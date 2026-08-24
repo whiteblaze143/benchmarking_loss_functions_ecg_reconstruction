@@ -58,6 +58,10 @@ def connect(path: Path) -> sqlite3.Connection:
       job_id TEXT NOT NULL,outcome TEXT NOT NULL,record_id TEXT NOT NULL,split TEXT NOT NULL,
       true_label TEXT NOT NULL,predicted_label TEXT NOT NULL,probabilities_json TEXT NOT NULL,
       PRIMARY KEY(job_id,outcome,record_id));
+    CREATE TABLE IF NOT EXISTS binary_predictions(
+      job_id TEXT NOT NULL,outcome TEXT NOT NULL,predictor_set TEXT NOT NULL,record_id TEXT NOT NULL,
+      split TEXT NOT NULL,truth INTEGER NOT NULL,probability REAL NOT NULL,
+      PRIMARY KEY(job_id,outcome,predictor_set,record_id));
     CREATE TABLE IF NOT EXISTS paired_comparisons(
       job_a TEXT NOT NULL,job_b TEXT NOT NULL,outcome TEXT NOT NULL,metric TEXT NOT NULL,
       delta_b_minus_a REAL,ci_low REAL,ci_high REAL,p_value REAL,details_json TEXT,
@@ -151,20 +155,24 @@ def fit_binary(meta, x):
     raw=StandardScaler().fit(raw[tr]).transform(raw)
     arrays={"waveform":[(3,raw)], "latent":[(d,xp[:,:d]) for d in (1,2,4,8)],
             "waveform_plus_latent":[(d,np.c_[raw,xp[:,:d]]) for d in (1,2,4,8)]}
-    out={}
+    test_ids=meta.loc[te,"record_id"].to_numpy()
+    out={"intercept_only":{"p":np.full(len(y),float(np.mean(y[va]))),"y":y,"test":te,"record_id":test_ids,"dims":0,"C":None,
+                           "calibration_intercept":float(np.log(np.mean(y[va])/(1-np.mean(y[va])))),
+                           "calibration_slope":0.0,"validation_loss":None,"validation_loss_se":None}}
     for name, choices in arrays.items():
         candidates=[]
         for d,a in choices:
             for C in (.01,.1,1,10):
                 q=LogisticRegression(C=C,class_weight="balanced",solver="liblinear",max_iter=3000).fit(a[tr],y[tr])
-                loss=metric_values(y[va],q.predict_proba(a[va])[:,1])["log_loss"]
-                candidates.append((loss,d,C,a))
-        _,d,C,a=min(candidates,key=lambda v:(v[0],v[1],v[2]))
+                pv=np.clip(q.predict_proba(a[va])[:,1],1e-7,1-1e-7);ell=-(y[va]*np.log(pv)+(1-y[va])*np.log(1-pv))
+                candidates.append((float(np.mean(ell)),float(np.std(ell,ddof=1)/math.sqrt(len(ell))),d,C,a))
+        best=min(candidates,key=lambda v:v[0]);eligible=[v for v in candidates if v[0]<=best[0]+best[1]]
+        loss,loss_se,d,C,a=min(eligible,key=lambda v:(v[2],v[3]))
         q=LogisticRegression(C=C,class_weight="balanced",solver="liblinear",max_iter=3000).fit(a[tr],y[tr])
         lv=q.decision_function(a[va]); la=q.decision_function(a)
         p,cal_i,cal_s=calibrate(lv,y[va],la)
-        out[name]={"p":p,"y":y,"test":te,"dims":d,"C":C,"calibration_intercept":cal_i,
-                   "calibration_slope":cal_s}
+        out[name]={"p":p,"y":y,"test":te,"record_id":test_ids,"dims":d,"C":C,"calibration_intercept":cal_i,
+                   "calibration_slope":cal_s,"validation_loss":loss,"validation_loss_se":loss_se}
     return out
 
 
@@ -184,7 +192,9 @@ def store_binary(c,jid,fits,nboot,seed):
             ix=stratified_indices(y,rng)
             for k,v in metric_values(y[ix],p[ix]).items(): boots[k].append(v)
         details={"dims":o["dims"],"C":o["C"],"validation_calibration_intercept":o["calibration_intercept"],
-                 "validation_calibration_slope":o["calibration_slope"],"bootstrap":"stratified_cached_record_id"}
+                 "validation_calibration_slope":o["calibration_slope"],"validation_loss":o["validation_loss"],
+                 "validation_loss_se":o["validation_loss_se"],"selection":"one_standard_error_rule",
+                 "bootstrap":"stratified_cached_record_id"}
         for k,v in vals.items():
             lo,hi=ci(boots[k]); c.execute("insert or replace into extended_results values(?,?,?,?,?,?,?,?,?)",
               (jid,"AF_AFIB_code_membership",name,k,float(v),lo,hi,len(y),json.dumps(details)))
@@ -198,19 +208,34 @@ def store_binary(c,jid,fits,nboot,seed):
         q25,q75=np.quantile(p,[.25,.75])
         c.execute("insert or replace into extended_results values(?,?,?,?,?,?,?,?,?)",
           (jid,"AF_AFIB_code_membership",name,"predicted_risk_IQR_contrast",float(q75-q25),None,None,len(y),json.dumps(details)))
+        record_ids=np.asarray(o.get("record_id",[]))
+        if record_ids.size==0:record_ids=np.arange(len(y)).astype(str)
+        c.executemany("insert or replace into binary_predictions values(?,?,?,?,?,?,?)",
+          [(jid,"AF_AFIB_code_membership",name,str(rid),"test",int(yy),float(pp)) for rid,yy,pp in zip(record_ids,y,p)])
+        if name!="intercept_only" and np.std(p)>1e-10:
+            import statsmodels.api as sm
+            score=np.log(np.clip(p,1e-6,1-1e-6)/np.clip(1-p,1e-6,1));score=(score-score.mean())/score.std()
+            try:
+                fit=sm.Logit(y,sm.add_constant(score)).fit(disp=0);beta,se,pv=fit.params[1],fit.bse[1],fit.pvalues[1]
+                c.execute("insert or replace into odds_ratios values(?,?,?,?,?,?,?,?,?,?,?)",
+                  (jid,"AF_AFIB_code_membership",name,"score_per_sd",math.exp(beta),math.exp(beta-1.96*se),
+                   math.exp(beta+1.96*se),float(pv),int(y.sum()),len(y),json.dumps({**details,"cross_sectional_code_association":True,"not_incidence_or_causal":True})))
+            except Exception as exc:
+                details["odds_ratio_error"]=repr(exc)
 
 
 def regression_metrics(y,p):
     from scipy.stats import spearmanr
     from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
     y=np.asarray(y,float);p=np.asarray(p,float);d=p-y
-    sy=np.std(y);sp=np.std(p);rho=np.corrcoef(y,p)[0,1] if sy>0 and sp>0 else np.nan
+    sy=np.std(y);sp=np.std(p);nonconstant=sy>1e-10 and sp>1e-10
+    rho=np.corrcoef(y,p)[0,1] if nonconstant else np.nan
     ccc=2*rho*sy*sp/(sy**2+sp**2+(np.mean(y)-np.mean(p))**2) if np.isfinite(rho) else np.nan
     return {"mae_ms":mean_absolute_error(y,p),"median_absolute_error_ms":np.median(np.abs(d)),
             "rmse_ms":math.sqrt(mean_squared_error(y,p)),"r2":r2_score(y,p),
-            "pearson":rho,"spearman":spearmanr(y,p).statistic if sp>0 else np.nan,"lin_ccc":ccc,
-            "calibration_intercept_ms":float(np.polyfit(p,y,1)[1]) if sp>0 else np.nan,
-            "calibration_slope":float(np.polyfit(p,y,1)[0]) if sp>0 else np.nan,
+            "pearson":rho,"spearman":spearmanr(y,p).statistic if nonconstant else np.nan,"lin_ccc":ccc,
+            "calibration_intercept_ms":float(np.polyfit(p,y,1)[1]) if nonconstant else np.nan,
+            "calibration_slope":float(np.polyfit(p,y,1)[0]) if nonconstant else np.nan,
             "bland_altman_bias_ms":float(np.mean(d)),
             "bland_altman_loa_low_ms":float(np.mean(d)-1.96*np.std(d,ddof=1)),
             "bland_altman_loa_high_ms":float(np.mean(d)+1.96*np.std(d,ddof=1))}
@@ -236,15 +261,17 @@ def fit_and_store_regression(c,jid,meta,x,nboot,seed):
         cand=[]
         for d,a in choices:
           for alpha in ((1e6,) if name=="mean_only" else (.01,.1,1,10,100)):
-            q=Ridge(alpha=alpha).fit(a[tr&ok],y[tr&ok]);err=np.mean(np.abs(y[va&ok]-q.predict(a[va&ok])))
-            cand.append((err,d,alpha,a))
-        _,d,alpha,a=min(cand,key=lambda z:(z[0],z[1],z[2]))
+            q=Ridge(alpha=alpha).fit(a[tr&ok],y[tr&ok]);ae=np.abs(y[va&ok]-q.predict(a[va&ok]))
+            cand.append((float(np.mean(ae)),float(np.std(ae,ddof=1)/math.sqrt(len(ae))),d,alpha,a))
+        best=min(cand,key=lambda z:z[0]);eligible=[z for z in cand if z[0]<=best[0]+best[1]]
+        val_mae,val_se,d,alpha,a=min(eligible,key=lambda z:(z[2],-z[3]))
         q=Ridge(alpha=alpha).fit(a[(tr|va)&ok],y[(tr|va)&ok]);pred=q.predict(a[te&ok]);truth=y[te&ok]
         vals=regression_metrics(truth,pred);boots={k:[] for k in vals}
         for _ in range(nboot):
             ix=rng.choice(len(truth),len(truth),True);v=regression_metrics(truth[ix],pred[ix])
             for k,z in v.items():boots[k].append(z)
-        details={"dims":d,"alpha":alpha,"n":len(truth),"endpoint":"annotation-derived QRSon-Toff",
+        details={"dims":d,"alpha":alpha,"validation_mae":val_mae,"validation_mae_se":val_se,
+                 "selection":"one_standard_error_rule","n":len(truth),"endpoint":"annotation-derived QRSon-Toff",
                  "not_clinical_QT_or_QTc":True,"bootstrap":"cached_record_id"}
         for k,v in vals.items():
             finite=np.asarray(boots[k]);finite=finite[np.isfinite(finite)];lo,hi=ci(finite) if len(finite) else (None,None)
@@ -304,8 +331,11 @@ def fit_store_multiclass(c,jid,meta,x,nboot,seed):
     for d in (1,2,4,8):
       for C in (.01,.1,1,10):
         q=LogisticRegression(C=C,class_weight="balanced",solver="lbfgs",max_iter=3000).fit(z[tr,:d],y[tr])
-        cand.append((log_loss(y[va],q.predict_proba(z[va,:d]),labels=q.classes_),d,C))
-    _,d,C=min(cand,key=lambda a:(a[0],a[1],a[2]));q=LogisticRegression(C=C,class_weight="balanced",solver="lbfgs",max_iter=3000).fit(z[tr|va,:d],y[tr|va])
+        probv=np.clip(q.predict_proba(z[va,:d]),1e-7,1-1e-7);ix={cl:i for i,cl in enumerate(q.classes_)}
+        ell=np.array([-math.log(probv[k,ix[yy]]) for k,yy in enumerate(y[va])])
+        cand.append((float(np.mean(ell)),float(np.std(ell,ddof=1)/math.sqrt(len(ell))),d,C))
+    best=min(cand,key=lambda a:a[0]);eligible=[a for a in cand if a[0]<=best[0]+best[1]]
+    val_loss,val_se,d,C=min(eligible,key=lambda a:(a[2],a[3]));q=LogisticRegression(C=C,class_weight="balanced",solver="lbfgs",max_iter=3000).fit(z[tr|va,:d],y[tr|va])
     truth=y[te];pred=q.predict(z[te,:d]);prob=q.predict_proba(z[te,:d]);classes=q.classes_;yb=label_binarize(truth,classes=classes)
     macro={"balanced_accuracy":balanced_accuracy_score(truth,pred),"macro_f1":f1_score(truth,pred,average="macro"),
            "macro_ovr_auroc":roc_auc_score(yb,prob,average="macro"),
@@ -317,7 +347,8 @@ def fit_store_multiclass(c,jid,meta,x,nboot,seed):
            "macro_ovr_auroc":roc_auc_score(tb,prob[ix],average="macro"),"macro_ovr_auprc":average_precision_score(tb,prob[ix],average="macro"),
            "multiclass_log_loss":log_loss(truth[ix],prob[ix],labels=classes)}
         for k,zv in v.items():boots[k].append(zv)
-    details={"dims":d,"C":C,"selection":"validation_multiclass_log_loss","classes":classes.tolist(),"rare_codes_descriptive":True}
+    details={"dims":d,"C":C,"validation_log_loss":val_loss,"validation_log_loss_se":val_se,
+             "selection":"one_standard_error_rule_on_validation_log_loss","classes":classes.tolist(),"rare_codes_descriptive":True}
     for k,v in macro.items():lo,hi=ci(boots[k]);c.execute("insert or replace into multiclass_results values(?,?,?,?,?,?,?,?,?)",(jid,"eight_code_rhythm","__macro__",k,float(v),lo,hi,len(truth),json.dumps(details)))
     for ix,cl in enumerate(classes):
         pos=truth==cl;phat=prob[:,ix];predpos=pred==cl;tp=np.sum(pos&predpos);fn=np.sum(pos&~predpos);tn=np.sum(~pos&~predpos);fp=np.sum(~pos&predpos)

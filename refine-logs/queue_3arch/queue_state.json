@@ -3399,40 +3399,67 @@
     {
       "id": "ecg_aim_f_1100013_s42",
       "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100013 --seed 42 --run_name ecg_aim_f_1100013_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100013_s42.pt",
-      "status": "pending",
-      "attempts": 0,
+      "status": "failed",
+      "attempts": 1,
       "handoff_reset_at": "2026-08-22T08:50:55Z",
-      "handoff_reason": "priority_spatial_1lead_queue_before_resuming_3lead"
+      "handoff_reason": "priority_spatial_1lead_queue_before_resuming_3lead",
+      "started": "2026-08-24T18:48:49Z",
+      "free_bytes_at_start": 13373853696,
+      "failed_at": "2026-08-24T18:49:33Z",
+      "returncode": 137,
+      "error": "training exited with status 137"
     },
     {
       "id": "ecg_aim_f_1100014_s42",
       "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100014 --seed 42 --run_name ecg_aim_f_1100014_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100014_s42.pt",
-      "status": "pending",
-      "attempts": 0
+      "status": "failed",
+      "attempts": 1,
+      "started": "2026-08-24T18:49:33Z",
+      "free_bytes_at_start": 13372710912,
+      "failed_at": "2026-08-24T18:50:07Z",
+      "returncode": 137,
+      "error": "training exited with status 137"
     },
     {
       "id": "ecg_aim_f_1100110_s42",
       "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100110 --seed 42 --run_name ecg_aim_f_1100110_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100110_s42.pt",
-      "status": "pending",
-      "attempts": 0
+      "status": "failed",
+      "attempts": 1,
+      "started": "2026-08-24T18:50:07Z",
+      "free_bytes_at_start": 13373882368,
+      "failed_at": "2026-08-24T18:50:39Z",
+      "returncode": 137,
+      "error": "training exited with status 137"
     },
     {
       "id": "ecg_aim_f_1100111_s42",
       "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100111 --seed 42 --run_name ecg_aim_f_1100111_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100111_s42.pt",
-      "status": "pending",
-      "attempts": 0
+      "status": "failed",
+      "attempts": 1,
+      "started": "2026-08-24T18:50:39Z",
+      "free_bytes_at_start": 13372530688,
+      "failed_at": "2026-08-24T18:51:11Z",
+      "returncode": 137,
+      "error": "training exited with status 137"
     },
     {
       "id": "ecg_aim_f_1100112_s42",
       "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100112 --seed 42 --run_name ecg_aim_f_1100112_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100112_s42.pt",
-      "status": "pending",
-      "attempts": 0
+      "status": "failed",
+      "attempts": 1,
+      "started": "2026-08-24T18:51:11Z",
+      "free_bytes_at_start": 13372026880,
+      "failed_at": "2026-08-24T18:51:43Z",
+      "returncode": 137,
+      "error": "training exited with status 137"
     },
     {
       "id": "ecg_aim_f_1100113_s42",
       "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100113 --seed 42 --run_name ecg_aim_f_1100113_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100113_s42.pt",
-      "status": "pending",
-      "attempts": 0
+      "status": "running",
+      "attempts": 1,
+      "started": "2026-08-24T18:51:43Z",
+      "free_bytes_at_start": 13376704512
     },
     {
       "id": "ecg_aim_f_1100114_s42",

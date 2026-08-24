@@ -72,6 +72,7 @@ boundary heatmaps, metric-space UMAPs, and provenance tables.
 From the repository root:
 
 ```{bash}
+#| label: observatory-render-command
 #| eval: false
 QUARTO_PYTHON=/home/mithunmanivannan/.venv/bin/python3 \
   .tools/quarto-1.10.18/bin/quarto render book

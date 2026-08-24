@@ -1291,6 +1291,7 @@ keys, applies the training-consistent observed leads \(I\), \(II\), and
 \(V_2\), and reconstructs a real locally stored PTB-XL record:
 
 ```{bash}
+#| label: archived-inference-command
 #| eval: false
 /home/mithunmanivannan/.venv/bin/python \
   scripts/infer_factorial_checkpoint.py \

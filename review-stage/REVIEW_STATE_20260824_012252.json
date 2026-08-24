@@ -1,0 +1,18 @@
+{
+  "workflow": "book_evidence_auto_review",
+  "round": 9,
+  "status": "in_progress",
+  "last_score": 9.5,
+  "last_verdict": "release path strongly fail-closed; scientific grid remains incomplete",
+  "review_independence": "same-family",
+  "acceptance_status": "provisional",
+  "reviewer_agent": "/root/book_review_round1",
+  "raw_response": "review-stage/book_review_20260731_round8.txt",
+  "pending_experiments": [
+    "complete the remaining content-pinned jobs",
+    "generate all 480 canonical per-record artifacts",
+    "eliminate the narrow mutate-and-restore tensor race with immutable snapshots",
+    "ninth adversarial review after additional live completions"
+  ],
+  "timestamp": "2026-07-31T07:31:30Z"
+}

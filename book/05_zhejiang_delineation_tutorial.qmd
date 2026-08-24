@@ -190,13 +190,34 @@ The table below is loaded rather than hard-coded. A ground-truth ceiling is a pi
 if RESULT_CSV.exists():
     current_results = pd.read_csv(RESULT_CSV)
     display(current_results)
+    ceiling = current_results.loc[current_results["model_id"] == "ground_truth_ceiling"]
+    metric_columns = [
+        c for c in current_results.columns
+        if c != "model_id" and pd.api.types.is_numeric_dtype(current_results[c])
+    ]
+    overlap_columns = [c for c in metric_columns if "dice" in c.lower() or "f1" in c.lower()]
+    error_columns = [c for c in metric_columns if "mae" in c.lower() or "error" in c.lower()]
+    ceiling_valid = (
+        len(ceiling) == 1
+        and all(np.isclose(float(ceiling.iloc[0][c]), 1.0) for c in overlap_columns)
+        and all(np.isclose(float(ceiling.iloc[0][c]), 0.0) for c in error_columns)
+    )
     model_rows = current_results.loc[current_results["model_id"] != "ground_truth_ceiling"]
+    if not ceiling_valid:
+        display(Markdown(
+            "> [!CAUTION]\n"
+            "> **BLOCKED sanity gate.** The row labelled `ground_truth_ceiling` is not a "
+            "perfect mask self-comparison. It may instead be a detector-versus-annotation result "
+            "or an evaluator defect. No downstream delineation or loss-function claim is admissible "
+            "until the row is correctly relabelled or the self-check is repaired."
+        ))
     status = pd.DataFrame([
         ("Artifact SHA-256", sha256_file(RESULT_CSV)),
         ("Rows in artifact", str(len(current_results))),
         ("Ground-truth ceiling rows", str((current_results["model_id"] == "ground_truth_ceiling").sum())),
         ("Reconstruction-model rows", str(len(model_rows))),
-        ("MSE-versus-MMD contrast estimable", "Yes" if len(model_rows) >= 2 else "No"),
+        ("Ceiling sanity gate", "PASS" if ceiling_valid else "FAIL — downstream claims blocked"),
+        ("MSE-versus-MMD contrast estimable", "Yes" if ceiling_valid and len(model_rows) >= 2 else "No"),
     ], columns=["Status field", "Value"])
     display(status)
 else:

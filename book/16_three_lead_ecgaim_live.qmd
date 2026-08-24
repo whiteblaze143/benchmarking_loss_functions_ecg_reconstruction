@@ -363,6 +363,48 @@ else:
         fig.show()
 ```
 
+### Held-out ROC, precision–recall, and calibration curves
+
+Curves are reconstructed from persisted test probabilities, not from UMAP
+coordinates or resubstitution predictions. The intercept-only rung exposes
+prevalence, the waveform rung is the parsimonious comparator, and latent gains
+are interpreted only when paired uncertainty agrees across discrimination and
+proper scoring rules.
+
+```{python}
+#| label: binary-curves
+binary_pred = read_sql_optional(STUDY_DB,"select * from binary_predictions")
+if binary_pred.empty:
+    display(pd.DataFrame([{"status":"pending held-out binary probabilities"}]))
+else:
+    from sklearn.metrics import roc_curve,precision_recall_curve
+    from sklearn.calibration import calibration_curve
+    model_key=read_sql(STUDY_DB,"select job_id,model_id from jobs")
+    binary_pred=binary_pred.merge(model_key,on="job_id",how="left")
+    roc_rows=[];pr_rows=[];cal_rows=[]
+    for (model,predictor),g in binary_pred.groupby(["model_id","predictor_set"]):
+        fpr,tpr,_=roc_curve(g.truth,g.probability)
+        precision,recall,_=precision_recall_curve(g.truth,g.probability)
+        obs,forecast=calibration_curve(g.truth,g.probability,n_bins=10,strategy="quantile")
+        key=f"{model} · {predictor}"
+        roc_rows.extend({"curve":key,"fpr":a,"tpr":b} for a,b in zip(fpr,tpr))
+        pr_rows.extend({"curve":key,"recall":a,"precision":b} for a,b in zip(recall,precision))
+        cal_rows.extend({"curve":key,"predicted":a,"observed":b} for a,b in zip(forecast,obs))
+    fig=go.Figure()
+    for key,g in pd.DataFrame(roc_rows).groupby("curve"):fig.add_trace(go.Scatter(x=g.fpr,y=g.tpr,name=key,mode="lines"))
+    fig.add_trace(go.Scatter(x=[0,1],y=[0,1],name="chance",line={"dash":"dash","color":"black"}))
+    fig.update_layout(title="Held-out AF/AFIB-code ROC",xaxis_title="False-positive rate",yaxis_title="True-positive rate");fig.show()
+    fig=px.line(pd.DataFrame(pr_rows),x="recall",y="precision",color="curve",title="Held-out AF/AFIB-code precision–recall");fig.show()
+    cal=pd.DataFrame(cal_rows);fig=px.line(cal,x="predicted",y="observed",color="curve",markers=True,title="Held-out probability calibration")
+    fig.add_trace(go.Scatter(x=[0,1],y=[0,1],name="ideal",line={"dash":"dash","color":"black"}));fig.show()
+
+predictor_delta=read_sql_optional(STUDY_DB,"select * from predictor_comparisons")
+if not predictor_delta.empty:
+    model_key=read_sql(STUDY_DB,"select job_id,model_id from jobs")
+    predictor_delta=predictor_delta.merge(model_key,on="job_id",how="left")
+    display(predictor_delta.sort_values(["outcome","model_id","reference_set","candidate_set","metric"]))
+```
+
 ### Matched checkpoint effects and multiplicity
 
 Checkpoint comparisons are paired by exact RDB record ID. `delta_b_minus_a`

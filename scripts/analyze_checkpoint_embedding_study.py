@@ -66,6 +66,10 @@ def connect(path: Path) -> sqlite3.Connection:
       job_a TEXT NOT NULL,job_b TEXT NOT NULL,outcome TEXT NOT NULL,metric TEXT NOT NULL,
       delta_b_minus_a REAL,ci_low REAL,ci_high REAL,p_value REAL,details_json TEXT,
       PRIMARY KEY(job_a,job_b,outcome,metric));
+    CREATE TABLE IF NOT EXISTS predictor_comparisons(
+      job_id TEXT NOT NULL,outcome TEXT NOT NULL,reference_set TEXT NOT NULL,candidate_set TEXT NOT NULL,
+      metric TEXT NOT NULL,delta_candidate_minus_reference REAL,ci_low REAL,ci_high REAL,p_value REAL,
+      details_json TEXT,PRIMARY KEY(job_id,outcome,reference_set,candidate_set,metric));
     CREATE TABLE IF NOT EXISTS checkpoint_similarity(
       job_a TEXT NOT NULL,job_b TEXT NOT NULL,split TEXT NOT NULL,metric TEXT NOT NULL,
       value REAL,details_json TEXT,PRIMARY KEY(job_a,job_b,split,metric));
@@ -382,6 +386,21 @@ def paired_delta(c,ja,jb,fa,fb,nboot,seed):
           (ja,jb,"AF_AFIB_code_membership",k,float(d),lo,hi,float(p),json.dumps({"paired_record_ids":len(y),"predictor_set":"latent"})))
 
 
+def binary_predictor_deltas(c,jid,fits,nboot,seed):
+    rng=np.random.default_rng(seed)
+    for ref,cand in (("waveform","latent"),("waveform","waveform_plus_latent"),("latent","waveform_plus_latent")):
+        a,b=fits[ref],fits[cand];y=a["y"][a["test"]];pa=a["p"][a["test"]];pb=b["p"][b["test"]]
+        va=metric_values(y,pa);vb=metric_values(y,pb);boots={k:[] for k in va}
+        for _ in range(nboot):
+            ix=stratified_indices(y,rng);aa=metric_values(y[ix],pa[ix]);bb=metric_values(y[ix],pb[ix])
+            for k in va:boots[k].append(bb[k]-aa[k])
+        for k in va:
+            arr=np.asarray(boots[k]);lo,hi=ci(arr);p=min(1.,2*min(np.mean(arr<=0),np.mean(arr>=0)))
+            c.execute("insert or replace into predictor_comparisons values(?,?,?,?,?,?,?,?,?,?)",
+              (jid,"AF_AFIB_code_membership",ref,cand,k,float(vb[k]-va[k]),lo,hi,float(p),
+               json.dumps({"paired_test_records":len(y),"same_bootstrap_indices":True})))
+
+
 def linear_cka(a,b):
     a=a-a.mean(0);b=b-b.mean(0)
     cross=np.linalg.norm(a.T@b,"fro")**2
@@ -469,14 +488,15 @@ def representation_diagnostics(c,jid,meta,x,nperm,seed):
               (jid,"projection_fidelity","test",int(s),int(n),metric,value,json.dumps({"UMAP_descriptive_only":True})))
 
 
-def adjust_p(c, qc_results):
+def adjust_p(c, qc_results, confirmatory_job):
     # Prespecified family: AF/AFIB-coded delta AUROC and Brier, annotation-derived
     # QRSon-Toff delta MAE, and reconstruction-failure outlier-score OR.
-    rows=c.execute("""select job_a,job_b,outcome,metric,p_value from paired_comparisons
-      where p_value is not null and ((outcome='AF_AFIB_code_membership' and metric in ('auroc','brier'))
-      or (outcome='annotation_QRSon_Toff_ms' and metric='mae_ms'))""").fetchall()
-    entries=[(f'{r["outcome"]}:{r["metric"]}:{r["job_a"]}:{r["job_b"]}',float(r["p_value"])) for r in rows]
-    entries += [(f'reconstruction_failure:latent_outlier:{jid}',float(v["p_value"])) for jid,v in qc_results.items() if v]
+    rows=c.execute("""select job_id,outcome,reference_set,candidate_set,metric,p_value from predictor_comparisons
+      where job_id=? and p_value is not null and reference_set='waveform' and candidate_set='latent'
+      and ((outcome='AF_AFIB_code_membership' and metric in ('auroc','brier'))
+      or (outcome='annotation_QRSon_Toff_ms' and metric='mae_ms'))""",(confirmatory_job,)).fetchall()
+    entries=[(f'{r["outcome"]}:{r["metric"]}:{r["reference_set"]}_vs_{r["candidate_set"]}:{r["job_id"]}',float(r["p_value"])) for r in rows]
+    entries += [(f'reconstruction_failure:latent_outlier:{jid}',float(v["p_value"])) for jid,v in qc_results.items() if v and jid==confirmatory_job]
     if not entries:return
     from statsmodels.stats.multitest import multipletests
     ps=np.array([v for _,v in entries]);adj=multipletests(ps,method="holm")[1]
@@ -517,6 +537,25 @@ def paired_regression_delta(c,ja,jb,ra,rb,nboot,seed):
            json.dumps({"paired_record_ids":len(y),"predictor_set":"latent","not_clinical_QT_or_QTc":True})))
 
 
+def regression_predictor_deltas(c,jid,outputs,nboot,seed):
+    rng=np.random.default_rng(seed)
+    for ref,cand in (("mean_only","waveform"),("waveform","latent"),("waveform","waveform_plus_latent")):
+        a,b=outputs[ref],outputs[cand]
+        if not np.array_equal(a["record_id"],b["record_id"]):raise RuntimeError("regression predictor record mismatch")
+        y=a["truth"];pa=a["pred"];pb=b["pred"];va=regression_metrics(y,pa);vb=regression_metrics(y,pb)
+        metrics=("mae_ms","rmse_ms") if ref=="mean_only" else ("mae_ms","rmse_ms","spearman","lin_ccc")
+        for metric in metrics:
+            boot=[]
+            for _ in range(nboot):
+                ix=rng.choice(len(y),len(y),True);aa=regression_metrics(y[ix],pa[ix]);bb=regression_metrics(y[ix],pb[ix]);boot.append(bb[metric]-aa[metric])
+            arr=np.asarray(boot);arr=arr[np.isfinite(arr)]
+            if len(arr)==0:continue
+            lo,hi=ci(arr);p=min(1.,2*min(np.mean(arr<=0),np.mean(arr>=0)))
+            c.execute("insert or replace into predictor_comparisons values(?,?,?,?,?,?,?,?,?,?)",
+              (jid,"annotation_QRSon_Toff_ms",ref,cand,metric,float(vb[metric]-va[metric]),lo,hi,float(p),
+               json.dumps({"paired_test_records":len(y),"not_clinical_QT_or_QTc":True})))
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("--db",type=Path,required=True)
     p.add_argument("--bootstrap",type=int,default=2000);p.add_argument("--seed",type=int,default=240824)
@@ -537,6 +576,8 @@ def main():
         for j in primary:
             m,x=load_job(c,j);fits[j]=fit_binary(m,x);store_binary(c,j,fits[j],a.bootstrap,a.seed)
             regression[j]=fit_and_store_regression(c,j,m,x,a.bootstrap,a.seed+2)
+            binary_predictor_deltas(c,j,fits[j],a.bootstrap,a.seed+6)
+            regression_predictor_deltas(c,j,regression[j],a.bootstrap,a.seed+7)
             fit_store_multiclass(c,j,m,x,a.bootstrap,a.seed+5)
             qc[j]=quality_control_or(c,j,m,x,a.oracle_db);umap_stability(c,j)
             representation_diagnostics(c,j,m,x,a.permutations,a.seed+4);c.commit()
@@ -546,7 +587,7 @@ def main():
         if len(primary)>=2:
             paired_delta(c,primary[0],primary[1],fits[primary[0]],fits[primary[1]],a.bootstrap,a.seed+1)
             paired_regression_delta(c,primary[0],primary[1],regression[primary[0]],regression[primary[1]],a.bootstrap,a.seed+3)
-        checkpoint_pairs(c,jobs);adjust_p(c,qc);adjust_exploratory(c)
+        checkpoint_pairs(c,jobs);adjust_p(c,qc,primary[-1]);adjust_exploratory(c)
         c.execute("update analysis_runs set status='complete',completed_at=CURRENT_TIMESTAMP where analysis_version=?",(version,));c.commit()
         print(json.dumps({"event":"rigorous_analysis_complete","jobs":len(jobs),"primary_jobs":len(primary)}))
     except Exception as e:

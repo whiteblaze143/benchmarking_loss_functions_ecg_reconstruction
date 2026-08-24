@@ -146,7 +146,7 @@ This is not the 3-by-12 matrix or pure projected MSE previously printed in the b
 The `ED` bit activates empirical **energy distance across records**, computed separately for each lead. If $X_c=\{\hat y_{bc,:}\}_{b=1}^B$ and $Y_c=\{y_{bc,:}\}_{b=1}^B$ are batches of complete lead waveforms,
 
 $$
-\mathcal L_{\mathrm{ED}}=rac1C\sum_c\left[
+\mathcal L_{\mathrm{ED}}=\frac{1}{C}\sum_c\left[
 2\,\overline{\|X_c-Y_c\|_2}
 -\overline{\|X_c-X'_c\|_2}
 -\overline{\|Y_c-Y'_c\|_2}
@@ -185,7 +185,7 @@ and the code averages biased empirical MMD estimates (diagonal self-kernels incl
 The blocks are inferior `[II, III, aVF]`, anteroseptal `[V1–V4]`, lateral `[I, aVL, V5, V6]`, all limb leads, and all precordial leads. Leads intentionally overlap across blocks. Each block is flattened per record, its MMD is divided by the number of leads in that block, and the five normalized block values are averaged.
 
 - Level 2 uses a Laplacian kernel $\exp(-\|x-y\|_2/h)$ with target within-batch median distance.
-- Level 3 uses a four-width inverse-multiquadratic kernel $(\|x-y\|_2^2+c^2)^{-1/2}$, where $c$ is a multiplier of the target median distance.
+- Level 3 uses a four-width inverse-multiquadratic kernel $(\|x-y\|_2^2+c^2)^{-1/2}$. In the current implementation, however, the helper derives its scale from its second argument separately for the prediction–prediction, target–target, and cross terms. Those three terms therefore do **not** yet share one fixed kernel. Until a shared detached bandwidth is implemented and identity, symmetry, and non-negativity tests pass, this branch is reported as an implementation-under-audit rather than interpreted as a standard MMD estimand.
 
 Because block weights, overlap, and bandwidth estimation are part of the estimand, “anatomical MMD” is not interchangeable with a generic per-lead MMD.
 

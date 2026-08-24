@@ -1,0 +1,74 @@
+{
+  "review_independence": "same-family",
+  "acceptance_status": "provisional",
+  "audit_snapshot": "2026-08-24T01:34:00-04:00",
+  "overall": {
+    "score": 4,
+    "readiness": "reject_release",
+    "executable_status": "in_scope_release_gate_failed",
+    "critical_blockers": 2
+  },
+  "chapters": {
+    "13_engineering_ml_visual_atlas": {
+      "score": 2,
+      "executable_status": "fail_missing_required_artifacts",
+      "readiness": "release_blocking",
+      "severity_counts": {
+        "critical": 2,
+        "major": 7,
+        "minor": 3
+      }
+    },
+    "14_cath_lab_clinical_trust_atlas": {
+      "score": 8,
+      "executable_status": "static_render_pass",
+      "readiness": "publishable_as_safety_protocol_only",
+      "severity_counts": {
+        "critical": 0,
+        "major": 4,
+        "minor": 3
+      }
+    },
+    "15_live_results_observatory": {
+      "score": 6,
+      "executable_status": "pass_at_audited_snapshot",
+      "readiness": "internal_monitoring_beta",
+      "severity_counts": {
+        "critical": 0,
+        "major": 6,
+        "minor": 3
+      }
+    },
+    "16_three_lead_ecgaim_live": {
+      "score": 4,
+      "executable_status": "pass_with_pending_production_analyses",
+      "readiness": "exploratory_not_results_ready",
+      "severity_counts": {
+        "critical": 0,
+        "major": 10,
+        "minor": 3
+      }
+    },
+    "17_one_lead_wavelet_ssl_live": {
+      "score": 3,
+      "executable_status": "pass_incomplete_10_of_120",
+      "readiness": "screening_only",
+      "severity_counts": {
+        "critical": 0,
+        "major": 9,
+        "minor": 3
+      }
+    }
+  },
+  "whole_book": {
+    "score": 4,
+    "readiness": "not_deploy_ready",
+    "navigation_status": "pass",
+    "local_resource_link_status": "pass_zero_missing",
+    "deployment_integrity_status": "fail",
+    "severity_counts": {
+      "critical_or_major": 9,
+      "minor": 3
+    }
+  }
+}

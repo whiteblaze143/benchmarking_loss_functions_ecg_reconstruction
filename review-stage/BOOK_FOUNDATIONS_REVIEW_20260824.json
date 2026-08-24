@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-08-24",
+  "review_type": "zero-context senior ML/clinical-methods audit",
+  "scope": {
+    "chapters_reviewed": 8,
+    "source_and_rendered_html_reviewed": true,
+    "book_sources_modified": false
+  },
+  "severity_counts": {
+    "CRITICAL": 4,
+    "MAJOR": 41,
+    "MINOR": 15,
+    "total": 60
+  },
+  "chapters": [
+    {
+      "path": "book/index.qmd",
+      "score": 5,
+      "readiness": "HOLD",
+      "severity_counts": {"CRITICAL": 0, "MAJOR": 4, "MINOR": 1}
+    },
+    {
+      "path": "book/01_dataset_and_preprocessing.qmd",
+      "score": 7,
+      "readiness": "CONDITIONAL / near-ready",
+      "severity_counts": {"CRITICAL": 0, "MAJOR": 3, "MINOR": 3}
+    },
+    {
+      "path": "book/02_network_architectures.qmd",
+      "score": 3,
+      "readiness": "BLOCKED",
+      "severity_counts": {"CRITICAL": 1, "MAJOR": 3, "MINOR": 2}
+    },
+    {
+      "path": "book/03_loss_function_formulations.qmd",
+      "score": 5,
+      "readiness": "BLOCKED",
+      "severity_counts": {"CRITICAL": 0, "MAJOR": 7, "MINOR": 1}
+    },
+    {
+      "path": "book/04_regression_to_mean.qmd",
+      "score": 2,
+      "readiness": "NOT READY",
+      "severity_counts": {"CRITICAL": 2, "MAJOR": 7, "MINOR": 1}
+    },
+    {
+      "path": "book/05_clinical_metrics_and_delineation.qmd",
+      "score": 4,
+      "readiness": "NOT READY",
+      "severity_counts": {"CRITICAL": 0, "MAJOR": 6, "MINOR": 2}
+    },
+    {
+      "path": "book/05_zhejiang_delineation_tutorial.qmd",
+      "score": 4,
+      "readiness": "BLOCKED",
+      "severity_counts": {"CRITICAL": 1, "MAJOR": 4, "MINOR": 2}
+    },
+    {
+      "path": "book/06_fairness_robustness_sqi.qmd",
+      "score": 3,
+      "readiness": "NOT READY",
+      "severity_counts": {"CRITICAL": 0, "MAJOR": 7, "MINOR": 3}
+    }
+  ]
+}

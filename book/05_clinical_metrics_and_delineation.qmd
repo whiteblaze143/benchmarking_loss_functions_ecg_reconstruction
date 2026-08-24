@@ -99,6 +99,7 @@ $$\psi(t) = \frac{2}{\sqrt{3\sigma} \pi^{1/4}} \left( 1 - \frac{t^2}{\sigma^2} \
 High-resolution scales isolate sharp QRS spikes ($10-25\text{ Hz}$), while lower-resolution scales detect smooth P and T wave peaks ($1-10\text{ Hz}$).
 
 ```{python}
+#| label: didactic-cwt-delineation
 import neurokit2 as nk
 import pandas as pd
 import numpy as np
@@ -163,6 +164,7 @@ fig_del.show()
 ## QTc Formula Comparison Function
 
 ```{python}
+#| label: qtc-formula-function
 def calculate_qtc_variations(qt_ms, rr_ms):
     """
     Computes QTc across Bazett, Fridericia, Framingham, and Hodges formulas.

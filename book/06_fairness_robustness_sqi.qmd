@@ -153,6 +153,7 @@ print("==================================================")
 ## Interactive Noise Stress Response Viewer
 
 ```{python}
+#| label: didactic-noise-stress-viewer
 fig_noise = make_subplots(
     rows=3, cols=1, 
     subplot_titles=(

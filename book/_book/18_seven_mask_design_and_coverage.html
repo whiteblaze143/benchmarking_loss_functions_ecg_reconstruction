@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>1&nbsp; Live Experiment Observatory – Benchmarking Loss Functions for Electrocardiogram Reconstruction</title>
+<title>4&nbsp; Seven-Character Factorial Study: Design and Coverage – Benchmarking Loss Functions for Electrocardiogram Reconstruction</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -71,8 +71,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./16_three_lead_ecgaim_live.html" rel="next">
-<link href="./index.html" rel="prev">
+<link href="./19_seven_mask_reconstruction_results.html" rel="next">
+<link href="./17_one_lead_wavelet_ssl_live.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -118,7 +118,56 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/vendor/require-2.3.6.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script type="text/javascript">
+window.PlotlyConfig = {MathJaxConfig: 'local'};
+if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+</script>
+<script type="module">import "site_libs/vendor/plotly-3.3.1.min.js"</script>
 
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="site_libs/vendor/katex-0.16.22.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="site_libs/vendor/katex-0.16.22.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -293,7 +342,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./15_live_results_observatory.html">Live Experiment Observatory</a></li><li class="breadcrumb-item"><a href="./15_live_results_observatory.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Live Experiment Observatory</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./18_seven_mask_design_and_coverage.html">Expanded Seven-Mask and One-Lead Evidence</a></li><li class="breadcrumb-item"><a href="./18_seven_mask_design_and_coverage.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Seven-Character Factorial Study: Design and Coverage</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -329,16 +378,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
  <span class="menu-text">Live Experiment Observatory</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./15_live_results_observatory.html" class="sidebar-item-text sidebar-link active">
+  <a href="./15_live_results_observatory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Live Experiment Observatory</span></span></a>
   </div>
 </li>
@@ -358,16 +407,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Expanded Seven-Mask and One-Lead Evidence</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./18_seven_mask_design_and_coverage.html" class="sidebar-item-text sidebar-link">
+  <a href="./18_seven_mask_design_and_coverage.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Seven-Character Factorial Study: Design and Coverage</span></span></a>
   </div>
 </li>
@@ -558,10 +607,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#what-is-live-now" id="toc-what-is-live-now" class="nav-link active" data-scroll-target="#what-is-live-now"><span class="header-section-number">1.1</span> What is live now?</a></li>
-  <li><a href="#two-evidence-tracks-that-must-not-be-mixed" id="toc-two-evidence-tracks-that-must-not-be-mixed" class="nav-link" data-scroll-target="#two-evidence-tracks-that-must-not-be-mixed"><span class="header-section-number">1.2</span> Two evidence tracks that must not be mixed</a></li>
-  <li><a href="#rerun-controls" id="toc-rerun-controls" class="nav-link" data-scroll-target="#rerun-controls"><span class="header-section-number">1.3</span> Rerun controls</a></li>
-  <li><a href="#visualization-contract" id="toc-visualization-contract" class="nav-link" data-scroll-target="#visualization-contract"><span class="header-section-number">1.4</span> Visualization contract</a></li>
+  <li><a href="#why-this-is-a-new-experiment-not-an-enlarged-four-mask-table" id="toc-why-this-is-a-new-experiment-not-an-enlarged-four-mask-table" class="nav-link active" data-scroll-target="#why-this-is-a-new-experiment-not-an-enlarged-four-mask-table"><span class="header-section-number">4.1</span> Why this is a new experiment, not an enlarged four-mask table</a></li>
+  <li><a href="#live-checkpoint-reconciliation" id="toc-live-checkpoint-reconciliation" class="nav-link" data-scroll-target="#live-checkpoint-reconciliation"><span class="header-section-number">4.2</span> Live checkpoint reconciliation</a></li>
+  <li><a href="#provenance-gates" id="toc-provenance-gates" class="nav-link" data-scroll-target="#provenance-gates"><span class="header-section-number">4.3</span> Provenance gates</a></li>
+  <li><a href="#claims-this-chapter-permits" id="toc-claims-this-chapter-permits" class="nav-link" data-scroll-target="#claims-this-chapter-permits"><span class="header-section-number">4.4</span> Claims this chapter permits</a></li>
   </ul>
 </nav>
     </div>
@@ -569,10 +618,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./15_live_results_observatory.html">Live Experiment Observatory</a></li><li class="breadcrumb-item"><a href="./15_live_results_observatory.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Live Experiment Observatory</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./18_seven_mask_design_and_coverage.html">Expanded Seven-Mask and One-Lead Evidence</a></li><li class="breadcrumb-item"><a href="./18_seven_mask_design_and_coverage.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Seven-Character Factorial Study: Design and Coverage</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Live Experiment Observatory</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
-<p class="subtitle lead">A rerunnable, database-backed view of the study</p>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Seven-Character Factorial Study: Design and Coverage</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<p class="subtitle lead">What the 160 cells mean, what exists, and what remains unmeasured</p>
 </div>
 
 
@@ -589,310 +638,279 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This section is the operational front door to the results. Every render opens the authoritative SQLite files in <strong>read-only mode</strong>, recomputes tables and figures, and records each source’s modification time. It does not export large CSVs, duplicate per-record rows, or mutate an evaluator database.</p>
-<div id="observatory-setup" class="cell" data-execution_count="1">
+<div id="seven-mask-design-setup" class="cell" data-execution_count="1">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> live_results <span class="im">import</span> <span class="op">*</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>SOURCES <span class="op">=</span> {</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Clinical biomarkers"</span>: source_path(<span class="st">"results/clinical_biomarkers_multids/clinical_metrics.db"</span>),</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Three-lead checkpoint catalog"</span>: source_path(<span class="st">"results/checkpoint_store/catalog.sqlite"</span>),</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"LUDB blinded"</span>: source_path(<span class="st">"results/ecgaim_ludb_semiseg_blinded/compact.sqlite"</span>),</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RDB blinded"</span>: source_path(<span class="st">"results/ecgaim_rdb_semiseg_blinded/compact.sqlite"</span>),</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RDB oracle"</span>: source_path(<span class="st">"results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite"</span>),</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"One-lead queue"</span>: source_path(<span class="st">"refine-logs/wavelet_ssl_1110000/full/queue.sqlite"</span>),</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"One-lead checkpoints"</span>: source_path(<span class="st">"results/onelead_checkpoint_store/catalog.sqlite"</span>),</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Checkpoint representation study"</span>: source_path(<span class="st">"results/checkpoint_embeddings/compact.sqlite"</span>),</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>inventory <span class="op">=</span> source_inventory(SOURCES)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>display(inventory)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>snapshot_manifest <span class="op">=</span> SNAPSHOT_ROOT <span class="op">/</span> <span class="st">"SNAPSHOT_MANIFEST.json"</span> <span class="cf">if</span> SNAPSHOT_ROOT <span class="cf">else</span> <span class="va">None</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> snapshot_manifest <span class="kw">and</span> snapshot_manifest.exists():</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    snapshot <span class="op">=</span> json.loads(snapshot_manifest.read_text())</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    display(pd.DataFrame([{</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"render_input_mode"</span>: <span class="st">"immutable SQLite backup snapshot"</span>,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshot_created_at"</span>: snapshot.get(<span class="st">"created_at"</span>),</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshot_root"</span>: <span class="bu">str</span>(SNAPSHOT_ROOT.relative_to(ROOT)),</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshotted_databases"</span>: <span class="bu">sum</span>(x.get(<span class="st">"status"</span>) <span class="op">==</span> <span class="st">"snapshotted"</span> <span class="cf">for</span> x <span class="kw">in</span> snapshot.get(<span class="st">"databases"</span>, [])),</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    }]))</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    display(pd.DataFrame([{</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">"render_input_mode"</span>: <span class="st">"live read-only files (exploratory only)"</span>,</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshot_created_at"</span>: <span class="va">None</span>,</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshot_root"</span>: <span class="va">None</span>,</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshotted_databases"</span>: <span class="dv">0</span>,</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    }]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> expanded_results <span class="im">import</span> <span class="op">*</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div id="observatory-setup-1" class="cell-output cell-output-display">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">source</th>
-<th data-quarto-table-cell-role="th">path</th>
-<th data-quarto-table-cell-role="th">exists</th>
-<th data-quarto-table-cell-role="th">size_mb</th>
-<th data-quarto-table-cell-role="th">updated</th>
-<th data-quarto-table-cell-role="th">rows</th>
-<th data-quarto-table-cell-role="th">tables</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>Clinical biomarkers</td>
-<td>review-stage/render-round4-expanded/input-snap...</td>
-<td>True</td>
-<td>6.03</td>
-<td>2026-08-24T13:22:53-04:00</td>
-<td>24358</td>
-<td>clinical_metrics:18,782, paired_inference:1,57...</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>Three-lead checkpoint catalog</td>
-<td>review-stage/render-round4-expanded/input-snap...</td>
-<td>True</td>
-<td>102.37</td>
-<td>2026-08-24T13:22:53-04:00</td>
-<td>590</td>
-<td>settings:2, checkpoints:588</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>LUDB blinded</td>
-<td>review-stage/render-round4-expanded/input-snap...</td>
-<td>True</td>
-<td>0.14</td>
-<td>2026-08-24T13:22:54-04:00</td>
-<td>874</td>
-<td>metadata:6, evaluations:124, boundary_summarie...</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
-<td>RDB blinded</td>
-<td>review-stage/render-round4-expanded/input-snap...</td>
-<td>True</td>
-<td>0.09</td>
-<td>2026-08-24T13:22:54-04:00</td>
-<td>539</td>
-<td>metadata:6, evaluations:29, boundary_summaries...</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
-<td>RDB oracle</td>
-<td>review-stage/render-round4-expanded/input-snap...</td>
-<td>True</td>
-<td>142.67</td>
-<td>2026-08-24T13:22:54-04:00</td>
-<td>1031532</td>
-<td>protocol_metadata:24, dataset_audit:34, record...</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">5</th>
-<td>One-lead queue</td>
-<td>review-stage/render-round4-expanded/input-snap...</td>
-<td>True</td>
-<td>0.57</td>
-<td>2026-08-24T13:22:55-04:00</td>
-<td>154</td>
-<td>metadata:2, jobs:120, attempts:32</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">6</th>
-<td>One-lead checkpoints</td>
-<td>review-stage/render-round4-expanded/input-snap...</td>
-<td>True</td>
-<td>0.12</td>
-<td>2026-08-24T13:22:55-04:00</td>
-<td>86</td>
-<td>settings:2, checkpoints:84</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">7</th>
-<td>Checkpoint representation study</td>
-<td>review-stage/render-round4-expanded/input-snap...</td>
-<td>True</td>
-<td>55.87</td>
-<td>2026-08-24T13:22:56-04:00</td>
-<td>140687</td>
-<td>study_metadata:3, jobs:11, records:2,398, feat...</td>
-</tr>
-</tbody>
-</table>
-
 </div>
-</div>
-<div id="observatory-setup-2" class="cell-output cell-output-display">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">render_input_mode</th>
-<th data-quarto-table-cell-role="th">snapshot_created_at</th>
-<th data-quarto-table-cell-role="th">snapshot_root</th>
-<th data-quarto-table-cell-role="th">snapshotted_databases</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>immutable SQLite backup snapshot</td>
-<td>2026-08-24T17:22:56.384676+00:00</td>
-<td>review-stage/render-round4-expanded/input-snap...</td>
-<td>8</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<section id="what-is-live-now" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="what-is-live-now"><span class="header-section-number">1.1</span> What is live now?</h2>
-<div id="cell-observatory-status" class="cell" data-execution_count="2">
-<details open="" class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown, display</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> load_onelead_queue(SOURCES[<span class="st">"One-lead queue"</span>])</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>le, _ <span class="op">=</span> load_blinded(SOURCES[<span class="st">"LUDB blinded"</span>], <span class="st">"LUDB"</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>re, _ <span class="op">=</span> load_blinded(SOURCES[<span class="st">"RDB blinded"</span>], <span class="st">"RDB"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>ro <span class="op">=</span> load_oracle(SOURCES[<span class="st">"RDB oracle"</span>], <span class="st">"RDB"</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> statuses(frame):</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> frame.status.value_counts().to_dict() <span class="cf">if</span> <span class="kw">not</span> frame.empty <span class="kw">and</span> <span class="st">"status"</span> <span class="kw">in</span> frame <span class="cf">else</span> {}</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> pd.DataFrame([</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"stream"</span>: <span class="st">"one-lead wavelet/SSL queue"</span>, <span class="op">**</span>statuses(q)},</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"stream"</span>: <span class="st">"LUDB blinded three-lead"</span>, <span class="op">**</span>statuses(le)},</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"stream"</span>: <span class="st">"RDB blinded three-lead"</span>, <span class="op">**</span>statuses(re)},</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"stream"</span>: <span class="st">"RDB oracle three-lead"</span>, <span class="op">**</span>statuses(ro)},</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>]).fillna(<span class="dv">0</span>)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>display(summary)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div id="observatory-status" class="cell-output cell-output-display">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">stream</th>
-<th data-quarto-table-cell-role="th">pending</th>
-<th data-quarto-table-cell-role="th">completed</th>
-<th data-quarto-table-cell-role="th">failed_transient</th>
-<th data-quarto-table-cell-role="th">running</th>
-<th data-quarto-table-cell-role="th">complete</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>one-lead wavelet/SSL queue</td>
-<td>88.0</td>
-<td>30.0</td>
-<td>1.0</td>
-<td>1.0</td>
-<td>0.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>LUDB blinded three-lead</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>124.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>RDB blinded three-lead</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>1.0</td>
-<td>28.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
-<td>RDB oracle three-lead</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>31.0</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<p>The counts above are a render-time snapshot—not a monitoring daemon. Rerender this chapter or the full book to incorporate newly committed DB rows.</p>
-</section>
-<section id="two-evidence-tracks-that-must-not-be-mixed" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="two-evidence-tracks-that-must-not-be-mixed"><span class="header-section-number">1.2</span> Two evidence tracks that must not be mixed</h2>
+<section id="why-this-is-a-new-experiment-not-an-enlarged-four-mask-table" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="why-this-is-a-new-experiment-not-an-enlarged-four-mask-table"><span class="header-section-number">4.1</span> Why this is a new experiment, not an enlarged four-mask table</h2>
+<p>The legacy benchmark is a completed <span class="math inline">3\times2^4=48</span> architecture-by-loss grid. The newer mask is a <strong>mixed-level</strong> design: fixed MSE, five binary additions, and one five-level MMD selector. It therefore contains <span class="math inline">2^5\times5=160</span> conditions per architecture and seed. The last character is categorical; the study does not estimate seven binary effects.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 30%">
+<col style="width: 23%">
+<col style="width: 23%">
+<col style="width: 23%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Track</th>
-<th>Input contract</th>
-<th>Main question</th>
-<th>External morphology evidence</th>
+<th style="text-align: right;">Position</th>
+<th>Field</th>
+<th>Levels</th>
+<th>Scientific question</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Three-lead benchmark</td>
-<td>observed I + II + V2</td>
-<td>Which architecture/objective best reconstructs nine missing leads?</td>
-<td>LUDB and RDB oracle/blinded analyses</td>
+<td style="text-align: right;">1</td>
+<td>MSE</td>
+<td>fixed at 1</td>
+<td>common reconstruction anchor</td>
 </tr>
 <tr class="even">
-<td>One-lead development</td>
-<td>observed I <strong>or</strong> II</td>
-<td>Do spatial structure, wavelets, and SSL improve reconstruction/delineation?</td>
-<td>RDB six-boundary supervision during development; no inherited three-lead leaderboard</td>
+<td style="text-align: right;">2</td>
+<td>correlation</td>
+<td>0/1</td>
+<td>does scale-free waveform agreement help?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td>derivative</td>
+<td>0/1</td>
+<td>does local slope matching preserve transitions?</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td>Kors VCG</td>
+<td>0/1</td>
+<td>does spatial-vector consistency help?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td>energy distance</td>
+<td>0/1</td>
+<td>does distributional matching help?</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td>lead consistency</td>
+<td>0/1</td>
+<td>do electrophysiologic lead identities help?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td>MMD kernel</td>
+<td>0–4</td>
+<td>which distributional geometry, if any, is useful?</td>
 </tr>
 </tbody>
 </table>
-<p>Use the next two chapters for interactive leaderboards, matched deltas, boundary heatmaps, metric-space UMAPs, and provenance tables.</p>
+<div id="cell-seven-mask-decoder" class="cell" data-execution_count="2">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>examples <span class="op">=</span> pd.DataFrame([decode_mask(mask) <span class="cf">for</span> mask <span class="kw">in</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                         [<span class="st">"1000000"</span>, <span class="st">"1100000"</span>, <span class="st">"1110000"</span>, <span class="st">"1111110"</span>, <span class="st">"1111114"</span>]])</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>display(examples)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="seven-mask-decoder" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">mse</th>
+<th data-quarto-table-cell-role="th">correlation</th>
+<th data-quarto-table-cell-role="th">derivative</th>
+<th data-quarto-table-cell-role="th">vcg</th>
+<th data-quarto-table-cell-role="th">energy</th>
+<th data-quarto-table-cell-role="th">lead_consistency</th>
+<th data-quarto-table-cell-role="th">mask</th>
+<th data-quarto-table-cell-role="th">mmd_level</th>
+<th data-quarto-table-cell-role="th">mmd_kernel</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1000000</td>
+<td>0</td>
+<td>none</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1100000</td>
+<td>0</td>
+<td>none</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1110000</td>
+<td>0</td>
+<td>none</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1111110</td>
+<td>0</td>
+<td>none</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1111114</td>
+<td>4</td>
+<td>temporal_kmeans_imq_multiscale</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </section>
-<section id="rerun-controls" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="rerun-controls"><span class="header-section-number">1.3</span> Rerun controls</h2>
-<p>From the repository root:</p>
-<pre class="{bash}"><code>#| label: observatory-render-command
-#| eval: false
-python3 scripts/render_quarto_chapters.py \
-  --round-dir review-stage/render-live</code></pre>
-<p>For a faster update, render only one live chapter. The top code cell of each chapter contains the small set of controls intended for editing.</p>
+<section id="live-checkpoint-reconciliation" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="live-checkpoint-reconciliation"><span class="header-section-number">4.2</span> Live checkpoint reconciliation</h2>
+<p>The table is recomputed from the checkpoint catalog on every render. A registered checkpoint is not automatically a test-set result or a clinical evaluation.</p>
+<div id="seven-mask-checkpoint-coverage" class="cell" data-execution_count="3">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>coverage <span class="op">=</span> checkpoint_completeness()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>display(coverage.style.<span class="bu">format</span>({<span class="st">"coverage_pct"</span>: <span class="st">"</span><span class="sc">{:.1f}</span><span class="st">%"</span>}))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.bar(coverage, x<span class="op">=</span><span class="st">"architecture"</span>, y<span class="op">=</span><span class="st">"registered"</span>, color<span class="op">=</span><span class="st">"architecture"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>             text<span class="op">=</span><span class="st">"registered"</span>, range_y<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">168</span>],</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>             title<span class="op">=</span><span class="st">"Seed-42 seven-mask checkpoints registered out of 160"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>fig.add_hline(y<span class="op">=</span><span class="dv">160</span>, line_dash<span class="op">=</span><span class="st">"dash"</span>, annotation_text<span class="op">=</span><span class="st">"complete grid"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="seven-mask-checkpoint-coverage-1" class="cell-output cell-output-display">
+<style type="text/css">
+</style>
+
+<table id="T_748b8" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_748b8_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">architecture</th>
+<th id="T_748b8_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">expected</th>
+<th id="T_748b8_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">registered</th>
+<th id="T_748b8_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">missing</th>
+<th id="T_748b8_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">coverage_pct</th>
+<th id="T_748b8_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">remote_verified</th>
+<th id="T_748b8_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">training_metric_rows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_748b8_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
+<td id="T_748b8_row0_col0" class="data row0 col0">unet</td>
+<td id="T_748b8_row0_col1" class="data row0 col1">160</td>
+<td id="T_748b8_row0_col2" class="data row0 col2">160</td>
+<td id="T_748b8_row0_col3" class="data row0 col3">0</td>
+<td id="T_748b8_row0_col4" class="data row0 col4">100.0%</td>
+<td id="T_748b8_row0_col5" class="data row0 col5">160</td>
+<td id="T_748b8_row0_col6" class="data row0 col6">160</td>
+</tr>
+<tr class="even">
+<th id="T_748b8_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
+<td id="T_748b8_row1_col0" class="data row1 col0">msvae</td>
+<td id="T_748b8_row1_col1" class="data row1 col1">160</td>
+<td id="T_748b8_row1_col2" class="data row1 col2">155</td>
+<td id="T_748b8_row1_col3" class="data row1 col3">5</td>
+<td id="T_748b8_row1_col4" class="data row1 col4">96.9%</td>
+<td id="T_748b8_row1_col5" class="data row1 col5">155</td>
+<td id="T_748b8_row1_col6" class="data row1 col6">0</td>
+</tr>
+<tr class="odd">
+<th id="T_748b8_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</th>
+<td id="T_748b8_row2_col0" class="data row2 col0">ecg_aim</td>
+<td id="T_748b8_row2_col1" class="data row2 col1">160</td>
+<td id="T_748b8_row2_col2" class="data row2 col2">123</td>
+<td id="T_748b8_row2_col3" class="data row2 col3">37</td>
+<td id="T_748b8_row2_col4" class="data row2 col4">76.9%</td>
+<td id="T_748b8_row2_col5" class="data row2 col5">122</td>
+<td id="T_748b8_row2_col6" class="data row2 col6">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="seven-mask-checkpoint-coverage-2" class="cell-output cell-output-display">
+<div>            <script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="site_libs/vendor/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="dc4f840c-8c98-4297-8a39-eb6919c669e7" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("dc4f840c-8c98-4297-8a39-eb6919c669e7")) {                    Plotly.newPlot(                        "dc4f840c-8c98-4297-8a39-eb6919c669e7",                        [{"hovertemplate":"architecture=%{x}\u003cbr\u003eregistered=%{text}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"unet","marker":{"color":"#636efa","pattern":{"shape":""}},"name":"unet","orientation":"v","showlegend":true,"text":{"dtype":"f8","bdata":"AAAAAAAAZEA="},"textposition":"auto","x":["unet"],"xaxis":"x","y":{"dtype":"i2","bdata":"oAA="},"yaxis":"y","type":"bar"},{"hovertemplate":"architecture=%{x}\u003cbr\u003eregistered=%{text}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"msvae","marker":{"color":"#EF553B","pattern":{"shape":""}},"name":"msvae","orientation":"v","showlegend":true,"text":{"dtype":"f8","bdata":"AAAAAABgY0A="},"textposition":"auto","x":["msvae"],"xaxis":"x","y":{"dtype":"i2","bdata":"mwA="},"yaxis":"y","type":"bar"},{"hovertemplate":"architecture=%{x}\u003cbr\u003eregistered=%{text}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"ecg_aim","marker":{"color":"#00cc96","pattern":{"shape":""}},"name":"ecg_aim","orientation":"v","showlegend":true,"text":{"dtype":"f8","bdata":"AAAAAADAXkA="},"textposition":"auto","x":["ecg_aim"],"xaxis":"x","y":{"dtype":"i1","bdata":"ew=="},"yaxis":"y","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"architecture"},"categoryorder":"array","categoryarray":["unet","msvae","ecg_aim"]},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"registered"},"range":[0,168]},"legend":{"title":{"text":"architecture"},"tracegroupgap":0},"title":{"text":"Seed-42 seven-mask checkpoints registered out of 160"},"barmode":"relative","shapes":[{"line":{"dash":"dash"},"type":"line","x0":0,"x1":1,"xref":"x domain","y0":160,"y1":160,"yref":"y"}],"annotations":[{"showarrow":false,"text":"complete grid","x":1,"xanchor":"right","xref":"x domain","y":160,"yanchor":"bottom","yref":"y"}]},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('dc4f840c-8c98-4297-8a39-eb6919c669e7');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+<p>At the current snapshot, U-Net is complete, MSVAE is missing five cells, and ECG-AIM is missing 37. Consequently, a full three-architecture factorial comparison is not yet estimable. Partial ECG-AIM rows are operational evidence, not a substitute for the missing cells.</p>
 </section>
-<section id="visualization-contract" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="visualization-contract"><span class="header-section-number">1.4</span> Visualization contract</h2>
-<p>The live chapters deliberately distinguish three objects:</p>
-<ol type="1">
-<li><strong>Raw metric views</strong> show observed values and remain the source of rankings.</li>
-<li><strong>Matched deltas</strong> compare a configuration against its registered baseline only when seed and observed lead agree.</li>
-<li><strong>Performance UMAP</strong> embeds standardized outcome vectors. Proximity means similar measured performance profiles; it does <strong>not</strong> establish similar encoder representations, physiology, or causal mechanisms.</li>
-</ol>
+<section id="provenance-gates" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="provenance-gates"><span class="header-section-number">4.3</span> Provenance gates</h2>
+<p>Every admissible comparison must match observed leads (I, II, V2), PTB-XL patient split, 500 Hz/no-normalization preprocessing, seed, source generation, checkpoint selector, and evaluation version. Mask strings alone are not unique experimental identities. Historical four-mask results and one-lead results are kept in separate chapters.</p>
+</section>
+<section id="claims-this-chapter-permits" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="claims-this-chapter-permits"><span class="header-section-number">4.4</span> Claims this chapter permits</h2>
+<ul>
+<li>Exact statements about which checkpoints are registered and verified.</li>
+<li>Exact statements about design structure and missing cells.</li>
+<li>No claims about test performance from checkpoint counts.</li>
+<li>No architecture-wide clinical claims until clinical evaluation coverage is reconciled separately.</li>
+</ul>
 
 
 <!-- -->
@@ -1366,126 +1384,93 @@ python3 scripts/render_quarto_chapters.py \
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link" aria-label="Preface &amp; Executive Summary">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Preface &amp; Executive Summary</span>
+      <a href="./17_one_lead_wavelet_ssl_live.html" class="pagination-link" aria-label="One-Lead Wavelet and SSL: Live Results">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL: Live Results</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./16_three_lead_ecgaim_live.html" class="pagination-link" aria-label="Three-Lead ECG-AIM: Live Results">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Three-Lead ECG-AIM: Live Results</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./19_seven_mask_reconstruction_results.html" class="pagination-link" aria-label="Seven-Character Factorial Reconstruction Results">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Seven-Character Factorial Reconstruction Results</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Live Experiment Observatory"</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "A rerunnable, database-backed view of the study"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Seven-Character Factorial Study: Design and Coverage"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "What the 160 cells mean, what exists, and what remains unmeasured"</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">  cache: false</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">  freeze: false</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>This section is the operational front door to the results. Every render opens</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>the authoritative SQLite files in **read-only mode**, recomputes tables and</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>figures, and records each source's modification time. It does not export large</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>CSVs, duplicate per-record rows, or mutate an evaluator database.</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: observatory-setup</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> live_results <span class="im">import</span> <span class="op">*</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>SOURCES <span class="op">=</span> {</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Clinical biomarkers"</span>: source_path(<span class="st">"results/clinical_biomarkers_multids/clinical_metrics.db"</span>),</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Three-lead checkpoint catalog"</span>: source_path(<span class="st">"results/checkpoint_store/catalog.sqlite"</span>),</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"LUDB blinded"</span>: source_path(<span class="st">"results/ecgaim_ludb_semiseg_blinded/compact.sqlite"</span>),</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RDB blinded"</span>: source_path(<span class="st">"results/ecgaim_rdb_semiseg_blinded/compact.sqlite"</span>),</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RDB oracle"</span>: source_path(<span class="st">"results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite"</span>),</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"One-lead queue"</span>: source_path(<span class="st">"refine-logs/wavelet_ssl_1110000/full/queue.sqlite"</span>),</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"One-lead checkpoints"</span>: source_path(<span class="st">"results/onelead_checkpoint_store/catalog.sqlite"</span>),</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Checkpoint representation study"</span>: source_path(<span class="st">"results/checkpoint_embeddings/compact.sqlite"</span>),</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>inventory <span class="op">=</span> source_inventory(SOURCES)</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>display(inventory)</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>snapshot_manifest <span class="op">=</span> SNAPSHOT_ROOT <span class="op">/</span> <span class="st">"SNAPSHOT_MANIFEST.json"</span> <span class="cf">if</span> SNAPSHOT_ROOT <span class="cf">else</span> <span class="va">None</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> snapshot_manifest <span class="kw">and</span> snapshot_manifest.exists():</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    snapshot <span class="op">=</span> json.loads(snapshot_manifest.read_text())</span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    display(pd.DataFrame([{</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">"render_input_mode"</span>: <span class="st">"immutable SQLite backup snapshot"</span>,</span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshot_created_at"</span>: snapshot.get(<span class="st">"created_at"</span>),</span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshot_root"</span>: <span class="bu">str</span>(SNAPSHOT_ROOT.relative_to(ROOT)),</span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshotted_databases"</span>: <span class="bu">sum</span>(x.get(<span class="st">"status"</span>) <span class="op">==</span> <span class="st">"snapshotted"</span> <span class="cf">for</span> x <span class="kw">in</span> snapshot.get(<span class="st">"databases"</span>, [])),</span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    }]))</span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    display(pd.DataFrame([{</span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">"render_input_mode"</span>: <span class="st">"live read-only files (exploratory only)"</span>,</span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshot_created_at"</span>: <span class="va">None</span>,</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshot_root"</span>: <span class="va">None</span>,</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>        <span class="st">"snapshotted_databases"</span>: <span class="dv">0</span>,</span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>    }]))</span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="fu">## What is live now?</span></span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: observatory-status</span></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown, display</span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> load_onelead_queue(SOURCES[<span class="st">"One-lead queue"</span>])</span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>le, _ <span class="op">=</span> load_blinded(SOURCES[<span class="st">"LUDB blinded"</span>], <span class="st">"LUDB"</span>)</span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>re, _ <span class="op">=</span> load_blinded(SOURCES[<span class="st">"RDB blinded"</span>], <span class="st">"RDB"</span>)</span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>ro <span class="op">=</span> load_oracle(SOURCES[<span class="st">"RDB oracle"</span>], <span class="st">"RDB"</span>)</span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> statuses(frame):</span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> frame.status.value_counts().to_dict() <span class="cf">if</span> <span class="kw">not</span> frame.empty <span class="kw">and</span> <span class="st">"status"</span> <span class="kw">in</span> frame <span class="cf">else</span> {}</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: seven-mask-design-setup</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> expanded_results <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why this is a new experiment, not an enlarged four-mask table</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>The legacy benchmark is a completed $3\times2^4=48$ architecture-by-loss grid.</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>The newer mask is a **mixed-level** design: fixed MSE, five binary additions,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>and one five-level MMD selector. It therefore contains $2^5\times5=160$</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>conditions per architecture and seed. The last character is categorical; the</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>study does not estimate seven binary effects.</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Position <span class="pp">|</span> Field <span class="pp">|</span> Levels <span class="pp">|</span> Scientific question <span class="pp">|</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="pp">|---:|---|---|---|</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1 <span class="pp">|</span> MSE <span class="pp">|</span> fixed at 1 <span class="pp">|</span> common reconstruction anchor <span class="pp">|</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2 <span class="pp">|</span> correlation <span class="pp">|</span> 0/1 <span class="pp">|</span> does scale-free waveform agreement help? <span class="pp">|</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 3 <span class="pp">|</span> derivative <span class="pp">|</span> 0/1 <span class="pp">|</span> does local slope matching preserve transitions? <span class="pp">|</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 4 <span class="pp">|</span> Kors VCG <span class="pp">|</span> 0/1 <span class="pp">|</span> does spatial-vector consistency help? <span class="pp">|</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 5 <span class="pp">|</span> energy distance <span class="pp">|</span> 0/1 <span class="pp">|</span> does distributional matching help? <span class="pp">|</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 6 <span class="pp">|</span> lead consistency <span class="pp">|</span> 0/1 <span class="pp">|</span> do electrophysiologic lead identities help? <span class="pp">|</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 7 <span class="pp">|</span> MMD kernel <span class="pp">|</span> 0–4 <span class="pp">|</span> which distributional geometry, if any, is useful? <span class="pp">|</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: seven-mask-decoder</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>examples <span class="op">=</span> pd.DataFrame([decode_mask(mask) <span class="cf">for</span> mask <span class="kw">in</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>                         [<span class="st">"1000000"</span>, <span class="st">"1100000"</span>, <span class="st">"1110000"</span>, <span class="st">"1111110"</span>, <span class="st">"1111114"</span>]])</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>display(examples)</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## Live checkpoint reconciliation</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>The table is recomputed from the checkpoint catalog on every render. A</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>registered checkpoint is not automatically a test-set result or a clinical</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>evaluation.</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: seven-mask-checkpoint-coverage</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>coverage <span class="op">=</span> checkpoint_completeness()</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>display(coverage.style.<span class="bu">format</span>({<span class="st">"coverage_pct"</span>: <span class="st">"</span><span class="sc">{:.1f}</span><span class="st">%"</span>}))</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.bar(coverage, x<span class="op">=</span><span class="st">"architecture"</span>, y<span class="op">=</span><span class="st">"registered"</span>, color<span class="op">=</span><span class="st">"architecture"</span>,</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>             text<span class="op">=</span><span class="st">"registered"</span>, range_y<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">168</span>],</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>             title<span class="op">=</span><span class="st">"Seed-42 seven-mask checkpoints registered out of 160"</span>)</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>fig.add_hline(y<span class="op">=</span><span class="dv">160</span>, line_dash<span class="op">=</span><span class="st">"dash"</span>, annotation_text<span class="op">=</span><span class="st">"complete grid"</span>)</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>fig.show()</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>At the current snapshot, U-Net is complete, MSVAE is missing five cells, and</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>ECG-AIM is missing 37. Consequently, a full three-architecture factorial</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>comparison is not yet estimable. Partial ECG-AIM rows are operational evidence,</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>not a substitute for the missing cells.</span>
 <span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> pd.DataFrame([</span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"stream"</span>: <span class="st">"one-lead wavelet/SSL queue"</span>, <span class="op">**</span>statuses(q)},</span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"stream"</span>: <span class="st">"LUDB blinded three-lead"</span>, <span class="op">**</span>statuses(le)},</span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"stream"</span>: <span class="st">"RDB blinded three-lead"</span>, <span class="op">**</span>statuses(re)},</span>
-<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"stream"</span>: <span class="st">"RDB oracle three-lead"</span>, <span class="op">**</span>statuses(ro)},</span>
-<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>]).fillna(<span class="dv">0</span>)</span>
-<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>display(summary)</span>
-<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>The counts above are a render-time snapshot—not a monitoring daemon. Rerender</span>
-<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>this chapter or the full book to incorporate newly committed DB rows.</span>
-<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a><span class="fu">## Two evidence tracks that must not be mixed</span></span>
-<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Track <span class="pp">|</span> Input contract <span class="pp">|</span> Main question <span class="pp">|</span> External morphology evidence <span class="pp">|</span></span>
-<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|---|</span></span>
-<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Three-lead benchmark <span class="pp">|</span> observed I + II + V2 <span class="pp">|</span> Which architecture/objective best reconstructs nine missing leads? <span class="pp">|</span> LUDB and RDB oracle/blinded analyses <span class="pp">|</span></span>
-<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> One-lead development <span class="pp">|</span> observed I **or** II <span class="pp">|</span> Do spatial structure, wavelets, and SSL improve reconstruction/delineation? <span class="pp">|</span> RDB six-boundary supervision during development; no inherited three-lead leaderboard <span class="pp">|</span></span>
-<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>Use the next two chapters for interactive leaderboards, matched deltas,</span>
-<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>boundary heatmaps, metric-space UMAPs, and provenance tables.</span>
-<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rerun controls</span></span>
-<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>From the repository root:</span>
-<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{bash}</span></span>
-<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: observatory-render-command</span></span>
-<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> scripts/render_quarto_chapters.py <span class="dt">\</span></span>
-<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>  <span class="at">--round-dir</span> review-stage/render-live</span>
-<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>For a faster update, render only one live chapter. The top code cell of each</span>
-<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>chapter contains the small set of controls intended for editing.</span>
-<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a><span class="fu">## Visualization contract</span></span>
-<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>The live chapters deliberately distinguish three objects:</span>
-<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Raw metric views** show observed values and remain the source of rankings.</span>
-<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Matched deltas** compare a configuration against its registered baseline</span>
-<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>   only when seed and observed lead agree.</span>
-<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Performance UMAP** embeds standardized outcome vectors. Proximity means</span>
-<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>   similar measured performance profiles; it does **not** establish similar</span>
-<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>   encoder representations, physiology, or causal mechanisms.</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="fu">## Provenance gates</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>Every admissible comparison must match observed leads (I, II, V2), PTB-XL</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>patient split, 500 Hz/no-normalization preprocessing, seed, source generation,</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>checkpoint selector, and evaluation version. Mask strings alone are not unique</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>experimental identities. Historical four-mask results and one-lead results are</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>kept in separate chapters.</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a><span class="fu">## Claims this chapter permits</span></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Exact statements about which checkpoints are registered and verified.</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Exact statements about design structure and missing cells.</span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No claims about test performance from checkpoint counts.</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No architecture-wide clinical claims until clinical evaluation coverage is</span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>  reconciled separately.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

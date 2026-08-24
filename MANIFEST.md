@@ -94,6 +94,13 @@ Updated: 2026-07-26T20:41:00Z
 
 Historical timestamped plans, stale pilot reports, and ad-hoc figures are not authoritative unless referenced above.
 
+## Seven-mask and one-lead book expansion (2026-08-24)
+
+- `refine-logs/EXPERIMENT_PLAN_20260824_171510.md` and `refine-logs/EXPERIMENT_PLAN.md` — claim-driven five-block roadmap.
+- `refine-logs/EXPERIMENT_TRACKER_20260824_171510.md` and `refine-logs/EXPERIMENT_TRACKER.md` — coverage-aware execution tracker.
+- `book/expanded_results.py` — read-only reconciliation across checkpoint, clinical, one-lead, and wavelet databases.
+- `book/18_seven_mask_design_and_coverage.qmd` through `book/23_evidence_synthesis_and_run_gaps.qmd` — six live analysis chapters.
+
 ## Quarto analysis book and review provenance (2026-08-24)
 
 - `book/_quarto.yml` and the 19 configured QMD chapters — executable analysis

@@ -1,15 +1,21 @@
-# Experiment Tracker: RDB Checkpoint Representation Study
+# Experiment Tracker
 
 | Run ID | Milestone | Purpose | System / Variant | Split | Metrics | Priority | Status | Notes |
 |---|---|---|---|---|---|---|---|---|
-| E000 | M0 | smoke + resume integrity | enhanced ECG-AIM encoder | 8 RDB records | finite 2,304-D shape, exact resume | MUST | COMPLETE | first pass committed 8 rows; second pass emitted `job_skip_complete`; small-split inference correctly gated |
-| E001 | M1 | simple learned baseline | ECG-AIM A0 `1000000_s42` | train/val/test, 2,398 | activation contract | MUST | RUNNING | tmux `checkpoint_embedding_rdb`, CPU 7 only; 521/2,398 at 2026-08-24 01:07 EDT |
-| E002 | M1 | enhanced representation | ECG-AIM `1011011_s42` | train/val/test, 2,398 | activation contract | MUST | QUEUED | frozen before analysis |
-| E003 | M2 | primary code-level probe | intercept vs waveform vs A0 vs enhanced | train→val→test | AUROC/AUPRC/Brier/log loss/calibration/score OR | MUST | QUEUED | AF/AFIB-coded membership; one-standard-error selection; held-out probabilities persisted |
-| E004 | M2 | secondary multinomial probe | waveform vs A0 vs enhanced | train→val→test | macro AUROC/F1/balanced accuracy | MUST | QUEUED | rare codes descriptive |
-| E005 | M2 | repolarization content | waveform vs A0 vs enhanced | train→val→test | QRSon–Toff MAE/correlation/agreement | MUST | QUEUED | not clinical QT/QTc |
-| E006 | M2 | projection robustness | A0 + enhanced | all splits | trustworthiness/Jaccard/Procrustes/null | MUST | QUEUED | 5 seeds × 3 neighbors |
-| E007 | M2 | quality-control association | enhanced outlier score | validation→test | OR/CI/risk contrast | MUST | ARMED | SHA-matched oracle evaluation 10 verified: 2,398/2,398 `primary_missing_precordial` rows; validation p10 Pearson/p90 MSE failure rule; train PCA-8 + Ledoit–Wolf score |
-| E008 | M2 | rigorous resumable post-analysis | all completed feature jobs | matched test records | calibration, paired 2,000× bootstrap, 1,000-label nulls, Holm/BH, eight-code metrics/confusion, QRSon–Toff agreement/Bland–Altman, CKA/RSA/kNN overlap, UMAP Procrustes/continuity | MUST | ARMED | tmux `checkpoint_embedding_postanalysis`; database gate requires all 11 exact counts and released extractor lock, so PID changes/resume are safe; CPU 7 only; full three-job synthetic DB entry-point test completed all 10 output tables |
-| E101–E109 | M3 | checkpoint sensitivity panel | nine frozen blinded-complete ECG-AIM IDs | test, 360 each | neighbor overlap/CKA/probe deltas | NICE | QUEUED | no raw-axis comparison |
-| E200 | M4 | live book integration | compact SQLite reader | complete + partial jobs | status, estimands, ROC/PR/calibration, paired effects, multiplicity, rhythm confusion, Bland–Altman, quality-control OR, geometry, UMAP | MUST | COMPLETE-LIVE | all 23 cells render; all 38 local resources resolve; all 18 sidebar HTML targets restored; stale legacy chapters rendered without executing absent archived inputs |
+| R001 | M0 | checkpoint audit | U-Net seven-mask s42 | catalog | coverage/provenance | MUST | DONE | 160/160 |
+| R002 | M0 | checkpoint audit | MSVAE seven-mask s42 | catalog | coverage/provenance | MUST | DONE | 155/160 |
+| R003 | M0 | checkpoint audit | ECG-AIM seven-mask s42 | catalog | coverage/provenance | MUST | DONE | 123/160 |
+| R004 | M0 | clinical audit | `missing_leads_v2` U-Net | PTB-XL | model/endpoint coverage | MUST | DONE | 160 models × 56 targets |
+| R005 | M0 | clinical audit | `missing_leads_v2` MSVAE | PTB-XL | model/endpoint coverage | MUST | PARTIAL | 37 models × 56 targets |
+| R006 | M0 | clinical audit | `missing_leads_v2` ECG-AIM | PTB-XL | model/endpoint coverage | MUST | BLOCKED | zero rows; evaluation absent |
+| R007 | M1 | finish grid | five missing MSVAE cells | validation | finite/provenance | MUST | TODO | do not impute failures |
+| R008 | M1 | finish grid | 37 missing ECG-AIM cells | validation | finite/provenance | MUST | TODO | preserve source contract |
+| R009 | M2 | clinical completion | remaining 123 MSVAE | test | v2 endpoints | MUST | TODO | same evaluator/version |
+| R010 | M2 | clinical completion | 160 ECG-AIM | test | v2 endpoints | MUST | TODO | zero presently evaluated |
+| R011 | M3 | paired factorial | eligible architectures | test | reconstruction/clinical | MUST | TODO | digest-keyed ledger |
+| R012 | M4 | spatial replication | A0/spatial/permuted | lead I/II | matched deltas/cost | MUST | TODO | ≥3 seeds promoted contrasts |
+| R013 | M4 | wavelet increment | A0→wavelet→SSL | lead I/II | recon + six boundaries | MUST | RUNNING | queue is screening |
+| R014 | M4 | physiological view | Morlet vs UEG phase | RDB development | T-on/T-off | MUST | RUNNING | matched compute only |
+| R015 | M5 | external morphology | promoted models | blinded LUDB/RDB | boundary timing/IoU | MUST | TODO | no peak invention |
+| R016 | M5 | robustness appendix | Pareto set | noise/subgroups | degradation | NICE | TODO | after core gates |
+

@@ -1,12 +1,12 @@
 # Quarto Book Mechanical Audit
 
-Generated: `2026-08-24T17:02:56.928214+00:00`
+Generated: `2026-08-24T17:31:20.564299+00:00`
 
 > This audit verifies structure and deployed artifacts, not scientific truth.
 
 ## Release gates
 
-- Configured chapters: **19**
+- Configured chapters: **25**
 - Missing source chapters: **0**
 - Missing rendered chapters: **0**
 - Incomplete HTML files: **0**
@@ -31,6 +31,12 @@ Generated: `2026-08-24T17:02:56.928214+00:00`
 | `15_live_results_observatory.qmd` | 4 | 2 | 3 | quarto-1.10.18 | complete | False | 0 |
 | `16_three_lead_ecgaim_live.qmd` | 30 | 23 | 42 | quarto-1.10.18 | complete | False | 0 |
 | `17_one_lead_wavelet_ssl_live.qmd` | 9 | 10 | 13 | quarto-1.10.18 | complete | False | 0 |
+| `18_seven_mask_design_and_coverage.qmd` | 4 | 3 | 3 | quarto-1.10.18 | complete | False | 0 |
+| `19_seven_mask_reconstruction_results.qmd` | 4 | 3 | 3 | quarto-1.10.18 | complete | False | 0 |
+| `20_missing_leads_v2_clinical_biomarkers.qmd` | 5 | 4 | 5 | quarto-1.10.18 | complete | False | 0 |
+| `21_one_lead_architecture_and_spatial_results.qmd` | 5 | 2 | 2 | quarto-1.10.18 | complete | False | 0 |
+| `22_one_lead_wavelet_ssl_mechanisms.qmd` | 5 | 3 | 3 | quarto-1.10.18 | complete | False | 0 |
+| `23_evidence_synthesis_and_run_gaps.qmd` | 4 | 2 | 1 | quarto-1.10.18 | complete | False | 0 |
 | `09_real_data_eda_and_diagnostics.qmd` | 35 | 27 | 41 | quarto-1.10.18 | complete | False | 0 |
 | `11_dataset_atlas_ludb_isp_sunnybrook.qmd` | 20 | 13 | 13 | quarto-1.10.18 | complete | False | 0 |
 | `05_zhejiang_delineation_tutorial.qmd` | 7 | 5 | 9 | quarto-1.10.18 | complete | False | 0 |

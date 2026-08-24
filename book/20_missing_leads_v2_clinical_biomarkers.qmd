@@ -1,0 +1,91 @@
+---
+title: "Clinical Biomarker Preservation under missing_leads_v2"
+subtitle: "Coverage first, then endpoint-specific interpretation"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: missing-v2-setup
+import numpy as np
+import pandas as pd
+import plotly.express as px
+from expanded_results import *
+clinical = clinical_metrics("missing_leads_v2")
+coverage = clinical_coverage("missing_leads_v2")
+```
+
+## Why `missing_leads_v2` is canonical
+
+This evaluation scores reconstructed missing leads against the measured
+12-lead ECG and prevents observed-lead passthrough from inflating performance.
+Rows from `legacy_v1` are not pooled with it. The reference rows describe the
+measured-signal benchmark; they are not trained reconstruction models.
+
+## Coverage audit before interpretation
+
+```{python}
+#| label: missing-v2-coverage
+display(coverage.style.format({"coverage_pct": "{:.1f}%", "clinical_coverage_pct": "{:.1f}%"}))
+long = coverage.melt(id_vars="architecture", value_vars=["registered", "clinical_models"],
+                     var_name="stage", value_name="models")
+fig = px.bar(long, x="architecture", y="models", color="stage", barmode="group",
+             text="models", range_y=[0, 168],
+             title="Checkpoint availability is not clinical-evaluation availability")
+fig.add_hline(y=160, line_dash="dash")
+fig.show()
+```
+
+The database currently contains all 160 U-Net models, 37 MSVAE models, and no
+ECG-AIM models under `missing_leads_v2`. Therefore:
+
+- U-Net supports a complete within-architecture clinical factorial analysis.
+- MSVAE supports only explicitly labeled partial/descriptive analysis.
+- ECG-AIM has **no clinical result in this database**; it is missing evidence,
+  not a negative outcome.
+- Cross-architecture clinical rankings are blocked by differential coverage.
+
+## Endpoint and dataset inventory
+
+```{python}
+#| label: missing-v2-inventory
+inventory = (clinical.groupby(["architecture", "dataset"], dropna=False)
+             .agg(models=("model_id", "nunique"), endpoints=("target", "nunique"), rows=("model_id", "size"))
+             .reset_index())
+display(inventory)
+```
+
+Model rows currently occur on PTB-XL; the external dataset rows are reference
+standards only. Claims of external model preservation require actual model rows,
+not the presence of a reference cohort in the same database.
+
+## Modular endpoint explorer
+
+```{python}
+#| label: missing-v2-endpoint-explorer
+MODEL_FAMILY = "unet"       # change to msvae only with partial-coverage caveat
+METRIC = "auroc"            # try mae, pearson_r, r2, auprc, f1, sens, spec
+TOP_N = 20
+view = clinical.query("architecture == @MODEL_FAMILY").copy()
+if not view.empty and METRIC in view:
+    usable = view.dropna(subset=[METRIC])
+    direction = usable.nlargest if METRIC not in {"mae"} else usable.nsmallest
+    selected = direction(TOP_N, METRIC)
+    fig = px.scatter(selected, x="target", y=METRIC, color="mask", hover_name="model_id",
+                     title=f"{MODEL_FAMILY}: selected {METRIC} rows (coverage-aware explorer)")
+    fig.update_xaxes(tickangle=55)
+    fig.show()
+    display(selected[["model_id", "mask", "dataset", "target", METRIC]])
+```
+
+The explorer is deliberately not a composite clinical score. AUROC, calibration,
+amplitude error, interval timing, and variance retention answer different
+questions and can disagree.
+
+## PreSACan and paired-inference coverage
+
+The granular PreSACan tables currently cover 160 U-Nets only. Paired inference
+covers 160 U-Nets and 37 MSVAEs. These tables should be interpreted within their
+own coverage envelope; they cannot fill the ECG-AIM gap.
+

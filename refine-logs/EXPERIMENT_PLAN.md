@@ -1,134 +1,135 @@
-# Experiment Plan: RDB Checkpoint Representation Study
+# Experiment Plan
 
-**Problem**: Determine whether frozen ECG-AIM encoder representations retain reproducible rhythm- and repolarization-relevant information beyond a parsimonious observed-waveform baseline, without overinterpreting UMAP or unsupported clinical outcomes.
-**Method Thesis**: A checkpoint-hash-bound, split-respecting representation audit can test learned morphology content and reconstruction quality-control utility; UMAP is visualization, while held-out probes, calibration, paired uncertainty, and negative controls carry the evidence.
+**Problem**: Determine which loss, architecture, spatial-conditioning, wavelet, and SSL mechanisms preserve clinically relevant missing-lead ECG information without mixing incompatible input contracts or incomplete evidence.
+**Method Thesis**: Use a coverage-first evidence ladder: complete within-contract factorial effects first, then clinical preservation, then external morphology and mechanistic one-lead studies.
 **Date**: 2026-08-24
+
+## Audited starting state
+
+| Evidence source | Exact current coverage | Interpretation |
+|---|---:|---|
+| Seven-mask U-Net checkpoints, seed 42 | 160/160 | complete checkpoint grid |
+| Seven-mask MSVAE checkpoints, seed 42 | 155/160 | five missing cells |
+| Seven-mask ECG-AIM checkpoints, seed 42 | 123/160 | 37 missing cells |
+| `missing_leads_v2` U-Net clinical models | 160/160 | complete within-U-Net clinical grid |
+| `missing_leads_v2` MSVAE clinical models | 37/160 | descriptive partial coverage only |
+| `missing_leads_v2` ECG-AIM clinical models | 0/160 | no result; not a negative result |
+| One-lead checkpoint catalog | 84 models | development track; multiple ECG-AIM variants |
+| One-lead wavelet/SSL queue | 120 planned cells | live screening queue; replication required |
+
+The seven-character design is fixed MSE plus five binary toggles and a five-level MMD selector: $2^5\times5=160$. It is not seven binary factors. The old $3\times2^4=48$ benchmark, the new three-lead mixed-level grid, and one-lead studies remain separate estimands.
 
 ## Claim Map
 
 | Claim | Why It Matters | Minimum Convincing Evidence | Linked Blocks |
 |---|---|---|---|
-| C1 (primary) | ECG-AIM should encode information associated with RDB rhythm codes and annotation-derived repolarization timing beyond a simple waveform summary. | Frozen train/validation/test pipeline; improved held-out discrimination/calibration and QRSon–Toff error versus a parsimonious baseline; paired 95% CIs; permutation control. | B1–B3 |
-| C2 (supporting) | Learned representations may help detect reconstruction failures. | A validation-frozen latent outlier score associated with test reconstruction failure, reported as exploratory OR per 1 SD with CI and absolute-risk contrast. | B4 |
-| Anti-claim | Attractive UMAP clusters may reflect label imbalance, preprocessing, record order, or arbitrary projection geometry. | Multi-seed/neighborhood stability, PCA reference, trustworthiness, neighbor overlap, permutation nulls, and high-dimensional probes. | B2, B5 |
+| C1: loss effects are endpoint dependent within a fixed architecture/input contract | MSE alone can reward smoothing while morphology and diagnostic utility disagree | complete grid, common test ledger, paired patient inference, five binary effects, four kernel contrasts, prespecified interactions | B1–B3 |
+| C2: ECG-AIM spatial and wavelet/SSL mechanisms can add complementary information | novel mechanisms must be isolated from capacity, architecture, and search effects | matched deletion chain, permuted geometry, Morlet-vs-UEG phase, seed/lead replication, boundary-localized external evaluation | B4–B5 |
 
-## Evidence Boundary
-
-RDB supplies waveforms, code-level rhythm labels, P/QRS/T regions, and six real boundaries: P/QRS/T onset and offset. It does **not** supply age, sex, blood pressure, comorbidities, medications, AF episode duration/burden, stroke, bleeding, hospitalization, mortality, future ventricular arrhythmia, or clinician-adjudicated scalar QT/QTc. Therefore this study will not estimate CHA2DS2-VASc, recommend anticoagulation, claim clinical AF diagnosis, claim guideline-grade QTc, or reproduce Ansari et al.'s prognostic ventricular-arrhythmia odds ratio.
-
-The Ansari 3DRECON-QT study motivates asking whether joint reconstruction yields repolarization-aware representations. The 2023 ACC/AHA/ACCP/HRS guideline motivates discrimination, calibration, external validation, clinician confirmation, and attention to AF burden/risk modifiers; it does not license treatment claims from this cross-sectional cache.
-
-RDB `released_rhythm` and `canonical_rhythm` remain codes. The known mappings SI→SA and VT→SVT are retained, and filename `VT` is never interpreted as ventricular tachycardia. AF/AFIB semantics remain mapping-controlled. Cached identifiers are unique but may be acquisition identifiers, so resampling is described as cached patient/record-level.
+**Anti-claims to rule out**: the best validation cell generalizes; absent database rows mean zero performance; E1 is inherently the improved base; wavelet gains come from SSL without a wavelet-only control; UEG-phase gains are generic regularization; architecture differences are estimable under unequal clinical coverage.
 
 ## Paper Storyline
 
-- **Main paper must prove**: split-respecting high-dimensional representation utility versus a simple baseline; honest uncertainty and calibration; reconstruction quality-control association.
-- **Appendix can support**: nine-checkpoint stability panel, layer sensitivity, multinomial rhythm tables, UMAP grid, nearest-neighbor atlas, and permutation distributions.
-- **Experiments intentionally cut**: thousands of feature-wise ORs, UMAP-coordinate regression, post hoc median splits, treatment/stroke claims, and a broad architecture sweep without matched semantic layers.
+- Main paper must prove C1 with a complete, generation-bound within-architecture analysis and endpoint discordance.
+- The ECG-AIM section must prove C2 using matched mechanistic contrasts, not novelty language.
+- Appendix can contain full 160-cell tables, failed-cell ledgers, kernel interactions, exploratory one-lead screens, and per-endpoint clinical atlases.
+- Cut generic UMAPs, post-hoc composite clinical scores, unreplicated top-cell narratives, and cross-architecture rankings with unequal coverage.
 
 ## Experiment Blocks
 
-### B1: Frozen extraction and provenance
+### Block 1: Seven-mask reconstruction anchor
 
-- **Claim tested**: downstream results resolve to exact checkpoints and records.
-- **Dataset / split**: all RDB train 1,678, validation 360, and test 360 records for A0 and enhanced ECG-AIM; identical 360 test records for the nine-checkpoint panel.
-- **Primary checkpoints**: `factorial_ecg_aim_1000000_s42` (A0) and `factorial_ecg_aim_1011011_s42` (enhanced, fixed before this analysis).
-- **Panel**: the nine ECG-AIM IDs complete in the blinded RDB DB at plan freeze time.
-- **Layer**: final `encoder`; exploratory layers require a new named job and cannot replace the primary.
-- **Pooling**: feature-wise mean + SD + maximum, producing 2,304 dimensions from `[batch,600,768]`.
-- **Storage**: zlib-compressed float16 feature BLOBs in SQLite, scalar metadata separately; no CSV. Expected tens of MB, not GB.
-- **Gate**: exact model/record manifests, SHA-256 match, finite features, fixed dimensions, and unique record counts.
-- **Priority**: MUST-RUN.
+- Claim tested: C1.
+- Dataset/task: patient-disjoint PTB-XL; I+II+V2 to 12 leads; score nine missing leads.
+- Compared systems: all 160 masks within each architecture; architectures are not replicates.
+- Metrics: missing-lead MSE/Pearson first; per-lead and tail errors second.
+- Setup: identical preprocessing, source generation, selector, record order, seed block, and digest.
+- Success: complete-cell paired estimates with failure accounting.
+- Failure: incomplete grids restrict inference to a frozen reduced estimand.
+- Target: reconstruction table, coverage diagram, Pareto plot.
+- Priority: MUST-RUN.
 
-### B2: Visualization rigor and stability
+### Block 2: Component and kernel isolation
 
-- **Claim tested**: visible organization is not a single-seed UMAP artifact.
-- **Compared views**: PCA-2D; UMAP cosine, min_dist 0.15, seeds 17/42/73/101/211, neighbors 10/30/60.
-- **Metrics**: trustworthiness, high-dimensional/2-D kNN Jaccard, Procrustes stability, high-dimensional silhouette, nearest-neighbor code agreement, label-permutation p-values.
-- **Success criterion**: stable local neighborhoods and above-null high-dimensional organization; no threshold is retrofitted for significance.
-- **Failure interpretation**: representation may still reconstruct well but cannot support a cluster-structure claim.
-- **Priority**: MUST-RUN for two primary checkpoints; appendix for nine-checkpoint panel.
+- Claim tested: C1 and simplicity.
+- Compared systems: five binary effects; MMD 1–4 versus 0; prespecified interactions; `1000000` versus `1111110`–`1111114`; deletion around promoted Pareto candidates.
+- Metrics: paired test reconstruction and morphology endpoints, never validation rank alone.
+- Success: replicated interpretable effects or an honest null.
+- Failure: strong interactions/seed instability imply no universal recommendation.
+- Target: effect forest and interaction heatmap.
+- Priority: MUST-RUN.
 
-### B3: Parsimonious held-out probes
+### Block 3: `missing_leads_v2` clinical preservation
 
-- **Primary binary outcome**: AF/AFIB-coded membership, labeled as a code-level cross-sectional outcome.
-- **Secondary outcome**: eight-code multinomial rhythm classification; rare AT/ST/SVT estimates remain descriptive.
-- **Repolarization outcome**: annotation-derived QRS-onset-to-subsequent-T-offset duration (`QRSon–Toff`), never called clinical QT. Exclusions and valid-boundary counts are reported.
-- **Predictor ladder**: intercept; three observed-waveform summaries (heart-rate estimate, RMS scale, spectral entropy/irregularity); first latent PC; latent PCs selected from {1,2,4,8}; waveform + latent PCs.
-- **Occam gate**: at most eight latent PCs; imputation/scaling/PCA fit on train only; hyperparameters and calibration selected on validation by the one-standard-error rule; one final test evaluation.
-- **Classification metrics**: AUROC, AUPRC, Brier, log loss, calibration intercept/slope, balanced accuracy, macro F1/AUROC, confusion matrix.
-- **Regression metrics**: MAE, median AE, RMSE, Pearson, Spearman, R², Lin concordance, calibration, Bland–Altman bias/limits.
-- **Uncertainty**: 2,000 paired stratified cached-ID bootstrap replicates where feasible; paired CIs for all model differences; permutation null for the primary improvement.
-- **Priority**: MUST-RUN.
+- Claim tested: C1's clinical relevance.
+- Dataset/task: PTB-XL measured ECG versus reconstructed missing leads; external cohorts only where model rows exist.
+- Compared systems: 160 U-Nets now; remaining 123 MSVAEs; then 160 ECG-AIMs with identical code.
+- Metrics: AUROC/AUPRC/calibration; QRS, ST, voltage, variance retention, Bland–Altman, PreSACan, paired inference.
+- Success: full coverage and endpoint-specific paired estimates.
+- Failure: discordance yields a Pareto set, not a forced winner.
+- Target: coverage funnel, endpoint forest, variance-retention atlas.
+- Priority: MUST-RUN.
 
-### B4: Reconstruction-failure association
+### Block 4: One-lead spatial mechanism
 
-- **Claim tested**: latent atypicality is associated with measured reconstruction failure.
-- **Outcome**: model-specific RDB oracle failure thresholds fixed using validation only (low signal Pearson and/or high T-region/boundary error). If split-specific oracle rows cannot be linked without leakage, this block is reported as unavailable rather than improvised.
-- **Predictor**: one training-frozen shrinkage-PCA Mahalanobis/outlier score.
-- **Effect**: OR per 1-SD score, 95% CI, event counts/prevalence, and predicted-risk difference between score quartiles. No causal/prognostic wording.
-- **Multiplicity**: part of the four-endpoint confirmatory Holm family only if its gate passes; otherwise exploratory/unavailable.
-- **Priority**: MUST-RUN gate, result conditional on data linkage.
+- Claim tested: C2.
+- Compared systems: A0, panorama, hybrid, relative geometry, FiLM; exact-$\Theta$, capacity-matched, and permuted controls; lead I and II separately.
+- Metrics: missing-lead reconstruction, per-lead tails, compute, and seed stability.
+- Success: benefit survives capacity/permutation controls and both leads, or is narrowly scoped.
+- Failure: E1 remains complementary rather than the default base.
+- Target: matched-delta plot and spatial-control table.
+- Priority: MUST-RUN for ECG-AIM.
 
-### B5: Simplicity and checkpoint sensitivity
+### Block 5: Wavelet, SSL, and physiological second view
 
-- **Claim tested**: enhanced representation benefit is not merely the existence of a large encoder or a favorable UMAP seed.
-- **Comparisons**: waveform baseline vs A0 vs enhanced vs waveform+enhanced; nine completed ECG-AIM checkpoints on identical test records.
-- **Metrics**: paired predictive deltas, cross-checkpoint kNN overlap, centered-kernel alignment/RSA, stability ranks.
-- **Interpretation**: with only nine models, checkpoint–boundary correlations are descriptive; no model-level regression significance claim.
-- **Priority**: MUST-RUN core comparison; panel is NICE-TO-HAVE but scheduled overnight.
-
-## Statistical Error Control
-
-The confirmatory family contains at most four tests: AF/AFIB-coded ΔAUROC, AF/AFIB-coded ΔBrier, QRSon–Toff ΔMAE, and reconstruction-failure OR. Holm correction applies. Per-code, per-layer, per-boundary, and checkpoint-panel analyses are exploratory with Benjamini–Hochberg control within named families. Effect sizes and CIs remain mandatory regardless of p-values.
-
-ORs from standardized frozen scores are associations, not causal effects or risk ratios. No UMAP coordinates enter the inferential models. Separation triggers the prespecified Firth/penalized fallback and is disclosed, not chosen for significance.
+- Claim tested: C2.
+- Compared systems: `A0→A0+wavelet→A0+wavelet+SSL`; A0/E1 complementarity; Morlet magnitude+phase versus magnitude+UEG-repolarization phase.
+- Metrics: reconstruction, P/QRS/T IoU, six boundary timing errors, especially T-on/T-off, compute/memory.
+- Success: replicated incremental gain; UEG gain localized to repolarization without unacceptable reconstruction regression.
+- Failure: generic/nonlocalized lift weakens the physiology interpretation.
+- Target: contrast forest and six-boundary localization plot.
+- Priority: MUST-RUN for wavelet/SSL.
 
 ## Run Order and Milestones
 
 | Milestone | Goal | Runs | Decision Gate | Cost | Risk |
 |---|---|---|---|---|---|
-| M0 | Resource/data preflight | manifests + 8-record smoke | ≥3 GiB available RAM, ≥8 GiB disk, finite 2,304-D vectors, resume test | minutes | active CPU evaluator; wait safely |
-| M1 | Primary extraction | A0 + enhanced, all 2,398 records | exact split counts and hashes | ~3–5 h one core | remote fetch / memory |
-| M2 | Core inference | split-respecting probes, bootstrap, UMAP grid | no leakage; calibration and null controls complete | ~1–3 h | bootstrap cost |
-| M3 | Checkpoint panel | nine frozen IDs × 360 test records | identical record manifest; ≥8 completed panel jobs | ~4–7 h under contention | download latency |
-| M4 | Book integration | DB-backed tables/figures | Quarto cells render read-only and incomplete states are watermarked | <1 h | evolving DB |
+| M0 | reconcile schemas/identities | read-only DB audit | exact counts and keys agree | CPU minutes | generation aliasing |
+| M1 | close checkpoint gaps | 5 MSVAE + 37 ECG-AIM | all verified or reduced estimand frozen | GPU days | queue/disk |
+| M2 | close clinical gaps | 123 MSVAE + 160 ECG-AIM `missing_leads_v2` | record order and finite metrics pass | inference days | evaluator mismatch |
+| M3 | common paired inference | eligible complete architectures | complete endpoint matrix | moderate | multiplicity |
+| M4 | decisive one-lead replication | registered spatial/wavelet contrasts | seed/lead consistency | GPU days | screen regression |
+| M5 | external morphology | promoted models on blinded LUDB/RDB | six-boundary gates pass | CPU days | domain shift |
 
 ## Compute and Data Budget
 
-- One CPU core only: core 7 via `taskset`; Torch/OMP/MKL/OpenBLAS/Numba threads fixed to 1.
-- CPU-only (`CUDA_VISIBLE_DEVICES=''`); batch size 1 under current 15 GiB RAM/no-swap host.
-- Expected peak runner RSS ~1.25 GiB; launch waits for ≥3 GiB available RAM.
-- Current disk free ~17 GiB; per-model gate requires ≥8 GiB. Cache pruned through the verified store, never manual deletion.
-- Expected wall time: approximately 8–14 hours including contention, downloads, bootstrap, and panel.
-
-## Resume, Stop, and Integrity Contract
-
-- Single-worker file lock; detached tmux session `checkpoint_embedding_rdb`.
-- SQLite WAL transactions; job key binds checkpoint SHA, record-manifest SHA, layer, and pooling version.
-- Upsert and commit after every record/batch; resume skips only hash/shape-valid rows.
-- `STOP` sentinel and SIGTERM mark an interrupted job without corrupting completed rows.
-- A job becomes complete only after exact unique-record counts, finite dimensions, and provenance checks pass.
-- No result DB is copied to CSV or Git.
+- Measure architecture wall times from queue logs before estimating total GPU-hours.
+- The immediate clinical workload is 123 remaining MSVAE plus 160 ECG-AIM models.
+- Store compact aggregates and required per-record ledgers in SQLite; do not duplicate waveform blobs or emit bloated CSVs.
+- Preserve checkpoint/evaluator digests, record order, failure state, and endpoint validity.
 
 ## Risks and Mitigations
 
-- **Test reuse/model selection**: prior RDB evaluation makes this exploratory for global model-selection claims; checkpoint/layer are frozen before this analysis and external confirmation remains required.
-- **Clinical covariates absent**: do not fabricate adjustment or AHA risk scores.
-- **Code ambiguity**: report codes verbatim and include AF+AFIB sensitivity only.
-- **Annotation leakage**: segmentation/boundary validity never enters rhythm predictors; it is outcome/reference-only.
-- **Projection overclaim**: primary analyses use high-dimensional features, not UMAP coordinates.
-- **Patient identity uncertainty**: call the unit cached patient/record ID and disclose the limitation.
-- **Contention/no swap**: wait on resource gates, one core/batch 1, CPU only.
+- Unequal coverage: show denominators and block architecture rankings.
+- Validation winner's curse: validation selects; test supports inference.
+- Mask ambiguity: decode six fields plus categorical MMD explicitly.
+- Historical mixing: join by full model ID and digest, never mask alone.
+- Multiplicity: prespecify endpoint families and contrasts.
+- RDB invention: use P/QRS/T onset/offset only; peaks remain invalid.
+- Disk pressure: compact databases and no duplicate CSV ledgers.
+
+## Book expansion
+
+Chapters 18–23 implement design/coverage, reconstruction, clinical, one-lead spatial, wavelet/SSL, and synthesis views. They read live databases at render time and separate measured evidence from missing coverage.
 
 ## Final Checklist
 
-- [x] Main claims and anti-claims frozen
-- [x] Novelty and simplicity comparisons specified
-- [x] AHA/Ansari clinical boundary specified
-- [x] One-core/storage/resume gates specified
-- [ ] Smoke and forced-resume test pass
-- [ ] Primary A0/enhanced extraction complete
-- [ ] Held-out inference and multiplicity complete
-- [ ] Nine-checkpoint panel complete or transparently partial
-- [ ] Book chapter renders from the compact DB
+- [x] Main tables mapped
+- [x] Novelty isolated
+- [x] Simplicity defended
+- [x] No irrelevant frontier primitive forced
+- [x] Must-run separated from nice-to-have
+- [ ] MSVAE/ECG-AIM seven-mask gaps closed or estimand frozen
+- [ ] `missing_leads_v2` coverage complete across intended architectures
+- [ ] One-lead contrasts replicated across seeds and leads
+

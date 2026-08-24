@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; Real-Cohort EDA, Integrity Checks, and Deep Diagnostics – Benchmarking Loss Functions for Electrocardiogram Reconstruction</title>
+<title>10&nbsp; Real-Cohort EDA, Integrity Checks, and Deep Diagnostics – Benchmarking Loss Functions for Electrocardiogram Reconstruction</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./11_dataset_atlas_ludb_isp_sunnybrook.html" rel="next">
-<link href="./17_one_lead_wavelet_ssl_live.html" rel="prev">
+<link href="./23_evidence_synthesis_and_run_gaps.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -336,7 +336,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -401,58 +401,82 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">I. Data, Cohorts, and Measurement</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Expanded Seven-Mask and One-Lead Evidence</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./09_real_data_eda_and_diagnostics.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></a>
+  <a href="./18_seven_mask_design_and_coverage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Seven-Character Factorial Study: Design and Coverage</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span></a>
+  <a href="./19_seven_mask_reconstruction_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Seven-Character Factorial Reconstruction Results</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05_zhejiang_delineation_tutorial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Zhejiang Cohort: Data Audit and Delineation Protocol</span></span></a>
+  <a href="./20_missing_leads_v2_clinical_biomarkers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Clinical Biomarker Preservation under missing_leads_v2</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./01_dataset_and_preprocessing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">PTB-XL Tensor, Lead, and Preprocessing Contract</span></span></a>
+  <a href="./21_one_lead_architecture_and_spatial_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">One-Lead Reconstruction: Architecture and Spatial Conditioning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./22_one_lead_wavelet_ssl_mechanisms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL Mechanism Study</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./23_evidence_synthesis_and_run_gaps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Evidence Synthesis and Run Gaps</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
- <span class="menu-text">II. Reconstruction Models and Objectives</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">I. Data, Cohorts, and Measurement</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02_network_architectures.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Implemented Reconstruction Architectures</span></span></a>
+  <a href="./09_real_data_eda_and_diagnostics.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03_loss_function_formulations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Implemented Loss Functions and Mixed-Level Design</span></span></a>
+  <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_zhejiang_delineation_tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Zhejiang Cohort: Data Audit and Delineation Protocol</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_dataset_and_preprocessing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">PTB-XL Tensor, Lead, and Preprocessing Contract</span></span></a>
   </div>
 </li>
       </ul>
@@ -460,7 +484,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
- <span class="menu-text">III. Clinical and Statistical Evaluation</span></a>
+ <span class="menu-text">II. Reconstruction Models and Objectives</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -468,20 +492,14 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05_clinical_metrics_and_delineation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Diagnostic Integrity &amp; Clinical Delineation</span></span></a>
+  <a href="./02_network_architectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Implemented Reconstruction Architectures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04_regression_to_mean.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Rigorous Agreement &amp; The Mathematics of Regression to the Mean</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./06_fairness_robustness_sqi.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Fairness, Noise Robustness, and Signal Quality Index (SQI)</span></span></a>
+  <a href="./03_loss_function_formulations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Implemented Loss Functions and Mixed-Level Design</span></span></a>
   </div>
 </li>
       </ul>
@@ -489,7 +507,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
- <span class="menu-text">IV. Benchmark and External Validation</span></a>
+ <span class="menu-text">III. Clinical and Statistical Evaluation</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -497,26 +515,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./08_factorial_loss_matrix_benchmarks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Generation-Bound 48-Cell Factorial Benchmark</span></span></a>
+  <a href="./05_clinical_metrics_and_delineation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Diagnostic Integrity &amp; Clinical Delineation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07_smartwatch_reconstruction_case_study.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Smartwatch Simulator Transfer and Frozen-Classifier Fidelity</span></span></a>
+  <a href="./04_regression_to_mean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Rigorous Agreement &amp; The Mathematics of Regression to the Mean</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./10_echonext_classifier_external_validation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EchoNext External Validation: Available Evidence and Reproduction Boundary</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./12_exhaustive_model_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Generation-Bound Exhaustive Model Analysis</span></span></a>
+  <a href="./06_fairness_robustness_sqi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Fairness, Noise Robustness, and Signal Quality Index (SQI)</span></span></a>
   </div>
 </li>
       </ul>
@@ -524,7 +536,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
- <span class="menu-text">V. Visual and Clinical Atlases</span></a>
+ <span class="menu-text">IV. Benchmark and External Validation</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -532,14 +544,49 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./08_factorial_loss_matrix_benchmarks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Generation-Bound 48-Cell Factorial Benchmark</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07_smartwatch_reconstruction_case_study.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Smartwatch Simulator Transfer and Frozen-Classifier Fidelity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_echonext_classifier_external_validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">EchoNext External Validation: Available Evidence and Reproduction Boundary</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_exhaustive_model_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Generation-Bound Exhaustive Model Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">V. Visual and Clinical Atlases</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./13_engineering_ml_visual_atlas.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Engineering Integrity, Storage, and Reproducibility Atlas</span></span></a>
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Engineering Integrity, Storage, and Reproducibility Atlas</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./14_cath_lab_clinical_trust_atlas.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Clinical Trust, Cath-Lab Safety, and Validation Requirements</span></span></a>
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Clinical Trust, Cath-Lab Safety, and Validation Requirements</span></span></a>
   </div>
 </li>
       </ul>
@@ -554,52 +601,52 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#evidence-map" id="toc-evidence-map" class="nav-link active" data-scroll-target="#evidence-map"><span class="header-section-number">4.1</span> Evidence map</a>
+  <li><a href="#evidence-map" id="toc-evidence-map" class="nav-link active" data-scroll-target="#evidence-map"><span class="header-section-number">10.1</span> Evidence map</a>
   <ul class="collapse">
-  <li><a href="#repository-data-entry-boundary" id="toc-repository-data-entry-boundary" class="nav-link" data-scroll-target="#repository-data-entry-boundary"><span class="header-section-number">4.1.1</span> Repository data-entry boundary</a></li>
+  <li><a href="#repository-data-entry-boundary" id="toc-repository-data-entry-boundary" class="nav-link" data-scroll-target="#repository-data-entry-boundary"><span class="header-section-number">10.1.1</span> Repository data-entry boundary</a></li>
   </ul></li>
-  <li><a href="#ptb-xl-observed-cohort-and-split-contract" id="toc-ptb-xl-observed-cohort-and-split-contract" class="nav-link" data-scroll-target="#ptb-xl-observed-cohort-and-split-contract"><span class="header-section-number">4.2</span> PTB-XL: observed cohort and split contract</a>
+  <li><a href="#ptb-xl-observed-cohort-and-split-contract" id="toc-ptb-xl-observed-cohort-and-split-contract" class="nav-link" data-scroll-target="#ptb-xl-observed-cohort-and-split-contract"><span class="header-section-number">10.2</span> PTB-XL: observed cohort and split contract</a>
   <ul class="collapse">
-  <li><a href="#leakage-checks-that-must-precede-modeling" id="toc-leakage-checks-that-must-precede-modeling" class="nav-link" data-scroll-target="#leakage-checks-that-must-precede-modeling"><span class="header-section-number">4.2.1</span> Leakage checks that must precede modeling</a></li>
-  <li><a href="#ptb-xl-demographic-and-diagnostic-composition" id="toc-ptb-xl-demographic-and-diagnostic-composition" class="nav-link" data-scroll-target="#ptb-xl-demographic-and-diagnostic-composition"><span class="header-section-number">4.2.2</span> PTB-XL demographic and diagnostic composition</a></li>
-  <li><a href="#executed-ptb-xl-waveform-audit" id="toc-executed-ptb-xl-waveform-audit" class="nav-link" data-scroll-target="#executed-ptb-xl-waveform-audit"><span class="header-section-number">4.2.3</span> Executed PTB-XL waveform audit</a></li>
-  <li><a href="#the-actual-model-input-tensor-boundary" id="toc-the-actual-model-input-tensor-boundary" class="nav-link" data-scroll-target="#the-actual-model-input-tensor-boundary"><span class="header-section-number">4.2.4</span> The actual model-input tensor boundary</a></li>
-  <li><a href="#byte-level-training-corpus-identity" id="toc-byte-level-training-corpus-identity" class="nav-link" data-scroll-target="#byte-level-training-corpus-identity"><span class="header-section-number">4.2.5</span> Byte-level training corpus identity</a></li>
+  <li><a href="#leakage-checks-that-must-precede-modeling" id="toc-leakage-checks-that-must-precede-modeling" class="nav-link" data-scroll-target="#leakage-checks-that-must-precede-modeling"><span class="header-section-number">10.2.1</span> Leakage checks that must precede modeling</a></li>
+  <li><a href="#ptb-xl-demographic-and-diagnostic-composition" id="toc-ptb-xl-demographic-and-diagnostic-composition" class="nav-link" data-scroll-target="#ptb-xl-demographic-and-diagnostic-composition"><span class="header-section-number">10.2.2</span> PTB-XL demographic and diagnostic composition</a></li>
+  <li><a href="#executed-ptb-xl-waveform-audit" id="toc-executed-ptb-xl-waveform-audit" class="nav-link" data-scroll-target="#executed-ptb-xl-waveform-audit"><span class="header-section-number">10.2.3</span> Executed PTB-XL waveform audit</a></li>
+  <li><a href="#the-actual-model-input-tensor-boundary" id="toc-the-actual-model-input-tensor-boundary" class="nav-link" data-scroll-target="#the-actual-model-input-tensor-boundary"><span class="header-section-number">10.2.4</span> The actual model-input tensor boundary</a></li>
+  <li><a href="#byte-level-training-corpus-identity" id="toc-byte-level-training-corpus-identity" class="nav-link" data-scroll-target="#byte-level-training-corpus-identity"><span class="header-section-number">10.2.5</span> Byte-level training corpus identity</a></li>
   </ul></li>
-  <li><a href="#echonext-population-waveform-and-endpoint-audit" id="toc-echonext-population-waveform-and-endpoint-audit" class="nav-link" data-scroll-target="#echonext-population-waveform-and-endpoint-audit"><span class="header-section-number">4.3</span> EchoNext: population, waveform, and endpoint audit</a>
+  <li><a href="#echonext-population-waveform-and-endpoint-audit" id="toc-echonext-population-waveform-and-endpoint-audit" class="nav-link" data-scroll-target="#echonext-population-waveform-and-endpoint-audit"><span class="header-section-number">10.3</span> EchoNext: population, waveform, and endpoint audit</a>
   <ul class="collapse">
-  <li><a href="#echonext-patient-overlap-audit" id="toc-echonext-patient-overlap-audit" class="nav-link" data-scroll-target="#echonext-patient-overlap-audit"><span class="header-section-number">4.3.1</span> EchoNext patient-overlap audit</a></li>
-  <li><a href="#echonext-demographics-setting-and-time" id="toc-echonext-demographics-setting-and-time" class="nav-link" data-scroll-target="#echonext-demographics-setting-and-time"><span class="header-section-number">4.3.2</span> EchoNext demographics, setting, and time</a></li>
-  <li><a href="#metadata-missingness-is-structured-not-random-noise" id="toc-metadata-missingness-is-structured-not-random-noise" class="nav-link" data-scroll-target="#metadata-missingness-is-structured-not-random-noise"><span class="header-section-number">4.3.3</span> Metadata missingness is structured, not random noise</a></li>
+  <li><a href="#echonext-patient-overlap-audit" id="toc-echonext-patient-overlap-audit" class="nav-link" data-scroll-target="#echonext-patient-overlap-audit"><span class="header-section-number">10.3.1</span> EchoNext patient-overlap audit</a></li>
+  <li><a href="#echonext-demographics-setting-and-time" id="toc-echonext-demographics-setting-and-time" class="nav-link" data-scroll-target="#echonext-demographics-setting-and-time"><span class="header-section-number">10.3.2</span> EchoNext demographics, setting, and time</a></li>
+  <li><a href="#metadata-missingness-is-structured-not-random-noise" id="toc-metadata-missingness-is-structured-not-random-noise" class="nav-link" data-scroll-target="#metadata-missingness-is-structured-not-random-noise"><span class="header-section-number">10.3.3</span> Metadata missingness is structured, not random noise</a></li>
   </ul></li>
-  <li><a href="#endpoint-prevalence-and-effective-difficulty" id="toc-endpoint-prevalence-and-effective-difficulty" class="nav-link" data-scroll-target="#endpoint-prevalence-and-effective-difficulty"><span class="header-section-number">4.4</span> Endpoint prevalence and effective difficulty</a>
+  <li><a href="#endpoint-prevalence-and-effective-difficulty" id="toc-endpoint-prevalence-and-effective-difficulty" class="nav-link" data-scroll-target="#endpoint-prevalence-and-effective-difficulty"><span class="header-section-number">10.4</span> Endpoint prevalence and effective difficulty</a>
   <ul class="collapse">
-  <li><a href="#endpoint-burden-and-co-occurrence" id="toc-endpoint-burden-and-co-occurrence" class="nav-link" data-scroll-target="#endpoint-burden-and-co-occurrence"><span class="header-section-number">4.4.1</span> Endpoint burden and co-occurrence</a></li>
+  <li><a href="#endpoint-burden-and-co-occurrence" id="toc-endpoint-burden-and-co-occurrence" class="nav-link" data-scroll-target="#endpoint-burden-and-co-occurrence"><span class="header-section-number">10.4.1</span> Endpoint burden and co-occurrence</a></li>
   </ul></li>
-  <li><a href="#per-dataset-waveform-umap-atlas" id="toc-per-dataset-waveform-umap-atlas" class="nav-link" data-scroll-target="#per-dataset-waveform-umap-atlas"><span class="header-section-number">4.5</span> Per-dataset waveform UMAP atlas</a>
+  <li><a href="#per-dataset-waveform-umap-atlas" id="toc-per-dataset-waveform-umap-atlas" class="nav-link" data-scroll-target="#per-dataset-waveform-umap-atlas"><span class="header-section-number">10.5</span> Per-dataset waveform UMAP atlas</a>
   <ul class="collapse">
-  <li><a href="#shared-feature-and-sampling-contract" id="toc-shared-feature-and-sampling-contract" class="nav-link" data-scroll-target="#shared-feature-and-sampling-contract"><span class="header-section-number">4.5.1</span> Shared feature and sampling contract</a></li>
-  <li><a href="#ptb-xl-development-cohort-support-and-split-transport" id="toc-ptb-xl-development-cohort-support-and-split-transport" class="nav-link" data-scroll-target="#ptb-xl-development-cohort-support-and-split-transport"><span class="header-section-number">4.5.2</span> PTB-XL — development-cohort support and split transport</a></li>
-  <li><a href="#echonext-structural-heart-disease-phenotype" id="toc-echonext-structural-heart-disease-phenotype" class="nav-link" data-scroll-target="#echonext-structural-heart-disease-phenotype"><span class="header-section-number">4.5.3</span> EchoNext — structural-heart-disease phenotype</a></li>
-  <li><a href="#ludb-expert-morphology-and-atrial-fibrillation-contrast" id="toc-ludb-expert-morphology-and-atrial-fibrillation-contrast" class="nav-link" data-scroll-target="#ludb-expert-morphology-and-atrial-fibrillation-contrast"><span class="header-section-number">4.5.4</span> LUDB — expert morphology and atrial-fibrillation contrast</a></li>
-  <li><a href="#isp-delineation-split-shift-audit-under-unresolved-provenance" id="toc-isp-delineation-split-shift-audit-under-unresolved-provenance" class="nav-link" data-scroll-target="#isp-delineation-split-shift-audit-under-unresolved-provenance"><span class="header-section-number">4.5.5</span> ISP — delineation split-shift audit under unresolved provenance</a></li>
-  <li><a href="#sunnybrook-physical-acquisition-quality-control" id="toc-sunnybrook-physical-acquisition-quality-control" class="nav-link" data-scroll-target="#sunnybrook-physical-acquisition-quality-control"><span class="header-section-number">4.5.6</span> Sunnybrook — physical-acquisition quality control</a></li>
-  <li><a href="#zhejiang-dense-mask-burden-and-waveform-phenotype" id="toc-zhejiang-dense-mask-burden-and-waveform-phenotype" class="nav-link" data-scroll-target="#zhejiang-dense-mask-burden-and-waveform-phenotype"><span class="header-section-number">4.5.7</span> Zhejiang — dense-mask burden and waveform phenotype</a></li>
-  <li><a href="#rdb-rhythm-diverse-delineation-and-p-wave-absence" id="toc-rdb-rhythm-diverse-delineation-and-p-wave-absence" class="nav-link" data-scroll-target="#rdb-rhythm-diverse-delineation-and-p-wave-absence"><span class="header-section-number">4.5.8</span> RDB — rhythm-diverse delineation and P-wave absence</a></li>
-  <li><a href="#nstdb-and-fitbit-noise-stress-perturbations-not-cohort-embeddings" id="toc-nstdb-and-fitbit-noise-stress-perturbations-not-cohort-embeddings" class="nav-link" data-scroll-target="#nstdb-and-fitbit-noise-stress-perturbations-not-cohort-embeddings"><span class="header-section-number">4.5.9</span> NSTDB and Fitbit noise stress — perturbations, not cohort embeddings</a></li>
-  <li><a href="#cross-figure-interpretation-and-falsification-rules" id="toc-cross-figure-interpretation-and-falsification-rules" class="nav-link" data-scroll-target="#cross-figure-interpretation-and-falsification-rules"><span class="header-section-number">4.5.10</span> Cross-figure interpretation and falsification rules</a></li>
+  <li><a href="#shared-feature-and-sampling-contract" id="toc-shared-feature-and-sampling-contract" class="nav-link" data-scroll-target="#shared-feature-and-sampling-contract"><span class="header-section-number">10.5.1</span> Shared feature and sampling contract</a></li>
+  <li><a href="#ptb-xl-development-cohort-support-and-split-transport" id="toc-ptb-xl-development-cohort-support-and-split-transport" class="nav-link" data-scroll-target="#ptb-xl-development-cohort-support-and-split-transport"><span class="header-section-number">10.5.2</span> PTB-XL — development-cohort support and split transport</a></li>
+  <li><a href="#echonext-structural-heart-disease-phenotype" id="toc-echonext-structural-heart-disease-phenotype" class="nav-link" data-scroll-target="#echonext-structural-heart-disease-phenotype"><span class="header-section-number">10.5.3</span> EchoNext — structural-heart-disease phenotype</a></li>
+  <li><a href="#ludb-expert-morphology-and-atrial-fibrillation-contrast" id="toc-ludb-expert-morphology-and-atrial-fibrillation-contrast" class="nav-link" data-scroll-target="#ludb-expert-morphology-and-atrial-fibrillation-contrast"><span class="header-section-number">10.5.4</span> LUDB — expert morphology and atrial-fibrillation contrast</a></li>
+  <li><a href="#isp-delineation-split-shift-audit-under-unresolved-provenance" id="toc-isp-delineation-split-shift-audit-under-unresolved-provenance" class="nav-link" data-scroll-target="#isp-delineation-split-shift-audit-under-unresolved-provenance"><span class="header-section-number">10.5.5</span> ISP — delineation split-shift audit under unresolved provenance</a></li>
+  <li><a href="#sunnybrook-physical-acquisition-quality-control" id="toc-sunnybrook-physical-acquisition-quality-control" class="nav-link" data-scroll-target="#sunnybrook-physical-acquisition-quality-control"><span class="header-section-number">10.5.6</span> Sunnybrook — physical-acquisition quality control</a></li>
+  <li><a href="#zhejiang-dense-mask-burden-and-waveform-phenotype" id="toc-zhejiang-dense-mask-burden-and-waveform-phenotype" class="nav-link" data-scroll-target="#zhejiang-dense-mask-burden-and-waveform-phenotype"><span class="header-section-number">10.5.7</span> Zhejiang — dense-mask burden and waveform phenotype</a></li>
+  <li><a href="#rdb-rhythm-diverse-delineation-and-p-wave-absence" id="toc-rdb-rhythm-diverse-delineation-and-p-wave-absence" class="nav-link" data-scroll-target="#rdb-rhythm-diverse-delineation-and-p-wave-absence"><span class="header-section-number">10.5.8</span> RDB — rhythm-diverse delineation and P-wave absence</a></li>
+  <li><a href="#nstdb-and-fitbit-noise-stress-perturbations-not-cohort-embeddings" id="toc-nstdb-and-fitbit-noise-stress-perturbations-not-cohort-embeddings" class="nav-link" data-scroll-target="#nstdb-and-fitbit-noise-stress-perturbations-not-cohort-embeddings"><span class="header-section-number">10.5.9</span> NSTDB and Fitbit noise stress — perturbations, not cohort embeddings</a></li>
+  <li><a href="#cross-figure-interpretation-and-falsification-rules" id="toc-cross-figure-interpretation-and-falsification-rules" class="nav-link" data-scroll-target="#cross-figure-interpretation-and-falsification-rules"><span class="header-section-number">10.5.10</span> Cross-figure interpretation and falsification rules</a></li>
   </ul></li>
-  <li><a href="#signal-level-eda-what-to-measure" id="toc-signal-level-eda-what-to-measure" class="nav-link" data-scroll-target="#signal-level-eda-what-to-measure"><span class="header-section-number">4.6</span> Signal-level EDA: what to measure</a>
+  <li><a href="#signal-level-eda-what-to-measure" id="toc-signal-level-eda-what-to-measure" class="nav-link" data-scroll-target="#signal-level-eda-what-to-measure"><span class="header-section-number">10.6</span> Signal-level EDA: what to measure</a>
   <ul class="collapse">
-  <li><a href="#units-and-inverse-normalization" id="toc-units-and-inverse-normalization" class="nav-link" data-scroll-target="#units-and-inverse-normalization"><span class="header-section-number">4.6.1</span> 1. Units and inverse normalization</a></li>
-  <li><a href="#clipping-occupancy" id="toc-clipping-occupancy" class="nav-link" data-scroll-target="#clipping-occupancy"><span class="header-section-number">4.6.2</span> 2. Clipping occupancy</a></li>
-  <li><a href="#lead-law-residuals" id="toc-lead-law-residuals" class="nav-link" data-scroll-target="#lead-law-residuals"><span class="header-section-number">4.6.3</span> 3. Lead-law residuals</a></li>
-  <li><a href="#spectral-and-morphology-distributions" id="toc-spectral-and-morphology-distributions" class="nav-link" data-scroll-target="#spectral-and-morphology-distributions"><span class="header-section-number">4.6.4</span> 4. Spectral and morphology distributions</a></li>
-  <li><a href="#cross-lead-dependence" id="toc-cross-lead-dependence" class="nav-link" data-scroll-target="#cross-lead-dependence"><span class="header-section-number">4.6.5</span> 5. Cross-lead dependence</a></li>
+  <li><a href="#units-and-inverse-normalization" id="toc-units-and-inverse-normalization" class="nav-link" data-scroll-target="#units-and-inverse-normalization"><span class="header-section-number">10.6.1</span> 1. Units and inverse normalization</a></li>
+  <li><a href="#clipping-occupancy" id="toc-clipping-occupancy" class="nav-link" data-scroll-target="#clipping-occupancy"><span class="header-section-number">10.6.2</span> 2. Clipping occupancy</a></li>
+  <li><a href="#lead-law-residuals" id="toc-lead-law-residuals" class="nav-link" data-scroll-target="#lead-law-residuals"><span class="header-section-number">10.6.3</span> 3. Lead-law residuals</a></li>
+  <li><a href="#spectral-and-morphology-distributions" id="toc-spectral-and-morphology-distributions" class="nav-link" data-scroll-target="#spectral-and-morphology-distributions"><span class="header-section-number">10.6.4</span> 4. Spectral and morphology distributions</a></li>
+  <li><a href="#cross-lead-dependence" id="toc-cross-lead-dependence" class="nav-link" data-scroll-target="#cross-lead-dependence"><span class="header-section-number">10.6.5</span> 5. Cross-lead dependence</a></li>
   </ul></li>
-  <li><a href="#deep-reconstruction-diagnostics" id="toc-deep-reconstruction-diagnostics" class="nav-link" data-scroll-target="#deep-reconstruction-diagnostics"><span class="header-section-number">4.7</span> Deep reconstruction diagnostics</a></li>
-  <li><a href="#statistical-design-for-the-factorial-benchmark" id="toc-statistical-design-for-the-factorial-benchmark" class="nav-link" data-scroll-target="#statistical-design-for-the-factorial-benchmark"><span class="header-section-number">4.8</span> Statistical design for the factorial benchmark</a></li>
-  <li><a href="#reproducible-audit-checklist" id="toc-reproducible-audit-checklist" class="nav-link" data-scroll-target="#reproducible-audit-checklist"><span class="header-section-number">4.9</span> Reproducible audit checklist</a></li>
+  <li><a href="#deep-reconstruction-diagnostics" id="toc-deep-reconstruction-diagnostics" class="nav-link" data-scroll-target="#deep-reconstruction-diagnostics"><span class="header-section-number">10.7</span> Deep reconstruction diagnostics</a></li>
+  <li><a href="#statistical-design-for-the-factorial-benchmark" id="toc-statistical-design-for-the-factorial-benchmark" class="nav-link" data-scroll-target="#statistical-design-for-the-factorial-benchmark"><span class="header-section-number">10.8</span> Statistical design for the factorial benchmark</a></li>
+  <li><a href="#reproducible-audit-checklist" id="toc-reproducible-audit-checklist" class="nav-link" data-scroll-target="#reproducible-audit-checklist"><span class="header-section-number">10.9</span> Reproducible audit checklist</a></li>
   </ul>
 </nav>
     </div>
@@ -607,9 +654,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span id="sec-real-data" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-real-data" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -627,8 +674,8 @@ window.Quarto = {
 
 
 <p>This is the first numbered chapter because every later result inherits its data contract. It replaces “representative synthetic ECG” reasoning with an auditable description of the data actually present in this repository. The analysis has three levels: <strong>metadata integrity</strong>, <strong>signal integrity</strong>, and <strong>task integrity</strong>. A reconstruction benchmark is only interpretable when all three hold.</p>
-<section id="evidence-map" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="evidence-map"><span class="header-section-number">4.1</span> Evidence map</h2>
+<section id="evidence-map" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="evidence-map"><span class="header-section-number">10.1</span> Evidence map</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -677,8 +724,8 @@ window.Quarto = {
 </table>
 <p>Every executable audit below resolves its input beneath <code>../data/</code> and prints the resolved path. No waveform statistic in this chapter is generated from the later synthetic tutorials.</p>
 <p>These artifacts do <strong>not</strong> support the same inference. PTB-XL is the reconstruction development cohort. EchoNext is an external transfer cohort with echocardiography-derived labels. Performance on EchoNext tests transport under a different sampling and normalization pipeline; it does not retroactively enlarge the PTB-XL training set.</p>
-<section id="repository-data-entry-boundary" class="level3" data-number="4.1.1">
-<h3 data-number="4.1.1" class="anchored" data-anchor-id="repository-data-entry-boundary"><span class="header-section-number">4.1.1</span> Repository data-entry boundary</h3>
+<section id="repository-data-entry-boundary" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="repository-data-entry-boundary"><span class="header-section-number">10.1.1</span> Repository data-entry boundary</h3>
 <p>The book opens every dataset through the checkout’s <code>data/</code> entry. In this workspace that entry is intentionally a symbolic link to the larger local data volume, so the checkout-relative path and the resolved physical path are both reported below. This is one dataset, not a fallback search path or a second hidden copy. The distinction matters when reproducing file hashes, moving the checkout, or interpreting an absolute path printed by an inference audit.</p>
 <div class="cell" data-tbl-cap="Checkout-relative and resolved identities of the data tree used by this render." data-execution_count="1">
 <details open="" class="code-fold">
@@ -728,8 +775,8 @@ window.Quarto = {
 </div>
 </section>
 </section>
-<section id="ptb-xl-observed-cohort-and-split-contract" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="ptb-xl-observed-cohort-and-split-contract"><span class="header-section-number">4.2</span> PTB-XL: observed cohort and split contract</h2>
+<section id="ptb-xl-observed-cohort-and-split-contract" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="ptb-xl-observed-cohort-and-split-contract"><span class="header-section-number">10.2</span> PTB-XL: observed cohort and split contract</h2>
 <p>The local metadata contain <strong>21,799 ECG records</strong> and <strong>28 columns</strong>. The ten official stratification folds are nearly balanced (2,173–2,198 records each). The locked model registry maps folds 1–8 to training (<strong>17,418</strong> records), fold 9 to validation (<strong>2,183</strong>), and fold 10 to test (<strong>2,198</strong>). The registry also reports <strong>1,904 unique patients</strong> in the test set, so patient-clustered uncertainty is necessary: record-level resampling would treat repeated ECGs from the same person as independent.</p>
 <p>The raw age field deserves an explicit validity audit. Its observed maximum is 300, which is not physiologically plausible as years and should not silently enter subgroup analysis. Age-based EDA must therefore report invalid-value counts and either use a documented correction supplied by the dataset or mark those values missing. It must not “fix” them by clipping without a sensitivity analysis.</p>
 <div class="cell" data-tbl-cap="PTB-XL metadata audit computed from the local cohort file." data-execution_count="2">
@@ -817,8 +864,8 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<section id="leakage-checks-that-must-precede-modeling" class="level3" data-number="4.2.1">
-<h3 data-number="4.2.1" class="anchored" data-anchor-id="leakage-checks-that-must-precede-modeling"><span class="header-section-number">4.2.1</span> Leakage checks that must precede modeling</h3>
+<section id="leakage-checks-that-must-precede-modeling" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="leakage-checks-that-must-precede-modeling"><span class="header-section-number">10.2.1</span> Leakage checks that must precede modeling</h3>
 <ol type="1">
 <li><strong>Patient separation:</strong> intersect patient IDs across train, validation, and test. Every intersection must be empty.</li>
 <li><strong>File inventory:</strong> confirm every metadata row resolves to exactly one waveform tensor in its assigned split.</li>
@@ -874,8 +921,8 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="ptb-xl-demographic-and-diagnostic-composition" class="level3" data-number="4.2.2">
-<h3 data-number="4.2.2" class="anchored" data-anchor-id="ptb-xl-demographic-and-diagnostic-composition"><span class="header-section-number">4.2.2</span> PTB-XL demographic and diagnostic composition</h3>
+<section id="ptb-xl-demographic-and-diagnostic-composition" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="ptb-xl-demographic-and-diagnostic-composition"><span class="header-section-number">10.2.2</span> PTB-XL demographic and diagnostic composition</h3>
 <p>The next audit separates record counts from patient counts, treats ages outside 0–120 as missing, and derives diagnostic superclasses from the local <code>scp_statements.csv</code> mapping. Superclass counts are multilabel record counts, so their sum can exceed the number of ECGs.</p>
 <div id="ptbxl-demographic-diagnostic-eda" class="cell" data-execution_count="4">
 <details open="" class="code-fold">
@@ -1110,8 +1157,8 @@ Split-level demographics</code></pre>
 </div>
 </div>
 </section>
-<section id="executed-ptb-xl-waveform-audit" class="level3" data-number="4.2.3">
-<h3 data-number="4.2.3" class="anchored" data-anchor-id="executed-ptb-xl-waveform-audit"><span class="header-section-number">4.2.3</span> Executed PTB-XL waveform audit</h3>
+<section id="executed-ptb-xl-waveform-audit" class="level3" data-number="10.2.3">
+<h3 data-number="10.2.3" class="anchored" data-anchor-id="executed-ptb-xl-waveform-audit"><span class="header-section-number">10.2.3</span> Executed PTB-XL waveform audit</h3>
 <p>The following block reads the actual paired WFDB records named by <code>filename_hr</code> and <code>filename_lr</code> in <code>data/ptb_xl/ptbxl_database.csv</code>. To keep HTML rendering reproducible and bounded, it uses a fixed, fold-stratified audit sample of 25 records from each official fold (250 records total); this is an EDA sample, not an inferential subsample. Primary signal summaries use the stored 500 Hz physical waveforms. The paired 100 Hz releases are upsampled to quantify what a 100→500 Hz adapter can and cannot recover.</p>
 <div class="cell" data-tbl-cap="Lead-wise audit of real PTB-XL WFDB waveforms (fixed 250-record stratified sample)." data-execution_count="5">
 <details open="" class="code-fold">
@@ -1506,8 +1553,8 @@ Split-level demographics</code></pre>
 </div>
 <p>Because 100 Hz data have a 50 Hz Nyquist limit, upsampling cannot restore true 40–150 Hz content present in the 500 Hz release. The paired error above measures the complete adapter discrepancy; final morphology analysis should additionally compare QRS-band power and fiducials before and after any model-specific resampling.</p>
 </section>
-<section id="the-actual-model-input-tensor-boundary" class="level3" data-number="4.2.4">
-<h3 data-number="4.2.4" class="anchored" data-anchor-id="the-actual-model-input-tensor-boundary"><span class="header-section-number">4.2.4</span> The actual model-input tensor boundary</h3>
+<section id="the-actual-model-input-tensor-boundary" class="level3" data-number="10.2.4">
+<h3 data-number="10.2.4" class="anchored" data-anchor-id="the-actual-model-input-tensor-boundary"><span class="header-section-number">10.2.4</span> The actual model-input tensor boundary</h3>
 <p>Raw WFDB EDA is necessary but not sufficient: the reconstruction code does not read WFDB files during training. <code>scripts/train_mcma_3lead.py::PTBXLDataset</code> loads <code>.pt</code> files, expects shape <code>12 × 5000</code>, appends 120 zeros to reach a pooling-compatible length of 5,120, and selects lead indices <code>[0, 1, 7]</code>—I, II, and V2—as the model input. Targets contain all 12 padded leads. The training loader applies no per-record standardization, filtering, or amplitude clipping.</p>
 <p>The following audit is computed over <strong>every tensor</strong>, not the 250-record raw-waveform sample. To keep routine book renders tractable, <code>scripts/audit_ptbxl_tensors_for_book.py</code> performs the 5 GB sequential scan with the project venv and writes a record-level Parquet plus a JSON summary. Each tensor is loaded through <code>torch.load(..., weights_only=True)</code> and checked for metadata/split alignment, shape, dtype, nonfinite values, flat leads, amplitude, RMS, and SHA-256 of canonical float32 signal bytes.</p>
 <div class="cell" data-tbl-cap="Full inventory of the canonical PTB-XL tensors consumed by the model loaders." data-execution_count="8">
@@ -1635,8 +1682,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 <p>The executed gate finds all <strong>21,799 of 21,799</strong> expected tensors in the correct split, all with shape <code>12 × 5000</code>, dtype <code>float32</code>, finite values, and unique canonical signal hashes. It also finds one concrete quality exception: training ECG <strong>12722</strong> has an exactly zero V5 lead. That record should be retained in the cohort ledger and handled by an explicit quality policy, not silently disappear inside a data loader.</p>
 <p>The gate distinguishes three failure classes. A missing tensor is a cohort-definition error; a malformed/nonfinite tensor is a preprocessing error; a duplicate canonical hash is a potential leakage or export error requiring record-level adjudication. A perfectly matched inventory does not by itself prove the correct physical units, so the next two checks inspect the distribution and pair tensors back to the raw 500 Hz waveforms.</p>
 </section>
-<section id="byte-level-training-corpus-identity" class="level3" data-number="4.2.5">
-<h3 data-number="4.2.5" class="anchored" data-anchor-id="byte-level-training-corpus-identity"><span class="header-section-number">4.2.5</span> Byte-level training corpus identity</h3>
+<section id="byte-level-training-corpus-identity" class="level3" data-number="10.2.5">
+<h3 data-number="10.2.5" class="anchored" data-anchor-id="byte-level-training-corpus-identity"><span class="header-section-number">10.2.5</span> Byte-level training corpus identity</h3>
 <p>Shape, dtype, and record counts do not detect a same-size content replacement. The training contract therefore includes a second manifest that hashes the exact bytes of every <code>.pt</code> file and forms each split root as <code>SHA256(record_id:size:file_sha256\n...)</code>.</p>
 <div class="cell" data-tbl-cap="Byte-level identity roots for all PTB-XL tensors used by training." data-execution_count="9">
 <details open="" class="code-fold">
@@ -1878,8 +1925,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 <p>All 250 paired arrays match exactly at float32 precision: maximum absolute difference and RMSE are zero, and the minimum flattened Pearson correlation is 1.0 in every split. This establishes that the saved tensors reproduce the physical 500 Hz WFDB values for the fixed sample. It does not validate the subsequent 120-sample zero padding as physiologic signal. Any metric spanning the padded tail must either mask those samples or document that identical target/reconstruction padding cannot inflate performance.</p>
 </section>
 </section>
-<section id="echonext-population-waveform-and-endpoint-audit" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="echonext-population-waveform-and-endpoint-audit"><span class="header-section-number">4.3</span> EchoNext: population, waveform, and endpoint audit</h2>
+<section id="echonext-population-waveform-and-endpoint-audit" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="echonext-population-waveform-and-endpoint-audit"><span class="header-section-number">10.3</span> EchoNext: population, waveform, and endpoint audit</h2>
 <p>The local EchoNext metadata table contains <strong>100,000 records and 39 fields</strong>. The frozen external test array contains <strong>5,442 × 1 × 2,500 × 12</strong> values. At the declared 250 Hz, each trace spans 10 seconds. The singleton axis is a storage/channel wrapper, not an ECG lead. Lead order is explicitly:</p>
 <p><span class="math display">[I,II,III,aVR,aVL,aVF,V_1,V_2,V_3,V_4,V_5,V_6].</span></p>
 <p>The waveforms are stored as <code>float64</code> after official per-lead clipping and train-set z-scoring. Evaluation inverts that affine transform back to clipped microvolts before reconstruction inference. This is a critical domain-transfer detail because PTB-XL models expect 500 Hz, 5,000-sample, physical-mV inputs with no per-record normalization. Resampling, unit conversion, axis ordering, and inverse normalization must all be validated independently.</p>
@@ -1963,8 +2010,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </div>
-<section id="echonext-patient-overlap-audit" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="echonext-patient-overlap-audit"><span class="header-section-number">4.3.1</span> EchoNext patient-overlap audit</h3>
+<section id="echonext-patient-overlap-audit" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="echonext-patient-overlap-audit"><span class="header-section-number">10.3.1</span> EchoNext patient-overlap audit</h3>
 <p>The released test and validation partitions are patient-disjoint from training and from one another. The <code>no_split</code> rows are different: locally they overlap identified patients in the formal partitions and therefore cannot be treated as an extra development set. This table is computed from the actual metadata and makes that exclusion auditable.</p>
 <div id="cell-echonext-patient-overlap" class="cell" data-execution_count="13">
 <details open="" class="code-fold">
@@ -2063,8 +2110,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </section>
-<section id="echonext-demographics-setting-and-time" class="level3" data-number="4.3.2">
-<h3 data-number="4.3.2" class="anchored" data-anchor-id="echonext-demographics-setting-and-time"><span class="header-section-number">4.3.2</span> EchoNext demographics, setting, and time</h3>
+<section id="echonext-demographics-setting-and-time" class="level3" data-number="10.3.2">
+<h3 data-number="10.3.2" class="anchored" data-anchor-id="echonext-demographics-setting-and-time"><span class="header-section-number">10.3.2</span> EchoNext demographics, setting, and time</h3>
 <p>Patient-level and record-level denominators differ because training and <code>no_split</code> can contain repeated ECGs. The table below keeps both visible and describes age only after verifying its declared 18–90 range.</p>
 <div id="echonext-demographic-eda" class="cell" data-execution_count="14">
 <details open="" class="code-fold">
@@ -2533,8 +2580,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </section>
-<section id="metadata-missingness-is-structured-not-random-noise" class="level3" data-number="4.3.3">
-<h3 data-number="4.3.3" class="anchored" data-anchor-id="metadata-missingness-is-structured-not-random-noise"><span class="header-section-number">4.3.3</span> Metadata missingness is structured, not random noise</h3>
+<section id="metadata-missingness-is-structured-not-random-noise" class="level3" data-number="10.3.3">
+<h3 data-number="10.3.3" class="anchored" data-anchor-id="metadata-missingness-is-structured-not-random-noise"><span class="header-section-number">10.3.3</span> Metadata missingness is structured, not random noise</h3>
 <p>Clinical measurements have sharply different availability. In the local table, tricuspid-regurgitation maximum velocity is missing in <strong>54.996%</strong> of rows and pulmonary artery systolic pressure in <strong>43.424%</strong>. Several echo interpretation/measurement fields are missing in roughly 9–12%. By contrast, age, sex, acquisition year, location, race/ethnicity, and split are complete.</p>
 <p>This pattern matters because a missing measurement can mean “not measured,” “not clinically indicated,” “not obtainable,” or “not transferred”—not “normal.” Binary endpoint flags must come from the released endpoint definition, never from naïvely converting a missing continuous measurement to zero.</p>
 <div class="cell" data-tbl-cap="Highest EchoNext metadata missingness rates." data-execution_count="15">
@@ -2640,8 +2687,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </section>
 </section>
-<section id="endpoint-prevalence-and-effective-difficulty" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="endpoint-prevalence-and-effective-difficulty"><span class="header-section-number">4.4</span> Endpoint prevalence and effective difficulty</h2>
+<section id="endpoint-prevalence-and-effective-difficulty" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="endpoint-prevalence-and-effective-difficulty"><span class="header-section-number">10.4</span> Endpoint prevalence and effective difficulty</h2>
 <p>The EchoNext classifier evaluates 12 echo-derived structural-heart-disease endpoints on the same 5,442 test records. Prevalence ranges from <strong>0.37%</strong> (20 pulmonary-regurgitation positives) to <strong>42.59%</strong> (2,318 composite SHD positives). Consequently:</p>
 <ul>
 <li>accuracy is misleading for rare endpoints;</li>
@@ -2772,8 +2819,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </div>
-<section id="endpoint-burden-and-co-occurrence" class="level3" data-number="4.4.1">
-<h3 data-number="4.4.1" class="anchored" data-anchor-id="endpoint-burden-and-co-occurrence"><span class="header-section-number">4.4.1</span> Endpoint burden and co-occurrence</h3>
+<section id="endpoint-burden-and-co-occurrence" class="level3" data-number="10.4.1">
+<h3 data-number="10.4.1" class="anchored" data-anchor-id="endpoint-burden-and-co-occurrence"><span class="header-section-number">10.4.1</span> Endpoint burden and co-occurrence</h3>
 <p>Structural-heart-disease endpoints overlap by construction: the composite label is positive when one or more component thresholds are met. Co-occurrence matters for macro metrics and error analysis because one ECG can contribute to multiple tasks. This block computes the test-set label-burden distribution and pairwise Jaccard overlap directly from the metadata.</p>
 <div id="echonext-endpoint-cooccurrence" class="cell" data-tbl-cap="Strongest pairwise EchoNext test-label overlaps (Jaccard index)." data-execution_count="17">
 <details open="" class="code-fold">
@@ -3043,8 +3090,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 <p>The audit reports a single SHA-256 label hash shared by the official reference and all 48 reconstructed-signal tables. This is a valuable identity check: differences among reconstruction cells cannot be explained by accidentally changing label order. It does not verify clinical adjudication or eliminate spectrum bias; those are separate questions.</p>
 </section>
 </section>
-<section id="per-dataset-waveform-umap-atlas" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="per-dataset-waveform-umap-atlas"><span class="header-section-number">4.5</span> Per-dataset waveform UMAP atlas</h2>
+<section id="per-dataset-waveform-umap-atlas" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="per-dataset-waveform-umap-atlas"><span class="header-section-number">10.5</span> Per-dataset waveform UMAP atlas</h2>
 <p>The repository reference manual at <code>external/dataset_info.md</code> enumerates seven clinical signal cohorts plus wearable/noise stress streams. This executable atlas reconciles that document with the files physically available at render time. It includes <strong>PTB-XL, EchoNext, LUDB, ISP, Sunnybrook, Zhejiang, and RDB</strong>. NSTDB/Fitbit stress streams are not plotted as an eighth clinical-cohort UMAP: they are perturbation sources, and no independently versioned raw stress corpus is present beneath the checkout’s <code>data/</code> entry. Treating generated SNR variants as independent patients would inflate the apparent sample size.</p>
 <p>Some statements in the reference manual are stronger than the locally verifiable evidence. In particular, the current <code>data/rdb/</code> entry is empty, so RDB is read from the generation-bound waveform/delineation cache; ISP provenance and class semantics remain unresolved by the files themselves; and Zhejiang’s geographic/demographic description is not encoded in its arrays. The plots use those datasets, but their legends and interpretations remain inside the local evidence boundary.</p>
 <table class="caption-top table">
@@ -3133,8 +3180,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </tr>
 </tbody>
 </table>
-<section id="shared-feature-and-sampling-contract" class="level3" data-number="4.5.1">
-<h3 data-number="4.5.1" class="anchored" data-anchor-id="shared-feature-and-sampling-contract"><span class="header-section-number">4.5.1</span> Shared feature and sampling contract</h3>
+<section id="shared-feature-and-sampling-contract" class="level3" data-number="10.5.1">
+<h3 data-number="10.5.1" class="anchored" data-anchor-id="shared-feature-and-sampling-contract"><span class="header-section-number">10.5.1</span> Shared feature and sampling contract</h3>
 <p>Each ECG is mapped to the same 96-dimensional vector: for every canonical lead, RMS amplitude, interquartile range, 1st-to-99th percentile range, derivative RMS, and four relative Fourier-energy quartiles. Features are robust-scaled <strong>within each dataset</strong>. This representation is deliberately transparent and is not a learned ECG-AIM latent representation. Because sampling rates and units differ—and Zhejiang’s units/rate are not independently documented in its local tree—no pooled cross-dataset UMAP is used to claim domain similarity.</p>
 <p>Sampling is deterministic and bounded. Small cohorts use all available records; larger cohorts use a SHA-256-ranked sample that is invariant to directory order. Raw signals are reduced one record at a time and are never copied into the HTML. RDB acquisition identifiers are replaced with one-way, namespace-scoped display tokens before plotting.</p>
 <div class="cell" data-tbl-cap="Provenance, feature contract, and stability diagnostics for every real-cohort UMAP." data-execution_count="18">
@@ -3350,8 +3397,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 <p>The diagnostics are part of the result, not decoration. Trustworthiness at <span class="math inline">k=5</span> measures whether local neighborhoods in the robust-scaled feature space survive projection. The stability column compares all pairwise distances from the seed-42 map with seeds 7 and 101 using Spearman rank correlation; it is rotation/reflection invariant. Low values invalidate visual cluster claims.</p>
 <p>Panel B in every curated figure is the main protection against an attractive but misleading projection. It compares same-group nearest-neighbor frequency in the original 96-dimensional space, in the two-dimensional UMAP, and under the observed group imbalance. If the UMAP bar rises far above the original-space bar, the projection has visually amplified grouping. Panel C returns to a raw, purpose-linked measurement rather than asking UMAP to carry the claim.</p>
 </section>
-<section id="ptb-xl-development-cohort-support-and-split-transport" class="level3" data-number="4.5.2">
-<h3 data-number="4.5.2" class="anchored" data-anchor-id="ptb-xl-development-cohort-support-and-split-transport"><span class="header-section-number">4.5.2</span> PTB-XL — development-cohort support and split transport</h3>
+<section id="ptb-xl-development-cohort-support-and-split-transport" class="level3" data-number="10.5.2">
+<h3 data-number="10.5.2" class="anchored" data-anchor-id="ptb-xl-development-cohort-support-and-split-transport"><span class="header-section-number">10.5.2</span> PTB-XL — development-cohort support and split transport</h3>
 <p>PTB-XL is the reconstruction development cohort: 21,799 ten-second, 12-lead records in paired 500 Hz and 100 Hz releases. Official folds define training (1–8), validation (9), and holdout test (10); the patient-overlap audit above is the relevant independence gate. Diagnostic SCP labels and clinical metadata support reconstruction, morphology, and downstream diagnostic-retention work.</p>
 <p>The curated question is not whether diagnoses form attractive clusters. It is whether official splits occupy comparable broad waveform support. Panel C shows global RMS by split; a split-specific island plus shifted RMS would trigger a device/site/quality investigation before interpreting model generalization.</p>
 <div id="cell-ptbxl-purpose-embedding" class="cell" data-execution_count="19">
@@ -3371,8 +3418,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </section>
-<section id="echonext-structural-heart-disease-phenotype" class="level3" data-number="4.5.3">
-<h3 data-number="4.5.3" class="anchored" data-anchor-id="echonext-structural-heart-disease-phenotype"><span class="header-section-number">4.5.3</span> EchoNext — structural-heart-disease phenotype</h3>
+<section id="echonext-structural-heart-disease-phenotype" class="level3" data-number="10.5.3">
+<h3 data-number="10.5.3" class="anchored" data-anchor-id="echonext-structural-heart-disease-phenotype"><span class="header-section-number">10.5.3</span> EchoNext — structural-heart-disease phenotype</h3>
 <p>EchoNext contains 100,000 ECG–echocardiogram pairs, but only the 5,442-record official test waveform array is locally retained. Signals are 250 Hz and stored after released clipping and train-set normalization; the earlier audit reverses that affine transform for physical interpretation. Twelve echo-derived endpoints make this a transport and downstream-task cohort, not extra PTB-XL reconstruction training data.</p>
 <p>The figure asks whether the released composite SHD endpoint aligns with broad ECG phenotype while showing LVEF outside the embedding. Visible separation is hypothesis generating: spectrum, care setting, age, and endpoint co-occurrence remain potential explanations.</p>
 <div id="cell-echonext-purpose-embedding" class="cell" data-execution_count="20">
@@ -3392,8 +3439,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </section>
-<section id="ludb-expert-morphology-and-atrial-fibrillation-contrast" class="level3" data-number="4.5.4">
-<h3 data-number="4.5.4" class="anchored" data-anchor-id="ludb-expert-morphology-and-atrial-fibrillation-contrast"><span class="header-section-number">4.5.4</span> LUDB — expert morphology and atrial-fibrillation contrast</h3>
+<section id="ludb-expert-morphology-and-atrial-fibrillation-contrast" class="level3" data-number="10.5.4">
+<h3 data-number="10.5.4" class="anchored" data-anchor-id="ludb-expert-morphology-and-atrial-fibrillation-contrast"><span class="header-section-number">10.5.4</span> LUDB — expert morphology and atrial-fibrillation contrast</h3>
 <p>LUDB contributes 200 ten-second, 500 Hz, 12-lead ECGs with independently cardiologist-annotated P, QRS, and T boundaries on every lead. It is a morphology/delineation benchmark. Header diagnoses overlap and are not one mutually exclusive disease target.</p>
 <p>AF is used as a narrow contrast because organized P-wave behavior is relevant to delineation. The 15 AF records are compared with the heterogeneous remainder, and age is shown explicitly as a basic confounding axis. This is not an estimate of AF diagnostic performance.</p>
 <div id="cell-ludb-purpose-embedding" class="cell" data-execution_count="21">
@@ -3413,8 +3460,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </section>
-<section id="isp-delineation-split-shift-audit-under-unresolved-provenance" class="level3" data-number="4.5.5">
-<h3 data-number="4.5.5" class="anchored" data-anchor-id="isp-delineation-split-shift-audit-under-unresolved-provenance"><span class="header-section-number">4.5.5</span> ISP — delineation split-shift audit under unresolved provenance</h3>
+<section id="isp-delineation-split-shift-audit-under-unresolved-provenance" class="level3" data-number="10.5.5">
+<h3 data-number="10.5.5" class="anchored" data-anchor-id="isp-delineation-split-shift-audit-under-unresolved-provenance"><span class="header-section-number">10.5.5</span> ISP — delineation split-shift audit under unresolved provenance</h3>
 <p>The local ISP package contains 403 training and 72 test records linked to 12-channel WFDB signals and serialized interval targets. Headers declare 1,000 Hz and the nonstandard unit token <code>mkv</code>. Although the reference manual assigns P/QRS/T semantics and a multicenter origin, no citation, license, source ID, or authoritative class dictionary is present locally. Those claims remain provisional here.</p>
 <p>The defensible question is whether the provided test split shifts relative to training in waveform features or interval burden. Patient independence remains unverified, so split mixing cannot certify leakage freedom.</p>
 <div id="cell-isp-purpose-embedding" class="cell" data-execution_count="22">
@@ -3434,8 +3481,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </section>
-<section id="sunnybrook-physical-acquisition-quality-control" class="level3" data-number="4.5.6">
-<h3 data-number="4.5.6" class="anchored" data-anchor-id="sunnybrook-physical-acquisition-quality-control"><span class="header-section-number">4.5.6</span> Sunnybrook — physical-acquisition quality control</h3>
+<section id="sunnybrook-physical-acquisition-quality-control" class="level3" data-number="10.5.6">
+<h3 data-number="10.5.6" class="anchored" data-anchor-id="sunnybrook-physical-acquisition-quality-control"><span class="header-section-number">10.5.6</span> Sunnybrook — physical-acquisition quality control</h3>
 <p>Sunnybrook is a 20-record local Philips XML transfer set with owner metadata and 179 machine-extracted features. The production decoder verifies sampling rate, lead order, resolution, and the centered ten-second crop. Cohort selection, subject multiplicity, adjudication, distribution authority, and the stronger “fully measured gold standard” claim are not independently established locally.</p>
 <p>With 20 records, a disease-cluster UMAP would be especially unstable. This figure marks the two records whose maximum absolute amplitude exceeds 5 mV and shows the raw maxima. Its purpose is retained-transient and influence analysis, not prevalence generalization.</p>
 <div id="cell-sunnybrook-purpose-embedding" class="cell" data-execution_count="23">
@@ -3455,8 +3502,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </section>
-<section id="zhejiang-dense-mask-burden-and-waveform-phenotype" class="level3" data-number="4.5.7">
-<h3 data-number="4.5.7" class="anchored" data-anchor-id="zhejiang-dense-mask-burden-and-waveform-phenotype"><span class="header-section-number">4.5.7</span> Zhejiang — dense-mask burden and waveform phenotype</h3>
+<section id="zhejiang-dense-mask-burden-and-waveform-phenotype" class="level3" data-number="10.5.7">
+<h3 data-number="10.5.7" class="anchored" data-anchor-id="zhejiang-dense-mask-burden-and-waveform-phenotype"><span class="header-section-number">10.5.7</span> Zhejiang — dense-mask burden and waveform phenotype</h3>
 <p>The Zhejiang tree contains 334 record-level masks and 4,008 lead files (12 per record), each 20,000 samples long. Local arrays establish signal–mask pairing and the observed <code>0/1/2/3</code> mask convention. They do not independently establish institution, ethnicity, units, sampling rate, patient independence, or clinical diagnoses; those fields require external provenance.</p>
 <p>The embedding is colored by QRS-mask-coverage quartile and Panel C exposes the underlying percentage. This tests whether gross segmentation burden tracks waveform phenotype; it does not turn a derived quartile into a clinical class.</p>
 <div id="cell-zhejiang-purpose-embedding" class="cell" data-execution_count="24">
@@ -3476,8 +3523,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </section>
-<section id="rdb-rhythm-diverse-delineation-and-p-wave-absence" class="level3" data-number="4.5.8">
-<h3 data-number="4.5.8" class="anchored" data-anchor-id="rdb-rhythm-diverse-delineation-and-p-wave-absence"><span class="header-section-number">4.5.8</span> RDB — rhythm-diverse delineation and P-wave absence</h3>
+<section id="rdb-rhythm-diverse-delineation-and-p-wave-absence" class="level3" data-number="10.5.8">
+<h3 data-number="10.5.8" class="anchored" data-anchor-id="rdb-rhythm-diverse-delineation-and-p-wave-absence"><span class="header-section-number">10.5.8</span> RDB — rhythm-diverse delineation and P-wave absence</h3>
 <p>RDB supplies 2,399 ten-second, 500 Hz, 12-lead records spanning eight canonical rhythm groups with lead-specific and consensus P/QRS/T intervals. The raw <code>data/rdb/</code> entry is empty in this checkout, so this figure reads the generation-bound cache built from the raw CSV/annotation package. Cache records are source-bound, while public display labels are pseudonymized.</p>
 <p>The figure asks whether rhythm diversity corresponds to broad waveform regimes and shows P-mask coverage by rhythm. This is directly relevant to AF hallucination: a model should not invent organized P waves when the reference mask supports their absence. Rhythm separation itself is not reconstruction quality.</p>
 <div id="cell-rdb-purpose-embedding" class="cell" data-execution_count="25">
@@ -3498,8 +3545,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 <p>The RDB codes are displayed exactly as retained by the cache. The source prefix <code>SI</code> maps to canonical <code>SA</code>, and source <code>VT</code> maps to canonical <code>SVT</code>; the figure does not silently relabel <code>AFIB</code> as atrial flutter without an authoritative cache mapping.</p>
 </section>
-<section id="nstdb-and-fitbit-noise-stress-perturbations-not-cohort-embeddings" class="level3" data-number="4.5.9">
-<h3 data-number="4.5.9" class="anchored" data-anchor-id="nstdb-and-fitbit-noise-stress-perturbations-not-cohort-embeddings"><span class="header-section-number">4.5.9</span> NSTDB and Fitbit noise stress — perturbations, not cohort embeddings</h3>
+<section id="nstdb-and-fitbit-noise-stress-perturbations-not-cohort-embeddings" class="level3" data-number="10.5.9">
+<h3 data-number="10.5.9" class="anchored" data-anchor-id="nstdb-and-fitbit-noise-stress-perturbations-not-cohort-embeddings"><span class="header-section-number">10.5.9</span> NSTDB and Fitbit noise stress — perturbations, not cohort embeddings</h3>
 <p>The reference manual describes electrode motion, baseline wander, muscle artifact, and wearable-motion streams across calibrated SNR levels. No versioned raw NSTDB/Fitbit corpus is present beneath the local <code>data/</code> entry, so this chapter does not invent a noise UMAP or repeat patients at several SNRs as if independent. The appropriate visualization is a paired degradation curve by SNR and noise type once a hash-bound stress-result table is retained.</p>
 <div class="cell" data-tbl-cap="Original-space group enrichment and projection amplification for the seven curated figures." data-execution_count="26">
 <details open="" class="code-fold">
@@ -3655,24 +3702,24 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </section>
-<section id="cross-figure-interpretation-and-falsification-rules" class="level3" data-number="4.5.10">
-<h3 data-number="4.5.10" class="anchored" data-anchor-id="cross-figure-interpretation-and-falsification-rules"><span class="header-section-number">4.5.10</span> Cross-figure interpretation and falsification rules</h3>
+<section id="cross-figure-interpretation-and-falsification-rules" class="level3" data-number="10.5.10">
+<h3 data-number="10.5.10" class="anchored" data-anchor-id="cross-figure-interpretation-and-falsification-rules"><span class="header-section-number">10.5.10</span> Cross-figure interpretation and falsification rules</h3>
 <p>For each panel, the only admissible first-pass question is whether its displayed group is locally mixed or separated in this <strong>specified feature representation</strong>. Separation does not prove diagnosis, site, physiology, or model learnability. PTB-XL and ISP colors are split diagnostics; EchoNext and RDB use released labels; LUDB uses a header-text AF indicator; Sunnybrook and Zhejiang colors are explicitly derived QC strata rather than clinical ground truth.</p>
 <p>A visual finding is worth following only when trustworthiness and seed stability are adequate. The next test must operate in the original 96-dimensional feature space—for example, patient-grouped classification or a prespecified two-sample test with multiplicity control. Repeating UMAP until an attractive separation appears is not a valid analysis.</p>
 </section>
 </section>
-<section id="signal-level-eda-what-to-measure" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="signal-level-eda-what-to-measure"><span class="header-section-number">4.6</span> Signal-level EDA: what to measure</h2>
-<section id="units-and-inverse-normalization" class="level3" data-number="4.6.1">
-<h3 data-number="4.6.1" class="anchored" data-anchor-id="units-and-inverse-normalization"><span class="header-section-number">4.6.1</span> 1. Units and inverse normalization</h3>
+<section id="signal-level-eda-what-to-measure" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="signal-level-eda-what-to-measure"><span class="header-section-number">10.6</span> Signal-level EDA: what to measure</h2>
+<section id="units-and-inverse-normalization" class="level3" data-number="10.6.1">
+<h3 data-number="10.6.1" class="anchored" data-anchor-id="units-and-inverse-normalization"><span class="header-section-number">10.6.1</span> 1. Units and inverse normalization</h3>
 <p>For each lead <span class="math inline">\ell</span>, recover clipped microvolts using</p>
 <p><span class="math display">x_{\mu V,\ell}=z_\ell\sigma_\ell+\mu_\ell.</span></p>
 <p>Then convert once to millivolts if the reconstruction model expects mV:</p>
 <p><span class="math display">x_{mV,\ell}=10^{-3}x_{\mu V,\ell}.</span></p>
 <p>A thousand-fold unit error can produce finite tensors and plausible-looking normalized plots while destroying inference. Unit tests should assert known percentile ranges before and after conversion.</p>
 </section>
-<section id="clipping-occupancy" class="level3" data-number="4.6.2">
-<h3 data-number="4.6.2" class="anchored" data-anchor-id="clipping-occupancy"><span class="header-section-number">4.6.2</span> 2. Clipping occupancy</h3>
+<section id="clipping-occupancy" class="level3" data-number="10.6.2">
+<h3 data-number="10.6.2" class="anchored" data-anchor-id="clipping-occupancy"><span class="header-section-number">10.6.2</span> 2. Clipping occupancy</h3>
 <p>Compute the fraction of values equal, or numerically close, to each provenance bound by lead. High occupancy indicates censored amplitude tails. Report this because peak-amplitude and ST-deviation errors are then conditional on the released clipping policy.</p>
 <p>The rendered audit below reads a deterministic 256-record sample from the memory-mapped array, reverses the released affine normalization using <code>PROVENANCE.json</code>, and recomputes signal-validity and lead-law summaries. The compact disk does not retain a hash-bound full-array clipping audit, so this chapter does not present hard-coded full-array percentiles or occupancies as current evidence.</p>
 <div id="cell-echonext-live-waveform-audit" class="cell" data-execution_count="27">
@@ -3773,25 +3820,25 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 <p>Full-array clipping occupancy is a required future retained artifact. It must be computed in chunks, bound to the waveform/provenance hashes, and loaded here rather than transcribed into prose.</p>
 </section>
-<section id="lead-law-residuals" class="level3" data-number="4.6.3">
-<h3 data-number="4.6.3" class="anchored" data-anchor-id="lead-law-residuals"><span class="header-section-number">4.6.3</span> 3. Lead-law residuals</h3>
+<section id="lead-law-residuals" class="level3" data-number="10.6.3">
+<h3 data-number="10.6.3" class="anchored" data-anchor-id="lead-law-residuals"><span class="header-section-number">10.6.3</span> 3. Lead-law residuals</h3>
 <p>The limb leads obey approximate linear relations:</p>
 <p><span class="math display">III \approx II-I,\quad aVR \approx-\frac{I+II}{2},\quad
 aVL \approx I-\frac{II}{2},\quad aVF \approx II-\frac{I}{2}.</span></p>
 <p>Residual distributions detect lead permutations, polarity errors, scaling inconsistencies, and corrupted records. These are pipeline diagnostics, not targets to “repair” after looking at test performance.</p>
 <p>The executable sample above supplies a regression diagnostic for the current local tensor. Full-array median and tail tolerances remain unreported until a hash-bound audit artifact is retained; sample estimates must not be promoted to full-cohort thresholds.</p>
 </section>
-<section id="spectral-and-morphology-distributions" class="level3" data-number="4.6.4">
-<h3 data-number="4.6.4" class="anchored" data-anchor-id="spectral-and-morphology-distributions"><span class="header-section-number">4.6.4</span> 4. Spectral and morphology distributions</h3>
+<section id="spectral-and-morphology-distributions" class="level3" data-number="10.6.4">
+<h3 data-number="10.6.4" class="anchored" data-anchor-id="spectral-and-morphology-distributions"><span class="header-section-number">10.6.4</span> 4. Spectral and morphology distributions</h3>
 <p>Report per-lead power in prespecified bands (baseline, P/T, QRS, high-frequency), R-peak count, RR variability, QRS width, QT/QTc, peak amplitude, and flatline fraction. Compare distributions before and after resampling. A global Pearson score can conceal loss of high-frequency QRS energy or systematic ST smoothing.</p>
 </section>
-<section id="cross-lead-dependence" class="level3" data-number="4.6.5">
-<h3 data-number="4.6.5" class="anchored" data-anchor-id="cross-lead-dependence"><span class="header-section-number">4.6.5</span> 5. Cross-lead dependence</h3>
+<section id="cross-lead-dependence" class="level3" data-number="10.6.5">
+<h3 data-number="10.6.5" class="anchored" data-anchor-id="cross-lead-dependence"><span class="header-section-number">10.6.5</span> 5. Cross-lead dependence</h3>
 <p>Plot the <span class="math inline">12\times12</span> lead correlation matrix and the distribution of record-level condition numbers. Reconstruction difficulty depends on how much missing-lead information is identifiable from observed leads <span class="math inline">I</span>, <span class="math inline">II</span>, and <span class="math inline">V_2</span> (indices 0, 1, 7 in the locked registry). Strong average correlation does not imply that diagnostically important residual variation is recoverable.</p>
 </section>
 </section>
-<section id="deep-reconstruction-diagnostics" class="level2" data-number="4.7">
-<h2 data-number="4.7" class="anchored" data-anchor-id="deep-reconstruction-diagnostics"><span class="header-section-number">4.7</span> Deep reconstruction diagnostics</h2>
+<section id="deep-reconstruction-diagnostics" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="deep-reconstruction-diagnostics"><span class="header-section-number">10.7</span> Deep reconstruction diagnostics</h2>
 <p>A useful diagnostic stack separates four questions.</p>
 <table class="caption-top table">
 <colgroup>
@@ -3838,15 +3885,15 @@ aVL \approx I-\frac{II}{2},\quad aVF \approx II-\frac{I}{2}.</span></p>
 <li>good mean performance + subgroup tail failure: deployment inequity.</li>
 </ul>
 </section>
-<section id="statistical-design-for-the-factorial-benchmark" class="level2" data-number="4.8">
-<h2 data-number="4.8" class="anchored" data-anchor-id="statistical-design-for-the-factorial-benchmark"><span class="header-section-number">4.8</span> Statistical design for the factorial benchmark</h2>
+<section id="statistical-design-for-the-factorial-benchmark" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="statistical-design-for-the-factorial-benchmark"><span class="header-section-number">10.8</span> Statistical design for the factorial benchmark</h2>
 <p>The registered experiment is a <span class="math inline">3\times2^4</span> grid, but primary factorial inference is the MSE-on <span class="math inline">3\times2^3</span> subset. Eight MultiScale-VAE MSE-toggle cells are quarantined because paired checkpoints were tensor-identical under a historical decoder-loss defect. The complete 48-row table is useful for identity and forensics; it is not a uniformly valid four-factor inferential grid.</p>
 <p>Use paired patient-cluster BCa intervals because all cells predict the same test patients and some patients contribute multiple records. For each family and endpoint, estimate</p>
 <p><span class="math display">\Delta_k=\mathbb{E}[Y\mid k=1]-\mathbb{E}[Y\mid k=0]</span></p>
 <p>and prespecified two-way interactions. Family-wise morphology tests use the repository’s corrected threshold; exploratory downstream endpoints must be labeled exploratory. The existing results show significant QRS and ST improvements for full-versus-base in all three architecture families, while ECGFounder AUROC changes are not significant. That supports improved morphology without detected diagnostic-utility loss; it is <strong>not</strong> proof of clinical equivalence.</p>
 </section>
-<section id="reproducible-audit-checklist" class="level2" data-number="4.9">
-<h2 data-number="4.9" class="anchored" data-anchor-id="reproducible-audit-checklist"><span class="header-section-number">4.9</span> Reproducible audit checklist</h2>
+<section id="reproducible-audit-checklist" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="reproducible-audit-checklist"><span class="header-section-number">10.9</span> Reproducible audit checklist</h2>
 <ul>
 <li>Record exact file hashes and waveform shapes.</li>
 <li>Assert patient-disjoint splits and stable record order.</li>
@@ -4332,13 +4379,13 @@ aVL \approx I-\frac{II}{2},\quad aVF \approx II-\frac{I}{2}.</span></p>
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./17_one_lead_wavelet_ssl_live.html" class="pagination-link" aria-label="One-Lead Wavelet and SSL: Live Results">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL: Live Results</span></span>
+      <a href="./23_evidence_synthesis_and_run_gaps.html" class="pagination-link" aria-label="Evidence Synthesis and Run Gaps">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Evidence Synthesis and Run Gaps</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html" class="pagination-link" aria-label="Dataset Atlas: LUDB, ISP, and Sunnybrook">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">

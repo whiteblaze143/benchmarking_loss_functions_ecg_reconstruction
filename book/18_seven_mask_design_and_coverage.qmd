@@ -1,0 +1,78 @@
+---
+title: "Seven-Character Factorial Study: Design and Coverage"
+subtitle: "What the 160 cells mean, what exists, and what remains unmeasured"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: seven-mask-design-setup
+import pandas as pd
+import plotly.express as px
+from expanded_results import *
+```
+
+## Why this is a new experiment, not an enlarged four-mask table
+
+The legacy benchmark is a completed $3\times2^4=48$ architecture-by-loss grid.
+The newer mask is a **mixed-level** design: fixed MSE, five binary additions,
+and one five-level MMD selector. It therefore contains $2^5\times5=160$
+conditions per architecture and seed. The last character is categorical; the
+study does not estimate seven binary effects.
+
+| Position | Field | Levels | Scientific question |
+|---:|---|---|---|
+| 1 | MSE | fixed at 1 | common reconstruction anchor |
+| 2 | correlation | 0/1 | does scale-free waveform agreement help? |
+| 3 | derivative | 0/1 | does local slope matching preserve transitions? |
+| 4 | Kors VCG | 0/1 | does spatial-vector consistency help? |
+| 5 | energy distance | 0/1 | does distributional matching help? |
+| 6 | lead consistency | 0/1 | do electrophysiologic lead identities help? |
+| 7 | MMD kernel | 0–4 | which distributional geometry, if any, is useful? |
+
+```{python}
+#| label: seven-mask-decoder
+examples = pd.DataFrame([decode_mask(mask) for mask in
+                         ["1000000", "1100000", "1110000", "1111110", "1111114"]])
+display(examples)
+```
+
+## Live checkpoint reconciliation
+
+The table is recomputed from the checkpoint catalog on every render. A
+registered checkpoint is not automatically a test-set result or a clinical
+evaluation.
+
+```{python}
+#| label: seven-mask-checkpoint-coverage
+coverage = checkpoint_completeness()
+display(coverage.style.format({"coverage_pct": "{:.1f}%"}))
+fig = px.bar(coverage, x="architecture", y="registered", color="architecture",
+             text="registered", range_y=[0, 168],
+             title="Seed-42 seven-mask checkpoints registered out of 160")
+fig.add_hline(y=160, line_dash="dash", annotation_text="complete grid")
+fig.show()
+```
+
+At the current snapshot, U-Net is complete, MSVAE is missing five cells, and
+ECG-AIM is missing 37. Consequently, a full three-architecture factorial
+comparison is not yet estimable. Partial ECG-AIM rows are operational evidence,
+not a substitute for the missing cells.
+
+## Provenance gates
+
+Every admissible comparison must match observed leads (I, II, V2), PTB-XL
+patient split, 500 Hz/no-normalization preprocessing, seed, source generation,
+checkpoint selector, and evaluation version. Mask strings alone are not unique
+experimental identities. Historical four-mask results and one-lead results are
+kept in separate chapters.
+
+## Claims this chapter permits
+
+- Exact statements about which checkpoints are registered and verified.
+- Exact statements about design structure and missing cells.
+- No claims about test performance from checkpoint counts.
+- No architecture-wide clinical claims until clinical evaluation coverage is
+  reconciled separately.
+

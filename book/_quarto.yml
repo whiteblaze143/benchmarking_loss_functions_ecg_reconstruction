@@ -21,6 +21,14 @@ book:
         - 15_live_results_observatory.qmd
         - 16_three_lead_ecgaim_live.qmd
         - 17_one_lead_wavelet_ssl_live.qmd
+    - part: "Expanded Seven-Mask and One-Lead Evidence"
+      chapters:
+        - 18_seven_mask_design_and_coverage.qmd
+        - 19_seven_mask_reconstruction_results.qmd
+        - 20_missing_leads_v2_clinical_biomarkers.qmd
+        - 21_one_lead_architecture_and_spatial_results.qmd
+        - 22_one_lead_wavelet_ssl_mechanisms.qmd
+        - 23_evidence_synthesis_and_run_gaps.qmd
     - part: "I. Data, Cohorts, and Measurement"
       chapters:
         - 09_real_data_eda_and_diagnostics.qmd

@@ -1,0 +1,78 @@
+---
+title: "One-Lead Wavelet and SSL Mechanism Study"
+subtitle: "Incremental claims, physiological views, and boundary localization"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: wavelet-mechanism-setup
+import pandas as pd
+import plotly.express as px
+from expanded_results import *
+queue = wavelet_queue()
+```
+
+## Principal comparison
+
+The causal ordering is:
+
+`A0 → A0 + wavelet → A0 + wavelet + SSL`.
+
+E1 is reserved for the matched complementarity contrast
+`A0+wavelet+SSL` versus `E1+wavelet+SSL`. This prevents architectural changes
+from being credited to wavelets or SSL.
+
+## Live queue and metric availability
+
+```{python}
+#| label: wavelet-queue-status
+display(queue.status.value_counts(dropna=False).rename_axis("status").reset_index(name="jobs"))
+completed = queue.query("status == 'completed'").copy()
+metric_cols = [c for c in completed if c.startswith("metric.") and pd.api.types.is_numeric_dtype(completed[c])]
+visible = [c for c in ["ordinal", "id", "cell.name", "status", *metric_cols] if c in completed]
+display(completed[visible].sort_values("ordinal"))
+```
+
+```{python}
+#| label: wavelet-reconstruction-delineation-map
+if not completed.empty and {"metric.val_missing_pearson", "metric.miou_wave"}.issubset(completed):
+    fig = px.scatter(completed, x="metric.val_missing_pearson", y="metric.miou_wave",
+                     color="cell.wavelet_bank", symbol="cell.ssl_mode", hover_name="id",
+                     hover_data=[c for c in ["metric.P_iou", "metric.QRS_iou", "metric.T_iou",
+                                            "metric.boundary_f1_smoke"] if c in completed],
+                     title="Reconstruction–delineation trade-off among completed screens")
+    fig.update_traces(marker={"size": 10, "opacity": .8})
+    fig.show()
+```
+
+These are short screening runs unless replicated. The plot shows trade-offs; it
+does not provide multiplicity-corrected evidence for the top point.
+
+## Highest-value physiological contrast
+
+At matched TimeSformer, BYOL objective, optimizer, compute, seed, observed lead,
+and fusion, compare:
+
+- Morlet magnitude + Morlet phase
+- Morlet magnitude + UEG-repolarization phase
+
+If the second improves primarily T-on and T-off rather than all boundaries, it
+supports—without proving—the hypothesis that the physiology of the second SSL
+view matters. A generic lift could instead reflect regularization, scaling, or
+view difficulty.
+
+## Boundary-localization requirement
+
+RDB supervision provides six real boundary channels: P/QRS/T onset and offset.
+It does not provide peaks. Any physiology claim must report channel-level
+validity and timing error, not only macro IoU. T-peak must remain absent rather
+than being synthesized from an interval midpoint or detector.
+
+## Promotion gate
+
+Promote a configuration only after matched incremental improvement, seed and
+lead replication, no reconstruction regression beyond a prespecified margin,
+boundary-localized analysis, checkpoint provenance, and blinded LUDB/RDB
+evaluation. Otherwise label it exploratory.

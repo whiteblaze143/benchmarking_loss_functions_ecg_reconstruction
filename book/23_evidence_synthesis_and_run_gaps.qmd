@@ -1,0 +1,63 @@
+---
+title: "Evidence Synthesis and Run Gaps"
+subtitle: "What is known, what is absent, and what should run next"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: synthesis-setup
+import pandas as pd
+from expanded_results import *
+```
+
+## Cross-track evidence matrix
+
+```{python}
+#| label: synthesis-matrix
+display(evidence_matrix())
+```
+
+The matrix is intentionally asymmetric. Complete U-Net clinical coverage does
+not repair incomplete MSVAE or absent ECG-AIM clinical coverage. Likewise,
+one-lead wavelet/delineation evidence does not fill three-lead factorial cells.
+
+## Two claims, five blocks
+
+**Primary claim:** within a fixed architecture and input contract, composite
+loss terms have endpoint-dependent effects rather than a universal winner.
+
+**Supporting claim:** ECG-AIM spatial and wavelet/SSL mechanisms can add
+complementary reconstruction or delineation information, but only when isolated
+by matched deletion and physiological-view controls.
+
+| Block | Evidence | Status | Book destination |
+|---|---|---|---|
+| B1 | complete seven-mask waveform grid | U-Net complete; MSVAE/ECG-AIM incomplete | Ch. 18–19 |
+| B2 | loss-component and kernel isolation | U-Net screening available; paired test factorial pending | Ch. 19 |
+| B3 | `missing_leads_v2` clinical preservation | 160 U-Net, 37 MSVAE, 0 ECG-AIM | Ch. 20 |
+| B4 | one-lead spatial mechanism | checkpoint-rich, metric normalization/replication incomplete | Ch. 21 |
+| B5 | wavelet/SSL and UEG-phase mechanism | live 120-run queue; exploratory until replicated | Ch. 22 |
+
+## Next execution order
+
+1. Complete or formally freeze the missing five MSVAE and 37 ECG-AIM cells.
+2. Extend `missing_leads_v2` first to the remaining MSVAE checkpoints, then to
+   ECG-AIM using the same evaluation code and PTB-XL record order.
+3. Create a common per-record seven-mask inference ledger keyed by checkpoint
+   digest, architecture, mask, and seed.
+4. Replicate only the one-lead A0→wavelet→SSL and Morlet-phase→UEG-phase
+   contrasts that survive screening.
+5. Run blinded LUDB/RDB external delineation only for preregistered promoted
+   models, preserving six-boundary RDB validity.
+
+## Stop rules
+
+- Do not launch broad external evaluation for incomplete or provenance-failed
+  cells.
+- Do not interpret absence from a database as zero performance.
+- Do not pool validation and test metrics or four-mask and seven-mask studies.
+- Do not promote a one-seed maximum from a 160- or 120-cell screen.
+- Do not compress incompatible clinical endpoints into an unvalidated score.
+

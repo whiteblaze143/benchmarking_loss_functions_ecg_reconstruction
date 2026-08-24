@@ -1,0 +1,73 @@
+---
+title: "Seven-Character Factorial Reconstruction Results"
+subtitle: "Screening metrics, estimands, interactions, and stop conditions"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: seven-mask-results-setup
+import pandas as pd
+import plotly.express as px
+from expanded_results import *
+catalog = checkpoint_catalog().query("seed == 42")
+```
+
+## Evidence hierarchy
+
+Checkpoint metadata contain validation screening metrics for the U-Net
+generation, but the MSVAE and ECG-AIM catalog records do not carry equivalent
+numeric summaries. This chapter therefore visualizes U-Net validation results
+without implying that missing metadata equal missing training or poor results.
+Confirmatory claims require common test inference and paired per-record
+endpoints.
+
+```{python}
+#| label: seven-mask-metric-availability
+availability = (catalog.groupby("architecture")
+                .agg(checkpoints=("model_id", "nunique"),
+                     with_val_pearson=("val_missing_pearson", "count"),
+                     with_val_mse=("val_missing_mse", "count"))
+                .reset_index())
+display(availability)
+```
+
+## U-Net validation landscape
+
+```{python}
+#| label: seven-mask-unet-landscape
+unet = catalog.query("architecture == 'unet' and val_missing_pearson.notna()").copy()
+if not unet.empty:
+    unet["binary_terms"] = unet[["correlation", "derivative", "vcg", "energy", "lead_consistency"]].sum(axis=1)
+    fig = px.scatter(unet, x="val_missing_mse", y="val_missing_pearson",
+                     color="mmd_kernel", symbol="binary_terms", hover_name="model_id",
+                     hover_data=LOSS_COLUMNS + ["mask"],
+                     title="U-Net validation trade-off across all 160 mixed-level cells")
+    fig.update_traces(marker={"size": 9, "opacity": .78})
+    fig.show()
+    display(unet.nlargest(12, "val_missing_pearson")[["model_id", "mask",
+        "val_missing_pearson", "val_missing_mse", *LOSS_COLUMNS, "mmd_kernel"]])
+```
+
+The strongest validation cell is a selector result, not a test-set conclusion.
+Because the same validation set selected checkpoints and ranks cells, its
+optimism must not be reported as generalization gain.
+
+## Factorial interpretation contract
+
+The confirmatory analysis should estimate five binary main effects, four MMD
+contrasts against level zero, and prespecified interactions using paired records
+and seed blocks. It should not rank 160 cells and declare the maximum a discovery.
+The all-binary-on masks `1111110`–`1111114` form a kernel family; none is a
+generic “full loss” independent of kernel choice.
+
+## What remains before a defensible result
+
+1. Finish the five MSVAE and 37 ECG-AIM checkpoint cells or explicitly freeze a
+   reduced estimand.
+2. Run identical, generation-bound missing-lead test inference.
+3. Preserve per-record pairing and patient clustering.
+4. Report optimization failures rather than silently dropping masks.
+5. Treat U-Net validation patterns as hypothesis generation until replicated.
+

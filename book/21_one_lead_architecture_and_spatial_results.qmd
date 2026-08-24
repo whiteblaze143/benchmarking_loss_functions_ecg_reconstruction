@@ -1,0 +1,68 @@
+---
+title: "One-Lead Reconstruction: Architecture and Spatial Conditioning"
+subtitle: "Lead I versus II, architecture controls, and ECG-AIM spatial ablations"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: onelead-architecture-setup
+import pandas as pd
+import plotly.express as px
+from expanded_results import *
+one = onelead_catalog()
+```
+
+## A distinct input contract
+
+These models observe lead I **or** lead II, not I+II+V2. Their difficulty,
+architecture, masks, and claims differ from the three-lead factorial study.
+They must never be appended as additional rows in a three-lead leaderboard.
+
+## Registered model inventory
+
+```{python}
+#| label: onelead-model-inventory
+inventory = (one.groupby(["architecture", "factorial_mask", "observed_lead", "status"])
+             .size().rename("models").reset_index()) if not one.empty else pd.DataFrame()
+display(inventory)
+if not inventory.empty:
+    fig = px.bar(inventory, x="architecture", y="models", color="factorial_mask",
+                 facet_col="observed_lead", barmode="stack",
+                 title="One-lead checkpoint coverage by architecture, mask, and observed lead")
+    fig.show()
+```
+
+Checkpoint counts document what is recoverable; they do not supply comparable
+test metrics. The spatial queue studied A0 through E1, exact-$\Theta$ controls,
+capacity matching, and permuted geometry. Those comparisons are interpretable
+only when mask, seed, observed lead, training budget, and checkpoint selection
+match.
+
+## Claim hierarchy
+
+1. **A0 → spatial encoding:** does explicit lead identity add information?
+2. **Panorama → relative geometry:** does electrode relationship matter beyond
+   an embedding label?
+3. **True → permuted geometry:** is any gain genuinely anatomical rather than
+   extra capacity or conditioning?
+4. **A0 versus E1:** complementarity only. Current `1110000` evidence does not
+   justify calling E1 the improved base architecture.
+
+## Required interpretation
+
+A result that improves lead I but not lead II is not automatically unstable:
+the two observed leads carry different spatial information. It becomes a broad
+architecture claim only after replication across seeds and both observed leads.
+Permutation controls are essential because a learned positional pathway can
+help through capacity even when its geometry is physiologically wrong.
+
+## Missing evidence
+
+- A normalized, per-run metric table for every registered one-lead checkpoint.
+- Seed replication for promoted spatial comparisons.
+- Common clinical evaluation under a one-lead-specific protocol.
+- External delineation for promoted models, separate from development-time RDB
+  supervision.
+

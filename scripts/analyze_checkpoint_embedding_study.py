@@ -8,16 +8,26 @@ test only for final paired estimates. UMAP remains descriptive.
 from __future__ import annotations
 
 import argparse
+import fcntl
+import hashlib
 import json
 import math
 import sqlite3
 import sys
+import time
 import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 import numpy as np
 import pandas as pd
+
+
+def file_sha256(path: Path) -> str:
+    h=hashlib.sha256()
+    with path.open("rb") as f:
+        for block in iter(lambda:f.read(1024*1024),b""):h.update(block)
+    return h.hexdigest()
 
 
 def connect(path: Path) -> sqlite3.Connection:
@@ -32,6 +42,22 @@ def connect(path: Path) -> sqlite3.Connection:
       job_id TEXT NOT NULL,outcome TEXT NOT NULL,predictor_set TEXT NOT NULL,metric TEXT NOT NULL,
       value REAL,ci_low REAL,ci_high REAL,n INTEGER,details_json TEXT,
       PRIMARY KEY(job_id,outcome,predictor_set,metric));
+    CREATE TABLE IF NOT EXISTS regression_predictions(
+      job_id TEXT NOT NULL,outcome TEXT NOT NULL,predictor_set TEXT NOT NULL,record_id TEXT NOT NULL,
+      split TEXT NOT NULL,truth REAL NOT NULL,prediction REAL NOT NULL,
+      PRIMARY KEY(job_id,outcome,predictor_set,record_id));
+    CREATE TABLE IF NOT EXISTS multiclass_results(
+      job_id TEXT NOT NULL,outcome TEXT NOT NULL,class_label TEXT NOT NULL,metric TEXT NOT NULL,
+      value REAL,ci_low REAL,ci_high REAL,n INTEGER,details_json TEXT,
+      PRIMARY KEY(job_id,outcome,class_label,metric));
+    CREATE TABLE IF NOT EXISTS confusion_matrix(
+      job_id TEXT NOT NULL,outcome TEXT NOT NULL,true_label TEXT NOT NULL,predicted_label TEXT NOT NULL,
+      count INTEGER NOT NULL,row_fraction REAL NOT NULL,
+      PRIMARY KEY(job_id,outcome,true_label,predicted_label));
+    CREATE TABLE IF NOT EXISTS classification_predictions(
+      job_id TEXT NOT NULL,outcome TEXT NOT NULL,record_id TEXT NOT NULL,split TEXT NOT NULL,
+      true_label TEXT NOT NULL,predicted_label TEXT NOT NULL,probabilities_json TEXT NOT NULL,
+      PRIMARY KEY(job_id,outcome,record_id));
     CREATE TABLE IF NOT EXISTS paired_comparisons(
       job_a TEXT NOT NULL,job_b TEXT NOT NULL,outcome TEXT NOT NULL,metric TEXT NOT NULL,
       delta_b_minus_a REAL,ci_low REAL,ci_high REAL,p_value REAL,details_json TEXT,
@@ -48,6 +74,33 @@ def connect(path: Path) -> sqlite3.Connection:
       details_json TEXT,PRIMARY KEY(family,hypothesis,method));
     """)
     return c
+
+
+def wait_for_feature_gate(c, stop_file: Path, interval: int = 60):
+    """Wait on committed database invariants, never a transient worker PID."""
+    while True:
+        row=c.execute("select value from study_metadata where key='frozen_config_json'").fetchone()
+        if row:
+            cfg=json.loads(row[0]);expected=len(cfg.get("primary_models",[]))+len(cfg.get("panel_models",[]))
+            jobs=c.execute("select job_id,status,completed_records,expected_records from jobs").fetchall()
+            complete=sum(r["status"]=="complete" and r["completed_records"]==r["expected_records"] for r in jobs)
+            bad_counts=[r["job_id"] for r in jobs if r["status"]=="complete" and r["completed_records"]!=r["expected_records"]]
+            if bad_counts:raise RuntimeError(f"completed jobs failed count gate: {bad_counts}")
+            db_path=Path(c.execute("pragma database_list").fetchone()[2]);lock_path=db_path.with_suffix(db_path.suffix+".lock")
+            lock_released=False
+            with lock_path.open("a+") as lock:
+                try:
+                    fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);lock_released=True;fcntl.flock(lock,fcntl.LOCK_UN)
+                except BlockingIOError:pass
+            if expected>0 and len(jobs)==expected and complete==expected and lock_released:
+                print(json.dumps({"event":"feature_gate_passed","jobs":expected,"extractor_lock_released":True}),flush=True);return
+            print(json.dumps({"event":"waiting_for_feature_gate","jobs_seen":len(jobs),"jobs_complete":complete,
+                              "jobs_expected":expected,"extractor_lock_released":lock_released}),flush=True)
+        else:print(json.dumps({"event":"waiting_for_frozen_config"}),flush=True)
+        if stop_file.exists():
+            print(json.dumps({"event":"postanalysis_stop_requested","stop_file":str(stop_file)}),flush=True)
+            raise SystemExit(0)
+        time.sleep(interval)
 
 
 def unpack(blob, dim):
@@ -198,6 +251,9 @@ def fit_and_store_regression(c,jid,meta,x,nboot,seed):
             c.execute("insert or replace into extended_results values(?,?,?,?,?,?,?,?,?)",
               (jid,"annotation_QRSon_Toff_ms",name,k,float(v) if np.isfinite(v) else None,lo,hi,len(truth),json.dumps(details)))
         outputs[name]={"record_id":meta.loc[te&ok,"record_id"].to_numpy(),"truth":truth,"pred":pred}
+        c.executemany("insert or replace into regression_predictions values(?,?,?,?,?,?,?)",
+          [(jid,"annotation_QRSon_Toff_ms",name,str(rid),"test",float(yy),float(pp))
+           for rid,yy,pp in zip(outputs[name]["record_id"],truth,pred)])
     return outputs
 
 
@@ -233,6 +289,48 @@ def quality_control_or(c,jid,meta,x,oracle_path):
     c.execute("insert or replace into extended_results values(?,?,?,?,?,?,?,?,?)",
       (jid,"reconstruction_failure","latent_outlier","predicted_risk_IQR_contrast",float(risk(q75)-risk(q25)),None,None,int(te.sum()),json.dumps(details)))
     return {"p_value":float(pv),"or":orr,"ci_low":lo,"ci_high":hi}
+
+
+def fit_store_multiclass(c,jid,meta,x,nboot,seed):
+    from sklearn.decomposition import PCA
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import (average_precision_score,balanced_accuracy_score,confusion_matrix,
+                                 f1_score,log_loss,roc_auc_score)
+    from sklearn.preprocessing import StandardScaler,label_binarize
+    tr=meta.split.eq("train").to_numpy();va=meta.split.eq("val").to_numpy();te=meta.split.eq("test").to_numpy()
+    y=meta.canonical_rhythm.to_numpy();sx=StandardScaler().fit(x[tr]);xs=sx.transform(x)
+    pca=PCA(n_components=8,random_state=42).fit(xs[tr]);z=pca.transform(xs)
+    cand=[]
+    for d in (1,2,4,8):
+      for C in (.01,.1,1,10):
+        q=LogisticRegression(C=C,class_weight="balanced",solver="lbfgs",max_iter=3000).fit(z[tr,:d],y[tr])
+        cand.append((log_loss(y[va],q.predict_proba(z[va,:d]),labels=q.classes_),d,C))
+    _,d,C=min(cand,key=lambda a:(a[0],a[1],a[2]));q=LogisticRegression(C=C,class_weight="balanced",solver="lbfgs",max_iter=3000).fit(z[tr|va,:d],y[tr|va])
+    truth=y[te];pred=q.predict(z[te,:d]);prob=q.predict_proba(z[te,:d]);classes=q.classes_;yb=label_binarize(truth,classes=classes)
+    macro={"balanced_accuracy":balanced_accuracy_score(truth,pred),"macro_f1":f1_score(truth,pred,average="macro"),
+           "macro_ovr_auroc":roc_auc_score(yb,prob,average="macro"),
+           "macro_ovr_auprc":average_precision_score(yb,prob,average="macro"),"multiclass_log_loss":log_loss(truth,prob,labels=classes)}
+    rng=np.random.default_rng(seed);boots={k:[] for k in macro}
+    for _ in range(nboot):
+        ix=stratified_indices(truth,rng);tb=label_binarize(truth[ix],classes=classes)
+        v={"balanced_accuracy":balanced_accuracy_score(truth[ix],pred[ix]),"macro_f1":f1_score(truth[ix],pred[ix],average="macro"),
+           "macro_ovr_auroc":roc_auc_score(tb,prob[ix],average="macro"),"macro_ovr_auprc":average_precision_score(tb,prob[ix],average="macro"),
+           "multiclass_log_loss":log_loss(truth[ix],prob[ix],labels=classes)}
+        for k,zv in v.items():boots[k].append(zv)
+    details={"dims":d,"C":C,"selection":"validation_multiclass_log_loss","classes":classes.tolist(),"rare_codes_descriptive":True}
+    for k,v in macro.items():lo,hi=ci(boots[k]);c.execute("insert or replace into multiclass_results values(?,?,?,?,?,?,?,?,?)",(jid,"eight_code_rhythm","__macro__",k,float(v),lo,hi,len(truth),json.dumps(details)))
+    for ix,cl in enumerate(classes):
+        pos=truth==cl;phat=prob[:,ix];predpos=pred==cl;tp=np.sum(pos&predpos);fn=np.sum(pos&~predpos);tn=np.sum(~pos&~predpos);fp=np.sum(~pos&predpos)
+        vals={"sensitivity":tp/max(tp+fn,1),"specificity":tn/max(tn+fp,1),"ovr_auroc":roc_auc_score(pos,phat),"ovr_auprc":average_precision_score(pos,phat)}
+        bs={k:[] for k in vals}
+        for _ in range(nboot):
+            ii=stratified_indices(pos.astype(int),rng);pp=pos[ii];pr=predpos[ii];ps=phat[ii]
+            vv={"sensitivity":np.mean(pr[pp]),"specificity":np.mean(~pr[~pp]),"ovr_auroc":roc_auc_score(pp,ps),"ovr_auprc":average_precision_score(pp,ps)}
+            for k,zv in vv.items():bs[k].append(zv)
+        for k,v in vals.items():lo,hi=ci(bs[k]);c.execute("insert or replace into multiclass_results values(?,?,?,?,?,?,?,?,?)",(jid,"eight_code_rhythm",str(cl),k,float(v),lo,hi,int(pos.sum()),json.dumps(details)))
+    cm=confusion_matrix(truth,pred,labels=classes)
+    c.executemany("insert or replace into confusion_matrix values(?,?,?,?,?,?)",[(jid,"eight_code_rhythm",str(a),str(b),int(cm[i,j]),float(cm[i,j]/max(cm[i].sum(),1))) for i,a in enumerate(classes) for j,b in enumerate(classes)])
+    c.executemany("insert or replace into classification_predictions values(?,?,?,?,?,?,?)",[(jid,"eight_code_rhythm",str(r),"test",str(t),str(p),json.dumps({str(k):float(v) for k,v in zip(classes,pr)})) for r,t,p,pr in zip(meta.loc[te,"record_id"],truth,pred,prob)])
 
 
 def paired_delta(c,ja,jb,fa,fb,nboot,seed):
@@ -305,6 +403,41 @@ def umap_stability(c,jid):
         c.execute("insert or replace into umap_stability values(?,?,?,?,?,?,?,?)",(jid,split,a[0],a[1],b[0],b[1],"procrustes_similarity",score))
 
 
+def representation_diagnostics(c,jid,meta,x,nperm,seed):
+    """High-dimensional null tests and high-to-2D neighborhood preservation."""
+    from sklearn.decomposition import PCA
+    from sklearn.manifold import trustworthiness
+    from sklearn.metrics import pairwise_distances, silhouette_score
+    from sklearn.neighbors import NearestNeighbors
+    from sklearn.preprocessing import StandardScaler
+    tr=meta.split.eq("train").to_numpy();fit=tr if tr.any() else meta.split.eq("test").to_numpy()
+    test=meta.split.eq("test").to_numpy();sx=StandardScaler().fit(x[fit]);xs=sx.transform(x)
+    pca=PCA(n_components=min(50,fit.sum()-1,x.shape[1]),random_state=42).fit(xs[fit]);z=pca.transform(xs)
+    labels=meta.canonical_rhythm.to_numpy()[test];zt=z[test];rng=np.random.default_rng(seed)
+    dist=pairwise_distances(zt,metric="cosine");np.fill_diagonal(dist,0)
+    observed_sil=float(silhouette_score(dist,labels,metric="precomputed"))
+    nn=np.argsort(dist,axis=1)[:,1:11];observed_agree=float(np.mean(labels[:,None]==labels[nn]))
+    null_sil=[];null_agree=[]
+    for _ in range(nperm):
+        lab=rng.permutation(labels);null_sil.append(silhouette_score(dist,lab,metric="precomputed"));null_agree.append(np.mean(lab[:,None]==lab[nn]))
+    for metric,value,pv in (("rhythm_silhouette",observed_sil,(1+np.sum(np.asarray(null_sil)>=observed_sil))/(nperm+1)),
+                            ("knn10_code_agreement",observed_agree,(1+np.sum(np.asarray(null_agree)>=observed_agree))/(nperm+1))):
+        c.execute("insert or replace into diagnostics values(?,?,?,?,?,?,?,?)",
+          (jid,"rigorous_high_dim","test",seed,None,metric,value,json.dumps({"permutations":nperm,"one_sided_p":float(pv),"labels":"canonical_rhythm_codes"})))
+    # Compare original PCA-space neighbors with each test UMAP, never the axes.
+    hi=NearestNeighbors(n_neighbors=11,metric="cosine").fit(zt).kneighbors(zt,return_distance=False)[:,1:]
+    ids=meta.loc[test,"record_id"].to_numpy()
+    for (s,n),rows in pd.read_sql_query("select seed,neighbors,record_id,x,y from projections where job_id=? and method='umap_train_transform'",c,params=(jid,)).groupby(["seed","neighbors"]):
+        q=pd.DataFrame({"record_id":ids,"order":np.arange(len(ids))}).merge(rows,on="record_id").sort_values("order")
+        if len(q)!=len(ids):continue
+        xy=q[["x","y"]].to_numpy();lo=NearestNeighbors(n_neighbors=11).fit(xy).kneighbors(xy,return_distance=False)[:,1:]
+        jac=float(np.mean([len(set(a)&set(b))/len(set(a)|set(b)) for a,b in zip(hi,lo)]))
+        cont=float(trustworthiness(xy,zt,n_neighbors=10,metric="euclidean"))
+        for metric,value in (("high_to_2d_knn10_jaccard",jac),("continuity",cont)):
+            c.execute("insert or replace into diagnostics values(?,?,?,?,?,?,?,?)",
+              (jid,"projection_fidelity","test",int(s),int(n),metric,value,json.dumps({"UMAP_descriptive_only":True})))
+
+
 def adjust_p(c, qc_results):
     # Prespecified family: AF/AFIB-coded delta AUROC and Brier, annotation-derived
     # QRSon-Toff delta MAE, and reconstruction-failure outlier-score OR.
@@ -319,6 +452,20 @@ def adjust_p(c, qc_results):
     for (h,raw),p in zip(entries,adj):
         c.execute("insert or replace into multiplicity_results values(?,?,?,?,?,?)",
           ("prespecified_confirmatory",h,raw,float(p),"Holm",json.dumps({"family_size":len(entries)})))
+
+
+def adjust_exploratory(c):
+    rows=c.execute("select job_id,metric,details_json from diagnostics where analysis='rigorous_high_dim'").fetchall()
+    entries=[]
+    for r in rows:
+        d=json.loads(r["details_json"] or "{}");p=d.get("one_sided_p")
+        if p is not None:entries.append((f'{r["job_id"]}:{r["metric"]}',float(p)))
+    if not entries:return
+    from statsmodels.stats.multitest import multipletests
+    adj=multipletests([p for _,p in entries],method="fdr_bh")[1]
+    for (h,raw),p in zip(entries,adj):
+        c.execute("insert or replace into multiplicity_results values(?,?,?,?,?,?)",
+          ("representation_label_nulls",h,raw,float(p),"Benjamini-Hochberg",json.dumps({"family_size":len(entries),"exploratory":True})))
 
 
 def paired_regression_delta(c,ja,jb,ra,rb,nboot,seed):
@@ -343,9 +490,15 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("--db",type=Path,required=True)
     p.add_argument("--bootstrap",type=int,default=2000);p.add_argument("--seed",type=int,default=240824)
     p.add_argument("--oracle-db",type=Path,default=ROOT/"results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite")
+    p.add_argument("--permutations",type=int,default=1000)
+    p.add_argument("--wait-for-features",action="store_true")
+    p.add_argument("--stop-file",type=Path,default=ROOT/"results/checkpoint_embeddings/STOP_ANALYSIS")
     a=p.parse_args();c=connect(a.db);version="rigorous_v1"
+    if a.wait_for_features:wait_for_feature_gate(c,a.stop_file)
     c.execute("insert or replace into analysis_runs(analysis_version,status,details_json) values(?,'running',?)",
-              (version,json.dumps({"bootstrap":a.bootstrap,"seed":a.seed,"umap_is_descriptive":True})));c.commit()
+              (version,json.dumps({"bootstrap":a.bootstrap,"seed":a.seed,"umap_is_descriptive":True,
+                "permutations":a.permutations,"code_sha256":file_sha256(Path(__file__)),
+                "oracle_db":str(a.oracle_db.resolve())},sort_keys=True)));c.commit()
     try:
         jobs=[r["job_id"] for r in c.execute("select job_id from jobs where status='complete' order by rowid")]
         primary=[r["job_id"] for r in c.execute("select job_id from jobs where status='complete' and split_scope='all' order by rowid")]
@@ -353,11 +506,16 @@ def main():
         for j in primary:
             m,x=load_job(c,j);fits[j]=fit_binary(m,x);store_binary(c,j,fits[j],a.bootstrap,a.seed)
             regression[j]=fit_and_store_regression(c,j,m,x,a.bootstrap,a.seed+2)
-            qc[j]=quality_control_or(c,j,m,x,a.oracle_db);umap_stability(c,j);c.commit()
+            fit_store_multiclass(c,j,m,x,a.bootstrap,a.seed+5)
+            qc[j]=quality_control_or(c,j,m,x,a.oracle_db);umap_stability(c,j)
+            representation_diagnostics(c,j,m,x,a.permutations,a.seed+4);c.commit()
+        for j in jobs:
+            if j not in primary:
+                m,x=load_job(c,j);umap_stability(c,j);representation_diagnostics(c,j,m,x,a.permutations,a.seed+4);c.commit()
         if len(primary)>=2:
             paired_delta(c,primary[0],primary[1],fits[primary[0]],fits[primary[1]],a.bootstrap,a.seed+1)
             paired_regression_delta(c,primary[0],primary[1],regression[primary[0]],regression[primary[1]],a.bootstrap,a.seed+3)
-        checkpoint_pairs(c,jobs);adjust_p(c,qc)
+        checkpoint_pairs(c,jobs);adjust_p(c,qc);adjust_exploratory(c)
         c.execute("update analysis_runs set status='complete',completed_at=CURRENT_TIMESTAMP where analysis_version=?",(version,));c.commit()
         print(json.dumps({"event":"rigorous_analysis_complete","jobs":len(jobs),"primary_jobs":len(primary)}))
     except Exception as e:

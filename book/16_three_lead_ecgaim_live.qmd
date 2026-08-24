@@ -389,6 +389,92 @@ else:
     fig.show()
 ```
 
+### Repolarization-content agreement
+
+The repolarization endpoint is the annotation-derived interval from QRS onset
+to the subsequent T offset. It is reported in milliseconds but is **not** a
+clinical QT or QTc measurement. The probe ladder is compared against a
+mean-only predictor and the same three-summary waveform baseline. Alongside
+MAE/RMSE and correlation, the analysis reports Lin concordance, calibration,
+and Bland–Altman bias and limits of agreement. These detect scale or offset
+errors that correlation alone can conceal.
+
+```{python}
+#| label: repolarization-agreement
+if not extended.empty:
+    rep = extended.query("outcome == 'annotation_QRSon_Toff_ms'")
+    if not rep.empty:
+        display(rep.sort_values(["model_id","predictor_set","metric"]))
+
+rep_pred = read_sql_optional(STUDY_DB, "select * from regression_predictions")
+if rep_pred.empty:
+    display(pd.DataFrame([{"status":"pending annotation-derived duration probes"}]))
+else:
+    model_key = read_sql(STUDY_DB, "select job_id,model_id from jobs")
+    rep_pred = rep_pred.merge(model_key,on="job_id",how="left")
+    shown = rep_pred.query("predictor_set == 'latent'").copy()
+    shown["pair_mean_ms"] = (shown.truth + shown.prediction)/2
+    shown["prediction_minus_truth_ms"] = shown.prediction-shown.truth
+    fig = px.scatter(shown,x="pair_mean_ms",y="prediction_minus_truth_ms",color="model_id",
+                     hover_name="record_id",marginal_y="histogram",
+                     title="Annotation-derived QRSon–Toff Bland–Altman view")
+    fig.add_hline(y=0,line_dash="dash",line_color="black")
+    fig.show()
+```
+
+### Eight-code rhythm sensitivity analysis
+
+This is secondary and code-level. The multinomial penalty and latent dimension
+are selected by validation log loss, then frozen for test. Macro metrics prevent
+the 60-record groups from completely dominating AT (18), ST (21), and SVT (21),
+but those rare-code rows remain descriptive rather than independent clinical
+claims. Row-normalized confusion matrices show *which* rhythm codes exchange
+errors instead of compressing behavior into one accuracy number.
+
+```{python}
+#| label: rhythm-code-analysis
+multi = read_sql_optional(STUDY_DB,"select * from multiclass_results")
+conf = read_sql_optional(STUDY_DB,"select * from confusion_matrix")
+if multi.empty:
+    display(pd.DataFrame([{"status":"pending complete full-cohort checkpoint"}]))
+else:
+    model_key=read_sql(STUDY_DB,"select job_id,model_id from jobs")
+    multi=multi.merge(model_key,on="job_id",how="left")
+    display(multi.sort_values(["model_id","class_label","metric"]))
+    cm=conf.merge(model_key,on="job_id",how="left")
+    selected=cm.model_id.iloc[-1]
+    mat=cm[cm.model_id.eq(selected)].pivot(index="true_label",columns="predicted_label",values="row_fraction")
+    fig=px.imshow(mat,text_auto=".2f",aspect="auto",zmin=0,zmax=1,
+                  title=f"Row-normalized test confusion matrix · {selected}")
+    fig.show()
+```
+
+### Reconstruction quality-control odds ratio
+
+For a checkpoint with an exact SHA match in the RDB oracle, failure is frozen
+from validation data as missing-precordial Pearson below its 10th percentile or
+MSE above its 90th percentile. The predictor is a train-fitted eight-PC
+Ledoit–Wolf Mahalanobis outlier score. The reported OR is the cross-sectional
+odds of measured reconstruction failure per one training-standard-deviation
+increase in that score. It is a model quality-control association—not patient
+prognosis, AF incidence, or treatment benefit.
+
+```{python}
+#| label: reconstruction-failure-or
+qc_or = odds.query("outcome == 'reconstruction_failure'").copy() if not odds.empty else pd.DataFrame()
+qc_risk = extended.query("outcome == 'reconstruction_failure'").copy() if not extended.empty else pd.DataFrame()
+if qc_or.empty:
+    display(pd.DataFrame([{"status":"pending SHA-matched enhanced-checkpoint embeddings"}]))
+else:
+    display(qc_or)
+    display(qc_risk)
+    fig=px.scatter(qc_or,x="odds_ratio",y="predictor_set",error_x=qc_or.ci_high-qc_or.odds_ratio,
+                   error_x_minus=qc_or.odds_ratio-qc_or.ci_low,log_x=True,
+                   title="Reconstruction-failure OR per SD latent outlier score")
+    fig.add_vline(x=1,line_dash="dash",line_color="black")
+    fig.show()
+```
+
 ### Projection stability and live UMAP
 
 The production grid fixes five seeds and neighborhood sizes 10, 30, and 60.

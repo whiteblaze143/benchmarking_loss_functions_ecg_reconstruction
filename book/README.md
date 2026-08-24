@@ -19,7 +19,12 @@ PATH=/home/mithunmanivannan/.venv/bin:$PATH \
 
 The explicit `QUARTO_PYTHON` and `PATH` settings matter. Without them, Quarto may start a different `python3` kernel and fail to find the venv's `jupyter-cache`, WFDB, or analysis packages.
 
-The project uses shared site assets (`embed-resources: false`). Embedding every Plotly dependency in every chapter previously produced pages larger than 250 MB and caused full renders to be killed for memory use.
+The project uses shared site assets (`embed-resources: false`). Those resources
+are still embedded in the deployable `book/_book` artifact under `site_libs/`,
+and the Pages workflow uploads the whole artifact. Embedding every Plotly
+dependency separately inside every HTML file previously produced pages larger
+than 250 MB and caused full renders to be killed for memory use. A release audit
+must therefore verify every local `src`/`href` resolves inside `_book`.
 
 ### Fast live refresh
 
@@ -48,8 +53,17 @@ tmux capture-pane -p -t checkpoint_embedding_rdb
 ```
 
 Its compact live database is `results/checkpoint_embeddings/compact.sqlite`.
+The actual 2,304-dimensional pooled checkpoint embeddings are stored there as
+finite float16 arrays compressed with zlib and keyed by checkpoint SHA-256,
+record manifest, hook layer, and pooling version; they are not replaced by only
+the 2-D UMAP coordinates. Derived statistical tables populate after extraction.
 Create `results/checkpoint_embeddings/STOP` for a graceful batch-boundary stop;
 remove the sentinel and rerun the identical command to resume verified rows.
+The rigorous one-core handoff can be monitored with:
+
+```bash
+tmux capture-pane -p -t checkpoint_embedding_postanalysis
+```
 
 ### GitHub Pages
 

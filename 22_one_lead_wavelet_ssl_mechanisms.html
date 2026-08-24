@@ -1,0 +1,2170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>8&nbsp; One-Lead Wavelet and SSL Mechanism Study – Benchmarking Loss Functions for Electrocardiogram Reconstruction</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./23_evidence_synthesis_and_run_gaps.html" rel="next">
+<link href="./21_one_lead_architecture_and_spatial_results.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-58b16e5bbcaf6fe162629cd441a17d0d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-baa5153929e6df0f7b5bdd98bde6b2d2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-58b16e5bbcaf6fe162629cd441a17d0d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script type="text/javascript">
+window.PlotlyConfig = {MathJaxConfig: 'local'};
+if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+</script>
+<script type="module">import "https://cdn.plot.ly/plotly-3.3.1.min"</script>
+
+
+
+</head>
+
+<body class="nav-sidebar docked quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./18_seven_mask_design_and_coverage.html">Expanded Seven-Mask and One-Lead Evidence</a></li><li class="breadcrumb-item"><a href="./22_one_lead_wavelet_ssl_mechanisms.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL Mechanism Study</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Benchmarking Loss Functions for Electrocardiogram Reconstruction</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface &amp; Executive Summary</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Live Experiment Observatory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15_live_results_observatory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Live Experiment Observatory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16_three_lead_ecgaim_live.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Three-Lead ECG-AIM: Live Results</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./17_one_lead_wavelet_ssl_live.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL: Live Results</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Expanded Seven-Mask and One-Lead Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./18_seven_mask_design_and_coverage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Seven-Character Factorial Study: Design and Coverage</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./19_seven_mask_reconstruction_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Seven-Character Factorial Reconstruction Results</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_missing_leads_v2_clinical_biomarkers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Clinical Biomarker Preservation under missing_leads_v2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./21_one_lead_architecture_and_spatial_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">One-Lead Reconstruction: Architecture and Spatial Conditioning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./22_one_lead_wavelet_ssl_mechanisms.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL Mechanism Study</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./23_evidence_synthesis_and_run_gaps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Evidence Synthesis and Run Gaps</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">I. Data, Cohorts, and Measurement</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09_real_data_eda_and_diagnostics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_zhejiang_delineation_tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Zhejiang Cohort: Data Audit and Delineation Protocol</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_dataset_and_preprocessing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">PTB-XL Tensor, Lead, and Preprocessing Contract</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">II. Reconstruction Models and Objectives</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_network_architectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Implemented Reconstruction Architectures</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_loss_function_formulations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Implemented Loss Functions and Mixed-Level Design</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">III. Clinical and Statistical Evaluation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_clinical_metrics_and_delineation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Diagnostic Integrity &amp; Clinical Delineation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_regression_to_mean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Rigorous Agreement &amp; The Mathematics of Regression to the Mean</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06_fairness_robustness_sqi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Fairness, Noise Robustness, and Signal Quality Index (SQI)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">IV. Benchmark and External Validation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08_factorial_loss_matrix_benchmarks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Generation-Bound 48-Cell Factorial Benchmark</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07_smartwatch_reconstruction_case_study.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Smartwatch Simulator Transfer and Frozen-Classifier Fidelity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_echonext_classifier_external_validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">EchoNext External Validation: Available Evidence and Reproduction Boundary</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_exhaustive_model_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Generation-Bound Exhaustive Model Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">V. Visual and Clinical Atlases</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13_engineering_ml_visual_atlas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Engineering Integrity, Storage, and Reproducibility Atlas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14_cath_lab_clinical_trust_atlas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Clinical Trust, Cath-Lab Safety, and Validation Requirements</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#principal-comparison" id="toc-principal-comparison" class="nav-link active" data-scroll-target="#principal-comparison"><span class="header-section-number">8.1</span> Principal comparison</a></li>
+  <li><a href="#live-queue-and-metric-availability" id="toc-live-queue-and-metric-availability" class="nav-link" data-scroll-target="#live-queue-and-metric-availability"><span class="header-section-number">8.2</span> Live queue and metric availability</a></li>
+  <li><a href="#highest-value-physiological-contrast" id="toc-highest-value-physiological-contrast" class="nav-link" data-scroll-target="#highest-value-physiological-contrast"><span class="header-section-number">8.3</span> Highest-value physiological contrast</a></li>
+  <li><a href="#boundary-localization-requirement" id="toc-boundary-localization-requirement" class="nav-link" data-scroll-target="#boundary-localization-requirement"><span class="header-section-number">8.4</span> Boundary-localization requirement</a></li>
+  <li><a href="#promotion-gate" id="toc-promotion-gate" class="nav-link" data-scroll-target="#promotion-gate"><span class="header-section-number">8.5</span> Promotion gate</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./18_seven_mask_design_and_coverage.html">Expanded Seven-Mask and One-Lead Evidence</a></li><li class="breadcrumb-item"><a href="./22_one_lead_wavelet_ssl_mechanisms.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL Mechanism Study</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL Mechanism Study</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<p class="subtitle lead">Incremental claims, physiological views, and boundary localization</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="wavelet-mechanism-setup" class="cell" data-execution_count="1">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> expanded_results <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>queue <span class="op">=</span> wavelet_queue()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="principal-comparison" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="principal-comparison"><span class="header-section-number">8.1</span> Principal comparison</h2>
+<p>The causal ordering is:</p>
+<p><code>A0 → A0 + wavelet → A0 + wavelet + SSL</code>.</p>
+<p>E1 is reserved for the matched complementarity contrast <code>A0+wavelet+SSL</code> versus <code>E1+wavelet+SSL</code>. This prevents architectural changes from being credited to wavelets or SSL.</p>
+</section>
+<section id="live-queue-and-metric-availability" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="live-queue-and-metric-availability"><span class="header-section-number">8.2</span> Live queue and metric availability</h2>
+<div id="wavelet-queue-status" class="cell" data-execution_count="2">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>display(queue.status.value_counts(dropna<span class="op">=</span><span class="va">False</span>).rename_axis(<span class="st">"status"</span>).reset_index(name<span class="op">=</span><span class="st">"jobs"</span>))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>completed <span class="op">=</span> queue.query(<span class="st">"status == 'completed'"</span>).copy()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>metric_cols <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> completed <span class="cf">if</span> c.startswith(<span class="st">"metric."</span>) <span class="kw">and</span> pd.api.types.is_numeric_dtype(completed[c])]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>visible <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"ordinal"</span>, <span class="st">"id"</span>, <span class="st">"cell.name"</span>, <span class="st">"status"</span>, <span class="op">*</span>metric_cols] <span class="cf">if</span> c <span class="kw">in</span> completed]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>display(completed[visible].sort_values(<span class="st">"ordinal"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="wavelet-queue-status-1" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">status</th>
+<th data-quarto-table-cell-role="th">jobs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>pending</td>
+<td>83</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>completed</td>
+<td>35</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>failed_transient</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>running</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div id="wavelet-queue-status-2" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ordinal</th>
+<th data-quarto-table-cell-role="th">id</th>
+<th data-quarto-table-cell-role="th">cell.name</th>
+<th data-quarto-table-cell-role="th">status</th>
+<th data-quarto-table-cell-role="th">metric.P_iou</th>
+<th data-quarto-table-cell-role="th">metric.QRS_iou</th>
+<th data-quarto-table-cell-role="th">metric.T_iou</th>
+<th data-quarto-table-cell-role="th">metric.best_epoch</th>
+<th data-quarto-table-cell-role="th">metric.best_score</th>
+<th data-quarto-table-cell-role="th">metric.boundary_f1_smoke</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">metric.train_consistency</th>
+<th data-quarto-table-cell-role="th">metric.train_dice</th>
+<th data-quarto-table-cell-role="th">metric.train_fid</th>
+<th data-quarto-table-cell-role="th">metric.train_grad_norm</th>
+<th data-quarto-table-cell-role="th">metric.train_recon</th>
+<th data-quarto-table-cell-role="th">metric.train_ssl</th>
+<th data-quarto-table-cell-role="th">metric.train_total</th>
+<th data-quarto-table-cell-role="th">metric.val_missing_pearson</th>
+<th data-quarto-table-cell-role="th">metric.val_missing_pearson_p05</th>
+<th data-quarto-table-cell-role="th">metric.val_recon_loss</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>0</td>
+<td>A0_raw_1110000_s42_l0</td>
+<td>A0_raw</td>
+<td>completed</td>
+<td>0.452241</td>
+<td>0.864959</td>
+<td>0.646499</td>
+<td>3.0</td>
+<td>0.896224</td>
+<td>0.684217</td>
+<td>...</td>
+<td>0.000774</td>
+<td>0.194532</td>
+<td>0.0</td>
+<td>0.718200</td>
+<td>1.714907</td>
+<td>0.000000</td>
+<td>2.067582</td>
+<td>0.706035</td>
+<td>0.365109</td>
+<td>0.938928</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>1</td>
+<td>E1_raw_1110000_s42_l0</td>
+<td>E1_raw</td>
+<td>completed</td>
+<td>0.446201</td>
+<td>0.865611</td>
+<td>0.641759</td>
+<td>3.0</td>
+<td>0.891100</td>
+<td>0.676260</td>
+<td>...</td>
+<td>0.000683</td>
+<td>0.194993</td>
+<td>0.0</td>
+<td>0.795605</td>
+<td>1.713270</td>
+<td>0.000000</td>
+<td>2.066996</td>
+<td>0.708448</td>
+<td>0.378072</td>
+<td>0.933635</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2</td>
+<td>A0_wave_noSSL_gated_add_1110000_s42_l0</td>
+<td>A0_wave_noSSL_gated_add</td>
+<td>completed</td>
+<td>0.622998</td>
+<td>0.866392</td>
+<td>0.712302</td>
+<td>3.0</td>
+<td>0.991355</td>
+<td>0.744386</td>
+<td>...</td>
+<td>0.000699</td>
+<td>0.185054</td>
+<td>0.0</td>
+<td>0.717676</td>
+<td>1.710425</td>
+<td>0.000000</td>
+<td>2.049955</td>
+<td>0.713615</td>
+<td>0.370868</td>
+<td>0.922718</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>3</td>
+<td>A0_wave_noSSL_cross_attn_1110000_s42_l0</td>
+<td>A0_wave_noSSL_cross_attn</td>
+<td>completed</td>
+<td>0.460712</td>
+<td>0.864404</td>
+<td>0.652415</td>
+<td>3.0</td>
+<td>0.901219</td>
+<td>0.685556</td>
+<td>...</td>
+<td>0.000688</td>
+<td>0.194223</td>
+<td>0.0</td>
+<td>0.727035</td>
+<td>1.713994</td>
+<td>0.000000</td>
+<td>2.066252</td>
+<td>0.706533</td>
+<td>0.363690</td>
+<td>0.938748</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>4</td>
+<td>E1_wave_noSSL_gated_add_1110000_s42_l0</td>
+<td>E1_wave_noSSL_gated_add</td>
+<td>completed</td>
+<td>0.571073</td>
+<td>0.865947</td>
+<td>0.694647</td>
+<td>3.0</td>
+<td>0.961896</td>
+<td>0.720563</td>
+<td>...</td>
+<td>0.000698</td>
+<td>0.190173</td>
+<td>0.0</td>
+<td>0.829660</td>
+<td>1.712508</td>
+<td>0.000000</td>
+<td>2.059558</td>
+<td>0.712001</td>
+<td>0.378688</td>
+<td>0.926424</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>5</td>
+<td>E1_wave_noSSL_cross_attn_1110000_s42_l0</td>
+<td>E1_wave_noSSL_cross_attn</td>
+<td>completed</td>
+<td>0.440263</td>
+<td>0.864722</td>
+<td>0.640358</td>
+<td>3.0</td>
+<td>0.888173</td>
+<td>0.676245</td>
+<td>...</td>
+<td>0.000695</td>
+<td>0.195413</td>
+<td>0.0</td>
+<td>0.839570</td>
+<td>1.714688</td>
+<td>0.000000</td>
+<td>2.068948</td>
+<td>0.706638</td>
+<td>0.367066</td>
+<td>0.936851</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>6</td>
+<td>P1_A0_morlet_mag_phase_noSSL_1110000_s42_l0</td>
+<td>P1_A0_morlet_mag_phase_noSSL</td>
+<td>completed</td>
+<td>0.616745</td>
+<td>0.866134</td>
+<td>0.711986</td>
+<td>3.0</td>
+<td>0.986732</td>
+<td>0.734738</td>
+<td>...</td>
+<td>0.000835</td>
+<td>0.185769</td>
+<td>0.0</td>
+<td>0.688591</td>
+<td>1.711107</td>
+<td>0.000000</td>
+<td>2.051690</td>
+<td>0.714259</td>
+<td>0.374946</td>
+<td>0.921840</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>7</td>
+<td>R0_morlet_mag_morlet_phase_1110000_s42_l0</td>
+<td>R0_morlet_mag_morlet_phase</td>
+<td>completed</td>
+<td>0.628681</td>
+<td>0.866849</td>
+<td>0.718116</td>
+<td>3.0</td>
+<td>0.996448</td>
+<td>0.748121</td>
+<td>...</td>
+<td>0.000843</td>
+<td>0.185039</td>
+<td>0.0</td>
+<td>0.730251</td>
+<td>1.708506</td>
+<td>0.275134</td>
+<td>2.062026</td>
+<td>0.715353</td>
+<td>0.369800</td>
+<td>0.919543</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>8</td>
+<td>R1_morlet_mag_ueg_phase_1110000_s42_l0</td>
+<td>R1_morlet_mag_ueg_phase</td>
+<td>completed</td>
+<td>0.626556</td>
+<td>0.867839</td>
+<td>0.722213</td>
+<td>3.0</td>
+<td>0.998195</td>
+<td>0.751148</td>
+<td>...</td>
+<td>0.000784</td>
+<td>0.184643</td>
+<td>0.0</td>
+<td>0.740922</td>
+<td>1.706155</td>
+<td>0.133708</td>
+<td>2.051564</td>
+<td>0.715390</td>
+<td>0.377057</td>
+<td>0.920305</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>9</td>
+<td>C1_E1_morlet_mag_morlet_phase_1110000_s42_l0</td>
+<td>C1_E1_morlet_mag_morlet_phase</td>
+<td>completed</td>
+<td>0.635202</td>
+<td>0.865329</td>
+<td>0.721064</td>
+<td>3.0</td>
+<td>0.998201</td>
+<td>0.744810</td>
+<td>...</td>
+<td>0.000660</td>
+<td>0.185066</td>
+<td>0.0</td>
+<td>0.842742</td>
+<td>1.709847</td>
+<td>0.181467</td>
+<td>2.058350</td>
+<td>0.714671</td>
+<td>0.374834</td>
+<td>0.920371</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">10</th>
+<td>10</td>
+<td>R2_morlet_mag_ueg_phase_sin_1110000_s42_l0</td>
+<td>R2_morlet_mag_ueg_phase_sin</td>
+<td>completed</td>
+<td>0.624298</td>
+<td>0.866473</td>
+<td>0.718119</td>
+<td>3.0</td>
+<td>0.994966</td>
+<td>0.748434</td>
+<td>...</td>
+<td>0.000755</td>
+<td>0.184894</td>
+<td>0.0</td>
+<td>0.693257</td>
+<td>1.709310</td>
+<td>0.174108</td>
+<td>2.057035</td>
+<td>0.715610</td>
+<td>0.379316</td>
+<td>0.920825</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">11</th>
+<td>11</td>
+<td>R3_morlet_logmag_ueg_phase_sin_1110000_s42_l0</td>
+<td>R3_morlet_logmag_ueg_phase_sin</td>
+<td>completed</td>
+<td>0.609206</td>
+<td>0.866116</td>
+<td>0.706306</td>
+<td>3.0</td>
+<td>0.984742</td>
+<td>0.744371</td>
+<td>...</td>
+<td>0.000724</td>
+<td>0.185583</td>
+<td>0.0</td>
+<td>0.709574</td>
+<td>1.711005</td>
+<td>0.206518</td>
+<td>2.061694</td>
+<td>0.714398</td>
+<td>0.371623</td>
+<td>0.921943</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">12</th>
+<td>12</td>
+<td>R7_morlet_mag_ueg_real_1110000_s42_l0</td>
+<td>R7_morlet_mag_ueg_real</td>
+<td>completed</td>
+<td>0.636249</td>
+<td>0.868259</td>
+<td>0.720775</td>
+<td>3.0</td>
+<td>1.000782</td>
+<td>0.749404</td>
+<td>...</td>
+<td>0.000721</td>
+<td>0.183849</td>
+<td>0.0</td>
+<td>0.732696</td>
+<td>1.708323</td>
+<td>0.244158</td>
+<td>2.057950</td>
+<td>0.716705</td>
+<td>0.380639</td>
+<td>0.916403</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">13</th>
+<td>13</td>
+<td>R8_morlet_mag_ueg_mag_1110000_s42_l0</td>
+<td>R8_morlet_mag_ueg_mag</td>
+<td>completed</td>
+<td>0.621168</td>
+<td>0.865869</td>
+<td>0.711324</td>
+<td>3.0</td>
+<td>0.993076</td>
+<td>0.754832</td>
+<td>...</td>
+<td>0.000803</td>
+<td>0.184391</td>
+<td>0.0</td>
+<td>0.683997</td>
+<td>1.708115</td>
+<td>0.140687</td>
+<td>2.053728</td>
+<td>0.715818</td>
+<td>0.376172</td>
+<td>0.919606</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">15</th>
+<td>15</td>
+<td>R4_morlet_mag_ueg_phase_wyatt_1110000_s42_l0</td>
+<td>R4_morlet_mag_ueg_phase_wyatt</td>
+<td>completed</td>
+<td>0.632354</td>
+<td>0.865607</td>
+<td>0.715495</td>
+<td>3.0</td>
+<td>0.996655</td>
+<td>0.749509</td>
+<td>...</td>
+<td>0.000738</td>
+<td>0.185131</td>
+<td>0.0</td>
+<td>0.741079</td>
+<td>1.709867</td>
+<td>0.217758</td>
+<td>2.060489</td>
+<td>0.714588</td>
+<td>0.363895</td>
+<td>0.920725</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">16</th>
+<td>16</td>
+<td>R5_morlet_mag_ueg_phase_wyatt_1110000_s42_l0</td>
+<td>R5_morlet_mag_ueg_phase_wyatt</td>
+<td>completed</td>
+<td>0.633382</td>
+<td>0.866430</td>
+<td>0.716772</td>
+<td>3.0</td>
+<td>0.997352</td>
+<td>0.748241</td>
+<td>...</td>
+<td>0.000671</td>
+<td>0.184555</td>
+<td>0.0</td>
+<td>0.736367</td>
+<td>1.709620</td>
+<td>0.153503</td>
+<td>2.056072</td>
+<td>0.714300</td>
+<td>0.372670</td>
+<td>0.921286</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">17</th>
+<td>17</td>
+<td>R6_morlet_mag_ueg_phase_wyatt_1110000_s42_l0</td>
+<td>R6_morlet_mag_ueg_phase_wyatt</td>
+<td>completed</td>
+<td>0.635065</td>
+<td>0.865357</td>
+<td>0.720399</td>
+<td>3.0</td>
+<td>0.997936</td>
+<td>0.744859</td>
+<td>...</td>
+<td>0.000707</td>
+<td>0.185155</td>
+<td>0.0</td>
+<td>0.717898</td>
+<td>1.709672</td>
+<td>0.103537</td>
+<td>2.054656</td>
+<td>0.714480</td>
+<td>0.380759</td>
+<td>0.922110</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">18</th>
+<td>18</td>
+<td>ssl_magnitude_phase_local_gated_add_1110000_s4...</td>
+<td>ssl_magnitude_phase_local_gated_add</td>
+<td>completed</td>
+<td>0.628616</td>
+<td>0.867727</td>
+<td>0.710968</td>
+<td>3.0</td>
+<td>0.992894</td>
+<td>0.743252</td>
+<td>...</td>
+<td>0.000706</td>
+<td>0.185278</td>
+<td>0.0</td>
+<td>0.732149</td>
+<td>1.711118</td>
+<td>0.075371</td>
+<td>2.054884</td>
+<td>0.713108</td>
+<td>0.366727</td>
+<td>0.924014</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">19</th>
+<td>19</td>
+<td>ssl_magnitude_phase_local_cross_attn_1110000_s...</td>
+<td>ssl_magnitude_phase_local_cross_attn</td>
+<td>completed</td>
+<td>0.473379</td>
+<td>0.865642</td>
+<td>0.667664</td>
+<td>3.0</td>
+<td>0.913070</td>
+<td>0.693089</td>
+<td>...</td>
+<td>0.000737</td>
+<td>0.193087</td>
+<td>0.0</td>
+<td>0.728924</td>
+<td>1.713045</td>
+<td>0.005536</td>
+<td>2.063549</td>
+<td>0.709023</td>
+<td>0.367248</td>
+<td>0.932877</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">20</th>
+<td>20</td>
+<td>ssl_magnitude_phase_both_gated_add_1110000_s42_l0</td>
+<td>ssl_magnitude_phase_both_gated_add</td>
+<td>completed</td>
+<td>0.636044</td>
+<td>0.867226</td>
+<td>0.715316</td>
+<td>3.0</td>
+<td>0.998267</td>
+<td>0.748728</td>
+<td>...</td>
+<td>0.000765</td>
+<td>0.184598</td>
+<td>0.0</td>
+<td>0.759591</td>
+<td>1.708567</td>
+<td>0.170510</td>
+<td>2.056082</td>
+<td>0.715561</td>
+<td>0.375901</td>
+<td>0.919415</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">21</th>
+<td>21</td>
+<td>ssl_magnitude_phase_both_cross_attn_1110000_s4...</td>
+<td>ssl_magnitude_phase_both_cross_attn</td>
+<td>completed</td>
+<td>0.461120</td>
+<td>0.866196</td>
+<td>0.657650</td>
+<td>3.0</td>
+<td>0.904677</td>
+<td>0.688468</td>
+<td>...</td>
+<td>0.000782</td>
+<td>0.193781</td>
+<td>0.0</td>
+<td>0.745521</td>
+<td>1.713178</td>
+<td>0.078179</td>
+<td>2.068303</td>
+<td>0.709047</td>
+<td>0.371360</td>
+<td>0.933332</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">22</th>
+<td>22</td>
+<td>ssl_magnitude_phase_sin_local_gated_add_111000...</td>
+<td>ssl_magnitude_phase_sin_local_gated_add</td>
+<td>completed</td>
+<td>0.627078</td>
+<td>0.867692</td>
+<td>0.716730</td>
+<td>3.0</td>
+<td>0.995534</td>
+<td>0.748189</td>
+<td>...</td>
+<td>0.000763</td>
+<td>0.184845</td>
+<td>0.0</td>
+<td>0.744216</td>
+<td>1.711082</td>
+<td>0.086581</td>
+<td>2.054667</td>
+<td>0.713206</td>
+<td>0.373559</td>
+<td>0.923261</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">23</th>
+<td>23</td>
+<td>ssl_magnitude_phase_sin_local_cross_attn_11100...</td>
+<td>ssl_magnitude_phase_sin_local_cross_attn</td>
+<td>completed</td>
+<td>0.466581</td>
+<td>0.864968</td>
+<td>0.662056</td>
+<td>3.0</td>
+<td>0.908142</td>
+<td>0.690984</td>
+<td>...</td>
+<td>0.000760</td>
+<td>0.193763</td>
+<td>0.0</td>
+<td>0.746025</td>
+<td>1.715410</td>
+<td>0.004581</td>
+<td>2.066964</td>
+<td>0.708614</td>
+<td>0.360923</td>
+<td>0.934864</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">24</th>
+<td>24</td>
+<td>ssl_magnitude_phase_sin_both_gated_add_1110000...</td>
+<td>ssl_magnitude_phase_sin_both_gated_add</td>
+<td>completed</td>
+<td>0.618840</td>
+<td>0.866402</td>
+<td>0.711927</td>
+<td>3.0</td>
+<td>0.989583</td>
+<td>0.743675</td>
+<td>...</td>
+<td>0.000746</td>
+<td>0.185698</td>
+<td>0.0</td>
+<td>0.744134</td>
+<td>1.711665</td>
+<td>0.156214</td>
+<td>2.060206</td>
+<td>0.712744</td>
+<td>0.369241</td>
+<td>0.925018</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">25</th>
+<td>25</td>
+<td>ssl_magnitude_phase_sin_both_cross_attn_111000...</td>
+<td>ssl_magnitude_phase_sin_both_cross_attn</td>
+<td>completed</td>
+<td>0.456674</td>
+<td>0.865004</td>
+<td>0.649894</td>
+<td>3.0</td>
+<td>0.899499</td>
+<td>0.686231</td>
+<td>...</td>
+<td>0.000705</td>
+<td>0.194319</td>
+<td>0.0</td>
+<td>0.760992</td>
+<td>1.715233</td>
+<td>0.000346</td>
+<td>2.067530</td>
+<td>0.707502</td>
+<td>0.365168</td>
+<td>0.936470</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">26</th>
+<td>26</td>
+<td>ssl_log_magnitude_phase_sin_local_gated_add_11...</td>
+<td>ssl_log_magnitude_phase_sin_local_gated_add</td>
+<td>completed</td>
+<td>0.622191</td>
+<td>0.866693</td>
+<td>0.722480</td>
+<td>3.0</td>
+<td>0.996471</td>
+<td>0.751306</td>
+<td>...</td>
+<td>0.000786</td>
+<td>0.184810</td>
+<td>0.0</td>
+<td>0.701815</td>
+<td>1.708561</td>
+<td>0.045161</td>
+<td>2.049871</td>
+<td>0.715229</td>
+<td>0.373057</td>
+<td>0.919918</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">27</th>
+<td>27</td>
+<td>ssl_log_magnitude_phase_sin_local_cross_attn_1...</td>
+<td>ssl_log_magnitude_phase_sin_local_cross_attn</td>
+<td>completed</td>
+<td>0.461719</td>
+<td>0.864698</td>
+<td>0.654750</td>
+<td>3.0</td>
+<td>0.902311</td>
+<td>0.684340</td>
+<td>...</td>
+<td>0.000725</td>
+<td>0.193999</td>
+<td>0.0</td>
+<td>0.738221</td>
+<td>1.712668</td>
+<td>0.004520</td>
+<td>2.064683</td>
+<td>0.708366</td>
+<td>0.367060</td>
+<td>0.932682</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">28</th>
+<td>28</td>
+<td>ssl_log_magnitude_phase_sin_both_gated_add_111...</td>
+<td>ssl_log_magnitude_phase_sin_both_gated_add</td>
+<td>completed</td>
+<td>0.617630</td>
+<td>0.866686</td>
+<td>0.705868</td>
+<td>3.0</td>
+<td>0.987199</td>
+<td>0.742561</td>
+<td>...</td>
+<td>0.000756</td>
+<td>0.184961</td>
+<td>0.0</td>
+<td>0.748720</td>
+<td>1.710082</td>
+<td>0.158808</td>
+<td>2.057532</td>
+<td>0.714980</td>
+<td>0.376419</td>
+<td>0.920752</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">29</th>
+<td>29</td>
+<td>ssl_log_magnitude_phase_sin_both_cross_attn_11...</td>
+<td>ssl_log_magnitude_phase_sin_both_cross_attn</td>
+<td>completed</td>
+<td>0.465144</td>
+<td>0.864763</td>
+<td>0.660500</td>
+<td>3.0</td>
+<td>0.906067</td>
+<td>0.686686</td>
+<td>...</td>
+<td>0.000763</td>
+<td>0.193625</td>
+<td>0.0</td>
+<td>0.747092</td>
+<td>1.713542</td>
+<td>0.000272</td>
+<td>2.064793</td>
+<td>0.709262</td>
+<td>0.373317</td>
+<td>0.933086</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">30</th>
+<td>30</td>
+<td>ssl_log_magnitude_real_local_gated_add_1110000...</td>
+<td>ssl_log_magnitude_real_local_gated_add</td>
+<td>completed</td>
+<td>0.634068</td>
+<td>0.865731</td>
+<td>0.715596</td>
+<td>3.0</td>
+<td>0.997720</td>
+<td>0.750717</td>
+<td>...</td>
+<td>0.000708</td>
+<td>0.184674</td>
+<td>0.0</td>
+<td>0.744158</td>
+<td>1.709073</td>
+<td>0.048311</td>
+<td>2.050488</td>
+<td>0.715759</td>
+<td>0.374473</td>
+<td>0.919472</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">31</th>
+<td>31</td>
+<td>ssl_log_magnitude_real_local_cross_attn_111000...</td>
+<td>ssl_log_magnitude_real_local_cross_attn</td>
+<td>completed</td>
+<td>0.453758</td>
+<td>0.864719</td>
+<td>0.647808</td>
+<td>3.0</td>
+<td>0.896034</td>
+<td>0.679797</td>
+<td>...</td>
+<td>0.000777</td>
+<td>0.194429</td>
+<td>0.0</td>
+<td>0.741458</td>
+<td>1.714729</td>
+<td>0.015234</td>
+<td>2.068065</td>
+<td>0.706562</td>
+<td>0.366376</td>
+<td>0.937436</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">32</th>
+<td>32</td>
+<td>ssl_log_magnitude_real_both_gated_add_1110000_...</td>
+<td>ssl_log_magnitude_real_both_gated_add</td>
+<td>completed</td>
+<td>0.642196</td>
+<td>0.867301</td>
+<td>0.716770</td>
+<td>3.0</td>
+<td>1.001567</td>
+<td>0.751759</td>
+<td>...</td>
+<td>0.000708</td>
+<td>0.184461</td>
+<td>0.0</td>
+<td>0.729130</td>
+<td>1.708580</td>
+<td>0.060695</td>
+<td>2.050263</td>
+<td>0.715380</td>
+<td>0.376525</td>
+<td>0.919702</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">33</th>
+<td>33</td>
+<td>ssl_log_magnitude_real_both_cross_attn_1110000...</td>
+<td>ssl_log_magnitude_real_both_cross_attn</td>
+<td>completed</td>
+<td>0.463177</td>
+<td>0.866427</td>
+<td>0.651779</td>
+<td>3.0</td>
+<td>0.902279</td>
+<td>0.684042</td>
+<td>...</td>
+<td>0.000784</td>
+<td>0.193986</td>
+<td>0.0</td>
+<td>0.728649</td>
+<td>1.713651</td>
+<td>0.034071</td>
+<td>2.067197</td>
+<td>0.708069</td>
+<td>0.367333</td>
+<td>0.935341</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">34</th>
+<td>34</td>
+<td>ssl_global_1110000_s42_l0</td>
+<td>ssl_global</td>
+<td>completed</td>
+<td>0.616929</td>
+<td>0.866411</td>
+<td>0.714028</td>
+<td>3.0</td>
+<td>0.989070</td>
+<td>0.740611</td>
+<td>...</td>
+<td>0.000695</td>
+<td>0.185526</td>
+<td>0.0</td>
+<td>0.763861</td>
+<td>1.710080</td>
+<td>0.000551</td>
+<td>2.050536</td>
+<td>0.714614</td>
+<td>0.367321</td>
+<td>0.922733</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">35</th>
+<td>35</td>
+<td>ssl_both_infer_b_1110000_s42_l0</td>
+<td>ssl_both_infer_b</td>
+<td>completed</td>
+<td>0.448373</td>
+<td>0.863929</td>
+<td>0.650350</td>
+<td>3.0</td>
+<td>0.896367</td>
+<td>0.685574</td>
+<td>...</td>
+<td>0.000765</td>
+<td>0.194865</td>
+<td>0.0</td>
+<td>0.714785</td>
+<td>1.714298</td>
+<td>0.000333</td>
+<td>2.067623</td>
+<td>0.707554</td>
+<td>0.367991</td>
+<td>0.933934</td>
+</tr>
+</tbody>
+</table>
+
+<p>35 rows × 29 columns</p>
+</div>
+</div>
+</div>
+<div id="cell-wavelet-reconstruction-delineation-map" class="cell" data-execution_count="3">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> completed.empty <span class="kw">and</span> {<span class="st">"metric.val_missing_pearson"</span>, <span class="st">"metric.miou_wave"</span>}.issubset(completed):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> px.scatter(completed, x<span class="op">=</span><span class="st">"metric.val_missing_pearson"</span>, y<span class="op">=</span><span class="st">"metric.miou_wave"</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                     color<span class="op">=</span><span class="st">"cell.wavelet_bank"</span>, symbol<span class="op">=</span><span class="st">"cell.ssl_mode"</span>, hover_name<span class="op">=</span><span class="st">"id"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                     hover_data<span class="op">=</span>[c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"metric.P_iou"</span>, <span class="st">"metric.QRS_iou"</span>, <span class="st">"metric.T_iou"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">"metric.boundary_f1_smoke"</span>] <span class="cf">if</span> c <span class="kw">in</span> completed],</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                     title<span class="op">=</span><span class="st">"Reconstruction–delineation trade-off among completed screens"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    fig.update_traces(marker<span class="op">=</span>{<span class="st">"size"</span>: <span class="dv">10</span>, <span class="st">"opacity"</span>: <span class="fl">.8</span>})</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="wavelet-reconstruction-delineation-map" class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="a58a06b4-da5f-4add-84f1-40658ef783fa" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("a58a06b4-da5f-4add-84f1-40658ef783fa")) {                    Plotly.newPlot(                        "a58a06b4-da5f-4add-84f1-40658ef783fa",                        [{"customdata":{"dtype":"f8","bdata":"AAAAoIPx3D8AAABgv63rPwAAAMAesOQ\u002fnRiwDBzl5T8AAADgjo7cPwAAAKAVs+s\u002fAAAA4EmJ5D9uiTSc66PlPwAAACCa7+M\u002fAAAAIHu56z8AAABgLcvmP2zMrA0C0uc\u002fAAAA4E183T8AAACgM6nrPwAAAICV4OQ\u002f7nWSzRLw5T8AAACgO0biPwAAAKDVtes\u002fAAAAYIw65j9Heo4e2Q7nPwAAAEBELdw\u002fAAAAgM2r6z8AAAAA0X3kP2CSDvXLo+U\u002f","shape":"6, 4"},"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003ecell.wavelet_bank=ecg_admissible_morlet\u003cbr\u003ecell.ssl_mode=none\u003cbr\u003emetric.val_missing_pearson=%{x}\u003cbr\u003emetric.miou_wave=%{y}\u003cbr\u003emetric.P_iou=%{customdata[0]}\u003cbr\u003emetric.QRS_iou=%{customdata[1]}\u003cbr\u003emetric.T_iou=%{customdata[2]}\u003cbr\u003emetric.boundary_f1_smoke=%{customdata[3]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["A0_raw_1110000_s42_l0","E1_raw_1110000_s42_l0","A0_wave_noSSL_gated_add_1110000_s42_l0","A0_wave_noSSL_cross_attn_1110000_s42_l0","E1_wave_noSSL_gated_add_1110000_s42_l0","E1_wave_noSSL_cross_attn_1110000_s42_l0"],"legendgroup":"ecg_admissible_morlet, none","marker":{"color":"#636efa","symbol":"circle","opacity":0.8,"size":10},"mode":"markers","name":"ecg_admissible_morlet, none","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"xTTSS9eX5j+eLW0+mqvmP14NAt7u1eY\u002fQxw5F+qb5j8S6uzGtsjmP2bfuUbInOY\u002f"},"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAYDXy5D8AAAAAjdbkPwAAACAWfOc\u002fAAAAoPoX5T8AAAAg37zmPwAAAIAVwOQ\u002f"},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"AAAAIHla5D8AAACAUcDrPwAAAIDd4+Y\u002frRJbGpT15z8AAACA\u002fILdPwAAAMDgt+s\u002fAAAAwHgL5T8Q98lG7gfmPwAAAKCJzeM\u002fAAAAIJC56z8AAADAGsjmP1zpN4kwzOc\u002fAAAAwCM63T8AAADAHK7rPwAAAGDvy+Q\u002f+hn5mZv15T8AAADgoMPjPwAAAIDju+s\u002fAAAAgHeW5j\u002fiIoa4DsPnPwAAAODrxN0\u002fAAAAICSs6z8AAADgzyLlP+Nu8IdV+eU\u002fAAAAoN2M5D8AAABg7sDrPwAAAADH7+Y\u002fXPbVpWgO6D8AAABgsKTdPwAAACDFues\u002fAAAAgGDb5D+sG1g7rOPlPwAAAGAmstw\u002fAAAAgE6l6z8AAABAq8\u002fkP8AUhe458OU\u002f","shape":"9, 4"},"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003ecell.wavelet_bank=ecg_admissible_morlet\u003cbr\u003ecell.ssl_mode=both\u003cbr\u003emetric.val_missing_pearson=%{x}\u003cbr\u003emetric.miou_wave=%{y}\u003cbr\u003emetric.P_iou=%{customdata[0]}\u003cbr\u003emetric.QRS_iou=%{customdata[1]}\u003cbr\u003emetric.T_iou=%{customdata[2]}\u003cbr\u003emetric.boundary_f1_smoke=%{customdata[3]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["ssl_magnitude_phase_both_gated_add_1110000_s42_l0","ssl_magnitude_phase_both_cross_attn_1110000_s42_l0","ssl_magnitude_phase_sin_both_gated_add_1110000_s42_l0","ssl_magnitude_phase_sin_both_cross_attn_1110000_s42_l0","ssl_log_magnitude_phase_sin_both_gated_add_1110000_s42_l0","ssl_log_magnitude_phase_sin_both_cross_attn_1110000_s42_l0","ssl_log_magnitude_real_both_gated_add_1110000_s42_l0","ssl_log_magnitude_real_both_cross_attn_1110000_s42_l0","ssl_both_infer_b_1110000_s42_l0"],"legendgroup":"ecg_admissible_morlet, both","marker":{"color":"#636efa","symbol":"diamond","opacity":0.8,"size":10},"mode":"markers","name":"ecg_admissible_morlet, both","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"f4pFneDl5j\u002fRAtjPg7DmP8JvQYTMzuY\u002fgYjsSNqj5j+r5mc7HuHmP+SPYxRGsuY\u002feiLW0GTk5j+yp8aRgKjmP2qkysNIpOY\u002f"},"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAADiq5z8AAADgRyzlPwAAACC8b+c\u002fAAAAoLQH5T8AAABgqVznPwAAAGAjO+U\u002fAAAAADG\u002f5z8AAABAfyLlPwAAAKBZ7+Q\u002f"},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"AAAAgJ8d5D8AAACAa8TrPwAAAKBAwOY\u002fLXHCSbnI5z8AAACg1UvePwAAAOBXs+s\u002fAAAAwIFd5T8\u002fcsKpyC3mPwAAAGAFEeQ\u002fAAAAwCHE6z8AAADAcu\u002fmPwPYnrQq8ec\u002fAAAAYHXc3T8AAAAA0a3rPwAAAICQL+U\u002fk6Xj54oc5j8AAAAg\u002fujjPwAAACDyu+s\u002fAAAAgI4e5z+WhkhFsgroPwAAAODPjN0\u002fAAAA4Jqr6z8AAADgtvPkPwWPTysd5uU\u002fAAAAQElK5D8AAADAELTrPwAAAGAp5uY\u002fcVrl898F6D8AAACAXQrdPwAAAIDGq+s\u002fAAAAoNe65D8r4mgw5sDlPw==","shape":"8, 4"},"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003ecell.wavelet_bank=ecg_admissible_morlet\u003cbr\u003ecell.ssl_mode=local\u003cbr\u003emetric.val_missing_pearson=%{x}\u003cbr\u003emetric.miou_wave=%{y}\u003cbr\u003emetric.P_iou=%{customdata[0]}\u003cbr\u003emetric.QRS_iou=%{customdata[1]}\u003cbr\u003emetric.T_iou=%{customdata[2]}\u003cbr\u003emetric.boundary_f1_smoke=%{customdata[3]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["ssl_magnitude_phase_local_gated_add_1110000_s42_l0","ssl_magnitude_phase_local_cross_attn_1110000_s42_l0","ssl_magnitude_phase_sin_local_gated_add_1110000_s42_l0","ssl_magnitude_phase_sin_local_cross_attn_1110000_s42_l0","ssl_log_magnitude_phase_sin_local_gated_add_1110000_s42_l0","ssl_log_magnitude_phase_sin_local_cross_attn_1110000_s42_l0","ssl_log_magnitude_real_local_gated_add_1110000_s42_l0","ssl_log_magnitude_real_local_cross_attn_1110000_s42_l0"],"legendgroup":"ecg_admissible_morlet, local","marker":{"color":"#636efa","symbol":"square","opacity":0.8,"size":10},"mode":"markers","name":"ecg_admissible_morlet, local","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"KJnqCsjR5j8Hd6\u002fdULDmP\u002f3wf0eV0uY\u002f6z2QLPis5j+PiX2SKOPmP\u002fRX3onuquY\u002fgzwk83\u002fn5j+MsTqOKJzmPw=="},"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAgG6L5z8AAADglmflPwAAAADeluc\u002fAAAAwN5D5T8AAACgf5bnPwAAAIDoIeU\u002fAAAAIIGh5z8AAABgRPnkPw=="},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"AAAAoOG94z8AAAAAo7nrPwAAAMBQ2eY\u002fFLpYJRaz5z8=","shape":"1, 4"},"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003ecell.wavelet_bank=ecg_admissible_morlet\u003cbr\u003ecell.ssl_mode=global\u003cbr\u003emetric.val_missing_pearson=%{x}\u003cbr\u003emetric.miou_wave=%{y}\u003cbr\u003emetric.P_iou=%{customdata[0]}\u003cbr\u003emetric.QRS_iou=%{customdata[1]}\u003cbr\u003emetric.T_iou=%{customdata[2]}\u003cbr\u003emetric.boundary_f1_smoke=%{customdata[3]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["ssl_global_1110000_s42_l0"],"legendgroup":"ecg_admissible_morlet, global","marker":{"color":"#636efa","symbol":"x","opacity":0.8,"size":10},"mode":"markers","name":"ecg_admissible_morlet, global","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"vayJpB3e5j8="},"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAAEdw5z8="},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"AAAAgF+84z8AAADgXbfrPwAAAMCWyOY\u002fHNYXofiC5z8=","shape":"1, 4"},"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003ecell.wavelet_bank=morlet\u003cbr\u003ecell.ssl_mode=none\u003cbr\u003emetric.val_missing_pearson=%{x}\u003cbr\u003emetric.miou_wave=%{y}\u003cbr\u003emetric.P_iou=%{customdata[0]}\u003cbr\u003emetric.QRS_iou=%{customdata[1]}\u003cbr\u003emetric.T_iou=%{customdata[2]}\u003cbr\u003emetric.boundary_f1_smoke=%{customdata[3]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["P1_A0_morlet_mag_phase_noSSL_1110000_s42_l0"],"legendgroup":"morlet, none","marker":{"color":"#EF553B","symbol":"circle","opacity":0.8,"size":10},"mode":"markers","name":"morlet, none","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"oE8fLjbb5j8="},"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAYHFp5z8="},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"AAAAQCge5D8AAADAOr3rPwAAACDO+uY\u002fXm7ZQ5zw5z8AAAAgvgzkPwAAACBWxes\u002fAAAA4F0c5z+Pkwj0ZgnoPwAAAGCTU+Q\u002fAAAAoMWw6z8AAACg9BLnP88Nyn981ec\u002fAAAAwED64z8AAABgJbrrPwAAAMDT+uY\u002fl8zkXivz5z8AAACgnn7jPwAAACA5t+s\u002fAAAAgA+a5j8sAO8N49HnPwAAACAnXOQ\u002fAAAAYMbI6z8AAADglRDnP8o5Qzcd++c\u002fAAAA4Jrg4z8AAABgMrXrPwAAAGAqw+Y\u002fLG2Fv5Qn6D8AAABAPzzkPwAAAMANs+s\u002fAAAA4FTl5j+DF9RG+\u002fvnPwAAACCqROQ\u002fAAAAQMu56z8AAACAy+\u002fmP2k3Z8SW8ec\u002fAAAAAHRS5D8AAADgAbHrPwAAACCCDec\u002ftOwjyuHV5z8=","shape":"10, 4"},"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003ecell.wavelet_bank=morlet\u003cbr\u003ecell.ssl_mode=both\u003cbr\u003emetric.val_missing_pearson=%{x}\u003cbr\u003emetric.miou_wave=%{y}\u003cbr\u003emetric.P_iou=%{customdata[0]}\u003cbr\u003emetric.QRS_iou=%{customdata[1]}\u003cbr\u003emetric.T_iou=%{customdata[2]}\u003cbr\u003emetric.boundary_f1_smoke=%{customdata[3]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["R0_morlet_mag_morlet_phase_1110000_s42_l0","R1_morlet_mag_ueg_phase_1110000_s42_l0","C1_E1_morlet_mag_morlet_phase_1110000_s42_l0","R2_morlet_mag_ueg_phase_sin_1110000_s42_l0","R3_morlet_logmag_ueg_phase_sin_1110000_s42_l0","R7_morlet_mag_ueg_real_1110000_s42_l0","R8_morlet_mag_ueg_mag_1110000_s42_l0","R4_morlet_mag_ueg_phase_wyatt_1110000_s42_l0","R5_morlet_mag_ueg_phase_wyatt_1110000_s42_l0","R6_morlet_mag_ueg_phase_wyatt_1110000_s42_l0"],"legendgroup":"morlet, both","marker":{"color":"#EF553B","symbol":"diamond","opacity":0.8,"size":10},"mode":"markers","name":"morlet, both","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"btV8USvk5j+oIVeJeuTmP+UOt1CV3uY\u002f7hVTOUfm5j+IyJ4AWtzmP2ALKXQ+7+Y\u002f9cM\u002f5\u002frn5j\u002fQusE3593mPyrfJ2qM2+Y\u002fCNI3VgXd5j8="},"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAALuc5z8AAACg0KTnPwAAACBvsuc\u002fAAAAAL6P5z8AAAAATUXnPwAAACCBvOc\u002fAAAAIP1y5z8AAAAANpznPwAAAGDApOc\u002fAAAAoFKw5z8="},"yaxis":"y","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"metric.val_missing_pearson"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"metric.miou_wave"}},"legend":{"title":{"text":"cell.wavelet_bank, cell.ssl_mode"},"tracegroupgap":0},"title":{"text":"Reconstruction–delineation trade-off among completed screens"}},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('a58a06b4-da5f-4add-84f1-40658ef783fa');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+<p>These are short screening runs unless replicated. The plot shows trade-offs; it does not provide multiplicity-corrected evidence for the top point.</p>
+</section>
+<section id="highest-value-physiological-contrast" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="highest-value-physiological-contrast"><span class="header-section-number">8.3</span> Highest-value physiological contrast</h2>
+<p>At matched TimeSformer, BYOL objective, optimizer, compute, seed, observed lead, and fusion, compare:</p>
+<ul>
+<li>Morlet magnitude + Morlet phase</li>
+<li>Morlet magnitude + UEG-repolarization phase</li>
+</ul>
+<p>If the second improves primarily T-on and T-off rather than all boundaries, it supports—without proving—the hypothesis that the physiology of the second SSL view matters. A generic lift could instead reflect regularization, scaling, or view difficulty.</p>
+</section>
+<section id="boundary-localization-requirement" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="boundary-localization-requirement"><span class="header-section-number">8.4</span> Boundary-localization requirement</h2>
+<p>RDB supervision provides six real boundary channels: P/QRS/T onset and offset. It does not provide peaks. Any physiology claim must report channel-level validity and timing error, not only macro IoU. T-peak must remain absent rather than being synthesized from an interval midpoint or detector.</p>
+</section>
+<section id="promotion-gate" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="promotion-gate"><span class="header-section-number">8.5</span> Promotion gate</h2>
+<p>Promote a configuration only after matched incremental improvement, seed and lead replication, no reconstruction regression beyond a prespecified margin, boundary-localized analysis, checkpoint provenance, and blinded LUDB/RDB evaluation. Otherwise label it exploratory.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./21_one_lead_architecture_and_spatial_results.html" class="pagination-link" aria-label="One-Lead Reconstruction: Architecture and Spatial Conditioning">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">One-Lead Reconstruction: Architecture and Spatial Conditioning</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./23_evidence_synthesis_and_run_gaps.html" class="pagination-link" aria-label="Evidence Synthesis and Run Gaps">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Evidence Synthesis and Run Gaps</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "One-Lead Wavelet and SSL Mechanism Study"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Incremental claims, physiological views, and boundary localization"</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">  cache: false</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">  freeze: false</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: wavelet-mechanism-setup</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> expanded_results <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>queue <span class="op">=</span> wavelet_queue()</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## Principal comparison</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>The causal ordering is:</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="in">`A0 → A0 + wavelet → A0 + wavelet + SSL`</span>.</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>E1 is reserved for the matched complementarity contrast</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="in">`A0+wavelet+SSL`</span> versus <span class="in">`E1+wavelet+SSL`</span>. This prevents architectural changes</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>from being credited to wavelets or SSL.</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## Live queue and metric availability</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: wavelet-queue-status</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>display(queue.status.value_counts(dropna<span class="op">=</span><span class="va">False</span>).rename_axis(<span class="st">"status"</span>).reset_index(name<span class="op">=</span><span class="st">"jobs"</span>))</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>completed <span class="op">=</span> queue.query(<span class="st">"status == 'completed'"</span>).copy()</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>metric_cols <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> completed <span class="cf">if</span> c.startswith(<span class="st">"metric."</span>) <span class="kw">and</span> pd.api.types.is_numeric_dtype(completed[c])]</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>visible <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"ordinal"</span>, <span class="st">"id"</span>, <span class="st">"cell.name"</span>, <span class="st">"status"</span>, <span class="op">*</span>metric_cols] <span class="cf">if</span> c <span class="kw">in</span> completed]</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>display(completed[visible].sort_values(<span class="st">"ordinal"</span>))</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: wavelet-reconstruction-delineation-map</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> completed.empty <span class="kw">and</span> {<span class="st">"metric.val_missing_pearson"</span>, <span class="st">"metric.miou_wave"</span>}.issubset(completed):</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> px.scatter(completed, x<span class="op">=</span><span class="st">"metric.val_missing_pearson"</span>, y<span class="op">=</span><span class="st">"metric.miou_wave"</span>,</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>                     color<span class="op">=</span><span class="st">"cell.wavelet_bank"</span>, symbol<span class="op">=</span><span class="st">"cell.ssl_mode"</span>, hover_name<span class="op">=</span><span class="st">"id"</span>,</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>                     hover_data<span class="op">=</span>[c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"metric.P_iou"</span>, <span class="st">"metric.QRS_iou"</span>, <span class="st">"metric.T_iou"</span>,</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">"metric.boundary_f1_smoke"</span>] <span class="cf">if</span> c <span class="kw">in</span> completed],</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>                     title<span class="op">=</span><span class="st">"Reconstruction–delineation trade-off among completed screens"</span>)</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>    fig.update_traces(marker<span class="op">=</span>{<span class="st">"size"</span>: <span class="dv">10</span>, <span class="st">"opacity"</span>: <span class="fl">.8</span>})</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>    fig.show()</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>These are short screening runs unless replicated. The plot shows trade-offs; it</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>does not provide multiplicity-corrected evidence for the top point.</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="fu">## Highest-value physiological contrast</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>At matched TimeSformer, BYOL objective, optimizer, compute, seed, observed lead,</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>and fusion, compare:</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Morlet magnitude + Morlet phase</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Morlet magnitude + UEG-repolarization phase</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>If the second improves primarily T-on and T-off rather than all boundaries, it</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>supports—without proving—the hypothesis that the physiology of the second SSL</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>view matters. A generic lift could instead reflect regularization, scaling, or</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>view difficulty.</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a><span class="fu">## Boundary-localization requirement</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>RDB supervision provides six real boundary channels: P/QRS/T onset and offset.</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>It does not provide peaks. Any physiology claim must report channel-level</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>validity and timing error, not only macro IoU. T-peak must remain absent rather</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>than being synthesized from an interval midpoint or detector.</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a><span class="fu">## Promotion gate</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>Promote a configuration only after matched incremental improvement, seed and</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>lead replication, no reconstruction regression beyond a prespecified margin,</span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>boundary-localized analysis, checkpoint provenance, and blinded LUDB/RDB</span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>evaluation. Otherwise label it exploratory.</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

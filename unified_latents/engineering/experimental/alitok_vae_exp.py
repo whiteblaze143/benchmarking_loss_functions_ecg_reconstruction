@@ -532,7 +532,11 @@ class AliTokECGAIM(nn.Module):
         baseline = self._limb_prior(patches, available)
         grid = grid + self.baseline_projection(baseline)
         for block in self.decoder:
-            grid = block(grid)
+            if self.training and grid.device.type == "cpu":
+                import torch.utils.checkpoint as cp
+                grid = cp.checkpoint(block, grid, use_reentrant=False)
+            else:
+                grid = block(grid)
         residual = self.patch_head(self.output_norm(grid))
         prediction = baseline + self.residual_gain * residual
         return self._unpatchify(prediction), memory

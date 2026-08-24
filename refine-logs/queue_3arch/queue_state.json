@@ -3398,252 +3398,241 @@
     },
     {
       "id": "ecg_aim_f_1100013_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100013 --seed 42 --run_name ecg_aim_f_1100013_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100013_s42.pt",
-      "status": "failed",
-      "attempts": 1,
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1100013 --seed 42 --run_name ecg_aim_f_1100013_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100013_s42.pt",
+      "status": "running",
+      "attempts": 3,
       "handoff_reset_at": "2026-08-22T08:50:55Z",
       "handoff_reason": "priority_spatial_1lead_queue_before_resuming_3lead",
-      "started": "2026-08-24T18:48:49Z",
-      "free_bytes_at_start": 13373853696,
-      "failed_at": "2026-08-24T18:49:33Z",
-      "returncode": 137,
-      "error": "training exited with status 137"
+      "free_bytes_at_start": 13392723968,
+      "started": "2026-08-24T19:19:48Z"
     },
     {
       "id": "ecg_aim_f_1100014_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100014 --seed 42 --run_name ecg_aim_f_1100014_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100014_s42.pt",
-      "status": "failed",
-      "attempts": 1,
-      "started": "2026-08-24T18:49:33Z",
-      "free_bytes_at_start": 13372710912,
-      "failed_at": "2026-08-24T18:50:07Z",
-      "returncode": 137,
-      "error": "training exited with status 137"
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1100014 --seed 42 --run_name ecg_aim_f_1100014_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100014_s42.pt",
+      "status": "pending",
+      "attempts": 2,
+      "free_bytes_at_start": 13393453056
     },
     {
       "id": "ecg_aim_f_1100110_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100110 --seed 42 --run_name ecg_aim_f_1100110_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100110_s42.pt",
-      "status": "failed",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1100110 --seed 42 --run_name ecg_aim_f_1100110_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100110_s42.pt",
+      "status": "pending",
       "attempts": 1,
-      "started": "2026-08-24T18:50:07Z",
-      "free_bytes_at_start": 13373882368,
-      "failed_at": "2026-08-24T18:50:39Z",
-      "returncode": 137,
-      "error": "training exited with status 137"
+      "free_bytes_at_start": 13373882368
     },
     {
       "id": "ecg_aim_f_1100111_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100111 --seed 42 --run_name ecg_aim_f_1100111_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100111_s42.pt",
-      "status": "failed",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1100111 --seed 42 --run_name ecg_aim_f_1100111_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100111_s42.pt",
+      "status": "pending",
       "attempts": 1,
-      "started": "2026-08-24T18:50:39Z",
-      "free_bytes_at_start": 13372530688,
-      "failed_at": "2026-08-24T18:51:11Z",
-      "returncode": 137,
-      "error": "training exited with status 137"
+      "free_bytes_at_start": 13372530688
     },
     {
       "id": "ecg_aim_f_1100112_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100112 --seed 42 --run_name ecg_aim_f_1100112_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100112_s42.pt",
-      "status": "failed",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1100112 --seed 42 --run_name ecg_aim_f_1100112_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100112_s42.pt",
+      "status": "pending",
       "attempts": 1,
-      "started": "2026-08-24T18:51:11Z",
-      "free_bytes_at_start": 13372026880,
-      "failed_at": "2026-08-24T18:51:43Z",
-      "returncode": 137,
-      "error": "training exited with status 137"
+      "free_bytes_at_start": 13372026880
     },
     {
       "id": "ecg_aim_f_1100113_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100113 --seed 42 --run_name ecg_aim_f_1100113_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100113_s42.pt",
-      "status": "running",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1100113 --seed 42 --run_name ecg_aim_f_1100113_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100113_s42.pt",
+      "status": "pending",
       "attempts": 1,
-      "started": "2026-08-24T18:51:43Z",
       "free_bytes_at_start": 13376704512
     },
     {
       "id": "ecg_aim_f_1100114_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1100114 --seed 42 --run_name ecg_aim_f_1100114_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100114_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1100114 --seed 42 --run_name ecg_aim_f_1100114_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100114_s42.pt",
       "status": "pending",
-      "attempts": 0
+      "attempts": 1,
+      "free_bytes_at_start": 13376282624
     },
     {
       "id": "ecg_aim_f_1101010_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1101010 --seed 42 --run_name ecg_aim_f_1101010_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101010_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1101010 --seed 42 --run_name ecg_aim_f_1101010_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101010_s42.pt",
       "status": "pending",
-      "attempts": 0
+      "attempts": 1,
+      "free_bytes_at_start": 13376086016
     },
     {
       "id": "ecg_aim_f_1101011_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1101011 --seed 42 --run_name ecg_aim_f_1101011_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101011_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1101011 --seed 42 --run_name ecg_aim_f_1101011_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101011_s42.pt",
       "status": "pending",
-      "attempts": 0
+      "attempts": 1,
+      "free_bytes_at_start": 13375651840
     },
     {
       "id": "ecg_aim_f_1101012_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1101012 --seed 42 --run_name ecg_aim_f_1101012_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101012_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1101012 --seed 42 --run_name ecg_aim_f_1101012_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101012_s42.pt",
       "status": "pending",
-      "attempts": 0
+      "attempts": 1,
+      "free_bytes_at_start": 13372936192
     },
     {
       "id": "ecg_aim_f_1101013_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1101013 --seed 42 --run_name ecg_aim_f_1101013_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101013_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1101013 --seed 42 --run_name ecg_aim_f_1101013_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101013_s42.pt",
       "status": "pending",
-      "attempts": 0
+      "attempts": 1,
+      "free_bytes_at_start": 13370777600
     },
     {
       "id": "ecg_aim_f_1101014_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1101014 --seed 42 --run_name ecg_aim_f_1101014_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101014_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1101014 --seed 42 --run_name ecg_aim_f_1101014_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101014_s42.pt",
       "status": "pending",
-      "attempts": 0
+      "attempts": 1,
+      "free_bytes_at_start": 13369905152
     },
     {
       "id": "ecg_aim_f_1101110_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1101110 --seed 42 --run_name ecg_aim_f_1101110_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101110_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1101110 --seed 42 --run_name ecg_aim_f_1101110_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101110_s42.pt",
       "status": "pending",
-      "attempts": 0
+      "attempts": 1,
+      "free_bytes_at_start": 12144934912
     },
     {
       "id": "ecg_aim_f_1101111_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1101111 --seed 42 --run_name ecg_aim_f_1101111_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101111_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1101111 --seed 42 --run_name ecg_aim_f_1101111_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101111_s42.pt",
       "status": "pending",
-      "attempts": 0
+      "attempts": 1,
+      "free_bytes_at_start": 14594191360
     },
     {
       "id": "ecg_aim_f_1101112_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1101112 --seed 42 --run_name ecg_aim_f_1101112_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101112_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1101112 --seed 42 --run_name ecg_aim_f_1101112_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101112_s42.pt",
       "status": "pending",
-      "attempts": 0
+      "attempts": 1,
+      "free_bytes_at_start": 14593835008
     },
     {
       "id": "ecg_aim_f_1101113_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1101113 --seed 42 --run_name ecg_aim_f_1101113_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101113_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1101113 --seed 42 --run_name ecg_aim_f_1101113_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101113_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1101114_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1101114 --seed 42 --run_name ecg_aim_f_1101114_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101114_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1101114 --seed 42 --run_name ecg_aim_f_1101114_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1101114_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1110010_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1110010 --seed 42 --run_name ecg_aim_f_1110010_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110010_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1110010 --seed 42 --run_name ecg_aim_f_1110010_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110010_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1110011_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1110011 --seed 42 --run_name ecg_aim_f_1110011_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110011_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1110011 --seed 42 --run_name ecg_aim_f_1110011_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110011_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1110012_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1110012 --seed 42 --run_name ecg_aim_f_1110012_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110012_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1110012 --seed 42 --run_name ecg_aim_f_1110012_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110012_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1110013_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1110013 --seed 42 --run_name ecg_aim_f_1110013_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110013_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1110013 --seed 42 --run_name ecg_aim_f_1110013_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110013_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1110014_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1110014 --seed 42 --run_name ecg_aim_f_1110014_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110014_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1110014 --seed 42 --run_name ecg_aim_f_1110014_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110014_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1110110_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1110110 --seed 42 --run_name ecg_aim_f_1110110_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110110_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1110110 --seed 42 --run_name ecg_aim_f_1110110_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110110_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1110111_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1110111 --seed 42 --run_name ecg_aim_f_1110111_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110111_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1110111 --seed 42 --run_name ecg_aim_f_1110111_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110111_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1110112_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1110112 --seed 42 --run_name ecg_aim_f_1110112_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110112_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1110112 --seed 42 --run_name ecg_aim_f_1110112_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110112_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1110113_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1110113 --seed 42 --run_name ecg_aim_f_1110113_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110113_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1110113 --seed 42 --run_name ecg_aim_f_1110113_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110113_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1110114_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1110114 --seed 42 --run_name ecg_aim_f_1110114_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110114_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1110114 --seed 42 --run_name ecg_aim_f_1110114_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1110114_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1111010_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1111010 --seed 42 --run_name ecg_aim_f_1111010_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111010_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1111010 --seed 42 --run_name ecg_aim_f_1111010_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111010_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1111011_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1111011 --seed 42 --run_name ecg_aim_f_1111011_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111011_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1111011 --seed 42 --run_name ecg_aim_f_1111011_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111011_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1111012_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1111012 --seed 42 --run_name ecg_aim_f_1111012_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111012_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1111012 --seed 42 --run_name ecg_aim_f_1111012_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111012_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1111013_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1111013 --seed 42 --run_name ecg_aim_f_1111013_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111013_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1111013 --seed 42 --run_name ecg_aim_f_1111013_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111013_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1111014_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1111014 --seed 42 --run_name ecg_aim_f_1111014_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111014_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1111014 --seed 42 --run_name ecg_aim_f_1111014_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111014_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1111110_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1111110 --seed 42 --run_name ecg_aim_f_1111110_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111110_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1111110 --seed 42 --run_name ecg_aim_f_1111110_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111110_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1111111_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1111111 --seed 42 --run_name ecg_aim_f_1111111_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111111_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1111111 --seed 42 --run_name ecg_aim_f_1111111_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111111_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1111112_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1111112 --seed 42 --run_name ecg_aim_f_1111112_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111112_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1111112 --seed 42 --run_name ecg_aim_f_1111112_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111112_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1111113_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1111113 --seed 42 --run_name ecg_aim_f_1111113_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111113_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1111113 --seed 42 --run_name ecg_aim_f_1111113_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111113_s42.pt",
       "status": "pending",
       "attempts": 0
     },
     {
       "id": "ecg_aim_f_1111114_s42",
-      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 32 --num_workers 2 --factorial_mask 1111114 --seed 42 --run_name ecg_aim_f_1111114_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111114_s42.pt",
+      "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1111114 --seed 42 --run_name ecg_aim_f_1111114_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1111114_s42.pt",
       "status": "pending",
       "attempts": 0,
       "restored_at": "2026-08-10T19:52:33.807872+00:00",

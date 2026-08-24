@@ -1,13 +1,7 @@
 {
-  "ecc": {
-    "ecc_corrected": 73058,
-    "ecc_uncorrected": 13,
-    "memory_free_mib": 40441,
-    "memory_used_mib": 0,
-    "utilization_pct": 0
-  },
-  "phase": "running_full_sweep",
-  "preflight_peak_gpu_memory_bytes": 36362649600,
-  "updated_at": "2026-08-24T00:19:46Z",
+  "barrier_retained": true,
+  "error": "RuntimeError: wavelet full sweep exited 130",
+  "phase": "failed",
+  "updated_at": "2026-08-24T19:20:03Z",
   "version": 1
 }

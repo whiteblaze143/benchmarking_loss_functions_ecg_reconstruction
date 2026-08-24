@@ -105,7 +105,7 @@ def build_architecture(arch_name, device):
     else:
         raise ValueError(f"Unknown architecture: {arch_name}")
         
-    if hasattr(torch, "compile"):
+    if device.type == "cuda" and hasattr(torch, "compile"):
         try:
             model = torch.compile(model)
             logging.info(f"Successfully enabled PyTorch 2.0 torch.compile graph fusion for {arch_name}!")
@@ -161,7 +161,7 @@ def main():
 
     # Set architecture-appropriate default batch size
     if args.batch_size == 256 and args.architecture in {"msvae", "ecg_aim"}:
-        args.batch_size = 32
+        args.batch_size = 4 if device.type == "cpu" else 32
 
     seed_everything(args.seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -176,9 +176,10 @@ def main():
     train_dataset = PTBXLDataset(f"{data_dir}/train")
     val_dataset = PTBXLDataset(f"{data_dir}/val")
 
+    pin_mem = (device.type == "cuda")
     loader_generator = torch.Generator().manual_seed(args.seed)
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, pin_memory=True, generator=loader_generator)
-    val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, pin_memory=True)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, pin_memory=pin_mem, generator=loader_generator)
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, pin_memory=pin_mem)
 
     if args.run_name:
         wandb.init(project="ecg-reconstruction-ablation", name=args.run_name, config=vars(args))
@@ -194,10 +195,14 @@ def main():
         max_lr = 3e-4
         pct_start = 0.1
     criterion = CombinatorialCompositeLoss(args.factorial_mask)
-    scaler = torch.amp.GradScaler('cuda')
+    use_amp = (device.type == "cuda" and args.architecture == "unet")
+    amp_dtype = torch.float16 if device.type == "cuda" else torch.bfloat16
+    scaler = torch.amp.GradScaler('cuda', enabled=(device.type == 'cuda' and use_amp))
 
+    accum_steps = max(1, 32 // args.batch_size) if (device.type == "cpu" and args.architecture in {"msvae", "ecg_aim"}) else 1
     steps_per_epoch = len(train_loader) if not args.max_batches else min(len(train_loader), args.max_batches)
-    total_steps = args.epochs * steps_per_epoch
+    total_optimizer_steps = args.epochs * max(1, steps_per_epoch // accum_steps)
+    total_steps = max(total_optimizer_steps, 10)
     scheduler = torch.optim.lr_scheduler.OneCycleLR(
         optimizer, max_lr=max_lr, total_steps=total_steps, pct_start=pct_start
     )
@@ -209,15 +214,13 @@ def main():
     for epoch in range(args.epochs):
         model.train()
         t_loss = 0.0
-        use_amp = (args.architecture == "unet")
-        amp_dtype = torch.float16
+        optimizer.zero_grad()
 
         for batch_idx, (x_raw, y) in enumerate(tqdm(train_loader, desc=f"Epoch {epoch+1}/{args.epochs}")):
             if args.max_batches and batch_idx >= args.max_batches:
                 break
             y = y[..., :5000].to(device, non_blocking=True).contiguous()
-            optimizer.zero_grad()
-            with torch.amp.autocast('cuda', enabled=use_amp, dtype=amp_dtype):
+            with torch.amp.autocast(device_type=device.type, enabled=use_amp, dtype=amp_dtype):
                 out, kl_loss = forward_pass(model, args.architecture, y, device)
                 min_len = min(out.shape[-1], y.shape[-1])
                 out_crop = out[..., :min_len]
@@ -225,13 +228,25 @@ def main():
                 loss, l_mse, l_corr, l_deriv, l_vcg, l_ed, l_lead, l_mmd = criterion(out_crop, y_crop)
                 total_loss = loss + 1e-4 * kl_loss
 
-            scaler.scale(total_loss).backward()
-            scaler.unscale_(optimizer)
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-            scaler.step(optimizer)
-            scaler.update()
-            if scheduler is not None:
-                scheduler.step()
+            scaled_total_loss = total_loss / accum_steps
+            if scaler.is_enabled():
+                scaler.scale(scaled_total_loss).backward()
+            else:
+                scaled_total_loss.backward()
+
+            if (batch_idx + 1) % accum_steps == 0 or (batch_idx + 1) == steps_per_epoch:
+                if scaler.is_enabled():
+                    scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+                if scaler.is_enabled():
+                    scaler.step(optimizer)
+                    scaler.update()
+                else:
+                    optimizer.step()
+                optimizer.zero_grad()
+                if scheduler is not None:
+                    scheduler.step()
+
             t_loss += loss.item()
 
         # Validation
@@ -243,7 +258,7 @@ def main():
                 if args.max_batches and v_idx >= args.max_batches:
                     break
                 y = y[..., :5000].to(device, non_blocking=True).contiguous()
-                with torch.amp.autocast('cuda', enabled=use_amp, dtype=amp_dtype):
+                with torch.amp.autocast(device_type=device.type, enabled=use_amp, dtype=amp_dtype):
                     out, _ = forward_pass(model, args.architecture, y, device)
                     min_len = min(out.shape[-1], y.shape[-1])
                     out_crop = out[..., :min_len]

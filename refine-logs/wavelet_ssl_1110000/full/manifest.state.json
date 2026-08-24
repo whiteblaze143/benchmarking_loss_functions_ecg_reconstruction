@@ -1,9 +1,9 @@
 {
   "cells": 60,
   "counts": {
-    "completed": 32,
+    "completed": 34,
     "failed_transient": 1,
-    "pending": 86,
+    "pending": 84,
     "running": 1
   },
   "jobs": [
@@ -4117,7 +4117,6 @@
         "wavelet_fusion": "cross_attn",
         "wavelet_heads": 6
       },
-      "child_pid": 634743,
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -4200,13 +4199,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-24T18:55:20Z",
       "id": "ssl_log_magnitude_real_both_cross_attn_1110000_s42_l0",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/033_ssl_log_magnitude_real_both_cross_attn_1110000_s42_l0.log",
+      "returncode": 0,
       "started_at": "2026-08-24T18:19:59Z",
-      "status": "running"
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 2,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -4319,11 +4320,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-24T19:43:19Z",
       "id": "ssl_global_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/034_ssl_global_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-24T19:31:19Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -4354,6 +4359,7 @@
         "wavelet_fusion": "gated_add",
         "wavelet_heads": 6
       },
+      "child_pid": 675294,
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -4437,7 +4443,9 @@
         "--no-fiducial-head"
       ],
       "id": "ssl_both_infer_b_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/035_ssl_both_infer_b_1110000_s42_l0.log",
+      "started_at": "2026-08-24T19:43:22Z",
+      "status": "running"
     },
     {
       "attempts": 0,
@@ -14364,6 +14372,6 @@
   ],
   "manifest_sha256": "008a7d9b49a8d912cc9bdd132a93c493128f17a9dcb944d2984e40112466aec6",
   "queue_status": "running",
-  "updated_at": "2026-08-24T18:20:00Z",
+  "updated_at": "2026-08-24T19:43:22Z",
   "version": 2
 }

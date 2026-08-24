@@ -19,7 +19,7 @@ ROOT = Path("..")
 
 ## Provenance and governance ledger
 
-The local files do not all have the same documentation status. LUDB is the public PhysioNet release v1.0.1, cited as Kalyakulina et al. with DOI [10.13026/eegm-h675], and is distributed under the Open Data Commons Attribution License v1.0. Its source states that 200 ten-second ECGs were collected in 2017–2018, annotated by cardiologists, with written consent and institutional review approval. EchoNext is a restricted PhysioNet resource; the local provenance identifies v1.1.1, while the canonical dataset record and version history are available under DOI [10.13026/2j37-ba56]. It uses the PhysioNet Restricted Health Data License/Data Use Agreement 1.5.0; its source documents de-identification and IRB-approved retrospective use.
+The local files do not all have the same documentation status. LUDB is the public PhysioNet release v1.0.1, cited as Kalyakulina et al. with DOI [10.13026/eegm-h675], and is distributed under the Open Data Commons Attribution License v1.0. Its source states that 200 ten-second ECGs were collected in 2017–2018, annotated by cardiologists, with written consent and institutional review approval. EchoNext is a restricted PhysioNet resource; local provenance pins IntroECG commit `15233e…` but does not attest which PhysioNet release version it corresponds to. The canonical dataset record and version history are available under DOI [10.13026/2j37-ba56].
 
   [10.13026/eegm-h675]: https://doi.org/10.13026/eegm-h675
   [10.13026/2j37-ba56]: https://doi.org/10.13026/2j37-ba56
@@ -29,7 +29,7 @@ The ISP folder in this repository does not include a citation, version, license,
 | Dataset | Patient/record unit | Local version | Split/independence status | License/governance | Source |
 |------------|------------|------------|------------|------------|------------|
 | LUDB | 200 records; source describes volunteers/patients | 1.0.1 | no official ML split; subject multiplicity not represented locally | ODC Attribution 1.0; source reports consent and IRB | [PhysioNet LUDB 1.0.1] |
-| EchoNext | ECG records with `patient_key` | 1.1.1 | train/val/test patient audit in the [opening real-data EDA](09_real_data_eda_and_diagnostics.qmd); `no_split` excluded | restricted health-data license/DUA; de-identified, IRB-approved retrospective use | [PhysioNet EchoNext] |
+| EchoNext | ECG records with `patient_key` | IntroECG commit `15233e…`; PhysioNet-version correspondence unverified | train/val/test patient audit in the [opening real-data EDA](09_real_data_eda_and_diagnostics.qmd); `no_split` excluded | restricted health-data license/DUA; de-identified, IRB-approved retrospective use | [PhysioNet EchoNext] |
 | ISP | row/file; subject unit unresolved | unknown | provided train/test folders; subject independence unverified | unknown locally | source not identified |
 | Sunnybrook | 20 XML files; subject unit unresolved | local metadata says 1.0 | no formal split; repeated-subject status unverified | local controlled artifact; license/ethics not documented | local owner metadata only |
 
@@ -336,19 +336,24 @@ def interval_audit(frame, split):
         })
     return pd.DataFrame(rows)
 
-pd.concat([
+isp_interval_integrity = pd.concat([
     interval_audit(isp_train, "train").assign(split="train"),
     interval_audit(isp_test, "test").assign(split="test"),
-]).groupby("split").agg(
+])
+display(isp_interval_integrity.groupby("split").agg(
     records=("file_name", "count"),
     invalid_class=("valid_class", lambda x: (~x).sum()),
     invalid_width=("positive_width", lambda x: (~x).sum()),
     outside_window=("within_window", lambda x: (~x).sum()),
     unsorted=("sorted", lambda x: (~x).sum()),
-)
+))
+invalid_isp = isp_interval_integrity.loc[
+    ~(isp_interval_integrity.valid_class & isp_interval_integrity.positive_width & isp_interval_integrity.within_window & isp_interval_integrity.sorted)
+]
+display(invalid_isp)
 ```
 
-The bounds above come from each linked WFDB header rather than a guessed 10,000-sample constant. The local headers declare 1,000 Hz, so a provisional conversion would be one sample per millisecond; because the source/version and unit token remain unresolved, the primary report keeps widths in samples and labels any time conversion as header-derived rather than source-verified. No reconstruction checkpoint has been evaluated on these ISP waveforms yet.
+The executed audit identifies invalid-width/out-of-window rows. Those records are quarantined from any benchmark or width summary until the source owner adjudicates whether the intervals should be clipped, corrected, or excluded. The descriptive counts above intentionally inventory the raw files and must not be mistaken for a cleaned training contract. The bounds come from each linked WFDB header; because source/version, class semantics, subject identity, and the unit token remain unresolved, no reconstruction checkpoint result or clinical timing claim is admissible on ISP yet.
 
 Train and test ages have similar means (55.86 and 55.17), but test variability is larger (SD 19.16 versus 16.43). Sex coding 1 occurs in 153/403 training and 27/72 test rows. Similar marginals do not establish subject independence; `file_name` can restart within split directories.
 

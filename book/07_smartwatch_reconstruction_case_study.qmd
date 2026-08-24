@@ -1,199 +1,161 @@
-# Four-Device Smartwatch Transfer Case Study {#sec-smartwatch}
+# Smartwatch Simulator Transfer and Frozen-Classifier Fidelity {#sec-smartwatch}
 
-This chapter evaluates what the repository actually contains: a zero-shot transfer experiment using the **Electrocardiogram-Capable Smartwatches v1.0.0** dataset and reconstruction models trained on PTB-XL. It does not train a toy model on simulated sinusoids and does not treat a commercial watch trace as a clinical 12-lead measurement.
+This chapter reads the current `factorial_v4_clinical` artifacts directly. It separates two estimands: device/protocol measurement error against programmed simulator values or paired Philips recordings, and frozen-classifier probability fidelity between reference and reconstructed waveforms. Neither supplies human diagnostic ground truth. The task table records `ground_truth_status = unavailable`; clinical accuracy and interchangeability are not estimable here.
 
-::: {.callout-important}
-## Evidence boundary
+::: {.callout-warning}
+## Release status
 
-The locked protocol uses an acquired watch **Lead II** signal, not Lead I. The remaining model inputs, I and V2, are zero-filled before inference. Signal endpoints use paired watch/Philips or simulator-calibrated records, and the downstream endpoint is frozen **ECGFounder** probability fidelity. Human diagnostic ground truth is unavailable. Device names identify dataset folders; they do not justify causal claims about proprietary filters, electrodes, or firmware.
+Core and clinical computation are complete, but the repository-wide final checker is 9/10 because the fresh post-run audit returned `REVIEW_UNAVAILABLE`. These are empirical artifacts, but the package is not finally promoted or independently reviewed.
 :::
 
-## The inverse problem actually tested
-
-Let $Y(t)\in\mathbb{R}^{12}$ be the reference lead vector and let $S_{II}$ select Lead II. The wearable observation is
-
-$$x_{II}(t)=S_{II}Y(t)+n(t).$$
-
-The trained model expects I, II, and V2, so the out-of-domain adapter supplies
-
-$$\tilde{x}(t)=[0,\ x_{II}(t),\ 0].$$
-
-The primary transfer endpoint excludes the observed Lead II and scores the other eleven outputs. This is more difficult than the PTB-XL task, where all three expected inputs are present. A single measured projection cannot uniquely identify every spatial cardiac vector; reconstruction therefore estimates a conditional distribution learned from the training cohort. Physiologic losses can regularize that estimate, but no mathematical argument makes VCG or any other loss term “required,” and no loss can recover information absent from both the observation and learned prior.
-
-## Locked data and pairing contract
-
-The result bundle records four source conditions—amplitude, frequency, 2-Hz square-wave, and ST-segment tests—and four watch folders. Each WFDB header supplies its native sampling rate. Signals are resampled to 500 Hz with `scipy.signal.resample_poly`, aligned using 0.5–40 Hz band-passed normalized cross-correlation, and evaluated over 5,000 samples.
+## Artifact and schema gate
 
 ```{python}
-#| label: smartwatch-contract-audit
-import json
+#| label: smartwatch-current-artifact-gate
+#| tbl-cap: "Current smartwatch artifact identities and release status."
 from pathlib import Path
-import pandas as pd
+import hashlib, json
 import numpy as np
+import pandas as pd
+from IPython.display import display
 
-ROOT = Path("..")
-RESULT_JSON = (
-    ROOT / "results/comprehensive_latest_48_models/"
-           "smartwatch/four_device_results.json"
-)
-SUMMARY_CSV = (
-    ROOT / "results/comprehensive_latest_48_models/"
-           "tables/smartwatch_four_device_summary.csv"
-)
-payload = json.loads(RESULT_JSON.read_text())
-watch = pd.read_csv(SUMMARY_CSV)
-protocol = payload["protocol"]
+ROOT = Path("..").resolve()
+CLINICAL = ROOT / "results/factorial_v4_clinical"
+PROTOCOL_CSV = CLINICAL / "smartwatch_protocol_metrics.csv"
+FIDELITY_CSV = CLINICAL / "smartwatch_task_fidelity.csv"
+COMPLETION_JSON = CLINICAL / "FINAL_COMPLETION.json"
+MANIFEST_JSON = CLINICAL / "clinical_database_manifest.json"
+required = [PROTOCOL_CSV, FIDELITY_CSV, COMPLETION_JSON, MANIFEST_JSON]
+missing = [str(path) for path in required if not path.is_file()]
+if missing:
+    raise FileNotFoundError(f"Required current smartwatch artifacts are missing: {missing}")
 
-pd.DataFrame({
-    "quantity": [
-        "summary rows", "reconstruction models", "devices",
-        "expected rows", "task", "evaluation sample rate",
-        "evaluation length", "human diagnostic ground truth"
-    ],
-    "value": [
-        len(watch), watch.model_id.nunique(), watch.device.nunique(),
-        watch.model_id.nunique() * watch.device.nunique(),
-        protocol["task"], protocol["evaluation_sample_rate_hz"],
-        protocol["evaluation_length_samples"],
-        protocol["evaluation_taxonomy"]["human_diagnostic_ground_truth"],
-    ]
-})
+def sha256_file(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+protocol = pd.read_csv(PROTOCOL_CSV)
+fidelity = pd.read_csv(FIDELITY_CSV)
+completion = json.loads(COMPLETION_JSON.read_text())
+manifest = json.loads(MANIFEST_JSON.read_text())
+declared_paths = []
+for value in manifest.values():
+    if isinstance(value, str) and ("/" in value or value.endswith((".csv", ".parquet", ".db"))):
+        p = Path(value)
+        if not p.is_absolute(): p = ROOT / p
+        declared_paths.append(p)
+missing_declared = sorted(str(p.relative_to(ROOT)) for p in declared_paths if not p.exists())
+expected_devices = {"applewatch_serie8", "fitbitsense2", "samsunggalaxy6", "withingsscanwatch"}
+assert set(protocol.device) == expected_devices
+assert set(fidelity.device) == expected_devices
+assert fidelity.model_id.nunique() == 48
+assert fidelity.task_name.nunique() == 150
+assert fidelity[["model_id", "device", "task_name"]].duplicated().sum() == 0
+assert len(fidelity) == 48 * 4 * 150
+assert set(fidelity.ground_truth_status) == {"unavailable"}
+assert set(fidelity.evaluation_type) == {"frozen_classifier_probability_fidelity_proxy"}
+
+display(pd.DataFrame([
+    ("Protocol rows", len(protocol)),
+    ("Fidelity rows", len(fidelity)),
+    ("Models × devices × tasks", "48 × 4 × 150 = 28,800"),
+    ("Human diagnostic ground truth", "unavailable"),
+    ("Final package gate", f"{completion['status']} ({completion['checks_passed']}/{completion['checks_total']})"),
+    ("Historical completion versus current compact disk", "not fully reproducible" if missing_declared else "retained inputs present"),
+    ("Manifest-declared inputs absent now", "; ".join(missing_declared) or "none"),
+    ("Failed gate", "; ".join(k for k, v in completion["checks"].items() if not v["passed"])),
+    ("Protocol SHA-256", sha256_file(PROTOCOL_CSV)),
+    ("Fidelity SHA-256", sha256_file(FIDELITY_CSV)),
+], columns=["Field", "Observed value"]))
 ```
 
-The 192 rows are the full Cartesian product of 48 locked reconstruction cells and four devices. This is not 192 independent cohorts: every model is evaluated against the corresponding paired device records.
+The 28,800 rows form an exact model × device × classifier-task product. They are aggregate task summaries, not independent patients or clinical outcomes. The `n` column is the number of paired recordings contributing to each task summary.
+
+## Device-protocol measurement checks
 
 ```{python}
-#| label: smartwatch-pairing-audit
-#| tbl-cap: "Watch-to-reference pairing audit from the locked protocol."
-pairing_rows = []
-for device, audit in protocol["pairing_audit"].items():
-    pairing_rows.append({
-        "device": device,
-        "discovered_watch_records": audit["discovered_watch_records"],
-        "paired_records": audit["paired_records"],
-        "unmatched_records": len(audit["unmatched_watch_record_ids"]),
-        "unmatched_ids": ", ".join(audit["unmatched_watch_record_ids"]) or "none",
-        "pairing_key": audit["pairing_key"],
-    })
-pd.DataFrame(pairing_rows)
+#| label: smartwatch-protocol-table
+#| tbl-cap: "Programmed-simulator and paired-device measurements. Missing values are structurally inapplicable, not zero error."
+display(protocol[[
+    "device", "experiment_type", "evaluation_type", "n_records",
+    "watch_vs_simulator_mae", "watch_vs_simulator_bias", "watch_vs_simulator_unit",
+    "philips_vs_simulator_mae", "philips_vs_simulator_bias", "philips_vs_simulator_unit",
+    "watch_vs_philips_max_aligned_cross_correlation",
+]].sort_values(["experiment_type", "device"]))
 ```
 
-Apple Watch, Fitbit, and Withings contribute 180 paired records per model; Samsung contributes 179. One Fitbit ST-segment record is explicitly unmatched rather than silently dropped. These counts describe simulator/device test files, not unique patients.
-
-## What every result column means
-
-The signal table reports missing-11-lead MSE, RMSE, MAE, Pearson correlation, $R^2$, derivative MSE, and SNR. It also reports fidelity between ECGFounder probabilities from the paired reference and reconstructed waveforms: MAE, RMSE, Pearson correlation, Bernoulli KL divergence, Jensen–Shannon divergence, and fixed-threshold agreement.
-
-Probability fidelity is a machine-mediated endpoint. It asks whether one frozen classifier changes, not whether clinical diagnoses are correct. In particular, high threshold agreement can coexist with poor probability correlation when most task probabilities lie far from their thresholds.
-
-## Device-stratified distribution across all 48 models
+Heart-rate errors are in bpm; amplitude and ST-offset errors are in µV; the 2-Hz square-wave row reports aligned cross-correlation. They must be faceted rather than averaged into a device score.
 
 ```{python}
-#| label: smartwatch-device-distribution
-#| tbl-cap: "Descriptive distribution across all 48 reconstruction cells; models, not records, are the rows summarized here."
-device_summary = watch.groupby("device", as_index=False).agg(
-    models=("model_id", "nunique"),
-    paired_records=("n_paired_records", "first"),
-    median_missing11_mse=("missing11_mse", "median"),
-    q25_missing11_pearson=("missing11_pearson", lambda x: x.quantile(0.25)),
-    median_missing11_pearson=("missing11_pearson", "median"),
-    q75_missing11_pearson=("missing11_pearson", lambda x: x.quantile(0.75)),
-    median_ecgfounder_probability_pearson=(
-        "ecgfounder_fidelity_probability_pearson", "median"
-    ),
-    median_threshold_agreement=(
-        "ecgfounder_fidelity_threshold_agreement", "median"
-    ),
-)
-device_summary
-```
-
-This table describes the distribution of model outcomes within each device. It must not be read as a randomized comparison of watch hardware: the dataset conditions, alignment, record composition, and preprocessing can all contribute to differences.
-
-```{python}
-#| label: smartwatch-device-model-plot
-#| fig-cap: "Missing-11-lead correlation for all 48 model cells within each device. Each point is a model–device result, not a patient."
+#| label: smartwatch-protocol-plot
+#| fig-cap: "Watch-versus-simulator error by protocol. Panels use different physical units; points are protocol aggregates."
 import plotly.express as px
-
-fig = px.box(
-    watch,
-    x="device",
-    y="missing11_pearson",
-    points="all",
-    hover_data=["model_id", "missing11_mse", "n_paired_records"],
-    labels={"missing11_pearson": "Missing-11-lead Pearson", "device": "Device folder"},
-)
-fig.update_layout(height=500, xaxis_tickangle=-20)
+protocol_error = protocol.loc[protocol.watch_vs_simulator_mae.notna()].copy()
+fig = px.bar(protocol_error, x="device", y="watch_vs_simulator_mae", facet_col="experiment_type",
+             facet_col_wrap=2, color="device", hover_data=["n_records", "watch_vs_simulator_unit"])
+fig.update_yaxes(matches=None)
+fig.update_layout(height=700, showlegend=False)
 fig.show()
 ```
 
-## Prespecified MSE-only versus full-composite anchors
+These measurements characterize this simulator/device protocol. They do not isolate proprietary hardware effects because preprocessing, alignment, composition, and protocol are not independently randomized.
 
-To avoid selecting the best model after opening all device results, the next table uses the same six within-architecture anchors as the main 48-cell analysis.
+## Frozen-classifier probability fidelity
+
+For task (k), reference probability (p_{ik}), and reconstructed-waveform probability \(\hat p_{ik}\), the table reports
+
+$$\operatorname{MAE}_k=\frac{1}{n}\sum_i|\hat p_{ik}-p_{ik}|,$$
+
+correlation, divergence, and fixed-threshold agreement. Threshold agreement is not accuracy: the reference classifier decision is the comparison target because patient labels are unavailable.
 
 ```{python}
-#| label: smartwatch-anchor-contrast
-#| tbl-cap: "Locked MSE-only and full-composite anchors on each device."
-anchor_ids = [
-    "unet__e1c0m0d0__s42", "unet__e1c1m1d1__s42",
-    "msvae__e1c0m0d0__s42", "msvae__e1c1m1d1__s42",
-    "ecgaim__e1c0m0d0__s42", "ecgaim__e1c1m1d1__s42",
-]
-anchors = watch[watch.model_id.isin(anchor_ids)].copy()
-anchors["family"] = anchors.model_id.str.split("__").str[0]
-anchors["loss"] = np.where(
-    anchors.model_id.str.contains("__e1c0m0d0__"), "MSE-only", "full composite"
+#| label: smartwatch-fidelity-distribution
+#| tbl-cap: "Across-task frozen-classifier fidelity by device."
+device_fidelity = fidelity.groupby("device", as_index=False).agg(
+    models=("model_id", "nunique"), tasks=("task_name", "nunique"),
+    paired_records_min=("n", "min"), paired_records_max=("n", "max"),
+    median_probability_mae=("probability_mae", "median"),
+    p90_probability_mae=("probability_mae", lambda s: s.quantile(.90)),
+    median_probability_pearson=("probability_pearson", "median"),
+    median_threshold_agreement=("threshold_agreement", "median"),
 )
-anchors[[
-    "device", "family", "loss", "n_paired_records",
-    "missing11_mse", "missing11_pearson",
-    "ecgfounder_fidelity_probability_mae",
-    "ecgfounder_fidelity_probability_pearson",
-    "ecgfounder_fidelity_threshold_agreement",
-]].sort_values(["device", "family", "loss"])
+display(device_fidelity)
 ```
 
-The anchor table exposes endpoint discordance rather than supporting a universal winner. A mask can improve waveform correlation while worsening probability drift, and the direction can differ by architecture and device. Formal inference must retain pairing by record and correct for the repeated device/task comparisons; the 24 aggregate anchor rows alone do not supply uncertainty.
-
-## Simulator and paired-reference calibration
-
-The bundle separately records checks against programmed simulator targets and paired Philips reference traces. Heart-rate, R-wave-amplitude, and ST-offset errors are simulator-calibrated protocol measurements. The square-wave value is the maximum cross-correlation used during lag alignment and is not an independent accuracy endpoint.
+## Prespecified anchors
 
 ```{python}
-#| label: smartwatch-ground-truth-calibration
-#| tbl-cap: "Selected device-protocol calibration measurements; these are simulator/paired-reference checks, not patient outcomes."
-calibration_rows = []
-for device, values in payload["device_protocol_ground_truth"].items():
-    calibration_rows.append({
-        "device": device,
-        "heart_rate_records": values["heart_rate"]["n_records"],
-        "watch_vs_simulator_hr_mae_bpm": values["heart_rate"]["watch_vs_simulator"]["mae"],
-        "r_wave_records": values["r_wave_amplitude"]["n_records"],
-        "watch_vs_simulator_r_amp_mae_uv": values["r_wave_amplitude"]["watch_vs_simulator"]["mae"],
-        "st_records": values["st_offset"]["n_records"],
-        "watch_vs_simulator_st_mae_uv": values["st_offset"]["watch_vs_simulator"]["mae"],
-        "square_wave_records": values["square_wave"]["n_records"],
-        "max_aligned_square_wave_correlation": values["square_wave"]["watch_vs_philips_max_aligned_cross_correlation"],
-    })
-pd.DataFrame(calibration_rows)
+#| label: smartwatch-fidelity-anchors
+#| tbl-cap: "MSE-only and full-composite anchors; descriptive task-aggregated fidelity only."
+anchor_ids = [f"{family}__{mask}__s42" for family in ("unet", "msvae", "ecgaim")
+              for mask in ("e1c0m0d0", "e1c1m1d1")]
+anchors = fidelity.loc[fidelity.model_id.isin(anchor_ids)].copy()
+assert set(anchors.model_id) == set(anchor_ids)
+assert len(anchors) == 6 * 4 * 150
+anchors["loss"] = np.where(anchors.factorial_mask.astype(str).str.zfill(4) == "1000", "MSE-only", "full composite")
+anchor_summary = anchors.groupby(["device", "family", "loss"], as_index=False).agg(
+    tasks=("task_name", "nunique"), median_probability_mae=("probability_mae", "median"),
+    p90_probability_mae=("probability_mae", lambda s: s.quantile(.90)),
+    median_probability_pearson=("probability_pearson", "median"),
+    median_threshold_agreement=("threshold_agreement", "median"),
+)
+display(anchor_summary)
 ```
 
-Large amplitude and ST-offset errors in these simulator conditions are warnings about transport and measurement—not estimates of patient-level diagnostic harm. The correct follow-up is a paired waveform audit stratified by programmed condition, followed by independently labeled clinical data if a diagnostic claim is intended.
+```{python}
+#| label: smartwatch-task-tail
+#| fig-cap: "Task-level probability-error tails for prespecified anchors. Log scaling exposes large-drift tasks without calling them clinical errors."
+fig = px.box(anchors, x="device", y="probability_mae", color="loss", facet_col="family",
+             points=False, log_y=True, hover_data=["model_id", "task_name", "n"])
+fig.update_layout(height=520)
+fig.show()
+```
 
-## Failure analysis required for a publishable transfer claim
+## Interpretation boundary
 
-1. Preserve the device/condition/record pairing and expose unmatched records.
-2. Compare against simple baselines: Lead-II replication, conditional mean, linear transform, and zero-filled input.
-3. Report each missing lead separately; an eleven-lead average can hide precordial failure.
-4. Measure alignment sensitivity by repeating metrics before and after the prespecified lag correction.
-5. Stratify errors by amplitude, frequency, square-wave, and ST-segment protocol.
-6. Inspect records with favorable global correlation but large ST or ECGFounder probability drift.
-7. Use patient ECGs and adjudicated labels before making clinical-device claims.
+The artifacts show that reconstruction changes a frozen classifier’s probabilities and that change varies across tasks, devices, architectures, and objectives. Before a clinical transfer claim, the study still requires record-level outputs joined to independently adjudicated labels, patient-level identity and clustered uncertainty, prespecified primary tasks and multiplicity control, simple baselines, per-lead waveform endpoints, alignment sensitivity, protocol-stratified failure cases, and a passed independent post-run audit.
 
-## Reproduction pointers
-
-- Locked aggregate results: `results/comprehensive_latest_48_models/tables/smartwatch_four_device_summary.csv`
-- Full protocol and per-model results: `results/comprehensive_latest_48_models/smartwatch/four_device_results.json`
-- Study manifest and digests: `results/comprehensive_latest_48_models/MANIFEST.json`
-
-The defensible conclusion is narrow: PTB-XL-trained reconstruction models can be stress-tested zero-shot on paired/simulator smartwatch Lead-II signals, and their waveform and frozen-classifier fidelity vary materially across model and device conditions. The experiment does not establish that reconstructed leads are clinically interchangeable with a measured 12-lead ECG.
+Reproduction sources are `smartwatch_protocol_metrics.csv`, `smartwatch_task_fidelity.csv`, `clinical_database_manifest.json`, and `FINAL_COMPLETION.json` under `results/factorial_v4_clinical/`. Rendering is read-only and generates no CSV.

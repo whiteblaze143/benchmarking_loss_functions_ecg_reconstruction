@@ -130,14 +130,14 @@ def compute_ba_statistics(pred_peaks, target_peaks, model_name):
     
     # 2. Shapiro-Wilk test for normality of differences
     stat_sw, p_value_sw = stats.shapiro(diff)
-    normality_msg = "Normal" if p_value_sw > 0.05 else "Non-Normal"
+    normality_msg = "Normality not rejected" if p_value_sw > 0.05 else "Normality rejected"
     
     # 3. Levene's Test for Homoscedasticity (Lower half vs Upper half)
     median_val = np.median(mean_val)
     diff_lower = diff[mean_val <= median_val]
     diff_upper = diff[mean_val > median_val]
     stat_lev, p_value_lev = stats.levene(diff_lower, diff_upper)
-    levene_msg = "Homoscedastic" if p_value_lev > 0.05 else "Heteroscedastic"
+    levene_msg = "Equal-variance null not rejected" if p_value_lev > 0.05 else "Equal-variance null rejected"
     
     # 4. Percentage bias calculation
     pct_diff = (diff / mean_val) * 100

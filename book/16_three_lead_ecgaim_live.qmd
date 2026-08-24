@@ -40,10 +40,10 @@ def read_sql_optional(path, query):
             return pd.DataFrame()
         raise
 
-CLINICAL_DB = ROOT / "results/clinical_biomarkers_multids/clinical_metrics.db"
-LUDB_BLIND = ROOT / "results/ecgaim_ludb_semiseg_blinded/compact.sqlite"
-RDB_BLIND = ROOT / "results/ecgaim_rdb_semiseg_blinded/compact.sqlite"
-RDB_ORACLE = ROOT / "results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite"
+CLINICAL_DB = source_path("results/clinical_biomarkers_multids/clinical_metrics.db")
+LUDB_BLIND = source_path("results/ecgaim_ludb_semiseg_blinded/compact.sqlite")
+RDB_BLIND = source_path("results/ecgaim_rdb_semiseg_blinded/compact.sqlite")
+RDB_ORACLE = source_path("results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite")
 ```
 
 ## ECG-AIM and the registered claim chain
@@ -76,14 +76,16 @@ display(source_inventory({
 clinical = read_sql(CLINICAL_DB, "select * from clinical_metrics")
 paired = read_sql(CLINICAL_DB, "select * from paired_inference")
 presacan = read_sql(CLINICAL_DB, "select * from presacan_model_summary")
+clinical_registry = json.loads((ROOT / "results/clinical_biomarkers_model_registry.json").read_text())
+registered_ids = {row["id"] for row in clinical_registry["models"]}
 clinical["suite"] = np.select(
-    [clinical.model_id.str.startswith("f_"),
+    [clinical.model_id.isin(registered_ids) & clinical.evaluation_version.eq("missing_leads_v2"),
      clinical.model_id.str.startswith("factorial_ecg_aim_"),
      clinical.model_id.eq("__original__")],
     ["canonical_160", "threelead_ecgaim_external", "reference"],
     default="quarantine",
 )
-display(clinical.groupby(["suite", "dataset"], dropna=False).agg(
+display(clinical.groupby(["suite", "dataset", "evaluation_version"], dropna=False).agg(
     models=("model_id", "nunique"), endpoints=("target", "nunique"), rows=("model_id", "size")
 ).reset_index())
 
@@ -147,7 +149,7 @@ that will be downloaded only when the opt-in block runs.
 ```{python}
 #| label: checkpoint-catalog-browser
 from pathlib import Path
-catalog = read_sql(ROOT / "results/checkpoint_store/catalog.sqlite", """
+catalog = read_sql(source_path("results/checkpoint_store/catalog.sqlite"), """
     select model_id, factorial_mask, seed, local_path, size_bytes, sha256,
            status, asset_state, round_trip_verified_at, metadata_json
     from checkpoints order by model_id
@@ -206,17 +208,15 @@ if RUN_CHECKPOINT_UMAP:
     )
     display(pd.DataFrame([latent_provenance]))
     display(latent_umap.label.value_counts().rename_axis("rhythm").reset_index(name="records"))
-    fig = px.scatter(latent_umap, x="umap_1", y="umap_2", color="label",
-                     hover_name="record_id", title=(
+    fig = px.scatter(latent_umap, x="umap_1", y="umap_2", color="label", title=(
                          f"Checkpoint activation UMAP · {CHECKPOINT_MODEL_ID} · {CHECKPOINT_LAYER}"
                      ))
     fig.update_traces(marker={"size": 8, "opacity": .75})
     fig.show()
     centroids = latent_umap.groupby("label")[["umap_1", "umap_2"]].agg(["mean", "std", "count"])
     display(centroids)
-    display(latent_umap[["record_id", "patient_id", "label", "nearest_record_id",
-                         "nearest_label", "nearest_cosine_distance"]]
-            .sort_values("nearest_cosine_distance").head(40))
+    display(latent_umap[["label", "nearest_label", "nearest_cosine_distance"]]
+            .sort_values("nearest_cosine_distance").head(40).reset_index(drop=True))
 else:
     display(pd.DataFrame([{
         "status": "opt-in",
@@ -282,7 +282,7 @@ encoder activations.
 
 ```{python}
 #| label: checkpoint-study-live-status
-STUDY_DB = ROOT / "results/checkpoint_embeddings/compact.sqlite"
+STUDY_DB = source_path("results/checkpoint_embeddings/compact.sqlite")
 display(source_inventory({"checkpoint representation study": STUDY_DB}))
 study_jobs = read_sql(STUDY_DB, "select * from jobs order by started_at, model_id")
 if study_jobs.empty:
@@ -338,9 +338,12 @@ without the test split. The final 360-record test split is evaluated once.
 The table below combines discrimination, calibration, and absolute-risk
 separation. A useful embedding should improve paired AUROC/AUPRC while reducing
 Brier score and log loss; a high AUROC paired with a poor calibration slope is
-not sufficient. Confidence intervals use 2,000 stratified cached-record
-bootstraps. Because the current cache has one row per cached patient/record ID,
-this is not proof that the source cohort contains no repeated person.
+not sufficient. Intervals use 2,000 stratified cached-record bootstraps and
+quantify record-level sampling variation only. Because the cache has one row
+per cached patient/record ID but no independently verified person mapping,
+these are **descriptive record-bootstrap intervals**, not patient-level
+inferential confidence intervals. Confirmatory inference requires a verified
+person key and person-clustered resampling.
 
 ```{python}
 #| label: rigorous-heldout-results
@@ -358,7 +361,7 @@ else:
                      facet_col="metric", barmode="group", orientation="h",
                      error_x=focus.ci_high-focus.value,
                      error_x_minus=focus.value-focus.ci_low,
-                     title="Held-out discrimination and error with 95% bootstrap CIs")
+                     title="Held-out metrics with 95% descriptive record-bootstrap intervals")
         fig.update_xaxes(matches=None)
         fig.show()
 ```
@@ -479,16 +482,21 @@ multi = read_sql_optional(STUDY_DB,"select * from multiclass_results")
 conf = read_sql_optional(STUDY_DB,"select * from confusion_matrix")
 if multi.empty:
     display(pd.DataFrame([{"status":"pending complete full-cohort checkpoint"}]))
+elif conf.empty:
+    display(pd.DataFrame([{"status":"multiclass summary present; confusion matrix pending"}]))
 else:
     model_key=read_sql(STUDY_DB,"select job_id,model_id from jobs")
     multi=multi.merge(model_key,on="job_id",how="left")
     display(multi.sort_values(["model_id","class_label","metric"]))
     cm=conf.merge(model_key,on="job_id",how="left")
-    selected=cm.model_id.iloc[-1]
-    mat=cm[cm.model_id.eq(selected)].pivot(index="true_label",columns="predicted_label",values="row_fraction")
-    fig=px.imshow(mat,text_auto=".2f",aspect="auto",zmin=0,zmax=1,
-                  title=f"Row-normalized test confusion matrix · {selected}")
-    fig.show()
+    selected=CHECKPOINT_MODEL_ID
+    if selected not in set(cm.model_id):
+        display(pd.DataFrame([{"status":f"registered display model unavailable: {selected}"}]))
+    else:
+        mat=cm[cm.model_id.eq(selected)].pivot(index="true_label",columns="predicted_label",values="row_fraction")
+        fig=px.imshow(mat,text_auto=".2f",aspect="auto",zmin=0,zmax=1,
+                      title=f"Row-normalized test confusion matrix · {selected}")
+        fig.show()
 ```
 
 ### Reconstruction quality-control odds ratio
@@ -530,25 +538,26 @@ if not diag.empty:
     display(diag.sort_values(["job_id","split","seed","neighbors","metric"]))
     stable = diag.query("analysis == 'umap' and split == 'test'")
     if not stable.empty:
+        stable = stable.assign(job_seed=stable.job_id.astype(str)+" · seed="+stable.seed.astype(str))
         fig = px.line(stable, x="neighbors", y="value", color="metric",
-                      line_group="job_id", facet_col="metric", markers=True,
+                      line_group="job_seed", facet_col="metric", markers=True,
                       title="Test projection diagnostics across fixed UMAP seeds")
         fig.update_yaxes(matches=None)
         fig.show()
 
 projection = read_sql(STUDY_DB, """
-    select p.*,r.canonical_rhythm,r.released_rhythm,r.patient_id,j.model_id
+    select p.x,p.y,r.canonical_rhythm,j.model_id
     from projections p join records r using(record_id) join jobs j using(job_id)
     where p.seed=42 and p.neighbors=30 and r.split='test'
 """)
 if not projection.empty:
-    chosen_model = projection.model_id.iloc[-1]
+    chosen_model = CHECKPOINT_MODEL_ID
     shown = projection[projection.model_id == chosen_model]
-    fig = px.scatter(shown, x="x", y="y", color="canonical_rhythm",
-                     hover_name="record_id", hover_data=["patient_id","released_rhythm"],
-                     title=f"Train-fit/test-transform encoder UMAP · {chosen_model}")
-    fig.update_traces(marker={"size":8,"opacity":.75})
-    fig.show()
+    if not shown.empty:
+        fig = px.scatter(shown, x="x", y="y", color="canonical_rhythm",
+                         title=f"Train-fit/test-transform encoder UMAP · {chosen_model}")
+        fig.update_traces(marker={"size":8,"opacity":.75}, hovertemplate="rhythm=%{fullData.name}<extra></extra>")
+        fig.show()
 ```
 
 ### Cross-checkpoint representation agreement
@@ -615,9 +624,15 @@ requires an external patient-level cohort with adjudicated outcomes.
 ```{python}
 #| label: clinical-paired-inference
 if not paired.empty:
+    # Exploratory screen only: Benjamini-Hochberg adjustment across the displayed
+    # database snapshot. Confirmatory families require prespecification.
+    ordered = paired.p_value.fillna(1).sort_values()
+    m = len(ordered)
+    adjusted = (ordered * m / np.arange(1, m + 1))[::-1].cummin()[::-1].clip(upper=1)
+    paired["p_value_bh_exploratory"] = adjusted.reindex(paired.index)
     paired["ci_excludes_zero"] = (paired.ci_low > 0) | (paired.ci_high < 0)
-    cols = [c for c in ["dataset", "model_id", "endpoint", "metric", "delta", "ci_low", "ci_high", "p_value", "n_records", "n_patients", "ci_excludes_zero"] if c in paired]
-    display(paired.sort_values(["ci_excludes_zero", "p_value"], ascending=[False, True])[cols].head(100))
+    cols = [c for c in ["dataset", "model_id", "endpoint", "metric", "delta", "ci_low", "ci_high", "p_value", "p_value_bh_exploratory", "n_records", "n_patients", "ci_excludes_zero"] if c in paired]
+    display(paired.sort_values(["p_value_bh_exploratory", "p_value"])[cols].head(100))
 ```
 
 ## LUDB and RDB blinded delineation
@@ -660,7 +675,20 @@ display(leaderboard(oracle.query("status == 'complete'"), oracle_metrics,
 
 ```{python}
 #| label: protocol-consistency
-cross = re.query("status == 'complete'").merge(oracle.query("status == 'complete'"), on="model_id", suffixes=("_blind", "_oracle"))
+blind_complete = re.query("status == 'complete'").copy()
+oracle_complete = oracle.query("status == 'complete'").copy()
+binding = [c for c in ["model_id", "checkpoint_sha256", "dataset_sha256"]
+           if c in blind_complete and c in oracle_complete]
+if set(binding) != {"model_id", "checkpoint_sha256", "dataset_sha256"}:
+    cross = pd.DataFrame()
+    display(pd.DataFrame([{"status": "cross-protocol comparison blocked",
+                           "reason": "model/checkpoint/dataset identity columns unavailable"}]))
+else:
+    cross = blind_complete.merge(oracle_complete, on=binding,
+                                 suffixes=("_blind", "_oracle"), validate="one_to_one")
+    display(pd.DataFrame([{"identity_binding": "+".join(binding),
+                           "matched_generations": len(cross),
+                           "unmatched_protocol_rows": len(blind_complete) + len(oracle_complete) - 2 * len(cross)}]))
 oracle_x = next((c for c in ["metric.signal_pearson_p05", "metric.missing_signal_pearson_p05"] if c in cross), None)
 if not cross.empty and oracle_x:
     fig = px.scatter(cross, x=oracle_x, y="primary_mean_micro_f1_20ms",

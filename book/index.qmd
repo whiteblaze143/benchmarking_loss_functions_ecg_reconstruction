@@ -49,8 +49,8 @@ Open this rendered `index.html`, then use the persistent sidebar or the Previous
 | Evidence stream | Current status | Interpretation |
 |------------------------|------------------------|------------------------|
 | Local dataset inventories and EDA | Executed from `data/` | Describes the actual repository cohorts and files |
-| Locked 48-cell reconstruction benchmark | Available | Supports descriptive and prespecified paired analyses |
-| EchoNext frozen-classifier outputs | Available, including archived record-level sidecars | Supports paired probability, calibration, subgroup, and failure-tail diagnostics |
+| Generation-bound 48-cell reconstruction benchmark | Computation complete; final package gate 9/10 | Supports generation-bound descriptive and prespecified paired analyses; independent fresh review remains unavailable |
+| EchoNext frozen-classifier outputs | Reviewed figures and label audit retained; record-level recomputation inputs absent on compact disk | Supports integrity-checked evidence display, not an independent rerun of probability/calibration analyses |
 | Mixed-level seven-position factorial checkpoints | Training in progress | Remains a visibly watermarked scaffold until its completion gate passes |
 | Generation-bound temporal morphology | Running under a digest/coverage gate | Partial accepted models diagnose measurement behavior; no factorial claim until the complete grid passes |
 

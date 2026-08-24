@@ -1,0 +1,61 @@
+{
+  "verdict": "MAJOR_REVISIONS_REQUIRED",
+  "critical_count": 0,
+  "major_count": 9,
+  "findings": [
+    {
+      "severity": "MAJOR",
+      "chapter": "07, 08, 09, 10, 12",
+      "issue": "Rendered chapter numbering and prose cross-references are inconsistent because Chapters 07, 08, and 10 define duplicate top-level titles, Chapter 09 falsely calls itself first, and Chapter 08 points to the filename-based Chapter 12 rather than rendered Chapter 16.",
+      "required_fix": "Use one title mechanism per chapter and replace prose chapter numbers with Quarto cross-references and stable anchors."
+    },
+    {
+      "severity": "MAJOR",
+      "chapter": "07, 08, 10",
+      "issue": "Current retained-artifact gates trust stale manifests and historical completeness booleans whose declared Parquet and per-record artifacts are absent; rendered hashes and missing paths are truncated.",
+      "required_fix": "Validate a current compact-release manifest by existence and SHA-256, distinguish historical completion from current reproducibility, and render complete hashes and paths."
+    },
+    {
+      "severity": "MAJOR",
+      "chapter": "08, 09",
+      "issue": "Eight quarantined MSVAE cells are unmarked in the master table and included in Pareto and non-inferiority summaries, while Chapter 09 overstates the inferential scope of the full 48-cell design.",
+      "required_fix": "Expose inference status, exclude invalid rows from claim-bearing summaries or label them forensic-only, and align Chapter 09 with the MSE-on 2^3 primary design."
+    },
+    {
+      "severity": "MAJOR",
+      "chapter": "09",
+      "issue": "Full-array EchoNext clipping, quantile, and lead-law statistics are hard-coded, while the executable audit samples only 256 records and no retained artifact contains the full-array values.",
+      "required_fix": "Execute a chunked full-array audit or retain a hashed audit artifact and load and assert every displayed value from it."
+    },
+    {
+      "severity": "MAJOR",
+      "chapter": "10",
+      "issue": "The retained-evidence gate reports generator hashes as verified although it hashes only PNG outputs, checks only input existence, and copies the declared script hash into a PASS row.",
+      "required_fix": "Hash the declared generator and all retained inputs against provenance and mark missing inputs unverifiable rather than PASS."
+    },
+    {
+      "severity": "MAJOR",
+      "chapter": "11",
+      "issue": "The provenance ledger assigns local EchoNext version 1.1.1 even though local PROVENANCE.json identifies only an IntroECG source commit.",
+      "required_fix": "Describe the local artifact as commit-pinned with PhysioNet-version correspondence unverified unless a version-binding attestation is supplied."
+    },
+    {
+      "severity": "MAJOR",
+      "chapter": "11",
+      "issue": "Executed ISP integrity checks find one invalid test interval and two out-of-window training intervals, but the prose and reported counts do not incorporate a quarantine or adjudication policy.",
+      "required_fix": "Quarantine or adjudicate affected intervals or records, recompute valid-set summaries, and keep ISP benchmark claims closed until the policy is explicit."
+    },
+    {
+      "severity": "MAJOR",
+      "chapter": "12",
+      "issue": "A stale queue JSON with a dead PID is rendered as one active running job and supports the claim that training is active.",
+      "required_fix": "Require state freshness and process or scheduler liveness before reporting active or running; otherwise report stale or halted with the last-observed time."
+    },
+    {
+      "severity": "MAJOR",
+      "chapter": "12",
+      "issue": "The MMD selector is described as five kernels although level 0 disables MMD and only levels 1 through 4 select kernels.",
+      "required_fix": "Describe five MMD states as off plus four kernels and use the off state as the categorical contrast baseline."
+    }
+  ]
+}

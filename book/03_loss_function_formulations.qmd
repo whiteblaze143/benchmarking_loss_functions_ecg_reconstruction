@@ -141,6 +141,8 @@ $$
 
 This is not the 3-by-12 matrix or pure projected MSE previously printed in the book. It encodes a chosen inverse transform and should be interpreted as a spatial regularizer, not direct measurement of cardiac dipole ground truth.
 
+The current cosine implementation is **not identity-safe at zero norm**: two zero VCG vectors incur an angle penalty rather than zero loss. The trainer also pads 5,000 samples to 5,120 with a zero target tail, so VCG-active cells receive an irreducible padded-tail contribution. VCG-active mixed-level cells are therefore implementation-under-audit and inadmissible for spatial-loss claims until valid-norm and padding masks are implemented and those cells are retrained.
+
 ## Energy distance—not signal energy
 
 The `ED` bit activates empirical **energy distance across records**, computed separately for each lead. If $X_c=\{\hat y_{bc,:}\}_{b=1}^B$ and $Y_c=\{y_{bc,:}\}_{b=1}^B$ are batches of complete lead waveforms,
@@ -193,7 +195,7 @@ Because block weights, overlap, and bandwidth estimation are part of the estiman
 
 For each training batch, the target is averaged over records, leaving one 12-dimensional vector per time sample. Four centroids are initialized from randomly selected time indices and updated for five Lloyd iterations. Time samples are assigned by 12-lead morphology, not constrained temporal adjacency. The resulting sets can be non-contiguous and should not be called detected P/QRS/T phases without validation.
 
-For each cluster, predicted and target values are flattened over its time samples and all 12 leads, and a multiscale IMQ MMD is computed across records. The four cluster losses are divided by four; empty clusters contribute zero through that fixed denominator. The training seed controls PyTorch random initialization, but cluster assignments remain batch-composition dependent.
+For each cluster, predicted and target values are flattened over its time samples and all 12 leads, and the same IMQ helper used by level 3 is applied. It therefore inherits the unequal-kernel-scale defect described above and can be asymmetric under argument exchange. The four cluster losses are divided by four; empty clusters contribute zero through that fixed denominator. The training seed controls PyTorch random initialization, but cluster assignments remain batch-composition dependent. Level 4 is implementation-under-audit and inadmissible for MMD claims until one detached bandwidth per cluster is reused for all three kernel terms and affected cells are retrained.
 
 ## Executable component-scale diagnostic
 

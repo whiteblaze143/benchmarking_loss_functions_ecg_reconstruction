@@ -11,7 +11,7 @@ This is the first numbered chapter because every later result inherits its data 
 | EchoNext cohort | `data/echonext/echonext_metadata_100k.csv` | population, setting, race/ethnicity, ECG intervals, echo-derived endpoints, split |
 | EchoNext test waveforms | `data/echonext/EchoNext_test_waveforms.npy` | 5,442 external-test ECGs, 12 leads, 2,500 samples |
 | EchoNext provenance | `data/echonext/PROVENANCE.json` | sampling rate, lead order, units, clipping and normalization contract |
-| Locked benchmark | `results/comprehensive_latest_48_models/` | 48 reconstruction cells and downstream diagnostic outputs |
+| Generation-bound benchmark | `results/factorial_v4/` and `results/factorial_v4_clinical/` | 48 registered reconstruction cells, statistical tables, reviewed figures, and explicit completion gates |
 
 Every executable audit below resolves its input beneath `../data/` and prints the resolved path. No waveform statistic in this chapter is generated from the later synthetic tutorials.
 
@@ -549,8 +549,7 @@ The EchoNext classifier evaluates 12 echo-derived structural-heart-disease endpo
 ```{python}
 #| label: echonext-label-support
 #| tbl-cap: "EchoNext test-set endpoint support from the locked label audit."
-label_audit_path = (ROOT / "results/comprehensive_latest_48_models/raw/factorial_v4_2x4/"
-                    "echonext_shd_label_audit.json")
+label_audit_path = ROOT / "results/factorial_v4/echonext_shd_label_audit.json"
 if label_audit_path.exists():
     label_audit = json.loads(label_audit_path.read_text())
     support = pd.DataFrame(label_audit["label_summary"]).T
@@ -626,9 +625,7 @@ A thousand-fold unit error can produce finite tensors and plausible-looking norm
 
 Compute the fraction of values equal, or numerically close, to each provenance bound by lead. High occupancy indicates censored amplitude tails. Report this because peak-amplitude and ST-deviation errors are then conditional on the released clipping policy.
 
-In the released test tensor, approximately 0.120–0.144% of samples per lead lie at either documented clipping bound. The inverse-normalized microvolt percentiles show clinically meaningful lead heterogeneity: for example, the 0.1st/99.9th percentiles are −102/287 µV in lead I, −369/173 µV in V1, −527/299 µV in V3, and −246/426 µV in V5. A single global clipping range or scale would therefore distort the precordial leads differently.
-
-The rendered audit below independently reads a fixed 256-record sample from the 1.3 GB memory-mapped array, reverses the released affine normalization using `PROVENANCE.json`, and recomputes signal-validity and lead-law summaries. The full-array values in the table that follows come from the locked audit; the executable sample serves as a regression test that the live local artifact still has the same axes, scaling, and physiologic lead relations.
+The rendered audit below reads a deterministic 256-record sample from the memory-mapped array, reverses the released affine normalization using `PROVENANCE.json`, and recomputes signal-validity and lead-law summaries. The compact disk does not retain a hash-bound full-array clipping audit, so this chapter does not present hard-coded full-array percentiles or occupancies as current evidence.
 
 ```{python}
 #| label: echonext-live-waveform-audit
@@ -662,20 +659,7 @@ echo_live_audit = pd.DataFrame({
 echo_live_audit
 ```
 
-| Lead | 0.1st percentile (µV) | Median | 99.9th percentile (µV) | Bound occupancy |
-|---|---:|---:|---:|---:|
-| I | −102 | 0 | 287 | 0.132% |
-| II | −168 | 0 | 283 | 0.133% |
-| III | −295 | 0 | 191 | 0.122% |
-| aVR | −247 | 0 | 90 | 0.134% |
-| aVL | −114 | 0 | 259 | 0.120% |
-| aVF | −216.5 | 0 | 219.5 | 0.129% |
-| V1 | −369 | 0 | 173 | 0.144% |
-| V2 | −502 | 0 | 254 | 0.142% |
-| V3 | −527 | 0 | 299 | 0.126% |
-| V4 | −372 | 0 | 406 | 0.135% |
-| V5 | −246 | 0 | 426 | 0.139% |
-| V6 | −167 | 0 | 376 | 0.132% |
+Full-array clipping occupancy is a required future retained artifact. It must be computed in chunks, bound to the waveform/provenance hashes, and loaded here rather than transcribed into prose.
 
 ### 3. Lead-law residuals
 
@@ -686,7 +670,7 @@ aVL \approx I-\frac{II}{2},\quad aVF \approx II-\frac{I}{2}.$$
 
 Residual distributions detect lead permutations, polarity errors, scaling inconsistencies, and corrupted records. These are pipeline diagnostics, not targets to “repair” after looking at test performance.
 
-The actual EchoNext test tensor passes a strong version of this check after inverse normalization. Median record-level residual RMSE is 2.34 µV for $III-(II-I)$, 0.86 µV for $aVR+(I+II)/2$, 1.53 µV for $aVL-(I-II/2)$, and 1.41 µV for $aVF-(II-I/2)$. Corresponding 99th percentiles are 16.57, 7.44, 11.88, and 9.87 µV. These nonzero residuals reflect quantization/clipping and acquisition representation; they also provide empirical tolerances for future pipeline tests. A residual orders of magnitude larger than these references is a red flag for lead or unit corruption.
+The executable sample above supplies a regression diagnostic for the current local tensor. Full-array median and tail tolerances remain unreported until a hash-bound audit artifact is retained; sample estimates must not be promoted to full-cohort thresholds.
 
 ### 4. Spectral and morphology distributions
 
@@ -717,7 +701,7 @@ Failure analysis should be **record based**, not figure based. Rank records sepa
 
 ## Statistical design for the factorial benchmark
 
-The locked experiment is a $3\times2^4$ design: three architectures crossed with toggles for MSE (E), correlation (C), MMD (M), and derivative loss (D). The 48 cells permit main-effect and interaction estimates; comparing only “MSE” with “full” wastes most of the design.
+The registered experiment is a $3\times2^4$ grid, but primary factorial inference is the MSE-on $3\times2^3$ subset. Eight MultiScale-VAE MSE-toggle cells are quarantined because paired checkpoints were tensor-identical under a historical decoder-loss defect. The complete 48-row table is useful for identity and forensics; it is not a uniformly valid four-factor inferential grid.
 
 Use paired patient-cluster BCa intervals because all cells predict the same test patients and some patients contribute multiple records. For each family and endpoint, estimate
 

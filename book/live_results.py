@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sqlite3
 from datetime import datetime
 from pathlib import Path
@@ -25,6 +26,13 @@ def project_root(start: Path | None = None) -> Path:
 
 
 ROOT = project_root()
+SNAPSHOT_ROOT = Path(os.environ["BOOK_SNAPSHOT_ROOT"]).resolve() if os.environ.get("BOOK_SNAPSHOT_ROOT") else None
+
+def source_path(relative: str | Path) -> Path:
+    """Resolve a live source through the immutable render snapshot when set."""
+    relative=Path(relative)
+    candidate=(SNAPSHOT_ROOT/relative) if SNAPSHOT_ROOT else (ROOT/relative)
+    return candidate
 
 
 def read_sql(path: str | Path, query: str, params=()) -> pd.DataFrame:

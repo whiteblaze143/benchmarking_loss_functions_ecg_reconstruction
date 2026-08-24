@@ -5,7 +5,7 @@ An exhaustive model chapter is useful only when every row names the exact model 
 ::: {.callout-important}
 ## Current evidence status
 
-Training is active. A completed queue flag is not sufficient evidence: the checkpoint must also pass the current content-pinned compatibility contract. Model rankings, factorial effects, and clinical diagnoses remain closed until the release gate is complete.
+The registered design remains incomplete. Queue JSON is an observation, not a heartbeat: this chapter verifies file freshness and recorded-process liveness before using the word “active.” Model rankings and factorial effects remain closed until the generation-bound release gate is complete.
 :::
 
 ## Live generation inventory
@@ -13,6 +13,7 @@ Training is active. A completed queue flag is not sufficient evidence: the check
 ```{python}
 #| label: exhaustive-live-inventory
 import json
+import os
 import re
 from collections import Counter
 from pathlib import Path
@@ -40,14 +41,27 @@ assert {mask[0] for mask in manifest_masks} == {"1"}
 assert all({mask[position] for mask in manifest_masks} == {"0", "1"} for position in range(1, 6))
 assert {mask[6] for mask in manifest_masks} == set("01234")
 
+expected_ids = {model_id for model_id, _, _ in identities}
+audit_models = [row for row in audit.get("models", []) if str(row.get("model_id")) in expected_ids]
+compatible_ids = {str(row.get("model_id")) for row in audit_models if row.get("compatible")}
+incompatible_ids = {str(row.get("model_id")) for row in audit_models if not row.get("compatible")}
+historical_audit_rows = len(audit.get("models", [])) - len(audit_models)
+state_age_hours = (pd.Timestamp.now(tz="UTC").timestamp() - (ROOT / "refine-logs/queue/queue_state.json").stat().st_mtime) / 3600
+running_pids = [int(job["pid"]) for job in state["jobs"] if job.get("status") == "running" and job.get("pid")]
+def pid_alive(pid):
+    try: os.kill(pid, 0); return True
+    except (ProcessLookupError, PermissionError): return False
+live_running_pids = [pid for pid in running_pids if pid_alive(pid)]
+queue_active = state_age_hours <= 1 and bool(live_running_pids)
+
 pd.DataFrame({
-    "quantity": ["pending", "running", "queue-completed", "contract-compatible", "contract-incompatible"],
-    "count": [status["pending"], status["running"], status["completed"],
-              audit["counts"]["compatible"], audit["counts"]["incompatible"]]
+    "quantity": ["pending", "recorded-running", "live-running-processes", "queue-completed", "current-generation compatible", "current-generation incompatible", "historical audit rows excluded", "state age (hours)", "queue active"],
+    "count": [status["pending"], status["running"], len(live_running_pids), status["completed"],
+              len(compatible_ids), len(incompatible_ids), historical_audit_rows, state_age_hours, queue_active]
 })
 ```
 
-The compatible count is the meaningful numerator. Earlier checkpoints produced under a different source bundle or optimizer regime were preserved under quarantine names and requeued; they are not silently pooled with the current generation.
+Only audit rows whose model IDs occur in the exact current manifest enter the compatibility counts. Historical rows are reported separately. At the current snapshot the queue state is stale/halted unless both freshness and a live recorded PID pass; a JSON row labelled `running` is not sufficient.
 
 ```{python}
 #| label: exhaustive-manifest-identity
@@ -69,7 +83,7 @@ The seed blocks are **42, 200, and 201**, with 160 distinct masks in each block.
 
 ## Seven-position mask decoded
 
-The label often shortened to “$2^7$” is a seven-character configuration code, not seven binary factors. The first position is fixed MSE, five positions are binary toggles, and the final position selects one of five MMD kernels. Consequently each seed has $2^5\times5=160$ conditions.
+The label often shortened to “$2^7$” is a seven-character configuration code, not seven binary factors. The first position is fixed MSE, five positions are binary toggles, and the final position selects one of five MMD states: off plus four kernels. Consequently each seed has $2^5\times5=160$ conditions.
 
 | Position | Implemented role | Levels | Training weight / normalizer | Interpretation rule |
 |---:|---|---:|---:|---|
@@ -79,7 +93,7 @@ The label often shortened to “$2^7$” is a seven-character configuration code
 | 4 | Kors-vectorcardiogram angle/magnitude loss | 0/1 | 5.0 / 1.0 | binary main effect and prespecified interactions |
 | 5 | empirical energy-distance loss | 0/1 | 1.0 / 0.05 | binary main effect; composite scale changes sharply |
 | 6 | Goldberger limb-lead consistency loss | 0/1 | 1.0 / 0.1 | binary main effect and prespecified interactions |
-| 7 | MMD kernel selector | 0–4 | 2.3 / 0.042 when active | categorical, never a numeric dose |
+| 7 | MMD state | 0 off; 1–4 kernel choices | 2.3 / 0.042 when active | categorical with off as baseline, never a numeric dose |
 
 With the manifest-bound seeds 42, 200, and 201, the planned grid contains 480 model identities. The primary analysis must retain seed as a training-replicate block and must not treat model fits—or three seeds—as independent patient samples. Patient-level uncertainty is estimated from the test cohort; seed variability addresses optimization replication and is a different uncertainty source.
 

@@ -8,16 +8,18 @@ from the one-lead spatial/wavelet/SSL program and provides interactive raw
 leaderboards, matched deltas, uncertainty tables, boundary heatmaps, and
 performance-profile UMAPs.
 
-All executable chapters are run with the project virtual environment:
+All executable chapters use an explicitly selected environment. Activate one
+that satisfies [`requirements-book.txt`](requirements-book.txt), then run from
+the repository root:
 
 ```bash
-cd /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction
-QUARTO_PYTHON=/home/mithunmanivannan/.venv/bin/python \
-PATH=/home/mithunmanivannan/.venv/bin:$PATH \
-.tools/quarto-1.10.18/bin/quarto render book
+python3 scripts/render_quarto_chapters.py \
+  --round-dir review-stage/render-release
 ```
 
-The explicit `QUARTO_PYTHON` and `PATH` settings matter. Without them, Quarto may start a different `python3` kernel and fail to find the venv's `jupyter-cache`, WFDB, or analysis packages.
+The wrapper rejects the wrong Quarto version, snapshots mutable SQLite inputs,
+records the Python executable/version, and binds each page to its source hash.
+It sets `QUARTO_PYTHON` to the interpreter used to launch the wrapper.
 
 The project uses shared site assets (`embed-resources: false`). Those resources
 are still embedded in the deployable `book/_book` artifact under `site_libs/`,
@@ -31,15 +33,11 @@ must therefore verify every local `src`/`href` resolves inside `_book`.
 To refresh only the pages backed by actively changing databases:
 
 ```bash
-for chapter in \
-  book/15_live_results_observatory.qmd \
-  book/16_three_lead_ecgaim_live.qmd \
-  book/17_one_lead_wavelet_ssl_live.qmd
-do
-  QUARTO_PYTHON=/home/mithunmanivannan/.venv/bin/python3 \
-    PATH=/home/mithunmanivannan/.venv/bin:$PATH \
-    .tools/quarto-1.10.18/bin/quarto render "$chapter"
-done
+python3 scripts/render_quarto_chapters.py \
+  --round-dir review-stage/render-live \
+  --chapter 15_live_results_observatory.qmd \
+  --chapter 16_three_lead_ecgaim_live.qmd \
+  --chapter 17_one_lead_wavelet_ssl_live.qmd
 ```
 
 The readers use SQLite URI `mode=ro`; rendering cannot modify an experiment
@@ -67,11 +65,22 @@ tmux capture-pane -p -t checkpoint_embedding_postanalysis
 
 ### GitHub Pages
 
-The Pages workflow deploys the checked-in `book/_book` snapshot. This is
-intentional: authoritative experiment databases and checkpoints stay ignored
-and are not uploaded to GitHub. Refresh locally, inspect the generated pages,
-then commit the source QMD plus the reviewed `_book` snapshot. In repository
-Settings → Pages, select **GitHub Actions** as the source once.
+The Pages workflow deploys the checked-in `book/_book` snapshot; authoritative
+databases and checkpoints remain ignored. HTML existence alone is not a release
+gate. Vendor runtime assets, run the audit, and build a manifest. The manifest
+builder refuses production while a scientific completion gate fails;
+`--provisional` labels the candidate explicitly nondeployable.
+GitHub Pages uploads a single immutable artifact and independently verifies the
+production status plus every page hash before deployment, so a partially
+updated local directory cannot be promoted.
+
+```bash
+python3 scripts/vendor_book_runtime.py
+python3 scripts/audit_quarto_book.py
+python3 scripts/build_book_release_manifest.py \
+  --render-state review-stage/render-release/render_state.json \
+  --provisional
+```
 
 ## Release checks
 
@@ -81,8 +90,14 @@ After a render:
 2. confirm the sidebar begins with the three Live Experiment Observatory pages;
 3. open Chapters 9–11 and verify their executed tables are present;
 4. verify Chapter 8's manifest gate reports 160 jobs and 160 unique masks for each seed;
-5. treat any failed Python cell, missing data artifact, or absent declared sidecar as a failed release gate.
+5. require zero stale/missing pages, unresolved resources, external runtime
+   dependencies, or exposed record identifiers in the mechanical audit;
+6. treat failed cells, absent declared sidecars, or a failed scientific
+   completion gate as a failed production-release gate.
 
-The book reads study data from `../data/` and locked results from
-`../results/comprehensive_latest_48_models/`. Synthetic tutorial chapters are
-explicitly separated from the real-data evidence chapters.
+The book reads study data from `../data/`, core generation-bound results from
+`../results/factorial_v4/`, clinical results from
+`../results/factorial_v4_clinical/`, and compact live SQLite databases under
+`../results/`. Synthetic tutorial chapters are explicitly separated from
+real-data evidence chapters. The removed `comprehensive_latest_48_models`
+bundle is not a current dependency.

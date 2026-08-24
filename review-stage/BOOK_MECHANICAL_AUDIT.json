@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-08-24T05:23:46.594676+00:00",
+  "generated_at": "2026-08-24T15:50:40.570078+00:00",
   "book": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/book",
   "chapters": [
     {
       "chapter": "index.qmd",
-      "source_bytes": 5542,
-      "source_mtime": 1787541250.1452515,
+      "source_bytes": 5724,
+      "source_mtime": 1787586235.6111577,
       "headings": 6,
       "python_blocks": 0,
       "all_blocks": 0,
@@ -13,31 +13,41 @@
       "labels": [],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 65811,
+      "html_bytes": 66202,
       "html_stale": false,
       "local_resource_count": 39,
-      "missing_local_resources": []
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [],
+      "output_blocks": 0,
+      "expected_executable_blocks": 0
     },
     {
       "chapter": "15_live_results_observatory.qmd",
-      "source_bytes": 3665,
-      "source_mtime": 1787546237.5884242,
+      "source_bytes": 3702,
+      "source_mtime": 1787549059.2193205,
       "headings": 4,
       "python_blocks": 2,
       "all_blocks": 3,
-      "unlabeled_blocks": [
-        74
-      ],
+      "unlabeled_blocks": [],
       "labels": [
         "observatory-setup",
-        "observatory-status"
+        "observatory-status",
+        "observatory-render-command"
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 75845,
+      "html_bytes": 76166,
       "html_stale": false,
       "local_resource_count": 39,
-      "missing_local_resources": []
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js"
+      ],
+      "output_blocks": 2,
+      "expected_executable_blocks": 2
     },
     {
       "chapter": "16_three_lead_ecgaim_live.qmd",
@@ -74,10 +84,21 @@
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 1742927,
+      "html_bytes": 2139255,
       "html_stale": false,
-      "local_resource_count": 38,
-      "missing_local_resources": []
+      "local_resource_count": 39,
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdn.plot.ly/plotly-3.3.1.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG",
+        "https://doi.org/10.1161/CIR.0000000000001193",
+        "https://doi.org/10.1161/CIRCULATIONAHA.125.077494"
+      ],
+      "output_blocks": 41,
+      "expected_executable_blocks": 23
     },
     {
       "chapter": "17_one_lead_wavelet_ssl_live.qmd",
@@ -100,15 +121,24 @@
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 154276,
+      "html_bytes": 206842,
       "html_stale": false,
       "local_resource_count": 39,
-      "missing_local_resources": []
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdn.plot.ly/plotly-3.3.1.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"
+      ],
+      "output_blocks": 12,
+      "expected_executable_blocks": 9
     },
     {
       "chapter": "09_real_data_eda_and_diagnostics.qmd",
-      "source_bytes": 39739,
-      "source_mtime": 1787541387.4319527,
+      "source_bytes": 39750,
+      "source_mtime": 1787586228.31017,
       "headings": 24,
       "python_blocks": 18,
       "all_blocks": 18,
@@ -135,10 +165,19 @@
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 343902,
+      "html_bytes": 345524,
       "html_stale": false,
       "local_resource_count": 39,
-      "missing_local_resources": []
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"
+      ],
+      "output_blocks": 32,
+      "expected_executable_blocks": 18
     },
     {
       "chapter": "11_dataset_atlas_ludb_isp_sunnybrook.qmd",
@@ -165,15 +204,28 @@
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 243026,
+      "html_bytes": 243053,
       "html_stale": false,
       "local_resource_count": 39,
-      "missing_local_resources": []
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6",
+        "https://doi.org/10.13026/2j37-ba56",
+        "https://doi.org/10.13026/eegm-h675",
+        "https://physionet.org/content/echonext/",
+        "https://physionet.org/content/ludb/1.0.1/"
+      ],
+      "output_blocks": 12,
+      "expected_executable_blocks": 13
     },
     {
       "chapter": "05_zhejiang_delineation_tutorial.qmd",
-      "source_bytes": 10998,
-      "source_mtime": 1786667152.3754156,
+      "source_bytes": 12235,
+      "source_mtime": 1787549950.30254,
       "headings": 7,
       "python_blocks": 5,
       "all_blocks": 5,
@@ -187,10 +239,17 @@
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 132949,
+      "html_bytes": 142487,
       "html_stale": false,
       "local_resource_count": 40,
-      "missing_local_resources": []
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js"
+      ],
+      "output_blocks": 9,
+      "expected_executable_blocks": 5
     },
     {
       "chapter": "01_dataset_and_preprocessing.qmd",
@@ -209,15 +268,26 @@
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 577755,
+      "html_bytes": 577782,
       "html_stale": false,
       "local_resource_count": 39,
-      "missing_local_resources": []
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdn.plot.ly/plotly-3.3.1.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG",
+        "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"
+      ],
+      "output_blocks": 6,
+      "expected_executable_blocks": 5
     },
     {
       "chapter": "02_network_architectures.qmd",
-      "source_bytes": 10003,
-      "source_mtime": 1787541654.5673683,
+      "source_bytes": 9976,
+      "source_mtime": 1787550048.8233192,
       "headings": 6,
       "python_blocks": 2,
       "all_blocks": 2,
@@ -228,15 +298,24 @@
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 105664,
+      "html_bytes": 108569,
       "html_stale": false,
       "local_resource_count": 39,
-      "missing_local_resources": []
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"
+      ],
+      "output_blocks": 3,
+      "expected_executable_blocks": 2
     },
     {
       "chapter": "03_loss_function_formulations.qmd",
-      "source_bytes": 13659,
-      "source_mtime": 1786667152.3754156,
+      "source_bytes": 14059,
+      "source_mtime": 1787549950.30054,
       "headings": 13,
       "python_blocks": 2,
       "all_blocks": 2,
@@ -247,153 +326,211 @@
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 141278,
+      "html_bytes": 142083,
       "html_stale": false,
       "local_resource_count": 39,
-      "missing_local_resources": []
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdn.plot.ly/plotly-3.3.1.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG",
+        "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"
+      ],
+      "output_blocks": 5,
+      "expected_executable_blocks": 2
     },
     {
       "chapter": "05_clinical_metrics_and_delineation.qmd",
-      "source_bytes": 9013,
-      "source_mtime": 1786667152.3754156,
+      "source_bytes": 9079,
+      "source_mtime": 1787549059.2213206,
       "headings": 22,
       "python_blocks": 3,
       "all_blocks": 3,
-      "unlabeled_blocks": [
-        101,
-        165
-      ],
+      "unlabeled_blocks": [],
       "labels": [
-        "qtc-sensitivity-plot"
+        "qtc-sensitivity-plot",
+        "didactic-cwt-delineation",
+        "qtc-formula-function"
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 211642,
+      "html_bytes": 212200,
       "html_stale": false,
       "local_resource_count": 39,
-      "missing_local_resources": []
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdn.plot.ly/plotly-3.3.1.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG",
+        "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"
+      ],
+      "output_blocks": 3,
+      "expected_executable_blocks": 3
     },
     {
       "chapter": "04_regression_to_mean.qmd",
-      "source_bytes": 9884,
-      "source_mtime": 1786667152.3754156,
+      "source_bytes": 10430,
+      "source_mtime": 1787549950.3015401,
       "headings": 17,
       "python_blocks": 2,
       "all_blocks": 2,
-      "unlabeled_blocks": [
-        105,
-        175
+      "unlabeled_blocks": [],
+      "labels": [
+        "didactic-bland-altman-statistics",
+        "didactic-bland-altman-visualization"
       ],
-      "labels": [],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 138260,
+      "html_bytes": 142718,
       "html_stale": false,
-      "local_resource_count": 38,
-      "missing_local_resources": []
+      "local_resource_count": 39,
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdn.plot.ly/plotly-3.3.1.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG",
+        "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"
+      ],
+      "output_blocks": 2,
+      "expected_executable_blocks": 2
     },
     {
       "chapter": "06_fairness_robustness_sqi.qmd",
-      "source_bytes": 8247,
-      "source_mtime": 1786667152.3754156,
+      "source_bytes": 8286,
+      "source_mtime": 1787549059.2223206,
       "headings": 17,
       "python_blocks": 2,
       "all_blocks": 2,
-      "unlabeled_blocks": [
-        155
-      ],
+      "unlabeled_blocks": [],
       "labels": [
-        "didactic-sqi-noise-simulation"
+        "didactic-sqi-noise-simulation",
+        "didactic-noise-stress-viewer"
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 200026,
+      "html_bytes": 203981,
       "html_stale": false,
-      "local_resource_count": 38,
-      "missing_local_resources": []
+      "local_resource_count": 39,
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdn.plot.ly/plotly-3.3.1.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG",
+        "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"
+      ],
+      "output_blocks": 2,
+      "expected_executable_blocks": 2
     },
     {
       "chapter": "08_factorial_loss_matrix_benchmarks.qmd",
-      "source_bytes": 63659,
-      "source_mtime": 1786667152.3764157,
-      "headings": 32,
-      "python_blocks": 12,
-      "all_blocks": 13,
-      "unlabeled_blocks": [
-        1293
-      ],
+      "source_bytes": 11946,
+      "source_mtime": 1787586000.888538,
+      "headings": 11,
+      "python_blocks": 9,
+      "all_blocks": 9,
+      "unlabeled_blocks": [],
       "labels": [
-        "load-locked-master",
-        "temporal-mmd-provenance-audit",
-        "pareto-frontier-and-anova",
-        "full-versus-base",
-        "familywise-tests",
-        "factorial-effects",
-        "supplementary-seed-confirmation",
-        "running-mixed-level-manifest-gate",
-        "running-mixed-level-completion-gate",
-        "checkpoint-store-live-summary",
-        "archived-inference-smoke-test",
-        "planned-mixed-level-placeholder"
+        "factorial-v4-gate",
+        "factorial-v4-master",
+        "factorial-v4-pareto",
+        "factorial-v4-anchor-deltas",
+        "factorial-v4-familywise-tests",
+        "factorial-v4-effects",
+        "factorial-v4-effect-forest",
+        "factorial-v4-noninferiority",
+        "factorial-v4-seeds"
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 479841,
+      "html_bytes": 201849,
       "html_stale": false,
-      "local_resource_count": 38,
-      "missing_local_resources": []
+      "local_resource_count": 39,
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdn.plot.ly/plotly-3.3.1.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"
+      ],
+      "output_blocks": 9,
+      "expected_executable_blocks": 9
     },
     {
       "chapter": "07_smartwatch_reconstruction_case_study.qmd",
-      "source_bytes": 11278,
-      "source_mtime": 1786667152.3764157,
-      "headings": 10,
+      "source_bytes": 8251,
+      "source_mtime": 1787585882.2977135,
+      "headings": 7,
       "python_blocks": 6,
       "all_blocks": 6,
       "unlabeled_blocks": [],
       "labels": [
-        "smartwatch-contract-audit",
-        "smartwatch-pairing-audit",
-        "smartwatch-device-distribution",
-        "smartwatch-device-model-plot",
-        "smartwatch-anchor-contrast",
-        "smartwatch-ground-truth-calibration"
+        "smartwatch-current-artifact-gate",
+        "smartwatch-protocol-table",
+        "smartwatch-protocol-plot",
+        "smartwatch-fidelity-distribution",
+        "smartwatch-fidelity-anchors",
+        "smartwatch-task-tail"
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 107143,
+      "html_bytes": 472558,
       "html_stale": false,
-      "local_resource_count": 38,
-      "missing_local_resources": []
+      "local_resource_count": 39,
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdn.plot.ly/plotly-3.3.1.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG",
+        "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"
+      ],
+      "output_blocks": 6,
+      "expected_executable_blocks": 6
     },
     {
       "chapter": "10_echonext_classifier_external_validation.qmd",
-      "source_bytes": 43488,
-      "source_mtime": 1786667152.3764157,
-      "headings": 30,
-      "python_blocks": 12,
-      "all_blocks": 12,
+      "source_bytes": 7679,
+      "source_mtime": 1787586228.30917,
+      "headings": 9,
+      "python_blocks": 6,
+      "all_blocks": 6,
       "unlabeled_blocks": [],
       "labels": [
-        "echonext-shd-interactive-plot",
-        "echonext-task-auroc-boxplots",
-        "echonext-classifier-table",
-        "echonext-macro-summary",
-        "echonext-reference-and-anchor-fidelity",
-        "echonext-per-task-reference-deltas",
-        "echonext-record-level-load",
-        "echonext-record-drift-tails",
-        "echonext-composite-reliability",
-        "echonext-subgroup-probability-drift",
-        "echonext-worst-records",
-        "echonext-morphology-diagnostic-discordance"
+        "echonext-retained-gate",
+        "echonext-retained-label-support",
+        "echonext-task-figure",
+        "echonext-calibration-figure",
+        "echonext-stress-figure",
+        "echonext-waveform-figure"
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 318021,
+      "html_bytes": 105395,
       "html_stale": false,
-      "local_resource_count": 38,
-      "missing_local_resources": []
+      "local_resource_count": 43,
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js"
+      ],
+      "output_blocks": 7,
+      "expected_executable_blocks": 6
     },
     {
       "chapter": "12_exhaustive_model_analysis.qmd",
@@ -409,55 +546,50 @@
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 83981,
+      "html_bytes": 92851,
       "html_stale": false,
-      "local_resource_count": 38,
-      "missing_local_resources": []
+      "local_resource_count": 39,
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
+        "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"
+      ],
+      "output_blocks": 3,
+      "expected_executable_blocks": 2
     },
     {
       "chapter": "13_engineering_ml_visual_atlas.qmd",
-      "source_bytes": 62881,
-      "source_mtime": 1786667152.3774157,
-      "headings": 12,
-      "python_blocks": 28,
-      "all_blocks": 28,
+      "source_bytes": 10253,
+      "source_mtime": 1787586184.4202435,
+      "headings": 9,
+      "python_blocks": 7,
+      "all_blocks": 7,
       "unlabeled_blocks": [],
       "labels": [
-        "engineering-state",
-        "engineering-contract",
-        "checkpoint-storage-accounting",
-        "compatible-inference-readiness",
-        "compatible-inference-index-case-lead-summary",
-        "compatible-inference-index-case-heatmap",
-        "compatible-model-table",
-        "log-coverage",
-        "compatible-training-summary",
-        "compatible-operational-eta",
-        "compatible-validation-mse-curves",
-        "compatible-composite-scale-audit",
-        "temporal-target-detector-eda",
-        "temporal-target-detector-coverage",
-        "temporal-target-detector-subgroups",
-        "temporal-morphology-acceptance-gate",
-        "temporal-evaluator-throughput",
-        "temporal-morphology-exclusions",
-        "temporal-morphology-coverage",
-        "temporal-morphology-partial-effect-diagnostics",
-        "temporal-morphology-per-record-ledger",
-        "temporal-morphology-tolerance-sensitivity",
-        "temporal-morphology-model-snapshot",
-        "controlled-kernel-training-context",
-        "controlled-kernel-feature-pareto",
-        "controlled-kernel-feature-pareto-map",
-        "temporal-morphology-controlled-kernel-contrasts",
-        "temporal-morphology-controlled-kernel-patient-contrasts"
+        "engineering-artifact-map",
+        "engineering-sqlite-integrity",
+        "engineering-factorial-package",
+        "engineering-mixed-level-status",
+        "engineering-embedding-status",
+        "engineering-storage-consumers",
+        "engineering-build-contract"
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 411434,
+      "html_bytes": 135479,
       "html_stale": false,
-      "local_resource_count": 38,
-      "missing_local_resources": []
+      "local_resource_count": 39,
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
+        "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js"
+      ],
+      "output_blocks": 7,
+      "expected_executable_blocks": 7
     },
     {
       "chapter": "14_cath_lab_clinical_trust_atlas.qmd",
@@ -470,10 +602,17 @@
       "labels": [],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 70821,
+      "html_bytes": 75143,
       "html_stale": false,
-      "local_resource_count": 38,
-      "missing_local_resources": []
+      "local_resource_count": 39,
+      "missing_local_resources": [],
+      "generator": "quarto-1.10.18",
+      "external_resources": [
+        "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
+        "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"
+      ],
+      "output_blocks": 0,
+      "expected_executable_blocks": 0
     }
   ],
   "summary": {
@@ -483,7 +622,10 @@
     "incomplete_html": 0,
     "stale_html": 0,
     "missing_resources": 0,
-    "unlabeled_blocks": 7,
-    "duplicate_labels": []
+    "unlabeled_blocks": 0,
+    "duplicate_labels": [],
+    "wrong_renderer": 0,
+    "zero_output_chapters": 0,
+    "external_resources": 12
   }
 }

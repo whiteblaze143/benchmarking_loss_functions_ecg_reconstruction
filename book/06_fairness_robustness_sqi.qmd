@@ -3,7 +3,7 @@
 ECG reconstruction models intended for wearable or clinical use must be evaluated across patient subgroups and realistic signal degradation. This chapter formulates measurement interfaces; its executable waveform example is synthetic and does not report robustness or fairness for a trained checkpoint.
 
 1. **Signal Quality Index (SQI) Metrics**: Higher-order statistical moments that quantify corruption.
-2. **Deterministic Noise-Stress Testing**: Controlled Gaussian, baseline wander, and electromyographic (EMG) noise injection.
+2. **Deterministic Noise-Stress Demonstration**: Controlled Gaussian and baseline-wander injection. EMG is specified as a future benchmark component but is not implemented in the executable example.
 3. **Demographic Subgroup Fairness & Paired Disparity Metrics**.
 
 ---
@@ -35,7 +35,7 @@ where $P(f) = |X(f)|^2$ is the Power Spectral Density obtained via Fast Fourier 
 
 ## Noise Stress Testing Mathematics & Noise Models
 
-To benchmark model robustness, we corrupt clean ECG signals $x(t)$ with three distinct physical noise models:
+The executable teaching example implements the first two models below. The third is a protocol specification, not executable evidence in this chapter:
 
 $$x_{\text{corrupted}}(t) = x(t) + n_{\text{artifact}}(t)$$
 
@@ -53,6 +53,8 @@ $$n_{\text{BW}}(t) = A_{\text{BW}} \cdot \sin(2\pi f_{\text{resp}} t + \phi)$$
 
 ### 3. Electromyographic (EMG) Muscle Tremor Noise ($n_{\text{EMG}}$)
 Modeled as a high-frequency filtered autoregressive process ($> 35\text{ Hz}$) simulating random muscle contractions.
+
+**Not implemented below.** A reportable implementation must specify the filter, autoregressive parameters, lead covariance, random seed, and achieved finite-sample SNR.
 
 ---
 

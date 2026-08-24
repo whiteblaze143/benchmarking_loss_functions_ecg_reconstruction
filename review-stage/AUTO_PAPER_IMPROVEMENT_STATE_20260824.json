@@ -1,0 +1,12 @@
+{
+  "workflow": "auto-paper-improvement-loop",
+  "artifact": "book/_quarto.yml and 19 configured QMD chapters",
+  "rounds_completed": 2,
+  "maximum_rounds": 2,
+  "review_backend_requested": "gemini-review",
+  "review_backend_used": "gpt-5.6-sol-xhigh fresh-context fallback",
+  "review_groups": ["foundations", "benchmarks", "live_system"],
+  "status": "final_executable_validation_in_progress",
+  "claim_policy": "fail_closed",
+  "timestamp": "2026-08-24T16:10:00Z"
+}

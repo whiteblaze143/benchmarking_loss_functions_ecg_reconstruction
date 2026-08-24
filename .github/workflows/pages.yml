@@ -25,6 +25,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Verify production release manifest
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, pathlib
+          root = pathlib.Path('.')
+          manifest_path = root / 'book/_book/RELEASE_MANIFEST.json'
+          if not manifest_path.is_file():
+              raise SystemExit('Missing RELEASE_MANIFEST.json; refusing mixed or unaudited deployment')
+          manifest = json.loads(manifest_path.read_text())
+          if manifest.get('release_status') != 'production_verified':
+              raise SystemExit(f"Non-production book: {manifest.get('release_status')}")
+          for rel, expected in manifest.get('outputs', {}).items():
+              path = root / rel
+              actual = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
+              if actual != expected.get('sha256'):
+                  raise SystemExit(f'Output hash mismatch: {rel}')
+          print(f"Verified {len(manifest.get('outputs', {}))} release-bound pages")
+          PY
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

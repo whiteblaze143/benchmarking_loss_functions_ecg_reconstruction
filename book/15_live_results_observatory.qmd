@@ -18,17 +18,34 @@ import pandas as pd
 from live_results import *
 
 SOURCES = {
-    "Clinical biomarkers": ROOT / "results/clinical_biomarkers_multids/clinical_metrics.db",
-    "Three-lead checkpoint catalog": ROOT / "results/checkpoint_store/catalog.sqlite",
-    "LUDB blinded": ROOT / "results/ecgaim_ludb_semiseg_blinded/compact.sqlite",
-    "RDB blinded": ROOT / "results/ecgaim_rdb_semiseg_blinded/compact.sqlite",
-    "RDB oracle": ROOT / "results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite",
-    "One-lead queue": ROOT / "refine-logs/wavelet_ssl_1110000/full/queue.sqlite",
-    "One-lead checkpoints": ROOT / "results/onelead_checkpoint_store/catalog.sqlite",
-    "Checkpoint representation study": ROOT / "results/checkpoint_embeddings/compact.sqlite",
+    "Clinical biomarkers": source_path("results/clinical_biomarkers_multids/clinical_metrics.db"),
+    "Three-lead checkpoint catalog": source_path("results/checkpoint_store/catalog.sqlite"),
+    "LUDB blinded": source_path("results/ecgaim_ludb_semiseg_blinded/compact.sqlite"),
+    "RDB blinded": source_path("results/ecgaim_rdb_semiseg_blinded/compact.sqlite"),
+    "RDB oracle": source_path("results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite"),
+    "One-lead queue": source_path("refine-logs/wavelet_ssl_1110000/full/queue.sqlite"),
+    "One-lead checkpoints": source_path("results/onelead_checkpoint_store/catalog.sqlite"),
+    "Checkpoint representation study": source_path("results/checkpoint_embeddings/compact.sqlite"),
 }
 inventory = source_inventory(SOURCES)
 display(inventory)
+
+snapshot_manifest = SNAPSHOT_ROOT / "SNAPSHOT_MANIFEST.json" if SNAPSHOT_ROOT else None
+if snapshot_manifest and snapshot_manifest.exists():
+    snapshot = json.loads(snapshot_manifest.read_text())
+    display(pd.DataFrame([{
+        "render_input_mode": "immutable SQLite backup snapshot",
+        "snapshot_created_at": snapshot.get("created_at"),
+        "snapshot_root": str(SNAPSHOT_ROOT.relative_to(ROOT)),
+        "snapshotted_databases": sum(x.get("status") == "snapshotted" for x in snapshot.get("databases", [])),
+    }]))
+else:
+    display(pd.DataFrame([{
+        "render_input_mode": "live read-only files (exploratory only)",
+        "snapshot_created_at": None,
+        "snapshot_root": None,
+        "snapshotted_databases": 0,
+    }]))
 ```
 
 ## What is live now?
@@ -74,8 +91,8 @@ From the repository root:
 ```{bash}
 #| label: observatory-render-command
 #| eval: false
-QUARTO_PYTHON=/home/mithunmanivannan/.venv/bin/python3 \
-  .tools/quarto-1.10.18/bin/quarto render book
+python3 scripts/render_quarto_chapters.py \
+  --round-dir review-stage/render-live
 ```
 
 For a faster update, render only one live chapter. The top code cell of each

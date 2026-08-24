@@ -93,3 +93,23 @@ Updated: 2026-07-26T20:41:00Z
 - Storage: the migrated 400,569,587-byte `bridge.pt` duplicate was hash-verified and hard-linked in place; generated Python/test caches were removed.
 
 Historical timestamped plans, stale pilot reports, and ad-hoc figures are not authoritative unless referenced above.
+
+## Quarto analysis book and review provenance (2026-08-24)
+
+- `book/_quarto.yml` and the 19 configured QMD chapters — executable analysis
+  book, separated into three-lead ECG-AIM and one-lead wavelet/SSL evidence.
+- `book/requirements-book.txt` — pinned book analysis environment contract.
+- `scripts/{render_quarto_chapters,snapshot_book_inputs,vendor_book_runtime,audit_quarto_book,build_book_release_manifest}.py`
+  — sequential source-bound rendering, immutable SQLite snapshots, local runtime
+  vendoring, fail-closed audit, and hash-bound release decisions.
+- `review-stage/BOOK_{FOUNDATIONS,BENCHMARKS,LIVE_SYSTEM}_REVIEW_20260824.*` —
+  first independent review round; timestamped raw Markdown and JSON findings.
+- `review-stage/BOOK_{FOUNDATIONS,BENCHMARKS,LIVE_SYSTEM}_REVIEW_ROUND2_20260824.*`
+  — fresh-context second review round and machine-readable findings.
+- `review-stage/CHAPTER_IMPROVEMENT_PLAN.md` — chapter-by-chapter remediation
+  plan; `review-stage/render-round*/` — resumable executable render evidence.
+- `review-stage/BOOK_MECHANICAL_AUDIT.{md,json}` — current mechanical release
+  gate; `.aris/traces/book_overhaul_20260824/README.md` — workflow trace.
+- `book/_book/RELEASE_MANIFEST.json` — generated only after a clean render and
+  audit; remains explicitly provisional/nondeployable while the independent
+  scientific completion gate is not PASS.

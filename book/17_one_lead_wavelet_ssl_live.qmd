@@ -22,8 +22,8 @@ import pandas as pd
 import plotly.express as px
 from live_results import *
 
-QUEUE_DB = ROOT / "refine-logs/wavelet_ssl_1110000/full/queue.sqlite"
-CHECKPOINT_DB = ROOT / "results/onelead_checkpoint_store/catalog.sqlite"
+QUEUE_DB = source_path("refine-logs/wavelet_ssl_1110000/full/queue.sqlite")
+CHECKPOINT_DB = source_path("results/onelead_checkpoint_store/catalog.sqlite")
 q = load_onelead_queue(QUEUE_DB)
 ```
 
@@ -50,8 +50,9 @@ E1 is reserved for complementarity:
 Current `1110000` evidence does not authorize calling E1 an improved base
 architecture. The highest-value mechanism contrast is matched **Morlet
 magnitude + Morlet phase** versus **Morlet magnitude + UEG-repolarization
-phase**. A gain concentrated on T-on/T-off would specifically support the
-physiological second-view hypothesis.
+phase**. A replicated gain concentrated on T-on/T-off would be consistent with
+the physiological second-view hypothesis, but detector artifacts, leakage, and
+generic regularization remain alternative explanations requiring controls.
 
 ## Raw completed runs and matched improvements
 
@@ -63,6 +64,32 @@ metrics = numeric_metrics(results, "metric.")
 raw_cols = [c for c in ["id", "cell_name", "seed", "observed_lead", *metrics] if c in results]
 display(results[raw_cols].sort_values(PRIMARY_METRIC, ascending=False) if PRIMARY_METRIC in results else results[raw_cols])
 display(leaderboard(results, metrics, id_col="id", group_cols=("observed_lead",), k=TOP_K))
+```
+
+```{python}
+#| label: one-lead-registered-contrasts
+#| tbl-cap: "Exact registered incremental and mechanism contrasts. Positive values mean the right-hand configuration improved. Missing rows are not yet estimable."
+registered_pairs = [
+    ("wavelet increment", "A0_raw", "A0_wave_noSSL_gated_add"),
+    ("SSL increment", "A0_wave_noSSL_gated_add", "ssl_magnitude_phase_local_gated_add"),
+    ("physiology view", "R0_morlet_mag_morlet_phase", "R1_morlet_mag_ueg_phase"),
+    ("E1 complementarity", "ssl_magnitude_phase_local_gated_add", "E1_ssl_local"),
+]
+contrast_rows=[]
+keys=["seed","observed_lead"]
+for label,left_name,right_name in registered_pairs:
+    left=completed.loc[completed.cell_name.eq(left_name),keys+metrics]
+    right=completed.loc[completed.cell_name.eq(right_name),keys+metrics]
+    pair=left.merge(right,on=keys,suffixes=("_left","_right"))
+    for _,row in pair.iterrows():
+        base={"contrast":label,"left":left_name,"right":right_name,
+              "seed":row["seed"],"observed_lead":row["observed_lead"]}
+        for metric in metrics:
+            sign=-1 if metric_direction(metric)=="min" else 1
+            base[f"improvement.{metric}"]=sign*(row[metric+"_right"]-row[metric+"_left"])
+        contrast_rows.append(base)
+contrast_table=pd.DataFrame(contrast_rows)
+display(contrast_table if not contrast_table.empty else pd.DataFrame([{"status":"no registered contrast currently estimable"}]))
 ```
 
 ```{python}
@@ -91,8 +118,10 @@ if improvements:
     imp = results.groupby(["cell_name", "observed_lead"])[improvements].mean().reset_index()
     imp["configuration"] = imp.cell_name + " · Lead " + imp.observed_lead
     pivot = imp.set_index("configuration")[improvements]
+    replicated = results.groupby(["cell_name","observed_lead"]).seed.nunique().min() >= 2
+    label = "Mean matched improvement" if replicated else "Single-run matched improvement (screening)"
     fig = px.imshow(pivot, color_continuous_scale="RdBu", color_continuous_midpoint=0,
-                    aspect="auto", title=f"Mean matched improvement over {BASELINE}")
+                    aspect="auto", title=f"{label} over {BASELINE}")
     fig.update_layout(height=max(450, 24 * len(pivot)))
     fig.show()
 ```
@@ -152,4 +181,3 @@ if not checkpoints.empty:
    lift across all boundary channels.
 4. Promote a configuration to external evaluation only after reconstruction,
    delineation, storage, and resume gates all pass.
-

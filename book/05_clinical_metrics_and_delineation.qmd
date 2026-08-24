@@ -17,12 +17,12 @@ $$\mathrm{RR} = \frac{60}{\mathrm{HR} \text{ (bpm)}}$$
 ### 1. Bazett Formula (1920)
 $$\mathrm{QTc}_B = \frac{\mathrm{QT}}{\sqrt{\mathrm{RR}}}$$
 
-- **Limitation**: Derived empirically from a small cohort. Overcorrects at tachycardia ($\mathrm{HR} > 80\text{ bpm}$), leading to false-positive Long QT diagnoses; undercorrects at bradycardia ($\mathrm{HR} < 60\text{ bpm}$).
+- **Limitation**: Derived empirically from a small cohort and can show residual heart-rate dependence. The fixed-QT illustration below is not evidence for a clinical heart-rate threshold or false-positive rate.
 
 ### 2. Fridericia Formula (1920)
 $$\mathrm{QTc}_F = \frac{\mathrm{QT}}{\sqrt[3]{\mathrm{RR}}}$$
 
-- **Advantage**: Substantially reduces heart-rate dependence across normal physiological ranges ($50 - 120\text{ bpm}$). Recommended by the FDA for drug-induced repolarization toxicity trials.
+- **Use boundary**: Fridericia is commonly used in drug-induced repolarization studies, but formula choice is protocol- and population-dependent; individualized correction may be preferable when justified. It is not presented here as a universal standard.
 
 ### 3. Framingham Linear Formula (1992)
 $$\mathrm{QTc}_{\text{Fram}} = \mathrm{QT} + 0.154 \cdot (1 - \mathrm{RR})$$
@@ -34,12 +34,13 @@ $$\mathrm{QTc}_{\text{Hodges}} = \mathrm{QT} + 0.00175 \cdot (\mathrm{HR} - 60)$
 
 ## Bipartite Event Matching & Fiducial Error Assignment
 
-Evaluating delineation error requires pairing ground-truth cardiac events $R = \{r_i\}_{i=1}^{N}$ with predicted events $P = \{p_j\}_{j=1}^{M}$ within a maximum temporal tolerance $\tau = 50\text{ ms}$.
+Evaluating delineation error requires pairing reference sample indices $R = \{r_i\}_{i=1}^{N}$ with predicted sample indices $P = \{p_j\}_{j=1}^{M}$. For a prespecified endpoint tolerance of 50 ms, the sample-domain gate is $\tau_s=0.050f_s$ samples; endpoint-specific sensitivity analyses are still required.
 
 ### Bipartite Graph Optimization Problem
-Find a 1-to-1 matching permutation $\pi$ that minimizes total timing error:
+First maximize the cardinality of a one-to-one matching, then—among maximum-cardinality matchings—minimize total absolute timing error:
 
-$$\min_{\pi} \sum_{i} |r_i - p_{\pi(i)}| \quad \text{subject to} \quad |r_i - p_{\pi(i)}| \le \tau$$
+$$\max |M|,\qquad \min_{M:\,|M|=|M|_{\max}}\sum_{(i,j)\in M}|r_i-p_j|,
+\quad |r_i-p_j|\le 0.050f_s.$$
 
 Unmatched reference events $r_i$ are categorized as **False Negatives (FN)**; unmatched predicted events $p_j$ are **False Positives (FP)**.
 
@@ -53,7 +54,7 @@ $$e_i = 1000 \cdot \frac{p_{\pi(i)} - r_i}{f_s} \quad \text{(in milliseconds, ms
 
 ### QTc Formula Sensitivity Across Heart Rates (40-140 bpm)
 
-Below, we simulate QTc calculations across a range of heart rates ($40 - 140\text{ bpm}$) with a fixed QT interval of $400\text{ ms}$ to compare formula stability:
+Below, we plot algebraic fixed-QT sensitivity across $40$–$140$ bpm. Holding QT at 400 ms cannot measure physiological correction accuracy or stability because observed QT normally varies with RR.
 
 ```{python}
 #| label: qtc-sensitivity-plot
@@ -71,7 +72,7 @@ qtc_hodges = qt_ms + 1.75 * (hr_range - 60.0)
 
 fig_qtc = go.Figure()
 fig_qtc.add_trace(go.Scatter(x=hr_range, y=qtc_bazett, mode='lines', line=dict(color='#f43f5e', width=2), name='Bazett (Overcorrects at High HR)'))
-fig_qtc.add_trace(go.Scatter(x=hr_range, y=qtc_fridericia, mode='lines', line=dict(color='#38bdf8', width=2), name='Fridericia (Recommended Standard)'))
+fig_qtc.add_trace(go.Scatter(x=hr_range, y=qtc_fridericia, mode='lines', line=dict(color='#38bdf8', width=2), name='Fridericia'))
 fig_qtc.add_trace(go.Scatter(x=hr_range, y=qtc_framingham, mode='lines', line=dict(color='#10b981', width=2), name='Framingham Linear Correction'))
 fig_qtc.add_trace(go.Scatter(x=hr_range, y=qtc_hodges, mode='lines', line=dict(color='#fbbf24', width=2), name='Hodges Linear Correction'))
 

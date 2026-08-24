@@ -64,7 +64,9 @@ format:
     # Keep shared site assets external. Embedding Plotly and every dependency in
     # every chapter produced >250 MB pages and exhausted memory on full renders.
     embed-resources: false
-    html-math-method: mathjax
+    # KaTeX assets are emitted into site_libs, avoiding external MathJax and
+    # polyfill runtime dependencies in the deployable snapshot.
+    html-math-method: katex
     fig-width: 9
     fig-height: 6
     fig-responsive: true
@@ -77,4 +79,5 @@ execute:
   cache: false
   freeze: false
 
-jupyter: venv-kernel
+# The render wrapper sets QUARTO_PYTHON; avoid a machine-local kernelspec.
+jupyter: python3

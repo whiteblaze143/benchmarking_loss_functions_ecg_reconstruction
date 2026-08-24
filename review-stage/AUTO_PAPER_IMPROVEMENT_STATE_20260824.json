@@ -6,7 +6,10 @@
   "review_backend_requested": "gemini-review",
   "review_backend_used": "gpt-5.6-sol-xhigh fresh-context fallback",
   "review_groups": ["foundations", "benchmarks", "live_system"],
-  "status": "final_executable_validation_in_progress",
+  "status": "two_rounds_complete_mechanical_acceptance_scientific_release_blocked",
   "claim_policy": "fail_closed",
-  "timestamp": "2026-08-24T16:10:00Z"
+  "final_render": {"configured": 19, "complete": 19, "errors": 0},
+  "mechanical_audit": {"status": "PASS", "external_runtime": 0, "identifier_hits": 0},
+  "release_status": "PROVISIONAL_NOT_DEPLOYABLE_SCIENTIFIC_GATE_FAILED",
+  "timestamp": "2026-08-24T16:15:00Z"
 }

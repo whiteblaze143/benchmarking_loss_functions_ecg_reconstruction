@@ -99,6 +99,9 @@ Historical timestamped plans, stale pilot reports, and ad-hoc figures are not au
 - `book/_quarto.yml` and the 19 configured QMD chapters — executable analysis
   book, separated into three-lead ECG-AIM and one-lead wavelet/SSL evidence.
 - `book/requirements-book.txt` — pinned book analysis environment contract.
+- `book/real_dataset_umap.py` — bounded, pseudonymized 96-feature waveform
+  embedding loaders for PTB-XL, EchoNext, LUDB, ISP, Sunnybrook, Zhejiang, and
+  RDB, with trustworthiness and three-seed projection-stability diagnostics.
 - `scripts/{render_quarto_chapters,snapshot_book_inputs,vendor_book_runtime,audit_quarto_book,build_book_release_manifest}.py`
   — sequential source-bound rendering, immutable SQLite snapshots, local runtime
   vendoring, fail-closed audit, and hash-bound release decisions.

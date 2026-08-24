@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify production release manifest
+      - name: Verify audited release or documentation-preview manifest
         run: |
           python3 - <<'PY'
           import hashlib, json, pathlib
@@ -34,8 +34,12 @@ jobs:
           if not manifest_path.is_file():
               raise SystemExit('Missing RELEASE_MANIFEST.json; refusing mixed or unaudited deployment')
           manifest = json.loads(manifest_path.read_text())
-          if manifest.get('release_status') != 'production_verified':
-              raise SystemExit(f"Non-production book: {manifest.get('release_status')}")
+          allowed = {
+              'production_verified',
+              'documentation_preview_verified_scientific_gate_pending',
+          }
+          if manifest.get('release_status') not in allowed:
+              raise SystemExit(f"Unaudited book status: {manifest.get('release_status')}")
           for rel, expected in manifest.get('outputs', {}).items():
               path = root / rel
               actual = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None

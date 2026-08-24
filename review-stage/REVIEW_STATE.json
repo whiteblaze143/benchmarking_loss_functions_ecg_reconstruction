@@ -1,11 +1,11 @@
 {
   "workflow": "book_wide_research_and_writing_review",
-  "round": 1,
-  "status": "in_progress",
+  "round": 2,
+  "status": "complete",
   "last_score": null,
-  "last_verdict": null,
+  "last_verdict": "mechanical_acceptance; scientific_release_gate_failed",
   "review_independence": "fresh_context_per_chapter_group",
-  "acceptance_status": "unassessed",
+  "acceptance_status": "accepted_as_provisional_nondeployable_analysis_book",
   "reviewer_backend_requested": "gemini-review",
   "reviewer_backend_resolved": "gpt-5.6-sol-xhigh-fallback",
   "reviewer_agents": [
@@ -17,5 +17,8 @@
     "checkpoint_embedding_rdb",
     "checkpoint_embedding_postanalysis"
   ],
-  "timestamp": "2026-08-24T05:22:52Z"
+  "final_render": {"configured": 19, "complete": 19, "error": 0},
+  "mechanical_audit": {"missing_html": 0, "stale_html": 0, "missing_resources": 0, "external_runtime": 0, "identifier_hits": 0},
+  "remaining_blocker": "results/factorial_v4_clinical/FINAL_COMPLETION.json is FAIL because independent scientific review remains unresolved",
+  "timestamp": "2026-08-24T16:15:00Z"
 }

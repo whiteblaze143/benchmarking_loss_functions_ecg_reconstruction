@@ -125,8 +125,22 @@ if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.M
 <script type="module">import "site_libs/vendor/plotly-3.3.1.min.js"</script>
 
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="site_libs/vendor/katex-0.16.22.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="site_libs/vendor/katex-0.16.22.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -588,8 +602,8 @@ window.Quarto = {
 <section id="start-with-the-executable-contract" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="start-with-the-executable-contract"><span class="header-section-number">9.1</span> Start with the executable contract</h2>
 <p>The running study does not contain seven binary loss switches. Its mask is</p>
-<p><span class="math display">\[m=m_{\mathrm{MSE}}m_{\mathrm{corr}}m_{\Delta}m_{\mathrm{VCG}}m_{\mathrm{ED}}m_{\mathrm{lead}}k_{\mathrm{MMD}},\]</span></p>
-<p>where the first six positions are Boolean in the implementation and the last position is categorical: <code>0=none</code>, <code>1=global adaptive RBF</code>, <code>2=anatomical Laplacian</code>, <code>3=anatomical multiscale IMQ</code>, and <code>4=temporal K-means multiscale IMQ</code>. The active 480-job manifest fixes MSE on, crosses the other five Boolean terms with the five MMD levels, and repeats the resulting <span class="math inline">\(2^5\times5=160\)</span> cells at three seeds.</p>
+<p><span class="math display">m=m_{\mathrm{MSE}}m_{\mathrm{corr}}m_{\Delta}m_{\mathrm{VCG}}m_{\mathrm{ED}}m_{\mathrm{lead}}k_{\mathrm{MMD}},</span></p>
+<p>where the first six positions are Boolean in the implementation and the last position is categorical: <code>0=none</code>, <code>1=global adaptive RBF</code>, <code>2=anatomical Laplacian</code>, <code>3=anatomical multiscale IMQ</code>, and <code>4=temporal K-means multiscale IMQ</code>. The active 480-job manifest fixes MSE on, crosses the other five Boolean terms with the five MMD levels, and repeats the resulting <span class="math inline">2^5\times5=160</span> cells at three seeds.</p>
 <p>This chapter describes <code>scripts/common_loss.py</code> exactly. It replaces a prior pedagogical loss class whose derivative norm, VCG transform, energy term, weights, and kernel choices did not match training.</p>
 <div id="implemented-loss-contract" class="cell" data-tbl-cap="Loss-mask factors and effective objective coefficients from the active source." data-execution_count="1">
 <details class="code-fold">
@@ -649,73 +663,73 @@ window.Quarto = {
 <style type="text/css">
 </style>
 
-<table id="T_74988" class="caption-top table table-sm table-striped small">
+<table id="T_b57ed" class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_74988_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Term</th>
-<th id="T_74988_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Mask position</th>
-<th id="T_74988_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Lambda</th>
-<th id="T_74988_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">Normalizer</th>
-<th id="T_74988_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">Effective coefficient (lambda / normalizer)</th>
+<th id="T_b57ed_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Term</th>
+<th id="T_b57ed_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Mask position</th>
+<th id="T_b57ed_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Lambda</th>
+<th id="T_b57ed_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">Normalizer</th>
+<th id="T_b57ed_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">Effective coefficient (lambda / normalizer)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<th id="T_74988_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
-<td id="T_74988_row0_col0" class="data row0 col0">MSE</td>
-<td id="T_74988_row0_col1" class="data row0 col1">0</td>
-<td id="T_74988_row0_col2" class="data row0 col2">1</td>
-<td id="T_74988_row0_col3" class="data row0 col3">0.18</td>
-<td id="T_74988_row0_col4" class="data row0 col4">5.5556</td>
+<th id="T_b57ed_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
+<td id="T_b57ed_row0_col0" class="data row0 col0">MSE</td>
+<td id="T_b57ed_row0_col1" class="data row0 col1">0</td>
+<td id="T_b57ed_row0_col2" class="data row0 col2">1</td>
+<td id="T_b57ed_row0_col3" class="data row0 col3">0.18</td>
+<td id="T_b57ed_row0_col4" class="data row0 col4">5.5556</td>
 </tr>
 <tr class="even">
-<th id="T_74988_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
-<td id="T_74988_row1_col0" class="data row1 col0">Pearson</td>
-<td id="T_74988_row1_col1" class="data row1 col1">1</td>
-<td id="T_74988_row1_col2" class="data row1 col2">1.7</td>
-<td id="T_74988_row1_col3" class="data row1 col3">1</td>
-<td id="T_74988_row1_col4" class="data row1 col4">1.7000</td>
+<th id="T_b57ed_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
+<td id="T_b57ed_row1_col0" class="data row1 col0">Pearson</td>
+<td id="T_b57ed_row1_col1" class="data row1 col1">1</td>
+<td id="T_b57ed_row1_col2" class="data row1 col2">1.7</td>
+<td id="T_b57ed_row1_col3" class="data row1 col3">1</td>
+<td id="T_b57ed_row1_col4" class="data row1 col4">1.7000</td>
 </tr>
 <tr class="odd">
-<th id="T_74988_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</th>
-<td id="T_74988_row2_col0" class="data row2 col0">First derivative L1</td>
-<td id="T_74988_row2_col1" class="data row2 col1">2</td>
-<td id="T_74988_row2_col2" class="data row2 col2">4.1</td>
-<td id="T_74988_row2_col3" class="data row2 col3">0.12</td>
-<td id="T_74988_row2_col4" class="data row2 col4">34.1667</td>
+<th id="T_b57ed_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</th>
+<td id="T_b57ed_row2_col0" class="data row2 col0">First derivative L1</td>
+<td id="T_b57ed_row2_col1" class="data row2 col1">2</td>
+<td id="T_b57ed_row2_col2" class="data row2 col2">4.1</td>
+<td id="T_b57ed_row2_col3" class="data row2 col3">0.12</td>
+<td id="T_b57ed_row2_col4" class="data row2 col4">34.1667</td>
 </tr>
 <tr class="even">
-<th id="T_74988_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</th>
-<td id="T_74988_row3_col0" class="data row3 col0">Kors VCG angle+magnitude</td>
-<td id="T_74988_row3_col1" class="data row3 col1">3</td>
-<td id="T_74988_row3_col2" class="data row3 col2">5</td>
-<td id="T_74988_row3_col3" class="data row3 col3">1</td>
-<td id="T_74988_row3_col4" class="data row3 col4">5.0000</td>
+<th id="T_b57ed_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</th>
+<td id="T_b57ed_row3_col0" class="data row3 col0">Kors VCG angle+magnitude</td>
+<td id="T_b57ed_row3_col1" class="data row3 col1">3</td>
+<td id="T_b57ed_row3_col2" class="data row3 col2">5</td>
+<td id="T_b57ed_row3_col3" class="data row3 col3">1</td>
+<td id="T_b57ed_row3_col4" class="data row3 col4">5.0000</td>
 </tr>
 <tr class="odd">
-<th id="T_74988_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</th>
-<td id="T_74988_row4_col0" class="data row4 col0">Energy distance</td>
-<td id="T_74988_row4_col1" class="data row4 col1">4</td>
-<td id="T_74988_row4_col2" class="data row4 col2">1</td>
-<td id="T_74988_row4_col3" class="data row4 col3">0.05</td>
-<td id="T_74988_row4_col4" class="data row4 col4">20.0000</td>
+<th id="T_b57ed_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</th>
+<td id="T_b57ed_row4_col0" class="data row4 col0">Energy distance</td>
+<td id="T_b57ed_row4_col1" class="data row4 col1">4</td>
+<td id="T_b57ed_row4_col2" class="data row4 col2">1</td>
+<td id="T_b57ed_row4_col3" class="data row4 col3">0.05</td>
+<td id="T_b57ed_row4_col4" class="data row4 col4">20.0000</td>
 </tr>
 <tr class="even">
-<th id="T_74988_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">5</th>
-<td id="T_74988_row5_col0" class="data row5 col0">Limb-lead consistency</td>
-<td id="T_74988_row5_col1" class="data row5 col1">5</td>
-<td id="T_74988_row5_col2" class="data row5 col2">1</td>
-<td id="T_74988_row5_col3" class="data row5 col3">0.1</td>
-<td id="T_74988_row5_col4" class="data row5 col4">10.0000</td>
+<th id="T_b57ed_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">5</th>
+<td id="T_b57ed_row5_col0" class="data row5 col0">Limb-lead consistency</td>
+<td id="T_b57ed_row5_col1" class="data row5 col1">5</td>
+<td id="T_b57ed_row5_col2" class="data row5 col2">1</td>
+<td id="T_b57ed_row5_col3" class="data row5 col3">0.1</td>
+<td id="T_b57ed_row5_col4" class="data row5 col4">10.0000</td>
 </tr>
 <tr class="odd">
-<th id="T_74988_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">6</th>
-<td id="T_74988_row6_col0" class="data row6 col0">Selected MMD</td>
-<td id="T_74988_row6_col1" class="data row6 col1">6</td>
-<td id="T_74988_row6_col2" class="data row6 col2">2.3</td>
-<td id="T_74988_row6_col3" class="data row6 col3">0.042</td>
-<td id="T_74988_row6_col4" class="data row6 col4">54.7619</td>
+<th id="T_b57ed_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">6</th>
+<td id="T_b57ed_row6_col0" class="data row6 col0">Selected MMD</td>
+<td id="T_b57ed_row6_col1" class="data row6 col1">6</td>
+<td id="T_b57ed_row6_col2" class="data row6 col2">2.3</td>
+<td id="T_b57ed_row6_col3" class="data row6 col3">0.042</td>
+<td id="T_b57ed_row6_col4" class="data row6 col4">54.7619</td>
 </tr>
 </tbody>
 </table>
@@ -779,106 +793,107 @@ window.Quarto = {
 </section>
 <section id="composite-accumulation-and-scope" class="level2" data-number="9.2">
 <h2 data-number="9.2" class="anchored" data-anchor-id="composite-accumulation-and-scope"><span class="header-section-number">9.2</span> Composite accumulation and scope</h2>
-<p>For active set <span class="math inline">\(A(m)\)</span>, training minimizes</p>
-<p><span class="math display">\[
+<p>For active set <span class="math inline">A(m)</span>, training minimizes</p>
+<p><span class="math display">
 \mathcal L_m(\hat Y,Y)=\sum_{j\in A(m)}\frac{\lambda_j}{s_j}\mathcal L_j(\hat Y,Y),
-\]</span></p>
+</span></p>
 <p>with the coefficients shown above. These are scale normalizers chosen to keep heterogeneous raw terms in a usable optimization range; they are not probabilistic calibration constants. Consequently, total losses from different masks are not directly comparable as prediction-quality scores.</p>
 <p>The trainer computes these terms on the model’s full 12-lead output and full 12-lead target. It does not restrict the training objective to the nine missing leads and does not copy the three acquired leads before loss calculation. Evaluation later restores I, II, and V2 exactly for acquisition-consistent all-lead endpoints and reports missing-lead endpoints separately. This train/evaluation distinction must remain explicit.</p>
 </section>
 <section id="mse-and-conditional-mean-behavior" class="level2" data-number="9.3">
 <h2 data-number="9.3" class="anchored" data-anchor-id="mse-and-conditional-mean-behavior"><span class="header-section-number">9.3</span> MSE and conditional-mean behavior</h2>
-<p>For <span class="math inline">\(N=BCT\)</span> scalar entries,</p>
-<p><span class="math display">\[
+<p>For <span class="math inline">N=BCT</span> scalar entries,</p>
+<p><span class="math display">
 \mathcal L_{\mathrm{MSE}}=\frac1N\sum_{b,c,t}(\hat y_{bct}-y_{bct})^2.
-\]</span></p>
-<p>At the population-risk optimum, squared loss estimates the conditional expectation <span class="math inline">\(\mathbb E[Y\mid X]\)</span>. When the missing leads are not uniquely determined by the observed leads, this can average plausible outcomes. That theorem does <strong>not</strong> say every finite trained MSE model returns a temporal or cohort-wide mean, nor does it prove peak attenuation in this dataset. Amplitude slopes, tail errors, and paired morphology measurements are needed to test the empirical hypothesis.</p>
+</span></p>
+<p>At the population-risk optimum, squared loss estimates the conditional expectation <span class="math inline">\mathbb E[Y\mid X]</span>. When the missing leads are not uniquely determined by the observed leads, this can average plausible outcomes. That theorem does <strong>not</strong> say every finite trained MSE model returns a temporal or cohort-wide mean, nor does it prove peak attenuation in this dataset. Amplitude slopes, tail errors, and paired morphology measurements are needed to test the empirical hypothesis.</p>
 </section>
 <section id="pearson-loss-with-degenerate-signal-handling" class="level2" data-number="9.4">
 <h2 data-number="9.4" class="anchored" data-anchor-id="pearson-loss-with-degenerate-signal-handling"><span class="header-section-number">9.4</span> Pearson loss with degenerate-signal handling</h2>
 <p>For each record and lead, the code centers over time and computes</p>
-<p><span class="math display">\[
+<p><span class="math display">
 r_{bc}=\frac{\sum_t(\hat y_{bct}-\bar{\hat y}_{bc})(y_{bct}-\bar y_{bc})}
 {\sqrt{\max(V^{\hat y}_{bc},10^{-8})\max(V^y_{bc},10^{-8})}},
 \qquad \mathcal L_{\mathrm{corr}}=1-\frac1{BC}\sum_{b,c}r_{bc}.
-\]</span></p>
-<p>When either un-clamped variance is below <span class="math inline">\(10^{-8}\)</span>, the implementation assigns correlation zero for that lead-record pair. This avoids infinite gradients on flat signals. Pearson is invariant to positive affine rescaling and therefore cannot establish amplitude agreement by itself.</p>
+</span></p>
+<p>When either un-clamped variance is below <span class="math inline">10^{-8}</span>, the implementation assigns correlation zero for that lead-record pair. This avoids infinite gradients on flat signals. Pearson is invariant to positive affine rescaling and therefore cannot establish amplitude agreement by itself.</p>
 </section>
 <section id="first-difference-loss" class="level2" data-number="9.5">
 <h2 data-number="9.5" class="anchored" data-anchor-id="first-difference-loss"><span class="header-section-number">9.5</span> First-difference loss</h2>
 <p>The active composite uses L1 distance between adjacent-sample differences:</p>
-<p><span class="math display">\[
+<p><span class="math display">
 \mathcal L_{\Delta}=\frac1{BC(T-1)}
 \sum_{b,c,t}\left| (\hat y_{bc,t+1}-\hat y_{bct})-(y_{bc,t+1}-y_{bct})\right|.
-\]</span></p>
+</span></p>
 <p><code>common_loss.py</code> also defines a squared derivative helper, but <code>CombinatorialCompositeLoss</code> calls <code>derivative_l1_loss</code>; the L1 equation is the study estimand. A first difference weights rapid sample-to-sample changes more strongly than slowly varying offsets, but preservation of a named QRS boundary remains an evaluation question.</p>
 </section>
 <section id="kors-vectorcardiogram-loss" class="level2" data-number="9.6">
 <h2 data-number="9.6" class="anchored" data-anchor-id="kors-vectorcardiogram-loss"><span class="header-section-number">9.6</span> Kors vectorcardiogram loss</h2>
 <p>The implementation selects eight independent leads in order</p>
-<p><span class="math display">\[[V1,V2,V3,V4,V5,V6,I,II]\]</span></p>
-<p>and maps them to <span class="math inline">\([X,Y,Z]\)</span> with</p>
-<p><span class="math display">\[
+<p><span class="math display">[V1,V2,V3,V4,V5,V6,I,II]</span></p>
+<p>and maps them to <span class="math inline">[X,Y,Z]</span> with</p>
+<p><span class="math display">
 K=\begin{bmatrix}
 -0.130&amp;0.050&amp;-0.010&amp;0.140&amp;0.260&amp;0.110&amp;0.380&amp;-0.070\\
 0.060&amp;-0.020&amp;-0.050&amp;0.060&amp;0.170&amp;0.130&amp;-0.070&amp;0.930\\
 -0.430&amp;-0.060&amp;-0.040&amp;-0.050&amp;-0.080&amp;-0.090&amp;0.110&amp;-0.230
 \end{bmatrix}.
-\]</span></p>
+</span></p>
 <p>At each time sample, the loss is the mean cosine distance between predicted and target VCG vectors plus the L1 difference in their Euclidean magnitudes:</p>
-<p><span class="math display">\[
+<p><span class="math display">
 \mathcal L_{\mathrm{VCG}}=
 \mathbb E_{b,t}[1-\cos(\hat v_{bt},v_{bt})]
 +\mathbb E_{b,t}[|\|\hat v_{bt}\|_2-\|v_{bt}\|_2|].
-\]</span></p>
+</span></p>
 <p>This is not the 3-by-12 matrix or pure projected MSE previously printed in the book. It encodes a chosen inverse transform and should be interpreted as a spatial regularizer, not direct measurement of cardiac dipole ground truth.</p>
+<p>The current cosine implementation is <strong>not identity-safe at zero norm</strong>: two zero VCG vectors incur an angle penalty rather than zero loss. The trainer also pads 5,000 samples to 5,120 with a zero target tail, so VCG-active cells receive an irreducible padded-tail contribution. VCG-active mixed-level cells are therefore implementation-under-audit and inadmissible for spatial-loss claims until valid-norm and padding masks are implemented and those cells are retrained.</p>
 </section>
 <section id="energy-distancenot-signal-energy" class="level2" data-number="9.7">
 <h2 data-number="9.7" class="anchored" data-anchor-id="energy-distancenot-signal-energy"><span class="header-section-number">9.7</span> Energy distance—not signal energy</h2>
-<p>The <code>ED</code> bit activates empirical <strong>energy distance across records</strong>, computed separately for each lead. If <span class="math inline">\(X_c=\{\hat y_{bc,:}\}_{b=1}^B\)</span> and <span class="math inline">\(Y_c=\{y_{bc,:}\}_{b=1}^B\)</span> are batches of complete lead waveforms,</p>
-<p><span class="math display">\[
+<p>The <code>ED</code> bit activates empirical <strong>energy distance across records</strong>, computed separately for each lead. If <span class="math inline">X_c=\{\hat y_{bc,:}\}_{b=1}^B</span> and <span class="math inline">Y_c=\{y_{bc,:}\}_{b=1}^B</span> are batches of complete lead waveforms,</p>
+<p><span class="math display">
 \mathcal L_{\mathrm{ED}}=\frac{1}{C}\sum_c\left[
 2\,\overline{\|X_c-Y_c\|_2}
 -\overline{\|X_c-X'_c\|_2}
 -\overline{\|Y_c-Y'_c\|_2}
 \right],
-\]</span></p>
-<p>where the bars denote means over all ordered batch pairs, including self-pairs in the within-sample terms. It is not <span class="math inline">\(|\sum_t\hat y^2-\sum_ty^2|\)</span> and does not directly constrain physical electrical energy. Because the empirical distribution is the current mini-batch, its value and gradient depend on batch composition and batch size.</p>
+</span></p>
+<p>where the bars denote means over all ordered batch pairs, including self-pairs in the within-sample terms. It is not <span class="math inline">|\sum_t\hat y^2-\sum_ty^2|</span> and does not directly constrain physical electrical energy. Because the empirical distribution is the current mini-batch, its value and gradient depend on batch composition and batch size.</p>
 </section>
 <section id="limb-lead-consistency" class="level2" data-number="9.8">
 <h2 data-number="9.8" class="anchored" data-anchor-id="limb-lead-consistency"><span class="header-section-number">9.8</span> Limb-lead consistency</h2>
 <p>The lead term averages four MSE residuals:</p>
-<p><span class="math display">\[
+<p><span class="math display">
 \begin{aligned}
 III&amp;=II-I,\\
 aVR&amp;=-(I+II)/2,\\
 aVL&amp;=I-II/2,\\
 aVF&amp;=II-I/2.
 \end{aligned}
-\]</span></p>
+</span></p>
 <p>It evaluates internal algebraic coherence of the predicted limb leads. Digitized targets can deviate from exact identities, so reducing the predicted residual does not automatically reduce target error; both reconstruction error and measured-target lead-law residuals must be reported.</p>
 </section>
 <section id="mmd-level-1-global-adaptive-rbf" class="level2" data-number="9.9">
 <h2 data-number="9.9" class="anchored" data-anchor-id="mmd-level-1-global-adaptive-rbf"><span class="header-section-number">9.9</span> MMD level 1: global adaptive RBF</h2>
-<p>Each record is flattened across 12 leads and time. Squared Euclidean distances are divided by feature count, and the detached median of positive within-prediction, within-target, and cross distances supplies a batch-adaptive base bandwidth <span class="math inline">\(h\)</span>. With multipliers <span class="math inline">\(a\in\{0.5,1,2,4\}\)</span>,</p>
-<p><span class="math display">\[
+<p>Each record is flattened across 12 leads and time. Squared Euclidean distances are divided by feature count, and the detached median of positive within-prediction, within-target, and cross distances supplies a batch-adaptive base bandwidth <span class="math inline">h</span>. With multipliers <span class="math inline">a\in\{0.5,1,2,4\}</span>,</p>
+<p><span class="math display">
 k_a(x,y)=\exp\left[-\frac{\|x-y\|_2^2/D}{2ah}\right],
-\]</span></p>
+</span></p>
 <p>and the code averages biased empirical MMD estimates (diagonal self-kernels included) across the four widths. Distance and kernel arithmetic are forced to float32 under mixed precision. Adaptation prevents the fixed-bandwidth underflow that affected a legacy high-dimensional implementation, but it also makes the kernel scale batch-dependent.</p>
 </section>
 <section id="mmd-levels-23-overlapping-anatomical-blocks" class="level2" data-number="9.10">
 <h2 data-number="9.10" class="anchored" data-anchor-id="mmd-levels-23-overlapping-anatomical-blocks"><span class="header-section-number">9.10</span> MMD levels 2–3: overlapping anatomical blocks</h2>
 <p>The blocks are inferior <code>[II, III, aVF]</code>, anteroseptal <code>[V1–V4]</code>, lateral <code>[I, aVL, V5, V6]</code>, all limb leads, and all precordial leads. Leads intentionally overlap across blocks. Each block is flattened per record, its MMD is divided by the number of leads in that block, and the five normalized block values are averaged.</p>
 <ul>
-<li>Level 2 uses a Laplacian kernel <span class="math inline">\(\exp(-\|x-y\|_2/h)\)</span> with target within-batch median distance.</li>
-<li>Level 3 uses a four-width inverse-multiquadratic kernel <span class="math inline">\((\|x-y\|_2^2+c^2)^{-1/2}\)</span>. In the current implementation, however, the helper derives its scale from its second argument separately for the prediction–prediction, target–target, and cross terms. Those three terms therefore do <strong>not</strong> yet share one fixed kernel. Until a shared detached bandwidth is implemented and identity, symmetry, and non-negativity tests pass, this branch is reported as an implementation-under-audit rather than interpreted as a standard MMD estimand.</li>
+<li>Level 2 uses a Laplacian kernel <span class="math inline">\exp(-\|x-y\|_2/h)</span> with target within-batch median distance.</li>
+<li>Level 3 uses a four-width inverse-multiquadratic kernel <span class="math inline">(\|x-y\|_2^2+c^2)^{-1/2}</span>. In the current implementation, however, the helper derives its scale from its second argument separately for the prediction–prediction, target–target, and cross terms. Those three terms therefore do <strong>not</strong> yet share one fixed kernel. Until a shared detached bandwidth is implemented and identity, symmetry, and non-negativity tests pass, this branch is reported as an implementation-under-audit rather than interpreted as a standard MMD estimand.</li>
 </ul>
 <p>Because block weights, overlap, and bandwidth estimation are part of the estimand, “anatomical MMD” is not interchangeable with a generic per-lead MMD.</p>
 </section>
 <section id="mmd-level-4-batch-dependent-temporal-k-means" class="level2" data-number="9.11">
 <h2 data-number="9.11" class="anchored" data-anchor-id="mmd-level-4-batch-dependent-temporal-k-means"><span class="header-section-number">9.11</span> MMD level 4: batch-dependent temporal K-means</h2>
 <p>For each training batch, the target is averaged over records, leaving one 12-dimensional vector per time sample. Four centroids are initialized from randomly selected time indices and updated for five Lloyd iterations. Time samples are assigned by 12-lead morphology, not constrained temporal adjacency. The resulting sets can be non-contiguous and should not be called detected P/QRS/T phases without validation.</p>
-<p>For each cluster, predicted and target values are flattened over its time samples and all 12 leads, and a multiscale IMQ MMD is computed across records. The four cluster losses are divided by four; empty clusters contribute zero through that fixed denominator. The training seed controls PyTorch random initialization, but cluster assignments remain batch-composition dependent.</p>
+<p>For each cluster, predicted and target values are flattened over its time samples and all 12 leads, and the same IMQ helper used by level 3 is applied. It therefore inherits the unequal-kernel-scale defect described above and can be asymmetric under argument exchange. The four cluster losses are divided by four; empty clusters contribute zero through that fixed denominator. The training seed controls PyTorch random initialization, but cluster assignments remain batch-composition dependent. Level 4 is implementation-under-audit and inadmissible for MMD claims until one detached bandwidth per cluster is reused for all three kernel terms and affected cells are retrained.</p>
 </section>
 <section id="executable-component-scale-diagnostic" class="level2" data-number="9.12">
 <h2 data-number="9.12" class="anchored" data-anchor-id="executable-component-scale-diagnostic"><span class="header-section-number">9.12</span> Executable component-scale diagnostic</h2>
@@ -1018,10 +1033,10 @@ k_a(x,y)=\exp\left[-\frac{\|x-y\|_2^2/D}{2ah}\right],
 </div>
 </div>
 <div id="implemented-loss-scale-probe-3" class="cell-output cell-output-display">
-<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="site_libs/vendor/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="4690093b-3bd8-4015-b0aa-678b391aa1bf" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("4690093b-3bd8-4015-b0aa-678b391aa1bf")) {                    Plotly.newPlot(                        "4690093b-3bd8-4015-b0aa-678b391aa1bf",                        [{"hovertemplate":"Component=%{x}\u003cbr\u003eWeighted contribution=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":"#636efa","pattern":{"shape":""}},"name":"","orientation":"v","showlegend":false,"textposition":"auto","x":["MSE","Pearson","Derivative","VCG","Energy distance","Lead consistency","Global RBF MMD"],"xaxis":"x","y":{"dtype":"f8","bdata":"HMdx7PMHbD8AAAAA2FZ1PwAAABGPMtk\u002fAAAA4J2qwz8AAADgn3ghQAAAAPShjmI\u002fC8MwDLQ6vz8="},"yaxis":"y","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Component"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Weighted contribution"}},"legend":{"tracegroupgap":0},"title":{"text":"SOFTWARE PROBE — weighted loss scale under stipulated attenuation\u002fnoise"},"barmode":"relative"},                        {"responsive": true}                    ).then(function(){
+<div>            <script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="site_libs/vendor/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="d39140c7-63b2-4cf5-b1a6-37ab59e4279b" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("d39140c7-63b2-4cf5-b1a6-37ab59e4279b")) {                    Plotly.newPlot(                        "d39140c7-63b2-4cf5-b1a6-37ab59e4279b",                        [{"hovertemplate":"Component=%{x}\u003cbr\u003eWeighted contribution=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":"#636efa","pattern":{"shape":""}},"name":"","orientation":"v","showlegend":false,"textposition":"auto","x":["MSE","Pearson","Derivative","VCG","Energy distance","Lead consistency","Global RBF MMD"],"xaxis":"x","y":{"dtype":"f8","bdata":"OY7jGPQHbD8AAAAA2FZ1P1VV1e6OMtk\u002fAAAA4J2qwz8AAADgn3ghQAAAAPShjmI\u002fC8MwDLQ6vz8="},"yaxis":"y","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Component"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Weighted contribution"}},"legend":{"tracegroupgap":0},"title":{"text":"SOFTWARE PROBE — weighted loss scale under stipulated attenuation\u002fnoise"},"barmode":"relative"},                        {"responsive": true}                    ).then(function(){
                             
-var gd = document.getElementById('4690093b-3bd8-4015-b0aa-678b391aa1bf');
+var gd = document.getElementById('d39140c7-63b2-4cf5-b1a6-37ab59e4279b');
 var x = new MutationObserver(function (mutations, observer) {{
         var display = window.getComputedStyle(gd).display;
         if (!display || display === 'none') {{
@@ -1682,114 +1697,116 @@ if (outputEl) {{
 <span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>This is not the 3-by-12 matrix or pure projected MSE previously printed in the book. It encodes a chosen inverse transform and should be interpreted as a spatial regularizer, not direct measurement of cardiac dipole ground truth.</span>
 <span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a><span class="fu">## Energy distance—not signal energy</span></span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>The current cosine implementation is **not identity-safe at zero norm**: two zero VCG vectors incur an angle penalty rather than zero loss. The trainer also pads 5,000 samples to 5,120 with a zero target tail, so VCG-active cells receive an irreducible padded-tail contribution. VCG-active mixed-level cells are therefore implementation-under-audit and inadmissible for spatial-loss claims until valid-norm and padding masks are implemented and those cells are retrained.</span>
 <span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>The <span class="in">`ED`</span> bit activates empirical **energy distance across records**, computed separately for each lead. If $X_c=<span class="sc">\{</span>\hat y_{bc,:}<span class="sc">\}</span>_{b=1}^B$ and $Y_c=\{y_{bc,:}\}_{b=1}^B$ are batches of complete lead waveforms,</span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a><span class="fu">## Energy distance—not signal energy</span></span>
 <span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>\mathcal L_{\mathrm{ED}}=\frac{1}{C}\sum_c\left[</span>
-<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>2\,\overline{<span class="sc">\|</span>X_c-Y_c<span class="sc">\|</span>_2}</span>
-<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>-\overline{<span class="sc">\|</span>X_c-X'_c<span class="sc">\|</span>_2}</span>
-<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>-\overline{<span class="sc">\|</span>Y_c-Y'_c<span class="sc">\|</span>_2}</span>
-<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>\right],</span>
-<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>where the bars denote means over all ordered batch pairs, including self-pairs in the within-sample terms. It is not $|\sum_t\hat y^2-\sum_ty^2|$ and does not directly constrain physical electrical energy. Because the empirical distribution is the current mini-batch, its value and gradient depend on batch composition and batch size.</span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>The <span class="in">`ED`</span> bit activates empirical **energy distance across records**, computed separately for each lead. If $X_c=<span class="sc">\{</span>\hat y_{bc,:}<span class="sc">\}</span>_{b=1}^B$ and $Y_c=\{y_{bc,:}\}_{b=1}^B$ are batches of complete lead waveforms,</span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>\mathcal L_{\mathrm{ED}}=\frac{1}{C}\sum_c\left[</span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>2\,\overline{<span class="sc">\|</span>X_c-Y_c<span class="sc">\|</span>_2}</span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>-\overline{<span class="sc">\|</span>X_c-X'_c<span class="sc">\|</span>_2}</span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>-\overline{<span class="sc">\|</span>Y_c-Y'_c<span class="sc">\|</span>_2}</span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>\right],</span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a><span class="fu">## Limb-lead consistency</span></span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a>where the bars denote means over all ordered batch pairs, including self-pairs in the within-sample terms. It is not $|\sum_t\hat y^2-\sum_ty^2|$ and does not directly constrain physical electrical energy. Because the empirical distribution is the current mini-batch, its value and gradient depend on batch composition and batch size.</span>
 <span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>The lead term averages four MSE residuals:</span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a><span class="fu">## Limb-lead consistency</span></span>
 <span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>III&amp;=II-I,<span class="sc">\\</span></span>
-<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>aVR&amp;=-(I+II)/2,<span class="sc">\\</span></span>
-<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>aVL&amp;=I-II/2,<span class="sc">\\</span></span>
-<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>aVF&amp;=II-I/2.</span>
-<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>It evaluates internal algebraic coherence of the predicted limb leads. Digitized targets can deviate from exact identities, so reducing the predicted residual does not automatically reduce target error; both reconstruction error and measured-target lead-law residuals must be reported.</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>The lead term averages four MSE residuals:</span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>III&amp;=II-I,<span class="sc">\\</span></span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>aVR&amp;=-(I+II)/2,<span class="sc">\\</span></span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>aVL&amp;=I-II/2,<span class="sc">\\</span></span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>aVF&amp;=II-I/2.</span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a><span class="fu">## MMD level 1: global adaptive RBF</span></span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>It evaluates internal algebraic coherence of the predicted limb leads. Digitized targets can deviate from exact identities, so reducing the predicted residual does not automatically reduce target error; both reconstruction error and measured-target lead-law residuals must be reported.</span>
 <span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>Each record is flattened across 12 leads and time. Squared Euclidean distances are divided by feature count, and the detached median of positive within-prediction, within-target, and cross distances supplies a batch-adaptive base bandwidth $h$. With multipliers $a\in<span class="sc">\{</span>0.5,1,2,4<span class="sc">\}</span>$,</span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a><span class="fu">## MMD level 1: global adaptive RBF</span></span>
 <span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a>k_a(x,y)=\exp\left<span class="co">[</span><span class="ot">-\frac{\|x-y\|_2^2/D}{2ah}\right</span><span class="co">]</span>,</span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>Each record is flattened across 12 leads and time. Squared Euclidean distances are divided by feature count, and the detached median of positive within-prediction, within-target, and cross distances supplies a batch-adaptive base bandwidth $h$. With multipliers $a\in<span class="sc">\{</span>0.5,1,2,4<span class="sc">\}</span>$,</span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a>and the code averages biased empirical MMD estimates (diagonal self-kernels included) across the four widths. Distance and kernel arithmetic are forced to float32 under mixed precision. Adaptation prevents the fixed-bandwidth underflow that affected a legacy high-dimensional implementation, but it also makes the kernel scale batch-dependent.</span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a>k_a(x,y)=\exp\left<span class="co">[</span><span class="ot">-\frac{\|x-y\|_2^2/D}{2ah}\right</span><span class="co">]</span>,</span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a><span class="fu">## MMD levels 2–3: overlapping anatomical blocks</span></span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a>and the code averages biased empirical MMD estimates (diagonal self-kernels included) across the four widths. Distance and kernel arithmetic are forced to float32 under mixed precision. Adaptation prevents the fixed-bandwidth underflow that affected a legacy high-dimensional implementation, but it also makes the kernel scale batch-dependent.</span>
 <span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>The blocks are inferior <span class="in">`[II, III, aVF]`</span>, anteroseptal <span class="in">`[V1–V4]`</span>, lateral <span class="in">`[I, aVL, V5, V6]`</span>, all limb leads, and all precordial leads. Leads intentionally overlap across blocks. Each block is flattened per record, its MMD is divided by the number of leads in that block, and the five normalized block values are averaged.</span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a><span class="fu">## MMD levels 2–3: overlapping anatomical blocks</span></span>
 <span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Level 2 uses a Laplacian kernel $\exp(-<span class="sc">\|</span>x-y<span class="sc">\|</span>_2/h)$ with target within-batch median distance.</span>
-<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Level 3 uses a four-width inverse-multiquadratic kernel $(<span class="sc">\|</span>x-y<span class="sc">\|</span>_2^2+c^2)^{-1/2}$. In the current implementation, however, the helper derives its scale from its second argument separately for the prediction–prediction, target–target, and cross terms. Those three terms therefore do **not** yet share one fixed kernel. Until a shared detached bandwidth is implemented and identity, symmetry, and non-negativity tests pass, this branch is reported as an implementation-under-audit rather than interpreted as a standard MMD estimand.</span>
-<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a>Because block weights, overlap, and bandwidth estimation are part of the estimand, “anatomical MMD” is not interchangeable with a generic per-lead MMD.</span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>The blocks are inferior <span class="in">`[II, III, aVF]`</span>, anteroseptal <span class="in">`[V1–V4]`</span>, lateral <span class="in">`[I, aVL, V5, V6]`</span>, all limb leads, and all precordial leads. Leads intentionally overlap across blocks. Each block is flattened per record, its MMD is divided by the number of leads in that block, and the five normalized block values are averaged.</span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Level 2 uses a Laplacian kernel $\exp(-<span class="sc">\|</span>x-y<span class="sc">\|</span>_2/h)$ with target within-batch median distance.</span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Level 3 uses a four-width inverse-multiquadratic kernel $(<span class="sc">\|</span>x-y<span class="sc">\|</span>_2^2+c^2)^{-1/2}$. In the current implementation, however, the helper derives its scale from its second argument separately for the prediction–prediction, target–target, and cross terms. Those three terms therefore do **not** yet share one fixed kernel. Until a shared detached bandwidth is implemented and identity, symmetry, and non-negativity tests pass, this branch is reported as an implementation-under-audit rather than interpreted as a standard MMD estimand.</span>
 <span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a><span class="fu">## MMD level 4: batch-dependent temporal K-means</span></span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>Because block weights, overlap, and bandwidth estimation are part of the estimand, “anatomical MMD” is not interchangeable with a generic per-lead MMD.</span>
 <span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>For each training batch, the target is averaged over records, leaving one 12-dimensional vector per time sample. Four centroids are initialized from randomly selected time indices and updated for five Lloyd iterations. Time samples are assigned by 12-lead morphology, not constrained temporal adjacency. The resulting sets can be non-contiguous and should not be called detected P/QRS/T phases without validation.</span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a><span class="fu">## MMD level 4: batch-dependent temporal K-means</span></span>
 <span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>For each cluster, predicted and target values are flattened over its time samples and all 12 leads, and a multiscale IMQ MMD is computed across records. The four cluster losses are divided by four; empty clusters contribute zero through that fixed denominator. The training seed controls PyTorch random initialization, but cluster assignments remain batch-composition dependent.</span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>For each training batch, the target is averaged over records, leaving one 12-dimensional vector per time sample. Four centroids are initialized from randomly selected time indices and updated for five Lloyd iterations. Time samples are assigned by 12-lead morphology, not constrained temporal adjacency. The resulting sets can be non-contiguous and should not be called detected P/QRS/T phases without validation.</span>
 <span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a><span class="fu">## Executable component-scale diagnostic</span></span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a>For each cluster, predicted and target values are flattened over its time samples and all 12 leads, and the same IMQ helper used by level 3 is applied. It therefore inherits the unequal-kernel-scale defect described above and can be asymmetric under argument exchange. The four cluster losses are divided by four; empty clusters contribute zero through that fixed denominator. The training seed controls PyTorch random initialization, but cluster assignments remain batch-composition dependent. Level 4 is implementation-under-audit and inadmissible for MMD claims until one detached bandwidth per cluster is reused for all three kernel terms and affected cells are retrained.</span>
 <span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a>The following deterministic probe loads an actual PTB-XL training batch, creates a stipulated attenuated/noisy prediction, and evaluates raw and weighted terms through the real implementation. It tests the software interface and illustrates scale only; the perturbation is not a trained model and the bars are not empirical loss effects.</span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a><span class="fu">## Executable component-scale diagnostic</span></span>
 <span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: implemented-loss-scale-probe</span></span>
-<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "SOFTWARE PROBE — weighted component values for a stipulated perturbation of actual PTB-XL tensors; not a model comparison."</span></span>
-<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
-<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
-<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a>torch.manual_seed(<span class="dv">20260801</span>)</span>
-<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>files <span class="op">=</span> <span class="bu">sorted</span>((ROOT <span class="op">/</span> <span class="st">"data/ptb_xl/tensors/train"</span>).glob(<span class="st">"*.pt"</span>), key<span class="op">=</span><span class="kw">lambda</span> path: <span class="bu">int</span>(path.stem))[:<span class="dv">8</span>]</span>
-<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> torch.stack([</span>
-<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a>    torch.load(path, map_location<span class="op">=</span><span class="st">"cpu"</span>, weights_only<span class="op">=</span><span class="va">True</span>).<span class="bu">float</span>() <span class="cf">for</span> path <span class="kw">in</span> files</span>
-<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a>])</span>
-<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a>prediction <span class="op">=</span> <span class="fl">0.9</span> <span class="op">*</span> target <span class="op">+</span> <span class="fl">0.01</span> <span class="op">*</span> torch.randn_like(target)</span>
-<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a>probe <span class="op">=</span> CombinatorialCompositeLoss(<span class="st">"1111111"</span>)</span>
-<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a>total, mse, corr, deriv, vcg, ed, lead, mmd <span class="op">=</span> probe(prediction, target)</span>
-<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a>raw <span class="op">=</span> {</span>
-<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MSE"</span>: mse.item(), <span class="st">"Pearson"</span>: corr.item(), <span class="st">"Derivative"</span>: deriv.item(),</span>
-<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a>    <span class="st">"VCG"</span>: vcg.item(), <span class="st">"Energy distance"</span>: ed.item(),</span>
-<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Lead consistency"</span>: lead.item(), <span class="st">"Global RBF MMD"</span>: mmd.item(),</span>
-<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a>coefficients <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(term_table.Term, term_table[<span class="st">"Effective coefficient (lambda / normalizer)"</span>]))</span>
-<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a>coefficient_keys <span class="op">=</span> {</span>
-<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MSE"</span>: <span class="st">"MSE"</span>, <span class="st">"Pearson"</span>: <span class="st">"Pearson"</span>, <span class="st">"Derivative"</span>: <span class="st">"First derivative L1"</span>,</span>
-<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>    <span class="st">"VCG"</span>: <span class="st">"Kors VCG angle+magnitude"</span>, <span class="st">"Energy distance"</span>: <span class="st">"Energy distance"</span>,</span>
-<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Lead consistency"</span>: <span class="st">"Limb-lead consistency"</span>, <span class="st">"Global RBF MMD"</span>: <span class="st">"Selected MMD"</span>,</span>
-<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>probe_frame <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Component"</span>: <span class="bu">list</span>(raw),</span>
-<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Raw value"</span>: <span class="bu">list</span>(raw.values()),</span>
-<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Effective coefficient"</span>: [coefficients[coefficient_keys[name]] <span class="cf">for</span> name <span class="kw">in</span> raw],</span>
-<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a>probe_frame[<span class="st">"Weighted contribution"</span>] <span class="op">=</span> probe_frame[<span class="st">"Raw value"</span>] <span class="op">*</span> probe_frame[<span class="st">"Effective coefficient"</span>]</span>
-<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a>display(probe_frame)</span>
-<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a>display(pd.DataFrame({<span class="st">"Composite total"</span>: [total.item()], <span class="st">"Sum of displayed contributions"</span>: [probe_frame[<span class="st">"Weighted contribution"</span>].<span class="bu">sum</span>()]}))</span>
-<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a>figure <span class="op">=</span> px.bar(</span>
-<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a>    probe_frame, x<span class="op">=</span><span class="st">"Component"</span>, y<span class="op">=</span><span class="st">"Weighted contribution"</span>,</span>
-<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"SOFTWARE PROBE — weighted loss scale under stipulated attenuation/noise"</span>,</span>
-<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a>figure.show()</span>
-<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretation rules</span></span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a>The following deterministic probe loads an actual PTB-XL training batch, creates a stipulated attenuated/noisy prediction, and evaluates raw and weighted terms through the real implementation. It tests the software interface and illustrates scale only; the perturbation is not a trained model and the bars are not empirical loss effects.</span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: implemented-loss-scale-probe</span></span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "SOFTWARE PROBE — weighted component values for a stipulated perturbation of actual PTB-XL tensors; not a model comparison."</span></span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>torch.manual_seed(<span class="dv">20260801</span>)</span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a>files <span class="op">=</span> <span class="bu">sorted</span>((ROOT <span class="op">/</span> <span class="st">"data/ptb_xl/tensors/train"</span>).glob(<span class="st">"*.pt"</span>), key<span class="op">=</span><span class="kw">lambda</span> path: <span class="bu">int</span>(path.stem))[:<span class="dv">8</span>]</span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> torch.stack([</span>
+<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a>    torch.load(path, map_location<span class="op">=</span><span class="st">"cpu"</span>, weights_only<span class="op">=</span><span class="va">True</span>).<span class="bu">float</span>() <span class="cf">for</span> path <span class="kw">in</span> files</span>
+<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a>prediction <span class="op">=</span> <span class="fl">0.9</span> <span class="op">*</span> target <span class="op">+</span> <span class="fl">0.01</span> <span class="op">*</span> torch.randn_like(target)</span>
+<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a>probe <span class="op">=</span> CombinatorialCompositeLoss(<span class="st">"1111111"</span>)</span>
+<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a>total, mse, corr, deriv, vcg, ed, lead, mmd <span class="op">=</span> probe(prediction, target)</span>
+<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a>raw <span class="op">=</span> {</span>
+<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MSE"</span>: mse.item(), <span class="st">"Pearson"</span>: corr.item(), <span class="st">"Derivative"</span>: deriv.item(),</span>
+<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a>    <span class="st">"VCG"</span>: vcg.item(), <span class="st">"Energy distance"</span>: ed.item(),</span>
+<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Lead consistency"</span>: lead.item(), <span class="st">"Global RBF MMD"</span>: mmd.item(),</span>
+<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a>coefficients <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(term_table.Term, term_table[<span class="st">"Effective coefficient (lambda / normalizer)"</span>]))</span>
+<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>coefficient_keys <span class="op">=</span> {</span>
+<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MSE"</span>: <span class="st">"MSE"</span>, <span class="st">"Pearson"</span>: <span class="st">"Pearson"</span>, <span class="st">"Derivative"</span>: <span class="st">"First derivative L1"</span>,</span>
+<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>    <span class="st">"VCG"</span>: <span class="st">"Kors VCG angle+magnitude"</span>, <span class="st">"Energy distance"</span>: <span class="st">"Energy distance"</span>,</span>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Lead consistency"</span>: <span class="st">"Limb-lead consistency"</span>, <span class="st">"Global RBF MMD"</span>: <span class="st">"Selected MMD"</span>,</span>
+<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>probe_frame <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Component"</span>: <span class="bu">list</span>(raw),</span>
+<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Raw value"</span>: <span class="bu">list</span>(raw.values()),</span>
+<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Effective coefficient"</span>: [coefficients[coefficient_keys[name]] <span class="cf">for</span> name <span class="kw">in</span> raw],</span>
+<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a>probe_frame[<span class="st">"Weighted contribution"</span>] <span class="op">=</span> probe_frame[<span class="st">"Raw value"</span>] <span class="op">*</span> probe_frame[<span class="st">"Effective coefficient"</span>]</span>
+<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a>display(probe_frame)</span>
+<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a>display(pd.DataFrame({<span class="st">"Composite total"</span>: [total.item()], <span class="st">"Sum of displayed contributions"</span>: [probe_frame[<span class="st">"Weighted contribution"</span>].<span class="bu">sum</span>()]}))</span>
+<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a>figure <span class="op">=</span> px.bar(</span>
+<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a>    probe_frame, x<span class="op">=</span><span class="st">"Component"</span>, y<span class="op">=</span><span class="st">"Weighted contribution"</span>,</span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"SOFTWARE PROBE — weighted loss scale under stipulated attenuation/noise"</span>,</span>
+<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a>figure.show()</span>
+<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>A lower total objective across two masks is not a fair performance comparison because the active terms and scale differ.</span>
-<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>MMD and energy distance are batch-distribution estimators; batch size 1,024 is part of the current model-generation contract even though it is encoded in queue commands rather than the compact contract JSON.</span>
-<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Full-12-lead training terms can reward reconstruction of already observed leads; primary evaluation must retain nine-missing-lead endpoints.</span>
-<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>None of these regularizers guarantees clinical feature preservation. Their effects must be estimated from paired, checkpoint-bound records with detector failures and uncertainty retained.</span>
-<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>The mask identifies an objective configuration only when joined to seed, exact source bundle, data content roots, optimizer regime, and checkpoint digest.</span>
+<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretation rules</span></span>
+<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>A lower total objective across two masks is not a fair performance comparison because the active terms and scale differ.</span>
+<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>MMD and energy distance are batch-distribution estimators; batch size 1,024 is part of the current model-generation contract even though it is encoded in queue commands rather than the compact contract JSON.</span>
+<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Full-12-lead training terms can reward reconstruction of already observed leads; primary evaluation must retain nine-missing-lead endpoints.</span>
+<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>None of these regularizers guarantees clinical feature preservation. Their effects must be estimated from paired, checkpoint-bound records with detector failures and uncertainty retained.</span>
+<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>The mask identifies an objective configuration only when joined to seed, exact source bundle, data content roots, optimizer regime, and checkpoint digest.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

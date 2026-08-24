@@ -1,6 +1,6 @@
 # Quarto Book Mechanical Audit
 
-Generated: `2026-08-24T15:50:40.570078+00:00`
+Generated: `2026-08-24T16:31:44.918447+00:00`
 
 > This audit verifies structure and deployed artifacts, not scientific truth.
 
@@ -17,18 +17,22 @@ Generated: `2026-08-24T15:50:40.570078+00:00`
 
 - Wrong renderer identity: **0**
 - Executable chapters with zero outputs: **0**
-- Distinct external runtime resources: **12**
+- Distinct external runtime resources: **6**
+
+- Unvendored external runtime dependencies: **0**
+
+- Public acquisition-identifier hits: **0**
 
 ## Chapter inventory
 
 | Chapter | Headings | Python blocks | Outputs | Renderer | HTML | Stale | Missing resources |
 |---|---:|---:|---:|---|---|---|---:|
-| `index.qmd` | 6 | 0 | 0 | quarto-1.10.18 | complete | False | 0 |
-| `15_live_results_observatory.qmd` | 4 | 2 | 2 | quarto-1.10.18 | complete | False | 0 |
-| `16_three_lead_ecgaim_live.qmd` | 30 | 23 | 41 | quarto-1.10.18 | complete | False | 0 |
-| `17_one_lead_wavelet_ssl_live.qmd` | 9 | 9 | 12 | quarto-1.10.18 | complete | False | 0 |
-| `09_real_data_eda_and_diagnostics.qmd` | 24 | 18 | 32 | quarto-1.10.18 | complete | False | 0 |
-| `11_dataset_atlas_ludb_isp_sunnybrook.qmd` | 20 | 13 | 12 | quarto-1.10.18 | complete | False | 0 |
+| `index.qmd` | 7 | 0 | 0 | quarto-1.10.18 | complete | False | 0 |
+| `15_live_results_observatory.qmd` | 4 | 2 | 3 | quarto-1.10.18 | complete | False | 0 |
+| `16_three_lead_ecgaim_live.qmd` | 30 | 23 | 42 | quarto-1.10.18 | complete | False | 0 |
+| `17_one_lead_wavelet_ssl_live.qmd` | 9 | 10 | 13 | quarto-1.10.18 | complete | False | 0 |
+| `09_real_data_eda_and_diagnostics.qmd` | 27 | 20 | 40 | quarto-1.10.18 | complete | False | 0 |
+| `11_dataset_atlas_ludb_isp_sunnybrook.qmd` | 20 | 13 | 13 | quarto-1.10.18 | complete | False | 0 |
 | `05_zhejiang_delineation_tutorial.qmd` | 7 | 5 | 9 | quarto-1.10.18 | complete | False | 0 |
 | `01_dataset_and_preprocessing.qmd` | 7 | 5 | 6 | quarto-1.10.18 | complete | False | 0 |
 | `02_network_architectures.qmd` | 6 | 2 | 3 | quarto-1.10.18 | complete | False | 0 |
@@ -54,18 +58,14 @@ Generated: `2026-08-24T15:50:40.570078+00:00`
   "wrong_renderer": {},
   "zero_output_chapters": [],
   "external_resources": [
-    "https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js",
-    "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js",
-    "https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js",
-    "https://cdn.plot.ly/plotly-3.3.1.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG",
-    "https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6",
     "https://doi.org/10.1161/CIR.0000000000001193",
     "https://doi.org/10.1161/CIRCULATIONAHA.125.077494",
     "https://doi.org/10.13026/2j37-ba56",
     "https://doi.org/10.13026/eegm-h675",
     "https://physionet.org/content/echonext/",
     "https://physionet.org/content/ludb/1.0.1/"
-  ]
+  ],
+  "external_runtime": [],
+  "identifier_hits": {}
 }
 ```

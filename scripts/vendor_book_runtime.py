@@ -10,6 +10,12 @@ URLS={
     'https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js':'require-2.3.6.min.js',
     'https://cdn.plot.ly/plotly-3.3.1.min.js':'plotly-3.3.1.min.js',
     'https://cdn.plot.ly/plotly-3.3.1.min':'plotly-3.3.1.min.js',
+    'https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js':'katex-0.16.22.min.js',
+    'https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css':'katex-0.16.22.min.css',
+}
+FETCH_URLS={
+    'katex-0.16.22.min.js':'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js',
+    'katex-0.16.22.min.css':'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css',
 }
 
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
@@ -26,11 +32,20 @@ def main():
             if not plotly.is_file():raise FileNotFoundError(plotly)
             shutil.copyfile(plotly,dest)
         elif not dest.is_file():
-            with urllib.request.urlopen(url,timeout=30) as response:dest.write_bytes(response.read())
+            with urllib.request.urlopen(FETCH_URLS.get(name,url),timeout=30) as response:dest.write_bytes(response.read())
         if dest.stat().st_size<10_000:raise RuntimeError(f'Vendored runtime unexpectedly small: {dest}')
+    # KaTeX CSS refers to relative font files. Vendor every referenced font and
+    # preserve its `fonts/` relative location under the local asset directory.
+    css=vendor/'katex-0.16.22.min.css';font_dir=vendor/'fonts';font_dir.mkdir(exist_ok=True)
+    for rel in sorted(set(re.findall(r'url\((?:"|\')?(fonts/[^)"\']+)',css.read_text()))):
+        dest=vendor/rel;dest.parent.mkdir(parents=True,exist_ok=True)
+        if not dest.is_file():
+            url='https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/'+rel
+            with urllib.request.urlopen(url,timeout=30) as response:dest.write_bytes(response.read())
+        if dest.stat().st_size<100:raise RuntimeError(f'Vendored KaTeX font unexpectedly small: {dest}')
     replacements={url:f'site_libs/vendor/{name}' for url,name in URLS.items()}
     changed=0
-    forbidden=('cdn.jsdelivr.net/npm/jquery','cdn.jsdelivr.net/npm/requirejs','cdn.plot.ly/plotly')
+    forbidden=('cdn.jsdelivr.net/npm/jquery','cdn.jsdelivr.net/npm/requirejs','cdn.plot.ly/plotly','cdn.jsdelivr.net/npm/katex')
     for html in out.glob('*.html'):
         text=html.read_text()
         revised=text

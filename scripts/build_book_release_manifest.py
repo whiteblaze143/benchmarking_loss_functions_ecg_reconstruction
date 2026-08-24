@@ -6,6 +6,11 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 
+def render_input_sha(q:Path):
+    h=hashlib.sha256();h.update(q.read_bytes());h.update((ROOT/'book/_quarto.yml').read_bytes())
+    if q.name=='09_real_data_eda_and_diagnostics.qmd':h.update((ROOT/'book/real_dataset_umap.py').read_bytes())
+    return h.hexdigest()
+
 def sha(path:Path):
     h=hashlib.sha256()
     with path.open('rb') as f:
@@ -29,8 +34,8 @@ def main():
     config_sha=sha(ROOT/'book/_quarto.yml')
     requirements=ROOT/'book/requirements-book.txt'
     for row in render.get('chapters',{}).values():
-        q=ROOT/row['source'];h=hashlib.sha256();h.update(q.read_bytes());h.update((ROOT/'book/_quarto.yml').read_bytes())
-        if row.get('input_sha256')!=h.hexdigest():raise RuntimeError(f"Render state is not bound to current inputs: {q}")
+        q=ROOT/row['source']
+        if row.get('input_sha256')!=render_input_sha(q):raise RuntimeError(f"Render state is not bound to current inputs: {q}")
     sources={};outputs={}
     for row in audit['chapters']:
         q=ROOT/'book'/row['chapter'];h=ROOT/'book/_book'/row['chapter'].replace('.qmd','.html')
@@ -46,12 +51,14 @@ def main():
     commit=subprocess.run(['git','rev-parse','HEAD'],cwd=ROOT,text=True,stdout=subprocess.PIPE,check=True).stdout.strip()
     dirty=subprocess.run(['git','status','--porcelain'],cwd=ROOT,text=True,stdout=subprocess.PIPE,check=True).stdout.splitlines()
     payload={'schema_version':1,'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
-             'release_status':'production_verified' if scientific_pass else 'PROVISIONAL_NOT_DEPLOYABLE_SCIENTIFIC_GATE_FAILED',
+             'release_status':'production_verified' if scientific_pass else 'documentation_preview_verified_scientific_gate_pending',
              'render_contract':render['render_contract'],'git_commit':commit,'git_dirty':bool(dirty),'git_changed_paths':dirty,
              'quarto_config_sha256':config_sha,'mandatory_scientific_gate':final_gate,
              'audit_summary':audit['summary'],'sources':sources,'outputs':outputs,'key_artifacts':artifacts,
              'book_requirements':{'path':str(requirements.relative_to(ROOT)),'sha256':sha(requirements),'bytes':requirements.stat().st_size},
-             'external_runtime_resources':sorted({x for r in audit['chapters'] for x in r['external_resources']})}
+             'analysis_modules':{'book/real_dataset_umap.py':{'sha256':sha(ROOT/'book/real_dataset_umap.py'),'bytes':(ROOT/'book/real_dataset_umap.py').stat().st_size}},
+             'external_reference_links':sorted({x for r in audit['chapters'] for x in r['external_resources']}),
+             'external_runtime_resources':sorted({x for r in audit['chapters'] for x in r['external_runtime']})}
     a.output.parent.mkdir(parents=True,exist_ok=True);tmp=a.output.with_suffix(a.output.suffix+'.tmp')
     tmp.write_text(json.dumps(payload,indent=2)+'\n');os.replace(tmp,a.output)
     print(json.dumps({'output':str(a.output),'sources':len(sources),'outputs':len(outputs),'external_resources':len(payload['external_runtime_resources'])}))

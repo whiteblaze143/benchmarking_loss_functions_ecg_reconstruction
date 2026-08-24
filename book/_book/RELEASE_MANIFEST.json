@@ -1,0 +1,350 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-24T16:31:46.067590+00:00",
+  "release_status": "documentation_preview_verified_scientific_gate_pending",
+  "render_contract": {
+    "quarto_binary": ".tools/quarto-1.10.18/bin/quarto",
+    "quarto_version": "1.10.18",
+    "python": "/home/mithunmanivannan/.venv/bin/python3",
+    "python_version": "3.12.3",
+    "sequential": true
+  },
+  "git_commit": "c922f97693732327045dcefbc04c655a3c809a5a",
+  "git_dirty": true,
+  "git_changed_paths": [
+    " M .github/workflows/pages.yml",
+    " M book/09_real_data_eda_and_diagnostics.qmd",
+    " M book/README.md",
+    " M book/_book/01_dataset_and_preprocessing.html",
+    " M book/_book/02_network_architectures.html",
+    " M book/_book/03_loss_function_formulations.html",
+    " M book/_book/04_regression_to_mean.html",
+    " M book/_book/05_clinical_metrics_and_delineation.html",
+    " M book/_book/05_zhejiang_delineation_tutorial.html",
+    " M book/_book/06_fairness_robustness_sqi.html",
+    " M book/_book/07_smartwatch_reconstruction_case_study.html",
+    " M book/_book/08_factorial_loss_matrix_benchmarks.html",
+    " M book/_book/09_real_data_eda_and_diagnostics.html",
+    " M book/_book/10_echonext_classifier_external_validation.html",
+    " M book/_book/11_dataset_atlas_ludb_isp_sunnybrook.html",
+    " M book/_book/12_exhaustive_model_analysis.html",
+    " M book/_book/14_cath_lab_clinical_trust_atlas.html",
+    " M book/_book/15_live_results_observatory.html",
+    " M book/_book/16_three_lead_ecgaim_live.html",
+    " M book/_book/17_one_lead_wavelet_ssl_live.html",
+    " M book/_book/index.html",
+    " M book/_book/search.json",
+    " M book/_book/site_libs/vendor/MANIFEST.json",
+    " M book/index.qmd",
+    " M review-stage/AUTO_PAPER_IMPROVEMENT_STATE_20260824.json",
+    " M review-stage/BOOK_MECHANICAL_AUDIT.json",
+    " M review-stage/BOOK_MECHANICAL_AUDIT.md",
+    " M review-stage/REVIEW_STATE.json",
+    " M review-stage/render-round3/render_state.json",
+    " M scripts/build_book_release_manifest.py",
+    " M scripts/render_quarto_chapters.py",
+    " M scripts/vendor_book_runtime.py",
+    "?? book/_book/RELEASE_MANIFEST.json",
+    "?? book/_book/site_libs/vendor/fonts/",
+    "?? book/_book/site_libs/vendor/katex-0.16.22.min.css",
+    "?? book/_book/site_libs/vendor/katex-0.16.22.min.js",
+    "?? book/real_dataset_umap.py",
+    "?? review-stage/render-umap/"
+  ],
+  "quarto_config_sha256": "84670a8b0f6bb3788ee2c070fa1b0750f72d8c574839e2e47bacb20f8568b381",
+  "mandatory_scientific_gate": {
+    "schema_version": 1,
+    "status": "FAIL",
+    "checks_passed": 9,
+    "checks_total": 10,
+    "checks": {
+      "required_artifacts_present": {
+        "passed": true,
+        "detail": {}
+      },
+      "core_queue_complete": {
+        "passed": true,
+        "detail": 91
+      },
+      "clinical_queue_complete": {
+        "passed": true,
+        "detail": 13
+      },
+      "core_completeness_pass": {
+        "passed": true,
+        "detail": "complete"
+      },
+      "clinical_completeness_pass": {
+        "passed": true,
+        "detail": "PASS"
+      },
+      "core_figures_reviewed_7": {
+        "passed": true,
+        "detail": "PASS"
+      },
+      "clinical_figures_reviewed_8": {
+        "passed": true,
+        "detail": "PASS"
+      },
+      "protocol_audit_pass": {
+        "passed": true,
+        "detail": "pass"
+      },
+      "mmd_repair_validated": {
+        "passed": true,
+        "detail": "pass"
+      },
+      "fresh_postrun_audit_pass": {
+        "passed": false,
+        "detail": "REVIEW_UNAVAILABLE"
+      }
+    }
+  },
+  "audit_summary": {
+    "configured_chapters": 19,
+    "missing_sources": [],
+    "missing_html": 0,
+    "incomplete_html": 0,
+    "stale_html": 0,
+    "missing_resources": 0,
+    "unlabeled_blocks": 0,
+    "duplicate_labels": [],
+    "wrong_renderer": 0,
+    "zero_output_chapters": 0,
+    "external_resources": 6,
+    "external_runtime": 0,
+    "identifier_hits": 0
+  },
+  "sources": {
+    "book/index.qmd": {
+      "sha256": "d85df828de661fe2a7e62005d5d6790eebba56e6a6d35656eac316a31f04fcfe",
+      "bytes": 6090
+    },
+    "book/15_live_results_observatory.qmd": {
+      "sha256": "950723d6239593513834fa8a9816c1e010f5251ec877afa0d86cdf01904f1e73",
+      "bytes": 4482
+    },
+    "book/16_three_lead_ecgaim_live.qmd": {
+      "sha256": "bf4e703fe441f9c7a65406f80ba0b868f84ad02bf2a86fa4971a42d6b567b160",
+      "bytes": 34788
+    },
+    "book/17_one_lead_wavelet_ssl_live.qmd": {
+      "sha256": "a9ebfc930b651e8cc4c880976f6e4197d2296298d35e183af4865bc8369a53cb",
+      "bytes": 7895
+    },
+    "book/09_real_data_eda_and_diagnostics.qmd": {
+      "sha256": "4d7a9d7d1d60d91000bec7e2c9dc04e6bf91fa2aef866bee96f9feabdd80bf17",
+      "bytes": 43544
+    },
+    "book/11_dataset_atlas_ludb_isp_sunnybrook.qmd": {
+      "sha256": "37b7647241e89760b422b291bc85b44b31adced4d9fbb2561d70c18e98755d2d",
+      "bytes": 25102
+    },
+    "book/05_zhejiang_delineation_tutorial.qmd": {
+      "sha256": "1db7142b3acc8ec14a2dbd4bda0bdaceb9a68b4d93a8ba56a10bfba2d7410601",
+      "bytes": 12235
+    },
+    "book/01_dataset_and_preprocessing.qmd": {
+      "sha256": "44df9cd491dd2c8bb9169a60033928920afe5387095f2fbeee264453e16411dc",
+      "bytes": 10802
+    },
+    "book/02_network_architectures.qmd": {
+      "sha256": "a881dbc4f4b5ae059cd9e2fb172596e31d9fcbe2fa353243480e7adaa2d6af05",
+      "bytes": 9976
+    },
+    "book/03_loss_function_formulations.qmd": {
+      "sha256": "8e9aae58b1d8cf8aa51f024a4c31762df47e44ede18c9ca62b7d041132769d9e",
+      "bytes": 14830
+    },
+    "book/05_clinical_metrics_and_delineation.qmd": {
+      "sha256": "fe7514c37d25d664ffd2616da90f0f3d3917e24b5a46f69478760dcb6fec025b",
+      "bytes": 9310
+    },
+    "book/04_regression_to_mean.qmd": {
+      "sha256": "2a1df7b3d1b29d92e81cabed132f650098486de1c5b920e7b248e78d25a85616",
+      "bytes": 10486
+    },
+    "book/06_fairness_robustness_sqi.qmd": {
+      "sha256": "eb3a3530b74f95016e131aa2e0456e326c877e4b71aeba0eaf693968926fcf7f",
+      "bytes": 8570
+    },
+    "book/08_factorial_loss_matrix_benchmarks.qmd": {
+      "sha256": "a9c02dd6bb905afb12e22a5d3e416b136c8e8566f992a89cc9c5707b41bb1440",
+      "bytes": 12460
+    },
+    "book/07_smartwatch_reconstruction_case_study.qmd": {
+      "sha256": "1084ab46517083c254232d80ad2ff03cac37f79a25c63c76b10a34fa9f9dbdec",
+      "bytes": 8786
+    },
+    "book/10_echonext_classifier_external_validation.qmd": {
+      "sha256": "5a61be6825d99b12289b6290a036b5e5bdb376c754e50bcb5efcf74289cb6871",
+      "bytes": 8163
+    },
+    "book/12_exhaustive_model_analysis.qmd": {
+      "sha256": "aab3840ecccc3ea7f92edc6e71f5ab233634626b948a3b4c1faeb7b9c9a4f948",
+      "bytes": 8525
+    },
+    "book/13_engineering_ml_visual_atlas.qmd": {
+      "sha256": "3b53f2b66c495727be5bc5c6341d9c9494ff5be799b33699cc7fe8daef10f6fe",
+      "bytes": 10253
+    },
+    "book/14_cath_lab_clinical_trust_atlas.qmd": {
+      "sha256": "423feec79eb1990afc40e703bc7e64368bcfc75ede9e3ed3c6ac5ff6109f8c1f",
+      "bytes": 6916
+    }
+  },
+  "outputs": {
+    "book/_book/index.html": {
+      "sha256": "40d5cb2b9c0ff15a64b77e2ae16c7d49650c5c7f20b4884f13eb4710d646d8a8",
+      "bytes": 68034,
+      "output_blocks": 0
+    },
+    "book/_book/15_live_results_observatory.html": {
+      "sha256": "66a752bb94ed68aba40417c7987135a976df1c2c56344e136e55db550a9d83a7",
+      "bytes": 82326,
+      "output_blocks": 3
+    },
+    "book/_book/16_three_lead_ecgaim_live.html": {
+      "sha256": "b870d169105f015b1b0a3526aca00af74ba203246deabca272fa65810761a29e",
+      "bytes": 1786333,
+      "output_blocks": 42
+    },
+    "book/_book/17_one_lead_wavelet_ssl_live.html": {
+      "sha256": "19560a8e6929b457cc2722beca0d7d7f437696fe7d62753b5d1bef970851a732",
+      "bytes": 223644,
+      "output_blocks": 13
+    },
+    "book/_book/09_real_data_eda_and_diagnostics.html": {
+      "sha256": "3d23786f4118159e6893ed34c675e572fa62a0050bfa5595408a266874e1fd4e",
+      "bytes": 495009,
+      "output_blocks": 40
+    },
+    "book/_book/11_dataset_atlas_ludb_isp_sunnybrook.html": {
+      "sha256": "6d772ee9419f7a6a83c0fad76b217971c9ff40a02bbbf1b57d315e0548f15930",
+      "bytes": 246663,
+      "output_blocks": 13
+    },
+    "book/_book/05_zhejiang_delineation_tutorial.html": {
+      "sha256": "d7558b002c9831f26dcee5f0de6b19e6c0c09813a4a5ebd164f073ce28c114f1",
+      "bytes": 142441,
+      "output_blocks": 9
+    },
+    "book/_book/01_dataset_and_preprocessing.html": {
+      "sha256": "0666e87414d477fc509b54d8b69866942884a9b5eca6780431978a1debf1c8a5",
+      "bytes": 577966,
+      "output_blocks": 6
+    },
+    "book/_book/02_network_architectures.html": {
+      "sha256": "8a11fd1e6b2c546119bc0873a60c7939d666758147bba8f1b47ef8a712f6907c",
+      "bytes": 109032,
+      "output_blocks": 3
+    },
+    "book/_book/03_loss_function_formulations.html": {
+      "sha256": "729b5c70b3c7121a552015634e511fbc7c74e90664218f81793733f11f238a2f",
+      "bytes": 144134,
+      "output_blocks": 5
+    },
+    "book/_book/05_clinical_metrics_and_delineation.html": {
+      "sha256": "8110984c91275bd31fad5089c436a2fd1044788500610a5234284aeef9c0049f",
+      "bytes": 212784,
+      "output_blocks": 3
+    },
+    "book/_book/04_regression_to_mean.html": {
+      "sha256": "882923340fdb5b034a520aaaf00a2474a8502d6c5756128d759b23d9605ec6d3",
+      "bytes": 143122,
+      "output_blocks": 2
+    },
+    "book/_book/06_fairness_robustness_sqi.html": {
+      "sha256": "60cfce34788d59a7ccbc82471c74b9c577bed5d08ec3a156b7e393d4ab827ab4",
+      "bytes": 204991,
+      "output_blocks": 2
+    },
+    "book/_book/08_factorial_loss_matrix_benchmarks.html": {
+      "sha256": "897c104dd2cf278d2fb0e694fb8f028a4cf31093f6c065ac5b1d6684608e33b3",
+      "bytes": 205122,
+      "output_blocks": 9
+    },
+    "book/_book/07_smartwatch_reconstruction_case_study.html": {
+      "sha256": "161eb3853b888864f9abb058cc0fb3878fbc4b00bc3d2206158c72befd6ee691",
+      "bytes": 476821,
+      "output_blocks": 6
+    },
+    "book/_book/10_echonext_classifier_external_validation.html": {
+      "sha256": "ff9936f2c3fda9c53383f14a67e0a0c08c68022c82665f1a58f0d6d9f1245e72",
+      "bytes": 108137,
+      "output_blocks": 7
+    },
+    "book/_book/12_exhaustive_model_analysis.html": {
+      "sha256": "7e039aa60be25d85ebc812d3398b7c997d990035c38408fa459fd4cd3ef7d675",
+      "bytes": 102282,
+      "output_blocks": 3
+    },
+    "book/_book/13_engineering_ml_visual_atlas.html": {
+      "sha256": "301e79f86be82e8e94779ee9b835cf5b790f2903e6fef74f0fbbac6bd6a275d2",
+      "bytes": 135433,
+      "output_blocks": 7
+    },
+    "book/_book/14_cath_lab_clinical_trust_atlas.html": {
+      "sha256": "d427618280c2bf0a90571f8a989919d6c3aca6e87d172693f20fc74ac4cee4f1",
+      "bytes": 75700,
+      "output_blocks": 0
+    }
+  },
+  "key_artifacts": {
+    "results/factorial_v4/completeness.json": {
+      "exists": true,
+      "sha256": "66882ba9576530bc4724577d447d7fbb2814dfa580fd5057213923b495c803c6",
+      "bytes": 1207
+    },
+    "results/factorial_v4/protocol_audit.json": {
+      "exists": true,
+      "sha256": "dd53d2436b7862ca0f3066831e1b71ff84ded6a96b85681ec8c0d2cd90f66b83",
+      "bytes": 942
+    },
+    "results/factorial_v4/main_48_cell_table.csv": {
+      "exists": true,
+      "sha256": "531a75f346a9f3fbb44931ce417c7b098455fcae16787612f28620e14538fc01",
+      "bytes": 7911
+    },
+    "results/factorial_v4_clinical/FINAL_COMPLETION.json": {
+      "exists": true,
+      "sha256": "f3f7a2997cbdf2e8f59945ed6be688935cfd3920af516db8db1fef18dfd9060f",
+      "bytes": 963
+    },
+    "results/factorial_v4_clinical/smartwatch_task_fidelity.csv": {
+      "exists": true,
+      "sha256": "e0d98cb73cfc29fd2f7005f31f789a6d1b3a9464dc9db72f672d00980a86ab12",
+      "bytes": 12442761
+    },
+    "results/clinical_biomarkers_multids/clinical_metrics.db": {
+      "exists": true,
+      "sha256": "2a4835e39f60c22623bd241c572f1ba4fb32d688a8675bb90c530f3297e056f8",
+      "bytes": 6320128
+    },
+    "results/checkpoint_embeddings/compact.sqlite": {
+      "exists": true,
+      "sha256": "854a916981d8cfdc39beff8010372b1741288fe132b5b7d84283950892779f12",
+      "bytes": 58585088
+    }
+  },
+  "book_requirements": {
+    "path": "book/requirements-book.txt",
+    "sha256": "199886ec5214aead701b97149d0f19c00e2f69390ac747c1a642b6c5428192db",
+    "bytes": 363
+  },
+  "analysis_modules": {
+    "book/real_dataset_umap.py": {
+      "sha256": "08705e7ed376980eeabfc813a366765fb7fdc6c76e2e19519817b82a5b65c088",
+      "bytes": 10321
+    }
+  },
+  "external_reference_links": [
+    "https://doi.org/10.1161/CIR.0000000000001193",
+    "https://doi.org/10.1161/CIRCULATIONAHA.125.077494",
+    "https://doi.org/10.13026/2j37-ba56",
+    "https://doi.org/10.13026/eegm-h675",
+    "https://physionet.org/content/echonext/",
+    "https://physionet.org/content/ludb/1.0.1/"
+  ],
+  "external_runtime_resources": []
+}

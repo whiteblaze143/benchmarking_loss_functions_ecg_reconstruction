@@ -119,8 +119,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="site_libs/vendor/katex-0.16.22.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="site_libs/vendor/katex-0.16.22.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -582,7 +596,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Training is active. A completed queue flag is not sufficient evidence: the checkpoint must also pass the current content-pinned compatibility contract. Model rankings, factorial effects, and clinical diagnoses remain closed until the release gate is complete.</p>
+<p>The registered design remains incomplete. Queue JSON is an observation, not a heartbeat: this chapter verifies file freshness and recorded-process liveness before using the word “active.” Model rankings and factorial effects remain closed until the generation-bound release gate is complete.</p>
 </div>
 </div>
 <section id="live-generation-inventory" class="level2" data-number="16.1">
@@ -591,38 +605,52 @@ window.Quarto = {
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>ROOT <span class="op">=</span> Path(<span class="st">".."</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>state <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"refine-logs/queue/queue_state.json"</span>).read_text())</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>audit <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"results/checkpoint_store/compatibility_audit.json"</span>).read_text())</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>manifest <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"refine-logs/factorial_manifest.json"</span>).read_text())</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> Counter(job.get(<span class="st">"status"</span>, <span class="st">"unknown"</span>) <span class="cf">for</span> job <span class="kw">in</span> state[<span class="st">"jobs"</span>])</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>manifest_jobs <span class="op">=</span> [job <span class="cf">for</span> phase <span class="kw">in</span> manifest[<span class="st">"phases"</span>] <span class="cf">for</span> job <span class="kw">in</span> phase[<span class="st">"jobs"</span>]]</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>identities <span class="op">=</span> []</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> job <span class="kw">in</span> manifest_jobs:</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    match <span class="op">=</span> re.fullmatch(<span class="vs">r"f_</span><span class="kw">(</span><span class="dv">\d</span><span class="op">{7}</span><span class="kw">)</span><span class="vs">_s</span><span class="kw">(</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">"</span>, job[<span class="st">"id"</span>])</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> match <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>, job[<span class="st">"id"</span>]</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    identities.append((job[<span class="st">"id"</span>], match.group(<span class="dv">1</span>), <span class="bu">int</span>(match.group(<span class="dv">2</span>))))</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>manifest_seeds <span class="op">=</span> <span class="bu">sorted</span>({seed <span class="cf">for</span> _, _, seed <span class="kw">in</span> identities})</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>manifest_masks <span class="op">=</span> <span class="bu">sorted</span>({mask <span class="cf">for</span> _, mask, _ <span class="kw">in</span> identities})</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(identities) <span class="op">==</span> <span class="dv">480</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>({model_id <span class="cf">for</span> model_id, _, _ <span class="kw">in</span> identities}) <span class="op">==</span> <span class="dv">480</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> manifest_seeds <span class="op">==</span> [<span class="dv">42</span>, <span class="dv">200</span>, <span class="dv">201</span>]</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(manifest_masks) <span class="op">==</span> <span class="dv">160</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> {mask[<span class="dv">0</span>] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> {<span class="st">"1"</span>}</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">all</span>({mask[position] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> {<span class="st">"0"</span>, <span class="st">"1"</span>} <span class="cf">for</span> position <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">6</span>))</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> {mask[<span class="dv">6</span>] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> <span class="bu">set</span>(<span class="st">"01234"</span>)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quantity"</span>: [<span class="st">"pending"</span>, <span class="st">"running"</span>, <span class="st">"queue-completed"</span>, <span class="st">"contract-compatible"</span>, <span class="st">"contract-incompatible"</span>],</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">"count"</span>: [status[<span class="st">"pending"</span>], status[<span class="st">"running"</span>], status[<span class="st">"completed"</span>],</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>              audit[<span class="st">"counts"</span>][<span class="st">"compatible"</span>], audit[<span class="st">"counts"</span>][<span class="st">"incompatible"</span>]]</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>ROOT <span class="op">=</span> Path(<span class="st">".."</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>state <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"refine-logs/queue/queue_state.json"</span>).read_text())</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>audit <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"results/checkpoint_store/compatibility_audit.json"</span>).read_text())</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>manifest <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"refine-logs/factorial_manifest.json"</span>).read_text())</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> Counter(job.get(<span class="st">"status"</span>, <span class="st">"unknown"</span>) <span class="cf">for</span> job <span class="kw">in</span> state[<span class="st">"jobs"</span>])</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>manifest_jobs <span class="op">=</span> [job <span class="cf">for</span> phase <span class="kw">in</span> manifest[<span class="st">"phases"</span>] <span class="cf">for</span> job <span class="kw">in</span> phase[<span class="st">"jobs"</span>]]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>identities <span class="op">=</span> []</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> job <span class="kw">in</span> manifest_jobs:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    match <span class="op">=</span> re.fullmatch(<span class="vs">r"f_</span><span class="kw">(</span><span class="dv">\d</span><span class="op">{7}</span><span class="kw">)</span><span class="vs">_s</span><span class="kw">(</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">"</span>, job[<span class="st">"id"</span>])</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> match <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>, job[<span class="st">"id"</span>]</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    identities.append((job[<span class="st">"id"</span>], match.group(<span class="dv">1</span>), <span class="bu">int</span>(match.group(<span class="dv">2</span>))))</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>manifest_seeds <span class="op">=</span> <span class="bu">sorted</span>({seed <span class="cf">for</span> _, _, seed <span class="kw">in</span> identities})</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>manifest_masks <span class="op">=</span> <span class="bu">sorted</span>({mask <span class="cf">for</span> _, mask, _ <span class="kw">in</span> identities})</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(identities) <span class="op">==</span> <span class="dv">480</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>({model_id <span class="cf">for</span> model_id, _, _ <span class="kw">in</span> identities}) <span class="op">==</span> <span class="dv">480</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> manifest_seeds <span class="op">==</span> [<span class="dv">42</span>, <span class="dv">200</span>, <span class="dv">201</span>]</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(manifest_masks) <span class="op">==</span> <span class="dv">160</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> {mask[<span class="dv">0</span>] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> {<span class="st">"1"</span>}</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">all</span>({mask[position] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> {<span class="st">"0"</span>, <span class="st">"1"</span>} <span class="cf">for</span> position <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">6</span>))</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> {mask[<span class="dv">6</span>] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> <span class="bu">set</span>(<span class="st">"01234"</span>)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>expected_ids <span class="op">=</span> {model_id <span class="cf">for</span> model_id, _, _ <span class="kw">in</span> identities}</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>audit_models <span class="op">=</span> [row <span class="cf">for</span> row <span class="kw">in</span> audit.get(<span class="st">"models"</span>, []) <span class="cf">if</span> <span class="bu">str</span>(row.get(<span class="st">"model_id"</span>)) <span class="kw">in</span> expected_ids]</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>compatible_ids <span class="op">=</span> {<span class="bu">str</span>(row.get(<span class="st">"model_id"</span>)) <span class="cf">for</span> row <span class="kw">in</span> audit_models <span class="cf">if</span> row.get(<span class="st">"compatible"</span>)}</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>incompatible_ids <span class="op">=</span> {<span class="bu">str</span>(row.get(<span class="st">"model_id"</span>)) <span class="cf">for</span> row <span class="kw">in</span> audit_models <span class="cf">if</span> <span class="kw">not</span> row.get(<span class="st">"compatible"</span>)}</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>historical_audit_rows <span class="op">=</span> <span class="bu">len</span>(audit.get(<span class="st">"models"</span>, [])) <span class="op">-</span> <span class="bu">len</span>(audit_models)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>state_age_hours <span class="op">=</span> (pd.Timestamp.now(tz<span class="op">=</span><span class="st">"UTC"</span>).timestamp() <span class="op">-</span> (ROOT <span class="op">/</span> <span class="st">"refine-logs/queue/queue_state.json"</span>).stat().st_mtime) <span class="op">/</span> <span class="dv">3600</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>running_pids <span class="op">=</span> [<span class="bu">int</span>(job[<span class="st">"pid"</span>]) <span class="cf">for</span> job <span class="kw">in</span> state[<span class="st">"jobs"</span>] <span class="cf">if</span> job.get(<span class="st">"status"</span>) <span class="op">==</span> <span class="st">"running"</span> <span class="kw">and</span> job.get(<span class="st">"pid"</span>)]</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pid_alive(pid):</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>: os.kill(pid, <span class="dv">0</span>)<span class="op">;</span> <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> (<span class="pp">ProcessLookupError</span>, <span class="pp">PermissionError</span>): <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>live_running_pids <span class="op">=</span> [pid <span class="cf">for</span> pid <span class="kw">in</span> running_pids <span class="cf">if</span> pid_alive(pid)]</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>queue_active <span class="op">=</span> state_age_hours <span class="op">&lt;=</span> <span class="dv">1</span> <span class="kw">and</span> <span class="bu">bool</span>(live_running_pids)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quantity"</span>: [<span class="st">"pending"</span>, <span class="st">"recorded-running"</span>, <span class="st">"live-running-processes"</span>, <span class="st">"queue-completed"</span>, <span class="st">"current-generation compatible"</span>, <span class="st">"current-generation incompatible"</span>, <span class="st">"historical audit rows excluded"</span>, <span class="st">"state age (hours)"</span>, <span class="st">"queue active"</span>],</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="st">"count"</span>: [status[<span class="st">"pending"</span>], status[<span class="st">"running"</span>], <span class="bu">len</span>(live_running_pids), status[<span class="st">"completed"</span>],</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>              <span class="bu">len</span>(compatible_ids), <span class="bu">len</span>(incompatible_ids), historical_audit_rows, state_age_hours, queue_active]</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="exhaustive-live-inventory" class="cell-output cell-output-display" data-execution_count="1">
 <div>
@@ -644,23 +672,43 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">1</th>
-<td>running</td>
+<td>recorded-running</td>
 <td>1</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2</th>
-<td>queue-completed</td>
-<td>394</td>
+<td>live-running-processes</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">3</th>
-<td>contract-compatible</td>
-<td>310</td>
+<td>queue-completed</td>
+<td>394</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">4</th>
-<td>contract-incompatible</td>
+<td>current-generation compatible</td>
+<td>310</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>current-generation incompatible</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>historical audit rows excluded</td>
 <td>278</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>state age (hours)</td>
+<td>255.788499</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>queue active</td>
+<td>False</td>
 </tr>
 </tbody>
 </table>
@@ -668,7 +716,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>The compatible count is the meaningful numerator. Earlier checkpoints produced under a different source bundle or optimizer regime were preserved under quarantine names and requeued; they are not silently pooled with the current generation.</p>
+<p>Only audit rows whose model IDs occur in the exact current manifest enter the compatibility counts. Historical rows are reported separately. At the current snapshot the queue state is stale/halted unless both freshness and a live recorded PID pass; a JSON row labelled <code>running</code> is not sufficient.</p>
 <div id="exhaustive-manifest-identity" class="cell" data-tbl-cap="Authoritative 480-job identity design parsed from the executable queue manifest." data-execution_count="2">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -770,7 +818,7 @@ window.Quarto = {
 </section>
 <section id="seven-position-mask-decoded" class="level2" data-number="16.2">
 <h2 data-number="16.2" class="anchored" data-anchor-id="seven-position-mask-decoded"><span class="header-section-number">16.2</span> Seven-position mask decoded</h2>
-<p>The label often shortened to “<span class="math inline">\(2^7\)</span>” is a seven-character configuration code, not seven binary factors. The first position is fixed MSE, five positions are binary toggles, and the final position selects one of five MMD kernels. Consequently each seed has <span class="math inline">\(2^5\times5=160\)</span> conditions.</p>
+<p>The label often shortened to “<span class="math inline">2^7</span>” is a seven-character configuration code, not seven binary factors. The first position is fixed MSE, five positions are binary toggles, and the final position selects one of five MMD states: off plus four kernels. Consequently each seed has <span class="math inline">2^5\times5=160</span> conditions.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 22%">
@@ -833,10 +881,10 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td style="text-align: right;">7</td>
-<td>MMD kernel selector</td>
-<td style="text-align: right;">0–4</td>
+<td>MMD state</td>
+<td style="text-align: right;">0 off; 1–4 kernel choices</td>
 <td style="text-align: right;">2.3 / 0.042 when active</td>
-<td>categorical, never a numeric dose</td>
+<td>categorical with off as baseline, never a numeric dose</td>
 </tr>
 </tbody>
 </table>
@@ -871,7 +919,7 @@ window.Quarto = {
 </section>
 <section id="planned-factorial-analysis" class="level2" data-number="16.5">
 <h2 data-number="16.5" class="anchored" data-anchor-id="planned-factorial-analysis"><span class="header-section-number">16.5</span> Planned factorial analysis</h2>
-<p>For endpoint <span class="math inline">\(Y\)</span>, a hierarchical model will estimate binary main effects, categorical kernel contrasts, prespecified interactions, seed variability, and paired patient uncertainty. The estimand is a within-architecture, within-cohort contrast—not the largest observed cell mean. Multiplicity control applies within endpoint families, while clinical non-inferiority uses prespecified margins rather than a non-significant superiority test.</p>
+<p>For endpoint <span class="math inline">Y</span>, a hierarchical model will estimate binary main effects, categorical kernel contrasts, prespecified interactions, seed variability, and paired patient uncertainty. The estimand is a within-architecture, within-cohort contrast—not the largest observed cell mean. Multiplicity control applies within endpoint families, while clinical non-inferiority uses prespecified margins rather than a non-significant superiority test.</p>
 <p>The release gate requires all eligible cells, matching contract digests, no duplicate identities, no unresolved checkpoint load failures, and complete primary endpoints. Until then, this chapter is an auditable analysis specification rather than a leaderboard.</p>
 
 
@@ -1363,7 +1411,7 @@ window.Quarto = {
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Current evidence status</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>Training is active. A completed queue flag is not sufficient evidence: the checkpoint must also pass the current content-pinned compatibility contract. Model rankings, factorial effects, and clinical diagnoses remain closed until the release gate is complete.</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>The registered design remains incomplete. Queue JSON is an observation, not a heartbeat: this chapter verifies file freshness and recorded-process liveness before using the word “active.” Model rankings and factorial effects remain closed until the generation-bound release gate is complete.</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## Live generation inventory</span></span>
@@ -1371,107 +1419,121 @@ window.Quarto = {
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: exhaustive-live-inventory</span></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>ROOT <span class="op">=</span> Path(<span class="st">".."</span>)</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>state <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"refine-logs/queue/queue_state.json"</span>).read_text())</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>audit <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"results/checkpoint_store/compatibility_audit.json"</span>).read_text())</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>manifest <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"refine-logs/factorial_manifest.json"</span>).read_text())</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> Counter(job.get(<span class="st">"status"</span>, <span class="st">"unknown"</span>) <span class="cf">for</span> job <span class="kw">in</span> state[<span class="st">"jobs"</span>])</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>manifest_jobs <span class="op">=</span> [job <span class="cf">for</span> phase <span class="kw">in</span> manifest[<span class="st">"phases"</span>] <span class="cf">for</span> job <span class="kw">in</span> phase[<span class="st">"jobs"</span>]]</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>identities <span class="op">=</span> []</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> job <span class="kw">in</span> manifest_jobs:</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    match <span class="op">=</span> re.fullmatch(<span class="vs">r"f_</span><span class="kw">(</span><span class="dv">\d</span><span class="op">{7}</span><span class="kw">)</span><span class="vs">_s</span><span class="kw">(</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">"</span>, job[<span class="st">"id"</span>])</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> match <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>, job[<span class="st">"id"</span>]</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    identities.append((job[<span class="st">"id"</span>], match.group(<span class="dv">1</span>), <span class="bu">int</span>(match.group(<span class="dv">2</span>))))</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>manifest_seeds <span class="op">=</span> <span class="bu">sorted</span>({seed <span class="cf">for</span> _, _, seed <span class="kw">in</span> identities})</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>manifest_masks <span class="op">=</span> <span class="bu">sorted</span>({mask <span class="cf">for</span> _, mask, _ <span class="kw">in</span> identities})</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(identities) <span class="op">==</span> <span class="dv">480</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>({model_id <span class="cf">for</span> model_id, _, _ <span class="kw">in</span> identities}) <span class="op">==</span> <span class="dv">480</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> manifest_seeds <span class="op">==</span> [<span class="dv">42</span>, <span class="dv">200</span>, <span class="dv">201</span>]</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(manifest_masks) <span class="op">==</span> <span class="dv">160</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> {mask[<span class="dv">0</span>] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> {<span class="st">"1"</span>}</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">all</span>({mask[position] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> {<span class="st">"0"</span>, <span class="st">"1"</span>} <span class="cf">for</span> position <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">6</span>))</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> {mask[<span class="dv">6</span>] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> <span class="bu">set</span>(<span class="st">"01234"</span>)</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quantity"</span>: [<span class="st">"pending"</span>, <span class="st">"running"</span>, <span class="st">"queue-completed"</span>, <span class="st">"contract-compatible"</span>, <span class="st">"contract-incompatible"</span>],</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="st">"count"</span>: [status[<span class="st">"pending"</span>], status[<span class="st">"running"</span>], status[<span class="st">"completed"</span>],</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>              audit[<span class="st">"counts"</span>][<span class="st">"compatible"</span>], audit[<span class="st">"counts"</span>][<span class="st">"incompatible"</span>]]</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>The compatible count is the meaningful numerator. Earlier checkpoints produced under a different source bundle or optimizer regime were preserved under quarantine names and requeued; they are not silently pooled with the current generation.</span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: exhaustive-manifest-identity</span></span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Authoritative 480-job identity design parsed from the executable queue manifest."</span></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>seed_counts <span class="op">=</span> Counter(seed <span class="cf">for</span> _, _, seed <span class="kw">in</span> identities)</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>kernel_counts <span class="op">=</span> Counter(<span class="bu">int</span>(mask[<span class="op">-</span><span class="dv">1</span>]) <span class="cf">for</span> _, mask, _ <span class="kw">in</span> identities)</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>display(pd.DataFrame({</span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    <span class="st">"seed"</span>: manifest_seeds,</span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scheduled identities"</span>: [seed_counts[seed] <span class="cf">for</span> seed <span class="kw">in</span> manifest_seeds],</span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    <span class="st">"unique masks"</span>: [<span class="bu">len</span>({mask <span class="cf">for</span> _, mask, value <span class="kw">in</span> identities <span class="cf">if</span> value <span class="op">==</span> seed}) <span class="cf">for</span> seed <span class="kw">in</span> manifest_seeds],</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>}))</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>display(pd.DataFrame({</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MMD kernel level"</span>: <span class="bu">sorted</span>(kernel_counts),</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scheduled identities"</span>: [kernel_counts[level] <span class="cf">for</span> level <span class="kw">in</span> <span class="bu">sorted</span>(kernel_counts)],</span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>}))</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>The seed blocks are **42, 200, and 201**, with 160 distinct masks in each block. These values are parsed from <span class="in">`factorial_manifest.json`</span>; they are not inferred from whatever subset has happened to finish.</span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="fu">## Seven-position mask decoded</span></span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>The label often shortened to “$2^7$” is a seven-character configuration code, not seven binary factors. The first position is fixed MSE, five positions are binary toggles, and the final position selects one of five MMD kernels. Consequently each seed has $2^5\times5=160$ conditions.</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Position <span class="pp">|</span> Implemented role <span class="pp">|</span> Levels <span class="pp">|</span> Training weight / normalizer <span class="pp">|</span> Interpretation rule <span class="pp">|</span></span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a><span class="pp">|---:|---|---:|---:|---|</span></span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1 <span class="pp">|</span> MSE anchor <span class="pp">|</span> fixed at 1 <span class="pp">|</span> 1.0 / 0.18 <span class="pp">|</span> not an estimable factor <span class="pp">|</span></span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2 <span class="pp">|</span> Pearson correlation loss <span class="pp">|</span> 0/1 <span class="pp">|</span> 1.7 / 1.0 <span class="pp">|</span> binary main effect and prespecified interactions <span class="pp">|</span></span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 3 <span class="pp">|</span> first-difference L1 loss <span class="pp">|</span> 0/1 <span class="pp">|</span> 4.1 / 0.12 <span class="pp">|</span> binary main effect and prespecified interactions <span class="pp">|</span></span>
-<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 4 <span class="pp">|</span> Kors-vectorcardiogram angle/magnitude loss <span class="pp">|</span> 0/1 <span class="pp">|</span> 5.0 / 1.0 <span class="pp">|</span> binary main effect and prespecified interactions <span class="pp">|</span></span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 5 <span class="pp">|</span> empirical energy-distance loss <span class="pp">|</span> 0/1 <span class="pp">|</span> 1.0 / 0.05 <span class="pp">|</span> binary main effect; composite scale changes sharply <span class="pp">|</span></span>
-<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 6 <span class="pp">|</span> Goldberger limb-lead consistency loss <span class="pp">|</span> 0/1 <span class="pp">|</span> 1.0 / 0.1 <span class="pp">|</span> binary main effect and prespecified interactions <span class="pp">|</span></span>
-<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 7 <span class="pp">|</span> MMD kernel selector <span class="pp">|</span> 0–4 <span class="pp">|</span> 2.3 / 0.042 when active <span class="pp">|</span> categorical, never a numeric dose <span class="pp">|</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>ROOT <span class="op">=</span> Path(<span class="st">".."</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>state <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"refine-logs/queue/queue_state.json"</span>).read_text())</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>audit <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"results/checkpoint_store/compatibility_audit.json"</span>).read_text())</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>manifest <span class="op">=</span> json.loads((ROOT <span class="op">/</span> <span class="st">"refine-logs/factorial_manifest.json"</span>).read_text())</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> Counter(job.get(<span class="st">"status"</span>, <span class="st">"unknown"</span>) <span class="cf">for</span> job <span class="kw">in</span> state[<span class="st">"jobs"</span>])</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>manifest_jobs <span class="op">=</span> [job <span class="cf">for</span> phase <span class="kw">in</span> manifest[<span class="st">"phases"</span>] <span class="cf">for</span> job <span class="kw">in</span> phase[<span class="st">"jobs"</span>]]</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>identities <span class="op">=</span> []</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> job <span class="kw">in</span> manifest_jobs:</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    match <span class="op">=</span> re.fullmatch(<span class="vs">r"f_</span><span class="kw">(</span><span class="dv">\d</span><span class="op">{7}</span><span class="kw">)</span><span class="vs">_s</span><span class="kw">(</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">"</span>, job[<span class="st">"id"</span>])</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> match <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>, job[<span class="st">"id"</span>]</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    identities.append((job[<span class="st">"id"</span>], match.group(<span class="dv">1</span>), <span class="bu">int</span>(match.group(<span class="dv">2</span>))))</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>manifest_seeds <span class="op">=</span> <span class="bu">sorted</span>({seed <span class="cf">for</span> _, _, seed <span class="kw">in</span> identities})</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>manifest_masks <span class="op">=</span> <span class="bu">sorted</span>({mask <span class="cf">for</span> _, mask, _ <span class="kw">in</span> identities})</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(identities) <span class="op">==</span> <span class="dv">480</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>({model_id <span class="cf">for</span> model_id, _, _ <span class="kw">in</span> identities}) <span class="op">==</span> <span class="dv">480</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> manifest_seeds <span class="op">==</span> [<span class="dv">42</span>, <span class="dv">200</span>, <span class="dv">201</span>]</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(manifest_masks) <span class="op">==</span> <span class="dv">160</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> {mask[<span class="dv">0</span>] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> {<span class="st">"1"</span>}</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">all</span>({mask[position] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> {<span class="st">"0"</span>, <span class="st">"1"</span>} <span class="cf">for</span> position <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">6</span>))</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> {mask[<span class="dv">6</span>] <span class="cf">for</span> mask <span class="kw">in</span> manifest_masks} <span class="op">==</span> <span class="bu">set</span>(<span class="st">"01234"</span>)</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>expected_ids <span class="op">=</span> {model_id <span class="cf">for</span> model_id, _, _ <span class="kw">in</span> identities}</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>audit_models <span class="op">=</span> [row <span class="cf">for</span> row <span class="kw">in</span> audit.get(<span class="st">"models"</span>, []) <span class="cf">if</span> <span class="bu">str</span>(row.get(<span class="st">"model_id"</span>)) <span class="kw">in</span> expected_ids]</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>compatible_ids <span class="op">=</span> {<span class="bu">str</span>(row.get(<span class="st">"model_id"</span>)) <span class="cf">for</span> row <span class="kw">in</span> audit_models <span class="cf">if</span> row.get(<span class="st">"compatible"</span>)}</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>incompatible_ids <span class="op">=</span> {<span class="bu">str</span>(row.get(<span class="st">"model_id"</span>)) <span class="cf">for</span> row <span class="kw">in</span> audit_models <span class="cf">if</span> <span class="kw">not</span> row.get(<span class="st">"compatible"</span>)}</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>historical_audit_rows <span class="op">=</span> <span class="bu">len</span>(audit.get(<span class="st">"models"</span>, [])) <span class="op">-</span> <span class="bu">len</span>(audit_models)</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>state_age_hours <span class="op">=</span> (pd.Timestamp.now(tz<span class="op">=</span><span class="st">"UTC"</span>).timestamp() <span class="op">-</span> (ROOT <span class="op">/</span> <span class="st">"refine-logs/queue/queue_state.json"</span>).stat().st_mtime) <span class="op">/</span> <span class="dv">3600</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>running_pids <span class="op">=</span> [<span class="bu">int</span>(job[<span class="st">"pid"</span>]) <span class="cf">for</span> job <span class="kw">in</span> state[<span class="st">"jobs"</span>] <span class="cf">if</span> job.get(<span class="st">"status"</span>) <span class="op">==</span> <span class="st">"running"</span> <span class="kw">and</span> job.get(<span class="st">"pid"</span>)]</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pid_alive(pid):</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>: os.kill(pid, <span class="dv">0</span>)<span class="op">;</span> <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> (<span class="pp">ProcessLookupError</span>, <span class="pp">PermissionError</span>): <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>live_running_pids <span class="op">=</span> [pid <span class="cf">for</span> pid <span class="kw">in</span> running_pids <span class="cf">if</span> pid_alive(pid)]</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>queue_active <span class="op">=</span> state_age_hours <span class="op">&lt;=</span> <span class="dv">1</span> <span class="kw">and</span> <span class="bu">bool</span>(live_running_pids)</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quantity"</span>: [<span class="st">"pending"</span>, <span class="st">"recorded-running"</span>, <span class="st">"live-running-processes"</span>, <span class="st">"queue-completed"</span>, <span class="st">"current-generation compatible"</span>, <span class="st">"current-generation incompatible"</span>, <span class="st">"historical audit rows excluded"</span>, <span class="st">"state age (hours)"</span>, <span class="st">"queue active"</span>],</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="st">"count"</span>: [status[<span class="st">"pending"</span>], status[<span class="st">"running"</span>], <span class="bu">len</span>(live_running_pids), status[<span class="st">"completed"</span>],</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>              <span class="bu">len</span>(compatible_ids), <span class="bu">len</span>(incompatible_ids), historical_audit_rows, state_age_hours, queue_active]</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>Only audit rows whose model IDs occur in the exact current manifest enter the compatibility counts. Historical rows are reported separately. At the current snapshot the queue state is stale/halted unless both freshness and a live recorded PID pass; a JSON row labelled <span class="in">`running`</span> is not sufficient.</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: exhaustive-manifest-identity</span></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Authoritative 480-job identity design parsed from the executable queue manifest."</span></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>seed_counts <span class="op">=</span> Counter(seed <span class="cf">for</span> _, _, seed <span class="kw">in</span> identities)</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>kernel_counts <span class="op">=</span> Counter(<span class="bu">int</span>(mask[<span class="op">-</span><span class="dv">1</span>]) <span class="cf">for</span> _, mask, _ <span class="kw">in</span> identities)</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>display(pd.DataFrame({</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    <span class="st">"seed"</span>: manifest_seeds,</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scheduled identities"</span>: [seed_counts[seed] <span class="cf">for</span> seed <span class="kw">in</span> manifest_seeds],</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    <span class="st">"unique masks"</span>: [<span class="bu">len</span>({mask <span class="cf">for</span> _, mask, value <span class="kw">in</span> identities <span class="cf">if</span> value <span class="op">==</span> seed}) <span class="cf">for</span> seed <span class="kw">in</span> manifest_seeds],</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>display(pd.DataFrame({</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MMD kernel level"</span>: <span class="bu">sorted</span>(kernel_counts),</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scheduled identities"</span>: [kernel_counts[level] <span class="cf">for</span> level <span class="kw">in</span> <span class="bu">sorted</span>(kernel_counts)],</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>The seed blocks are **42, 200, and 201**, with 160 distinct masks in each block. These values are parsed from <span class="in">`factorial_manifest.json`</span>; they are not inferred from whatever subset has happened to finish.</span>
 <span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>With the manifest-bound seeds 42, 200, and 201, the planned grid contains 480 model identities. The primary analysis must retain seed as a training-replicate block and must not treat model fits—or three seeds—as independent patient samples. Patient-level uncertainty is estimated from the test cohort; seed variability addresses optimization replication and is a different uncertainty source.</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a><span class="fu">## Seven-position mask decoded</span></span>
 <span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a><span class="fu">## Model-level evidence contract</span></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>The label often shortened to “$2^7$” is a seven-character configuration code, not seven binary factors. The first position is fixed MSE, five positions are binary toggles, and the final position selects one of five MMD states: off plus four kernels. Consequently each seed has $2^5\times5=160$ conditions.</span>
 <span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>For each model, the final table will include:</span>
-<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>full <span class="in">`model_id`</span>, mask, seed, architecture, and observed-lead set;</span>
-<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>checkpoint SHA-256, byte size, state schema, and archive locator;</span>
-<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>source-bundle, environment, preprocessing, and train/validation/test content roots;</span>
-<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>convergence diagnostics and prespecified exclusion status;</span>
-<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>paired patient-level reconstruction, morphology, calibration, and downstream-task metrics;</span>
-<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>uncertainty intervals and subgroup denominators;</span>
-<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>inference recipe proving that the archived model can be materialized and loaded.</span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Position <span class="pp">|</span> Implemented role <span class="pp">|</span> Levels <span class="pp">|</span> Training weight / normalizer <span class="pp">|</span> Interpretation rule <span class="pp">|</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a><span class="pp">|---:|---|---:|---:|---|</span></span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1 <span class="pp">|</span> MSE anchor <span class="pp">|</span> fixed at 1 <span class="pp">|</span> 1.0 / 0.18 <span class="pp">|</span> not an estimable factor <span class="pp">|</span></span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2 <span class="pp">|</span> Pearson correlation loss <span class="pp">|</span> 0/1 <span class="pp">|</span> 1.7 / 1.0 <span class="pp">|</span> binary main effect and prespecified interactions <span class="pp">|</span></span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 3 <span class="pp">|</span> first-difference L1 loss <span class="pp">|</span> 0/1 <span class="pp">|</span> 4.1 / 0.12 <span class="pp">|</span> binary main effect and prespecified interactions <span class="pp">|</span></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 4 <span class="pp">|</span> Kors-vectorcardiogram angle/magnitude loss <span class="pp">|</span> 0/1 <span class="pp">|</span> 5.0 / 1.0 <span class="pp">|</span> binary main effect and prespecified interactions <span class="pp">|</span></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 5 <span class="pp">|</span> empirical energy-distance loss <span class="pp">|</span> 0/1 <span class="pp">|</span> 1.0 / 0.05 <span class="pp">|</span> binary main effect; composite scale changes sharply <span class="pp">|</span></span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 6 <span class="pp">|</span> Goldberger limb-lead consistency loss <span class="pp">|</span> 0/1 <span class="pp">|</span> 1.0 / 0.1 <span class="pp">|</span> binary main effect and prespecified interactions <span class="pp">|</span></span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 7 <span class="pp">|</span> MMD state <span class="pp">|</span> 0 off; 1–4 kernel choices <span class="pp">|</span> 2.3 / 0.042 when active <span class="pp">|</span> categorical with off as baseline, never a numeric dose <span class="pp">|</span></span>
 <span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why the previous model-by-model prose was withdrawn</span></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>With the manifest-bound seeds 42, 200, and 201, the planned grid contains 480 model identities. The primary analysis must retain seed as a training-replicate block and must not treat model fits—or three seeds—as independent patient samples. Patient-level uncertainty is estimated from the test cohort; seed variability addresses optimization replication and is a different uncertainty source.</span>
 <span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>The previous draft assigned clinical diagnoses such as “strictly preserves T-wave termination” from aggregate feature means in a legacy CSV. That inference was not supported. A mean QT difference cannot establish waveform-level boundary preservation; it also cannot distinguish delineator failure, pairing error, variance collapse, or checkpoint-generation mismatch. The source file lacked the identity fields needed to resolve those alternatives.</span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a><span class="fu">## Model-level evidence contract</span></span>
 <span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>The correct diagnostic chain is:</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>For each model, the final table will include:</span>
 <span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>verify checkpoint and dataset identity;</span>
-<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>retain paired per-record outputs and delineation quality flags;</span>
-<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>report valid-pair denominators and failure rates;</span>
-<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>estimate paired bias, limits of agreement, robust slope, and coverage;</span>
-<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>stratify by heart rate, rhythm, morphology, sex, age, and signal quality;</span>
-<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>inspect representative waveforms under a prespecified selection rule;</span>
-<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>only then make a bounded claim about preservation.</span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>full <span class="in">`model_id`</span>, mask, seed, architecture, and observed-lead set;</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>checkpoint SHA-256, byte size, state schema, and archive locator;</span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>source-bundle, environment, preprocessing, and train/validation/test content roots;</span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>convergence diagnostics and prespecified exclusion status;</span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>paired patient-level reconstruction, morphology, calibration, and downstream-task metrics;</span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>uncertainty intervals and subgroup denominators;</span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>inference recipe proving that the archived model can be materialized and loaded.</span>
 <span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a><span class="fu">## Planned factorial analysis</span></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why the previous model-by-model prose was withdrawn</span></span>
 <span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>For endpoint $Y$, a hierarchical model will estimate binary main effects, categorical kernel contrasts, prespecified interactions, seed variability, and paired patient uncertainty. The estimand is a within-architecture, within-cohort contrast—not the largest observed cell mean. Multiplicity control applies within endpoint families, while clinical non-inferiority uses prespecified margins rather than a non-significant superiority test.</span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>The previous draft assigned clinical diagnoses such as “strictly preserves T-wave termination” from aggregate feature means in a legacy CSV. That inference was not supported. A mean QT difference cannot establish waveform-level boundary preservation; it also cannot distinguish delineator failure, pairing error, variance collapse, or checkpoint-generation mismatch. The source file lacked the identity fields needed to resolve those alternatives.</span>
 <span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>The release gate requires all eligible cells, matching contract digests, no duplicate identities, no unresolved checkpoint load failures, and complete primary endpoints. Until then, this chapter is an auditable analysis specification rather than a leaderboard.</span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>The correct diagnostic chain is:</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>verify checkpoint and dataset identity;</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>retain paired per-record outputs and delineation quality flags;</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>report valid-pair denominators and failure rates;</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>estimate paired bias, limits of agreement, robust slope, and coverage;</span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>stratify by heart rate, rhythm, morphology, sex, age, and signal quality;</span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>inspect representative waveforms under a prespecified selection rule;</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>only then make a bounded claim about preservation.</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## Planned factorial analysis</span></span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>For endpoint $Y$, a hierarchical model will estimate binary main effects, categorical kernel contrasts, prespecified interactions, seed variability, and paired patient uncertainty. The estimand is a within-architecture, within-cohort contrast—not the largest observed cell mean. Multiplicity control applies within endpoint families, while clinical non-inferiority uses prespecified margins rather than a non-significant superiority test.</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>The release gate requires all eligible cells, matching contract digests, no duplicate identities, no unresolved checkpoint load failures, and complete primary endpoints. Until then, this chapter is an auditable analysis specification rather than a leaderboard.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

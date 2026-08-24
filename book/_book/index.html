@@ -559,6 +559,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="preface-executive-summary" class="level1 unnumbered">
 <h1 class="unnumbered">Preface &amp; Executive Summary</h1>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Documentation preview — independent scientific audit pending
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This deployed book has passed executable and mechanical integrity checks, but the generation-bound scientific package remains at 9/10 because its independent fresh-review gate is unresolved. Tables preserve their evidence status; this site must not be cited as a final audited scientific release.</p>
+</div>
+</div>
 <section id="motivation-clinical-context" class="level2">
 <h2 class="anchored" data-anchor-id="motivation-clinical-context">Motivation &amp; Clinical Context</h2>
 <p>Electrocardiogram (ECG) reconstruction aims to estimate a complete <strong>12-lead ECG representation</strong> from a reduced subset of leads—such as a single wearable-like Lead I or a 3-lead input. Mean Squared Error (MSE) is a standard objective, but conditional averaging can attenuate morphology when the missing signal is not uniquely determined by the observed leads. This handbook tests that concern rather than assuming it.</p>
@@ -577,7 +590,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="how-to-read-this-handbook" class="level2">
 <h2 class="anchored" data-anchor-id="how-to-read-this-handbook">How to read this handbook</h2>
 <p>For current experiment status, start with the <a href="./15_live_results_observatory.html">Live Experiment Observatory</a>, then open either the <a href="./16_three_lead_ecgaim_live.html">three-lead ECG-AIM analysis</a> or the <a href="./17_one_lead_wavelet_ssl_live.html">one-lead wavelet/SSL analysis</a>. Those pages query the live databases on every render and keep the two experimental contracts separate.</p>
-<p>The book begins with evidence, not demonstrations. The <a href="./09_real_data_eda_and_diagnostics.html">opening real-data EDA</a> audits the actual local PTB-XL and EchoNext cohorts: record and patient counts, split integrity, label support, missingness, signal shape, units, clipping, lead dependence, and resampling. The <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html">multi-dataset atlas</a> then establishes what LUDB, ISP, and Sunnybrook contribute that the development cohort cannot, followed by a separate <a href="./05_zhejiang_delineation_tutorial.html">Zhejiang file-level audit</a>. Only after those measurement contracts are visible does the <a href="./01_dataset_and_preprocessing.html">PTB-XL preprocessing contract</a> explain the content-pinned tensors and lead mapping.</p>
+<p>The book begins with evidence, not demonstrations. The <a href="./09_real_data_eda_and_diagnostics.html">opening real-data EDA</a> audits PTB-XL and EchoNext in depth and now provides separate, stability-audited waveform UMAPs for every locally supported clinical cohort: PTB-XL, EchoNext, LUDB, ISP, Sunnybrook, Zhejiang, and RDB. The <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html">multi-dataset atlas</a> establishes what the smaller morphology cohorts contribute, followed by a separate <a href="./05_zhejiang_delineation_tutorial.html">Zhejiang file-level audit</a>. Only after those measurement contracts are visible does the <a href="./01_dataset_and_preprocessing.html">PTB-XL preprocessing contract</a> explain the content-pinned tensors and lead mapping.</p>
 <p>The remaining parts follow the causal order of the study:</p>
 <ol type="1">
 <li><strong>Data, cohorts, and measurement</strong> — what was observed, how records were partitioned, and which claims each dataset can support.</li>
@@ -1127,61 +1140,70 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Preface &amp; Executive Summary {.unnumbered}</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Motivation &amp; Clinical Context</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>Electrocardiogram (ECG) reconstruction aims to estimate a complete **12-lead ECG representation** from a reduced subset of leads—such as a single wearable-like Lead I or a 3-lead input. Mean Squared Error (MSE) is a standard objective, but conditional averaging can attenuate morphology when the missing signal is not uniquely determined by the observed leads. This handbook tests that concern rather than assuming it.</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Regression-to-the-Mean Failure (Presacan et al., 2025)</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>In *Communications Medicine* (Nature Portfolio), **Presacan et al. (2025)** reported regression-to-the-mean behavior in ECG reconstruction trained with MSE. More generally, squared-error population risk targets a conditional expectation; when multiple missing-lead morphologies are compatible with the observed leads, averaging can attenuate uncommon amplitudes or shapes. Whether that occurs for a particular checkpoint and endpoint is measured here rather than assumed from the theorem or prior paper.</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>Potential failure modes include P/T delineation error, ST-segment attenuation, and QT/QTc drift. These are hypotheses requiring artifact-backed evaluation; the book does not infer patient harm from synthetic waveforms or global similarity metrics.</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="in">       MSE Loss (Regression to Mean)          Combinatorial Composite Loss (Ours)</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="in">    ┌─────────────────────────────────┐      ┌─────────────────────────────────┐</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="in">    │  Flat P-waves / Flattened ST    │      │  Candidate shape preservation  │</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="in">    │  Damped Peak Amplitudes         │  vs  │  QTc/VCG metrics require audit │</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="in">    │  Metrics requiring audit        │      │  No assumed clinical benefit   │</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="in">    └─────────────────────────────────┘      └─────────────────────────────────┘</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>::: callout-warning</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">## Documentation preview — independent scientific audit pending</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>This deployed book has passed executable and mechanical integrity checks, but</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>the generation-bound scientific package remains at 9/10 because its independent</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>fresh-review gate is unresolved. Tables preserve their evidence status; this</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>site must not be cited as a final audited scientific release.</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Motivation &amp; Clinical Context</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>Electrocardiogram (ECG) reconstruction aims to estimate a complete **12-lead ECG representation** from a reduced subset of leads—such as a single wearable-like Lead I or a 3-lead input. Mean Squared Error (MSE) is a standard objective, but conditional averaging can attenuate morphology when the missing signal is not uniquely determined by the observed leads. This handbook tests that concern rather than assuming it.</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Regression-to-the-Mean Failure (Presacan et al., 2025)</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>In *Communications Medicine* (Nature Portfolio), **Presacan et al. (2025)** reported regression-to-the-mean behavior in ECG reconstruction trained with MSE. More generally, squared-error population risk targets a conditional expectation; when multiple missing-lead morphologies are compatible with the observed leads, averaging can attenuate uncommon amplitudes or shapes. Whether that occurs for a particular checkpoint and endpoint is measured here rather than assumed from the theorem or prior paper.</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>Potential failure modes include P/T delineation error, ST-segment attenuation, and QT/QTc drift. These are hypotheses requiring artifact-backed evaluation; the book does not infer patient harm from synthetic waveforms or global similarity metrics.</span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to read this handbook</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>For current experiment status, start with the <span class="co">[</span><span class="ot">Live Experiment Observatory</span><span class="co">](15_live_results_observatory.qmd)</span>,</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>then open either the <span class="co">[</span><span class="ot">three-lead ECG-AIM analysis</span><span class="co">](16_three_lead_ecgaim_live.qmd)</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>or the <span class="co">[</span><span class="ot">one-lead wavelet/SSL analysis</span><span class="co">](17_one_lead_wavelet_ssl_live.qmd)</span>. Those</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>pages query the live databases on every render and keep the two experimental</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>contracts separate.</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>The book begins with evidence, not demonstrations. The <span class="co">[</span><span class="ot">opening real-data EDA</span><span class="co">](09_real_data_eda_and_diagnostics.qmd)</span> audits the actual local PTB-XL and EchoNext cohorts: record and patient counts, split integrity, label support, missingness, signal shape, units, clipping, lead dependence, and resampling. The <span class="co">[</span><span class="ot">multi-dataset atlas</span><span class="co">](11_dataset_atlas_ludb_isp_sunnybrook.qmd)</span> then establishes what LUDB, ISP, and Sunnybrook contribute that the development cohort cannot, followed by a separate <span class="co">[</span><span class="ot">Zhejiang file-level audit</span><span class="co">](05_zhejiang_delineation_tutorial.qmd)</span>. Only after those measurement contracts are visible does the <span class="co">[</span><span class="ot">PTB-XL preprocessing contract</span><span class="co">](01_dataset_and_preprocessing.qmd)</span> explain the content-pinned tensors and lead mapping.</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>The remaining parts follow the causal order of the study:</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Data, cohorts, and measurement** — what was observed, how records were partitioned, and which claims each dataset can support.</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Reconstruction models and objectives** — the architectures and loss terms applied to those inputs.</span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Clinical and statistical evaluation** — paired morphology, delineation, agreement, fairness, robustness, and uncertainty.</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>**Benchmark and external validation** — the locked 48-cell evidence, the still-training mixed-level factorial study, device transfer, and EchoNext classifier preservation.</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="in">       MSE Loss (Regression to Mean)          Combinatorial Composite Loss (Ours)</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="in">    ┌─────────────────────────────────┐      ┌─────────────────────────────────┐</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="in">    │  Flat P-waves / Flattened ST    │      │  Candidate shape preservation  │</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="in">    │  Damped Peak Amplitudes         │  vs  │  QTc/VCG metrics require audit │</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="in">    │  Metrics requiring audit        │      │  No assumed clinical benefit   │</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="in">    └─────────────────────────────────┘      └─────────────────────────────────┘</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to read this handbook</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>For current experiment status, start with the <span class="co">[</span><span class="ot">Live Experiment Observatory</span><span class="co">](15_live_results_observatory.qmd)</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>then open either the <span class="co">[</span><span class="ot">three-lead ECG-AIM analysis</span><span class="co">](16_three_lead_ecgaim_live.qmd)</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>or the <span class="co">[</span><span class="ot">one-lead wavelet/SSL analysis</span><span class="co">](17_one_lead_wavelet_ssl_live.qmd)</span>. Those</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>pages query the live databases on every render and keep the two experimental</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>contracts separate.</span>
 <span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>This order is deliberate. A model ranking is uninterpretable until the reader knows the units, split boundary, repeated-patient structure, endpoint prevalence, and downstream measurement contract. Synthetic examples remain in the book as executable tutorials, but they are labeled as demonstrations and never substitute for cohort evidence.</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>The book begins with evidence, not demonstrations. The <span class="co">[</span><span class="ot">opening real-data EDA</span><span class="co">](09_real_data_eda_and_diagnostics.qmd)</span> audits PTB-XL and EchoNext in depth and now provides separate, stability-audited waveform UMAPs for every locally supported clinical cohort: PTB-XL, EchoNext, LUDB, ISP, Sunnybrook, Zhejiang, and RDB. The <span class="co">[</span><span class="ot">multi-dataset atlas</span><span class="co">](11_dataset_atlas_ludb_isp_sunnybrook.qmd)</span> establishes what the smaller morphology cohorts contribute, followed by a separate <span class="co">[</span><span class="ot">Zhejiang file-level audit</span><span class="co">](05_zhejiang_delineation_tutorial.qmd)</span>. Only after those measurement contracts are visible does the <span class="co">[</span><span class="ot">PTB-XL preprocessing contract</span><span class="co">](01_dataset_and_preprocessing.qmd)</span> explain the content-pinned tensors and lead mapping.</span>
 <span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## One connected book</span></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>Open this rendered <span class="in">`index.html`</span>, then use the persistent sidebar or the Previous/Next controls. The five parts and all chapters are members of one Quarto book; tables, figures, equation numbers, citations, and section references share one navigation structure.</span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Evidence status at a glance</span></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Evidence stream <span class="pp">|</span> Current status <span class="pp">|</span> Interpretation <span class="pp">|</span></span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------------------|------------------------|------------------------|</span></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Local dataset inventories and EDA <span class="pp">|</span> Executed from <span class="in">`data/`</span> <span class="pp">|</span> Describes the actual repository cohorts and files <span class="pp">|</span></span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Generation-bound 48-cell reconstruction benchmark <span class="pp">|</span> Computation complete; final package gate 9/10 <span class="pp">|</span> Supports generation-bound descriptive and prespecified paired analyses; independent fresh review remains unavailable <span class="pp">|</span></span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> EchoNext frozen-classifier outputs <span class="pp">|</span> Reviewed figures and label audit retained; record-level recomputation inputs absent on compact disk <span class="pp">|</span> Supports integrity-checked evidence display, not an independent rerun of probability/calibration analyses <span class="pp">|</span></span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Mixed-level seven-position factorial checkpoints <span class="pp">|</span> Training in progress <span class="pp">|</span> Remains a visibly watermarked scaffold until its completion gate passes <span class="pp">|</span></span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Generation-bound temporal morphology <span class="pp">|</span> Running under a digest/coverage gate <span class="pp">|</span> Partial accepted models diagnose measurement behavior; no factorial claim until the complete grid passes <span class="pp">|</span></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>The distinction between **observed**, **derived**, **planned**, and **synthetic** evidence is maintained throughout the book.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>The remaining parts follow the causal order of the study:</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Data, cohorts, and measurement** — what was observed, how records were partitioned, and which claims each dataset can support.</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Reconstruction models and objectives** — the architectures and loss terms applied to those inputs.</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Clinical and statistical evaluation** — paired morphology, delineation, agreement, fairness, robustness, and uncertainty.</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>**Benchmark and external validation** — the locked 48-cell evidence, the still-training mixed-level factorial study, device transfer, and EchoNext classifier preservation.</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>This order is deliberate. A model ranking is uninterpretable until the reader knows the units, split boundary, repeated-patient structure, endpoint prevalence, and downstream measurement contract. Synthetic examples remain in the book as executable tutorials, but they are labeled as demonstrations and never substitute for cohort evidence.</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## One connected book</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>Open this rendered <span class="in">`index.html`</span>, then use the persistent sidebar or the Previous/Next controls. The five parts and all chapters are members of one Quarto book; tables, figures, equation numbers, citations, and section references share one navigation structure.</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="fu">## Evidence status at a glance</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Evidence stream <span class="pp">|</span> Current status <span class="pp">|</span> Interpretation <span class="pp">|</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------------------|------------------------|------------------------|</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Local dataset inventories and EDA <span class="pp">|</span> Executed from <span class="in">`data/`</span> <span class="pp">|</span> Describes the actual repository cohorts and files <span class="pp">|</span></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Generation-bound 48-cell reconstruction benchmark <span class="pp">|</span> Computation complete; final package gate 9/10 <span class="pp">|</span> Supports generation-bound descriptive and prespecified paired analyses; independent fresh review remains unavailable <span class="pp">|</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> EchoNext frozen-classifier outputs <span class="pp">|</span> Reviewed figures and label audit retained; record-level recomputation inputs absent on compact disk <span class="pp">|</span> Supports integrity-checked evidence display, not an independent rerun of probability/calibration analyses <span class="pp">|</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Mixed-level seven-position factorial checkpoints <span class="pp">|</span> Training in progress <span class="pp">|</span> Remains a visibly watermarked scaffold until its completion gate passes <span class="pp">|</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Generation-bound temporal morphology <span class="pp">|</span> Running under a digest/coverage gate <span class="pp">|</span> Partial accepted models diagnose measurement behavior; no factorial claim until the complete grid passes <span class="pp">|</span></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>The distinction between **observed**, **derived**, **planned**, and **synthetic** evidence is maintained throughout the book.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

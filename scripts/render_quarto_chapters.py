@@ -38,7 +38,10 @@ def save(path:Path,data):
     tmp=path.with_suffix(path.suffix+'.tmp');tmp.write_text(json.dumps(data,indent=2)+'\n');tmp.replace(path)
 
 def input_hash(source:Path,config:Path):
-    h=hashlib.sha256();h.update(source.read_bytes());h.update(config.read_bytes());return h.hexdigest()
+    h=hashlib.sha256();h.update(source.read_bytes());h.update(config.read_bytes())
+    if source.name=='09_real_data_eda_and_diagnostics.qmd':
+        h.update((source.parent/'real_dataset_umap.py').read_bytes())
+    return h.hexdigest()
 
 
 def main():

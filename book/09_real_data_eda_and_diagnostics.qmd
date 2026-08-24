@@ -607,6 +607,99 @@ pd.DataFrame(cooccurrence).sort_values(
 
 The audit reports a single SHA-256 label hash shared by the official reference and all 48 reconstructed-signal tables. This is a valuable identity check: differences among reconstruction cells cannot be explained by accidentally changing label order. It does not verify clinical adjudication or eliminate spectrum bias; those are separate questions.
 
+## Per-dataset waveform UMAP atlas
+
+The repository reference manual at `external/dataset_info.md` enumerates seven
+clinical signal cohorts plus wearable/noise stress streams. This executable
+atlas reconciles that document with the files physically available at render
+time. It includes **PTB-XL, EchoNext, LUDB, ISP, Sunnybrook, Zhejiang, and RDB**.
+NSTDB/Fitbit stress streams are not plotted as an eighth clinical-cohort UMAP:
+they are perturbation sources, and no independently versioned raw stress corpus
+is present beneath the checkout's `data/` entry. Treating generated SNR variants
+as independent patients would inflate the apparent sample size.
+
+Some statements in the reference manual are stronger than the locally
+verifiable evidence. In particular, the current `data/rdb/` entry is empty, so
+RDB is read from the generation-bound waveform/delineation cache; ISP provenance
+and class semantics remain unresolved by the files themselves; and Zhejiang's
+geographic/demographic description is not encoded in its arrays. The plots use
+those datasets, but their legends and interpretations remain inside the local
+evidence boundary.
+
+### Shared feature and sampling contract
+
+Each ECG is mapped to the same 96-dimensional vector: for every canonical lead,
+RMS amplitude, interquartile range, 1st-to-99th percentile range, derivative
+RMS, and four relative Fourier-energy quartiles. Features are robust-scaled
+**within each dataset**. This representation is deliberately transparent and
+is not a learned ECG-AIM latent representation. Because sampling rates and
+units differ—and Zhejiang's units/rate are not independently documented in its
+local tree—no pooled cross-dataset UMAP is used to claim domain similarity.
+
+Sampling is deterministic and bounded. Small cohorts use all available records;
+larger cohorts use a SHA-256-ranked sample that is invariant to directory order.
+Raw signals are reduced one record at a time and are never copied into the HTML.
+RDB acquisition identifiers are replaced with one-way, namespace-scoped display
+tokens before plotting.
+
+```{python}
+#| label: real-dataset-umap-build
+#| tbl-cap: "Provenance, feature contract, and stability diagnostics for every real-cohort UMAP."
+import sys
+if str((ROOT / "book").resolve()) not in sys.path:
+    sys.path.insert(0, str((ROOT / "book").resolve()))
+from real_dataset_umap import build_all
+
+dataset_umaps, dataset_umap_diagnostics = build_all()
+display(dataset_umap_diagnostics[[
+    "dataset", "source", "records_embedded", "sample", "selection", "group",
+    "features", "n_neighbors", "min_dist", "metric", "primary_seed",
+    "sensitivity_seeds", "trustworthiness_k5",
+    "mean_pairwise_distance_rank_stability",
+]])
+```
+
+The diagnostics are part of the result, not decoration. Trustworthiness at
+$k=5$ measures whether local neighborhoods in the robust-scaled feature space
+survive projection. The stability column compares all pairwise distances from
+the seed-42 map with seeds 7 and 101 using Spearman rank correlation; it is
+rotation/reflection invariant. Low values invalidate visual cluster claims.
+
+```{python}
+#| label: real-dataset-umap-panels
+#| fig-cap: "Separate descriptive waveform-feature UMAPs for every locally supported real ECG cohort."
+import plotly.express as px
+
+for dataset, projection in dataset_umaps.items():
+    diag = dataset_umap_diagnostics.set_index("dataset").loc[dataset]
+    fig = px.scatter(
+        projection, x="umap_1", y="umap_2", color="group",
+        hover_name="record", opacity=0.78,
+        title=(f"{dataset} waveform-feature UMAP · n={len(projection)} · "
+               f"T(5)={diag.trustworthiness_k5:.3f} · "
+               f"seed stability={diag.mean_pairwise_distance_rank_stability:.3f}"),
+        labels={"group": str(diag["group"]), "umap_1": "UMAP 1", "umap_2": "UMAP 2"},
+    )
+    fig.update_traces(marker={"size": 7, "line": {"width": 0.25, "color": "white"}})
+    fig.update_layout(height=520, legend_title_text=str(diag["group"]))
+    fig.show()
+```
+
+### Interpretation and falsification rules
+
+For each panel, the only admissible first-pass question is whether its displayed
+group is locally mixed or separated in this **specified feature representation**.
+Separation does not prove diagnosis, site, physiology, or model learnability.
+PTB-XL and ISP colors are split diagnostics; EchoNext and RDB use released
+labels; LUDB uses a header-text AF indicator; Sunnybrook and Zhejiang colors are
+explicitly derived QC strata rather than clinical ground truth.
+
+A visual finding is worth following only when trustworthiness and seed stability
+are adequate. The next test must operate in the original 96-dimensional feature
+space—for example, patient-grouped classification or a prespecified two-sample
+test with multiplicity control. Repeating UMAP until an attractive separation
+appears is not a valid analysis.
+
 ## Signal-level EDA: what to measure
 
 ### 1. Units and inverse normalization

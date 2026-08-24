@@ -1,5 +1,14 @@
 # Preface & Executive Summary {.unnumbered}
 
+::: callout-warning
+## Documentation preview — independent scientific audit pending
+
+This deployed book has passed executable and mechanical integrity checks, but
+the generation-bound scientific package remains at 9/10 because its independent
+fresh-review gate is unresolved. Tables preserve their evidence status; this
+site must not be cited as a final audited scientific release.
+:::
+
 ## Motivation & Clinical Context
 
 Electrocardiogram (ECG) reconstruction aims to estimate a complete **12-lead ECG representation** from a reduced subset of leads—such as a single wearable-like Lead I or a 3-lead input. Mean Squared Error (MSE) is a standard objective, but conditional averaging can attenuate morphology when the missing signal is not uniquely determined by the observed leads. This handbook tests that concern rather than assuming it.
@@ -27,7 +36,7 @@ or the [one-lead wavelet/SSL analysis](17_one_lead_wavelet_ssl_live.qmd). Those
 pages query the live databases on every render and keep the two experimental
 contracts separate.
 
-The book begins with evidence, not demonstrations. The [opening real-data EDA](09_real_data_eda_and_diagnostics.qmd) audits the actual local PTB-XL and EchoNext cohorts: record and patient counts, split integrity, label support, missingness, signal shape, units, clipping, lead dependence, and resampling. The [multi-dataset atlas](11_dataset_atlas_ludb_isp_sunnybrook.qmd) then establishes what LUDB, ISP, and Sunnybrook contribute that the development cohort cannot, followed by a separate [Zhejiang file-level audit](05_zhejiang_delineation_tutorial.qmd). Only after those measurement contracts are visible does the [PTB-XL preprocessing contract](01_dataset_and_preprocessing.qmd) explain the content-pinned tensors and lead mapping.
+The book begins with evidence, not demonstrations. The [opening real-data EDA](09_real_data_eda_and_diagnostics.qmd) audits PTB-XL and EchoNext in depth and now provides separate, stability-audited waveform UMAPs for every locally supported clinical cohort: PTB-XL, EchoNext, LUDB, ISP, Sunnybrook, Zhejiang, and RDB. The [multi-dataset atlas](11_dataset_atlas_ludb_isp_sunnybrook.qmd) establishes what the smaller morphology cohorts contribute, followed by a separate [Zhejiang file-level audit](05_zhejiang_delineation_tutorial.qmd). Only after those measurement contracts are visible does the [PTB-XL preprocessing contract](01_dataset_and_preprocessing.qmd) explain the content-pinned tensors and lead mapping.
 
 The remaining parts follow the causal order of the study:
 

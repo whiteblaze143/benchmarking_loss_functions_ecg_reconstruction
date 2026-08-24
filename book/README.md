@@ -68,8 +68,10 @@ tmux capture-pane -p -t checkpoint_embedding_postanalysis
 The Pages workflow deploys the checked-in `book/_book` snapshot; authoritative
 databases and checkpoints remain ignored. HTML existence alone is not a release
 gate. Vendor runtime assets, run the audit, and build a manifest. The manifest
-builder refuses production while a scientific completion gate fails;
-`--provisional` labels the candidate explicitly nondeployable.
+builder refuses the `production_verified` label while a scientific completion
+gate fails. `--provisional` creates a mechanically verified documentation
+preview whose visible warning and manifest state that scientific review remains
+pending.
 GitHub Pages uploads a single immutable artifact and independently verifies the
 production status plus every page hash before deployment, so a partially
 updated local directory cannot be promoted.

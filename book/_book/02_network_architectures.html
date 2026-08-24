@@ -119,8 +119,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="site_libs/vendor/katex-0.16.22.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="site_libs/vendor/katex-0.16.22.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -751,29 +765,29 @@ window.Quarto = {
 </section>
 <section id="shared-tensor-and-lead-contract" class="level2" data-number="8.2">
 <h2 data-number="8.2" class="anchored" data-anchor-id="shared-tensor-and-lead-contract"><span class="header-section-number">8.2</span> Shared tensor and lead contract</h2>
-<p>Let the measured ECG be <span class="math inline">\(Y\in\mathbb{R}^{12\times T}\)</span> in canonical order</p>
-<p><span class="math display">\[[I, II, III, aVR, aVL, aVF, V1, V2, V3, V4, V5, V6].\]</span></p>
-<p>With observed index set <span class="math inline">\(O=\{0,1,7\}\)</span> and missing set <span class="math inline">\(M=\{0,\ldots,11\}\setminus O\)</span>, a reconstructor <span class="math inline">\(f_\theta\)</span> receives <span class="math inline">\(Y_O\)</span> or an equivalent masked 12-lead representation and produces <span class="math inline">\(\tilde Y=f_\theta(Y_O)\)</span>. The evaluator applies the acquisition-preserving projection</p>
-<p><span class="math display">\[
+<p>Let the measured ECG be <span class="math inline">Y\in\mathbb{R}^{12\times T}</span> in canonical order</p>
+<p><span class="math display">[I, II, III, aVR, aVL, aVF, V1, V2, V3, V4, V5, V6].</span></p>
+<p>With observed index set <span class="math inline">O=\{0,1,7\}</span> and missing set <span class="math inline">M=\{0,\ldots,11\}\setminus O</span>, a reconstructor <span class="math inline">f_\theta</span> receives <span class="math inline">Y_O</span> or an equivalent masked 12-lead representation and produces <span class="math inline">\tilde Y=f_\theta(Y_O)</span>. The evaluator applies the acquisition-preserving projection</p>
+<p><span class="math display">
 \hat Y_j =
 \begin{cases}
 Y_j,&amp;j\in O,\\
 \tilde Y_j,&amp;j\in M.
 \end{cases}
-\]</span></p>
-<p>This projection is important for deployment semantics—the device already measured <span class="math inline">\(Y_O\)</span>—but it means all-lead metrics combine nine inferred channels with three exact channels. Missing-lead metrics on <span class="math inline">\(M\)</span> are consequently the primary architecture-comparison endpoints.</p>
+</span></p>
+<p>This projection is important for deployment semantics—the device already measured <span class="math inline">Y_O</span>—but it means all-lead metrics combine nine inferred channels with three exact channels. Missing-lead metrics on <span class="math inline">M</span> are consequently the primary architecture-comparison endpoints.</p>
 <p>The registry declares 500 Hz, 5,000 samples, mV, no normalization, and fixed train/validation/test inventories. Those fields are evaluation contracts, not defaults to infer for an external dataset. EchoNext, smartwatch, LUDB, ISP, Sunnybrook, and Zhejiang evaluations each require their own provenance and transformation audit.</p>
 </section>
 <section id="mcma-u-net-the-running-study-backbone" class="level2" data-number="8.3">
 <h2 data-number="8.3" class="anchored" data-anchor-id="mcma-u-net-the-running-study-backbone"><span class="header-section-number">8.3</span> MCMA-U-Net: the running study backbone</h2>
 <p>The implemented <code>MCMAModel</code> is an encoder-decoder with six channel widths</p>
-<p><span class="math display">\[[16,32,64,128,256,512],\]</span></p>
-<p>five stride-2 temporal reductions after an initial stride-1 block, five transposed-convolution upsampling stages, encoder-decoder concatenations, and a final <span class="math inline">\(1\times1\)</span> projection to 12 output leads. Its residual-style down/up blocks use kernel size 13, GELU activation, GroupNorm, and InstanceNorm. This is not the generic three-level BatchNorm U-Net previously shown in this chapter; the executable source is <code>scripts/train_mcma_3lead.py</code>.</p>
-<p>For a cross-correlation layer with kernel <span class="math inline">\(K\)</span>, stride <span class="math inline">\(s\)</span>, dilation <span class="math inline">\(d\)</span>, and padding <span class="math inline">\(p\)</span>,</p>
-<p><span class="math display">\[
+<p><span class="math display">[16,32,64,128,256,512],</span></p>
+<p>five stride-2 temporal reductions after an initial stride-1 block, five transposed-convolution upsampling stages, encoder-decoder concatenations, and a final <span class="math inline">1\times1</span> projection to 12 output leads. Its residual-style down/up blocks use kernel size 13, GELU activation, GroupNorm, and InstanceNorm. This is not the generic three-level BatchNorm U-Net previously shown in this chapter; the executable source is <code>scripts/train_mcma_3lead.py</code>.</p>
+<p>For a cross-correlation layer with kernel <span class="math inline">K</span>, stride <span class="math inline">s</span>, dilation <span class="math inline">d</span>, and padding <span class="math inline">p</span>,</p>
+<p><span class="math display">
 L_{out}=\left\lfloor\frac{L_{in}+2p-d(K-1)-1}{s}+1\right\rfloor.
-\]</span></p>
-<p>Five halvings require a length compatible with <span class="math inline">\(2^5\)</span>. The U-Net adapter pads a 5,000-sample record by 120 samples to 5,120, runs the network, then crops back to 5,000. Skip tensors are explicitly interpolated when a parity mismatch remains. The padding/cropping behavior is part of inference and must not be silently changed in another evaluator.</p>
+</span></p>
+<p>Five halvings require a length compatible with <span class="math inline">2^5</span>. The U-Net adapter pads a 5,000-sample record by 120 samples to 5,120, runs the network, then crops back to 5,000. Skip tensors are explicitly interpolated when a parity mismatch remains. The padding/cropping behavior is part of inference and must not be silently changed in another evaluator.</p>
 <div class="cell" data-tbl-cap="Executable MCMA-U-Net structure and source identity for the active study." data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>

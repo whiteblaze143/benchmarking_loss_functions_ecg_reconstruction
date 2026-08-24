@@ -1,0 +1,31 @@
+{
+  "gpu": "NVIDIA A100-PCIE-40GB",
+  "architecture": "ecg_aim_v1",
+  "width": 384,
+  "encoder_depth": 8,
+  "decoder_depth": 4,
+  "precision": "bfloat16 autocast; fp32 parameters/optimizer",
+  "results": [
+    {
+      "batch_size": 16,
+      "status": "ok",
+      "ecg_per_second": 125.9903803583787,
+      "step_seconds": 0.12699382250048075,
+      "peak_allocated_gib": 4.44719934463501
+    },
+    {
+      "batch_size": 32,
+      "status": "ok",
+      "ecg_per_second": 133.21291330009467,
+      "step_seconds": 0.24021695200008253,
+      "peak_allocated_gib": 8.532536029815674
+    },
+    {
+      "batch_size": 64,
+      "status": "ok",
+      "ecg_per_second": 132.79238274432424,
+      "step_seconds": 0.4819553552497382,
+      "peak_allocated_gib": 16.735332012176514
+    }
+  ]
+}

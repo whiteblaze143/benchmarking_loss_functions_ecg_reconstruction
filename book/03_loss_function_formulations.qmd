@@ -1,0 +1,251 @@
+---
+title: "Implemented Loss Functions and Mixed-Level Design"
+---
+
+## Start with the executable contract
+
+The running study does not contain seven binary loss switches. Its mask is
+
+$$m=m_{\mathrm{MSE}}m_{\mathrm{corr}}m_{\Delta}m_{\mathrm{VCG}}m_{\mathrm{ED}}m_{\mathrm{lead}}k_{\mathrm{MMD}},$$
+
+where the first six positions are Boolean in the implementation and the last position is categorical: `0=none`, `1=global adaptive RBF`, `2=anatomical Laplacian`, `3=anatomical multiscale IMQ`, and `4=temporal K-means multiscale IMQ`. The active 480-job manifest fixes MSE on, crosses the other five Boolean terms with the five MMD levels, and repeats the resulting $2^5\times5=160$ cells at three seeds.
+
+This chapter describes `scripts/common_loss.py` exactly. It replaces a prior pedagogical loss class whose derivative norm, VCG transform, energy term, weights, and kernel choices did not match training.
+
+```{python}
+#| label: implemented-loss-contract
+#| tbl-cap: "Loss-mask factors and effective objective coefficients from the active source."
+#| code-fold: true
+from pathlib import Path
+import hashlib
+import json
+import re
+import sys
+
+import numpy as np
+import pandas as pd
+
+ROOT = Path("..").resolve()
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.common_loss import FactorialLossConfig, CombinatorialCompositeLoss
+
+source_path = ROOT / "scripts/common_loss.py"
+contract = json.loads((ROOT / "refine-logs/factorial_training_contract.json").read_text())
+manifest = json.loads((ROOT / "refine-logs/factorial_manifest.json").read_text())
+
+commands = [job["cmd"] for phase in manifest["phases"] for job in phase["jobs"]]
+masks = [re.search(r"--factorial_mask\s+(\d{7})", command).group(1) for command in commands]
+seeds = [int(re.search(r"--seed\s+(\d+)", command).group(1)) for command in commands]
+
+default = FactorialLossConfig.from_mask("1111111")
+normalizers = CombinatorialCompositeLoss("1111111").NORM
+terms = [
+    ("MSE", 0, default.lambda_mse, normalizers["mse"]),
+    ("Pearson", 1, default.lambda_corr, normalizers["corr"]),
+    ("First derivative L1", 2, default.lambda_deriv, normalizers["deriv"]),
+    ("Kors VCG angle+magnitude", 3, default.lambda_vcg, normalizers["vcg"]),
+    ("Energy distance", 4, default.lambda_ed, normalizers["ed"]),
+    ("Limb-lead consistency", 5, default.lambda_lead, normalizers["lead"]),
+    ("Selected MMD", 6, default.lambda_mmd, normalizers["mmd"]),
+]
+term_table = pd.DataFrame(terms, columns=["Term", "Mask position", "Lambda", "Normalizer"])
+term_table["Effective coefficient (lambda / normalizer)"] = term_table.Lambda / term_table.Normalizer
+display(term_table.style.format({
+    "Lambda": "{:.3g}", "Normalizer": "{:.3g}",
+    "Effective coefficient (lambda / normalizer)": "{:.4f}",
+}))
+
+display(pd.DataFrame([
+    ("Scheduled jobs", len(commands)),
+    ("Unique masks", len(set(masks))),
+    ("Seeds", sorted(set(seeds))),
+    ("Masks with MSE enabled", sum(mask[0] == "1" for mask in masks)),
+    ("MMD levels", sorted({int(mask[6]) for mask in masks})),
+    ("Source SHA-256", hashlib.sha256(source_path.read_bytes()).hexdigest()),
+    ("Approved source SHA-256", contract["source_file_sha256"]["scripts/common_loss.py"]),
+], columns=["Audit field", "Observed value"]))
+```
+
+The source hash must equal the approved contract hash while training is active. Editing the loss implementation mid-queue would create a new model generation even if every mask string remained unchanged.
+
+## Composite accumulation and scope
+
+For active set $A(m)$, training minimizes
+
+$$
+\mathcal L_m(\hat Y,Y)=\sum_{j\in A(m)}\frac{\lambda_j}{s_j}\mathcal L_j(\hat Y,Y),
+$$
+
+with the coefficients shown above. These are scale normalizers chosen to keep heterogeneous raw terms in a usable optimization range; they are not probabilistic calibration constants. Consequently, total losses from different masks are not directly comparable as prediction-quality scores.
+
+The trainer computes these terms on the model's full 12-lead output and full 12-lead target. It does not restrict the training objective to the nine missing leads and does not copy the three acquired leads before loss calculation. Evaluation later restores I, II, and V2 exactly for acquisition-consistent all-lead endpoints and reports missing-lead endpoints separately. This train/evaluation distinction must remain explicit.
+
+## MSE and conditional-mean behavior
+
+For $N=BCT$ scalar entries,
+
+$$
+\mathcal L_{\mathrm{MSE}}=\frac1N\sum_{b,c,t}(\hat y_{bct}-y_{bct})^2.
+$$
+
+At the population-risk optimum, squared loss estimates the conditional expectation $\mathbb E[Y\mid X]$. When the missing leads are not uniquely determined by the observed leads, this can average plausible outcomes. That theorem does **not** say every finite trained MSE model returns a temporal or cohort-wide mean, nor does it prove peak attenuation in this dataset. Amplitude slopes, tail errors, and paired morphology measurements are needed to test the empirical hypothesis.
+
+## Pearson loss with degenerate-signal handling
+
+For each record and lead, the code centers over time and computes
+
+$$
+r_{bc}=\frac{\sum_t(\hat y_{bct}-\bar{\hat y}_{bc})(y_{bct}-\bar y_{bc})}
+{\sqrt{\max(V^{\hat y}_{bc},10^{-8})\max(V^y_{bc},10^{-8})}},
+\qquad \mathcal L_{\mathrm{corr}}=1-\frac1{BC}\sum_{b,c}r_{bc}.
+$$
+
+When either un-clamped variance is below $10^{-8}$, the implementation assigns correlation zero for that lead-record pair. This avoids infinite gradients on flat signals. Pearson is invariant to positive affine rescaling and therefore cannot establish amplitude agreement by itself.
+
+## First-difference loss
+
+The active composite uses L1 distance between adjacent-sample differences:
+
+$$
+\mathcal L_{\Delta}=\frac1{BC(T-1)}
+\sum_{b,c,t}\left| (\hat y_{bc,t+1}-\hat y_{bct})-(y_{bc,t+1}-y_{bct})\right|.
+$$
+
+`common_loss.py` also defines a squared derivative helper, but `CombinatorialCompositeLoss` calls `derivative_l1_loss`; the L1 equation is the study estimand. A first difference weights rapid sample-to-sample changes more strongly than slowly varying offsets, but preservation of a named QRS boundary remains an evaluation question.
+
+## Kors vectorcardiogram loss
+
+The implementation selects eight independent leads in order
+
+$$[V1,V2,V3,V4,V5,V6,I,II]$$
+
+and maps them to $[X,Y,Z]$ with
+
+$$
+K=\begin{bmatrix}
+-0.130&0.050&-0.010&0.140&0.260&0.110&0.380&-0.070\\
+0.060&-0.020&-0.050&0.060&0.170&0.130&-0.070&0.930\\
+-0.430&-0.060&-0.040&-0.050&-0.080&-0.090&0.110&-0.230
+\end{bmatrix}.
+$$
+
+At each time sample, the loss is the mean cosine distance between predicted and target VCG vectors plus the L1 difference in their Euclidean magnitudes:
+
+$$
+\mathcal L_{\mathrm{VCG}}=
+\mathbb E_{b,t}[1-\cos(\hat v_{bt},v_{bt})]
++\mathbb E_{b,t}[|\|\hat v_{bt}\|_2-\|v_{bt}\|_2|].
+$$
+
+This is not the 3-by-12 matrix or pure projected MSE previously printed in the book. It encodes a chosen inverse transform and should be interpreted as a spatial regularizer, not direct measurement of cardiac dipole ground truth.
+
+## Energy distance—not signal energy
+
+The `ED` bit activates empirical **energy distance across records**, computed separately for each lead. If $X_c=\{\hat y_{bc,:}\}_{b=1}^B$ and $Y_c=\{y_{bc,:}\}_{b=1}^B$ are batches of complete lead waveforms,
+
+$$
+\mathcal L_{\mathrm{ED}}=rac1C\sum_c\left[
+2\,\overline{\|X_c-Y_c\|_2}
+-\overline{\|X_c-X'_c\|_2}
+-\overline{\|Y_c-Y'_c\|_2}
+\right],
+$$
+
+where the bars denote means over all ordered batch pairs, including self-pairs in the within-sample terms. It is not $|\sum_t\hat y^2-\sum_ty^2|$ and does not directly constrain physical electrical energy. Because the empirical distribution is the current mini-batch, its value and gradient depend on batch composition and batch size.
+
+## Limb-lead consistency
+
+The lead term averages four MSE residuals:
+
+$$
+\begin{aligned}
+III&=II-I,\\
+aVR&=-(I+II)/2,\\
+aVL&=I-II/2,\\
+aVF&=II-I/2.
+\end{aligned}
+$$
+
+It evaluates internal algebraic coherence of the predicted limb leads. Digitized targets can deviate from exact identities, so reducing the predicted residual does not automatically reduce target error; both reconstruction error and measured-target lead-law residuals must be reported.
+
+## MMD level 1: global adaptive RBF
+
+Each record is flattened across 12 leads and time. Squared Euclidean distances are divided by feature count, and the detached median of positive within-prediction, within-target, and cross distances supplies a batch-adaptive base bandwidth $h$. With multipliers $a\in\{0.5,1,2,4\}$,
+
+$$
+k_a(x,y)=\exp\left[-\frac{\|x-y\|_2^2/D}{2ah}\right],
+$$
+
+and the code averages biased empirical MMD estimates (diagonal self-kernels included) across the four widths. Distance and kernel arithmetic are forced to float32 under mixed precision. Adaptation prevents the fixed-bandwidth underflow that affected a legacy high-dimensional implementation, but it also makes the kernel scale batch-dependent.
+
+## MMD levels 2–3: overlapping anatomical blocks
+
+The blocks are inferior `[II, III, aVF]`, anteroseptal `[V1–V4]`, lateral `[I, aVL, V5, V6]`, all limb leads, and all precordial leads. Leads intentionally overlap across blocks. Each block is flattened per record, its MMD is divided by the number of leads in that block, and the five normalized block values are averaged.
+
+- Level 2 uses a Laplacian kernel $\exp(-\|x-y\|_2/h)$ with target within-batch median distance.
+- Level 3 uses a four-width inverse-multiquadratic kernel $(\|x-y\|_2^2+c^2)^{-1/2}$, where $c$ is a multiplier of the target median distance.
+
+Because block weights, overlap, and bandwidth estimation are part of the estimand, “anatomical MMD” is not interchangeable with a generic per-lead MMD.
+
+## MMD level 4: batch-dependent temporal K-means
+
+For each training batch, the target is averaged over records, leaving one 12-dimensional vector per time sample. Four centroids are initialized from randomly selected time indices and updated for five Lloyd iterations. Time samples are assigned by 12-lead morphology, not constrained temporal adjacency. The resulting sets can be non-contiguous and should not be called detected P/QRS/T phases without validation.
+
+For each cluster, predicted and target values are flattened over its time samples and all 12 leads, and a multiscale IMQ MMD is computed across records. The four cluster losses are divided by four; empty clusters contribute zero through that fixed denominator. The training seed controls PyTorch random initialization, but cluster assignments remain batch-composition dependent.
+
+## Executable component-scale diagnostic
+
+The following deterministic probe loads an actual PTB-XL training batch, creates a stipulated attenuated/noisy prediction, and evaluates raw and weighted terms through the real implementation. It tests the software interface and illustrates scale only; the perturbation is not a trained model and the bars are not empirical loss effects.
+
+```{python}
+#| label: implemented-loss-scale-probe
+#| fig-cap: "SOFTWARE PROBE — weighted component values for a stipulated perturbation of actual PTB-XL tensors; not a model comparison."
+#| code-fold: true
+import torch
+import plotly.express as px
+
+torch.manual_seed(20260801)
+files = sorted((ROOT / "data/ptb_xl/tensors/train").glob("*.pt"), key=lambda path: int(path.stem))[:8]
+target = torch.stack([
+    torch.load(path, map_location="cpu", weights_only=True).float() for path in files
+])
+prediction = 0.9 * target + 0.01 * torch.randn_like(target)
+
+probe = CombinatorialCompositeLoss("1111111")
+total, mse, corr, deriv, vcg, ed, lead, mmd = probe(prediction, target)
+raw = {
+    "MSE": mse.item(), "Pearson": corr.item(), "Derivative": deriv.item(),
+    "VCG": vcg.item(), "Energy distance": ed.item(),
+    "Lead consistency": lead.item(), "Global RBF MMD": mmd.item(),
+}
+coefficients = dict(zip(term_table.Term, term_table["Effective coefficient (lambda / normalizer)"]))
+coefficient_keys = {
+    "MSE": "MSE", "Pearson": "Pearson", "Derivative": "First derivative L1",
+    "VCG": "Kors VCG angle+magnitude", "Energy distance": "Energy distance",
+    "Lead consistency": "Limb-lead consistency", "Global RBF MMD": "Selected MMD",
+}
+probe_frame = pd.DataFrame({
+    "Component": list(raw),
+    "Raw value": list(raw.values()),
+    "Effective coefficient": [coefficients[coefficient_keys[name]] for name in raw],
+})
+probe_frame["Weighted contribution"] = probe_frame["Raw value"] * probe_frame["Effective coefficient"]
+display(probe_frame)
+display(pd.DataFrame({"Composite total": [total.item()], "Sum of displayed contributions": [probe_frame["Weighted contribution"].sum()]}))
+
+figure = px.bar(
+    probe_frame, x="Component", y="Weighted contribution",
+    title="SOFTWARE PROBE — weighted loss scale under stipulated attenuation/noise",
+)
+figure.show()
+```
+
+## Interpretation rules
+
+1. A lower total objective across two masks is not a fair performance comparison because the active terms and scale differ.
+2. MMD and energy distance are batch-distribution estimators; batch size 1,024 is part of the current model-generation contract even though it is encoded in queue commands rather than the compact contract JSON.
+3. Full-12-lead training terms can reward reconstruction of already observed leads; primary evaluation must retain nine-missing-lead endpoints.
+4. None of these regularizers guarantees clinical feature preservation. Their effects must be estimated from paired, checkpoint-bound records with detector failures and uncertainty retained.
+5. The mask identifies an objective configuration only when joined to seed, exact source bundle, data content roots, optimizer regime, and checkpoint digest.

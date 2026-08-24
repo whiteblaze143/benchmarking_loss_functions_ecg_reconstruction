@@ -1,0 +1,477 @@
+# Dataset Atlas: LUDB, ISP, and Sunnybrook {#sec-dataset-atlas}
+
+LUDB, ISP, and Sunnybrook are complementary, not interchangeable. LUDB supplies dense lead-specific morphology annotations; ISP supplies interval targets for delineation; Sunnybrook supplies a small external set of fully measured clinical ECGs. A pooled “multi-dataset score” would erase those distinctions.
+
+```{python}
+#| label: atlas-setup
+from pathlib import Path
+from collections import Counter
+import ast
+import hashlib
+import json
+import re
+import numpy as np
+import pandas as pd
+import wfdb
+
+ROOT = Path("..")
+```
+
+## Provenance and governance ledger
+
+The local files do not all have the same documentation status. LUDB is the public PhysioNet release v1.0.1, cited as Kalyakulina et al. with DOI [10.13026/eegm-h675], and is distributed under the Open Data Commons Attribution License v1.0. Its source states that 200 ten-second ECGs were collected in 2017–2018, annotated by cardiologists, with written consent and institutional review approval. EchoNext is a restricted PhysioNet resource; the local provenance identifies v1.1.1, while the canonical dataset record and version history are available under DOI [10.13026/2j37-ba56]. It uses the PhysioNet Restricted Health Data License/Data Use Agreement 1.5.0; its source documents de-identification and IRB-approved retrospective use.
+
+  [10.13026/eegm-h675]: https://doi.org/10.13026/eegm-h675
+  [10.13026/2j37-ba56]: https://doi.org/10.13026/2j37-ba56
+
+The ISP folder in this repository does not include a citation, version, license, data-use terms, or a source identifier. Its three class meanings and sampling rate therefore remain unknown in this book. Sunnybrook has a local `METADATA.json` and README but no accompanying license, cohort selection protocol, subject identifiers, consent/ethics statement, or distribution authority. Until those fields are supplied by the data owner, Sunnybrook is a local exploratory transfer set and ISP is a locally present delineation artifact—not a fully provenance-resolved public benchmark.
+
+| Dataset | Patient/record unit | Local version | Split/independence status | License/governance | Source |
+|------------|------------|------------|------------|------------|------------|
+| LUDB | 200 records; source describes volunteers/patients | 1.0.1 | no official ML split; subject multiplicity not represented locally | ODC Attribution 1.0; source reports consent and IRB | [PhysioNet LUDB 1.0.1] |
+| EchoNext | ECG records with `patient_key` | 1.1.1 | train/val/test patient audit in the [opening real-data EDA](09_real_data_eda_and_diagnostics.qmd); `no_split` excluded | restricted health-data license/DUA; de-identified, IRB-approved retrospective use | [PhysioNet EchoNext] |
+| ISP | row/file; subject unit unresolved | unknown | provided train/test folders; subject independence unverified | unknown locally | source not identified |
+| Sunnybrook | 20 XML files; subject unit unresolved | local metadata says 1.0 | no formal split; repeated-subject status unverified | local controlled artifact; license/ethics not documented | local owner metadata only |
+
+  [PhysioNet LUDB 1.0.1]: https://physionet.org/content/ludb/1.0.1/
+  [PhysioNet EchoNext]: https://physionet.org/content/echonext/
+
+### Reproducible local fingerprints
+
+The following fingerprints identify the exact artifacts read by this book. A tree hash includes each relative path, file size, and file digest, so a renamed, added, removed, or changed record alters the result.
+
+```{python}
+#| label: dataset-provenance-hashes
+#| tbl-cap: "SHA-256 fingerprints of the actual local dataset artifacts."
+def file_sha256(path, chunk_size=8 * 1024 * 1024):
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(chunk_size), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+def tree_sha256(root, patterns):
+    files = sorted({
+        path for pattern in patterns for path in root.rglob(pattern)
+        if path.is_file()
+    })
+    digest = hashlib.sha256()
+    total_bytes = 0
+    for path in files:
+        size = path.stat().st_size
+        total_bytes += size
+        digest.update(str(path.relative_to(root)).encode())
+        digest.update(str(size).encode())
+        digest.update(file_sha256(path).encode())
+    return len(files), total_bytes, digest.hexdigest()
+
+fingerprints = []
+for dataset, root, patterns in [
+    ("LUDB", ROOT / "data/ludb", ["*.hea", "*.dat", "*.atr_*", "README", "LICENSE.txt"]),
+    ("ISP", ROOT / "data/isp_delineation_dataset", ["*.hea", "*.dat", "*.csv"]),
+    ("Sunnybrook", ROOT / "data/sunnybrook_12_lead_ecg_samples", ["*.xml", "*.csv", "*.json", "*.md"]),
+]:
+    n_files, n_bytes, digest = tree_sha256(root, patterns)
+    fingerprints.append({
+        "dataset": dataset, "resolved_root": str(root.resolve()),
+        "files_hashed": n_files, "bytes_hashed": n_bytes, "sha256_tree": digest,
+    })
+
+for name in [
+    "echonext_metadata_100k.csv", "EchoNext_test_waveforms.npy", "PROVENANCE.json"
+]:
+    path = ROOT / "data/echonext" / name
+    fingerprints.append({
+        "dataset": f"EchoNext: {name}",
+        "resolved_root": str(path.resolve()), "files_hashed": 1,
+        "bytes_hashed": path.stat().st_size, "sha256_tree": file_sha256(path),
+    })
+pd.DataFrame(fingerprints)
+```
+
+## LUDB: lead-specific morphology ground truth
+
+### Acquisition and inventory
+
+The local LUDB copy contains 200 WFDB records. Every record has 12 leads, 5,000 samples at 500 Hz, ten seconds of duration, and physical units of mV. Each lead has a separate annotation stream, allowing a wave to be present or bounded differently across leads.
+
+```{python}
+#| label: ludb-inventory
+ludb_root = ROOT / "data/ludb"
+record_ids = sorted(int(p.stem) for p in ludb_root.glob("*.hea"))
+
+inventory = []
+for rid in record_ids:
+    h = wfdb.rdheader(str(ludb_root / str(rid)))
+    inventory.append({
+        "record": rid, "sampling_rate_hz": h.fs, "samples": h.sig_len,
+        "duration_s": h.sig_len / h.fs, "leads": h.n_sig,
+        "lead_order": ",".join(h.sig_name), "units": ",".join(h.units),
+    })
+ludb_inventory = pd.DataFrame(inventory)
+ludb_inventory.describe(include="all")
+```
+
+All 200 records should share exactly one schema. A mismatch is an integrity failure, not a reason to silently resample or reorder one record.
+
+### Demographics and diagnoses
+
+The local headers yield 115 male and 85 female records. Age ranges from 11 to 90 years (mean 51.98, median 56). Diagnoses are overlapping free-text statements. Frequent statements include sinus rhythm (143), left ventricular hypertrophy (108), left atrial hypertrophy (102), normal electrical axis (75), left-axis deviation (66), incomplete right bundle-branch block (29), sinus bradycardia (25), and atrial fibrillation (15).
+
+```{python}
+#| label: ludb-demographics
+def parse_ludb_header(path):
+    text = path.read_text()
+    age = re.search(r"#<age>:\s*(\d+)", text)
+    sex = re.search(r"#<sex>:\s*([MF])", text)
+    statements = [
+        line[1:].strip() for line in text.splitlines()
+        if line.startswith("#") and not line.startswith("#<") and line[1:].strip()
+    ]
+    return {
+        "age": int(age.group(1)) if age else np.nan,
+        "sex": sex.group(1) if sex else "unknown",
+        "statements": statements,
+    }
+
+ludb_meta = pd.DataFrame([
+    {"record": rid, **parse_ludb_header(ludb_root / f"{rid}.hea")}
+    for rid in record_ids
+])
+statement_counts = Counter(s for row in ludb_meta.statements for s in row)
+
+pd.DataFrame({
+    "quantity": ["records", "age mean", "age median", "age minimum",
+                 "age maximum", "male", "female"],
+    "value": [
+        len(ludb_meta), ludb_meta.age.mean(), ludb_meta.age.median(),
+        ludb_meta.age.min(), ludb_meta.age.max(),
+        (ludb_meta.sex == "M").sum(), (ludb_meta.sex == "F").sum(),
+    ],
+})
+```
+
+One record can have rhythm, axis, chamber, conduction, and repolarization statements simultaneously. Converting these into a single mutually exclusive target would be invalid.
+
+### Annotation grammar and counts
+
+LUDB uses `p` for P peaks, `N` for QRS fiducials, `t` for T peaks, `(` for onsets, and `)` for offsets. Across the 2,400 lead-specific annotation streams, the local files contain 16,797 P peaks, 21,965 QRS markers, 19,661 T peaks, 58,321 onsets, and 58,423 offsets.
+
+```{python}
+#| label: ludb-annotation-audit
+symbols = Counter()
+per_lead_annotations = []
+for rid in record_ids:
+    h = wfdb.rdheader(str(ludb_root / str(rid)))
+    for lead in h.sig_name:
+        ann = wfdb.rdann(str(ludb_root / str(rid)), lead)
+        counts = Counter(ann.symbol)
+        symbols.update(ann.symbol)
+        per_lead_annotations.append({
+            "record": rid, "lead": lead, "p": counts["p"],
+            "qrs": counts["N"], "t": counts["t"],
+            "onset": counts["("], "offset": counts[")"],
+        })
+pd.Series(symbols, name="count").rename_axis("symbol").reset_index()
+```
+
+Onset and offset totals do not need to be identical: waves may be absent, annotations can touch record boundaries, and pairing is wave- and lead-specific. A correct parser uses the symbol sequence and cardiac-cycle context rather than pairing the $j$th onset with the $j$th offset globally.
+
+### Real waveform EDA
+
+Median within-record maxima range from about 0.59 to 0.79 mV by lead; median minima range from −0.21 mV in V6 to −0.78 mV in aVR. Median RMS amplitude is approximately 0.107–0.118 mV. These are cohort sanity references, not universal clipping limits.
+
+```{python}
+#| label: ludb-waveform-eda
+signal_rows = []
+for rid in record_ids:
+    rec = wfdb.rdrecord(str(ludb_root / str(rid)), physical=True)
+    for j, lead in enumerate(rec.sig_name):
+        x = rec.p_signal[:, j]
+        signal_rows.append({
+            "record": rid, "lead": lead, "minimum_mv": np.nanmin(x),
+            "maximum_mv": np.nanmax(x),
+            "rms_mv": np.sqrt(np.nanmean(x ** 2)),
+            "flat_fraction": np.mean(np.diff(x) == 0),
+        })
+ludb_signal = pd.DataFrame(signal_rows)
+ludb_signal.groupby("lead").agg(
+    median_minimum_mv=("minimum_mv", "median"),
+    median_maximum_mv=("maximum_mv", "median"),
+    median_rms_mv=("rms_mv", "median"),
+    p99_flat_fraction=("flat_fraction", lambda x: np.quantile(x, 0.99)),
+)
+```
+
+### Diagnostics LUDB enables
+
+For P, QRS, and T waves, report onset, peak, and offset error by lead. Matching must be beat-aware and limited to a physiologic window; unconstrained nearest-neighbor matching can pair adjacent cycles. Minimum outputs are sensitivity, positive predictive value, median/IQR/95th-percentile timing error, cycle-mismatch rate, error versus wave amplitude, and interval consistency across leads.
+
+A reconstruction can have high sample correlation but erase a low-amplitude P wave or shift its boundary enough to corrupt PR measurement. LUDB is designed to reveal precisely that failure.
+
+## ISP delineation targets
+
+### Local data contract
+
+The ISP CSVs contain 403 training and 72 test rows. Each row includes `file_name`, age, binary sex coding, and a serialized list of `(class, onset, offset)` intervals. The training split contains 14,148 intervals and the test split 2,558.
+
+Training class counts are 4,312 / 5,048 / 4,788 for classes 0/1/2; test counts are 793 / 900 / 865. Median widths are 116/110/182 samples in training and 114/110/182 in test. The ordering suggests P/QRS/T-like triplets, but the semantic mapping must come from source documentation rather than inference from sequence alone.
+
+The WFDB files are present and link one-to-one to the CSV `file_name` inside each split. Their headers declare 12 channels, 1,000 samples/s, approximately 9,998–10,000 samples, and a nonstandard unit token `mkv`. The numerical scale is consistent with microvolt-like values, but the book does not silently relabel `mkv` as µV without authoritative provenance.
+
+```{python}
+#| label: isp-audit
+def load_isp(split):
+    path = ROOT / "data/isp_delineation_dataset" / f"{split}_isp_delineation_data.csv"
+    frame = pd.read_csv(path)
+    frame["intervals"] = frame.target.map(ast.literal_eval)
+    frame["interval_count"] = frame.intervals.map(len)
+    return frame
+
+isp_train = load_isp("train")
+isp_test = load_isp("test")
+
+def summarize_isp(frame, split):
+    intervals = [x for row in frame.intervals for x in row]
+    return {
+        "split": split, "records": len(frame), "age_mean": frame.age.mean(),
+        "age_sd": frame.age.std(), "sex_0": (frame.sex == 0).sum(),
+        "sex_1": (frame.sex == 1).sum(), "intervals": len(intervals),
+        "class_0": sum(x[0] == 0 for x in intervals),
+        "class_1": sum(x[0] == 1 for x in intervals),
+        "class_2": sum(x[0] == 2 for x in intervals),
+    }
+
+pd.DataFrame([
+    summarize_isp(isp_train, "train"),
+    summarize_isp(isp_test, "test"),
+])
+```
+
+### Executed ISP waveform inventory and EDA
+
+```{python}
+#| label: isp-waveform-inventory
+#| tbl-cap: "Schema audit of every local ISP WFDB record."
+isp_root = ROOT / "data/isp_delineation_dataset"
+isp_headers = []
+missing_links = []
+for split, frame in [("train", isp_train), ("test", isp_test)]:
+    for file_name in frame.file_name:
+        base = isp_root / f"{split}_data" / str(file_name)
+        if not base.with_suffix(".hea").is_file() or not base.with_suffix(".dat").is_file():
+            missing_links.append((split, file_name))
+            continue
+        header = wfdb.rdheader(str(base))
+        isp_headers.append({
+            "split": split, "file_name": file_name, "fs_hz": header.fs,
+            "samples": header.sig_len, "leads": header.n_sig,
+            "units": ",".join(header.units),
+            "lead_order": ",".join(header.sig_name),
+        })
+isp_headers = pd.DataFrame(isp_headers)
+assert not missing_links
+pd.DataFrame({
+    "quantity": [
+        "linked records", "missing waveform links", "sampling rates",
+        "record lengths", "lead counts", "unit strings", "lead orders",
+    ],
+    "value": [
+        len(isp_headers), len(missing_links),
+        sorted(isp_headers.fs_hz.unique().tolist()),
+        sorted(isp_headers.samples.unique().tolist()),
+        sorted(isp_headers.leads.unique().tolist()),
+        isp_headers.units.nunique(), isp_headers.lead_order.nunique(),
+    ],
+})
+```
+
+```{python}
+#| label: isp-waveform-eda
+#| tbl-cap: "Lead-wise signal audit over all 475 local ISP waveform records, in declared header units."
+isp_signal_rows = []
+for row in isp_headers.itertuples(index=False):
+    base = isp_root / f"{row.split}_data" / str(row.file_name)
+    record = wfdb.rdrecord(str(base), physical=True)
+    for lead_index, lead in enumerate(record.sig_name):
+        values = record.p_signal[:, lead_index]
+        isp_signal_rows.append({
+            "split": row.split, "file_name": row.file_name, "lead": lead,
+            "finite_fraction": np.isfinite(values).mean(),
+            "minimum": np.nanmin(values), "maximum": np.nanmax(values),
+            "rms": np.sqrt(np.nanmean(values ** 2)),
+            "flat_fraction": np.mean(np.diff(values) == 0),
+        })
+isp_signal = pd.DataFrame(isp_signal_rows)
+isp_signal.groupby(["split", "lead"]).agg(
+    records=("file_name", "count"),
+    finite_percent=("finite_fraction", lambda x: 100 * x.mean()),
+    median_minimum=("minimum", "median"),
+    median_maximum=("maximum", "median"),
+    median_rms=("rms", "median"),
+    p99_flat_fraction=("flat_fraction", lambda x: np.quantile(x, 0.99)),
+)
+```
+
+This audit establishes the live file contract and exposes flatlines/extreme records. It does not resolve acquisition device, cohort selection, class semantics, or whether train and test folders contain distinct people.
+
+### Interval integrity
+
+```{python}
+#| label: isp-integrity
+def interval_audit(frame, split):
+    lengths = isp_headers.loc[
+        isp_headers.split == split
+    ].set_index("file_name").samples
+    rows = []
+    for _, record in frame.iterrows():
+        xs = record.intervals
+        record_length = int(lengths.loc[record.file_name])
+        rows.append({
+            "file_name": record.file_name,
+            "valid_class": all(x[0] in {0, 1, 2} for x in xs),
+            "positive_width": all(x[1] < x[2] for x in xs),
+            "within_window": all(0 <= x[1] < x[2] <= record_length for x in xs),
+            "sorted": all(xs[j][1] <= xs[j + 1][1] for j in range(len(xs) - 1)),
+        })
+    return pd.DataFrame(rows)
+
+pd.concat([
+    interval_audit(isp_train, "train").assign(split="train"),
+    interval_audit(isp_test, "test").assign(split="test"),
+]).groupby("split").agg(
+    records=("file_name", "count"),
+    invalid_class=("valid_class", lambda x: (~x).sum()),
+    invalid_width=("positive_width", lambda x: (~x).sum()),
+    outside_window=("within_window", lambda x: (~x).sum()),
+    unsorted=("sorted", lambda x: (~x).sum()),
+)
+```
+
+The bounds above come from each linked WFDB header rather than a guessed 10,000-sample constant. The local headers declare 1,000 Hz, so a provisional conversion would be one sample per millisecond; because the source/version and unit token remain unresolved, the primary report keeps widths in samples and labels any time conversion as header-derived rather than source-verified. No reconstruction checkpoint has been evaluated on these ISP waveforms yet.
+
+Train and test ages have similar means (55.86 and 55.17), but test variability is larger (SD 19.16 versus 16.43). Sex coding 1 occurs in 153/403 training and 27/72 test rows. Similar marginals do not establish subject independence; `file_name` can restart within split directories.
+
+## Sunnybrook local transfer set
+
+### Acquisition contract
+
+The repository contains 20 Philips Sierra XML ECGs. Local owner-supplied metadata declares Philips PageWriter TC hardware, 500 Hz, 5 µV/bit, 0.05–150 Hz bandwidth, 60 Hz notch filtering, 12 leads, and fully measured 10-wire acquisition. The feature dictionary contains 179 machine-extracted fields. These declarations are technically checked where possible below, but cohort and governance claims remain unresolved.
+
+```{python}
+#| label: sunnybrook-provenance
+sunny_root = ROOT / "data/sunnybrook_12_lead_ecg_samples"
+sunny_meta = json.loads((sunny_root / "METADATA.json").read_text())
+xml_files = sorted(sunny_root.glob("*.xml"))
+
+pd.DataFrame({
+    "quantity": ["XML files", "sampling rate (Hz)", "resolution (µV/bit)",
+                 "lead count", "feature count", "low bandwidth (Hz)",
+                 "high bandwidth (Hz)", "notch (Hz)"],
+    "value": [
+        len(xml_files), sunny_meta["sampling_rate_hz"],
+        sunny_meta["resolution_uv_per_bit"], sunny_meta["lead_count"],
+        sunny_meta["feature_count"], sunny_meta["bandwidth_hz"][0],
+        sunny_meta["bandwidth_hz"][1], sunny_meta["notch_filter_hz"],
+    ],
+})
+```
+
+### Executed Sunnybrook waveform EDA
+
+This block reuses the evaluator's production XML decoder, including the `parsedwaveforms@resolution` attribute, 500 Hz assertion, lead-order assertion, and centered ten-second crop. It does not trust the README's scale without checking each XML.
+
+```{python}
+#| label: sunnybrook-waveform-eda
+#| tbl-cap: "Lead-wise EDA of all 20 decoded Sunnybrook XML records."
+import sys
+if str(ROOT.resolve()) not in sys.path:
+    sys.path.insert(0, str(ROOT.resolve()))
+from scripts.evaluate_sunnybrook_registry import load_record
+
+sunny_records = [load_record(path) for path in xml_files]
+sunny_signals = np.stack([record["signal"] for record in sunny_records])
+assert sunny_signals.shape == (20, 12, 5000)
+
+sunny_eda = []
+lead_order = ["I", "II", "III", "aVR", "aVL", "aVF",
+              "V1", "V2", "V3", "V4", "V5", "V6"]
+for lead_index, lead in enumerate(lead_order):
+    values = sunny_signals[:, lead_index, :]
+    per_record_peak = np.max(np.abs(values), axis=1)
+    sunny_eda.append({
+        "lead": lead,
+        "finite_percent": 100 * np.isfinite(values).mean(),
+        "p01_mV": np.quantile(values, 0.01),
+        "median_mV": np.median(values),
+        "p99_mV": np.quantile(values, 0.99),
+        "median_RMS_mV": np.median(np.sqrt(np.mean(values ** 2, axis=1))),
+        "maximum_record_peak_mV": per_record_peak.max(),
+        "record_with_maximum_peak": sunny_records[int(per_record_peak.argmax())]["record_id"],
+        "p99_flat_fraction": np.quantile(
+            np.mean(np.diff(values, axis=1) == 0, axis=1), 0.99
+        ),
+    })
+pd.DataFrame(sunny_eda)
+```
+
+```{python}
+#| label: sunnybrook-lead-law-outliers
+#| tbl-cap: "Record-level Sunnybrook lead-law residuals and amplitude outliers."
+sunny_laws = {
+    "III-(II-I)": sunny_signals[:, 2] - (sunny_signals[:, 1] - sunny_signals[:, 0]),
+    "aVR+(I+II)/2": sunny_signals[:, 3] + (sunny_signals[:, 0] + sunny_signals[:, 1]) / 2,
+    "aVL-(I-II/2)": sunny_signals[:, 4] - (sunny_signals[:, 0] - sunny_signals[:, 1] / 2),
+    "aVF-(II-I/2)": sunny_signals[:, 5] - (sunny_signals[:, 1] - sunny_signals[:, 0] / 2),
+}
+sunny_record_audit = pd.DataFrame({
+    "record_id": [record["record_id"] for record in sunny_records],
+    "source_sha256": [record["source_sha256"] for record in sunny_records],
+    "resolution_uv_per_bit": [record["resolution_uv_per_bit"] for record in sunny_records],
+    "maximum_absolute_mV": np.max(np.abs(sunny_signals), axis=(1, 2)),
+    **{
+        f"{name}_RMSE_mV": np.sqrt(np.mean(residual ** 2, axis=1))
+        for name, residual in sunny_laws.items()
+    },
+})
+sunny_record_audit.sort_values("maximum_absolute_mV", ascending=False)
+```
+
+The ranked table makes outlier selection algorithmic. ECG010 and ECG008 appear because of their decoded amplitudes, not because they were selected after viewing model performance. They remain in the primary descriptive analysis; robust medians and leave-one-record-out sensitivity should accompany means.
+
+Fully measured limb leads make Sunnybrook valuable for detecting models that exploit algebraic limb-lead identities while failing on independently acquired morphology.
+
+### Hyperfeatures and evidence level
+
+The Philips XLI pipeline supplies global heart rate, PR/QRS/QT/QTc and axes; per-lead P/Q/R/S/T amplitudes; P/QRS/T durations; ST onset/midpoint/J+80/end/slope; measured-lead flags; and diagnostic statements. These are machine-derived reference features, not cardiologist-adjudicated truth.
+
+The set includes sinus rhythms, atrial fibrillation/flutter, old inferior MI, chamber/conduction findings, poor R-wave progression, and a mislaced-lead warning. With only 20 records, these are cases for external stress testing, not stable prevalence or broad clinical-effect estimation.
+
+### Retained transients and robust analysis
+
+The comprehensive package retains a 20.44 mV V5 transient in ECG010 and a 6.66 mV V4 transient in ECG008 without clipping. Final analyses should report median/IQR and per-record influence alongside means, with an explicitly labeled sensitivity analysis excluding flagged transients. Silent removal would hide a real robustness failure.
+
+Provenance also notes an approximately 18 µV physical Einthoven residual. This is an empirical acquisition reference, not a universal “errors below 18 µV are perfect” threshold: lead-law residual and reconstruction error are different quantities.
+
+Sunnybrook superclass endpoints use non-adjudicated Philips statement proxies. ECGFounder has probability-fidelity evaluation only because compatible 150-task labels are absent. Those qualifications must appear beside every result table, not only in an appendix.
+
+## Cross-dataset role matrix
+
+| Dataset | Local records | Signal/target contract | Primary use | Main limitation |
+|---------------|--------------:|---------------|---------------|---------------|
+| LUDB | 200 | 12×5,000, 500 Hz, mV, lead annotations | wave-boundary diagnostics | small; overlapping free-text diagnoses |
+| ISP | 403 train + 72 test | linked 12-channel WFDB, header-declared 1,000 Hz and `mkv`; serialized intervals | delineation learning/audit | source, units, class semantics, subject independence unresolved |
+| Sunnybrook | 20 | Philips XML, 12 lead, 500 Hz, XML-declared scale | local fully measured transfer audit | tiny; cohort/governance unresolved; machine-derived proxies |
+
+## Minimum gate for final factorial results
+
+Every endpoint in the running mixed-level loss study must preserve:
+
+1.  source file/hash and provenance version;
+2.  units, sampling rate, length, and lead order;
+3.  eligible/excluded record counts with reasons;
+4.  per-record outputs for paired analysis;
+5.  common record-order hashes across loss cells;
+6.  uncertainty clustered at the patient/record level;
+7.  label status: adjudicated, machine derived, inferred, or unknown;
+8.  result status: complete, partial, failed, or placeholder.

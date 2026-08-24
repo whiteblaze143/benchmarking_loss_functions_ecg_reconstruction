@@ -1,0 +1,7 @@
+{
+  "overall_mse": 1.2728065252304077,
+  "overall_pearson": -0.060004670172929764,
+  "filtered_mse": 1.2796640396118164,
+  "filtered_pearson": -0.06337426602840424,
+  "filtered_val_auroc": 0.0
+}

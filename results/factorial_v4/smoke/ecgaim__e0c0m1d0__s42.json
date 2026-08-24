@@ -1,0 +1,12 @@
+{
+  "id": "ecgaim__e0c0m1d0__s42",
+  "status": "pass",
+  "checkpoint_sha256": "84016432c2fec91e148b2918b761f94b68be3027be755a760e3f061cf1696b57",
+  "output_shape": [
+    1,
+    12,
+    5000
+  ],
+  "finite": true,
+  "observed_lead_mse": 0.0
+}

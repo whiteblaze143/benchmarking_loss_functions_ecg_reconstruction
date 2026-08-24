@@ -1,0 +1,11 @@
+version: 1
+endpoint: strict_atrial_fibrillation
+ptbxl:
+  positive: [AFIB]
+  atrial_flutter: [AFLT]
+  conflict_policy: exclude_primary_strict_analysis
+rdb:
+  positive: [AF]
+  atrial_flutter: [AFL, AFIB]
+  negative: [AFL, AFIB, SI, SA, AT, SVT, VT, SVT/VT, ST, SR, SB]
+  duplicate_policy: exclude_mapping_flagged_duplicate

@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "status": "pass_with_author_declaration_pending",
+  "poster": "final_poster/poster.pdf",
+  "geometry_mm": [
+    841.0,
+    1189.0
+  ],
+  "checks_passed": 24,
+  "checks_total": 24,
+  "checks": [
+    {
+      "check": "poster_pdf_exists",
+      "passed": true,
+      "detail": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/final_poster/poster.pdf"
+    },
+    {
+      "check": "poster_tex_exists",
+      "passed": true,
+      "detail": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/final_poster/poster.tex"
+    },
+    {
+      "check": "single_page",
+      "passed": true,
+      "detail": "1 page"
+    },
+    {
+      "check": "a0_portrait_geometry",
+      "passed": true,
+      "detail": "841.00 x 1189.00 mm"
+    },
+    {
+      "check": "text_present:Benchmarking Loss Functions for 12-Lead",
+      "passed": true,
+      "detail": "found"
+    },
+    {
+      "check": "text_present:ECG Reconstruction from Limited Leads",
+      "passed": true,
+      "detail": "found"
+    },
+    {
+      "check": "text_present:Mithun Manivannan",
+      "passed": true,
+      "detail": "found"
+    },
+    {
+      "check": "text_present:Experimental Design",
+      "passed": true,
+      "detail": "found"
+    },
+    {
+      "check": "text_present:Complete 2",
+      "passed": true,
+      "detail": "found"
+    },
+    {
+      "check": "text_present:primary factorial models",
+      "passed": true,
+      "detail": "found"
+    },
+    {
+      "check": "text_present:Declaration of interest",
+      "passed": true,
+      "detail": "found"
+    },
+    {
+      "check": "no_overfull_vboxes",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "check": "overfull_hbox_count_below_3",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "check": "asset_manifest_hashes",
+      "passed": true,
+      "detail": "all match"
+    },
+    {
+      "check": "master_has_48_cells",
+      "passed": true,
+      "detail": "48"
+    },
+    {
+      "check": "factorial_design_is_3x16",
+      "passed": true,
+      "detail": "{\"ecg_aim\": 16, \"multiscale_vae\": 16, \"unet\": 16}"
+    },
+    {
+      "check": "upstream_completeness_passes",
+      "passed": true,
+      "detail": "complete"
+    },
+    {
+      "check": "claim_literal:MSVAE correlation-only Pearson",
+      "passed": true,
+      "detail": "0.874"
+    },
+    {
+      "check": "claim_literal:MSVAE correlation-only R2",
+      "passed": true,
+      "detail": "-14.984"
+    },
+    {
+      "check": "claim_literal:U-Net best R2",
+      "passed": true,
+      "detail": "0.700"
+    },
+    {
+      "check": "claim_literal:MSVAE best R2",
+      "passed": true,
+      "detail": "0.816"
+    },
+    {
+      "check": "claim_literal:ECG-AIM best R2",
+      "passed": true,
+      "detail": "0.822"
+    },
+    {
+      "check": "claim_literal:ECG-AIM full Sunnybrook Pearson",
+      "passed": true,
+      "detail": "0.849"
+    },
+    {
+      "check": "author_declaration_flagged",
+      "passed": true,
+      "detail": "Funding/conflict macros intentionally require author confirmation"
+    }
+  ],
+  "author_action_required": "Replace FundingStatement and ConflictStatement macros before printing."
+}

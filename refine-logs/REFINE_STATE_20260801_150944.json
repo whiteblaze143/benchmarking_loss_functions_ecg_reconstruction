@@ -1,0 +1,20 @@
+{
+  "phase": "refine",
+  "round": 1,
+  "threadId": null,
+  "last_score": null,
+  "last_verdict": "REVISE_IN_PROGRESS",
+  "status": "in_progress",
+  "timestamp": "2026-08-01T15:09:44Z",
+  "problem_anchor_frozen": true,
+  "external_reviewer": "unavailable",
+  "external_reviewer_note": "The requested Claude review bridge is not callable in this environment; no same-family review is represented as independent.",
+  "current_blockers": [
+    "446 current-contract jobs are pending (including one bounded transient-CUDA retry), 1 is running, and 33 are complete at the latest audited snapshot",
+    "23 of 33 compatible checkpoints currently pass the explicit-distribution-MMD, per-record-ledger, and five-window-sensitivity evaluator generation",
+    "the final evaluator exposes target/reconstruction detector strata and tolerance sensitivity, but independently adjudicated fiducials are unavailable",
+    "final-generation paired per-record endpoints are still repopulating across the compatible cohort and seed-aware factorial inference does not yet exist"
+  ],
+  "local_review": "refine-logs/round-1-local-integrity-review.md",
+  "local_review_independent": false
+}

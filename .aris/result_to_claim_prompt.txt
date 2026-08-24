@@ -1,0 +1,33 @@
+RESULT-TO-CLAIM EVALUATION
+
+Act as an independent reviewer. Return only the JSON object required by the
+output schema. Do not invoke tools, delegate, announce a plan, or modify files.
+
+Judge whether the five proposed empirical poster statements in the raw
+artifacts below are supported. Be conservative and do not generalize beyond
+the evaluated architectures, datasets, masks, seeds, tasks, or frozen
+classifiers. A value existing in the supplied artifact is not by itself proof
+that the statement is appropriately scoped.
+
+Evaluate:
+1. claim_supported: yes | partial | no for the package as a whole
+2. what_results_support
+3. what_results_dont_support
+4. missing_evidence
+5. suggested_claim_revision
+6. next_experiments_needed
+7. confidence
+8. integrity_status: use unavailable because the independent postrun
+   experiment-audit verdict was not emitted
+9. one verdict for each P1-P5 claim
+
+Known gate fact: deterministic completeness, tests, source/output hashes, and
+figure reviews pass, but the independent postrun integrity verdict is
+REVIEW_UNAVAILABLE. Do not convert that into an integrity PASS.
+
+Raw artifacts follow on stdin:
+- poster evidence handoff
+- poster_claims.json
+- gate_status.json
+- CLAIM_SCOPE.md
+- postrun audit status

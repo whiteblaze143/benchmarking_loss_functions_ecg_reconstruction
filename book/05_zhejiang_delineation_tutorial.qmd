@@ -1,0 +1,222 @@
+---
+title: "Zhejiang Cohort: Data Audit and Delineation Protocol"
+---
+
+## Why this chapter appears before model results
+
+This chapter is an **input-data audit**, not evidence that one reconstruction loss is clinically superior. The local Zhejiang collection can support a useful external morphology benchmark, but the current result table contains only a ground-truth ceiling row. It therefore cannot yet estimate an MSE-versus-MMD contrast. Keeping that distinction visible prevents an available dataset from being mistaken for a completed experiment.
+
+The audit below reads the files in `data/zhejiang` directly. It establishes what is physically present, checks signal-label pairing and mask integrity, and states the provenance information that is still missing. Later chapters may cite this cohort only within those bounds.
+
+```{python}
+#| label: zhejiang-setup
+#| code-fold: true
+from pathlib import Path
+import hashlib
+import pickle
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from IPython.display import Markdown, display
+
+REPO = Path("..").resolve()
+DATA_ROOT = REPO / "data" / "zhejiang"
+ECG_ROOT = DATA_ROOT / "ecg"
+LABEL_ROOT = DATA_ROOT / "label"
+RESULT_CSV = REPO / "results" / "zhejiang_benchmark" / "zhejiang_delineation_evaluation.csv"
+
+LEADS = ("I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6")
+
+def sha256_file(path, chunk_bytes=1024 * 1024):
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(chunk_bytes), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+if not ECG_ROOT.is_dir() or not LABEL_ROOT.is_dir():
+    raise FileNotFoundError(
+        "The Zhejiang audit requires data/zhejiang/ecg and data/zhejiang/label."
+    )
+```
+
+## Physical inventory and pairing
+
+Signal filenames follow `<record_id>_<lead>.pkl`; label filenames follow `<record_id>.pkl`. The audit treats those filenames as identifiers—it does not infer patient independence, acquisition site, diagnosis, units, duration, or sampling frequency from the directory name.
+
+```{python}
+#| label: zhejiang-inventory
+#| code-fold: true
+signal_files = sorted(ECG_ROOT.glob("*.pkl"))
+label_files = sorted(LABEL_ROOT.glob("*.pkl"))
+
+signal_rows = []
+for path in signal_files:
+    stem = path.stem
+    record_id, sep, lead = stem.rpartition("_")
+    signal_rows.append({
+        "record_id": record_id if sep else stem,
+        "lead": lead if sep else "UNPARSED",
+        "path": str(path.relative_to(REPO)),
+    })
+
+signal_index = pd.DataFrame(signal_rows)
+label_ids = {path.stem for path in label_files}
+signal_ids = set(signal_index["record_id"])
+lead_counts = signal_index.groupby("record_id")["lead"].nunique()
+
+inventory = pd.DataFrame([
+    ("Signal files", len(signal_files)),
+    ("Label files", len(label_files)),
+    ("Unique signal record IDs", len(signal_ids)),
+    ("Signal IDs with a label", len(signal_ids & label_ids)),
+    ("Signal IDs missing a label", len(signal_ids - label_ids)),
+    ("Label IDs missing signals", len(label_ids - signal_ids)),
+    ("Records with all 12 named leads", int((lead_counts == 12).sum())),
+], columns=["Audit quantity", "Observed value"])
+display(inventory)
+
+unexpected_leads = sorted(set(signal_index["lead"]) - set(LEADS))
+missing_named_leads = {
+    record_id: sorted(set(LEADS) - set(group["lead"]))
+    for record_id, group in signal_index.groupby("record_id")
+    if set(group["lead"]) != set(LEADS)
+}
+display(Markdown(
+    f"**Pairing verdict:** unexpected lead labels = `{unexpected_leads}`; "
+    f"records with a missing or extra named lead set = `{len(missing_named_leads)}`."
+))
+```
+
+## Array and annotation integrity
+
+Every label array is loaded below. Signal integrity is checked for every lead file as well, so the displayed counts describe the local corpus rather than a convenience sample. Mask values are audited against the observed convention `0=background`, `1=P`, `2=QRS`, and `3=T`; this convention is an interpretation used by the evaluator and still needs an authoritative data dictionary.
+
+```{python}
+#| label: zhejiang-array-audit
+#| code-fold: true
+signal_audit = []
+for path in signal_files:
+    with path.open("rb") as handle:
+        array = np.asarray(pickle.load(handle))
+    signal_audit.append({
+        "samples": int(array.size),
+        "ndim": int(array.ndim),
+        "dtype": str(array.dtype),
+        "finite": bool(np.isfinite(array).all()),
+    })
+
+mask_audit = []
+mask_class_counts = {class_id: 0 for class_id in (0, 1, 2, 3)}
+unexpected_mask_values = set()
+for path in label_files:
+    with path.open("rb") as handle:
+        mask = np.asarray(pickle.load(handle))
+    values, counts = np.unique(mask, return_counts=True)
+    for value, count in zip(values, counts):
+        numeric_value = float(value)
+        if numeric_value in mask_class_counts:
+            mask_class_counts[int(numeric_value)] += int(count)
+        else:
+            unexpected_mask_values.add(numeric_value)
+    mask_audit.append({
+        "samples": int(mask.size),
+        "ndim": int(mask.ndim),
+        "dtype": str(mask.dtype),
+        "finite": bool(np.isfinite(mask).all()),
+    })
+
+signal_audit = pd.DataFrame(signal_audit)
+mask_audit = pd.DataFrame(mask_audit)
+array_summary = pd.DataFrame([
+    ("Signals", len(signal_audit), sorted(signal_audit["samples"].unique().tolist()),
+     sorted(signal_audit["ndim"].unique().tolist()),
+     ", ".join(sorted(signal_audit["dtype"].unique())), int((~signal_audit["finite"]).sum())),
+    ("Masks", len(mask_audit), sorted(mask_audit["samples"].unique().tolist()),
+     sorted(mask_audit["ndim"].unique().tolist()),
+     ", ".join(sorted(mask_audit["dtype"].unique())), int((~mask_audit["finite"]).sum())),
+], columns=["Object", "Files checked", "Observed lengths", "Observed dimensions", "Dtypes", "Files with non-finite values"])
+display(array_summary)
+
+class_table = pd.DataFrame({
+    "Mask class": [0, 1, 2, 3],
+    "Interpreted region": ["Background", "P wave", "QRS complex", "T wave"],
+    "Annotated samples": [mask_class_counts[i] for i in (0, 1, 2, 3)],
+})
+class_table["Share of all mask samples"] = (
+    class_table["Annotated samples"] / class_table["Annotated samples"].sum()
+)
+display(class_table.style.format({"Share of all mask samples": "{:.2%}"}))
+display(Markdown(f"**Unexpected mask values:** `{sorted(unexpected_mask_values)}`"))
+```
+
+## One paired record, without invented physical units
+
+The plot uses the native sample index. A time axis, millivolt axis, or resampling operation would require verified acquisition metadata; the evaluator currently assumes 2,000 Hz, but that assumption is not documented by a local source file. The visualization therefore makes only the defensible claim that the signal and categorical mask are sample-aligned.
+
+```{python}
+#| label: zhejiang-example
+#| fig-cap: "A locally stored Lead II signal with its categorical annotation mask. Axis units are intentionally not inferred."
+#| code-fold: true
+example_id = sorted(signal_ids & label_ids)[0]
+with (ECG_ROOT / f"{example_id}_II.pkl").open("rb") as handle:
+    example_signal = np.asarray(pickle.load(handle), dtype=float)
+with (LABEL_ROOT / f"{example_id}.pkl").open("rb") as handle:
+    example_mask = np.asarray(pickle.load(handle))
+
+window = slice(0, min(6000, example_signal.size))
+x = np.arange(example_signal.size)[window]
+fig, ax = plt.subplots(figsize=(12, 4.5))
+ax.plot(x, example_signal[window], color="black", linewidth=0.7, label="Lead II signal")
+ymin, ymax = ax.get_ylim()
+for class_id, label, color in [(1, "P", "#4C78A8"), (2, "QRS", "#E45756"), (3, "T", "#54A24B")]:
+    ax.fill_between(x, ymin, ymax, where=example_mask[window] == class_id,
+                    color=color, alpha=0.15, label=f"Mask: {label}")
+ax.set(xlabel="Native sample index", ylabel="Stored amplitude (unit undocumented)",
+       title=f"Zhejiang record {example_id}: signal–mask alignment audit")
+ax.legend(ncol=4, loc="upper right")
+fig.tight_layout()
+plt.show()
+```
+
+## What the current result artifact can—and cannot—say
+
+The table below is loaded rather than hard-coded. A ground-truth ceiling is a pipeline sanity check: applying the reference mask to itself should produce perfect overlap and zero boundary error. It is not a reconstruction-model result and supplies no loss-function comparison.
+
+```{python}
+#| label: zhejiang-result-status
+#| code-fold: true
+if RESULT_CSV.exists():
+    current_results = pd.read_csv(RESULT_CSV)
+    display(current_results)
+    model_rows = current_results.loc[current_results["model_id"] != "ground_truth_ceiling"]
+    status = pd.DataFrame([
+        ("Artifact SHA-256", sha256_file(RESULT_CSV)),
+        ("Rows in artifact", str(len(current_results))),
+        ("Ground-truth ceiling rows", str((current_results["model_id"] == "ground_truth_ceiling").sum())),
+        ("Reconstruction-model rows", str(len(model_rows))),
+        ("MSE-versus-MMD contrast estimable", "Yes" if len(model_rows) >= 2 else "No"),
+    ], columns=["Status field", "Value"])
+    display(status)
+else:
+    current_results = pd.DataFrame()
+    display(Markdown("> **Current status:** the Zhejiang result artifact is absent; no model comparison is available."))
+```
+
+## Generation-bound evaluation protocol
+
+A defensible external delineation result must bind each row to the exact model generation. For every checkpoint, the evaluation artifact should record:
+
+1. model ID, mask, seed, checkpoint SHA-256, source-bundle SHA-256, training contract, and checkpoint byte count;
+2. a content digest for the Zhejiang signal and label inputs, plus documented units and acquisition sampling rate;
+3. the input-lead mapping and all preprocessing, including any resampling and annotation-index transform;
+4. per-record and per-wave Dice, onset error, offset error, detection failures, and paired-record coverage—not only an aggregate mean;
+5. paired uncertainty across records and multiplicity control for the predeclared factorial contrasts;
+6. a failure ledger for missing waves, unusable records, and numerical errors.
+
+The storage layer described later in the book already supports the first requirement: an archived checkpoint is materialized by exact content hash for inference and removed from the local cache afterward. The current Zhejiang evaluator does not yet satisfy the remaining provenance and coverage requirements and its one-row output must remain a pipeline check.
+
+## Interpretation boundary
+
+The local files establish a paired 12-lead signal-and-mask corpus with internally consistent array structure. They do **not**, by themselves, establish cohort independence, diagnostic labels, RVOT/LVOT composition, sampling rate, voltage units, or licensing terms. Those facts require an authoritative README, paper, or data dictionary. Until model rows are generated under the protocol above, this chapter supports dataset readiness work—not a claim that MMD, MSE, or any other objective better preserves clinical morphology.

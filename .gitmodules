@@ -1,0 +1,6 @@
+[submodule "Auto-claude-code-research-in-sleep"]
+	path = Auto-claude-code-research-in-sleep
+	url = https://github.com/whiteblaze143/Auto-claude-code-research-in-sleep.git
+[submodule "ecg_fm_integration/echonext_minimodel_repo"]
+	path = ecg_fm_integration/echonext_minimodel_repo
+	url = https://github.com/PierreElias/IntroECG.git

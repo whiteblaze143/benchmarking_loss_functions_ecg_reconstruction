@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "status": "infrastructure_ready_test_scoring_locked",
+  "question": "Does ECG-AIM preserve AF in reconstructed 12-lead ECG without hallucinating AF in non-AF rhythms?",
+  "primary_cohort": {"dataset": "RDB", "split": "test", "n": 360, "AF": 60, "negative": 300, "test_untouched": true},
+  "secondary_cohort": {"dataset": "PTB-XL", "split": 10, "AF": 150, "AFL": 5, "conflicts_excluded": 2, "test_untouched": true},
+  "probe": {"name": "AFProbe-v1", "training_data": "real PTB-XL only", "train_folds": [1,2,3,4,5,6,7,8], "calibration_fold": 9, "reconstruction_training_forbidden": true},
+  "labels": {"PTB-XL": {"AF_positive": ["AFIB"], "flutter_negative": ["AFLT"]}, "RDB": {"AF_positive": ["AF"], "flutter_negative": ["AFL", "AFIB"]}, "conflicts": "exclude"},
+  "conditions": {"A": "real12", "B": "real source only", "C": "real complementary 11", "D": "real source plus reconstructed 11", "E": "reconstructed complementary 11 only"},
+  "thresholds": {"A_and_D": "same t12 frozen on real PTB-XL fold 9", "B": "corresponding real source mask fold-9 threshold", "C_and_E": "same corresponding real-11 fold-9 threshold", "reconstruction_calibration_forbidden": true},
+  "primary_contrasts": ["A-D", "D-B", "C-E"],
+  "primary_metrics": ["AUROC", "AUPRC", "sensitivity", "specificity"],
+  "RDB_negative_subgroups": ["AFL", "SI", "AT", "SVT/VT", "ST", "SR", "SB"],
+  "mechanistic_endpoints": ["independent-delineator P hallucination", "independent-detector RR preservation"],
+  "noise_snr_db": [-6, 0, 6, 12, 18],
+  "storage": "SQLite record-level predictions; no expanded CSV",
+  "launch_gate": "Both --confirm-frozen-final and a hash-matched frozen fold-9 calibration are required."
+}

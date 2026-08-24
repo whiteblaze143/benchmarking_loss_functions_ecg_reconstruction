@@ -1,0 +1,61 @@
+{
+  "model_id": "f_1000000_s42",
+  "checkpoint_sha256": "ea2df9939d4438de51c702ddd887edf2ccd57b8e2c094737f9207bffc9070349",
+  "checkpoint_size_bytes": 41010928,
+  "input": "/home/mithunmanivannan/data/ptb_xl/tensors/test/100.pt",
+  "input_shape": [
+    1,
+    3,
+    5024
+  ],
+  "output": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/inference/f_1000000_s42_ecg100.pt",
+  "output_shape": [
+    1,
+    12,
+    5000
+  ],
+  "finite": true,
+  "mean": 0.001137434272095561,
+  "std": 0.16532152891159058,
+  "checkpoint_provenance": {
+    "seed": 42,
+    "factorial_mask": "1000000",
+    "split_inventory_name_size_sha256": {
+      "train": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3",
+      "val": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3",
+      "test": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+    },
+    "split_content_roots": {
+      "train": {
+        "records": 17418,
+        "content_root_sha256": "2e7f9ef46395e23f01e018ae64f460616961de22d32be68d7ab83cbfb34db4be"
+      },
+      "val": {
+        "records": 2183,
+        "content_root_sha256": "b534556d81caf9ea74adc8eb84023030e79af1fd69767c2a9b24b2d7dd2606e2"
+      },
+      "test": {
+        "records": 2198,
+        "content_root_sha256": "e79b25b7f3825f3bd89ef924a3de104d7344b1c96358d9441756b3fad6645fda"
+      }
+    },
+    "preprocessing": {
+      "sample_rate_hz": 500,
+      "units": "mV",
+      "normalization": "none"
+    },
+    "source_bundle_sha256": "6e262086df8e995d90cea19208f189d78658959641069e8e958bcaa7af83e6bd",
+    "source_file_sha256": {
+      "scripts/common_loss.py": "a5936007806209ebb0e1af4911a50ad0658ffbd7d29c33e6c1ce91e79eb8d847",
+      "scripts/experiment_provenance.py": "d040ac044fe2b57b4b9f07d0a22da3ecec114c4b1fe752f9f6c792d1db917a70",
+      "scripts/train_factorial.py": "acdd219330b7291c2cda3fdfce77ea2bc1074a27927985fb84f65474e1011b0d",
+      "scripts/train_mcma_3lead.py": "47d534f1aedad1131acad314bb94ed7526ba4e70b67ea44323c9116f1ec426f0"
+    },
+    "exact_sources_embedded": true,
+    "training_contract_id": "factorial-v4-content-pinned-20260731",
+    "state_precision_policy": "float16",
+    "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+  },
+  "cache_pruned_files": 2,
+  "cache_limit_gib": 0.0
+}

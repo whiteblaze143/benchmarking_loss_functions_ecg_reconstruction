@@ -1,0 +1,204 @@
+# Diagnostic Integrity & Clinical Delineation {#sec-delineation}
+
+Waveform reconstruction evaluation must look beyond global signal similarity ($L_2$ distance or Pearson correlation) to measure localized morphological features that dictate downstream clinical interpretation. 
+
+This chapter details the mathematical formulations and algorithmic implementations for **P-QRS-T feature delineation**, **QT/QTc interval calculation**, and **bipartite event matching**.
+
+---
+
+## Mathematical Formulations of QTc Interval Correction
+
+The QT interval measures the total temporal duration of ventricular depolarization ($QRS$) and repolarization ($T$-wave). Because QT duration shortens as heart rate increases, clinical interpretation requires calculating the **rate-corrected QT interval (QTc)**.
+
+Let $\mathrm{QT}$ be the uncorrected interval in seconds and $\mathrm{RR}$ be the cardiac cycle length ($R\text{-to-}R$ interval) in seconds:
+
+$$\mathrm{RR} = \frac{60}{\mathrm{HR} \text{ (bpm)}}$$
+
+### 1. Bazett Formula (1920)
+$$\mathrm{QTc}_B = \frac{\mathrm{QT}}{\sqrt{\mathrm{RR}}}$$
+
+- **Limitation**: Derived empirically from a small cohort. Overcorrects at tachycardia ($\mathrm{HR} > 80\text{ bpm}$), leading to false-positive Long QT diagnoses; undercorrects at bradycardia ($\mathrm{HR} < 60\text{ bpm}$).
+
+### 2. Fridericia Formula (1920)
+$$\mathrm{QTc}_F = \frac{\mathrm{QT}}{\sqrt[3]{\mathrm{RR}}}$$
+
+- **Advantage**: Substantially reduces heart-rate dependence across normal physiological ranges ($50 - 120\text{ bpm}$). Recommended by the FDA for drug-induced repolarization toxicity trials.
+
+### 3. Framingham Linear Formula (1992)
+$$\mathrm{QTc}_{\text{Fram}} = \mathrm{QT} + 0.154 \cdot (1 - \mathrm{RR})$$
+
+### 4. Hodges Linear Formula (1983)
+$$\mathrm{QTc}_{\text{Hodges}} = \mathrm{QT} + 0.00175 \cdot (\mathrm{HR} - 60)$$
+
+---
+
+## Bipartite Event Matching & Fiducial Error Assignment
+
+Evaluating delineation error requires pairing ground-truth cardiac events $R = \{r_i\}_{i=1}^{N}$ with predicted events $P = \{p_j\}_{j=1}^{M}$ within a maximum temporal tolerance $\tau = 50\text{ ms}$.
+
+### Bipartite Graph Optimization Problem
+Find a 1-to-1 matching permutation $\pi$ that minimizes total timing error:
+
+$$\min_{\pi} \sum_{i} |r_i - p_{\pi(i)}| \quad \text{subject to} \quad |r_i - p_{\pi(i)}| \le \tau$$
+
+Unmatched reference events $r_i$ are categorized as **False Negatives (FN)**; unmatched predicted events $p_j$ are **False Positives (FP)**.
+
+### Signed Timing Error Definition
+For matched event pairs:
+
+$$e_i = 1000 \cdot \frac{p_{\pi(i)} - r_i}{f_s} \quad \text{(in milliseconds, ms)}$$
+
+- $e_i > 0$: Reconstructed wave is delayed relative to ground truth (late detection).
+- $e_i < 0$: Reconstructed wave is advanced relative to ground truth (early detection).
+
+### QTc Formula Sensitivity Across Heart Rates (40-140 bpm)
+
+Below, we simulate QTc calculations across a range of heart rates ($40 - 140\text{ bpm}$) with a fixed QT interval of $400\text{ ms}$ to compare formula stability:
+
+```{python}
+#| label: qtc-sensitivity-plot
+import numpy as np
+import plotly.graph_objects as go
+
+hr_range = np.linspace(40, 140, 100)
+rr_seconds = 60.0 / hr_range
+qt_ms = 400.0  # Constant 400 ms QT interval
+
+qtc_bazett = qt_ms / np.sqrt(rr_seconds)
+qtc_fridericia = qt_ms / (rr_seconds ** (1/3))
+qtc_framingham = qt_ms + 154.0 * (1.0 - rr_seconds)
+qtc_hodges = qt_ms + 1.75 * (hr_range - 60.0)
+
+fig_qtc = go.Figure()
+fig_qtc.add_trace(go.Scatter(x=hr_range, y=qtc_bazett, mode='lines', line=dict(color='#f43f5e', width=2), name='Bazett (Overcorrects at High HR)'))
+fig_qtc.add_trace(go.Scatter(x=hr_range, y=qtc_fridericia, mode='lines', line=dict(color='#38bdf8', width=2), name='Fridericia (Recommended Standard)'))
+fig_qtc.add_trace(go.Scatter(x=hr_range, y=qtc_framingham, mode='lines', line=dict(color='#10b981', width=2), name='Framingham Linear Correction'))
+fig_qtc.add_trace(go.Scatter(x=hr_range, y=qtc_hodges, mode='lines', line=dict(color='#fbbf24', width=2), name='Hodges Linear Correction'))
+
+fig_qtc.update_layout(
+    title="QTc Correction Formula Heart Rate Sensitivity (Fixed 400 ms QT)",
+    xaxis_title="Heart Rate (bpm)",
+    yaxis_title="Corrected QTc (ms)",
+    template="plotly_dark",
+    height=450, margin=dict(l=20, r=20, t=50, b=20)
+)
+fig_qtc.show()
+```
+
+---
+
+
+## Didactic Continuous Wavelet Transform (CWT) Delineation
+
+The following section explains one automated delineation approach. It is a **synthetic software demonstration**, not a result from a repository checkpoint and not a validation of the generation-bound temporal-MMD evaluator. That evaluator must separately disclose its detector, detection failures, and paired-beat coverage.
+
+Continuous Wavelet Transforms (CWT) can use a Mexican Hat mother wavelet $\psi(t)$ to detect steep wave zero-crossings:
+
+$$\psi(t) = \frac{2}{\sqrt{3\sigma} \pi^{1/4}} \left( 1 - \frac{t^2}{\sigma^2} \right) e^{-\frac{t^2}{2\sigma^2}}$$
+
+High-resolution scales isolate sharp QRS spikes ($10-25\text{ Hz}$), while lower-resolution scales detect smooth P and T wave peaks ($1-10\text{ Hz}$).
+
+```{python}
+import neurokit2 as nk
+import pandas as pd
+import numpy as np
+import plotly.graph_objects as go
+
+# 1. Simulate one 5-second ECG-like trace at 500 Hz
+sampling_rate = 500
+ecg_signal = nk.ecg_simulate(duration=5, sampling_rate=sampling_rate, heart_rate=72)
+
+# 2. Clean signal using zero-phase Butterworth bandpass filter
+ecg_cleaned = nk.ecg_clean(ecg_signal, sampling_rate=sampling_rate, method="neurokit")
+
+# 3. Locate R-peaks
+_, rpeaks = nk.ecg_peaks(ecg_cleaned, sampling_rate=sampling_rate)
+
+# 4. Continuous Wavelet Transform (CWT) Delineation for P, Q, S, T boundaries
+signals, waves = nk.ecg_delineate(ecg_cleaned, rpeaks, sampling_rate=sampling_rate, method="cwt")
+
+# Generate time vector in seconds
+t = np.linspace(0, len(ecg_cleaned) / sampling_rate, len(ecg_cleaned))
+
+# Create Plotly Interactive Delineation Viewer
+fig_del = go.Figure()
+
+# Cleaned ECG trace
+fig_del.add_trace(go.Scatter(
+    x=t, y=ecg_cleaned, mode='lines', 
+    name='Cleaned synthetic trace',
+    line=dict(color='#38bdf8', width=2)
+))
+
+# Helper to plot fiducial markers
+def add_fiducial(indices, color, symbol, name):
+    valid_idx = [int(i) for i in indices if not np.isnan(i)]
+    if len(valid_idx) > 0:
+        fig_del.add_trace(go.Scatter(
+            x=t[valid_idx], y=ecg_cleaned[valid_idx],
+            mode='markers', 
+            marker=dict(color=color, size=9, symbol=symbol, line=dict(width=1, color='white')),
+            name=name
+        ))
+
+# Add P, R, and T wave markers
+add_fiducial(rpeaks['ECG_R_Peaks'], '#f43f5e', 'star', 'R-Peak')
+add_fiducial(waves['ECG_P_Onsets'], '#a855f7', 'triangle-right', 'P-Onset')
+add_fiducial(waves['ECG_P_Offsets'], '#a855f7', 'triangle-left', 'P-Offset')
+add_fiducial(waves['ECG_T_Onsets'], '#10b981', 'triangle-right', 'T-Onset')
+add_fiducial(waves['ECG_T_Offsets'], '#10b981', 'triangle-left', 'T-Offset')
+
+fig_del.update_layout(
+    title="DIDACTIC SIMULATION — Automated CWT Delineation",
+    xaxis_title="Time (seconds)",
+    yaxis_title="Simulated amplitude (arbitrary units)",
+    template="plotly_dark",
+    height=450, margin=dict(l=20, r=20, t=40, b=20)
+)
+fig_del.show()
+```
+
+---
+
+## QTc Formula Comparison Function
+
+```{python}
+def calculate_qtc_variations(qt_ms, rr_ms):
+    """
+    Computes QTc across Bazett, Fridericia, Framingham, and Hodges formulas.
+    
+    Args:
+        qt_ms (float): Uncorrected QT interval in milliseconds.
+        rr_ms (float): R-R interval in milliseconds.
+    """
+    qt_sec = qt_ms / 1000.0
+    rr_sec = rr_ms / 1000.0
+    hr = 60.0 / rr_sec
+    
+    qtc_bazett = (qt_sec / np.sqrt(rr_sec)) * 1000.0
+    qtc_fridericia = (qt_sec / (rr_sec ** (1/3))) * 1000.0
+    qtc_framingham = (qt_sec + 0.154 * (1.0 - rr_sec)) * 1000.0
+    qtc_hodges = qt_ms + 1.75 * (hr - 60.0)
+    
+    return {
+        "Heart Rate (bpm)": round(hr, 1),
+        "Uncorrected QT (ms)": round(qt_ms, 1),
+        "QTc Bazett (ms)": round(qtc_bazett, 1),
+        "QTc Fridericia (ms)": round(qtc_fridericia, 1),
+        "QTc Framingham (ms)": round(qtc_framingham, 1),
+        "QTc Hodges (ms)": round(qtc_hodges, 1)
+    }
+
+# Compare QTc corrections at Normal HR (70 bpm) vs Tachycardia (110 bpm)
+normal_hr_stats = calculate_qtc_variations(qt_ms=400, rr_ms=857) # 70 bpm
+tachy_hr_stats = calculate_qtc_variations(qt_ms=340, rr_ms=545)  # 110 bpm
+
+print("==================================================")
+print("Normal Heart Rate (70 bpm) QTc Comparison:")
+print(normal_hr_stats)
+print("\nTachycardic Heart Rate (110 bpm) QTc Comparison:")
+print(tachy_hr_stats)
+print("==================================================")
+```
+
+These formulas and matching definitions specify the intended measurement interface. Clinical interval integrity is established only when the detector is validated, reference and reconstructed events are paired under a prespecified rule, detection failures remain in the denominator, and results are bound to named records and checkpoint digests.

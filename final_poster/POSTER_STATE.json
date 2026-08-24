@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "status": "local_verification_complete_author_declaration_pending",
+  "venue": "IEEE EMBC 2026",
+  "venue_spec_url": "https://embc.embs.org/2026/presenter-guidelines/",
+  "venue_spec_retrieved": "2026-07-27",
+  "canvas": {
+    "width_mm": 841,
+    "height_mm": 1189,
+    "orientation": "portrait"
+  },
+  "source_format": "LaTeX / beamerposter",
+  "template_source": "assets/template/IEEE-EMBSPosterTemplate2026.pptx",
+  "evidence_package": "../results/comprehensive_latest_48_models",
+  "local_visual_score": 9,
+  "independent_gemini_review": "unavailable",
+  "author_action_required": [
+    "Confirm funding and collaboration acknowledgment",
+    "Confirm conflict-of-interest statement",
+    "Insert assigned poster number"
+  ]
+}

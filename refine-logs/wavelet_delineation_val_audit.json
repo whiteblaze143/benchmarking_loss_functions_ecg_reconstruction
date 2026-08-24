@@ -1,0 +1,344 @@
+{
+  "root": "/home/mithunmanivannan/data/delineation_cache/val",
+  "records": 80,
+  "nonfinite": 0,
+  "class_counts": {
+    "bg": 2496408,
+    "P": 545484,
+    "QRS": 688860,
+    "T": 1069248,
+    "invalid": 0
+  },
+  "annotation_types": {
+    "integrated": 80
+  },
+  "sources": {
+    "ISP": 80
+  },
+  "unique_patient_ids": 80,
+  "missing_patient_ids": 0,
+  "records_with_fiducials": 0,
+  "valid_fiducial_channels": 0,
+  "files": [
+    {
+      "file": "data/delineation_cache/val/isp_101.pt",
+      "sha256": "8188c530d56b9626bdd44847fc8c0da9d852838cb936b5ab6ad4e48b656f7bb8"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_106.pt",
+      "sha256": "447f0cd3bad43a4f6fa6e4c4813962f7c026a5529f44a3b3c1e4be9bcdb00a58"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_110.pt",
+      "sha256": "6f126531d34149cd047a371b59572b0cd2494ff4b4040d07e793f0aefaa12797"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_111.pt",
+      "sha256": "30ef531783241dc4dcd413156cb0b02279f49b6ede74629e0715ee198d050df9"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_113.pt",
+      "sha256": "109db9ad8db05d8c8ce9534badb822c272169c87905a79625214e9c862894a4c"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_122.pt",
+      "sha256": "2bbaafce525aa5bb98acab117bb4522d185dd993fa3d0b96b0d9152eb5efae83"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_124.pt",
+      "sha256": "6bea5a11bbf5acc5fb197aa9b771f33a6799a267386b4f05acfb21dc1ba244b6"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_127.pt",
+      "sha256": "8293b4c168fa279900c405e8bfee82cd83f015645a2f116c58fdf163728f0ec3"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_136.pt",
+      "sha256": "f992f86cc4826fe9c2f8dcc5212f85e73dcf85fcb3c1fc7299fddd12d74b9872"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_144.pt",
+      "sha256": "49bcd96cd1484a9504201752204bff2f40ef8c51289b24456fac5b7e74f532a3"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_147.pt",
+      "sha256": "090d1cfbfeb4d2a5ec2d823108b88cc5e28f3656efc849e81d487a80ee964559"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_148.pt",
+      "sha256": "a8041a8a90b0b76d9e01570419574fdf1041325b9abade2623ef2581d39b6f3b"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_155.pt",
+      "sha256": "f10e30090eb3c87d145c45f981b4ff152435d103b714ce672b8762372bbc2430"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_158.pt",
+      "sha256": "0915644561165a06fc5a768d90abc2d53f469a56d15b2d605329dfbf2dd77560"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_162.pt",
+      "sha256": "71992204467de598f259b2a67ade3d8025ce496b5261f84790b64bd4d974ec50"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_166.pt",
+      "sha256": "8956f4d459e0b78e209c573e3670cd8b8466ef572e2b922f87430630ee602fcf"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_168.pt",
+      "sha256": "2b3a82ea808323d1324dea4e9908b43c2b65937144a6b50d3f11265d16d052f2"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_171.pt",
+      "sha256": "90180ab647ac287ad2e572843ff6a66ef2b913fa9a64ac82079123d4e7ddf579"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_175.pt",
+      "sha256": "6fecc8e72b17967afd2215407f1a8688892bb0fca47f449f58e4c6b0dfd1ab15"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_183.pt",
+      "sha256": "a83c0b0b7b19c756268b450bd5338a892055c6c2f979b0bf27ff511407c48021"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_189.pt",
+      "sha256": "53ef0771f231c8d112166a36636c92bc66452b8bb60fb8f05a8e347872563500"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_192.pt",
+      "sha256": "0ce526042f74b1ede3cf0678e6142225f23173dfa40db6243065c2f53fd78935"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_194.pt",
+      "sha256": "fcb2c166e3b50fec78127cc730a8cf3f4495bfa781ee4c4281a284dc53b90341"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_200.pt",
+      "sha256": "ad696a871bdd7e7a38f6ef3482a2e7ad77bf602fc8ad903c763058fc08eed6c4"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_201.pt",
+      "sha256": "dc1b02c8bfb35fbde50cc7d5d75abe8c73454504141a60b0456d54de3f278a11"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_21.pt",
+      "sha256": "1eb62266199c1ab30fb3bfa034d94d2fb341f503ffc05de390906fc931f1e4dc"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_214.pt",
+      "sha256": "17b6d245ebe356c9c9e663684695d713522185ad9110f46b29dcb3c69aa6d91c"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_218.pt",
+      "sha256": "f2460e1676873342e452696fc3b0e91d4365b2e0cb0c35951815eb89e850b24e"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_222.pt",
+      "sha256": "d0fc1484145ccec9a5e896872ea58284690bab79bf213cf8c2f3e9a496c642e1"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_226.pt",
+      "sha256": "0f27cc0dbda7cbd853961258980f5f10d7288aa076b734af9c183ffe386ee3fe"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_231.pt",
+      "sha256": "25b04545df7a5ddf6f3fe42474aa6ce0d57645415c25b2d830d88a2f1bb6356e"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_232.pt",
+      "sha256": "66ce568769baa3d79af71973eda25ddde348c7d07a7c66cea284cceeeaea32cc"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_233.pt",
+      "sha256": "e2e1ac37c1f204ce5888d4e6bec4d195e8571e65c23df521b39854f95ad9319e"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_237.pt",
+      "sha256": "2a27674378ddaf9a2ec28acb744f19f98721c9efd21fe69bc38e3a10eab6ff76"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_241.pt",
+      "sha256": "49487872b35576f22799cc75331a7c01a5ee06dd6cb0e4f8db5901c64d9d159c"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_246.pt",
+      "sha256": "70d6c9ecb0e9bee4d65267635fcc8b1d9943bf322d86692653dc6c4053cd6214"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_250.pt",
+      "sha256": "ba6bce7561e8dcbe6e4f38b3de2bc3cada0a5594c597efc6ee38379730066704"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_255.pt",
+      "sha256": "b162594fb37391e8707647f9d21ce49296327ff7005b56cd42a956467eb201ac"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_257.pt",
+      "sha256": "650c0560312a503e08d26fe1a2af2180e529643f5caaed301cbfd5b544168fd7"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_262.pt",
+      "sha256": "438f0387e533e592ea02a73cd2218c7a6fd5649e6aa5bdd23d2e8c49c27f3261"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_263.pt",
+      "sha256": "ef896f70bfc159852889c375b2135d1163bae69fef7e8f44fa5b7205128f6fc7"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_266.pt",
+      "sha256": "38726ede226beca633050c003730da54eee154e7c29ed5e2c3a0a955da8c9046"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_268.pt",
+      "sha256": "4c07478998221cb287353781b9d1847c2f36f97de47bf9f90628d4e94c739296"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_27.pt",
+      "sha256": "ad554a8d70ece8f8df0f44344428b60a1b9a56a7ef46ef433bc8f816d63bcc99"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_276.pt",
+      "sha256": "8151da83591fa6771c0683835a9d92c0f25707118d268a67d3176075a46d0f0f"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_278.pt",
+      "sha256": "cfe4c7e8d34e20278831942b8f85983e3ad25fa30651c016e91f7c687b4a53ab"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_281.pt",
+      "sha256": "b2f8a0f1642e03b8fbf71e556f17dd1866f9a058bf0a9011bf8c74e8dc79ccd6"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_288.pt",
+      "sha256": "99c7aa5fbd020dc8c1ffc74228d09e387187fd036732c59f992e09c05eeba059"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_29.pt",
+      "sha256": "bf178ce71c51ca1383a45692ca89eb6618c9cdae04ab44ba144a8ba82c8e519d"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_290.pt",
+      "sha256": "378a8c78f11edb2ae7f64b882bf0ae6043d622e6bfaaeadf037ac835b02d211d"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_293.pt",
+      "sha256": "5b840f789b4d682eddaf90583c0c70995fe451a4f476ad30a7e9a777d3239509"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_301.pt",
+      "sha256": "a456c229ea5500d519c8b40eb0fa08147a670d679e87610c1fa31139c80a098a"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_302.pt",
+      "sha256": "414c7686a1ae003a35a020900ceda72d899128a4f0d61497937250a519265be6"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_313.pt",
+      "sha256": "1ffbaec2709f92e699ccf2642182dd4ccc0a431867099daecccc8247734fad7e"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_316.pt",
+      "sha256": "a7f32e60ba978e194be4910c8177c34a854faefefb6b7b4ebe49ca036f9c9fca"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_318.pt",
+      "sha256": "e548dc7b85bba2cbabff51e79f01bedd0934a2ace93811a5087da5549b8e1550"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_329.pt",
+      "sha256": "976a54b50f7e85b68171aba1db6814c46d84faa7098a30cf6f7434175d891b4c"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_339.pt",
+      "sha256": "b4d798e29441b66e9188e1d0e45b8b9f5262016f7fa0625dfea91ea5a6089acd"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_349.pt",
+      "sha256": "e4c158f592465f42c14dcd957c91a339f7340f4e8ff0d21b5f4bbc9c806b3e56"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_35.pt",
+      "sha256": "279e16f1b93cb224fa9a23ec1f954838e7b3329f282917a747c54eab555da8fb"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_352.pt",
+      "sha256": "f9872387841db4dfd7cdf48fca990e3aac7c19f775aa21931bf5fc129b0f7ee1"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_355.pt",
+      "sha256": "244626f49624ab984602b8b4a8030882142bc872114a603e09df08c15dba177f"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_357.pt",
+      "sha256": "25c7f875ea9917f6fcb2233984256e1fd16439b04636ead44c926ee315bfd5c7"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_360.pt",
+      "sha256": "bae951a1eac91138ce1e1058cd0312ab1ee969e95ab0c6cef0f5d76fbced0d18"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_363.pt",
+      "sha256": "b49e40e2eb1e71e459df88fc4b48b7cc67c0dc6ac34e36735c3f54877e815d20"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_366.pt",
+      "sha256": "7ba510efcf1693a0aaf4d07f860d1c645169d442b395eb49070bc84b76b8881a"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_371.pt",
+      "sha256": "ca586ef9810d2eab42466264db48f9d0d5254abaec679fb0ab047fce2a158339"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_383.pt",
+      "sha256": "4d1ff5911b03887cf0a74ac34675dd932b954ba39de19b3504db56ad7ed94544"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_386.pt",
+      "sha256": "b29a0ad02bb94b26a333eafcee35311c08a7cabc29395c2876e0fa191f7779fa"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_387.pt",
+      "sha256": "fb437619bab12d62796a6c0200816c4b3ef39561ee9f3e6f9cc10e0f0fca28b8"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_394.pt",
+      "sha256": "a2aa56051d8be5d4893117f8acbc3a92a5e1a4dd78dcf58cd3ce8007705c0725"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_399.pt",
+      "sha256": "7f09cd3dc69494ec45ff4a1c162d38aa3fa698f30bd525a1f2d05873f8331c76"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_403.pt",
+      "sha256": "819f2920154b63dfa5b09f56010f948396330c5a872ce81fe3489a85e437f842"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_41.pt",
+      "sha256": "5ddda5777fc3f754acb65123a94ca01ba4b63706a98eeef31981b9761164f71b"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_62.pt",
+      "sha256": "ef9d0b47e33419ac7175d0d760f7bf110186fa7133bf101550effa192f8b7861"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_63.pt",
+      "sha256": "8a117b336710d2cfeb29499093f72e7a32521fdb1ba5808eeedf7022631e0e29"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_69.pt",
+      "sha256": "c340cdc5252eb017d1158723df3f6155fad113a8cb2f557a563805baca871f98"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_78.pt",
+      "sha256": "9f6db1f72588356551cd39c5325057ebd1b1e5750351b9081a4ea4f857b17856"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_85.pt",
+      "sha256": "e1ff2e9b55a96a5288473015ad38dfac889f89d987754aae4761a9667daafec2"
+    },
+    {
+      "file": "data/delineation_cache/val/isp_99.pt",
+      "sha256": "d4af12cc4eebafd81d72608239222d2220f5849e9ed6bf39db4241b77e94e464"
+    }
+  ]
+}

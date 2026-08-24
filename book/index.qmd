@@ -1,0 +1,51 @@
+# Preface & Executive Summary {.unnumbered}
+
+## Motivation & Clinical Context
+
+Electrocardiogram (ECG) reconstruction aims to estimate a complete **12-lead ECG representation** from a reduced subset of leads—such as a single wearable-like Lead I or a 3-lead input. Mean Squared Error (MSE) is a standard objective, but conditional averaging can attenuate morphology when the missing signal is not uniquely determined by the observed leads. This handbook tests that concern rather than assuming it.
+
+### The Regression-to-the-Mean Failure (Presacan et al., 2025)
+
+In *Communications Medicine* (Nature Portfolio), **Presacan et al. (2025)** reported regression-to-the-mean behavior in ECG reconstruction trained with MSE. More generally, squared-error population risk targets a conditional expectation; when multiple missing-lead morphologies are compatible with the observed leads, averaging can attenuate uncommon amplitudes or shapes. Whether that occurs for a particular checkpoint and endpoint is measured here rather than assumed from the theorem or prior paper.
+
+Potential failure modes include P/T delineation error, ST-segment attenuation, and QT/QTc drift. These are hypotheses requiring artifact-backed evaluation; the book does not infer patient harm from synthetic waveforms or global similarity metrics.
+
+```
+       MSE Loss (Regression to Mean)          Combinatorial Composite Loss (Ours)
+    ┌─────────────────────────────────┐      ┌─────────────────────────────────┐
+    │  Flat P-waves / Flattened ST    │      │  Candidate shape preservation  │
+    │  Damped Peak Amplitudes         │  vs  │  QTc/VCG metrics require audit │
+    │  Metrics requiring audit        │      │  No assumed clinical benefit   │
+    └─────────────────────────────────┘      └─────────────────────────────────┘
+```
+
+## How to read this handbook
+
+The book begins with evidence, not demonstrations. The [opening real-data EDA](09_real_data_eda_and_diagnostics.qmd) audits the actual local PTB-XL and EchoNext cohorts: record and patient counts, split integrity, label support, missingness, signal shape, units, clipping, lead dependence, and resampling. The [multi-dataset atlas](11_dataset_atlas_ludb_isp_sunnybrook.qmd) then establishes what LUDB, ISP, and Sunnybrook contribute that the development cohort cannot, followed by a separate [Zhejiang file-level audit](05_zhejiang_delineation_tutorial.qmd). Only after those measurement contracts are visible does the [PTB-XL preprocessing contract](01_dataset_and_preprocessing.qmd) explain the content-pinned tensors and lead mapping.
+
+The remaining parts follow the causal order of the study:
+
+1.  **Data, cohorts, and measurement** — what was observed, how records were partitioned, and which claims each dataset can support.
+2.  **Reconstruction models and objectives** — the architectures and loss terms applied to those inputs.
+3.  **Clinical and statistical evaluation** — paired morphology, delineation, agreement, fairness, robustness, and uncertainty.
+4.  **Benchmark and external validation** — the locked 48-cell evidence, the still-training mixed-level factorial study, device transfer, and EchoNext classifier preservation.
+
+This order is deliberate. A model ranking is uninterpretable until the reader knows the units, split boundary, repeated-patient structure, endpoint prevalence, and downstream measurement contract. Synthetic examples remain in the book as executable tutorials, but they are labeled as demonstrations and never substitute for cohort evidence.
+
+::: callout-note
+## One connected book
+
+Open this rendered `index.html`, then use the persistent sidebar or the Previous/Next controls. The five parts and all chapters are members of one Quarto book; tables, figures, equation numbers, citations, and section references share one navigation structure.
+:::
+
+## Evidence status at a glance
+
+| Evidence stream | Current status | Interpretation |
+|------------------------|------------------------|------------------------|
+| Local dataset inventories and EDA | Executed from `data/` | Describes the actual repository cohorts and files |
+| Locked 48-cell reconstruction benchmark | Available | Supports descriptive and prespecified paired analyses |
+| EchoNext frozen-classifier outputs | Available, including archived record-level sidecars | Supports paired probability, calibration, subgroup, and failure-tail diagnostics |
+| Mixed-level seven-position factorial checkpoints | Training in progress | Remains a visibly watermarked scaffold until its completion gate passes |
+| Generation-bound temporal morphology | Running under a digest/coverage gate | Partial accepted models diagnose measurement behavior; no factorial claim until the complete grid passes |
+
+The distinction between **observed**, **derived**, **planned**, and **synthetic** evidence is maintained throughout the book.

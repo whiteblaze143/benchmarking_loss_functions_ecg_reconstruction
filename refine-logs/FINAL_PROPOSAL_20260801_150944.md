@@ -1,0 +1,117 @@
+# Final Research Proposal: Endpoint-Aware Factorial Benchmarking of ECG Reconstruction Losses
+
+## Problem Anchor
+
+- **Bottom-line problem:** Determine which loss components preserve clinically relevant missing-lead ECG information when reconstructing 12 leads from reduced observations.
+- **Must-solve bottleneck:** Pointwise error can reward conditional-mean smoothing, while global shape metrics can improve without preserving localized morphology, calibration, or downstream diagnostic information.
+- **Non-goals:** Claiming reconstructed ECG replaces measured ECG or echocardiography; declaring one universal loss winner; treating frozen classifiers or machine statements as clinical adjudication.
+- **Constraints:** Use the existing fixed MCMA architecture for the expanded grid; compare only checkpoints sharing the content-pinned source bundle, batch size 1024, state schema, preprocessing, and patient-split roots; preserve patient pairing; acknowledge that the expanded mixed-level grid is still training.
+- **Success condition:** A complete, generation-bound factorial analysis shows which components and interactions improve prespecified morphology endpoints without unacceptable diagnostic, calibration, subgroup, robustness, or transfer degradation, and every reported row resolves to an exact inferable checkpoint digest.
+
+## Stable Method Thesis
+
+A factorial, endpoint-aware evaluation—not a predetermined composite-loss victory claim—is the contribution: within the fixed MCMA generator, loss components must be assessed jointly across amplitude, morphology, physiologic consistency, diagnostic utility, calibration, robustness, and external transfer because these endpoints can disagree. Architecture heterogeneity is examined only in the completed interim 48-cell benchmark and is not an estimand of the expanded fixed-architecture grid.
+
+## Dominant Contribution
+
+A mixed-level loss-function benchmark with paired per-record analysis and an explicit clinical evidence ladder. The running seven-character configuration implements fixed MSE, five binary toggles, and a five-level MMD-kernel selector: $2^5\times5=160$ conditions per seed, for the manifest-bound seeds 42, 200, and 201. Its estimable design terms are five binary main effects, categorical kernel contrasts, and prespecified interactions—not seven binary main effects. The already completed $3\times2^4=48$ seed-42 grid is interim evidence and pipeline validation; it is not a substitute for this training checkpoint matrix.
+
+## Supporting Contribution
+
+A reproducible diagnostic atlas linking:
+
+- PTB-XL patient-disjoint reconstruction and noise/subgroup evaluation;
+- LUDB lead-specific P/QRS/T boundary annotations;
+- ISP interval-target integrity analysis;
+- EchoNext external morphology and 12-task frozen waveform-plus-seven-covariate SHD classification;
+- Sunnybrook fully measured Philips ECG transfer;
+- four device/simulator smartwatch conditions.
+
+## Complexity Intentionally Rejected
+
+- No new generative architecture is required to answer the loss-function question.
+- No post hoc weighted “clinical score” collapsing incompatible endpoints.
+- No automatic claim that more loss terms are better.
+- No test-set threshold tuning.
+- No conversion of proxy or machine-derived labels into adjudicated outcomes.
+- No forced LLM/VLM/diffusion primitive: none is necessary for the anchored problem.
+
+## System and Data Flow
+
+1. Use the fixed MCMA architecture and select one seven-character mixed-level loss configuration from the locked manifest.
+2. Train on the same patient-disjoint PTB-XL training inventory with batch size 1024 and the approved source/preprocessing contract; exclude historical batch-size-256 or source-mismatched checkpoints.
+3. Select checkpoints using validation data only.
+4. Reconstruct missing leads on a common, hash-locked test inventory.
+5. Save per-record signals/metrics and failure status with model ID, seed, checkpoint digest, source digest, data roots, and evaluation-code digest.
+6. Evaluate amplitude, shape, QRS/ST, intervals, cross-lead laws, downstream classifiers, calibration, noise, subgroup effects, and external transfer.
+7. Estimate main effects and prespecified interactions within architecture using paired patient-cluster inference.
+8. Apply a prespecified model-selection rule or report a Pareto set.
+
+## Evidence Layers
+
+### Completed interim evidence
+
+The 48-cell grid shows that full-composite versus MSE-only improves PTB-XL Pearson, QRS, and ST correlation in all three families, while effects on MSE and EchoNext SHD macro AUROC are not uniformly favorable. This is evidence for endpoint trade-offs, not a universal full-loss winner.
+
+### Training evidence
+
+The mixed-level grid remains pending until every required seed block passes its 160-condition checkpoint, record-order, provenance, and evaluation completeness gates. At the 2026-08-01 15:09 UTC audit, 33/480 current-contract models were checkpoint-compatible and all 33 passed strict finite-output inference on the real PTB-XL tensor `test/100.pt`; 23/33 had passed the final explicit-distribution-MMD/per-record-ledger/tolerance-sensitivity morphology evaluator. One otherwise healthy training run had aborted with an allowlisted transient CUDA/NVLink hardware error and was requeued under a bounded two-attempt policy; it is not counted as a completion. These partial counts are operational diagnostics, not factorial evidence. The present manifest contains one model implementation, so architecture-stratified claims do not apply to this running grid. Mask-only legacy evaluation rows are generation-unbound and are excluded from current-grid estimates.
+
+### External evidence
+
+- EchoNext: 5,442 external 10-second 12-lead ECGs at 250 Hz with 12 echo-derived endpoints. SHD inference also uses seven unchanged tabular covariates and is not waveform-only evidence.
+- LUDB: 200 10-second 500 Hz 12-lead ECGs with lead-specific wave boundaries.
+- ISP: 403/72 train/test rows with interval targets; sampling-rate/raw-waveform provenance remains a gate.
+- Sunnybrook: 20 fully measured 500 Hz Philips XML ECGs; proxy/machine-derived clinical fields.
+- Smartwatch: four device/simulator conditions; not prospective human validation.
+
+## Primary Claims to Test
+
+### Claim 1: Within the fixed MCMA generator, loss effects and interactions are endpoint dependent
+
+- **Evidence:** five binary main effects, categorical MMD-kernel contrasts, and prespecified interactions on missing-lead waveform, paired morphology, and physiologic-consistency endpoints, with seed-blocked replication and patient-cluster uncertainty.
+- **Falsifier:** effects are negligible, inconsistent, or dominated by seed/optimization instability.
+
+### Claim 2: Pareto-selected loss configurations can show morphology–diagnostic discordance and must survive external/tail checks
+
+- **Evidence:** paired morphology changes versus frozen-classifier probability/calibration drift, followed by LUDB delineation, EchoNext and Sunnybrook transfer, noise degradation, and subgroup risk–coverage analysis for a prespecified compact Pareto set.
+- **Falsifier:** discordance disappears under paired uncertainty, is caused by preprocessing/detector error, or selected configurations fail on external cohorts or clinically relevant tails.
+
+## Required Ablations and Deletion Checks
+
+- Five binary main effects within the fixed MCMA architecture.
+- Four categorical MMD-kernel contrasts against level 0 plus prespecified mechanistic interactions.
+- MSE-only (`1000000`) versus each all-binary-on kernel configuration (`1111110`–`1111114`), interpreted as a family rather than a single ambiguous “full mask.”
+- Best smaller configuration versus the prespecified Pareto candidates.
+- With/without each binary component from a selected configuration while holding the MMD-kernel level fixed.
+- Copied/derived leads excluded from primary reconstruction averages.
+- Original versus reconstructed frozen-classifier predictions.
+- Clean versus each corruption family.
+- Sensitivity to delineator and interval-correction convention.
+
+## Statistical Plan
+
+- Pair records across every loss cell.
+- Cluster resampling by patient for PTB-XL.
+- Report estimates and BCa 95% intervals.
+- Declare confirmatory endpoint families and multiplicity control.
+- Use non-inferiority only with a prespecified, justified margin.
+- Treat rare tasks and three-positive electrode-problem endpoint as exploratory.
+- Report optimization failures and incomplete masks.
+
+## Failure Modes and Diagnostics
+
+- **Conditional-mean smoothing:** amplitude-slope and Bland–Altman diagnostics.
+- **Localized morphology loss:** QRS/ST window metrics and LUDB boundaries.
+- **Cross-lead incoherence:** Einthoven/augmented-lead residuals and VCG error.
+- **Diagnostic drift:** per-task probabilities, calibration, and discordant records.
+- **Domain preprocessing error:** units/rate/lead-order/resampling assertions.
+- **Noise fragility:** paired 17-condition degradation curves.
+- **Fairness/coverage failure:** patient-cluster subgroup deltas and abstention rates.
+- **Outlier domination:** per-record influence and robust summaries.
+- **Generation aliasing:** join every result by full model ID and checkpoint SHA-256 rather than seven-character mask alone.
+- **Optimizer-regime confounding:** never pool batch-size-256 historical checkpoints with the current batch-size-1024 generation.
+
+## Verdict
+
+**REVISE / IN PROGRESS.** The question and analysis framework are stable, but the expanded mixed-level-study claims cannot be judged until training and locked evaluation complete. The final generation-bound morphology evaluator now exists and is producing admissible artifacts, but partial seed-42 coverage cannot establish factorial effects. Existing 48-cell results and real-data EDA support the benchmark motivation and identify diagnostic trade-offs.

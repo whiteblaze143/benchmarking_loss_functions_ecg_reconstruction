@@ -1,0 +1,100 @@
+{
+  "source_sha256": {
+    "generator_script": "82ca184cb68ec8c13003d1f9c43e3503f14b0034124de2fd1cc476193e34c3d5",
+    "comprehensive_results": "af45f840b48ec08d44088c431d21a0f332e5614f02ac0dc4f798f8861b555d98",
+    "model_registry": "c1f16dca1bfaf574fa58e1d3823acfed097d874ec8df136fc5e8eee5642cac41",
+    "paper_parity_results": "9c4f6b95f43a2e91ed1a0e439cc41771c141254943237b148efc6c544cedda1f",
+    "echonext_results": "ddff5343e5fa8aa4f42857954a0c79095cfc908789f19437ea9479ef7bae1a84",
+    "smartwatch_results": "fd452e0cd2d43d1bacb38097700ffb320a1f62eaa1cf1ad96868bc51210fc454",
+    "main_table": "531a75f346a9f3fbb44931ce417c7b098455fcae16787612f28620e14538fc01",
+    "primary_main_table": "7c382987ac08aa2bac614d45ee15aa6efff578e44025525e44a9d4eaad9a8f24",
+    "effects_table": "9c4a6196d5d761149d3d02b72093c2e7358c88565d10494680362ee6d6fb32b0"
+  },
+  "core_coverage_passed": true,
+  "generated_figures": {
+    "factorial_heatmaps": {
+      "path": "results/factorial_v4/plots/factorial_heatmaps.png",
+      "sha256": "8e4201398b231abe26c1e2ff146e4ff4a53c4f2d9c0d06eb079cbd2bd3bb484d"
+    },
+    "factorial_effect_forest": {
+      "path": "results/factorial_v4/plots/factorial_effect_forest.png",
+      "sha256": "a0c808637c67d28352a52c060fa73ea5d8def3f77ba68598f2720d002eb8fa24"
+    },
+    "morphology_diagnostic_pareto": {
+      "path": "results/factorial_v4/plots/morphology_diagnostic_pareto.png",
+      "sha256": "7bbbe29e0c98bbb8d153a88dd00ae641036808b1166637f000cf69c0f316958a"
+    },
+    "nstdb_degradation": {
+      "path": "results/factorial_v4/plots/nstdb_degradation.png",
+      "sha256": "567af1fe87f6e53608f4135f85e493e703a13d87cb9a9c07ca152d2f55636db7"
+    },
+    "echonext_external_heatmap": {
+      "path": "results/factorial_v4/plots/echonext_external_heatmap.png",
+      "sha256": "2a35bb65602e041edf92003dd8e79a21d5ca4c6ddda689ffffab5fb779dd1b8c"
+    },
+    "echonext_representative_reconstructions": {
+      "path": "results/factorial_v4/plots/echonext_representative_reconstructions.png",
+      "sha256": "e4d566d9773e4947ae6093ff2dc89003e22fc4ad912580b16e9ce35bcc68cff5"
+    },
+    "factorial_heatmaps_svg": {
+      "path": "results/factorial_v4/plots/factorial_heatmaps.svg",
+      "sha256": "461ea1020f7d2f22461a5d99b1524028739540158caddded1e9ad42cc3ce65cd"
+    },
+    "factorial_heatmaps_pdf": {
+      "path": "results/factorial_v4/plots/factorial_heatmaps.pdf",
+      "sha256": "2fca0547391587c4640a8e9a4ad294cd51a887d41bf72ffd240f927108c371f3"
+    },
+    "factorial_effect_forest_svg": {
+      "path": "results/factorial_v4/plots/factorial_effect_forest.svg",
+      "sha256": "ab7b94d092a0db1acbff22b48948b4a9236d129317dfe466a3726c3d7e4af4ea"
+    },
+    "factorial_effect_forest_pdf": {
+      "path": "results/factorial_v4/plots/factorial_effect_forest.pdf",
+      "sha256": "d6c8ce49f26cc8378945be96afa571226cf6dcaba1cb33deeb4008f8e48c487e"
+    },
+    "morphology_diagnostic_pareto_svg": {
+      "path": "results/factorial_v4/plots/morphology_diagnostic_pareto.svg",
+      "sha256": "4d26d20ee4f2436894be73e23e6d899a41b21d5604294cc619e11f0caae633fc"
+    },
+    "morphology_diagnostic_pareto_pdf": {
+      "path": "results/factorial_v4/plots/morphology_diagnostic_pareto.pdf",
+      "sha256": "73f8a03238ff110072a96f0f23287b26254af6ca3f4ef4923467a3048d0ff91c"
+    },
+    "nstdb_degradation_svg": {
+      "path": "results/factorial_v4/plots/nstdb_degradation.svg",
+      "sha256": "65f5eb31b7055748b4308f8f23bae2b7bbc26550b34b31cdf35fb742038ebb10"
+    },
+    "nstdb_degradation_pdf": {
+      "path": "results/factorial_v4/plots/nstdb_degradation.pdf",
+      "sha256": "c77637acbade79ee08dae507dfa3b2ebba3c1f38eb7c6a8af20f1097516a580d"
+    },
+    "echonext_external_heatmap_svg": {
+      "path": "results/factorial_v4/plots/echonext_external_heatmap.svg",
+      "sha256": "f21a13d5cb353a88ce99beda92544042fa4c1c31d333fbe0a9f6385b5369126d"
+    },
+    "echonext_external_heatmap_pdf": {
+      "path": "results/factorial_v4/plots/echonext_external_heatmap.pdf",
+      "sha256": "b793701c272fffda517993b5b4caa7afc63f27e9beeeac4c23c98038342678c5"
+    },
+    "echonext_representative_reconstructions_svg": {
+      "path": "results/factorial_v4/plots/echonext_representative_reconstructions.svg",
+      "sha256": "5f0ef14c11f0179c83a48357efe3dee232735c9d2e9369df37b748b1ccdeb9f3"
+    },
+    "echonext_representative_reconstructions_pdf": {
+      "path": "results/factorial_v4/plots/echonext_representative_reconstructions.pdf",
+      "sha256": "eff6e50ab4ebc6df3e6652d13a62f9e1417c3b3c14a4d821d5682d8d7b06bdd6"
+    },
+    "factorial_heatmaps_4factor_supplementary": {
+      "path": "results/factorial_v4/plots/factorial_heatmaps_4factor_supplementary.png",
+      "sha256": "a0379a8ed134b64a07af2009fa440ea4f4065706cd6dc3da01653c25ce1f6120"
+    },
+    "factorial_heatmaps_4factor_supplementary_svg": {
+      "path": "results/factorial_v4/plots/factorial_heatmaps_4factor_supplementary.svg",
+      "sha256": "742235b74d09bf6fd1a269631637f73805b97ddfa526ba207e75f70e5546e8df"
+    },
+    "factorial_heatmaps_4factor_supplementary_pdf": {
+      "path": "results/factorial_v4/plots/factorial_heatmaps_4factor_supplementary.pdf",
+      "sha256": "dfcc71357520e912a0e6abd54b314294d25b24a1d377accce0204a9e26aab2d1"
+    }
+  }
+}

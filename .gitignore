@@ -1,0 +1,60 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+**/.venv/
+
+# Runtime experiment artifacts are retained on disk, not in Git history.
+wandb/
+checkpoints/
+data/
+*.pt
+*.pth
+*.ckpt
+*.npy
+*.npz
+*.parquet
+*.log
+*.log.exitcode
+*.tmp
+experiment_queue/**/logs/
+experiment_queue/**/queue_manager.log
+experiment_queue/**/queue_state.json
+results/factorial_v2/smoke/
+results/**/per_record/
+results/**/echonext_per_record/
+results/**/*partial*
+results/**/comprehensive_results*.json
+results/**/clean_results*.json
+results/**/echonext_results*.json
+results/**/smartwatch_results*.json
+results/**/*clinical_metrics.json
+results/**/*task_metrics.csv
+.aris/traces/
+
+# Large file patterns
+*.jsonl
+*.tar.gz
+*.zst
+.tools/
+
+# Databases are authoritative on-disk experiment artifacts, never Git content.
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+
+# TEMPORARY: live SQLite files mutate during LUDB evaluation. Remove these
+# entries and re-add the final stable databases through Git LFS after the run.
+results/ecgaim_ludb_oracle/ecgaim_ludb_oracle.sqlite
+results/ecgaim_ludb_oracle/ecgaim_ludb_oracle.sqlite-shm
+results/ecgaim_ludb_oracle/ecgaim_ludb_oracle.sqlite-wal
+# TEMPORARY: RDB production outputs will mutate for several days. Remove these
+# entries only after the daemon is stopped and the final exports are stable.
+results/ecgaim_rdb_oracle/*.sqlite
+results/ecgaim_rdb_oracle/*.sqlite-shm
+results/ecgaim_rdb_oracle/*.sqlite-wal
+results/ecgaim_rdb_oracle/*.csv
+results/checkpoint_store/catalog.sqlite
+results/checkpoint_store/catalog.sqlite-shm
+results/checkpoint_store/catalog.sqlite-wal

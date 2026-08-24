@@ -1,0 +1,12 @@
+{
+  "id": "unet__e1c1m1d1__s42",
+  "status": "pass",
+  "checkpoint_sha256": "726e74f194c9d990b72ed74dbc08f2192138ab7957a98f5df80e253ff2e69f4a",
+  "output_shape": [
+    1,
+    12,
+    5000
+  ],
+  "finite": true,
+  "observed_lead_mse": 0.0
+}

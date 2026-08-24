@@ -1,0 +1,4 @@
+[REPORT CONTENT]
+
+[BACKGROUD]
+You are a BERT-based model extracting ECG report features. Input is a text report [REPORT CONTENT] with diagnoses (e.g., “Sinus rhythm.”) or pathological findings. Encode key ECG features (e.g., ST segments, abnormalities), including uncertainties, while preserving distinctions in abnormalities for downstream inference. Ensure embeddings capture all critical ECG and diagnostic details for multimodal generation.

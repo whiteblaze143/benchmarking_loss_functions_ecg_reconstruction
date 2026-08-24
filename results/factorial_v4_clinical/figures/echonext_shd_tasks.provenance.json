@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/figures/figure_echonext_shd.py",
+  "script_sha256": "0e4f26ac3973b247b18fcca2ee776f7593740f0d7e5d2ba7fd1b50daf783cb79",
+  "common_helper_sha256": "e57c67c3e4dc0ed56aaab3c3e573bcb4b030954212f41e35f81fe3707434ff3e",
+  "inputs": {
+    "results/factorial_v4_clinical/classification_task_metrics.parquet": "bad90daf6490a6bd0f6e73b07dc70094f86c70990a76fa5f9080fa81345d51b8",
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": "4a645f296f0238019991eb5fcd7b34da196e9eeb6b11a0ce727c04af6fec1218"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "results/factorial_v4_clinical/figures/echonext_shd_tasks.pdf",
+      "sha256": "3d96f5ffdbebfd4cab2835b67493742cb72f98a3ef87fdb313f8b2215527b890"
+    },
+    "svg": {
+      "path": "results/factorial_v4_clinical/figures/echonext_shd_tasks.svg",
+      "sha256": "61adf3d63e18ba4f74d398d09e0d0d3bf79c7d31e0b1ff8b455a89bfbb0b5968"
+    },
+    "png": {
+      "path": "results/factorial_v4_clinical/figures/echonext_shd_tasks.png",
+      "sha256": "62c51a84687173325ecc6cd27e08b154f65c3138101aa842d7b599fe23ab2273"
+    }
+  },
+  "metadata": {
+    "tasks": 12,
+    "ground_truth": "echocardiography-derived EchoNext labels",
+    "selection": "validation-selected reconstruction masks",
+    "classifier_inputs": "reconstructed waveform plus unchanged original tabular metadata; retention is not attributable to waveform alone"
+  }
+}

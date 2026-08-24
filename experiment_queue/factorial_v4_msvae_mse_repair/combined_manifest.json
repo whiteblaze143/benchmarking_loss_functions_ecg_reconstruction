@@ -1,0 +1,216 @@
+{
+  "project": "factorial_v4_complete_repaired_2x4",
+  "cwd": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction",
+  "ssh": "localhost",
+  "conda": "none",
+  "default_cmd": "echo no-default",
+  "preconditions": [],
+  "gpus": [
+    0
+  ],
+  "max_parallel": 1,
+  "gpu_free_threshold_mib": 500,
+  "minimum_free_disk_gib": 4.0,
+  "low_disk_cleanup_interval_sec": 60,
+  "low_disk_cleanup_cmd": "git prune --expire=15.minutes.ago",
+  "oom_retry": {
+    "delay": 120,
+    "max_attempts": 3
+  },
+  "phases": [
+    {
+      "name": "repair_tests",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "msvae_attached_loss_tests",
+          "label": "Verify attached MultiScale-VAE reconstruction gradients",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python -m pytest -q tests/test_factorial_losses.py",
+          "expected_output": null
+        },
+        {
+          "id": "msvae_mse_off_smoke",
+          "label": "Smoke repaired MultiScale-VAE MSE-off route",
+          "cmd": "git prune --expire now && FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py smoke-cell --family msvae --mask 0010 --seed 42 --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/correction_2x4/msvae__e0c0m1d0__s42_smoke.json",
+          "expected_output": "results/factorial_v4/correction_2x4/msvae__e0c0m1d0__s42_smoke.json"
+        }
+      ]
+    },
+    {
+      "name": "replace_msvae_mse_off",
+      "depends_on": [
+        "repair_tests"
+      ],
+      "jobs": [
+        {
+          "id": "repair_msvae__e0c0m0d0__s42",
+          "label": "Retrain repaired MSVAE mask 0000",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m0d0__s42 --run_tag msvae__e0c0m0d0__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c0m0d1__s42",
+          "label": "Retrain repaired MSVAE mask 0001",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m0d1__s42 --run_tag msvae__e0c0m0d1__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.05 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c0m1d0__s42",
+          "label": "Retrain repaired MSVAE mask 0010",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m1d0__s42 --run_tag msvae__e0c0m1d0__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.0 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c0m1d1__s42",
+          "label": "Retrain repaired MSVAE mask 0011",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m1d1__s42 --run_tag msvae__e0c0m1d1__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.05 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m1d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c1m0d0__s42",
+          "label": "Retrain repaired MSVAE mask 0100",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m0d0__s42 --run_tag msvae__e0c1m0d0__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c1m0d1__s42",
+          "label": "Retrain repaired MSVAE mask 0101",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m0d1__s42 --run_tag msvae__e0c1m0d1__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.05 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c1m1d0__s42",
+          "label": "Retrain repaired MSVAE mask 0110",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m1d0__s42 --run_tag msvae__e0c1m1d0__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.0 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c1m1d1__s42",
+          "label": "Retrain repaired MSVAE mask 0111",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m1d1__s42 --run_tag msvae__e0c1m1d1__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m1d1__s42/ul_ecp_best.pt"
+        }
+      ]
+    },
+    {
+      "name": "repair_attestation",
+      "depends_on": [
+        "replace_msvae_mse_off"
+      ],
+      "jobs": [
+        {
+          "id": "verify_msvae_mse_repair",
+          "label": "Attest repaired MSE-off checkpoints differ from MSE-on pairs",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/verify_msvae_mse_repair.py --queue-state experiment_queue/factorial_v4_msvae_mse_repair/queue_state.json --manifest experiment_queue/factorial_v4_msvae_mse_repair/manifest.json --output results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json",
+          "expected_output": "results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json"
+        },
+        {
+          "id": "build_msvae_mse_off_registry",
+          "label": "Build exact eight-cell repaired evaluation registry",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/subset_model_registry.py --registry experiment_queue/factorial_v4/model_registry.json --output experiment_queue/factorial_v4_2x4_postprocess/msvae_mse_off_registry.json --prefix msvae__e0 --expected-count 8",
+          "expected_output": "experiment_queue/factorial_v4_2x4_postprocess/msvae_mse_off_registry.json"
+        }
+      ]
+    },
+    {
+      "name": "ptbxl_repaired_evaluation",
+      "depends_on": [
+        "repair_attestation"
+      ],
+      "jobs": [
+        {
+          "id": "evaluate_repaired_msvae_ptbxl",
+          "label": "Evaluate eight repaired cells on clean PTB-XL and 17 stress conditions",
+          "cmd": "git prune --expire now && FACTORIAL_RUN_ID=factorial_v4_2x4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_comprehensive_registry.py --registry experiment_queue/factorial_v4_2x4_postprocess/msvae_mse_off_registry.json --output results/factorial_v4/correction_2x4/comprehensive_msvae_e0.json --batch_size 32 --robustness_samples 2198 --robustness_condition_batch 9 --morphology_samples 2198",
+          "expected_output": "results/factorial_v4/correction_2x4/comprehensive_msvae_e0.json"
+        }
+      ]
+    },
+    {
+      "name": "ptbxl_merge",
+      "depends_on": [
+        "ptbxl_repaired_evaluation"
+      ],
+      "jobs": [
+        {
+          "id": "merge_repaired_msvae_ptbxl",
+          "label": "Merge repaired PTB-XL cells into provenance-bound 48-cell result",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/merge_repaired_model_results.py --base results/factorial_v4/comprehensive_results.json --replacement results/factorial_v4/correction_2x4/comprehensive_msvae_e0.json --attestation results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json --output results/factorial_v4_2x4/comprehensive_results.json",
+          "expected_output": "results/factorial_v4_2x4/comprehensive_results.json"
+        }
+      ]
+    },
+    {
+      "name": "echonext_repaired_evaluation",
+      "depends_on": [
+        "repair_attestation"
+      ],
+      "jobs": [
+        {
+          "id": "evaluate_repaired_msvae_echonext",
+          "label": "Evaluate eight repaired cells on EchoNext clean and stress data",
+          "cmd": "git prune --expire now && FACTORIAL_RUN_ID=factorial_v4_2x4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_echonext.py --registry experiment_queue/factorial_v4_2x4_postprocess/msvae_mse_off_registry.json --data_dir data/echonext --output results/factorial_v4/correction_2x4/echonext_msvae_e0.json --batch_size 32 --robustness_condition_batch 9 --robustness_samples 2198 --morphology_samples 2198 --skip_ecgfounder --resume --device cuda",
+          "expected_output": "results/factorial_v4/correction_2x4/echonext_msvae_e0.json"
+        }
+      ]
+    },
+    {
+      "name": "echonext_merge",
+      "depends_on": [
+        "echonext_repaired_evaluation"
+      ],
+      "jobs": [
+        {
+          "id": "merge_repaired_msvae_echonext",
+          "label": "Merge repaired EchoNext cells into 48-cell result",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/merge_repaired_model_results.py --base results/factorial_v4/echonext_results.json --replacement results/factorial_v4/correction_2x4/echonext_msvae_e0.json --attestation results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json --output results/factorial_v4_2x4/echonext_results.json",
+          "expected_output": "results/factorial_v4_2x4/echonext_results.json"
+        }
+      ]
+    },
+    {
+      "name": "smartwatch_repaired_evaluation",
+      "depends_on": [
+        "repair_attestation"
+      ],
+      "jobs": [
+        {
+          "id": "evaluate_repaired_msvae_smartwatch",
+          "label": "Evaluate eight repaired cells on four smartwatch devices",
+          "cmd": "git prune --expire now && FACTORIAL_RUN_ID=factorial_v4_2x4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_smartwatch.py --registry experiment_queue/factorial_v4_2x4_postprocess/msvae_mse_off_registry.json --data_dir data/physionet.org/files/ecg-capable-smartwatches/1.0.0 --output results/factorial_v4/correction_2x4/smartwatch_msvae_e0.json --batch_size 16 --robustness_samples 0 --device cuda",
+          "expected_output": "results/factorial_v4/correction_2x4/smartwatch_msvae_e0.json"
+        }
+      ]
+    },
+    {
+      "name": "smartwatch_merge",
+      "depends_on": [
+        "smartwatch_repaired_evaluation"
+      ],
+      "jobs": [
+        {
+          "id": "merge_repaired_msvae_smartwatch",
+          "label": "Merge repaired smartwatch cells into 48-cell result",
+          "cmd": "git prune --expire now && PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/merge_repaired_model_results.py --base results/factorial_v4/smartwatch_results.json --replacement results/factorial_v4/correction_2x4/smartwatch_msvae_e0.json --attestation results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json --output results/factorial_v4_2x4/smartwatch_results.json",
+          "expected_output": "results/factorial_v4_2x4/smartwatch_results.json"
+        }
+      ]
+    },
+    {
+      "name": "complete_2x4_statistics",
+      "depends_on": [
+        "ptbxl_merge",
+        "echonext_merge",
+        "smartwatch_merge"
+      ],
+      "jobs": [
+        {
+          "id": "analyze_complete_repaired_2x4",
+          "label": "Estimate four-factor main effects and interactions",
+          "cmd": "git prune --expire now && FACTORIAL_RUN_ID=factorial_v4_2x4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/analyze_factorial_v2.py --input results/factorial_v4_2x4/comprehensive_results.json --registry experiment_queue/factorial_v4/model_registry.json --paper-parity results/factorial_v4/paper_parity_results.json --confirmation-dir results/factorial_v4/confirmation --echonext results/factorial_v4_2x4/echonext_results.json --smartwatch results/factorial_v4_2x4/smartwatch_results.json --msvae-mse-repair-attestation results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json --output-dir results/factorial_v4_2x4 --require-complete",
+          "expected_output": "results/factorial_v4_2x4/statistics.json"
+        }
+      ]
+    }
+  ]
+}

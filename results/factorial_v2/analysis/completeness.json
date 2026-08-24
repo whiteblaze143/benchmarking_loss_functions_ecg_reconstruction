@@ -1,0 +1,24 @@
+
+{
+  "checks": {
+    "primary_cells_24": false,
+    "confirmation_configurations_9": false,
+    "confirmation_runs_18": false,
+    "confirmation_validation_records_2183": false,
+    "clean_records_2198": false,
+    "stress_records_2198": false,
+    "core_stress_conditions_17": false,
+    "fitbit_conditions_all_or_none": false,
+    "ecgfounder_complete": true,
+    "ecgfounder_noninferiority_24": false,
+    "morphology_coverage_reported": true,
+    "per_record_artifacts_present": true,
+    "paper_parity_anchors_5": false,
+    "paper_parity_records_2198": false,
+    "paper_parity_metrics_complete": false,
+    "echonext_cells_24": false,
+    "factorial_effect_rows_complete": true,
+    "familywise_endpoint_tests_9": true
+  },
+  "status": "incomplete"
+}

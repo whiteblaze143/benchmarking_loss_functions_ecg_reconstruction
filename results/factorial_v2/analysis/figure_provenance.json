@@ -1,0 +1,12 @@
+{
+  "source_sha256": {
+    "comprehensive_results": "1f0a8f0906b0ebf394969778e6c5e83eb793cec582604f0e790833e553fc2f8d",
+    "model_registry": "16d4025b197f60a523d1de3d4d395e701e489d7344214c4fd0c93cf66a666d53",
+    "paper_parity_results": null,
+    "echonext_results": null,
+    "main_table": "0b1fac502a45801b1914be7d7dd933fc079d915db927bce612ea0a897509be82",
+    "effects_table": "62355d924fc3d46aa00b3f1033237e1a5643d8a395aad110a6bacbc6ddd6db9d"
+  },
+  "core_coverage_passed": false,
+  "generated_figures": {}
+}

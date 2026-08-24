@@ -1,0 +1,1 @@
+{"M0 (Baseline)": {"Train": {"mae": 0.062, "pearson": 0.86}, "Val": {"mae": 0.068, "pearson": 0.84}, "Test": {"mae": 0.071, "pearson": 0.82}}, "M1-HPO (Ours)": {"Train": {"mae": 0.031, "pearson": 0.95}, "Val": {"mae": 0.035, "pearson": 0.93}, "Test": {"mae": 0.038, "pearson": 0.91}}}

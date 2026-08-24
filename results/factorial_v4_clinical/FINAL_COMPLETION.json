@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "status": "FAIL",
+  "checks_passed": 9,
+  "checks_total": 10,
+  "checks": {
+    "required_artifacts_present": {
+      "passed": true,
+      "detail": {}
+    },
+    "core_queue_complete": {
+      "passed": true,
+      "detail": 91
+    },
+    "clinical_queue_complete": {
+      "passed": true,
+      "detail": 13
+    },
+    "core_completeness_pass": {
+      "passed": true,
+      "detail": "complete"
+    },
+    "clinical_completeness_pass": {
+      "passed": true,
+      "detail": "PASS"
+    },
+    "core_figures_reviewed_7": {
+      "passed": true,
+      "detail": "PASS"
+    },
+    "clinical_figures_reviewed_8": {
+      "passed": true,
+      "detail": "PASS"
+    },
+    "protocol_audit_pass": {
+      "passed": true,
+      "detail": "pass"
+    },
+    "mmd_repair_validated": {
+      "passed": true,
+      "detail": "pass"
+    },
+    "fresh_postrun_audit_pass": {
+      "passed": false,
+      "detail": "REVIEW_UNAVAILABLE"
+    }
+  }
+}

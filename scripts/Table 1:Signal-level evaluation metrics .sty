@@ -1,0 +1,943 @@
+Table 1:Signal-level evaluation metrics for all experiments on the MIMIC dataset with different input leads.
+Lead Name	Lead Index	MSE	MAE	FID Score (if available)
+Main experiment (Input leads: II, V1, V5)
+I	0	0.00075	0.01691	
+III	2	0.00087	0.01833	
+aVR	3	0.00061	0.01425	
+aVL	4	0.00067	0.01570	
+aVF	5	0.00073	0.01568	
+V2	7	0.00126	0.02051	
+V3	8	0.00135	0.01984	
+V4	9	0.00138	0.01997	
+V6	11	0.00140	0.01916	
+Overall Metrics	0.00100	0.01783	11.34
+Comparative experiment (Input leads: I, II, V3)
+I	0	0.00085	0.01826	
+III	2	0.00061	0.01468	
+aVR	3	0.00067	0.01571	
+aVL	4	0.00070	0.01578	
+aVF	5	0.00162	0.02073	
+V2	7	0.00125	0.02047	
+V3	8	0.00148	0.02071	
+V4	9	0.00150	0.02088	
+V6	11	0.00149	0.01981	
+Overall Metrics	0.00113	0.01856	11.58
+Comparative experiment (Input lead: I)
+II	1	0.00076	0.01826	
+III	2	0.00081	0.01565	
+aVR	3	0.00067	0.01572	
+aVL	4	0.00083	0.01575	
+aVF	5	0.00182	0.02174	
+V1	6	0.00147	0.02348	
+V2	7	0.00143	0.02048	
+V3	8	0.00158	0.02171	
+V4	9	0.00172	0.02289	
+V5	10	0.00159	0.01880	
+V6	11	0.00172	0.01980	
+Overall Metrics	0.00131	0.01939	12.52
+To quantitatively evaluate the fidelity of generated ECG signals, we adopt three objective signal-level metrics: Mean Absolute Error (MAE), Mean Squared Error (MSE), and Fréchet Inception Distance (FID). These metrics assess both point-wise and distributional similarity between the generated signals and real ECGs.
+
+Let 
+𝐫
+ECG
+∈
+ℝ
+T
+×
+C
+ and 
+𝐠
+ECG
+∈
+ℝ
+T
+×
+C
+ denote the real and generated ECG signals respectively, where 
+T
+ is the number of time points and 
+C
+ is the number of channels. The MAE and MSE are defined as:
+
+MAE
+​
+(
+𝐫
+ECG
+,
+𝐠
+ECG
+)
+=
+1
+T
+⋅
+C
+​
+∑
+t
+=
+1
+T
+∑
+c
+=
+1
+C
+|
+𝐫
+t
+,
+c
+−
+𝐠
+t
+,
+c
+|
+(1)
+MSE
+​
+(
+𝐫
+ECG
+,
+𝐠
+ECG
+)
+=
+1
+T
+⋅
+C
+​
+∑
+t
+=
+1
+T
+∑
+c
+=
+1
+C
+(
+𝐫
+t
+,
+c
+−
+𝐠
+t
+,
+c
+)
+2
+(2)
+MAE captures the average magnitude of signal reconstruction error, while MSE penalizes larger deviations more heavily due to squaring. Lower MAE and MSE values indicate more accurate signal-level reconstructions.
+
+To further evaluate the distributional similarity in the feature space, we adopt the Fréchet Inception Distance (FID) metric, which measures the distance between the feature distributions of generated and real ECGs. The features are extracted from a pretrained encoder (e.g., ECGFounder), and the FID is calculated as:
+
+FID
+=
+‖
+μ
+r
+−
+μ
+g
+‖
+2
+2
++
+Tr
+​
+(
+Σ
+r
++
+Σ
+g
+−
+2
+​
+(
+Σ
+r
+​
+Σ
+g
+)
+1
+/
+2
+)
+(3)
+Here, 
+μ
+r
+, 
+Σ
+r
+ and 
+μ
+g
+, 
+Σ
+g
+ denote the mean and covariance matrices of feature embeddings for real and generated samples, respectively. A lower FID indicates that the synthetic signals are more similar to real ECGs in terms of high-level representations.
+
+For each experimental setup, Tables 1, list the MAE and MSE values per lead alongside the overall averaged scores, providing a comprehensive view of reconstruction quality across all leads.
+
+In the main experiment using leads II, V1, and V5 as input, the per-lead MAE and MSE values are consistently low, with the MAE ranging from approximately 0.00061 to 0.00140. The overall MAE and MSE are 0.00100 and 0.01782, respectively. The corresponding FID score of 12.64 further suggests that the reconstructed signals closely resemble the real ECG distribution in the feature space. Clinically, this lead combination offers broad spatial coverage across the frontal and horizontal planes, effectively capturing both limb and precordial information—making it a common configuration in arrhythmia and myocardial infarction screening.
+
+To validate the robustness of our method, we compared it with two alternative configurations: leads I, II, and V3, and the single-lead I setup. Both setups also yield strong performance, with overall MAE/MSE scores of 0.00113/0.01856 and 0.00112/0.01863, respectively. These results highlight that while our generative framework is robust to variations in input leads, carefully selecting leads with high diagnostic value further enhances reconstruction accuracy and practical applicability.
+
+WearECG can Enhance the Performance of AI-ECG Diagnosis
+To rigorously evaluate the diagnostic capacity of the generated 12-lead ECG signals, we performed a downstream multi-label classification task using ECGFounder26, a leading foundation model pretrained on over 10 million clinical ECG records. This task directly probes whether the generated signals retain sufficient pathological information to support real-world clinical decision-making. Specifically, the model was tasked with predicting approximately 40 cardiovascular conditions—including arrhythmias, conduction abnormalities, myocardial infarction, and chamber enlargements—using multi-hot encoded labels that reflect the frequent co-occurrence of cardiac diseases. This setting imposes a high bar for diagnostic fidelity, as successful classification requires the presence of nuanced, disease-specific signal features.
+
+To isolate the diagnostic value of the generated signals, we froze the pretrained ECGFounder encoder and trained a lightweight classification head solely on synthetic ECGs. Prior to training, all signals were normalized on a per-lead basis via Z-score standardization. Performance was comprehensively evaluated using AUROC, sensitivity, specificity, and optimal threshold per condition, providing insights into both global and condition-specific diagnostic utility. Strong performance in this task indicates that our generation framework does more than mimic surface waveform morphology—it embeds clinically meaningful patterns that generalize to real-world diagnostic objectives, underscoring the potential value of synthetic ECGs in training, benchmarking, and augmenting downstream clinical models.
+
+Table 2:AUROC comparison across different ECG lead configurations on MIMIC Dataset: WearECG (ours), original 12-lead, 3-lead only, and 1-lead only.
+Disease
+ 	WearECG (ours)	original 12-lead	3-lead only	1-lead only
+NORMAL
+ 	0.7958	0.8468	0.7753	0.8071
+SINUS RHYTHM
+ 	0.9247	0.9393	0.9262	0.9397
+SINUS BRADY
+ 	0.9882	0.9881	0.9878	0.9848
+AFIB
+ 	0.9751	0.9773	0.9718	0.9700
+SINUS TACHY
+ 	0.9910	0.9928	0.9928	0.9914
+LAXIS DEV
+ 	0.8609	0.8562	0.9269	0.2827
+PVC
+ 	0.9551	0.9391	0.9389	0.8539
+RBBB
+ 	0.9411	0.9588	0.9367	0.8632
+LAE
+ 	0.7290	0.8103	0.6391	0.6578
+PAC
+ 	0.9722	0.9570	0.9530	0.9573
+PSVC
+ 	0.8785	0.8852	0.8707	0.8614
+LBBB
+ 	0.7519	0.7448	0.7873	0.7224
+LVH
+ 	0.6881	0.7666	0.7129	0.5812
+QT SHORT
+ 	0.7406	0.7741	0.6956	0.5987
+QT LONG
+ 	0.8025	0.8224	0.8076	0.7977
+AFLUTTER
+ 	0.9088	0.9068	0.8962	0.8785
+SINUS ARR
+ 	0.9418	0.9533	0.9278	0.8961
+LAFB
+ 	0.9065	0.9031	0.9603	0.5420
+RAXIS DEV
+ 	0.8588	0.8540	0.7259	0.5496
+ECTOPIC ATR
+ 	0.7621	0.8204	0.7989	0.8932
+SHORT PR
+ 	0.7600	0.8216	0.7818	0.7248
+REPOL ABN
+ 	0.6019	0.6534	0.5176	0.5189
+RAE
+ 	0.6219	0.7086	0.7660	0.8165
+VOLT CRIT LVH
+ 	0.6310	0.6159	0.7123	0.5627
+LPFB
+ 	0.7822	0.8294	0.7759	0.3841
+1ST AVB
+ 	0.8752	0.9282	0.7953	0.8537
+RVH
+ 	0.8047	0.7927	0.7599	0.6064
+ACUTE MI/STEMI
+ 	0.8427	0.8734	0.6794	0.6870
+SVT
+ 	0.8374	0.8540	0.8130	0.8265
+VT
+ 	0.8815	0.8925	0.8854	0.8740
+EARLY REP
+ 	0.7927	0.7954	0.6801	0.7243
+WPW
+ 	0.8831	0.9050	0.8306	0.8558
+ACUTE
+ 	0.8469	0.8774	0.7280	0.6922
+ACUTE MI
+ 	0.8437	0.8720	0.6971	0.7213
+SVC
+ 	0.8785	0.8853	0.8718	0.8620
+2:1 AV COND
+ 	0.7428	0.6904	0.6936	0.6256
+Macro-AUC
+ 	0.8333	0.8465	0.7837	0.7545
+ 
+Table 3:Regional MI classification on MIMIC Dataset (AUROC)
+Region
+ 	WearECG	1-lead only	3-lead only	Original 12-lead
+Anterior
+ 	0.8683	0.7966	0.8397	0.8728
+Anterolateral
+ 	0.8880	0.7979	0.8297	0.8894
+Anteroseptal
+ 	0.9378	0.7676	0.8624	0.9410
+Inferior
+ 	0.8067	0.8180	0.8055	0.8117
+Lateral
+ 	0.8782	0.7989	0.8182	0.8823
+Septal
+ 	0.8794	0.6763	0.7839	0.8927
+Macro-AUC
+ 	0.8764	0.7759	0.8233	0.8817
+ 
+Using the MIMIC dataset for downstream evaluation (Table LABEL:tab:synthetic_eval), the synthetic ECGs generated by our WearECG model achieved a macro-average AUROC of 0.8333, closely approaching the original 12-lead configuration’s performance (0.8465) and substantially outperforming both the 3-lead (0.7837) and 1-lead (0.7545) setups. For critical cardiac conditions such as sinus bradycardia (AUROC = 0.9882), atrial fibrillation (AUROC = 0.9751), and premature ventricular complexes (AUROC = 0.9551), our model maintained high sensitivity and specificity, indicating effective preservation of key diagnostic features in the synthetic signals.
+
+To assess the generalizability of our model across datasets, we additionally evaluated downstream classification performance on the PTB-XL dataset. Consistent with the MIMIC results, WearECG-generated synthetic ECGs maintained competitive AUROC scores, demonstrating effective transfer of learned representations to a distinct clinical dataset.
+
+Table 4:AUROC comparison across different ECG lead configurations on PTBXL Dataset: WearECG (ours) and original 12-lead.
+Disease
+ 	WearECG (ours)	original 12-lead	3-lead only
+NORMAL
+ 	0.8183	0.8468	0.8027
+SINUS RHYTHM
+ 	0.8436	0.9393	0.7981
+SINUS BRADY
+ 	0.9301	0.9881	0.9040
+AFIB
+ 	0.9883	0.9770	0.9917
+SINUS TACHY
+ 	0.9907	0.9928	0.9844
+LAXIS DEV
+ 	0.8311	0.8562	0.8102
+PVC
+ 	0.9772	0.9391	0.9751
+RBBB
+ 	0.9076	0.9588	0.8905
+LAE
+ 	0.6621	0.8103	0.6848
+PAC
+ 	0.9532	0.9570	0.8786
+PSVC
+ 	0.8765	0.8852	0.8456
+LBBB
+ 	0.9801	0.9848	0.8814
+LVH
+ 	0.7283	0.7666	0.6673
+QT LONG
+ 	0.8680	0.8224	0.8862
+AFLUTTER
+ 	0.9589	0.9068	0.9906
+LAFB
+ 	0.8384	0.9031	0.8152
+ECTOPIC ATR
+ 	0.8337	0.8204	0.8170
+RAE
+ 	0.7511	0.8086	0.7243
+LPFB
+ 	0.6734	0.8294	0.7857
+1ST AVB
+ 	0.6857	0.9282	0.8375
+RVH
+ 	0.8475	0.8927	0.8383
+ACUTE MI/STEMI
+ 	0.6473	0.8734	0.5287
+SVT
+ 	0.8929	0.9540	0.8237
+VT
+ 	0.8641	0.8925	0.8264
+Macro-AUC
+ 	0.8470	0.8931	0.8328
+ 
+Table 5:Regional MI classification on PTB-XL Dataset(AUROC)
+Region
+ 	WearECG	Original 12-lead	3-lead only
+Anterior
+ 	0.5828	0.6465	0.6287
+Anterolateral
+ 	0.9112	0.9431	0.7473
+Anteroseptal
+ 	0.8756	0.9440	0.8400
+Inferior
+ 	0.7701	0.8615	0.7374
+Lateral
+ 	0.8460	0.9134	0.5594
+Septal
+ 	0.7447	0.9464	0.6748
+Macro-AUC
+ 	0.7885	0.8758	0.6979
+ 
+Importantly, we further evaluated WearECG on regional myocardial infarction (MI) classification across six anatomical locations (anterior, anterolateral, anteroseptal, inferior, lateral, and septal). As shown in Table LABEL:tab:MI_classification, our model consistently achieved high AUROC scores for all regions (macro-average AUROC = 0.8764), demonstrating its ability to preserve spatially localized infarct patterns. This indicates that WearECG not only captures overall cardiac abnormalities but also retains the diagnostic fidelity necessary for identifying specific infarct locations, which is critical for accurate clinical assessment and intervention planning.
+
+In contrast, the 1-lead approach exhibited significantly degraded performance across most pathologies and infarct regions, highlighting its limited clinical utility. The 3-lead system, while better than 1-lead, still falls short of matching the fidelity of our reconstructed signals. These results emphasize the added value of our method in bridging the gap between minimal lead configurations and full 12-lead ECGs, making WearECG a promising tool for practical and accurate cardiac monitoring in resource-constrained settings.
+
+Importantly, the successful transfer of knowledge from ECGFounder to synthetic ECGs underscores the generalizability and clinical value of our generation framework. This finding highlights the potential utility of synthetic ECGs in model pretraining, algorithm benchmarking, and data augmentation, especially in privacy-sensitive or low-resource settings where real ECG data are scarce or difficult to share.
+
+WearECG can Improve the ECG Diagnosis of Cardiologists
+Moreover, we also conducted a blinded Turing test involving three board-certified cardiologists. It also aims to evaluate the feature-level fidelity of the generated electrocardiogram (ECG) signals, we . A balanced set of 50 ECG samples—consisting of both real and generated signals—was randomly shuffled and presented under strictly blind conditions. The task required each expert to independently classify every sample as either “real” or “generated” based solely on waveform morphology and clinical plausibility. The resulting classification accuracies were 52%, 44%, and 44%, respectively, which are statistically close to random guessing (i.e., 50%). This suggests that the generated signals successfully mimic key morphological and temporal patterns found in authentic ECGs, such as waveform shapes, lead-to-lead coherence, and rhythm characteristics.
+
+In the evaluation of model-assisted myocardial infarction (MI) recognition, we analyzed the same set of generated ECG samples from two complementary perspectives: a quantitative assessment using a confusion matrix and a qualitative examination through case studies.
+
+For the confusion matrix evaluation (Figure X), the model-generated ECG samples, including both MI and normal cases, were assessed by physicians for MI detection and localization. The model achieved 26 true positives, 13 true negatives, 16 false positives, and 0 false negatives across 55 samples, corresponding to an accuracy of 70.9%, sensitivity of 100%, specificity of 44.8%, precision of 61.9%, and an F1-score of 76.5%.The results highlight that the model can effectively assist physicians in identifying MI, achieving high sensitivity while maintaining moderate specificity.
+
+Refer to caption
+Figure 3:Confusion matrix for model-assisted myocardial infarction (MI) detection.
+In the case study analysis, we selected representative samples to evaluate the effectiveness of model-generated ECGs in assisting physicians with myocardial infarction (MI) localization. Accurate localization of infarct regions is critical for guiding timely and appropriate clinical interventions, including treatment planning and risk assessment.
+
+Table 6:Representative case study samples for model-assisted MI localization.
+Physician 1	Physician 2	Physician 3	Model Prediction
+Septal	Anteroseptal	Anteroseptal	Anteroseptal
+Inferior/Septal	Inferior	Inferior	Inferior
+These results indicate that the model-generated ECGs closely align with physician assessments, effectively assisting in MI localization and providing useful reference for clinical interpretation. By accurately reconstructing ECG signals, the model offers a valuable tool for detecting and localizing myocardial infarction, which is critical for timely clinical decision-making, risk assessment, and treatment planning. This demonstrates that reconstructed ECGs can play an important role in supporting cardiologists in diagnosing heart conditions, particularly in identifying infarct regions, and may help reduce the likelihood of misdiagnosis in clinical practice. Additional cases are provided in the appendix for further reference.
+
+DISCUSSION
+In this study, we present a novel ECG signal generation and reconstruction framework aimed at synthesizing 12-lead ECGs from only three input leads. This approach effectively reduces data acquisition costs while maintaining high-fidelity signal reconstruction and diagnostic utility. Leveraging a variational autoencoder (VAE)-based backbone and integrating downstream classification heads for clinical diagnosis tasks, our pipeline offers a comprehensive solution for efficient and accurate ECG signal generation. Experimental results validate the robustness of the generated signals in both waveform-level metrics and downstream diagnostic performance, demonstrating the clinical promise of low-lead ECG reconstruction.
+
+Our main contribution lies in proposing a systematic pipeline for 3-lead to 12-lead ECG generation, evaluated not only by signal similarity metrics (e.g., FID, MSE) but also through downstream diagnostic tasks using a frozen expert model (ECGFounder). This dual-evaluation strategy provides insight into both the signal fidelity and clinical validity of the generated ECGs. Importantly, we achieve effective reconstruction and myocardial infarction localization from 3-lead inputs on portable devices, reaching diagnostic performance comparable to clinical reference standards on real-world datasets. Additionally, we demonstrate that the generated signals retain sufficient pathological information to support reliable myocardial infarction classification. Our design also allows modular adaptation, making it feasible to incorporate different generation backbones or clinical models in future studies.
+
+The proposed framework holds significant potential in resource-constrained medical scenarios, such as remote monitoring, wearable devices, and low-cost screening systems. By leveraging AI models to reconstruct high-quality 12-lead ECG signals from only 3-lead inputs, it not only preserves the essential diagnostic information but also enables effective localization of myocardial infarction. This breakthrough facilitates portable and accessible MI detection, which is crucial for reducing cases of missed or delayed medical intervention, especially in underserved or remote regions. Moreover, the system can be integrated into the clinical pathway spanning chest pain centers, pre-hospital emergency response, and community-based diagnostic services. This integration ensures early identification of critical cardiac events and provides robust auxiliary support for triage and referral decisions in environments where advanced ECG equipment or specialized cardiologists are unavailable. Additionally, by improving the completeness and reliability of diagnostic data derived from limited leads, this approach enhances clinical coverage in challenging scenarios characterized by patient movement, noise interference, or emergency conditions where acquiring full 12-lead ECGs is impractical.
+
+Despite promising results, our current framework still faces several important limitations. First, although the model demonstrates strong performance on the MIMIC dataset, this dataset mainly represents a specific patient population and device setting. Therefore, the generalization ability of the model to other populations with different ethnic, demographic, or clinical characteristics, as well as to ECG data acquired from different devices or clinical environments, remains unverified. This gap limits the immediate applicability of the model in diverse real-world scenarios and calls for further external validation on heterogeneous datasets.The current framework operates solely on raw ECG waveforms without leveraging complementary clinical diagnostic information, such as cardiologist textual reports or structured clinical notes. This lack of multimodal semantic integration means that the model cannot fully exploit the rich contextual and interpretative information embedded in clinical texts, which could be valuable for improving both the fidelity and diagnostic relevance of the generated signals. While ECGFounder provides a powerful and pretrained diagnostic backbone that offers objective quantitative evaluation of generated ECGs, it remains an algorithmic proxy and cannot replace expert cardiologist assessment. The subtle nuances and complex judgment calls made by experienced clinicians during ECG interpretation involve contextual knowledge and clinical experience that current automated models cannot yet replicate. Therefore, extensive clinical validation involving human experts remains essential to confirm the safety, reliability, and clinical utility of the generated ECG signals before deployment in real medical practice.
+
+Future work will focus on three main directions. First, we aim to rigorously validate the generalizability of our model across diverse datasets and real-world clinical ECG recordings that exhibit varying patient demographics, device types, noise levels, and lead configurations. This will help ensure robustness and applicability of the model in heterogeneous clinical settings. Moreover, we plan to enhance our downstream evaluation framework by including a wider range of cardiovascular conditions beyond myocardial infarction, such as arrhythmias and conduction abnormalities, to comprehensively assess the diagnostic value and clinical relevance of the generated ECG signals. Third, recognizing the current limitation of lacking semantic clinical context, we intend to integrate multimodal information, such as clinical diagnostic text reports and structured medical records, into the generation process. This integration will provide richer semantic constraints and improve both interpretability and diagnostic utility. Additionally, we will explore the incorporation of physiological priors and anatomical constraints—like heart vector models or lead field theory—into the model architecture to enhance biological plausibility and signal realism. In the long term, we envision adapting this framework for real-time implementation in portable or wearable ECG devices, enabling low-cost, accessible cardiovascular monitoring and early diagnostic support in resource-limited and ambulatory environments.
+
+METHODS
+Problem Definition
+The electrocardiogram (ECG) is a non-invasive tool that records the heart’s electrical activity over time, characterized by waveforms such as the P-wave, QRS complex, and T-wave, which correspond to distinct phases of the cardiac cycle. The standard 12-lead ECG, derived from 10 electrodes placed on the limbs and chest (as detailed in Table 7), provides a spatially comprehensive view of cardiac function and is widely used for diagnosing various cardiovascular conditions.
+
+Table 7:Electrode configuration in the standard 12-lead ECG system.
+Lead	Electrode Position
+I	Left Arm, Right Arm
+II	Left Foot, Right Arm
+III	Left Foot, Left Arm
+aVR	Right Arm
+aVL	Left Arm
+aVF	Left Foot
+V1	4th intercostal space, right sternal border
+V2	4th intercostal space, left sternal border
+V3	Midpoint between V2 and V4
+V4	5th intercostal space, midclavicular line
+V5	Lateral to V4, left midaxillary line
+V6	Lateral to V5, left midaxillary line
+We formulate 12-lead ECG reconstruction as a generative task, where the input contains only partial information from three selected leads. Given a segment 
+x
+∈
+ℝ
+L
+×
+T
+ representing an ECG with 
+L
+=
+12
+ leads over 
+T
+ time steps (e.g., 
+T
+=
+1000
+ for 2 seconds at 500Hz), we simulate 3-lead input by masking out 9 leads:
+
+x
+m
+​
+a
+​
+s
+​
+k
+​
+e
+​
+d
+=
+x
+⊙
+(
+1
+−
+M
+)
+(4)
+Here, 
+M
+∈
+{
+0
+,
+1
+}
+L
+×
+T
+ is a binary mask with zeros at the retained leads II, V1, V5 and ones elsewhere. The model is trained to reconstruct the full 12-lead ECG 
+y
+∈
+ℝ
+12
+×
+T
+ from 
+x
+m
+​
+a
+​
+s
+​
+k
+​
+e
+​
+d
+.
+
+We adopt a standard Variational Autoencoder (VAE) framework. The encoder maps the masked ECG to a latent distribution 
+q
+​
+(
+z
+|
+x
+m
+​
+a
+​
+s
+​
+k
+​
+e
+​
+d
+)
+, from which we sample a latent vector 
+z
+. The decoder then reconstructs the full ECG 
+y
+^
+=
+f
+θ
+​
+(
+z
+)
+.
+
+The model is optimized using a combination of:
+
+• Mean squared error between 
+y
+^
+ and 
+y
+• KL divergence between the approximate posterior and prior
+• Optional perceptual loss based on a pretrained ECG encoder
+To assess robustness and clinical applicability, we apply comparative experiments with multiple lead configurations, including:
+
+• Single-lead input (e.g., lead I only)
+• Three-lead input (e.g., I–II–V3 and II–V1–V5)
+This setup enables the model to learn to infer missing leads from partial observations, mimicking clinical scenarios where limited-lead monitoring is available. What’s more, it reflects realistic scenarios in low-resource or wearable monitoring environments.
+
+WearECG Overview
+We propose a two-stage framework to reconstruct 12-lead ECG signals from 3-lead inputs and enable multi-label disease classification. The first stage adopts an enhanced Variational Autoencoder (VAE) architecture 27, which extends the basic VAE structure by introducing several critical improvements for ECG signal modeling: (1) deep residual convolutional blocks that capture richer temporal representations; (2) multi-head self-attention modules to model long-range dependencies between leads; and (3) a hierarchical encoder-decoder design with progressive downsampling and upsampling to aggregate global context efficiently. This symmetric encoder-decoder backbone leverages structured latent representations through reparameterization to generate full-lead ECGs from partial inputs. Additionally, a perceptual loss is optionally employed during training to better preserve clinically meaningful features in the reconstructed signals, enhancing their diagnostic value.
+
+In the second stage, we fine-tune ECGFounder 26, a pre-trained ECG classification model, by attaching a lightweight classification head for downstream diagnosis tasks such as myocardial infarction, conduction blocks, and arrhythmias, formulated as multi-label prediction. The entire pipeline is modular and can be trained end-to-end or in a decoupled manner, demonstrating robustness and clinical relevance across various lead configurations.
+
+Refer to caption
+Figure 4:Framework Overview
+Dataset and Data Preprocessing
+The raw 12-lead ECG signals underwent a multi-step preprocessing pipeline to ensure data quality and uniformity for model training. First, the leads were reordered to a standardized sequence to maintain consistency across datasets by mapping their original order to a target reference layout. Next, all signals were resampled to a fixed frequency of 500 Hz using Fourier-based interpolation, which preserved signal integrity while adjusting the time series length. Missing values (NaNs) within the signals were replaced by averaging neighboring data points within a defined window, effectively mitigating missing data without causing significant bias.
+
+Although optional in this study, per-lead Z-score normalization was applied to align data distributions across samples and aid model convergence. To handle the large dataset efficiently, records were processed in batches, each undergoing NaN replacement, resampling, and optional normalization before saving. Finally, to prevent data leakage, train-test splits were created by grouping records according to subject_id, ensuring that all records from a given subject appear exclusively in either the training or testing set.
+
+WearECG Encoder: Learning Latent Structures from Limited Leads
+The encoder is constructed using a multi-layer one-dimensional convolutional neural network (1D CNN) tailored to process 12-lead electrocardiogram (ECG) signals. The input signal 
+𝐱
+∈
+ℝ
+T
+×
+12
+, where 
+T
+ is the temporal length, is initially projected to a higher dimensional feature space through a convolutional layer, increasing channels from 12 to 128. The network then applies residual blocks and downsampling layers to extract hierarchical features, reducing temporal resolution while increasing channel depth to 512, resulting in a compressed representation 
+𝐡
+∈
+ℝ
+T
+′
+×
+C
+ with 
+T
+′
+<
+T
+.
+
+Two separate convolutional layers predict the parameters of the approximate posterior distribution over the latent space:
+
+𝝁
+=
+f
+μ
+​
+(
+𝐡
+)
+,
+log
+⁡
+𝝈
+2
+=
+f
+σ
+​
+(
+𝐡
+)
+,
+(5)
+where 
+𝝁
+,
+log
+⁡
+𝝈
+2
+∈
+ℝ
+T
+′
+×
+d
+, and 
+d
+ is the latent dimension (here 
+d
+=
+4
+).
+
+The latent variable 
+𝐳
+ is then sampled using the reparameterization trick:
+
+𝐳
+=
+𝝁
++
+𝝈
+⊙
+ϵ
+,
+ϵ
+∼
+𝒩
+​
+(
+𝟎
+,
+𝐈
+)
+,
+(6)
+where 
+⊙
+ denotes element-wise multiplication, ensuring differentiability of the sampling process for backpropagation.
+
+WearECG Decoder: Reconstructing Twelve-Lead Signals from Latent Space
+The decoder receives the latent representation 
+𝐳
+∈
+ℝ
+T
+′
+×
+d
+ and aims to reconstruct the original ECG signal 
+𝐱
+^
+∈
+ℝ
+T
+×
+12
+. It employs a series of residual blocks integrated with multi-head self-attention mechanisms, which model long-range temporal dependencies. The decoder progressively upsamples the temporal dimension from 
+T
+′
+ back to 
+T
+ while reducing the channel depth from 
+d
+ back to 12.
+
+Formally, the decoding process can be described as:
+
+𝐱
+^
+=
+g
+θ
+​
+(
+𝐳
+)
+,
+(7)
+where 
+g
+θ
+​
+(
+⋅
+)
+ represents the decoder network parameterized by 
+θ
+, incorporating convolutional, residual, attention, and upsampling layers.
+
+The model is trained under the variational autoencoder framework by optimizing the evidence lower bound (ELBO):
+
+ℒ
+(
+θ
+,
+ϕ
+;
+𝐱
+)
+=
+𝔼
+q
+ϕ
+​
+(
+𝐳
+|
+𝐱
+)
+[
+log
+p
+θ
+(
+𝐱
+|
+𝐳
+)
+]
+−
+KL
+(
+q
+ϕ
+(
+𝐳
+|
+𝐱
+)
+|
+|
+p
+(
+𝐳
+)
+)
+,
+(8)
+where
+
+q
+ϕ
+​
+(
+𝐳
+|
+𝐱
+)
+=
+𝒩
+​
+(
+𝐳
+;
+𝝁
+,
+diag
+​
+(
+𝝈
+2
+)
+)
+,
+p
+​
+(
+𝐳
+)
+=
+𝒩
+​
+(
+𝟎
+,
+𝐈
+)
+,
+(9)
+with 
+q
+ϕ
+ the encoder’s approximate posterior and 
+p
+​
+(
+𝐳
+)
+ the prior.
+
+The reconstruction loss is computed as the mean squared error (MSE):
+
+ℒ
+recon
+=
+1
+N
+​
+∑
+i
+=
+1
+N
+‖
+𝐱
+i
+−
+𝐱
+^
+i
+‖
+2
+,
+(10)
+and the KL divergence term has a closed-form expression:
+
+KL
+=
+−
+1
+2
+​
+∑
+j
+=
+1
+d
+(
+1
++
+log
+⁡
+σ
+j
+2
+−
+μ
+j
+2
+−
+σ
+j
+2
+)
+.
+(11)
+The total loss is thus:
+
+ℒ
+=
+ℒ
+recon
++
+β
+⋅
+KL
+,
+(12)
+where 
+β
+ is a hyperparameter weighting the KL term (e.g., 
+10
+−
+4
+).
+
+Optimization is performed using the AdamW optimizer, with parameters updated by
+
+θ
+,
+ϕ
+←
+θ
+,
+ϕ
+−
+η
+​
+∇
+θ
+,
+ϕ
+ℒ
+,
+(13)
+where 
+η
+ is the learning rate scheduled by a OneCycle learning rate policy to facilitate convergence.
+
+To avoid data leakage, the dataset is split by subject according to their subject_id, ensuring that all samples from a single subject belong exclusively to either the training or testing sets.
+
+Fine-tuned ECGFounder
+In the downstream classification stage, we fine-tune ECGFounder, a deep neural network pretrained on large-scale 12-lead ECG datasets.This study addresses a multi-label classification task on 12-lead ECG signals, targeting approximately 40 cardiac disease categories, including myocardial infarction28, various conduction blocks29, and arrhythmias. Labels are represented as multi-hot vectors, enabling simultaneous detection of multiple coexisting conditions. The task demands robust generalization and fine-grained feature extraction from the model.
+
+ECGFounder employs a modular 1D convolutional architecture tailored for multi-lead ECG signals. The backbone network consists of multiple residual bottleneck blocks, each containing sequential 1×1, k×1, and 1×1 convolutions, combined with batch normalization and Swish activation functions. To maintain temporal resolution and reduce information loss, custom SAME-padding convolution and max-pooling layers are applied. The network progressively downsamples the input signal through multiple stages, aggregating hierarchical features while incorporating squeeze-and-excitation modules for channel-wise attention.
+
+Prior to model input, each ECG lead is standardized using Z-score normalization 30 to mitigate offset and amplitude scaling issues.During fine-tuning, the pretrained weights are loaded, and the backbone parameters are frozen to retain learned representations. A lightweight classification head—a fully connected linear layer—is appended to the extracted deep features for multi-label prediction of cardiovascular conditions such as myocardial infarction, conduction blocks, and arrhythmias. Input ECG signals are standardized per lead by Z-score normalization before feeding into the model. Training uses a multi-label binary cross-entropy loss, optimized with Adam, with hyperparameters empirically selected for convergence.
+
+The entire pipeline demonstrates robustness and clinical relevance across various lead configurations, enabling effective downstream diagnosis from reconstructed or raw ECG signals.
+
+Training Setup
+The model was trained on a single NVIDIA RTX 3090 GPU using the PyTorch framework. We utilized an efficient data loading pipeline that shuffled the training data and processed it in batches of size 16. To optimize the model parameters, the AdamW optimizer was employed with an initial learning rate of 
+1
+×
+10
+−
+5
+. A OneCycle learning rate scheduler was applied, with a maximum learning rate of 
+5
+×
+10
+−
+5
+ and a warm-up period corresponding to 20% of the total training steps, which facilitated faster and more stable convergence.
+
+Training was conducted for 10 epochs. The loss function combined a mean squared reconstruction loss and a Kullback–Leibler divergence (KLD) regularization term, where the KLD weight was set to 
+1
+×
+10
+−
+4
+ to balance reconstruction fidelity and latent space regularization. To reduce GPU memory consumption and accelerate training without compromising performance, mixed precision training was enabled via PyTorch’s Automatic Mixed Precision (AMP) feature.
+
+To prevent data leakage and ensure the robustness of model evaluation, the dataset was split by subject_id, such that all samples belonging to the same subject were contained exclusively in either the training or validation sets. Data preprocessing, including normalization and consistent lead reordering, was performed during data loading to maintain input uniformity.
+
+Model checkpoints were saved at the end of each epoch to enable recovery and facilitate model selection. Although an early stopping mechanism was configured, it was not triggered as training proceeded stably without overfitting.
+
+RESOURCE AVAILABILITY

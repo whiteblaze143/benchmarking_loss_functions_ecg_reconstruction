@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "reviewed_at": "2026-07-26T19:48:32Z",
+  "review_method": "Original-resolution PNG inspection plus SHA-256 verification against figure_provenance.json",
+  "figures": {
+    "factorial_heatmaps": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "8e4201398b231abe26c1e2ff146e4ff4a53c4f2d9c0d06eb079cbd2bd3bb484d",
+      "notes": "All four primary factorial panels are legible; titles, mask labels, values, and color bars are unclipped."
+    },
+    "factorial_heatmaps_4factor_supplementary": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "a0379a8ed134b64a07af2009fa440ea4f4065706cd6dc3da01653c25ce1f6120",
+      "notes": "Dense 2^4 supplement was regenerated with compact two-decimal annotations, cell boundaries, and readable labels."
+    },
+    "factorial_effect_forest": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "a0c808637c67d28352a52c060fa73ea5d8def3f77ba68598f2720d002eb8fa24",
+      "notes": "Point estimates, BCa intervals, zero reference, family grouping, and MMD capitalization are clear."
+    },
+    "morphology_diagnostic_pareto": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "7bbbe29e0c98bbb8d153a88dd00ae641036808b1166637f000cf69c0f316958a",
+      "notes": "Regenerated to encode masks by distinct markers; separate architecture and mask legends eliminate colliding point labels."
+    },
+    "nstdb_degradation": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "567af1fe87f6e53608f4135f85e493e703a13d87cb9a9c07ca152d2f55636db7",
+      "notes": "All nine family-by-NSTDB facets and eight masks are visible with an unobstructed shared legend."
+    },
+    "echonext_external_heatmap": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "2a35bb65602e041edf92003dd8e79a21d5ca4c6ddda689ffffab5fb779dd1b8c",
+      "notes": "R2 and Pearson panels are fully annotated and clearly expose the external-domain amplitude-calibration failure."
+    },
+    "echonext_representative_reconstructions": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "e4d566d9773e4947ae6093ff2dc89003e22fc4ad912580b16e9ce35bcc68cff5",
+      "notes": "All three architecture panels, lead traces, targets, reconstructions, titles, and panel labels are visible."
+    }
+  }
+}

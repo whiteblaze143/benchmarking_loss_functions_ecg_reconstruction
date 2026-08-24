@@ -1,0 +1,312 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "checks_passed": 16,
+  "checks_total": 16,
+  "checks": {
+    "preflight_pass": {
+      "passed": true,
+      "detail": {
+        "free_disk_gib": 4.8631591796875,
+        "registry_models": 48,
+        "ptbxl_per_record_models": 48,
+        "comprehensive_results": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/comprehensive_results.json",
+        "echonext": {
+          "waveform_shape": [
+            5442,
+            1,
+            2500,
+            12
+          ],
+          "test_metadata_rows": 5442,
+          "shd_tasks": 12,
+          "official_classifier": {
+            "name": "EchoNext_Mini_multilabel",
+            "source_repository": "https://github.com/PierreElias/IntroECG",
+            "source_commit": "15233e9392e9dc10c136a5624abf10199207bce9",
+            "repository_root": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/ecg_fm_integration/echonext_minimodel_repo/7-EchoNext Minimodel",
+            "weights": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/ecg_fm_integration/echonext_minimodel_repo/7-EchoNext Minimodel/models/echonext_multilabel_minimodel/weights.pt",
+            "weights_sha256": "aac57aad0ec9763021c6264e89c74e3d78f8b711159b1880e5bd4515d5e21cd6",
+            "tabular_transformer": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/ecg_fm_integration/echonext_minimodel_repo/7-EchoNext Minimodel/models/echonext_multilabel_minimodel/tabular_transformer.joblib",
+            "tabular_transformer_sha256": "495386a8f6555addc8ddfb257a7364d062c4ecc553246d34fc1242ab91b74b59",
+            "waveform_normalization_params": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/ecg_fm_integration/echonext_minimodel_repo/7-EchoNext Minimodel/models/echonext_multilabel_minimodel/waveform_normalization_params.json",
+            "waveform_normalization_params_sha256": "f3fc58aa37984bb58c7d47aa73f7a623c40fe0fd13f4c1ba4e1de050a53c2b1c",
+            "tasks": [
+              "lvef_lte_45",
+              "lvwt_gte_13",
+              "aortic_stenosis_moderate_or_greater",
+              "aortic_regurgitation_moderate_or_greater",
+              "mitral_regurgitation_moderate_or_greater",
+              "tricuspid_regurgitation_moderate_or_greater",
+              "pulmonary_regurgitation_moderate_or_greater",
+              "rv_systolic_dysfunction_moderate_or_greater",
+              "pericardial_effusion_moderate_large",
+              "pasp_gte_45",
+              "tr_max_gte_32",
+              "shd_moderate_or_greater"
+            ],
+            "threshold": 0.5,
+            "threshold_source": "fixed_predefined_0.5"
+          }
+        },
+        "smartwatch": {
+          "applewatch_serie8": {
+            "paired_records": 180,
+            "input_leads": [
+              "II"
+            ]
+          },
+          "fitbitsense2": {
+            "paired_records": 180,
+            "input_leads": [
+              "II"
+            ]
+          },
+          "samsunggalaxy6": {
+            "paired_records": 179,
+            "input_leads": [
+              "II"
+            ]
+          },
+          "withingsscanwatch": {
+            "paired_records": 180,
+            "input_leads": [
+              "II"
+            ]
+          }
+        },
+        "nstdb": {
+          "bw": true,
+          "em": true,
+          "ma": true
+        }
+      }
+    },
+    "ptbxl_task_rows_14640": {
+      "passed": true,
+      "detail": 14640
+    },
+    "ptbxl_tasks_150_plus_5": {
+      "passed": true,
+      "detail": {
+        "ECGFounder_150": 150,
+        "PTBXL_five_superclass": 5
+      }
+    },
+    "ptbxl_extensive_schema": {
+      "passed": true,
+      "detail": []
+    },
+    "echonext_models_48": {
+      "passed": true,
+      "detail": 48
+    },
+    "echonext_reference_12_tasks": {
+      "passed": true,
+      "detail": 12
+    },
+    "echonext_complete_clean_stress_per_task": {
+      "passed": true,
+      "detail": {
+        "models_with_parquet": 48,
+        "unique_row_counts": [
+          42808
+        ]
+      }
+    },
+    "smartwatch_models_48": {
+      "passed": true,
+      "detail": 48
+    },
+    "smartwatch_exact_pairs_and_150_tasks": {
+      "passed": true,
+      "detail": {
+        "applewatch_serie8": 180,
+        "fitbitsense2": 180,
+        "samsunggalaxy6": 179,
+        "withingsscanwatch": 180
+      }
+    },
+    "smartwatch_taxonomy_explicit": {
+      "passed": true,
+      "detail": {
+        "taxonomy": {
+          "simulator_targets": "simulation_only_calibrated_protocol",
+          "philips_pairing": "paired_device_signal_reference",
+          "ecgfounder": "frozen_classifier_probability_fidelity_proxy",
+          "human_diagnostic_ground_truth": "unavailable",
+          "square_wave": "paired_device_reference_under_simulated_2hz_stimulus; reported endpoint is the cross-correlation maximized during lag alignment, not an independent accuracy metric"
+        },
+        "pairing_audit": {
+          "applewatch_serie8": {
+            "discovered_watch_records": 180,
+            "paired_records": 180,
+            "unmatched_watch_record_ids": [],
+            "pairing_key": "casefolded_relative_posix_path"
+          },
+          "fitbitsense2": {
+            "discovered_watch_records": 181,
+            "paired_records": 180,
+            "unmatched_watch_record_ids": [
+              "st-segment/ST-m6/ST-m6_5"
+            ],
+            "pairing_key": "casefolded_relative_posix_path"
+          },
+          "samsunggalaxy6": {
+            "discovered_watch_records": 179,
+            "paired_records": 179,
+            "unmatched_watch_record_ids": [],
+            "pairing_key": "casefolded_relative_posix_path"
+          },
+          "withingsscanwatch": {
+            "discovered_watch_records": 180,
+            "paired_records": 180,
+            "unmatched_watch_record_ids": [],
+            "pairing_key": "casefolded_relative_posix_path"
+          }
+        }
+      }
+    },
+    "classification_database_rows_25020": {
+      "passed": true,
+      "detail": 25020
+    },
+    "smartwatch_fidelity_rows_28800": {
+      "passed": true,
+      "detail": 28800
+    },
+    "smartwatch_protocol_rows_16": {
+      "passed": true,
+      "detail": 16
+    },
+    "eight_hashed_figure_triplets": {
+      "passed": true,
+      "detail": {
+        "ptbxl_ecgfounder_task_rank": {
+          "generator_script_hash": true,
+          "common_helper_hash": true,
+          "pdf": true,
+          "svg": true,
+          "png": true,
+          "input:results/factorial_v4_clinical/classification_task_metrics.parquet": true,
+          "input:/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": true
+        },
+        "ptbxl_five_superclasses": {
+          "generator_script_hash": true,
+          "common_helper_hash": true,
+          "pdf": true,
+          "svg": true,
+          "png": true,
+          "input:results/factorial_v4_clinical/classification_task_metrics.parquet": true,
+          "input:/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": true
+        },
+        "echonext_shd_tasks": {
+          "generator_script_hash": true,
+          "common_helper_hash": true,
+          "pdf": true,
+          "svg": true,
+          "png": true,
+          "input:results/factorial_v4_clinical/classification_task_metrics.parquet": true,
+          "input:/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": true
+        },
+        "echonext_shd_stress": {
+          "generator_script_hash": true,
+          "common_helper_hash": true,
+          "pdf": true,
+          "svg": true,
+          "png": true,
+          "input:results/factorial_v4_clinical/classification_task_metrics.parquet": true,
+          "input:/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": true
+        },
+        "smartwatch_radar": {
+          "generator_script_hash": true,
+          "common_helper_hash": true,
+          "pdf": true,
+          "svg": true,
+          "png": true,
+          "input:results/factorial_v4/smartwatch_results.json": true,
+          "input:/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": true
+        },
+        "smartwatch_protocol_accuracy": {
+          "generator_script_hash": true,
+          "common_helper_hash": true,
+          "pdf": true,
+          "svg": true,
+          "png": true,
+          "input:results/factorial_v4_clinical/smartwatch_protocol_metrics.parquet": true
+        },
+        "smartwatch_task_rank": {
+          "generator_script_hash": true,
+          "common_helper_hash": true,
+          "pdf": true,
+          "svg": true,
+          "png": true,
+          "input:results/factorial_v4_clinical/smartwatch_task_fidelity.parquet": true,
+          "input:/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": true
+        },
+        "echonext_shd_calibration": {
+          "generator_script_hash": true,
+          "common_helper_hash": true,
+          "pdf": true,
+          "svg": true,
+          "png": true,
+          "input:results/factorial_v4/echonext_results.json": true,
+          "input:results/factorial_v4/echonext_reference_shd.parquet": true,
+          "input:/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": true,
+          "input:results/factorial_v4/echonext_per_record/unet__e1c1m1d0__s42__echonext_shd.parquet": true,
+          "input:results/factorial_v4/echonext_per_record/msvae__e1c1m0d0__s42__echonext_shd.parquet": true,
+          "input:results/factorial_v4/echonext_per_record/ecgaim__e1c1m1d0__s42__echonext_shd.parquet": true
+        }
+      }
+    },
+    "eight_figures_visually_reviewed": {
+      "passed": true,
+      "detail": {
+        "ptbxl_ecgfounder_task_rank": {
+          "data_hash_gate": "PASS",
+          "visual_review": "PASS",
+          "png_sha256": "aa97a4ca2f620afa3c6f056ad518183ad5b8cb8c5e2a745c8cbda5a1d39382a5"
+        },
+        "ptbxl_five_superclasses": {
+          "data_hash_gate": "PASS",
+          "visual_review": "PASS",
+          "png_sha256": "f502c731c9bed4d35afc3b4a811d7a4a962ef0468f29776d47b2c7264c86b4e4"
+        },
+        "echonext_shd_tasks": {
+          "data_hash_gate": "PASS",
+          "visual_review": "PASS",
+          "png_sha256": "62c51a84687173325ecc6cd27e08b154f65c3138101aa842d7b599fe23ab2273"
+        },
+        "echonext_shd_stress": {
+          "data_hash_gate": "PASS",
+          "visual_review": "PASS",
+          "png_sha256": "ab54752840700c8cf4e3c99c999d7be28cc65c5dc3ddeaa9701bbb47afff1201"
+        },
+        "smartwatch_radar": {
+          "data_hash_gate": "PASS",
+          "visual_review": "PASS",
+          "png_sha256": "07d10545e38d68b3d852a324eb2711db4ca79c3e947f1cc8ff84dcd165e85ec5"
+        },
+        "smartwatch_protocol_accuracy": {
+          "data_hash_gate": "PASS",
+          "visual_review": "PASS",
+          "png_sha256": "e70b591627e850baa2333831f305d992be06b70aee8bbb2a7a7f283d78ca543f"
+        },
+        "smartwatch_task_rank": {
+          "data_hash_gate": "PASS",
+          "visual_review": "PASS",
+          "png_sha256": "761acc860eb80253d7c56a52318457296ceaeb78c13a17a1a3aed09cd84ba810"
+        },
+        "echonext_shd_calibration": {
+          "data_hash_gate": "PASS",
+          "visual_review": "PASS",
+          "png_sha256": "57349517dd2004946372fe7ce29d9a1c3555105b4efea42a49bac95bbcf6373a"
+        }
+      }
+    },
+    "withdrawn_invalid_artifacts_absent": {
+      "passed": true,
+      "detail": []
+    }
+  }
+}

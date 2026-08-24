@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/figures/figure_smartwatch_radar.py",
+  "script_sha256": "c93d58a36096c254b718b2a556921671a43bd7fb456b78fb778916db8e7f90a6",
+  "common_helper_sha256": "e57c67c3e4dc0ed56aaab3c3e573bcb4b030954212f41e35f81fe3707434ff3e",
+  "inputs": {
+    "results/factorial_v4/smartwatch_results.json": "fd452e0cd2d43d1bacb38097700ffb320a1f62eaa1cf1ad96868bc51210fc454",
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": "4a645f296f0238019991eb5fcd7b34da196e9eeb6b11a0ce727c04af6fec1218"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "results/factorial_v4_clinical/figures/smartwatch_radar.pdf",
+      "sha256": "1a78551c543cdfce57287155f599486e30563f0f27c6c0a26f2d521fd2113e9d"
+    },
+    "svg": {
+      "path": "results/factorial_v4_clinical/figures/smartwatch_radar.svg",
+      "sha256": "8f216560c776e679d4fad13a8df33d66c3f2100e2019bd8efc609f73dc52d949"
+    },
+    "png": {
+      "path": "results/factorial_v4_clinical/figures/smartwatch_radar.png",
+      "sha256": "07d10545e38d68b3d852a324eb2711db4ca79c3e947f1cc8ff84dcd165e85ec5"
+    }
+  },
+  "metadata": {
+    "normalization": "direction-corrected min-max across 12 selected family-device rows",
+    "interpretation": "higher is better; relative profile only, not absolute clinical accuracy",
+    "ground_truth_status": "signal reference plus classifier probability-fidelity proxy"
+  }
+}

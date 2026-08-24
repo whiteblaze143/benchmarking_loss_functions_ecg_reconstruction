@@ -1,0 +1,156 @@
+---
+title: "Implemented Reconstruction Architectures"
+---
+
+## Two studies, two architecture scopes
+
+This repository contains two related but distinct experiments. The locked 48-cell benchmark crosses **three architecture families**—MCMA-U-Net, WearECG MultiScale-VAE, and ECG-AIM—with 16 four-bit objective masks at seed 42. The running 480-model study holds the architecture fixed to **MCMA-U-Net** and crosses a mixed-level seven-character loss mask with three seeds. ResNet and Conformer are not cells in either study and are therefore not presented as evaluated architectures.
+
+All families solve the same imputation task: observed leads I, II, and V2 (indices 0, 1, and 7 in the canonical order) condition reconstruction of a 12-lead, 5,000-sample array. Evaluation restores the three acquired leads exactly before computing all-lead endpoints; primary reconstruction endpoints are calculated on the nine missing leads so copied inputs cannot inflate performance.
+
+```{python}
+#| label: architecture-registry-audit
+#| tbl-cap: "Architecture facts read from the locked 48-cell model registry; no parameter or receptive-field values are invented."
+#| code-fold: true
+from pathlib import Path
+import hashlib
+import json
+
+import pandas as pd
+
+ROOT = Path("..").resolve()
+REGISTRY_PATH = ROOT / "results/comprehensive_latest_48_models/provenance/model_registry.json"
+registry = json.loads(REGISTRY_PATH.read_text())
+models = pd.DataFrame(registry["models"])
+
+def sha256_file(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+rows = []
+for family, group in models.groupby("family", sort=False):
+    architecture = group.iloc[0]["architecture"]
+    rows.append({
+        "Registry family": family,
+        "Cells": len(group),
+        "Declared architecture": architecture.get("name"),
+        "Architecture fields": ", ".join(
+            f"{key}={value}" for key, value in architecture.items() if key != "name"
+        ),
+        "Kinds": ", ".join(sorted(group["kind"].unique())),
+        "Seeds": ", ".join(map(str, sorted(group["seed"].unique()))),
+        "Observed leads": ", ".join(map(str, group.iloc[0]["observed_leads"])),
+        "Unique masks": group["factorial_mask"].nunique(),
+    })
+
+architecture_table = pd.DataFrame(rows)
+display(architecture_table)
+display(pd.DataFrame([
+    ("Registry schema", registry["schema_version"]),
+    ("Registry benchmark", registry["benchmark"]),
+    ("Registry SHA-256", sha256_file(REGISTRY_PATH)),
+    ("Registered models", len(models)),
+], columns=["Field", "Value"]))
+```
+
+## Shared tensor and lead contract
+
+Let the measured ECG be $Y\in\mathbb{R}^{12\times T}$ in canonical order
+
+$$[I, II, III, aVR, aVL, aVF, V1, V2, V3, V4, V5, V6].$$
+
+With observed index set $O=\{0,1,7\}$ and missing set $M=\{0,\ldots,11\}\setminus O$, a reconstructor $f_\theta$ receives $Y_O$ or an equivalent masked 12-lead representation and produces $\tilde Y=f_\theta(Y_O)$. The evaluator applies the acquisition-preserving projection
+
+$$
+\hat Y_j =
+\begin{cases}
+Y_j,&j\in O,\\
+\tilde Y_j,&j\in M.
+\end{cases}
+$$
+
+This projection is important for deployment semantics—the device already measured $Y_O$—but it means all-lead metrics combine nine inferred channels with three exact channels. Missing-lead metrics on $M$ are consequently the primary architecture-comparison endpoints.
+
+The registry declares 500 Hz, 5,000 samples, mV, no normalization, and fixed train/validation/test inventories. Those fields are evaluation contracts, not defaults to infer for an external dataset. EchoNext, smartwatch, LUDB, ISP, Sunnybrook, and Zhejiang evaluations each require their own provenance and transformation audit.
+
+## MCMA-U-Net: the running study backbone
+
+The implemented `MCMAModel` is an encoder-decoder with six channel widths
+
+$$[16,32,64,128,256,512],$$
+
+five stride-2 temporal reductions after an initial stride-1 block, five transposed-convolution upsampling stages, encoder-decoder concatenations, and a final $1\times1$ projection to 12 output leads. Its residual-style down/up blocks use kernel size 13, GELU activation, GroupNorm, and InstanceNorm. This is not the generic three-level BatchNorm U-Net previously shown in this chapter; the executable source is `scripts/train_mcma_3lead.py`.
+
+For a cross-correlation layer with kernel $K$, stride $s$, dilation $d$, and padding $p$,
+
+$$
+L_{out}=\left\lfloor\frac{L_{in}+2p-d(K-1)-1}{s}+1\right\rfloor.
+$$
+
+Five halvings require a length compatible with $2^5$. The U-Net adapter pads a 5,000-sample record by 120 samples to 5,120, runs the network, then crops back to 5,000. Skip tensors are explicitly interpolated when a parity mismatch remains. The padding/cropping behavior is part of inference and must not be silently changed in another evaluator.
+
+```{python}
+#| label: current-unet-source-audit
+#| tbl-cap: "Executable MCMA-U-Net structure and source identity for the active study."
+#| code-fold: true
+import sys
+import torch
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from scripts.train_mcma_3lead import MCMAModel
+
+unet = MCMAModel(in_channels=3, out_channels=12)
+trainable = sum(parameter.numel() for parameter in unet.parameters() if parameter.requires_grad)
+state_tensors = len(unet.state_dict())
+source_path = ROOT / "scripts/train_mcma_3lead.py"
+
+with torch.inference_mode():
+    # A short length divisible by 32 verifies channel flow without allocating a
+    # training-size activation graph. Production inference uses padded length 5120.
+    probe_input = torch.zeros(1, 3, 320)
+    probe_output = unet(probe_input)
+
+display(pd.DataFrame([
+    ("Input lead indices", "0, 1, 7"),
+    ("Production input shape", "[batch, 3, 5120] after right padding"),
+    ("Production output shape", "[batch, 12, 5000] after crop"),
+    ("Probe input/output", f"{tuple(probe_input.shape)} → {tuple(probe_output.shape)}"),
+    ("Trainable parameters", f"{trainable:,}"),
+    ("State-dict tensors", state_tensors),
+    ("Implementation SHA-256", sha256_file(source_path)),
+], columns=["Field", "Observed value"]))
+```
+
+The current checkpoint contract additionally fixes the full source bundle, state schema, float16 checkpoint state, split byte-content roots, optimizer, and checkpoint-selection rule. A checkpoint from the same nominal class but a different source bundle is not interchangeable.
+
+## WearECG MultiScale-VAE
+
+The locked registry declares a WearECG MultiScale-VAE with four latent channels and evaluation kind `msvae`. Its adapter constructs a 12-lead tensor in which unobserved channels are masked, passes explicit observed-lead indices, and calls the model's imputation regressor when available. This family has a VAE base objective; factorial switches add auxiliary terms around that family-specific base. Its total objective scale is therefore not directly comparable to the U-Net total loss.
+
+The loose primary checkpoints referenced by the locked registry are not present in the working checkpoint directory because the completed benchmark is distributed as a locked result bundle. This book reports the registry-declared architecture and artifact-backed evaluation outputs; it does not invent a parameter count by instantiating a possibly different local implementation.
+
+## ECG-AIM
+
+The locked registry declares ECG-AIM as an AliTok-style model with width 384, encoder depth 8, decoder depth 4, eight attention heads, and patch size 25. At 5,000 samples, patch size 25 corresponds to 200 temporal tokens before architecture-specific special tokens or masking. As with MultiScale-VAE, the evaluator supplies a masked 12-lead tensor and explicit lead indices, then obtains a 12-lead prediction through the registered adapter.
+
+Attention width, depth, and token size describe computational structure; they do not by themselves imply better morphology or diagnostic fidelity. Those are measured in the paired PTB-XL and transfer endpoints. Cross-family rankings are descriptive because the backbone, base objective, optimizer schedule, and inductive bias all change together.
+
+## Architecture comparison rules
+
+The cleanest loss-function estimand is **within-family**: compare objective masks while holding architecture, seed, split, preprocessing, and evaluator fixed. An architecture-family contrast changes multiple mechanisms and should not be interpreted as a pure effect of convolution, variational inference, or attention.
+
+For every reported model, the minimum identity is:
+
+1. registry ID and architecture family;
+2. objective mask and seed;
+3. observed-lead order and pass-through policy;
+4. checkpoint digest and source-bundle digest;
+5. preprocessing and split content roots;
+6. adapter/evaluation-code digest;
+7. state schema and precision.
+
+The 480-model study satisfies this identity through its checkpoint sidecars and SQLite/remote-blob catalog. The 48-cell study satisfies it through its locked registry and referenced-artifact bundle. Neither justifies substituting a similarly named architecture from another script or checkpoint generation.

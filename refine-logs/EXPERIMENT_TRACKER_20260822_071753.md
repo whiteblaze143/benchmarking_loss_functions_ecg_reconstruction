@@ -1,0 +1,28 @@
+# Experiment Tracker: SemiSegECG Delineation
+
+| Run ID | Milestone | Purpose | System / variant | Split | Metrics | Priority | Status | Notes |
+|---|---|---|---|---|---|---|---|---|
+| SD000 | M0 | Preserve current work | LUDB/RDB oracle + ECG-AIM queue | Current production | Process/session/DB state | MUST | RUNNING | Do not stop or overlap; LUDB remained active during planning |
+| SD001 | M0 | Pin vendor source | SemiSegECG `cf22fb55` | N/A | Commit/license audit | MUST | DONE | Cloned under `external/semiseg/semi-seg-ecg` |
+| SD002 | M0 | Pin artifact identity | ViT-Tiny MT checkpoint + LUDB notebook | N/A | SHA-256, architecture/state inventory | MUST | DONE | Checkpoint `6a965b86…`; notebook `973f7aaa…` |
+| SD003 | M0 | Compatibility smoke | Student and EMA | LUDB record 1, lead I | Strict keys, shape, finite logits, class occupancy | MUST | DONE | Both states strict-load; `[1,4,2500]`; all classes present |
+| SD004 | M0 | Acquire exact benchmark split | Official SemiSegECG indices | LUDB train/valid/test | Subject overlap, file/dataset hashes | MUST | TODO | Hard provenance gate |
+| SD005 | M0 | Build thin adapter | Pinned ViT-Tiny/FCN + student/EMA | Synthetic + one real record | Determinism, preprocessing, memory, throughput | MUST | TODO | Alias `vit_seg_tiny` to compatible released `vit_tiny`; no vendor edits |
+| SD006 | M0 | Build boundary matcher | Four-class connected components | Synthetic labeled sequences | Exact onset/offset, last-beat, missing/spurious, one-to-one matching | MUST | TODO | Never substitute zero for missing interval |
+| SD007 | M1 | Official parity | Official student + notebook rules | Official LUDB test | Paper-style mIoU and PR/QRS/QT MAE | MUST | TODO | Parity only; document last-beat/zero-failure defects |
+| SD008 | M1 | Select frozen checkpoint state | Student versus EMA | Official LUDB validation | Boundary panel, coverage, class IoU/Dice | MUST | TODO | Selection on validation only |
+| SD009 | M1 | Source-signal clinical ceiling | Frozen selected state | Official LUDB test originals | P/QRS/T onset/offset mu, sigma, MAE, p95, Se, PPV; interval errors | MUST | TODO | Hard Poff/QRSoff/Toff gates |
+| SD010 | M1 | Padding leakage audit | No padding versus label-dependent notebook padding | LUDB validation/test originals | Boundary deltas and coverage | MUST | TODO | Production must use no-padding result |
+| SD011 | M2 | Identity control | Original and identity round trip | Frozen LUDB pilot | Paired timing delta, failure delta | MUST | TODO | Expected near zero |
+| SD012 | M2 | Known perturbation controls | Shifts, smoothing, amplitude/noise perturbations | Frozen LUDB pilot | Recovery sign/magnitude, sensitivity | MUST | TODO | Stop if timing response is not calibrated |
+| SD013 | M2 | Reconstruction pilot | `1000000`, provisional leader, `1100000`, `1110000`, optional failure mask | Held-out LUDB | Full paired timing/morphology panel | MUST | BLOCKED_BY_UPSTREAM | Wait for required checkpoints/final catch-up |
+| SD014 | M3 | Full LUDB learned delineation | Complete ECG-AIM grid, frozen state/protocol | Official LUDB test | Timing Pareto, gates, failure coverage | MUST | BLOCKED_BY_UPSTREAM | Launch only after current LUDB/RDB/training work |
+| SD015 | M4 | RDB source ceiling | Frozen state | RDB originals | Timing/coverage by label type and subgroup | MUST | BLOCKED_BY_UPSTREAM | RDB mapping/oracle must finish first |
+| SD016 | M4 | RDB selected-model confirmation | MSE + 5–10 prespecified Pareto masks | RDB | Timing, intervals, subgroups, failures | MUST | BLOCKED_BY_UPSTREAM | Do not screen all 160 unless justified |
+| SD017 | M5 | Conditional retraining smoke | ViT-Tiny MT, one seed/one epoch | Official train/valid | Throughput, memory, learning, exact resume | CONDITIONAL | TODO | Run only if released ceiling failure is remediable |
+| SD018 | M5 | Conditional confirmation | ViT-Tiny MT, 3 seeds/100 epochs | Official train/valid/test | Same frozen clinical panel | CONDITIONAL | TODO | Requires explicit go decision after SD017 |
+| SD019 | Upstream | Freeze one-lead reconstruction baseline | A0 unconditioned ECG-AIM, `1010010`, seed 42, Lead I, 10 epochs | PTB-XL validation | Val loss 0.4620; best missing-lead Pearson 0.7007 | MUST | DONE_PRELIMINARY | Full run, not smoke; provisional Pearson leader by +0.0008 vs B1 and +0.0018 vs C1; no significance claim before confirmation |
+| SD020 | Upstream | Complete one-lead grouped/author controls | A0-E1 + PA1 author multiplicative fusion; `1010010`/`1000000`; Lead I/II; seed 42 | PTB-XL validation | Validation loss and missing-lead Pearson | MUST | RUNNING | 24 control jobs within the combined queue; PA1 is not part of the L/R/F factorial |
+| SD021 | Upstream | Exact-Theta equivalence controls | Exact released `ThetaEncoder`; T000 and T111 only | `1010010`/`1000000`; Lead I/II; PTB-XL validation | Validation loss and missing-lead Pearson versus grouped counterparts | CONTROL | QUEUED | Eight jobs across all mask/source environments; remaining 24 permutation-redundant cells cancelled before running |
+| SD022 | Upstream | Geometry mechanism controls | CM1 fixed random capacity-match + PG1 permuted lead geometry | `1010010`/`1000000`; Lead I/II; PTB-XL validation | Validation loss and missing-lead Pearson versus B1 | MUST | QUEUED | Eight jobs; both controls have exactly B1's trainable parameter count |
+| SD023 | Upstream | Richer lead-field representation | F1 physics/lead-field asset | N/A | Asset validity and adapter contract before performance | CONDITIONAL | BLOCKED_ASSET_INVALID | `external/lead_field.md` is paper text only; no model/checkpoint/data/interface, so no F1 job queued |

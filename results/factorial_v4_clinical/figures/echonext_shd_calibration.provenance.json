@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/figures/figure_echonext_calibration.py",
+  "script_sha256": "dd6141385bf0d75bde7e766462e30094bd0efc666f16a02c8f3ef79d4cd36168",
+  "common_helper_sha256": "e57c67c3e4dc0ed56aaab3c3e573bcb4b030954212f41e35f81fe3707434ff3e",
+  "inputs": {
+    "results/factorial_v4/echonext_results.json": "ddff5343e5fa8aa4f42857954a0c79095cfc908789f19437ea9479ef7bae1a84",
+    "results/factorial_v4/echonext_reference_shd.parquet": "27f519081f6288a99ce2ac6dc47e35700cb941c3146fe2a63b4f527ec7e62f4e",
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": "4a645f296f0238019991eb5fcd7b34da196e9eeb6b11a0ce727c04af6fec1218",
+    "results/factorial_v4/echonext_per_record/unet__e1c1m1d0__s42__echonext_shd.parquet": "bceb22d44c73b18ddb580949845cc09584423213d8f90fb0e46351bd9cf14fab",
+    "results/factorial_v4/echonext_per_record/msvae__e1c1m0d0__s42__echonext_shd.parquet": "b3590034c7a28fb8aa1da02b6509fe888962441b8d41333087678d4451ee46fd",
+    "results/factorial_v4/echonext_per_record/ecgaim__e1c1m1d0__s42__echonext_shd.parquet": "72e07bc6bbc11570afb67d2e77e6856d98206e468ecde1dcb9c7cfb872cf7669"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "results/factorial_v4_clinical/figures/echonext_shd_calibration.pdf",
+      "sha256": "83c36df5c0062708f82f6ced7cdd83d4029ff8df1e12ae811a96570c8f1544e8"
+    },
+    "svg": {
+      "path": "results/factorial_v4_clinical/figures/echonext_shd_calibration.svg",
+      "sha256": "9e0f0b91bb78260a125969fbdcb8ce5696e17a42e95bc7007d1c3aabef7b4559"
+    },
+    "png": {
+      "path": "results/factorial_v4_clinical/figures/echonext_shd_calibration.png",
+      "sha256": "57349517dd2004946372fe7ce29d9a1c3555105b4efea42a49bac95bbcf6373a"
+    }
+  },
+  "metadata": {
+    "task": "shd_moderate_or_greater",
+    "task_index": 11,
+    "bins": 10,
+    "selection": "validation-selected masks"
+  }
+}

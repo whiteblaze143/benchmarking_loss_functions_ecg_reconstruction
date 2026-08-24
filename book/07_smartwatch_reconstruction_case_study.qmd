@@ -1,0 +1,199 @@
+# Four-Device Smartwatch Transfer Case Study {#sec-smartwatch}
+
+This chapter evaluates what the repository actually contains: a zero-shot transfer experiment using the **Electrocardiogram-Capable Smartwatches v1.0.0** dataset and reconstruction models trained on PTB-XL. It does not train a toy model on simulated sinusoids and does not treat a commercial watch trace as a clinical 12-lead measurement.
+
+::: {.callout-important}
+## Evidence boundary
+
+The locked protocol uses an acquired watch **Lead II** signal, not Lead I. The remaining model inputs, I and V2, are zero-filled before inference. Signal endpoints use paired watch/Philips or simulator-calibrated records, and the downstream endpoint is frozen **ECGFounder** probability fidelity. Human diagnostic ground truth is unavailable. Device names identify dataset folders; they do not justify causal claims about proprietary filters, electrodes, or firmware.
+:::
+
+## The inverse problem actually tested
+
+Let $Y(t)\in\mathbb{R}^{12}$ be the reference lead vector and let $S_{II}$ select Lead II. The wearable observation is
+
+$$x_{II}(t)=S_{II}Y(t)+n(t).$$
+
+The trained model expects I, II, and V2, so the out-of-domain adapter supplies
+
+$$\tilde{x}(t)=[0,\ x_{II}(t),\ 0].$$
+
+The primary transfer endpoint excludes the observed Lead II and scores the other eleven outputs. This is more difficult than the PTB-XL task, where all three expected inputs are present. A single measured projection cannot uniquely identify every spatial cardiac vector; reconstruction therefore estimates a conditional distribution learned from the training cohort. Physiologic losses can regularize that estimate, but no mathematical argument makes VCG or any other loss term “required,” and no loss can recover information absent from both the observation and learned prior.
+
+## Locked data and pairing contract
+
+The result bundle records four source conditions—amplitude, frequency, 2-Hz square-wave, and ST-segment tests—and four watch folders. Each WFDB header supplies its native sampling rate. Signals are resampled to 500 Hz with `scipy.signal.resample_poly`, aligned using 0.5–40 Hz band-passed normalized cross-correlation, and evaluated over 5,000 samples.
+
+```{python}
+#| label: smartwatch-contract-audit
+import json
+from pathlib import Path
+import pandas as pd
+import numpy as np
+
+ROOT = Path("..")
+RESULT_JSON = (
+    ROOT / "results/comprehensive_latest_48_models/"
+           "smartwatch/four_device_results.json"
+)
+SUMMARY_CSV = (
+    ROOT / "results/comprehensive_latest_48_models/"
+           "tables/smartwatch_four_device_summary.csv"
+)
+payload = json.loads(RESULT_JSON.read_text())
+watch = pd.read_csv(SUMMARY_CSV)
+protocol = payload["protocol"]
+
+pd.DataFrame({
+    "quantity": [
+        "summary rows", "reconstruction models", "devices",
+        "expected rows", "task", "evaluation sample rate",
+        "evaluation length", "human diagnostic ground truth"
+    ],
+    "value": [
+        len(watch), watch.model_id.nunique(), watch.device.nunique(),
+        watch.model_id.nunique() * watch.device.nunique(),
+        protocol["task"], protocol["evaluation_sample_rate_hz"],
+        protocol["evaluation_length_samples"],
+        protocol["evaluation_taxonomy"]["human_diagnostic_ground_truth"],
+    ]
+})
+```
+
+The 192 rows are the full Cartesian product of 48 locked reconstruction cells and four devices. This is not 192 independent cohorts: every model is evaluated against the corresponding paired device records.
+
+```{python}
+#| label: smartwatch-pairing-audit
+#| tbl-cap: "Watch-to-reference pairing audit from the locked protocol."
+pairing_rows = []
+for device, audit in protocol["pairing_audit"].items():
+    pairing_rows.append({
+        "device": device,
+        "discovered_watch_records": audit["discovered_watch_records"],
+        "paired_records": audit["paired_records"],
+        "unmatched_records": len(audit["unmatched_watch_record_ids"]),
+        "unmatched_ids": ", ".join(audit["unmatched_watch_record_ids"]) or "none",
+        "pairing_key": audit["pairing_key"],
+    })
+pd.DataFrame(pairing_rows)
+```
+
+Apple Watch, Fitbit, and Withings contribute 180 paired records per model; Samsung contributes 179. One Fitbit ST-segment record is explicitly unmatched rather than silently dropped. These counts describe simulator/device test files, not unique patients.
+
+## What every result column means
+
+The signal table reports missing-11-lead MSE, RMSE, MAE, Pearson correlation, $R^2$, derivative MSE, and SNR. It also reports fidelity between ECGFounder probabilities from the paired reference and reconstructed waveforms: MAE, RMSE, Pearson correlation, Bernoulli KL divergence, Jensen–Shannon divergence, and fixed-threshold agreement.
+
+Probability fidelity is a machine-mediated endpoint. It asks whether one frozen classifier changes, not whether clinical diagnoses are correct. In particular, high threshold agreement can coexist with poor probability correlation when most task probabilities lie far from their thresholds.
+
+## Device-stratified distribution across all 48 models
+
+```{python}
+#| label: smartwatch-device-distribution
+#| tbl-cap: "Descriptive distribution across all 48 reconstruction cells; models, not records, are the rows summarized here."
+device_summary = watch.groupby("device", as_index=False).agg(
+    models=("model_id", "nunique"),
+    paired_records=("n_paired_records", "first"),
+    median_missing11_mse=("missing11_mse", "median"),
+    q25_missing11_pearson=("missing11_pearson", lambda x: x.quantile(0.25)),
+    median_missing11_pearson=("missing11_pearson", "median"),
+    q75_missing11_pearson=("missing11_pearson", lambda x: x.quantile(0.75)),
+    median_ecgfounder_probability_pearson=(
+        "ecgfounder_fidelity_probability_pearson", "median"
+    ),
+    median_threshold_agreement=(
+        "ecgfounder_fidelity_threshold_agreement", "median"
+    ),
+)
+device_summary
+```
+
+This table describes the distribution of model outcomes within each device. It must not be read as a randomized comparison of watch hardware: the dataset conditions, alignment, record composition, and preprocessing can all contribute to differences.
+
+```{python}
+#| label: smartwatch-device-model-plot
+#| fig-cap: "Missing-11-lead correlation for all 48 model cells within each device. Each point is a model–device result, not a patient."
+import plotly.express as px
+
+fig = px.box(
+    watch,
+    x="device",
+    y="missing11_pearson",
+    points="all",
+    hover_data=["model_id", "missing11_mse", "n_paired_records"],
+    labels={"missing11_pearson": "Missing-11-lead Pearson", "device": "Device folder"},
+)
+fig.update_layout(height=500, xaxis_tickangle=-20)
+fig.show()
+```
+
+## Prespecified MSE-only versus full-composite anchors
+
+To avoid selecting the best model after opening all device results, the next table uses the same six within-architecture anchors as the main 48-cell analysis.
+
+```{python}
+#| label: smartwatch-anchor-contrast
+#| tbl-cap: "Locked MSE-only and full-composite anchors on each device."
+anchor_ids = [
+    "unet__e1c0m0d0__s42", "unet__e1c1m1d1__s42",
+    "msvae__e1c0m0d0__s42", "msvae__e1c1m1d1__s42",
+    "ecgaim__e1c0m0d0__s42", "ecgaim__e1c1m1d1__s42",
+]
+anchors = watch[watch.model_id.isin(anchor_ids)].copy()
+anchors["family"] = anchors.model_id.str.split("__").str[0]
+anchors["loss"] = np.where(
+    anchors.model_id.str.contains("__e1c0m0d0__"), "MSE-only", "full composite"
+)
+anchors[[
+    "device", "family", "loss", "n_paired_records",
+    "missing11_mse", "missing11_pearson",
+    "ecgfounder_fidelity_probability_mae",
+    "ecgfounder_fidelity_probability_pearson",
+    "ecgfounder_fidelity_threshold_agreement",
+]].sort_values(["device", "family", "loss"])
+```
+
+The anchor table exposes endpoint discordance rather than supporting a universal winner. A mask can improve waveform correlation while worsening probability drift, and the direction can differ by architecture and device. Formal inference must retain pairing by record and correct for the repeated device/task comparisons; the 24 aggregate anchor rows alone do not supply uncertainty.
+
+## Simulator and paired-reference calibration
+
+The bundle separately records checks against programmed simulator targets and paired Philips reference traces. Heart-rate, R-wave-amplitude, and ST-offset errors are simulator-calibrated protocol measurements. The square-wave value is the maximum cross-correlation used during lag alignment and is not an independent accuracy endpoint.
+
+```{python}
+#| label: smartwatch-ground-truth-calibration
+#| tbl-cap: "Selected device-protocol calibration measurements; these are simulator/paired-reference checks, not patient outcomes."
+calibration_rows = []
+for device, values in payload["device_protocol_ground_truth"].items():
+    calibration_rows.append({
+        "device": device,
+        "heart_rate_records": values["heart_rate"]["n_records"],
+        "watch_vs_simulator_hr_mae_bpm": values["heart_rate"]["watch_vs_simulator"]["mae"],
+        "r_wave_records": values["r_wave_amplitude"]["n_records"],
+        "watch_vs_simulator_r_amp_mae_uv": values["r_wave_amplitude"]["watch_vs_simulator"]["mae"],
+        "st_records": values["st_offset"]["n_records"],
+        "watch_vs_simulator_st_mae_uv": values["st_offset"]["watch_vs_simulator"]["mae"],
+        "square_wave_records": values["square_wave"]["n_records"],
+        "max_aligned_square_wave_correlation": values["square_wave"]["watch_vs_philips_max_aligned_cross_correlation"],
+    })
+pd.DataFrame(calibration_rows)
+```
+
+Large amplitude and ST-offset errors in these simulator conditions are warnings about transport and measurement—not estimates of patient-level diagnostic harm. The correct follow-up is a paired waveform audit stratified by programmed condition, followed by independently labeled clinical data if a diagnostic claim is intended.
+
+## Failure analysis required for a publishable transfer claim
+
+1. Preserve the device/condition/record pairing and expose unmatched records.
+2. Compare against simple baselines: Lead-II replication, conditional mean, linear transform, and zero-filled input.
+3. Report each missing lead separately; an eleven-lead average can hide precordial failure.
+4. Measure alignment sensitivity by repeating metrics before and after the prespecified lag correction.
+5. Stratify errors by amplitude, frequency, square-wave, and ST-segment protocol.
+6. Inspect records with favorable global correlation but large ST or ECGFounder probability drift.
+7. Use patient ECGs and adjudicated labels before making clinical-device claims.
+
+## Reproduction pointers
+
+- Locked aggregate results: `results/comprehensive_latest_48_models/tables/smartwatch_four_device_summary.csv`
+- Full protocol and per-model results: `results/comprehensive_latest_48_models/smartwatch/four_device_results.json`
+- Study manifest and digests: `results/comprehensive_latest_48_models/MANIFEST.json`
+
+The defensible conclusion is narrow: PTB-XL-trained reconstruction models can be stress-tested zero-shot on paired/simulator smartwatch Lead-II signals, and their waveform and frozen-classifier fidelity vary materially across model and device conditions. The experiment does not establish that reconstructed leads are clinically interchangeable with a measured 12-lead ECG.

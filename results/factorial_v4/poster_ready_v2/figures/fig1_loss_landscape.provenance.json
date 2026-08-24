@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/scripts/style.py",
+  "sources": {
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/main_primary_24_cell_table.parquet": "19db3bc47295d9e8e6b1b280cf2f08ddba9b145e303cad7dcb5ad95552a99ca7"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig1_loss_landscape.pdf",
+      "sha256": "4d6e6dc95287f04acc4f7658de7cd4eafe33f92569a3be1d64f8ba4ed82b46a3"
+    },
+    "svg": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig1_loss_landscape.svg",
+      "sha256": "f4d20bf7784cc4ea1f3e35dcbf7a3345785d2babc830b10da83c5b8c2634d997"
+    },
+    "png": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig1_loss_landscape.png",
+      "sha256": "d13983291a6f949c2c4914aab4f64d333191c691393a4ed93a05736cf4aa939a"
+    }
+  },
+  "caption": "Complete MSE-on 2^3 factorial landscape on 2,198 PTB-XL fold-10 ECGs. Loss effects vary by architecture; no single mask dominates all reconstruction, morphology, and frozen-classifier endpoints.",
+  "style": "poster_v2_colorblind_vector"
+}

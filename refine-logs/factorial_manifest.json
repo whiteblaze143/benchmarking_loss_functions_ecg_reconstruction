@@ -1,0 +1,1948 @@
+{
+  "project": "ecg_reconstruction_factorial",
+  "cwd": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction",
+  "ssh": "localhost",
+  "conda": "none",
+  "gpus": [
+    0
+  ],
+  "max_parallel": 1,
+  "gpu_free_threshold_mib": 6000,
+  "minimum_free_disk_gib": 5,
+  "oom_retry": {
+    "delay": 60,
+    "max_attempts": 3
+  },
+  "transient_retry": {
+    "delay": 120,
+    "max_attempts": 2
+  },
+  "phases": [
+    {
+      "name": "default",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "f_1000000_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000000 --seed 42 --run_name f_1000000_s42 --checkpoint_path checkpoints/factorial_1000000_s42.pt"
+        },
+        {
+          "id": "f_1000001_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000001 --seed 42 --run_name f_1000001_s42 --checkpoint_path checkpoints/factorial_1000001_s42.pt"
+        },
+        {
+          "id": "f_1000002_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000002 --seed 42 --run_name f_1000002_s42 --checkpoint_path checkpoints/factorial_1000002_s42.pt"
+        },
+        {
+          "id": "f_1000003_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000003 --seed 42 --run_name f_1000003_s42 --checkpoint_path checkpoints/factorial_1000003_s42.pt"
+        },
+        {
+          "id": "f_1000004_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000004 --seed 42 --run_name f_1000004_s42 --checkpoint_path checkpoints/factorial_1000004_s42.pt"
+        },
+        {
+          "id": "f_1000010_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000010 --seed 42 --run_name f_1000010_s42 --checkpoint_path checkpoints/factorial_1000010_s42.pt"
+        },
+        {
+          "id": "f_1000011_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000011 --seed 42 --run_name f_1000011_s42 --checkpoint_path checkpoints/factorial_1000011_s42.pt"
+        },
+        {
+          "id": "f_1000012_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000012 --seed 42 --run_name f_1000012_s42 --checkpoint_path checkpoints/factorial_1000012_s42.pt"
+        },
+        {
+          "id": "f_1000013_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000013 --seed 42 --run_name f_1000013_s42 --checkpoint_path checkpoints/factorial_1000013_s42.pt"
+        },
+        {
+          "id": "f_1000014_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000014 --seed 42 --run_name f_1000014_s42 --checkpoint_path checkpoints/factorial_1000014_s42.pt"
+        },
+        {
+          "id": "f_1000100_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000100 --seed 42 --run_name f_1000100_s42 --checkpoint_path checkpoints/factorial_1000100_s42.pt"
+        },
+        {
+          "id": "f_1000101_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000101 --seed 42 --run_name f_1000101_s42 --checkpoint_path checkpoints/factorial_1000101_s42.pt"
+        },
+        {
+          "id": "f_1000102_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000102 --seed 42 --run_name f_1000102_s42 --checkpoint_path checkpoints/factorial_1000102_s42.pt"
+        },
+        {
+          "id": "f_1000103_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000103 --seed 42 --run_name f_1000103_s42 --checkpoint_path checkpoints/factorial_1000103_s42.pt"
+        },
+        {
+          "id": "f_1000104_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000104 --seed 42 --run_name f_1000104_s42 --checkpoint_path checkpoints/factorial_1000104_s42.pt"
+        },
+        {
+          "id": "f_1000110_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000110 --seed 42 --run_name f_1000110_s42 --checkpoint_path checkpoints/factorial_1000110_s42.pt"
+        },
+        {
+          "id": "f_1000111_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000111 --seed 42 --run_name f_1000111_s42 --checkpoint_path checkpoints/factorial_1000111_s42.pt"
+        },
+        {
+          "id": "f_1000112_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000112 --seed 42 --run_name f_1000112_s42 --checkpoint_path checkpoints/factorial_1000112_s42.pt"
+        },
+        {
+          "id": "f_1000113_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000113 --seed 42 --run_name f_1000113_s42 --checkpoint_path checkpoints/factorial_1000113_s42.pt"
+        },
+        {
+          "id": "f_1000114_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000114 --seed 42 --run_name f_1000114_s42 --checkpoint_path checkpoints/factorial_1000114_s42.pt"
+        },
+        {
+          "id": "f_1001000_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001000 --seed 42 --run_name f_1001000_s42 --checkpoint_path checkpoints/factorial_1001000_s42.pt"
+        },
+        {
+          "id": "f_1001001_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001001 --seed 42 --run_name f_1001001_s42 --checkpoint_path checkpoints/factorial_1001001_s42.pt"
+        },
+        {
+          "id": "f_1001002_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001002 --seed 42 --run_name f_1001002_s42 --checkpoint_path checkpoints/factorial_1001002_s42.pt"
+        },
+        {
+          "id": "f_1001003_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001003 --seed 42 --run_name f_1001003_s42 --checkpoint_path checkpoints/factorial_1001003_s42.pt"
+        },
+        {
+          "id": "f_1001004_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001004 --seed 42 --run_name f_1001004_s42 --checkpoint_path checkpoints/factorial_1001004_s42.pt"
+        },
+        {
+          "id": "f_1001010_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001010 --seed 42 --run_name f_1001010_s42 --checkpoint_path checkpoints/factorial_1001010_s42.pt"
+        },
+        {
+          "id": "f_1001011_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001011 --seed 42 --run_name f_1001011_s42 --checkpoint_path checkpoints/factorial_1001011_s42.pt"
+        },
+        {
+          "id": "f_1001012_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001012 --seed 42 --run_name f_1001012_s42 --checkpoint_path checkpoints/factorial_1001012_s42.pt"
+        },
+        {
+          "id": "f_1001013_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001013 --seed 42 --run_name f_1001013_s42 --checkpoint_path checkpoints/factorial_1001013_s42.pt"
+        },
+        {
+          "id": "f_1001014_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001014 --seed 42 --run_name f_1001014_s42 --checkpoint_path checkpoints/factorial_1001014_s42.pt"
+        },
+        {
+          "id": "f_1001100_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001100 --seed 42 --run_name f_1001100_s42 --checkpoint_path checkpoints/factorial_1001100_s42.pt"
+        },
+        {
+          "id": "f_1001101_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001101 --seed 42 --run_name f_1001101_s42 --checkpoint_path checkpoints/factorial_1001101_s42.pt"
+        },
+        {
+          "id": "f_1001102_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001102 --seed 42 --run_name f_1001102_s42 --checkpoint_path checkpoints/factorial_1001102_s42.pt"
+        },
+        {
+          "id": "f_1001103_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001103 --seed 42 --run_name f_1001103_s42 --checkpoint_path checkpoints/factorial_1001103_s42.pt"
+        },
+        {
+          "id": "f_1001104_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001104 --seed 42 --run_name f_1001104_s42 --checkpoint_path checkpoints/factorial_1001104_s42.pt"
+        },
+        {
+          "id": "f_1001110_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001110 --seed 42 --run_name f_1001110_s42 --checkpoint_path checkpoints/factorial_1001110_s42.pt"
+        },
+        {
+          "id": "f_1001111_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001111 --seed 42 --run_name f_1001111_s42 --checkpoint_path checkpoints/factorial_1001111_s42.pt"
+        },
+        {
+          "id": "f_1001112_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001112 --seed 42 --run_name f_1001112_s42 --checkpoint_path checkpoints/factorial_1001112_s42.pt"
+        },
+        {
+          "id": "f_1001113_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001113 --seed 42 --run_name f_1001113_s42 --checkpoint_path checkpoints/factorial_1001113_s42.pt"
+        },
+        {
+          "id": "f_1001114_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001114 --seed 42 --run_name f_1001114_s42 --checkpoint_path checkpoints/factorial_1001114_s42.pt"
+        },
+        {
+          "id": "f_1010000_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010000 --seed 42 --run_name f_1010000_s42 --checkpoint_path checkpoints/factorial_1010000_s42.pt"
+        },
+        {
+          "id": "f_1010001_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010001 --seed 42 --run_name f_1010001_s42 --checkpoint_path checkpoints/factorial_1010001_s42.pt"
+        },
+        {
+          "id": "f_1010002_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010002 --seed 42 --run_name f_1010002_s42 --checkpoint_path checkpoints/factorial_1010002_s42.pt"
+        },
+        {
+          "id": "f_1010003_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010003 --seed 42 --run_name f_1010003_s42 --checkpoint_path checkpoints/factorial_1010003_s42.pt"
+        },
+        {
+          "id": "f_1010004_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010004 --seed 42 --run_name f_1010004_s42 --checkpoint_path checkpoints/factorial_1010004_s42.pt"
+        },
+        {
+          "id": "f_1010010_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010010 --seed 42 --run_name f_1010010_s42 --checkpoint_path checkpoints/factorial_1010010_s42.pt"
+        },
+        {
+          "id": "f_1010011_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010011 --seed 42 --run_name f_1010011_s42 --checkpoint_path checkpoints/factorial_1010011_s42.pt"
+        },
+        {
+          "id": "f_1010012_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010012 --seed 42 --run_name f_1010012_s42 --checkpoint_path checkpoints/factorial_1010012_s42.pt"
+        },
+        {
+          "id": "f_1010013_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010013 --seed 42 --run_name f_1010013_s42 --checkpoint_path checkpoints/factorial_1010013_s42.pt"
+        },
+        {
+          "id": "f_1010014_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010014 --seed 42 --run_name f_1010014_s42 --checkpoint_path checkpoints/factorial_1010014_s42.pt"
+        },
+        {
+          "id": "f_1010100_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010100 --seed 42 --run_name f_1010100_s42 --checkpoint_path checkpoints/factorial_1010100_s42.pt"
+        },
+        {
+          "id": "f_1010101_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010101 --seed 42 --run_name f_1010101_s42 --checkpoint_path checkpoints/factorial_1010101_s42.pt"
+        },
+        {
+          "id": "f_1010102_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010102 --seed 42 --run_name f_1010102_s42 --checkpoint_path checkpoints/factorial_1010102_s42.pt"
+        },
+        {
+          "id": "f_1010103_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010103 --seed 42 --run_name f_1010103_s42 --checkpoint_path checkpoints/factorial_1010103_s42.pt"
+        },
+        {
+          "id": "f_1010104_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010104 --seed 42 --run_name f_1010104_s42 --checkpoint_path checkpoints/factorial_1010104_s42.pt"
+        },
+        {
+          "id": "f_1010110_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010110 --seed 42 --run_name f_1010110_s42 --checkpoint_path checkpoints/factorial_1010110_s42.pt"
+        },
+        {
+          "id": "f_1010111_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010111 --seed 42 --run_name f_1010111_s42 --checkpoint_path checkpoints/factorial_1010111_s42.pt"
+        },
+        {
+          "id": "f_1010112_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010112 --seed 42 --run_name f_1010112_s42 --checkpoint_path checkpoints/factorial_1010112_s42.pt"
+        },
+        {
+          "id": "f_1010113_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010113 --seed 42 --run_name f_1010113_s42 --checkpoint_path checkpoints/factorial_1010113_s42.pt"
+        },
+        {
+          "id": "f_1010114_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010114 --seed 42 --run_name f_1010114_s42 --checkpoint_path checkpoints/factorial_1010114_s42.pt"
+        },
+        {
+          "id": "f_1011000_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011000 --seed 42 --run_name f_1011000_s42 --checkpoint_path checkpoints/factorial_1011000_s42.pt"
+        },
+        {
+          "id": "f_1011001_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011001 --seed 42 --run_name f_1011001_s42 --checkpoint_path checkpoints/factorial_1011001_s42.pt"
+        },
+        {
+          "id": "f_1011002_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011002 --seed 42 --run_name f_1011002_s42 --checkpoint_path checkpoints/factorial_1011002_s42.pt"
+        },
+        {
+          "id": "f_1011003_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011003 --seed 42 --run_name f_1011003_s42 --checkpoint_path checkpoints/factorial_1011003_s42.pt"
+        },
+        {
+          "id": "f_1011004_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011004 --seed 42 --run_name f_1011004_s42 --checkpoint_path checkpoints/factorial_1011004_s42.pt"
+        },
+        {
+          "id": "f_1011010_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011010 --seed 42 --run_name f_1011010_s42 --checkpoint_path checkpoints/factorial_1011010_s42.pt"
+        },
+        {
+          "id": "f_1011011_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011011 --seed 42 --run_name f_1011011_s42 --checkpoint_path checkpoints/factorial_1011011_s42.pt"
+        },
+        {
+          "id": "f_1011012_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011012 --seed 42 --run_name f_1011012_s42 --checkpoint_path checkpoints/factorial_1011012_s42.pt"
+        },
+        {
+          "id": "f_1011013_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011013 --seed 42 --run_name f_1011013_s42 --checkpoint_path checkpoints/factorial_1011013_s42.pt"
+        },
+        {
+          "id": "f_1011014_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011014 --seed 42 --run_name f_1011014_s42 --checkpoint_path checkpoints/factorial_1011014_s42.pt"
+        },
+        {
+          "id": "f_1011100_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011100 --seed 42 --run_name f_1011100_s42 --checkpoint_path checkpoints/factorial_1011100_s42.pt"
+        },
+        {
+          "id": "f_1011101_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011101 --seed 42 --run_name f_1011101_s42 --checkpoint_path checkpoints/factorial_1011101_s42.pt"
+        },
+        {
+          "id": "f_1011102_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011102 --seed 42 --run_name f_1011102_s42 --checkpoint_path checkpoints/factorial_1011102_s42.pt"
+        },
+        {
+          "id": "f_1011103_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011103 --seed 42 --run_name f_1011103_s42 --checkpoint_path checkpoints/factorial_1011103_s42.pt"
+        },
+        {
+          "id": "f_1011104_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011104 --seed 42 --run_name f_1011104_s42 --checkpoint_path checkpoints/factorial_1011104_s42.pt"
+        },
+        {
+          "id": "f_1011110_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011110 --seed 42 --run_name f_1011110_s42 --checkpoint_path checkpoints/factorial_1011110_s42.pt"
+        },
+        {
+          "id": "f_1011111_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011111 --seed 42 --run_name f_1011111_s42 --checkpoint_path checkpoints/factorial_1011111_s42.pt"
+        },
+        {
+          "id": "f_1011112_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011112 --seed 42 --run_name f_1011112_s42 --checkpoint_path checkpoints/factorial_1011112_s42.pt"
+        },
+        {
+          "id": "f_1011113_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011113 --seed 42 --run_name f_1011113_s42 --checkpoint_path checkpoints/factorial_1011113_s42.pt"
+        },
+        {
+          "id": "f_1011114_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011114 --seed 42 --run_name f_1011114_s42 --checkpoint_path checkpoints/factorial_1011114_s42.pt"
+        },
+        {
+          "id": "f_1100000_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100000 --seed 42 --run_name f_1100000_s42 --checkpoint_path checkpoints/factorial_1100000_s42.pt"
+        },
+        {
+          "id": "f_1100001_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100001 --seed 42 --run_name f_1100001_s42 --checkpoint_path checkpoints/factorial_1100001_s42.pt"
+        },
+        {
+          "id": "f_1100002_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100002 --seed 42 --run_name f_1100002_s42 --checkpoint_path checkpoints/factorial_1100002_s42.pt"
+        },
+        {
+          "id": "f_1100003_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100003 --seed 42 --run_name f_1100003_s42 --checkpoint_path checkpoints/factorial_1100003_s42.pt"
+        },
+        {
+          "id": "f_1100004_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100004 --seed 42 --run_name f_1100004_s42 --checkpoint_path checkpoints/factorial_1100004_s42.pt"
+        },
+        {
+          "id": "f_1100010_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100010 --seed 42 --run_name f_1100010_s42 --checkpoint_path checkpoints/factorial_1100010_s42.pt"
+        },
+        {
+          "id": "f_1100011_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100011 --seed 42 --run_name f_1100011_s42 --checkpoint_path checkpoints/factorial_1100011_s42.pt"
+        },
+        {
+          "id": "f_1100012_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100012 --seed 42 --run_name f_1100012_s42 --checkpoint_path checkpoints/factorial_1100012_s42.pt"
+        },
+        {
+          "id": "f_1100013_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100013 --seed 42 --run_name f_1100013_s42 --checkpoint_path checkpoints/factorial_1100013_s42.pt"
+        },
+        {
+          "id": "f_1100014_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100014 --seed 42 --run_name f_1100014_s42 --checkpoint_path checkpoints/factorial_1100014_s42.pt"
+        },
+        {
+          "id": "f_1100100_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100100 --seed 42 --run_name f_1100100_s42 --checkpoint_path checkpoints/factorial_1100100_s42.pt"
+        },
+        {
+          "id": "f_1100101_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100101 --seed 42 --run_name f_1100101_s42 --checkpoint_path checkpoints/factorial_1100101_s42.pt"
+        },
+        {
+          "id": "f_1100102_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100102 --seed 42 --run_name f_1100102_s42 --checkpoint_path checkpoints/factorial_1100102_s42.pt"
+        },
+        {
+          "id": "f_1100103_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100103 --seed 42 --run_name f_1100103_s42 --checkpoint_path checkpoints/factorial_1100103_s42.pt"
+        },
+        {
+          "id": "f_1100104_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100104 --seed 42 --run_name f_1100104_s42 --checkpoint_path checkpoints/factorial_1100104_s42.pt"
+        },
+        {
+          "id": "f_1100110_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100110 --seed 42 --run_name f_1100110_s42 --checkpoint_path checkpoints/factorial_1100110_s42.pt"
+        },
+        {
+          "id": "f_1100111_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100111 --seed 42 --run_name f_1100111_s42 --checkpoint_path checkpoints/factorial_1100111_s42.pt"
+        },
+        {
+          "id": "f_1100112_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100112 --seed 42 --run_name f_1100112_s42 --checkpoint_path checkpoints/factorial_1100112_s42.pt"
+        },
+        {
+          "id": "f_1100113_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100113 --seed 42 --run_name f_1100113_s42 --checkpoint_path checkpoints/factorial_1100113_s42.pt"
+        },
+        {
+          "id": "f_1100114_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100114 --seed 42 --run_name f_1100114_s42 --checkpoint_path checkpoints/factorial_1100114_s42.pt"
+        },
+        {
+          "id": "f_1101000_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101000 --seed 42 --run_name f_1101000_s42 --checkpoint_path checkpoints/factorial_1101000_s42.pt"
+        },
+        {
+          "id": "f_1101001_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101001 --seed 42 --run_name f_1101001_s42 --checkpoint_path checkpoints/factorial_1101001_s42.pt"
+        },
+        {
+          "id": "f_1101002_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101002 --seed 42 --run_name f_1101002_s42 --checkpoint_path checkpoints/factorial_1101002_s42.pt"
+        },
+        {
+          "id": "f_1101003_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101003 --seed 42 --run_name f_1101003_s42 --checkpoint_path checkpoints/factorial_1101003_s42.pt"
+        },
+        {
+          "id": "f_1101004_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101004 --seed 42 --run_name f_1101004_s42 --checkpoint_path checkpoints/factorial_1101004_s42.pt"
+        },
+        {
+          "id": "f_1101010_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101010 --seed 42 --run_name f_1101010_s42 --checkpoint_path checkpoints/factorial_1101010_s42.pt"
+        },
+        {
+          "id": "f_1101011_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101011 --seed 42 --run_name f_1101011_s42 --checkpoint_path checkpoints/factorial_1101011_s42.pt"
+        },
+        {
+          "id": "f_1101012_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101012 --seed 42 --run_name f_1101012_s42 --checkpoint_path checkpoints/factorial_1101012_s42.pt"
+        },
+        {
+          "id": "f_1101013_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101013 --seed 42 --run_name f_1101013_s42 --checkpoint_path checkpoints/factorial_1101013_s42.pt"
+        },
+        {
+          "id": "f_1101014_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101014 --seed 42 --run_name f_1101014_s42 --checkpoint_path checkpoints/factorial_1101014_s42.pt"
+        },
+        {
+          "id": "f_1101100_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101100 --seed 42 --run_name f_1101100_s42 --checkpoint_path checkpoints/factorial_1101100_s42.pt"
+        },
+        {
+          "id": "f_1101101_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101101 --seed 42 --run_name f_1101101_s42 --checkpoint_path checkpoints/factorial_1101101_s42.pt"
+        },
+        {
+          "id": "f_1101102_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101102 --seed 42 --run_name f_1101102_s42 --checkpoint_path checkpoints/factorial_1101102_s42.pt"
+        },
+        {
+          "id": "f_1101103_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101103 --seed 42 --run_name f_1101103_s42 --checkpoint_path checkpoints/factorial_1101103_s42.pt"
+        },
+        {
+          "id": "f_1101104_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101104 --seed 42 --run_name f_1101104_s42 --checkpoint_path checkpoints/factorial_1101104_s42.pt"
+        },
+        {
+          "id": "f_1101110_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101110 --seed 42 --run_name f_1101110_s42 --checkpoint_path checkpoints/factorial_1101110_s42.pt"
+        },
+        {
+          "id": "f_1101111_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101111 --seed 42 --run_name f_1101111_s42 --checkpoint_path checkpoints/factorial_1101111_s42.pt"
+        },
+        {
+          "id": "f_1101112_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101112 --seed 42 --run_name f_1101112_s42 --checkpoint_path checkpoints/factorial_1101112_s42.pt"
+        },
+        {
+          "id": "f_1101113_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101113 --seed 42 --run_name f_1101113_s42 --checkpoint_path checkpoints/factorial_1101113_s42.pt"
+        },
+        {
+          "id": "f_1101114_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101114 --seed 42 --run_name f_1101114_s42 --checkpoint_path checkpoints/factorial_1101114_s42.pt"
+        },
+        {
+          "id": "f_1110000_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110000 --seed 42 --run_name f_1110000_s42 --checkpoint_path checkpoints/factorial_1110000_s42.pt"
+        },
+        {
+          "id": "f_1110001_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110001 --seed 42 --run_name f_1110001_s42 --checkpoint_path checkpoints/factorial_1110001_s42.pt"
+        },
+        {
+          "id": "f_1110002_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110002 --seed 42 --run_name f_1110002_s42 --checkpoint_path checkpoints/factorial_1110002_s42.pt"
+        },
+        {
+          "id": "f_1110003_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110003 --seed 42 --run_name f_1110003_s42 --checkpoint_path checkpoints/factorial_1110003_s42.pt"
+        },
+        {
+          "id": "f_1110004_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110004 --seed 42 --run_name f_1110004_s42 --checkpoint_path checkpoints/factorial_1110004_s42.pt"
+        },
+        {
+          "id": "f_1110010_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110010 --seed 42 --run_name f_1110010_s42 --checkpoint_path checkpoints/factorial_1110010_s42.pt"
+        },
+        {
+          "id": "f_1110011_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110011 --seed 42 --run_name f_1110011_s42 --checkpoint_path checkpoints/factorial_1110011_s42.pt"
+        },
+        {
+          "id": "f_1110012_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110012 --seed 42 --run_name f_1110012_s42 --checkpoint_path checkpoints/factorial_1110012_s42.pt"
+        },
+        {
+          "id": "f_1110013_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110013 --seed 42 --run_name f_1110013_s42 --checkpoint_path checkpoints/factorial_1110013_s42.pt"
+        },
+        {
+          "id": "f_1110014_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110014 --seed 42 --run_name f_1110014_s42 --checkpoint_path checkpoints/factorial_1110014_s42.pt"
+        },
+        {
+          "id": "f_1110100_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110100 --seed 42 --run_name f_1110100_s42 --checkpoint_path checkpoints/factorial_1110100_s42.pt"
+        },
+        {
+          "id": "f_1110101_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110101 --seed 42 --run_name f_1110101_s42 --checkpoint_path checkpoints/factorial_1110101_s42.pt"
+        },
+        {
+          "id": "f_1110102_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110102 --seed 42 --run_name f_1110102_s42 --checkpoint_path checkpoints/factorial_1110102_s42.pt"
+        },
+        {
+          "id": "f_1110103_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110103 --seed 42 --run_name f_1110103_s42 --checkpoint_path checkpoints/factorial_1110103_s42.pt"
+        },
+        {
+          "id": "f_1110104_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110104 --seed 42 --run_name f_1110104_s42 --checkpoint_path checkpoints/factorial_1110104_s42.pt"
+        },
+        {
+          "id": "f_1110110_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110110 --seed 42 --run_name f_1110110_s42 --checkpoint_path checkpoints/factorial_1110110_s42.pt"
+        },
+        {
+          "id": "f_1110111_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110111 --seed 42 --run_name f_1110111_s42 --checkpoint_path checkpoints/factorial_1110111_s42.pt"
+        },
+        {
+          "id": "f_1110112_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110112 --seed 42 --run_name f_1110112_s42 --checkpoint_path checkpoints/factorial_1110112_s42.pt"
+        },
+        {
+          "id": "f_1110113_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110113 --seed 42 --run_name f_1110113_s42 --checkpoint_path checkpoints/factorial_1110113_s42.pt"
+        },
+        {
+          "id": "f_1110114_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110114 --seed 42 --run_name f_1110114_s42 --checkpoint_path checkpoints/factorial_1110114_s42.pt"
+        },
+        {
+          "id": "f_1111000_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111000 --seed 42 --run_name f_1111000_s42 --checkpoint_path checkpoints/factorial_1111000_s42.pt"
+        },
+        {
+          "id": "f_1111001_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111001 --seed 42 --run_name f_1111001_s42 --checkpoint_path checkpoints/factorial_1111001_s42.pt"
+        },
+        {
+          "id": "f_1111002_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111002 --seed 42 --run_name f_1111002_s42 --checkpoint_path checkpoints/factorial_1111002_s42.pt"
+        },
+        {
+          "id": "f_1111003_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111003 --seed 42 --run_name f_1111003_s42 --checkpoint_path checkpoints/factorial_1111003_s42.pt"
+        },
+        {
+          "id": "f_1111004_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111004 --seed 42 --run_name f_1111004_s42 --checkpoint_path checkpoints/factorial_1111004_s42.pt"
+        },
+        {
+          "id": "f_1111010_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111010 --seed 42 --run_name f_1111010_s42 --checkpoint_path checkpoints/factorial_1111010_s42.pt"
+        },
+        {
+          "id": "f_1111011_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111011 --seed 42 --run_name f_1111011_s42 --checkpoint_path checkpoints/factorial_1111011_s42.pt"
+        },
+        {
+          "id": "f_1111012_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111012 --seed 42 --run_name f_1111012_s42 --checkpoint_path checkpoints/factorial_1111012_s42.pt"
+        },
+        {
+          "id": "f_1111013_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111013 --seed 42 --run_name f_1111013_s42 --checkpoint_path checkpoints/factorial_1111013_s42.pt"
+        },
+        {
+          "id": "f_1111014_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111014 --seed 42 --run_name f_1111014_s42 --checkpoint_path checkpoints/factorial_1111014_s42.pt"
+        },
+        {
+          "id": "f_1111100_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111100 --seed 42 --run_name f_1111100_s42 --checkpoint_path checkpoints/factorial_1111100_s42.pt"
+        },
+        {
+          "id": "f_1111101_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111101 --seed 42 --run_name f_1111101_s42 --checkpoint_path checkpoints/factorial_1111101_s42.pt"
+        },
+        {
+          "id": "f_1111102_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111102 --seed 42 --run_name f_1111102_s42 --checkpoint_path checkpoints/factorial_1111102_s42.pt"
+        },
+        {
+          "id": "f_1111103_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111103 --seed 42 --run_name f_1111103_s42 --checkpoint_path checkpoints/factorial_1111103_s42.pt"
+        },
+        {
+          "id": "f_1111104_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111104 --seed 42 --run_name f_1111104_s42 --checkpoint_path checkpoints/factorial_1111104_s42.pt"
+        },
+        {
+          "id": "f_1111110_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111110 --seed 42 --run_name f_1111110_s42 --checkpoint_path checkpoints/factorial_1111110_s42.pt"
+        },
+        {
+          "id": "f_1111111_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111111 --seed 42 --run_name f_1111111_s42 --checkpoint_path checkpoints/factorial_1111111_s42.pt"
+        },
+        {
+          "id": "f_1111112_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111112 --seed 42 --run_name f_1111112_s42 --checkpoint_path checkpoints/factorial_1111112_s42.pt"
+        },
+        {
+          "id": "f_1111113_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111113 --seed 42 --run_name f_1111113_s42 --checkpoint_path checkpoints/factorial_1111113_s42.pt"
+        },
+        {
+          "id": "f_1111114_s42",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111114 --seed 42 --run_name f_1111114_s42 --checkpoint_path checkpoints/factorial_1111114_s42.pt"
+        },
+        {
+          "id": "f_1000000_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000000 --seed 200 --run_name f_1000000_s200 --checkpoint_path checkpoints/factorial_1000000_s200.pt"
+        },
+        {
+          "id": "f_1000001_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000001 --seed 200 --run_name f_1000001_s200 --checkpoint_path checkpoints/factorial_1000001_s200.pt"
+        },
+        {
+          "id": "f_1000002_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000002 --seed 200 --run_name f_1000002_s200 --checkpoint_path checkpoints/factorial_1000002_s200.pt"
+        },
+        {
+          "id": "f_1000003_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000003 --seed 200 --run_name f_1000003_s200 --checkpoint_path checkpoints/factorial_1000003_s200.pt"
+        },
+        {
+          "id": "f_1000004_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000004 --seed 200 --run_name f_1000004_s200 --checkpoint_path checkpoints/factorial_1000004_s200.pt"
+        },
+        {
+          "id": "f_1000010_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000010 --seed 200 --run_name f_1000010_s200 --checkpoint_path checkpoints/factorial_1000010_s200.pt"
+        },
+        {
+          "id": "f_1000011_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000011 --seed 200 --run_name f_1000011_s200 --checkpoint_path checkpoints/factorial_1000011_s200.pt"
+        },
+        {
+          "id": "f_1000012_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000012 --seed 200 --run_name f_1000012_s200 --checkpoint_path checkpoints/factorial_1000012_s200.pt"
+        },
+        {
+          "id": "f_1000013_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000013 --seed 200 --run_name f_1000013_s200 --checkpoint_path checkpoints/factorial_1000013_s200.pt"
+        },
+        {
+          "id": "f_1000014_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000014 --seed 200 --run_name f_1000014_s200 --checkpoint_path checkpoints/factorial_1000014_s200.pt"
+        },
+        {
+          "id": "f_1000100_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000100 --seed 200 --run_name f_1000100_s200 --checkpoint_path checkpoints/factorial_1000100_s200.pt"
+        },
+        {
+          "id": "f_1000101_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000101 --seed 200 --run_name f_1000101_s200 --checkpoint_path checkpoints/factorial_1000101_s200.pt"
+        },
+        {
+          "id": "f_1000102_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000102 --seed 200 --run_name f_1000102_s200 --checkpoint_path checkpoints/factorial_1000102_s200.pt"
+        },
+        {
+          "id": "f_1000103_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000103 --seed 200 --run_name f_1000103_s200 --checkpoint_path checkpoints/factorial_1000103_s200.pt"
+        },
+        {
+          "id": "f_1000104_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000104 --seed 200 --run_name f_1000104_s200 --checkpoint_path checkpoints/factorial_1000104_s200.pt"
+        },
+        {
+          "id": "f_1000110_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000110 --seed 200 --run_name f_1000110_s200 --checkpoint_path checkpoints/factorial_1000110_s200.pt"
+        },
+        {
+          "id": "f_1000111_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000111 --seed 200 --run_name f_1000111_s200 --checkpoint_path checkpoints/factorial_1000111_s200.pt"
+        },
+        {
+          "id": "f_1000112_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000112 --seed 200 --run_name f_1000112_s200 --checkpoint_path checkpoints/factorial_1000112_s200.pt"
+        },
+        {
+          "id": "f_1000113_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000113 --seed 200 --run_name f_1000113_s200 --checkpoint_path checkpoints/factorial_1000113_s200.pt"
+        },
+        {
+          "id": "f_1000114_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000114 --seed 200 --run_name f_1000114_s200 --checkpoint_path checkpoints/factorial_1000114_s200.pt"
+        },
+        {
+          "id": "f_1001000_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001000 --seed 200 --run_name f_1001000_s200 --checkpoint_path checkpoints/factorial_1001000_s200.pt"
+        },
+        {
+          "id": "f_1001001_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001001 --seed 200 --run_name f_1001001_s200 --checkpoint_path checkpoints/factorial_1001001_s200.pt"
+        },
+        {
+          "id": "f_1001002_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001002 --seed 200 --run_name f_1001002_s200 --checkpoint_path checkpoints/factorial_1001002_s200.pt"
+        },
+        {
+          "id": "f_1001003_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001003 --seed 200 --run_name f_1001003_s200 --checkpoint_path checkpoints/factorial_1001003_s200.pt"
+        },
+        {
+          "id": "f_1001004_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001004 --seed 200 --run_name f_1001004_s200 --checkpoint_path checkpoints/factorial_1001004_s200.pt"
+        },
+        {
+          "id": "f_1001010_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001010 --seed 200 --run_name f_1001010_s200 --checkpoint_path checkpoints/factorial_1001010_s200.pt"
+        },
+        {
+          "id": "f_1001011_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001011 --seed 200 --run_name f_1001011_s200 --checkpoint_path checkpoints/factorial_1001011_s200.pt"
+        },
+        {
+          "id": "f_1001012_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001012 --seed 200 --run_name f_1001012_s200 --checkpoint_path checkpoints/factorial_1001012_s200.pt"
+        },
+        {
+          "id": "f_1001013_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001013 --seed 200 --run_name f_1001013_s200 --checkpoint_path checkpoints/factorial_1001013_s200.pt"
+        },
+        {
+          "id": "f_1001014_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001014 --seed 200 --run_name f_1001014_s200 --checkpoint_path checkpoints/factorial_1001014_s200.pt"
+        },
+        {
+          "id": "f_1001100_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001100 --seed 200 --run_name f_1001100_s200 --checkpoint_path checkpoints/factorial_1001100_s200.pt"
+        },
+        {
+          "id": "f_1001101_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001101 --seed 200 --run_name f_1001101_s200 --checkpoint_path checkpoints/factorial_1001101_s200.pt"
+        },
+        {
+          "id": "f_1001102_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001102 --seed 200 --run_name f_1001102_s200 --checkpoint_path checkpoints/factorial_1001102_s200.pt"
+        },
+        {
+          "id": "f_1001103_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001103 --seed 200 --run_name f_1001103_s200 --checkpoint_path checkpoints/factorial_1001103_s200.pt"
+        },
+        {
+          "id": "f_1001104_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001104 --seed 200 --run_name f_1001104_s200 --checkpoint_path checkpoints/factorial_1001104_s200.pt"
+        },
+        {
+          "id": "f_1001110_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001110 --seed 200 --run_name f_1001110_s200 --checkpoint_path checkpoints/factorial_1001110_s200.pt"
+        },
+        {
+          "id": "f_1001111_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001111 --seed 200 --run_name f_1001111_s200 --checkpoint_path checkpoints/factorial_1001111_s200.pt"
+        },
+        {
+          "id": "f_1001112_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001112 --seed 200 --run_name f_1001112_s200 --checkpoint_path checkpoints/factorial_1001112_s200.pt"
+        },
+        {
+          "id": "f_1001113_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001113 --seed 200 --run_name f_1001113_s200 --checkpoint_path checkpoints/factorial_1001113_s200.pt"
+        },
+        {
+          "id": "f_1001114_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001114 --seed 200 --run_name f_1001114_s200 --checkpoint_path checkpoints/factorial_1001114_s200.pt"
+        },
+        {
+          "id": "f_1010000_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010000 --seed 200 --run_name f_1010000_s200 --checkpoint_path checkpoints/factorial_1010000_s200.pt"
+        },
+        {
+          "id": "f_1010001_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010001 --seed 200 --run_name f_1010001_s200 --checkpoint_path checkpoints/factorial_1010001_s200.pt"
+        },
+        {
+          "id": "f_1010002_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010002 --seed 200 --run_name f_1010002_s200 --checkpoint_path checkpoints/factorial_1010002_s200.pt"
+        },
+        {
+          "id": "f_1010003_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010003 --seed 200 --run_name f_1010003_s200 --checkpoint_path checkpoints/factorial_1010003_s200.pt"
+        },
+        {
+          "id": "f_1010004_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010004 --seed 200 --run_name f_1010004_s200 --checkpoint_path checkpoints/factorial_1010004_s200.pt"
+        },
+        {
+          "id": "f_1010010_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010010 --seed 200 --run_name f_1010010_s200 --checkpoint_path checkpoints/factorial_1010010_s200.pt"
+        },
+        {
+          "id": "f_1010011_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010011 --seed 200 --run_name f_1010011_s200 --checkpoint_path checkpoints/factorial_1010011_s200.pt"
+        },
+        {
+          "id": "f_1010012_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010012 --seed 200 --run_name f_1010012_s200 --checkpoint_path checkpoints/factorial_1010012_s200.pt"
+        },
+        {
+          "id": "f_1010013_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010013 --seed 200 --run_name f_1010013_s200 --checkpoint_path checkpoints/factorial_1010013_s200.pt"
+        },
+        {
+          "id": "f_1010014_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010014 --seed 200 --run_name f_1010014_s200 --checkpoint_path checkpoints/factorial_1010014_s200.pt"
+        },
+        {
+          "id": "f_1010100_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010100 --seed 200 --run_name f_1010100_s200 --checkpoint_path checkpoints/factorial_1010100_s200.pt"
+        },
+        {
+          "id": "f_1010101_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010101 --seed 200 --run_name f_1010101_s200 --checkpoint_path checkpoints/factorial_1010101_s200.pt"
+        },
+        {
+          "id": "f_1010102_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010102 --seed 200 --run_name f_1010102_s200 --checkpoint_path checkpoints/factorial_1010102_s200.pt"
+        },
+        {
+          "id": "f_1010103_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010103 --seed 200 --run_name f_1010103_s200 --checkpoint_path checkpoints/factorial_1010103_s200.pt"
+        },
+        {
+          "id": "f_1010104_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010104 --seed 200 --run_name f_1010104_s200 --checkpoint_path checkpoints/factorial_1010104_s200.pt"
+        },
+        {
+          "id": "f_1010110_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010110 --seed 200 --run_name f_1010110_s200 --checkpoint_path checkpoints/factorial_1010110_s200.pt"
+        },
+        {
+          "id": "f_1010111_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010111 --seed 200 --run_name f_1010111_s200 --checkpoint_path checkpoints/factorial_1010111_s200.pt"
+        },
+        {
+          "id": "f_1010112_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010112 --seed 200 --run_name f_1010112_s200 --checkpoint_path checkpoints/factorial_1010112_s200.pt"
+        },
+        {
+          "id": "f_1010113_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010113 --seed 200 --run_name f_1010113_s200 --checkpoint_path checkpoints/factorial_1010113_s200.pt"
+        },
+        {
+          "id": "f_1010114_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010114 --seed 200 --run_name f_1010114_s200 --checkpoint_path checkpoints/factorial_1010114_s200.pt"
+        },
+        {
+          "id": "f_1011000_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011000 --seed 200 --run_name f_1011000_s200 --checkpoint_path checkpoints/factorial_1011000_s200.pt"
+        },
+        {
+          "id": "f_1011001_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011001 --seed 200 --run_name f_1011001_s200 --checkpoint_path checkpoints/factorial_1011001_s200.pt"
+        },
+        {
+          "id": "f_1011002_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011002 --seed 200 --run_name f_1011002_s200 --checkpoint_path checkpoints/factorial_1011002_s200.pt"
+        },
+        {
+          "id": "f_1011003_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011003 --seed 200 --run_name f_1011003_s200 --checkpoint_path checkpoints/factorial_1011003_s200.pt"
+        },
+        {
+          "id": "f_1011004_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011004 --seed 200 --run_name f_1011004_s200 --checkpoint_path checkpoints/factorial_1011004_s200.pt"
+        },
+        {
+          "id": "f_1011010_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011010 --seed 200 --run_name f_1011010_s200 --checkpoint_path checkpoints/factorial_1011010_s200.pt"
+        },
+        {
+          "id": "f_1011011_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011011 --seed 200 --run_name f_1011011_s200 --checkpoint_path checkpoints/factorial_1011011_s200.pt"
+        },
+        {
+          "id": "f_1011012_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011012 --seed 200 --run_name f_1011012_s200 --checkpoint_path checkpoints/factorial_1011012_s200.pt"
+        },
+        {
+          "id": "f_1011013_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011013 --seed 200 --run_name f_1011013_s200 --checkpoint_path checkpoints/factorial_1011013_s200.pt"
+        },
+        {
+          "id": "f_1011014_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011014 --seed 200 --run_name f_1011014_s200 --checkpoint_path checkpoints/factorial_1011014_s200.pt"
+        },
+        {
+          "id": "f_1011100_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011100 --seed 200 --run_name f_1011100_s200 --checkpoint_path checkpoints/factorial_1011100_s200.pt"
+        },
+        {
+          "id": "f_1011101_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011101 --seed 200 --run_name f_1011101_s200 --checkpoint_path checkpoints/factorial_1011101_s200.pt"
+        },
+        {
+          "id": "f_1011102_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011102 --seed 200 --run_name f_1011102_s200 --checkpoint_path checkpoints/factorial_1011102_s200.pt"
+        },
+        {
+          "id": "f_1011103_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011103 --seed 200 --run_name f_1011103_s200 --checkpoint_path checkpoints/factorial_1011103_s200.pt"
+        },
+        {
+          "id": "f_1011104_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011104 --seed 200 --run_name f_1011104_s200 --checkpoint_path checkpoints/factorial_1011104_s200.pt"
+        },
+        {
+          "id": "f_1011110_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011110 --seed 200 --run_name f_1011110_s200 --checkpoint_path checkpoints/factorial_1011110_s200.pt"
+        },
+        {
+          "id": "f_1011111_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011111 --seed 200 --run_name f_1011111_s200 --checkpoint_path checkpoints/factorial_1011111_s200.pt"
+        },
+        {
+          "id": "f_1011112_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011112 --seed 200 --run_name f_1011112_s200 --checkpoint_path checkpoints/factorial_1011112_s200.pt"
+        },
+        {
+          "id": "f_1011113_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011113 --seed 200 --run_name f_1011113_s200 --checkpoint_path checkpoints/factorial_1011113_s200.pt"
+        },
+        {
+          "id": "f_1011114_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011114 --seed 200 --run_name f_1011114_s200 --checkpoint_path checkpoints/factorial_1011114_s200.pt"
+        },
+        {
+          "id": "f_1100000_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100000 --seed 200 --run_name f_1100000_s200 --checkpoint_path checkpoints/factorial_1100000_s200.pt"
+        },
+        {
+          "id": "f_1100001_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100001 --seed 200 --run_name f_1100001_s200 --checkpoint_path checkpoints/factorial_1100001_s200.pt"
+        },
+        {
+          "id": "f_1100002_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100002 --seed 200 --run_name f_1100002_s200 --checkpoint_path checkpoints/factorial_1100002_s200.pt"
+        },
+        {
+          "id": "f_1100003_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100003 --seed 200 --run_name f_1100003_s200 --checkpoint_path checkpoints/factorial_1100003_s200.pt"
+        },
+        {
+          "id": "f_1100004_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100004 --seed 200 --run_name f_1100004_s200 --checkpoint_path checkpoints/factorial_1100004_s200.pt"
+        },
+        {
+          "id": "f_1100010_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100010 --seed 200 --run_name f_1100010_s200 --checkpoint_path checkpoints/factorial_1100010_s200.pt"
+        },
+        {
+          "id": "f_1100011_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100011 --seed 200 --run_name f_1100011_s200 --checkpoint_path checkpoints/factorial_1100011_s200.pt"
+        },
+        {
+          "id": "f_1100012_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100012 --seed 200 --run_name f_1100012_s200 --checkpoint_path checkpoints/factorial_1100012_s200.pt"
+        },
+        {
+          "id": "f_1100013_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100013 --seed 200 --run_name f_1100013_s200 --checkpoint_path checkpoints/factorial_1100013_s200.pt"
+        },
+        {
+          "id": "f_1100014_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100014 --seed 200 --run_name f_1100014_s200 --checkpoint_path checkpoints/factorial_1100014_s200.pt"
+        },
+        {
+          "id": "f_1100100_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100100 --seed 200 --run_name f_1100100_s200 --checkpoint_path checkpoints/factorial_1100100_s200.pt"
+        },
+        {
+          "id": "f_1100101_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100101 --seed 200 --run_name f_1100101_s200 --checkpoint_path checkpoints/factorial_1100101_s200.pt"
+        },
+        {
+          "id": "f_1100102_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100102 --seed 200 --run_name f_1100102_s200 --checkpoint_path checkpoints/factorial_1100102_s200.pt"
+        },
+        {
+          "id": "f_1100103_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100103 --seed 200 --run_name f_1100103_s200 --checkpoint_path checkpoints/factorial_1100103_s200.pt"
+        },
+        {
+          "id": "f_1100104_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100104 --seed 200 --run_name f_1100104_s200 --checkpoint_path checkpoints/factorial_1100104_s200.pt"
+        },
+        {
+          "id": "f_1100110_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100110 --seed 200 --run_name f_1100110_s200 --checkpoint_path checkpoints/factorial_1100110_s200.pt"
+        },
+        {
+          "id": "f_1100111_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100111 --seed 200 --run_name f_1100111_s200 --checkpoint_path checkpoints/factorial_1100111_s200.pt"
+        },
+        {
+          "id": "f_1100112_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100112 --seed 200 --run_name f_1100112_s200 --checkpoint_path checkpoints/factorial_1100112_s200.pt"
+        },
+        {
+          "id": "f_1100113_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100113 --seed 200 --run_name f_1100113_s200 --checkpoint_path checkpoints/factorial_1100113_s200.pt"
+        },
+        {
+          "id": "f_1100114_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100114 --seed 200 --run_name f_1100114_s200 --checkpoint_path checkpoints/factorial_1100114_s200.pt"
+        },
+        {
+          "id": "f_1101000_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101000 --seed 200 --run_name f_1101000_s200 --checkpoint_path checkpoints/factorial_1101000_s200.pt"
+        },
+        {
+          "id": "f_1101001_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101001 --seed 200 --run_name f_1101001_s200 --checkpoint_path checkpoints/factorial_1101001_s200.pt"
+        },
+        {
+          "id": "f_1101002_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101002 --seed 200 --run_name f_1101002_s200 --checkpoint_path checkpoints/factorial_1101002_s200.pt"
+        },
+        {
+          "id": "f_1101003_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101003 --seed 200 --run_name f_1101003_s200 --checkpoint_path checkpoints/factorial_1101003_s200.pt"
+        },
+        {
+          "id": "f_1101004_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101004 --seed 200 --run_name f_1101004_s200 --checkpoint_path checkpoints/factorial_1101004_s200.pt"
+        },
+        {
+          "id": "f_1101010_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101010 --seed 200 --run_name f_1101010_s200 --checkpoint_path checkpoints/factorial_1101010_s200.pt"
+        },
+        {
+          "id": "f_1101011_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101011 --seed 200 --run_name f_1101011_s200 --checkpoint_path checkpoints/factorial_1101011_s200.pt"
+        },
+        {
+          "id": "f_1101012_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101012 --seed 200 --run_name f_1101012_s200 --checkpoint_path checkpoints/factorial_1101012_s200.pt"
+        },
+        {
+          "id": "f_1101013_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101013 --seed 200 --run_name f_1101013_s200 --checkpoint_path checkpoints/factorial_1101013_s200.pt"
+        },
+        {
+          "id": "f_1101014_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101014 --seed 200 --run_name f_1101014_s200 --checkpoint_path checkpoints/factorial_1101014_s200.pt"
+        },
+        {
+          "id": "f_1101100_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101100 --seed 200 --run_name f_1101100_s200 --checkpoint_path checkpoints/factorial_1101100_s200.pt"
+        },
+        {
+          "id": "f_1101101_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101101 --seed 200 --run_name f_1101101_s200 --checkpoint_path checkpoints/factorial_1101101_s200.pt"
+        },
+        {
+          "id": "f_1101102_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101102 --seed 200 --run_name f_1101102_s200 --checkpoint_path checkpoints/factorial_1101102_s200.pt"
+        },
+        {
+          "id": "f_1101103_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101103 --seed 200 --run_name f_1101103_s200 --checkpoint_path checkpoints/factorial_1101103_s200.pt"
+        },
+        {
+          "id": "f_1101104_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101104 --seed 200 --run_name f_1101104_s200 --checkpoint_path checkpoints/factorial_1101104_s200.pt"
+        },
+        {
+          "id": "f_1101110_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101110 --seed 200 --run_name f_1101110_s200 --checkpoint_path checkpoints/factorial_1101110_s200.pt"
+        },
+        {
+          "id": "f_1101111_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101111 --seed 200 --run_name f_1101111_s200 --checkpoint_path checkpoints/factorial_1101111_s200.pt"
+        },
+        {
+          "id": "f_1101112_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101112 --seed 200 --run_name f_1101112_s200 --checkpoint_path checkpoints/factorial_1101112_s200.pt"
+        },
+        {
+          "id": "f_1101113_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101113 --seed 200 --run_name f_1101113_s200 --checkpoint_path checkpoints/factorial_1101113_s200.pt"
+        },
+        {
+          "id": "f_1101114_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101114 --seed 200 --run_name f_1101114_s200 --checkpoint_path checkpoints/factorial_1101114_s200.pt"
+        },
+        {
+          "id": "f_1110000_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110000 --seed 200 --run_name f_1110000_s200 --checkpoint_path checkpoints/factorial_1110000_s200.pt"
+        },
+        {
+          "id": "f_1110001_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110001 --seed 200 --run_name f_1110001_s200 --checkpoint_path checkpoints/factorial_1110001_s200.pt"
+        },
+        {
+          "id": "f_1110002_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110002 --seed 200 --run_name f_1110002_s200 --checkpoint_path checkpoints/factorial_1110002_s200.pt"
+        },
+        {
+          "id": "f_1110003_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110003 --seed 200 --run_name f_1110003_s200 --checkpoint_path checkpoints/factorial_1110003_s200.pt"
+        },
+        {
+          "id": "f_1110004_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110004 --seed 200 --run_name f_1110004_s200 --checkpoint_path checkpoints/factorial_1110004_s200.pt"
+        },
+        {
+          "id": "f_1110010_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110010 --seed 200 --run_name f_1110010_s200 --checkpoint_path checkpoints/factorial_1110010_s200.pt"
+        },
+        {
+          "id": "f_1110011_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110011 --seed 200 --run_name f_1110011_s200 --checkpoint_path checkpoints/factorial_1110011_s200.pt"
+        },
+        {
+          "id": "f_1110012_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110012 --seed 200 --run_name f_1110012_s200 --checkpoint_path checkpoints/factorial_1110012_s200.pt"
+        },
+        {
+          "id": "f_1110013_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110013 --seed 200 --run_name f_1110013_s200 --checkpoint_path checkpoints/factorial_1110013_s200.pt"
+        },
+        {
+          "id": "f_1110014_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110014 --seed 200 --run_name f_1110014_s200 --checkpoint_path checkpoints/factorial_1110014_s200.pt"
+        },
+        {
+          "id": "f_1110100_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110100 --seed 200 --run_name f_1110100_s200 --checkpoint_path checkpoints/factorial_1110100_s200.pt"
+        },
+        {
+          "id": "f_1110101_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110101 --seed 200 --run_name f_1110101_s200 --checkpoint_path checkpoints/factorial_1110101_s200.pt"
+        },
+        {
+          "id": "f_1110102_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110102 --seed 200 --run_name f_1110102_s200 --checkpoint_path checkpoints/factorial_1110102_s200.pt"
+        },
+        {
+          "id": "f_1110103_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110103 --seed 200 --run_name f_1110103_s200 --checkpoint_path checkpoints/factorial_1110103_s200.pt"
+        },
+        {
+          "id": "f_1110104_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110104 --seed 200 --run_name f_1110104_s200 --checkpoint_path checkpoints/factorial_1110104_s200.pt"
+        },
+        {
+          "id": "f_1110110_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110110 --seed 200 --run_name f_1110110_s200 --checkpoint_path checkpoints/factorial_1110110_s200.pt"
+        },
+        {
+          "id": "f_1110111_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110111 --seed 200 --run_name f_1110111_s200 --checkpoint_path checkpoints/factorial_1110111_s200.pt"
+        },
+        {
+          "id": "f_1110112_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110112 --seed 200 --run_name f_1110112_s200 --checkpoint_path checkpoints/factorial_1110112_s200.pt"
+        },
+        {
+          "id": "f_1110113_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110113 --seed 200 --run_name f_1110113_s200 --checkpoint_path checkpoints/factorial_1110113_s200.pt"
+        },
+        {
+          "id": "f_1110114_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110114 --seed 200 --run_name f_1110114_s200 --checkpoint_path checkpoints/factorial_1110114_s200.pt"
+        },
+        {
+          "id": "f_1111000_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111000 --seed 200 --run_name f_1111000_s200 --checkpoint_path checkpoints/factorial_1111000_s200.pt"
+        },
+        {
+          "id": "f_1111001_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111001 --seed 200 --run_name f_1111001_s200 --checkpoint_path checkpoints/factorial_1111001_s200.pt"
+        },
+        {
+          "id": "f_1111002_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111002 --seed 200 --run_name f_1111002_s200 --checkpoint_path checkpoints/factorial_1111002_s200.pt"
+        },
+        {
+          "id": "f_1111003_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111003 --seed 200 --run_name f_1111003_s200 --checkpoint_path checkpoints/factorial_1111003_s200.pt"
+        },
+        {
+          "id": "f_1111004_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111004 --seed 200 --run_name f_1111004_s200 --checkpoint_path checkpoints/factorial_1111004_s200.pt"
+        },
+        {
+          "id": "f_1111010_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111010 --seed 200 --run_name f_1111010_s200 --checkpoint_path checkpoints/factorial_1111010_s200.pt"
+        },
+        {
+          "id": "f_1111011_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111011 --seed 200 --run_name f_1111011_s200 --checkpoint_path checkpoints/factorial_1111011_s200.pt"
+        },
+        {
+          "id": "f_1111012_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111012 --seed 200 --run_name f_1111012_s200 --checkpoint_path checkpoints/factorial_1111012_s200.pt"
+        },
+        {
+          "id": "f_1111013_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111013 --seed 200 --run_name f_1111013_s200 --checkpoint_path checkpoints/factorial_1111013_s200.pt"
+        },
+        {
+          "id": "f_1111014_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111014 --seed 200 --run_name f_1111014_s200 --checkpoint_path checkpoints/factorial_1111014_s200.pt"
+        },
+        {
+          "id": "f_1111100_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111100 --seed 200 --run_name f_1111100_s200 --checkpoint_path checkpoints/factorial_1111100_s200.pt"
+        },
+        {
+          "id": "f_1111101_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111101 --seed 200 --run_name f_1111101_s200 --checkpoint_path checkpoints/factorial_1111101_s200.pt"
+        },
+        {
+          "id": "f_1111102_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111102 --seed 200 --run_name f_1111102_s200 --checkpoint_path checkpoints/factorial_1111102_s200.pt"
+        },
+        {
+          "id": "f_1111103_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111103 --seed 200 --run_name f_1111103_s200 --checkpoint_path checkpoints/factorial_1111103_s200.pt"
+        },
+        {
+          "id": "f_1111104_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111104 --seed 200 --run_name f_1111104_s200 --checkpoint_path checkpoints/factorial_1111104_s200.pt"
+        },
+        {
+          "id": "f_1111110_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111110 --seed 200 --run_name f_1111110_s200 --checkpoint_path checkpoints/factorial_1111110_s200.pt"
+        },
+        {
+          "id": "f_1111111_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111111 --seed 200 --run_name f_1111111_s200 --checkpoint_path checkpoints/factorial_1111111_s200.pt"
+        },
+        {
+          "id": "f_1111112_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111112 --seed 200 --run_name f_1111112_s200 --checkpoint_path checkpoints/factorial_1111112_s200.pt"
+        },
+        {
+          "id": "f_1111113_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111113 --seed 200 --run_name f_1111113_s200 --checkpoint_path checkpoints/factorial_1111113_s200.pt"
+        },
+        {
+          "id": "f_1111114_s200",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111114 --seed 200 --run_name f_1111114_s200 --checkpoint_path checkpoints/factorial_1111114_s200.pt"
+        },
+        {
+          "id": "f_1000000_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000000 --seed 201 --run_name f_1000000_s201 --checkpoint_path checkpoints/factorial_1000000_s201.pt"
+        },
+        {
+          "id": "f_1000001_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000001 --seed 201 --run_name f_1000001_s201 --checkpoint_path checkpoints/factorial_1000001_s201.pt"
+        },
+        {
+          "id": "f_1000002_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000002 --seed 201 --run_name f_1000002_s201 --checkpoint_path checkpoints/factorial_1000002_s201.pt"
+        },
+        {
+          "id": "f_1000003_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000003 --seed 201 --run_name f_1000003_s201 --checkpoint_path checkpoints/factorial_1000003_s201.pt"
+        },
+        {
+          "id": "f_1000004_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000004 --seed 201 --run_name f_1000004_s201 --checkpoint_path checkpoints/factorial_1000004_s201.pt"
+        },
+        {
+          "id": "f_1000010_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000010 --seed 201 --run_name f_1000010_s201 --checkpoint_path checkpoints/factorial_1000010_s201.pt"
+        },
+        {
+          "id": "f_1000011_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000011 --seed 201 --run_name f_1000011_s201 --checkpoint_path checkpoints/factorial_1000011_s201.pt"
+        },
+        {
+          "id": "f_1000012_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000012 --seed 201 --run_name f_1000012_s201 --checkpoint_path checkpoints/factorial_1000012_s201.pt"
+        },
+        {
+          "id": "f_1000013_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000013 --seed 201 --run_name f_1000013_s201 --checkpoint_path checkpoints/factorial_1000013_s201.pt"
+        },
+        {
+          "id": "f_1000014_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000014 --seed 201 --run_name f_1000014_s201 --checkpoint_path checkpoints/factorial_1000014_s201.pt"
+        },
+        {
+          "id": "f_1000100_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000100 --seed 201 --run_name f_1000100_s201 --checkpoint_path checkpoints/factorial_1000100_s201.pt"
+        },
+        {
+          "id": "f_1000101_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000101 --seed 201 --run_name f_1000101_s201 --checkpoint_path checkpoints/factorial_1000101_s201.pt"
+        },
+        {
+          "id": "f_1000102_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000102 --seed 201 --run_name f_1000102_s201 --checkpoint_path checkpoints/factorial_1000102_s201.pt"
+        },
+        {
+          "id": "f_1000103_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000103 --seed 201 --run_name f_1000103_s201 --checkpoint_path checkpoints/factorial_1000103_s201.pt"
+        },
+        {
+          "id": "f_1000104_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000104 --seed 201 --run_name f_1000104_s201 --checkpoint_path checkpoints/factorial_1000104_s201.pt"
+        },
+        {
+          "id": "f_1000110_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000110 --seed 201 --run_name f_1000110_s201 --checkpoint_path checkpoints/factorial_1000110_s201.pt"
+        },
+        {
+          "id": "f_1000111_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000111 --seed 201 --run_name f_1000111_s201 --checkpoint_path checkpoints/factorial_1000111_s201.pt"
+        },
+        {
+          "id": "f_1000112_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000112 --seed 201 --run_name f_1000112_s201 --checkpoint_path checkpoints/factorial_1000112_s201.pt"
+        },
+        {
+          "id": "f_1000113_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000113 --seed 201 --run_name f_1000113_s201 --checkpoint_path checkpoints/factorial_1000113_s201.pt"
+        },
+        {
+          "id": "f_1000114_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1000114 --seed 201 --run_name f_1000114_s201 --checkpoint_path checkpoints/factorial_1000114_s201.pt"
+        },
+        {
+          "id": "f_1001000_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001000 --seed 201 --run_name f_1001000_s201 --checkpoint_path checkpoints/factorial_1001000_s201.pt"
+        },
+        {
+          "id": "f_1001001_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001001 --seed 201 --run_name f_1001001_s201 --checkpoint_path checkpoints/factorial_1001001_s201.pt"
+        },
+        {
+          "id": "f_1001002_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001002 --seed 201 --run_name f_1001002_s201 --checkpoint_path checkpoints/factorial_1001002_s201.pt"
+        },
+        {
+          "id": "f_1001003_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001003 --seed 201 --run_name f_1001003_s201 --checkpoint_path checkpoints/factorial_1001003_s201.pt"
+        },
+        {
+          "id": "f_1001004_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001004 --seed 201 --run_name f_1001004_s201 --checkpoint_path checkpoints/factorial_1001004_s201.pt"
+        },
+        {
+          "id": "f_1001010_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001010 --seed 201 --run_name f_1001010_s201 --checkpoint_path checkpoints/factorial_1001010_s201.pt"
+        },
+        {
+          "id": "f_1001011_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001011 --seed 201 --run_name f_1001011_s201 --checkpoint_path checkpoints/factorial_1001011_s201.pt"
+        },
+        {
+          "id": "f_1001012_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001012 --seed 201 --run_name f_1001012_s201 --checkpoint_path checkpoints/factorial_1001012_s201.pt"
+        },
+        {
+          "id": "f_1001013_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001013 --seed 201 --run_name f_1001013_s201 --checkpoint_path checkpoints/factorial_1001013_s201.pt"
+        },
+        {
+          "id": "f_1001014_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001014 --seed 201 --run_name f_1001014_s201 --checkpoint_path checkpoints/factorial_1001014_s201.pt"
+        },
+        {
+          "id": "f_1001100_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001100 --seed 201 --run_name f_1001100_s201 --checkpoint_path checkpoints/factorial_1001100_s201.pt"
+        },
+        {
+          "id": "f_1001101_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001101 --seed 201 --run_name f_1001101_s201 --checkpoint_path checkpoints/factorial_1001101_s201.pt"
+        },
+        {
+          "id": "f_1001102_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001102 --seed 201 --run_name f_1001102_s201 --checkpoint_path checkpoints/factorial_1001102_s201.pt"
+        },
+        {
+          "id": "f_1001103_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001103 --seed 201 --run_name f_1001103_s201 --checkpoint_path checkpoints/factorial_1001103_s201.pt"
+        },
+        {
+          "id": "f_1001104_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001104 --seed 201 --run_name f_1001104_s201 --checkpoint_path checkpoints/factorial_1001104_s201.pt"
+        },
+        {
+          "id": "f_1001110_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001110 --seed 201 --run_name f_1001110_s201 --checkpoint_path checkpoints/factorial_1001110_s201.pt"
+        },
+        {
+          "id": "f_1001111_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001111 --seed 201 --run_name f_1001111_s201 --checkpoint_path checkpoints/factorial_1001111_s201.pt"
+        },
+        {
+          "id": "f_1001112_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001112 --seed 201 --run_name f_1001112_s201 --checkpoint_path checkpoints/factorial_1001112_s201.pt"
+        },
+        {
+          "id": "f_1001113_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001113 --seed 201 --run_name f_1001113_s201 --checkpoint_path checkpoints/factorial_1001113_s201.pt"
+        },
+        {
+          "id": "f_1001114_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1001114 --seed 201 --run_name f_1001114_s201 --checkpoint_path checkpoints/factorial_1001114_s201.pt"
+        },
+        {
+          "id": "f_1010000_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010000 --seed 201 --run_name f_1010000_s201 --checkpoint_path checkpoints/factorial_1010000_s201.pt"
+        },
+        {
+          "id": "f_1010001_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010001 --seed 201 --run_name f_1010001_s201 --checkpoint_path checkpoints/factorial_1010001_s201.pt"
+        },
+        {
+          "id": "f_1010002_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010002 --seed 201 --run_name f_1010002_s201 --checkpoint_path checkpoints/factorial_1010002_s201.pt"
+        },
+        {
+          "id": "f_1010003_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010003 --seed 201 --run_name f_1010003_s201 --checkpoint_path checkpoints/factorial_1010003_s201.pt"
+        },
+        {
+          "id": "f_1010004_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010004 --seed 201 --run_name f_1010004_s201 --checkpoint_path checkpoints/factorial_1010004_s201.pt"
+        },
+        {
+          "id": "f_1010010_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010010 --seed 201 --run_name f_1010010_s201 --checkpoint_path checkpoints/factorial_1010010_s201.pt"
+        },
+        {
+          "id": "f_1010011_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010011 --seed 201 --run_name f_1010011_s201 --checkpoint_path checkpoints/factorial_1010011_s201.pt"
+        },
+        {
+          "id": "f_1010012_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010012 --seed 201 --run_name f_1010012_s201 --checkpoint_path checkpoints/factorial_1010012_s201.pt"
+        },
+        {
+          "id": "f_1010013_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010013 --seed 201 --run_name f_1010013_s201 --checkpoint_path checkpoints/factorial_1010013_s201.pt"
+        },
+        {
+          "id": "f_1010014_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010014 --seed 201 --run_name f_1010014_s201 --checkpoint_path checkpoints/factorial_1010014_s201.pt"
+        },
+        {
+          "id": "f_1010100_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010100 --seed 201 --run_name f_1010100_s201 --checkpoint_path checkpoints/factorial_1010100_s201.pt"
+        },
+        {
+          "id": "f_1010101_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010101 --seed 201 --run_name f_1010101_s201 --checkpoint_path checkpoints/factorial_1010101_s201.pt"
+        },
+        {
+          "id": "f_1010102_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010102 --seed 201 --run_name f_1010102_s201 --checkpoint_path checkpoints/factorial_1010102_s201.pt"
+        },
+        {
+          "id": "f_1010103_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010103 --seed 201 --run_name f_1010103_s201 --checkpoint_path checkpoints/factorial_1010103_s201.pt"
+        },
+        {
+          "id": "f_1010104_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010104 --seed 201 --run_name f_1010104_s201 --checkpoint_path checkpoints/factorial_1010104_s201.pt"
+        },
+        {
+          "id": "f_1010110_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010110 --seed 201 --run_name f_1010110_s201 --checkpoint_path checkpoints/factorial_1010110_s201.pt"
+        },
+        {
+          "id": "f_1010111_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010111 --seed 201 --run_name f_1010111_s201 --checkpoint_path checkpoints/factorial_1010111_s201.pt"
+        },
+        {
+          "id": "f_1010112_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010112 --seed 201 --run_name f_1010112_s201 --checkpoint_path checkpoints/factorial_1010112_s201.pt"
+        },
+        {
+          "id": "f_1010113_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010113 --seed 201 --run_name f_1010113_s201 --checkpoint_path checkpoints/factorial_1010113_s201.pt"
+        },
+        {
+          "id": "f_1010114_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1010114 --seed 201 --run_name f_1010114_s201 --checkpoint_path checkpoints/factorial_1010114_s201.pt"
+        },
+        {
+          "id": "f_1011000_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011000 --seed 201 --run_name f_1011000_s201 --checkpoint_path checkpoints/factorial_1011000_s201.pt"
+        },
+        {
+          "id": "f_1011001_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011001 --seed 201 --run_name f_1011001_s201 --checkpoint_path checkpoints/factorial_1011001_s201.pt"
+        },
+        {
+          "id": "f_1011002_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011002 --seed 201 --run_name f_1011002_s201 --checkpoint_path checkpoints/factorial_1011002_s201.pt"
+        },
+        {
+          "id": "f_1011003_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011003 --seed 201 --run_name f_1011003_s201 --checkpoint_path checkpoints/factorial_1011003_s201.pt"
+        },
+        {
+          "id": "f_1011004_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011004 --seed 201 --run_name f_1011004_s201 --checkpoint_path checkpoints/factorial_1011004_s201.pt"
+        },
+        {
+          "id": "f_1011010_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011010 --seed 201 --run_name f_1011010_s201 --checkpoint_path checkpoints/factorial_1011010_s201.pt"
+        },
+        {
+          "id": "f_1011011_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011011 --seed 201 --run_name f_1011011_s201 --checkpoint_path checkpoints/factorial_1011011_s201.pt"
+        },
+        {
+          "id": "f_1011012_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011012 --seed 201 --run_name f_1011012_s201 --checkpoint_path checkpoints/factorial_1011012_s201.pt"
+        },
+        {
+          "id": "f_1011013_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011013 --seed 201 --run_name f_1011013_s201 --checkpoint_path checkpoints/factorial_1011013_s201.pt"
+        },
+        {
+          "id": "f_1011014_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011014 --seed 201 --run_name f_1011014_s201 --checkpoint_path checkpoints/factorial_1011014_s201.pt"
+        },
+        {
+          "id": "f_1011100_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011100 --seed 201 --run_name f_1011100_s201 --checkpoint_path checkpoints/factorial_1011100_s201.pt"
+        },
+        {
+          "id": "f_1011101_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011101 --seed 201 --run_name f_1011101_s201 --checkpoint_path checkpoints/factorial_1011101_s201.pt"
+        },
+        {
+          "id": "f_1011102_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011102 --seed 201 --run_name f_1011102_s201 --checkpoint_path checkpoints/factorial_1011102_s201.pt"
+        },
+        {
+          "id": "f_1011103_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011103 --seed 201 --run_name f_1011103_s201 --checkpoint_path checkpoints/factorial_1011103_s201.pt"
+        },
+        {
+          "id": "f_1011104_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011104 --seed 201 --run_name f_1011104_s201 --checkpoint_path checkpoints/factorial_1011104_s201.pt"
+        },
+        {
+          "id": "f_1011110_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011110 --seed 201 --run_name f_1011110_s201 --checkpoint_path checkpoints/factorial_1011110_s201.pt"
+        },
+        {
+          "id": "f_1011111_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011111 --seed 201 --run_name f_1011111_s201 --checkpoint_path checkpoints/factorial_1011111_s201.pt"
+        },
+        {
+          "id": "f_1011112_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011112 --seed 201 --run_name f_1011112_s201 --checkpoint_path checkpoints/factorial_1011112_s201.pt"
+        },
+        {
+          "id": "f_1011113_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011113 --seed 201 --run_name f_1011113_s201 --checkpoint_path checkpoints/factorial_1011113_s201.pt"
+        },
+        {
+          "id": "f_1011114_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1011114 --seed 201 --run_name f_1011114_s201 --checkpoint_path checkpoints/factorial_1011114_s201.pt"
+        },
+        {
+          "id": "f_1100000_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100000 --seed 201 --run_name f_1100000_s201 --checkpoint_path checkpoints/factorial_1100000_s201.pt"
+        },
+        {
+          "id": "f_1100001_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100001 --seed 201 --run_name f_1100001_s201 --checkpoint_path checkpoints/factorial_1100001_s201.pt"
+        },
+        {
+          "id": "f_1100002_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100002 --seed 201 --run_name f_1100002_s201 --checkpoint_path checkpoints/factorial_1100002_s201.pt"
+        },
+        {
+          "id": "f_1100003_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100003 --seed 201 --run_name f_1100003_s201 --checkpoint_path checkpoints/factorial_1100003_s201.pt"
+        },
+        {
+          "id": "f_1100004_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100004 --seed 201 --run_name f_1100004_s201 --checkpoint_path checkpoints/factorial_1100004_s201.pt"
+        },
+        {
+          "id": "f_1100010_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100010 --seed 201 --run_name f_1100010_s201 --checkpoint_path checkpoints/factorial_1100010_s201.pt"
+        },
+        {
+          "id": "f_1100011_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100011 --seed 201 --run_name f_1100011_s201 --checkpoint_path checkpoints/factorial_1100011_s201.pt"
+        },
+        {
+          "id": "f_1100012_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100012 --seed 201 --run_name f_1100012_s201 --checkpoint_path checkpoints/factorial_1100012_s201.pt"
+        },
+        {
+          "id": "f_1100013_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100013 --seed 201 --run_name f_1100013_s201 --checkpoint_path checkpoints/factorial_1100013_s201.pt"
+        },
+        {
+          "id": "f_1100014_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100014 --seed 201 --run_name f_1100014_s201 --checkpoint_path checkpoints/factorial_1100014_s201.pt"
+        },
+        {
+          "id": "f_1100100_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100100 --seed 201 --run_name f_1100100_s201 --checkpoint_path checkpoints/factorial_1100100_s201.pt"
+        },
+        {
+          "id": "f_1100101_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100101 --seed 201 --run_name f_1100101_s201 --checkpoint_path checkpoints/factorial_1100101_s201.pt"
+        },
+        {
+          "id": "f_1100102_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100102 --seed 201 --run_name f_1100102_s201 --checkpoint_path checkpoints/factorial_1100102_s201.pt"
+        },
+        {
+          "id": "f_1100103_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100103 --seed 201 --run_name f_1100103_s201 --checkpoint_path checkpoints/factorial_1100103_s201.pt"
+        },
+        {
+          "id": "f_1100104_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100104 --seed 201 --run_name f_1100104_s201 --checkpoint_path checkpoints/factorial_1100104_s201.pt"
+        },
+        {
+          "id": "f_1100110_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100110 --seed 201 --run_name f_1100110_s201 --checkpoint_path checkpoints/factorial_1100110_s201.pt"
+        },
+        {
+          "id": "f_1100111_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100111 --seed 201 --run_name f_1100111_s201 --checkpoint_path checkpoints/factorial_1100111_s201.pt"
+        },
+        {
+          "id": "f_1100112_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100112 --seed 201 --run_name f_1100112_s201 --checkpoint_path checkpoints/factorial_1100112_s201.pt"
+        },
+        {
+          "id": "f_1100113_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100113 --seed 201 --run_name f_1100113_s201 --checkpoint_path checkpoints/factorial_1100113_s201.pt"
+        },
+        {
+          "id": "f_1100114_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1100114 --seed 201 --run_name f_1100114_s201 --checkpoint_path checkpoints/factorial_1100114_s201.pt"
+        },
+        {
+          "id": "f_1101000_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101000 --seed 201 --run_name f_1101000_s201 --checkpoint_path checkpoints/factorial_1101000_s201.pt"
+        },
+        {
+          "id": "f_1101001_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101001 --seed 201 --run_name f_1101001_s201 --checkpoint_path checkpoints/factorial_1101001_s201.pt"
+        },
+        {
+          "id": "f_1101002_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101002 --seed 201 --run_name f_1101002_s201 --checkpoint_path checkpoints/factorial_1101002_s201.pt"
+        },
+        {
+          "id": "f_1101003_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101003 --seed 201 --run_name f_1101003_s201 --checkpoint_path checkpoints/factorial_1101003_s201.pt"
+        },
+        {
+          "id": "f_1101004_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101004 --seed 201 --run_name f_1101004_s201 --checkpoint_path checkpoints/factorial_1101004_s201.pt"
+        },
+        {
+          "id": "f_1101010_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101010 --seed 201 --run_name f_1101010_s201 --checkpoint_path checkpoints/factorial_1101010_s201.pt"
+        },
+        {
+          "id": "f_1101011_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101011 --seed 201 --run_name f_1101011_s201 --checkpoint_path checkpoints/factorial_1101011_s201.pt"
+        },
+        {
+          "id": "f_1101012_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101012 --seed 201 --run_name f_1101012_s201 --checkpoint_path checkpoints/factorial_1101012_s201.pt"
+        },
+        {
+          "id": "f_1101013_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101013 --seed 201 --run_name f_1101013_s201 --checkpoint_path checkpoints/factorial_1101013_s201.pt"
+        },
+        {
+          "id": "f_1101014_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101014 --seed 201 --run_name f_1101014_s201 --checkpoint_path checkpoints/factorial_1101014_s201.pt"
+        },
+        {
+          "id": "f_1101100_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101100 --seed 201 --run_name f_1101100_s201 --checkpoint_path checkpoints/factorial_1101100_s201.pt"
+        },
+        {
+          "id": "f_1101101_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101101 --seed 201 --run_name f_1101101_s201 --checkpoint_path checkpoints/factorial_1101101_s201.pt"
+        },
+        {
+          "id": "f_1101102_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101102 --seed 201 --run_name f_1101102_s201 --checkpoint_path checkpoints/factorial_1101102_s201.pt"
+        },
+        {
+          "id": "f_1101103_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101103 --seed 201 --run_name f_1101103_s201 --checkpoint_path checkpoints/factorial_1101103_s201.pt"
+        },
+        {
+          "id": "f_1101104_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101104 --seed 201 --run_name f_1101104_s201 --checkpoint_path checkpoints/factorial_1101104_s201.pt"
+        },
+        {
+          "id": "f_1101110_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101110 --seed 201 --run_name f_1101110_s201 --checkpoint_path checkpoints/factorial_1101110_s201.pt"
+        },
+        {
+          "id": "f_1101111_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101111 --seed 201 --run_name f_1101111_s201 --checkpoint_path checkpoints/factorial_1101111_s201.pt"
+        },
+        {
+          "id": "f_1101112_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101112 --seed 201 --run_name f_1101112_s201 --checkpoint_path checkpoints/factorial_1101112_s201.pt"
+        },
+        {
+          "id": "f_1101113_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101113 --seed 201 --run_name f_1101113_s201 --checkpoint_path checkpoints/factorial_1101113_s201.pt"
+        },
+        {
+          "id": "f_1101114_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1101114 --seed 201 --run_name f_1101114_s201 --checkpoint_path checkpoints/factorial_1101114_s201.pt"
+        },
+        {
+          "id": "f_1110000_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110000 --seed 201 --run_name f_1110000_s201 --checkpoint_path checkpoints/factorial_1110000_s201.pt"
+        },
+        {
+          "id": "f_1110001_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110001 --seed 201 --run_name f_1110001_s201 --checkpoint_path checkpoints/factorial_1110001_s201.pt"
+        },
+        {
+          "id": "f_1110002_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110002 --seed 201 --run_name f_1110002_s201 --checkpoint_path checkpoints/factorial_1110002_s201.pt"
+        },
+        {
+          "id": "f_1110003_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110003 --seed 201 --run_name f_1110003_s201 --checkpoint_path checkpoints/factorial_1110003_s201.pt"
+        },
+        {
+          "id": "f_1110004_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110004 --seed 201 --run_name f_1110004_s201 --checkpoint_path checkpoints/factorial_1110004_s201.pt"
+        },
+        {
+          "id": "f_1110010_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110010 --seed 201 --run_name f_1110010_s201 --checkpoint_path checkpoints/factorial_1110010_s201.pt"
+        },
+        {
+          "id": "f_1110011_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110011 --seed 201 --run_name f_1110011_s201 --checkpoint_path checkpoints/factorial_1110011_s201.pt"
+        },
+        {
+          "id": "f_1110012_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110012 --seed 201 --run_name f_1110012_s201 --checkpoint_path checkpoints/factorial_1110012_s201.pt"
+        },
+        {
+          "id": "f_1110013_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110013 --seed 201 --run_name f_1110013_s201 --checkpoint_path checkpoints/factorial_1110013_s201.pt"
+        },
+        {
+          "id": "f_1110014_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110014 --seed 201 --run_name f_1110014_s201 --checkpoint_path checkpoints/factorial_1110014_s201.pt"
+        },
+        {
+          "id": "f_1110100_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110100 --seed 201 --run_name f_1110100_s201 --checkpoint_path checkpoints/factorial_1110100_s201.pt"
+        },
+        {
+          "id": "f_1110101_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110101 --seed 201 --run_name f_1110101_s201 --checkpoint_path checkpoints/factorial_1110101_s201.pt"
+        },
+        {
+          "id": "f_1110102_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110102 --seed 201 --run_name f_1110102_s201 --checkpoint_path checkpoints/factorial_1110102_s201.pt"
+        },
+        {
+          "id": "f_1110103_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110103 --seed 201 --run_name f_1110103_s201 --checkpoint_path checkpoints/factorial_1110103_s201.pt"
+        },
+        {
+          "id": "f_1110104_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110104 --seed 201 --run_name f_1110104_s201 --checkpoint_path checkpoints/factorial_1110104_s201.pt"
+        },
+        {
+          "id": "f_1110110_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110110 --seed 201 --run_name f_1110110_s201 --checkpoint_path checkpoints/factorial_1110110_s201.pt"
+        },
+        {
+          "id": "f_1110111_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110111 --seed 201 --run_name f_1110111_s201 --checkpoint_path checkpoints/factorial_1110111_s201.pt"
+        },
+        {
+          "id": "f_1110112_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110112 --seed 201 --run_name f_1110112_s201 --checkpoint_path checkpoints/factorial_1110112_s201.pt"
+        },
+        {
+          "id": "f_1110113_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110113 --seed 201 --run_name f_1110113_s201 --checkpoint_path checkpoints/factorial_1110113_s201.pt"
+        },
+        {
+          "id": "f_1110114_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1110114 --seed 201 --run_name f_1110114_s201 --checkpoint_path checkpoints/factorial_1110114_s201.pt"
+        },
+        {
+          "id": "f_1111000_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111000 --seed 201 --run_name f_1111000_s201 --checkpoint_path checkpoints/factorial_1111000_s201.pt"
+        },
+        {
+          "id": "f_1111001_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111001 --seed 201 --run_name f_1111001_s201 --checkpoint_path checkpoints/factorial_1111001_s201.pt"
+        },
+        {
+          "id": "f_1111002_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111002 --seed 201 --run_name f_1111002_s201 --checkpoint_path checkpoints/factorial_1111002_s201.pt"
+        },
+        {
+          "id": "f_1111003_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111003 --seed 201 --run_name f_1111003_s201 --checkpoint_path checkpoints/factorial_1111003_s201.pt"
+        },
+        {
+          "id": "f_1111004_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111004 --seed 201 --run_name f_1111004_s201 --checkpoint_path checkpoints/factorial_1111004_s201.pt"
+        },
+        {
+          "id": "f_1111010_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111010 --seed 201 --run_name f_1111010_s201 --checkpoint_path checkpoints/factorial_1111010_s201.pt"
+        },
+        {
+          "id": "f_1111011_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111011 --seed 201 --run_name f_1111011_s201 --checkpoint_path checkpoints/factorial_1111011_s201.pt"
+        },
+        {
+          "id": "f_1111012_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111012 --seed 201 --run_name f_1111012_s201 --checkpoint_path checkpoints/factorial_1111012_s201.pt"
+        },
+        {
+          "id": "f_1111013_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111013 --seed 201 --run_name f_1111013_s201 --checkpoint_path checkpoints/factorial_1111013_s201.pt"
+        },
+        {
+          "id": "f_1111014_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111014 --seed 201 --run_name f_1111014_s201 --checkpoint_path checkpoints/factorial_1111014_s201.pt"
+        },
+        {
+          "id": "f_1111100_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111100 --seed 201 --run_name f_1111100_s201 --checkpoint_path checkpoints/factorial_1111100_s201.pt"
+        },
+        {
+          "id": "f_1111101_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111101 --seed 201 --run_name f_1111101_s201 --checkpoint_path checkpoints/factorial_1111101_s201.pt"
+        },
+        {
+          "id": "f_1111102_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111102 --seed 201 --run_name f_1111102_s201 --checkpoint_path checkpoints/factorial_1111102_s201.pt"
+        },
+        {
+          "id": "f_1111103_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111103 --seed 201 --run_name f_1111103_s201 --checkpoint_path checkpoints/factorial_1111103_s201.pt"
+        },
+        {
+          "id": "f_1111104_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111104 --seed 201 --run_name f_1111104_s201 --checkpoint_path checkpoints/factorial_1111104_s201.pt"
+        },
+        {
+          "id": "f_1111110_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111110 --seed 201 --run_name f_1111110_s201 --checkpoint_path checkpoints/factorial_1111110_s201.pt"
+        },
+        {
+          "id": "f_1111111_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111111 --seed 201 --run_name f_1111111_s201 --checkpoint_path checkpoints/factorial_1111111_s201.pt"
+        },
+        {
+          "id": "f_1111112_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111112 --seed 201 --run_name f_1111112_s201 --checkpoint_path checkpoints/factorial_1111112_s201.pt"
+        },
+        {
+          "id": "f_1111113_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111113 --seed 201 --run_name f_1111113_s201 --checkpoint_path checkpoints/factorial_1111113_s201.pt"
+        },
+        {
+          "id": "f_1111114_s201",
+          "cmd": "~/.venv/bin/python3 scripts/train_factorial.py --batch_size 1024 --factorial_mask 1111114 --seed 201 --run_name f_1111114_s201 --checkpoint_path checkpoints/factorial_1111114_s201.pt"
+        }
+      ]
+    }
+  ]
+}

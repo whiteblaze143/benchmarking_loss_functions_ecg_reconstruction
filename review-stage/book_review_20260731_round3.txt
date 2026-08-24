@@ -1,0 +1,31 @@
+Round 3 read-only review
+Date: 2026-07-31
+Reviewer: /root/book_review_round1 (same-family Codex; provisional)
+Score: 7.5/10
+Verdict: ALMOST READY
+
+Verified:
+- The book is unified and renders with actual PTB-XL/EchoNext EDA first.
+- All 12 pages share the same ordered sidebar; navigation and local assets pass.
+- The live mixed-level section is honest and does not promote partial cells.
+- Archive acceptance checks status, asset id/state, bytes, digest, and timestamp.
+- Exact archived inference works on data/ptb_xl/tensors/test/100.pt and returns
+  a finite [1, 12, 5000] reconstruction with embedded provenance.
+- Chapter 1 audits all 21,799 saved tensors and raw/tensor alignment.
+- Chapter 11 executes record-level EchoNext drift, bootstrap, calibration,
+  subgroup, failure-tail, and morphology-diagnostic discordance analyses.
+
+Major findings:
+1. Gate 4 checked key presence but not non-null values or cross-cell equality.
+2. Gate 2 accepted a local ZIP without size/SHA/semantic payload validation.
+3. Gate 5 counted Parquet files without one-to-one identity/schema/hash checks,
+   and Gate 6 was nominal rather than an actual table-writer integration test.
+4. Archive state did not distinguish API metadata verification from an
+   independently downloaded SHA-256 round trip.
+
+Minor findings:
+1. The executive diagram overstated QTc/VCG benefit.
+2. The storage table counted catalog paths instead of files present on disk.
+3. Sidecars needed a durable remote representation.
+
+No files were edited by the reviewer.

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/figures/figure_echonext_stress.py",
+  "script_sha256": "6840d40c5f5f30d68b0f672540f898e6f56f6841b608fdf89707a413c30c58ee",
+  "common_helper_sha256": "e57c67c3e4dc0ed56aaab3c3e573bcb4b030954212f41e35f81fe3707434ff3e",
+  "inputs": {
+    "results/factorial_v4_clinical/classification_task_metrics.parquet": "bad90daf6490a6bd0f6e73b07dc70094f86c70990a76fa5f9080fa81345d51b8",
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": "4a645f296f0238019991eb5fcd7b34da196e9eeb6b11a0ce727c04af6fec1218"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "results/factorial_v4_clinical/figures/echonext_shd_stress.pdf",
+      "sha256": "40bb547a148cfcea2fbbc8e1db76382389bcbdb237f418267f93dc8f1d130ca0"
+    },
+    "svg": {
+      "path": "results/factorial_v4_clinical/figures/echonext_shd_stress.svg",
+      "sha256": "ca075ec37b113708e014c3be4f8f239a14d7d00b4beb68465122722de167898f"
+    },
+    "png": {
+      "path": "results/factorial_v4_clinical/figures/echonext_shd_stress.png",
+      "sha256": "ab54752840700c8cf4e3c99c999d7be28cc65c5dc3ddeaa9701bbb47afff1201"
+    }
+  },
+  "metadata": {
+    "evaluation_type": "simulation_only perturbations with real fixed labels",
+    "aggregation": "mean across 12 SHD tasks",
+    "conditions": "Gaussian and NSTDB BW/EM/MA at four SNRs plus synthetic baseline drift",
+    "record_scope": "deterministic first 2,198 records of the 5,442-record clean test set",
+    "classifier_inputs": "perturbed/reconstructed waveform plus unchanged original tabular metadata"
+  }
+}

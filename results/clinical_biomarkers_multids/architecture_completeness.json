@@ -1,0 +1,16 @@
+{
+  "evaluation_version": "missing_leads_v2",
+  "expected_models_per_architecture": 160,
+  "registered_models": {
+    "unet": 160,
+    "msvae": 155,
+    "ecg_aim": 0
+  },
+  "complete": {
+    "unet": true,
+    "msvae": false,
+    "ecg_aim": false
+  },
+  "architecture_claims_allowed": false,
+  "reason": "Architecture comparisons are blocked until all 160 masks are registered for U-Net, MSVAE, and ECG-AIM."
+}

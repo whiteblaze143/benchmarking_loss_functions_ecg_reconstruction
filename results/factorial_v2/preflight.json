@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "timestamp": "2026-07-22T22:42:39.946584+00:00",
+  "free_gib": 12.078781127929688,
+  "minimum_free_gib": 12.0,
+  "splits": {
+    "train": {
+      "count": 17418,
+      "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+    },
+    "val": {
+      "count": 2183,
+      "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+    },
+    "test": {
+      "count": 2198,
+      "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+    }
+  },
+  "overlaps": {
+    "train_val": 0,
+    "train_test": 0,
+    "val_test": 0
+  },
+  "missing_required_assets": [],
+  "fitbit_noise_gate": {
+    "provenance": "data/fitbit_noise/PROVENANCE.json",
+    "status": "not_included_missing_noise_extraction_provenance",
+    "note": "The local smartwatch simulator files are not treated as a validated wearable-noise extraction."
+  },
+  "gpu": "NVIDIA A100-PCIE-40GB, 40960 MiB",
+  "status": "pass"
+}

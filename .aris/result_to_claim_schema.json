@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "claim_supported",
+    "what_results_support",
+    "what_results_dont_support",
+    "missing_evidence",
+    "suggested_claim_revision",
+    "next_experiments_needed",
+    "confidence",
+    "integrity_status",
+    "claim_verdicts"
+  ],
+  "properties": {
+    "claim_supported": {
+      "type": "string",
+      "enum": ["yes", "partial", "no"]
+    },
+    "what_results_support": {"type": "string"},
+    "what_results_dont_support": {"type": "string"},
+    "missing_evidence": {"type": "string"},
+    "suggested_claim_revision": {"type": "string"},
+    "next_experiments_needed": {"type": "string"},
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"]
+    },
+    "integrity_status": {
+      "type": "string",
+      "enum": ["pass", "warn", "fail", "unavailable"]
+    },
+    "claim_verdicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "verdict", "reason"],
+        "properties": {
+          "id": {"type": "string"},
+          "verdict": {
+            "type": "string",
+            "enum": ["yes", "partial", "no"]
+          },
+          "reason": {"type": "string"}
+        }
+      }
+    }
+  }
+}

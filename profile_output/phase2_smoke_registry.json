@@ -1,0 +1,9 @@
+{
+  "models": [
+    {
+      "id": "alitok_mse_full",
+      "family": "alitok_vae",
+      "loss": "mse"
+    }
+  ]
+}

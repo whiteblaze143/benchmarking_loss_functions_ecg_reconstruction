@@ -1,0 +1,25 @@
+project: ecg_reconstruction_factorial
+cwd: /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction
+ssh: localhost
+default_cmd: python scripts/train_factorial.py
+
+gpus: [0]
+max_parallel: 1
+gpu_free_threshold_mib: 6000
+minimum_free_disk_gib: 5
+oom_retry:
+  delay: 60
+  max_attempts: 3
+
+grid:
+  seed: [42, 200, 201]
+  corr: [0, 1]
+  deriv: [0, 1]
+  vcg: [0, 1]
+  ed: [0, 1]
+  lead: [0, 1]
+  mmd: [0, 1, 2, 3, 4]
+
+template:
+  id: "f_1${corr}${deriv}${vcg}${ed}${lead}${mmd}_s${seed}"
+  cmd: "python scripts/train_factorial.py --factorial_mask 1${corr}${deriv}${vcg}${ed}${lead}${mmd} --seed ${seed} --run_name f_1${corr}${deriv}${vcg}${ed}${lead}${mmd}_s${seed} --checkpoint_path checkpoints/factorial_1${corr}${deriv}${vcg}${ed}${lead}${mmd}_s${seed}.pt"

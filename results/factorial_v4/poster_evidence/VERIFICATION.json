@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "checks": {
+    "source_hashes": true,
+    "output_hashes": true,
+    "claim_status_fail_closed": true
+  },
+  "failures": []
+}

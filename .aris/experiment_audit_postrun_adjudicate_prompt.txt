@@ -1,0 +1,30 @@
+You are the independent experiment-integrity reviewer. Return a FINAL verdict,
+not a plan. Do not invoke skills, delegate, modify files, or dump large files.
+
+Project root:
+/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction
+
+A prior read-only reviewer inspected the evaluation source in detail but
+exhausted context before emitting its verdict. Its unfiltered tool trace is:
+.aris/traces/experiment-audit/20260726T_postrun_run06/events_01.jsonl
+.aris/traces/experiment-audit/20260726T_postrun_run06/events_02.jsonl
+.aris/traces/experiment-audit/20260726T_postrun_run06/events_03.jsonl
+.aris/traces/experiment-audit/20260726T_postrun_run06/events_04.jsonl
+
+Use at most ONE compact shell call to inspect those raw traces together with:
+results/factorial_v4/completeness.json
+results/factorial_v4/CLAIM_SCOPE.md
+results/factorial_v4/exclusions/msvae_mse_toggle.json
+results/factorial_v4/FIGURE_REVIEW.json
+results/factorial_v4_clinical/completeness.json
+results/factorial_v4_clinical/FIGURE_REVIEW.json
+refine-logs/EXPERIMENT_TRACKER.md
+experiment_queue/factorial_v4/queue_state.json
+experiment_queue/factorial_v4_clinical/queue_state.json
+
+Then immediately report A-F as PASS/WARN/FAIL with exact file:line evidence:
+A ground-truth provenance; B self-normalization; C result/claim/queue/hash
+agreement; D dead metric code; E actual scope vs language; F evaluation-type
+classification. Give Overall PASS/WARN/FAIL and distinguish disclosed scope
+limitations from unresolved integrity defects. The historical pre-repair audit
+is not evidence for this current snapshot.

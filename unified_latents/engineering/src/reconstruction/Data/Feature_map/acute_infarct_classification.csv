@@ -1,0 +1,12 @@
+statement,occurences,proposed label
+ sinus rhythm acute inferolateral infarct with true posterior involvement ,1,['inferolateral_acute_infarct']
+ sinus rhythm evolving inferior infarct with apical envolvement ,1,['inferior_acute_infarct']
+ sinus rhythm left atrial enlargement otherwise no definite pathology edit lao alter acute myocardial infarct nicht auszuschließen ( asmi xxxx lao ) ,1,['generic_acute_infarct']
+ sinus rhythm st and t abnormality in anterolateral leads including slight st elevation in v5 and xxxx possible causes include acute ischaemia progress trace advised to exclude acute antero - lateral infarct ,1,['lateral_acute_infarct']
+ sinus rhythm left axis deviation left anterior fascicular block right bundle branch block bifascicular block st elevation v2 - xxxx cant exclude recent damage progress trace advised to rule out recent infarct ,1,['generic_acute_infarct']
+ sinustachykardie slt st - hebung in v1 - xxxx dd chron posteriorer oder frischer septaler infarkt edit acute myocardial infarct xxxx frischer asmi ( asmi xxxx ) ,1,['generic_acute_infarct']
+ sinusrhythmus ueberdrehter linkstyp qrs ( t ) abnormal anteroseptaler infarkt wahrscheinlich alt inferiorer infarkt wahrscheinlich alt edit imi xxxx acute myocardial infarct xxxx ( imi xxxx asmi xxxx ) ,1,['generic_acute_infarct']
+ sinus rhythm evolving inferolateral infarct since xxxx ,1,['inferolateral_acute_infarct']
+ sinusbradykardie lagetyp normal qrs ( t ) abnormal anteroseptaler myokardschaden nicht auszuschliessen t abnormal in anterioren ableitungen lateralen ableitungen edit injas injal isc xxxx qsv1 ( acute myocardial infarct injal ) ,1,['generic_acute_infarct']
+ sinusrhythmus lagetyp normal qrs ( t ) abnorm inferiorer myokardschaden nicht auszuschliessen xxxx unbestätigter bericht edit imi xxxx acute myocardial infarct xxxx qsiii mini - rv1qsv2 ( imi xxxx asmi xxxx ) ,1,['generic_acute_infarct']
+ sinusrhythmus linkstyp periphere niederspannung qrs ( t ) abnorm anteroseptaler myokardschaden nicht auszuschliessen inferiorer myokardschaden nicht auszuschliessen xxxx unbestätigter bericht edit imi xxxx acute myocardial infarct xxxx ( imi xxxx asmi xxxx ) ,1,['generic_acute_infarct']

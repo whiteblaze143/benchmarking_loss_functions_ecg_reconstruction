@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/figures/figure_ptbxl_task_rank.py",
+  "inputs": {
+    "results/factorial_v3_clinical/ptbxl_task_metrics.parquet": "2fc52d5e1ae52a31dd17f5048b4df56e9bf6e6e37ab665bfed92f382dc467c13"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "results/factorial_v3_clinical/figures/ptbxl_ecgfounder_task_rank.pdf",
+      "sha256": "69d83a4f96a36c0b818af4372b066dfc89b063a55eadf1859fcbf2889ea18cbf"
+    },
+    "svg": {
+      "path": "results/factorial_v3_clinical/figures/ptbxl_ecgfounder_task_rank.svg",
+      "sha256": "3eb26979b3675ac37a5bee19e39b477e8fe0b268c98907560a572df746ef782b"
+    },
+    "png": {
+      "path": "results/factorial_v3_clinical/figures/ptbxl_ecgfounder_task_rank.png",
+      "sha256": "bc1db7ce832503765d834af42bb4c51d88f768060938469f8b5868cc7962b222"
+    }
+  },
+  "metadata": {
+    "task_filter": "31/150 ECGFounder tasks with both classes",
+    "selection": "validation-selected masks only",
+    "undefined_tasks": "excluded from AUROC/AP plot and retained in database"
+  }
+}

@@ -1,0 +1,28 @@
+\section{Granular Clinical Ablation Study}
+\label{sec:granular_ablation}
+
+To rigorously assess the impact of each loss component on clinical fidelity, we performed an exhaustive combinatorial ablation study. The factorial matrix evaluated 28 distinct model configurations. We analyzed the reconstructions across 334 records from the Zhejiang PVC database, focusing on specific temporal morphological boundaries (P, QRS, T wave onsets and offsets) and lead-specific amplitudes. By isolating individual binary toggles in the factorial mask---namely Vectorcardiogram (VCG) spatial projection, Einthoven consistency, Maximum Mean Discrepancy (MMD) temporal kernels, Energy Difference (ED), and Derivative penalties---we present a granular breakdown of their clinical implications.
+
+\subsection{Spatial Constraints: The VCG vs. Einthoven Trade-off}
+A fundamental challenge in 12-lead ECG reconstruction is maintaining spatial coherence across the torso. We evaluated two spatial regularizers: VCG projection (which enforces a 3D dipole representation) and Einthoven consistency (which enforces the fundamental algebraic relationship $II = I + III$).
+
+Averaged across all factorial permutations, enabling VCG projection drastically reduced the Mean Absolute Error (MAE) in precordial chest leads. Most notably, Lead V6 MAE dropped from 41.0 $\mu$V to 15.1 $\mu$V. Clinically, Lead V6 is a unipolar precordial lead observing the lateral wall of the left ventricle. Standard temporal models often allow this lateral representation to drift independently of the anterior leads. By enforcing the 3D spatial dipole via the VCG projection loss, the model is geometrically locked, preventing chest lead hallucination.
+
+Conversely, enabling Einthoven consistency \textit{without} VCG projection actually degraded chest lead performance, increasing V6 MAE from 18.7 $\mu$V to 37.7 $\mu$V on average. This reveals a critical clinical trade-off: Einthoven mathematically forces the limb leads (I, II, III) into perfect alignment. When optimized in isolation, neural networks sacrifice the unconstrained precordial leads (V1-V6) to satisfy the limb lead algebraic constraint. Einthoven consistency is therefore most clinically beneficial when paired simultaneously with VCG projection, which anchors the entire 12-lead spatial matrix.
+
+\subsection{Temporal MMD Kernels for QT Interval Preservation}
+A critical failure mode of standard Mean Squared Error (MSE) autoencoders is the attenuation and "smoothing out" of low-amplitude signal terminations, particularly the T-wave offset. The QT interval measures the total duration of ventricular depolarization and repolarization. 
+
+We ablated five variations of the Maximum Mean Discrepancy (MMD) temporal kernel (indexed 0 through 4). As the kernel complexity increased from 0 to 4, the QT interval absolute error exhibited a steady decrease, dropping from an average of 185 ms (Kernel 0) to 159 ms (Kernel 4), with the optimal combinatorial models achieving errors as low as 52 ms. 
+
+MMD operates by aligning the overall temporal distributions of the feature maps across batches. This effectively penalizes the model when the reconstructed signal's temporal support shrinks, strictly preserving the T-wave termination point. Clinically, preserving this exact temporal boundary is paramount for downstream algorithms evaluating drug-induced repolarization abnormalities or congenital Long QT Syndrome.
+
+\subsection{Energy Difference (ED) for Amplitude Variance Preservation}
+Neural networks trained purely on MSE suffer from "variance shrinkage," where predictions regress toward the dataset mean, resulting in clinically flattened waveforms (e.g., blunted R-peaks or shallow S-waves). 
+
+The Energy Difference (ED) penalty mitigates this by regularizing the signal's $L_2$ norm. Across all factorial models, enabling ED drastically reduced the log variance ratio error for amplitude features. For instance, T-wave amplitude variance error dropped from 1.08 to 0.47, and P-wave amplitude variance error dropped from 1.43 to 0.71. This ensures that reconstructed complexes maintain their true clinical magnitude, preventing the false diagnosis of low-voltage QRS commonly caused by standard loss functions. Notably, ED degrades the variance ratio of the QT interval (increasing error from 1.52 to 2.36), as ED is an energy regularizer rather than a temporal regularizer.
+
+\subsection{The Derivative Penalty Trap}
+Finally, we observed catastrophic clinical degradation when employing the Derivative penalty. Averaged across all masks, enabling the Derivative loss more than doubled the MAE for almost all clinical features: P-wave amplitude MAE increased from 0.037 $\mu$V to 0.082 $\mu$V, and QT interval error exploded from 125 ms to 276 ms.
+
+The mechanism behind this failure is evident: the Derivative loss heavily penalizes mismatches in local instantaneous slope. When the model experiences even a minor temporal phase shift (a slight horizontal delay in the reconstructed beat), it attempts to "catch up" to the target slope prematurely. This causes massive amplitude overshoots and high-frequency noise, which destabilizes the low-frequency baseline scaling and distorts the overall complex boundaries, rendering the reconstructed ECG clinically uninterpretable.

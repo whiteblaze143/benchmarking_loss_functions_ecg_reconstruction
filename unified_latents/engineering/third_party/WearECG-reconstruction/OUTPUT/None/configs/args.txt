@@ -1,0 +1,105 @@
+==> torch version: 2.0.1+cu117
+==> cudnn version: 8500
+==> Cmd:
+['main.py', '--config_file', 'config/MIMIC/mimic_cond.yaml']
+==> args:
+  condition_type: 0
+  config_file: config/MIMIC/mimic_cond.yaml
+  cudnn_deterministic: True
+  gpu: None
+  milestone: 10
+  missing_ratio: 0.0
+  mode: infill
+  name: None
+  opts: []
+  output: OUTPUT
+  pred_len: 0
+  save_dir: OUTPUT/None
+  seed: 42
+  synthesis_channels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  tensorboard: False
+  train: False
+==> torch version: 2.0.1+cu117
+==> cudnn version: 8500
+==> Cmd:
+['main.py', '--config_file', 'config/MIMIC/mimic_cond.yaml']
+==> args:
+  condition_type: 0
+  config_file: config/MIMIC/mimic_cond.yaml
+  cudnn_deterministic: True
+  gpu: None
+  milestone: 10
+  missing_ratio: 0.0
+  mode: infill
+  name: None
+  opts: []
+  output: OUTPUT
+  pred_len: 0
+  save_dir: OUTPUT/None
+  seed: 42
+  synthesis_channels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  tensorboard: False
+  train: False
+==> torch version: 2.0.1+cu117
+==> cudnn version: 8500
+==> Cmd:
+['main.py', '--config_file', 'config/MIMIC/mimic_cond.yaml']
+==> args:
+  condition_type: 0
+  config_file: config/MIMIC/mimic_cond.yaml
+  cudnn_deterministic: True
+  gpu: None
+  milestone: 10
+  missing_ratio: 0.0
+  mode: infill
+  name: None
+  opts: []
+  output: OUTPUT
+  pred_len: 0
+  save_dir: OUTPUT/None
+  seed: 42
+  synthesis_channels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  tensorboard: False
+  train: False
+==> torch version: 2.0.1+cu117
+==> cudnn version: 8500
+==> Cmd:
+['main.py', '--config_file', 'config/MIMIC/mimic_cond.yaml']
+==> args:
+  condition_type: 0
+  config_file: config/MIMIC/mimic_cond.yaml
+  cudnn_deterministic: True
+  gpu: None
+  milestone: 10
+  missing_ratio: 0.0
+  mode: infill
+  name: None
+  opts: []
+  output: OUTPUT
+  pred_len: 0
+  save_dir: OUTPUT/None
+  seed: 42
+  synthesis_channels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  tensorboard: False
+  train: False
+==> torch version: 2.0.1+cu117
+==> cudnn version: 8500
+==> Cmd:
+['main.py', '--config_file', 'config/MIMIC/mimic_cond.yaml']
+==> args:
+  condition_type: 0
+  config_file: config/MIMIC/mimic_cond.yaml
+  cudnn_deterministic: True
+  gpu: None
+  milestone: 10
+  missing_ratio: 0.0
+  mode: infill
+  name: None
+  opts: []
+  output: OUTPUT
+  pred_len: 0
+  save_dir: OUTPUT/None
+  seed: 42
+  synthesis_channels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  tensorboard: False
+  train: False

@@ -1,0 +1,15 @@
+statement,occurences,proposed label
+ sinus rhythm probable old anteroseptal infarct st and t abnormality consider anterolateral ischemia or left ventricular strain inferolateral ischemia or left ventricular strain ,2,"['anterolateral_ischemia', 'inferolateral_ischemia']"
+ sinus rhythm left atrial enlargement left ventricular hypertrophy st and t abnormality consider anterolateral ischemia or left ventricular strain possible old inferior infarct edit imi xxxx lvh xxxx isc_ sokolow xxxx ( imi xxxx lvh xxxx isc_ ) ,1,['anterolateral_ischemia']
+ sinus rhythm st and t abnormality consider anterolateral ischemia or left ventricular strain ,1,['anterolateral_ischemia']
+ sinus rhythm frequent premature atrial contraction ( s ) undetermined axis incomplete right bundle branch block qrs ( t ) contour abnormality consider inferior myocardial damage st and t abnormality consider anterior ischemia or left ventricular stra ,1,['anterior_ischemia']
+ sinus rhythm st and t abnormality consistant with anterior ischemia or left ventricular strain ,1,['anterior_ischemia']
+ sinus rhythm minor st and t abnormality consider ischemia or early left ventricular strain ,1,['generic_ischemia']
+ premature atrial contraction ( s ) sinus rhythm left atrial enlargement moderate amplitude criteria for lvh st and t abnormality consider anterolateral ischemia or left ventricular strain ,1,['anterolateral_ischemia']
+ sinus rhythm abnormal left axis deviation r - s transition zone in v leads displaced to the right left anterior fascicular block left ventricular hypertrophy st and t abnormality consider high lateral ischemia or left ventricular strain ,1,['lateral_ischemia']
+ sinus rhythm st and t abnormality consider high lateral ischemia or left ventricular strain ,1,['lateral_ischemia']
+ sinus arrhythmia abnormal left axis deviation left anterior fascicular block left ventricular hypertrophy incomplete right bundle branch block st and t abnormality consider high lateral ischemia or left ventricular strain ,1,['lateral_ischemia']
+ sinus rhythm leftward axis non specific intraventricular delay st and t abnormality consider lateral ischemia or left ventricular strain ,1,['lateral_ischemia']
+ sinus rhythm left anterior fascicular blockward axis minor st and t abnormality consider anterior ischemia or early left ventricular strain ,1,['anterior_ischemia']
+ atrial fibrillation with rapid ventricular response st and t abnormality consider inferior ischemia or left ventricular strain ,1,['inferior_ischemia']
+ sinus rhythm anterolateral t wave change consistent with ischemia or lv strain ,1,['generic_ischemia']

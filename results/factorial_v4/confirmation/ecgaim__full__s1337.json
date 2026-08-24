@@ -1,0 +1,15 @@
+{
+  "family": "ecgaim",
+  "slot": "full",
+  "mask": "1111",
+  "seed": 1337,
+  "checkpoint": "checkpoints/factorial_v4/confirmation/ecgaim__e1c1m1d1__s1337/ul_ecp_best.pt",
+  "sha256": "5744d4c240221b0cca5eb4e04033ebbb08451afbd4493402f52be8241a56736b",
+  "validation_evaluation": "results/factorial_v4/confirmation/ecgaim__full__s1337.evaluation.json",
+  "validation_metrics": {
+    "n_samples": 2183,
+    "mse": 0.025191985210127554,
+    "r2": 0.8061122573100987,
+    "pearson": 0.9228649852220876
+  }
+}

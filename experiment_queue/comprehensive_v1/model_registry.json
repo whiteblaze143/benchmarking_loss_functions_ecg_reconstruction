@@ -1,0 +1,133 @@
+{
+  "schema_version": 2,
+  "data_dir": "data/ptb_xl/tensors/test",
+  "ptbxl_csv": "data/ptb_xl/ptbxl_database.csv",
+  "scp_statements_csv": "data/ptb_xl/scp_statements.csv",
+  "ecgfounder_repo": "ecg_fm_integration/ecgfounder_repo",
+  "ecgfounder_checkpoint": "ecg_fm_integration/ecgfounder_repo/checkpoint/12_lead_ECGFounder.pth",
+  "ecgfounder_labels_csv": "ecg_fm_integration/ecgfounder_repo/csv/ptbxl_label.csv",
+  "ecgfounder_tasks": "ecg_fm_integration/ecgfounder_repo/tasks.txt",
+  "nstdb_dir": "data/mit-bih-noise-stress-test-database-1.0.0",
+  "models": [
+    {
+      "id": "unet_mse_full",
+      "family": "unet",
+      "loss": "mse",
+      "kind": "unet",
+      "checkpoint": "checkpoints/comprehensive/unet_mse_full.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "unet_pearson_full",
+      "family": "unet",
+      "loss": "mse+pearson",
+      "kind": "unet",
+      "checkpoint": "checkpoints/comprehensive/unet_pearson_full.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "unet_mmd_full",
+      "family": "unet",
+      "loss": "mse+mmd",
+      "kind": "unet",
+      "checkpoint": "checkpoints/comprehensive/unet_mmd_full.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "unet_deriv_full",
+      "family": "unet",
+      "loss": "mse+derivative",
+      "kind": "unet",
+      "checkpoint": "checkpoints/comprehensive/unet_deriv_full.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "unet_all_full",
+      "family": "unet",
+      "loss": "mse+pearson+mmd+derivative",
+      "kind": "unet",
+      "checkpoint": "checkpoints/comprehensive/unet_all_full.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "cnvae_mse_full",
+      "family": "cnvae",
+      "loss": "elbo",
+      "kind": "cnvae",
+      "checkpoint": "checkpoints/comprehensive/cnvae/cnvae_mse_full/best_model.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "cnvae_pearson_full",
+      "family": "cnvae",
+      "loss": "elbo+pearson",
+      "kind": "cnvae",
+      "checkpoint": "checkpoints/comprehensive/cnvae/cnvae_pearson_full/best_model.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "cnvae_mmd_full",
+      "family": "cnvae",
+      "loss": "elbo+mmd",
+      "kind": "cnvae",
+      "checkpoint": "checkpoints/comprehensive/cnvae/cnvae_mmd_full/best_model.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "cnvae_all_full",
+      "family": "cnvae",
+      "loss": "elbo+pearson+mmd+derivative",
+      "kind": "cnvae",
+      "checkpoint": "checkpoints/comprehensive/cnvae/cnvae_all_full/best_model.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "msvae_mse_full",
+      "family": "multiscale_vae",
+      "loss": "mse",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/wearecg_fm/engineering_baseline_I-II-V2_bs32/ul_ecp_best.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "msvae_pearson_full",
+      "family": "multiscale_vae",
+      "loss": "mse+pearson",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/wearecg_fm/engineering_baseline_I-II-V2_bs32_pearson/ul_ecp_best.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "msvae_mmd_full",
+      "family": "multiscale_vae",
+      "loss": "mse+mmd",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/wearecg_fm/engineering_baseline_I-II-V2_bs32_mmd/ul_ecp_best.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "msvae_all_full",
+      "family": "multiscale_vae",
+      "loss": "mse+pearson+mmd+derivative",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/wearecg_fm/engineering_baseline_I-II-V2_bs32_all/ul_ecp_best.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "alitok_mse_full",
+      "family": "alitok_vae",
+      "loss": "mse",
+      "kind": "alitok",
+      "checkpoint": "checkpoints/wearecg_fm/engineering_alitok_I-II-V2_bs32/ul_ecp_best.pt",
+      "observed_leads": [0, 1, 7]
+    },
+    {
+      "id": "alitok_pearson_full",
+      "family": "alitok_vae",
+      "loss": "mse+pearson",
+      "kind": "alitok",
+      "checkpoint": "checkpoints/wearecg_fm/engineering_alitok_I-II-V2_bs32_pearson/ul_ecp_best.pt",
+      "observed_leads": [0, 1, 7]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "audit_timestamp_utc": "2026-07-26T20:39:00Z",
+  "snapshot": "factorial_v4_postrun",
+  "overall_verdict": "REVIEW_UNAVAILABLE",
+  "integrity_status": "unavailable",
+  "reviewer": {
+    "backend": "codex-cli-read-only-review",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "ultra",
+    "independence": "fresh_context_same_family_provisional",
+    "acceptance_status": "not_accepted"
+  },
+  "deterministic_gates": {
+    "focused_tests": "62_passed",
+    "core_completeness": "complete",
+    "clinical_completeness": "PASS_16_of_16",
+    "figure_hash_reviews": "15_of_15_bound_to_current_png"
+  },
+  "review_attempts": {
+    "trace_root": ".aris/traces/experiment-audit",
+    "status": "reviewer_inspected_source_but_no_final_verdict_emitted",
+    "failure_modes": [
+      "subagent_account_usage_limit",
+      "read_only_bwrap_startup_failure",
+      "reviewer_context_exhaustion_before_verdict",
+      "subsequent_cli_turns_terminated_before_final_response"
+    ]
+  },
+  "claim_use": "No supportive claim may cite this file as an integrity PASS."
+}

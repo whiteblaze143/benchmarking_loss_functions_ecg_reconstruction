@@ -1,0 +1,7 @@
+{
+  "at": "2026-08-23T23:08:38Z",
+  "error": "queue infrastructure failure: BrokenPipeError: [Errno 32] Broken pipe",
+  "job_id": "A0_raw_1110000_s42_l0",
+  "status": "infrastructure_failure",
+  "version": 1
+}

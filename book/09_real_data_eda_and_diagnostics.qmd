@@ -1,0 +1,733 @@
+# Real-Cohort EDA, Integrity Checks, and Deep Diagnostics {#sec-real-data}
+
+This is the first numbered chapter because every later result inherits its data contract. It replaces “representative synthetic ECG” reasoning with an auditable description of the data actually present in this repository. The analysis has three levels: **metadata integrity**, **signal integrity**, and **task integrity**. A reconstruction benchmark is only interpretable when all three hold.
+
+## Evidence map
+
+| Evidence layer | Repository artifact | What it can establish |
+|---|---|---|
+| PTB-XL cohort | `data/ptb_xl/ptbxl_database.csv` | cohort size, patient IDs, demographics, acquisition fields, official stratification folds |
+| PTB-XL waveforms | `data/ptb_xl/tensors/{train,val,test}/*.pt` | physical signal shape and per-record waveform diagnostics |
+| EchoNext cohort | `data/echonext/echonext_metadata_100k.csv` | population, setting, race/ethnicity, ECG intervals, echo-derived endpoints, split |
+| EchoNext test waveforms | `data/echonext/EchoNext_test_waveforms.npy` | 5,442 external-test ECGs, 12 leads, 2,500 samples |
+| EchoNext provenance | `data/echonext/PROVENANCE.json` | sampling rate, lead order, units, clipping and normalization contract |
+| Locked benchmark | `results/comprehensive_latest_48_models/` | 48 reconstruction cells and downstream diagnostic outputs |
+
+Every executable audit below resolves its input beneath `../data/` and prints the resolved path. No waveform statistic in this chapter is generated from the later synthetic tutorials.
+
+These artifacts do **not** support the same inference. PTB-XL is the reconstruction development cohort. EchoNext is an external transfer cohort with echocardiography-derived labels. Performance on EchoNext tests transport under a different sampling and normalization pipeline; it does not retroactively enlarge the PTB-XL training set.
+
+### Repository data-entry boundary
+
+The book opens every dataset through the checkout's `data/` entry. In this workspace that entry is intentionally a symbolic link to the larger local data volume, so the checkout-relative path and the resolved physical path are both reported below. This is one dataset, not a fallback search path or a second hidden copy. The distinction matters when reproducing file hashes, moving the checkout, or interpreting an absolute path printed by an inference audit.
+
+```{python}
+#| label: repository-data-path-audit
+#| tbl-cap: "Checkout-relative and resolved identities of the data tree used by this render."
+from pathlib import Path
+import pandas as pd
+
+CHECKOUT_ROOT = Path.cwd().parent
+DATA_ENTRY = CHECKOUT_ROOT / "data"
+if not DATA_ENTRY.exists():
+    raise FileNotFoundError(f"Repository data entry is missing: {DATA_ENTRY}")
+
+pd.DataFrame([
+    {
+        "logical repository entry": str(DATA_ENTRY),
+        "entry type": "symbolic link" if DATA_ENTRY.is_symlink() else "directory",
+        "resolved physical root": str(DATA_ENTRY.resolve()),
+    }
+])
+```
+
+## PTB-XL: observed cohort and split contract
+
+The local metadata contain **21,799 ECG records** and **28 columns**. The ten official stratification folds are nearly balanced (2,173–2,198 records each). The locked model registry maps folds 1–8 to training (**17,418** records), fold 9 to validation (**2,183**), and fold 10 to test (**2,198**). The registry also reports **1,904 unique patients** in the test set, so patient-clustered uncertainty is necessary: record-level resampling would treat repeated ECGs from the same person as independent.
+
+The raw age field deserves an explicit validity audit. Its observed maximum is 300, which is not physiologically plausible as years and should not silently enter subgroup analysis. Age-based EDA must therefore report invalid-value counts and either use a documented correction supplied by the dataset or mark those values missing. It must not “fix” them by clipping without a sensitivity analysis.
+
+```{python}
+#| label: ptbxl-metadata-audit
+#| tbl-cap: "PTB-XL metadata audit computed from the local cohort file."
+from pathlib import Path
+import pandas as pd
+import numpy as np
+
+ROOT = Path("..")
+ptb = pd.read_csv(ROOT / "data/ptb_xl/ptbxl_database.csv")
+
+ptb_audit = pd.DataFrame({
+    "quantity": [
+        "records", "unique patients", "male-coded (sex=0)",
+        "female-coded (sex=1)", "age missing", "age outside [0,120]",
+        "fold-10 test records", "fold-10 unique patients"
+    ],
+    "value": [
+        len(ptb), ptb.patient_id.nunique(), (ptb.sex == 0).sum(),
+        (ptb.sex == 1).sum(), ptb.age.isna().sum(),
+        (~ptb.age.between(0, 120)).sum(), (ptb.strat_fold == 10).sum(),
+        ptb.loc[ptb.strat_fold == 10, "patient_id"].nunique()
+    ]
+})
+ptb_audit
+```
+
+### Leakage checks that must precede modeling
+
+1. **Patient separation:** intersect patient IDs across train, validation, and test. Every intersection must be empty.
+2. **File inventory:** confirm every metadata row resolves to exactly one waveform tensor in its assigned split.
+3. **Duplicate signals:** hash waveform bytes after canonical dtype conversion. Metadata uniqueness alone cannot detect copied signals.
+4. **Label derivation:** parse `scp_codes` deterministically and version the superclass mapping.
+5. **Preprocessing fit scope:** any learned mean, variance, clipping threshold, or calibration parameter must be fit on training data only.
+
+```{python}
+#| label: ptbxl-patient-overlap
+fold_groups = {
+    "train": set(ptb.loc[ptb.strat_fold <= 8, "patient_id"]),
+    "validation": set(ptb.loc[ptb.strat_fold == 9, "patient_id"]),
+    "test": set(ptb.loc[ptb.strat_fold == 10, "patient_id"]),
+}
+pd.DataFrame([
+    {"pair": f"{a} ∩ {b}", "overlapping_patients": len(fold_groups[a] & fold_groups[b])}
+    for a, b in [("train", "validation"), ("train", "test"), ("validation", "test")]
+])
+```
+
+### PTB-XL demographic and diagnostic composition
+
+The next audit separates record counts from patient counts, treats ages outside 0–120 as missing, and derives diagnostic superclasses from the local `scp_statements.csv` mapping. Superclass counts are multilabel record counts, so their sum can exceed the number of ECGs.
+
+```{python}
+#| label: ptbxl-demographic-diagnostic-eda
+import ast
+
+ptb["analysis_split"] = np.select(
+    [ptb.strat_fold <= 8, ptb.strat_fold == 9, ptb.strat_fold == 10],
+    ["train", "validation", "test"],
+    default="unassigned",
+)
+ptb["age_valid"] = ptb.age.where(ptb.age.between(0, 120))
+ptb_demographics = ptb.groupby("analysis_split").agg(
+    records=("ecg_id", "size"),
+    patients=("patient_id", "nunique"),
+    valid_age=("age_valid", "count"),
+    age_median=("age_valid", "median"),
+    age_q1=("age_valid", lambda x: x.quantile(0.25)),
+    age_q3=("age_valid", lambda x: x.quantile(0.75)),
+    male_coded_records=("sex", lambda x: (x == 0).sum()),
+    female_coded_records=("sex", lambda x: (x == 1).sum()),
+)
+
+scp = pd.read_csv(ROOT / "data/ptb_xl/scp_statements.csv", index_col=0)
+diagnostic_map = scp.loc[
+    scp.diagnostic == 1, "diagnostic_class"
+].dropna().to_dict()
+superclass_rows = []
+for row in ptb[["analysis_split", "scp_codes"]].itertuples(index=False):
+    codes = ast.literal_eval(row.scp_codes)
+    classes = sorted({
+        diagnostic_map[code] for code in codes if code in diagnostic_map
+    })
+    superclass_rows.extend(
+        {"split": row.analysis_split, "superclass": label}
+        for label in classes
+    )
+superclass_counts = (
+    pd.DataFrame(superclass_rows)
+      .groupby(["split", "superclass"]).size()
+      .rename("records").reset_index()
+)
+print(f"Metadata source: {(ROOT / 'data/ptb_xl/ptbxl_database.csv').resolve()}")
+print("Split-level demographics")
+display(ptb_demographics)
+print("Multilabel diagnostic-superclass counts")
+superclass_counts
+```
+
+### Executed PTB-XL waveform audit
+
+The following block reads the actual paired WFDB records named by `filename_hr` and `filename_lr` in `data/ptb_xl/ptbxl_database.csv`. To keep HTML rendering reproducible and bounded, it uses a fixed, fold-stratified audit sample of 25 records from each official fold (250 records total); this is an EDA sample, not an inferential subsample. Primary signal summaries use the stored 500 Hz physical waveforms. The paired 100 Hz releases are upsampled to quantify what a 100→500 Hz adapter can and cannot recover.
+
+```{python}
+#| label: ptbxl-waveform-audit
+#| tbl-cap: "Lead-wise audit of real PTB-XL WFDB waveforms (fixed 250-record stratified sample)."
+import wfdb
+from scipy.signal import resample_poly, welch
+
+PTB_ROOT = (ROOT / "data/ptb_xl").resolve()
+audit_rows = (
+    ptb.groupby("strat_fold", group_keys=False)
+       .sample(n=25, random_state=20260731)
+       .sort_values(["strat_fold", "ecg_id"])
+)
+signals_hr = []
+signals_lr_up = []
+for row in audit_rows[["filename_hr", "filename_lr"]].itertuples(index=False):
+    signal_hr, fields_hr = wfdb.rdsamp(str(PTB_ROOT / row.filename_hr))
+    signal_lr, fields_lr = wfdb.rdsamp(str(PTB_ROOT / row.filename_lr))
+    if fields_hr["fs"] != 500 or signal_hr.shape != (5000, 12):
+        raise ValueError(f"Unexpected PTB-XL high-resolution contract: {row.filename_hr}")
+    if fields_lr["fs"] != 100 or signal_lr.shape != (1000, 12):
+        raise ValueError(f"Unexpected PTB-XL low-resolution contract: {row.filename_lr}")
+    if fields_hr["sig_name"] != fields_lr["sig_name"]:
+        raise ValueError(f"Lead-order mismatch: {row.filename_hr} vs {row.filename_lr}")
+    signals_hr.append(signal_hr.astype(np.float32))
+    signals_lr_up.append(
+        resample_poly(signal_lr, up=5, down=1, axis=0).astype(np.float32)
+    )
+ptb_wave = np.stack(signals_hr)  # records × 5000 samples × leads
+ptb_lr_up = np.stack(signals_lr_up)
+fields = fields_hr
+lead_names = fields["sig_name"]
+
+finite = np.isfinite(ptb_wave)
+lead_sd = ptb_wave.std(axis=1)
+freq, psd = welch(ptb_wave, fs=500, axis=1, nperseg=1024)
+band_power = {
+    "baseline_<0.5Hz": np.trapz(psd[:, (freq < 0.5), :], freq[freq < 0.5], axis=1),
+    "cardiac_0.5-40Hz": np.trapz(
+        psd[:, (freq >= 0.5) & (freq <= 40), :],
+        freq[(freq >= 0.5) & (freq <= 40)], axis=1
+    ),
+    "high_40-150Hz": np.trapz(
+        psd[:, (freq > 40) & (freq <= 150), :],
+        freq[(freq > 40) & (freq <= 150)], axis=1
+    ),
+}
+
+ptb_signal_audit = pd.DataFrame({
+    "lead": lead_names,
+    "finite_percent": 100 * finite.mean(axis=(0, 1)),
+    "p01_mV": np.quantile(ptb_wave, 0.01, axis=(0, 1)),
+    "median_mV": np.median(ptb_wave, axis=(0, 1)),
+    "p99_mV": np.quantile(ptb_wave, 0.99, axis=(0, 1)),
+    "median_RMS_mV": np.median(np.sqrt(np.mean(ptb_wave ** 2, axis=1)), axis=0),
+    "near_flat_records_percent": 100 * (lead_sd < 1e-4).mean(axis=0),
+    "median_high_frequency_fraction": np.median(
+        band_power["high_40-150Hz"] /
+        np.maximum(
+            band_power["cardiac_0.5-40Hz"] + band_power["high_40-150Hz"],
+            1e-12
+        ),
+        axis=0
+    ),
+})
+print(f"Loaded {len(ptb_wave)} paired 500 Hz/100 Hz real records from {PTB_ROOT}")
+ptb_signal_audit
+```
+
+```{python}
+#| label: ptbxl-cross-lead-audit
+#| tbl-cap: "Record-level PTB-XL cross-lead and lead-law diagnostics."
+record_corr = np.stack([np.corrcoef(record, rowvar=False) for record in ptb_wave])
+offdiag = ~np.eye(12, dtype=bool)
+law_residuals = {
+    "III-(II-I)": ptb_wave[:, :, 2] - (ptb_wave[:, :, 1] - ptb_wave[:, :, 0]),
+    "aVR+(I+II)/2": ptb_wave[:, :, 3] + (ptb_wave[:, :, 0] + ptb_wave[:, :, 1]) / 2,
+    "aVL-(I-II/2)": ptb_wave[:, :, 4] - (ptb_wave[:, :, 0] - ptb_wave[:, :, 1] / 2),
+    "aVF-(II-I/2)": ptb_wave[:, :, 5] - (ptb_wave[:, :, 1] - ptb_wave[:, :, 0] / 2),
+}
+pd.DataFrame({
+    "quantity": [
+        "median record mean |off-diagonal correlation|",
+        "99th percentile record condition number",
+        *[f"median RMSE {name} (mV)" for name in law_residuals],
+    ],
+    "value": [
+        np.median(np.abs(record_corr[:, offdiag]).mean(axis=1)),
+        np.quantile([np.linalg.cond(c) for c in record_corr], 0.99),
+        *[np.median(np.sqrt(np.mean(residual ** 2, axis=1)))
+          for residual in law_residuals.values()],
+    ],
+})
+```
+
+```{python}
+#| label: ptbxl-split-resampling-audit
+#| tbl-cap: "Split-specific PTB-XL signal summaries and paired 100→500 Hz resampling fidelity."
+record_rms = np.sqrt(np.mean(ptb_wave ** 2, axis=(1, 2)))
+record_peak = np.max(np.abs(ptb_wave), axis=(1, 2))
+record_flat_leads = (ptb_wave.std(axis=1) < 1e-4).sum(axis=1)
+resampling_mse = np.mean((ptb_lr_up - ptb_wave) ** 2, axis=(1, 2))
+resampling_corr = np.asarray([
+    np.corrcoef(high.flatten(), upsampled.flatten())[0, 1]
+    for high, upsampled in zip(ptb_wave, ptb_lr_up)
+])
+record_summary = pd.DataFrame({
+    "split": audit_rows.analysis_split.to_numpy(),
+    "record_rms_mV": record_rms,
+    "record_peak_mV": record_peak,
+    "near_flat_leads": record_flat_leads,
+    "100_to_500_mse_mV2": resampling_mse,
+    "100_to_500_pearson": resampling_corr,
+})
+record_summary.groupby("split").agg(
+    sampled_records=("record_rms_mV", "size"),
+    median_RMS_mV=("record_rms_mV", "median"),
+    p99_peak_mV=("record_peak_mV", lambda x: x.quantile(0.99)),
+    records_with_near_flat_lead=("near_flat_leads", lambda x: (x > 0).sum()),
+    median_resampling_MSE_mV2=("100_to_500_mse_mV2", "median"),
+    median_resampling_Pearson=("100_to_500_pearson", "median"),
+)
+```
+
+Because 100 Hz data have a 50 Hz Nyquist limit, upsampling cannot restore true 40–150 Hz content present in the 500 Hz release. The paired error above measures the complete adapter discrepancy; final morphology analysis should additionally compare QRS-band power and fiducials before and after any model-specific resampling.
+
+### The actual model-input tensor boundary
+
+Raw WFDB EDA is necessary but not sufficient: the reconstruction code does not read WFDB files during training. `scripts/train_mcma_3lead.py::PTBXLDataset` loads `.pt` files, expects shape `12 × 5000`, appends 120 zeros to reach a pooling-compatible length of 5,120, and selects lead indices `[0, 1, 7]`—I, II, and V2—as the model input. Targets contain all 12 padded leads. The training loader applies no per-record standardization, filtering, or amplitude clipping.
+
+The following audit is computed over **every tensor**, not the 250-record raw-waveform sample. To keep routine book renders tractable, `scripts/audit_ptbxl_tensors_for_book.py` performs the 5 GB sequential scan with the project venv and writes a record-level Parquet plus a JSON summary. Each tensor is loaded through `torch.load(..., weights_only=True)` and checked for metadata/split alignment, shape, dtype, nonfinite values, flat leads, amplitude, RMS, and SHA-256 of canonical float32 signal bytes.
+
+```{python}
+#| label: ptbxl-full-tensor-inventory
+#| tbl-cap: "Full inventory of the canonical PTB-XL tensors consumed by the model loaders."
+import torch
+import json
+
+TENSOR_AUDIT_ROOT = ROOT / "results/book_eda"
+tensor_inventory_path = TENSOR_AUDIT_ROOT / "ptbxl_tensor_inventory.parquet"
+tensor_summary_path = TENSOR_AUDIT_ROOT / "ptbxl_tensor_audit_summary.json"
+if not tensor_inventory_path.is_file() or not tensor_summary_path.is_file():
+    raise FileNotFoundError(
+        "Run with the project venv: "
+        "python scripts/audit_ptbxl_tensors_for_book.py"
+    )
+
+tensor_inventory = pd.read_parquet(tensor_inventory_path)
+tensor_summary = json.loads(tensor_summary_path.read_text())
+tensor_gate = pd.DataFrame({
+    "gate": [
+        "metadata rows matched one-to-one",
+        "unexpected or missing split assignments",
+        "shape 12 × 5000",
+        "dtype float32",
+        "records with nonfinite values",
+        "records with at least one flat lead",
+        "unique canonical signal hashes",
+        "duplicate signal-hash groups",
+    ],
+    "observed": [
+        tensor_summary["metadata_tensor_alignment"].get("both", 0),
+        tensor_summary["metadata_tensor_alignment"].get("left_only", 0)
+        + tensor_summary["metadata_tensor_alignment"].get("right_only", 0),
+        tensor_summary["shape_12_by_5000"],
+        tensor_summary["float32"],
+        tensor_summary["records_with_nonfinite_values"],
+        tensor_summary["records_with_flat_leads"],
+        tensor_summary["unique_signal_hashes"],
+        tensor_summary["duplicate_hash_groups"],
+    ],
+    "required": [
+        tensor_summary["record_count"], 0, tensor_summary["record_count"],
+        tensor_summary["record_count"], 0, "review, do not silently drop",
+        tensor_summary["record_count"], 0,
+    ],
+})
+print(f"Full tensor inventory: {tensor_inventory_path.resolve()}")
+print(f"Audit implementation: {(ROOT / tensor_summary['audit_script']).resolve()}")
+tensor_gate
+```
+
+The executed gate finds all **21,799 of 21,799** expected tensors in the correct split, all with shape `12 × 5000`, dtype `float32`, finite values, and unique canonical signal hashes. It also finds one concrete quality exception: training ECG **12722** has an exactly zero V5 lead. That record should be retained in the cohort ledger and handled by an explicit quality policy, not silently disappear inside a data loader.
+
+The gate distinguishes three failure classes. A missing tensor is a cohort-definition error; a malformed/nonfinite tensor is a preprocessing error; a duplicate canonical hash is a potential leakage or export error requiring record-level adjudication. A perfectly matched inventory does not by itself prove the correct physical units, so the next two checks inspect the distribution and pair tensors back to the raw 500 Hz waveforms.
+
+### Byte-level training corpus identity
+
+Shape, dtype, and record counts do not detect a same-size content replacement.
+The training contract therefore includes a second manifest that hashes the
+exact bytes of every `.pt` file and forms each split root as
+`SHA256(record_id:size:file_sha256\n...)`.
+
+```{python}
+#| label: ptbxl-byte-content-roots
+#| tbl-cap: "Byte-level identity roots for all PTB-XL tensors used by training."
+content_manifest_path = (
+    ROOT / "refine-logs/ptbxl_tensor_content_manifest.json"
+)
+content_manifest = json.loads(content_manifest_path.read_text())
+pd.DataFrame([
+    {
+        "split": split,
+        "records": details["records"],
+        "content_root_sha256": details["content_root_sha256"],
+    }
+    for split, details in content_manifest["splits"].items()
+])
+```
+
+The manifest contains **17,418 train**, **2,183 validation**, and **2,198
+test** file digests—21,799 identities in total. The final factorial worker
+recomputes these roots before Epoch 1, before each checkpoint write, and before
+the final sidecar. It separately verifies the manifest file,
+`ptbxl_database.csv`, `scp_statements.csv`, and manifest-producing script
+against the pinned contract. This turns same-size or mid-training tensor
+corruption into a fail-closed attempt.
+
+```{python}
+#| label: ptbxl-full-tensor-distribution
+#| tbl-cap: "Split-wise distribution of all canonical PTB-XL model tensors."
+tensor_inventory.groupby("split").agg(
+    records=("ecg_id", "size"),
+    unique_ecg_ids=("ecg_id", "nunique"),
+    median_record_RMS_mV=("rms", "median"),
+    p01_record_RMS_mV=("rms", lambda values: values.quantile(0.01)),
+    p99_record_RMS_mV=("rms", lambda values: values.quantile(0.99)),
+    minimum_value_mV=("minimum", "min"),
+    maximum_value_mV=("maximum", "max"),
+    records_with_flat_leads=("flat_leads", lambda values: values.gt(0).sum()),
+    records_with_nonfinite_values=(
+        "nonfinite_values", lambda values: values.gt(0).sum()
+    ),
+)
+```
+
+Across all tensors, record RMS ranges from **0.0523 to 4.2603 mV**; the observed sample extrema reach approximately **−32.69 to +32.72 mV**. Those tails are far outside a typical display scale and deserve artifact review. They are not sufficient reason to winsorize the test set after inspection. Split differences in amplitude are descriptive data-quality signals, not automatic evidence of covariate shift, and should be interpreted alongside diagnosis, age, patient repetition, and acquisition metadata.
+
+```{python}
+#| label: ptbxl-raw-tensor-pair-audit
+#| tbl-cap: "Paired raw-WFDB versus saved-tensor agreement on the deterministic 250-record audit sample."
+raw_tensor_rows = []
+for sample_index, row in enumerate(
+    audit_rows[["ecg_id", "analysis_split"]].itertuples(index=False)
+):
+    split_dir = {"train": "train", "validation": "val", "test": "test"}[
+        row.analysis_split
+    ]
+    tensor_path = ROOT / f"data/ptb_xl/tensors/{split_dir}/{row.ecg_id}.pt"
+    saved = torch.load(
+        tensor_path, map_location="cpu", weights_only=True
+    ).numpy().T
+    raw = ptb_wave[sample_index]
+    difference = saved.astype(np.float64) - raw.astype(np.float64)
+    raw_tensor_rows.append({
+        "split": row.analysis_split,
+        "ecg_id": row.ecg_id,
+        "shape_matches": saved.shape == raw.shape,
+        "maximum_absolute_difference_mV": np.max(np.abs(difference)),
+        "RMSE_mV": np.sqrt(np.mean(difference ** 2)),
+        "Pearson": np.corrcoef(saved.ravel(), raw.ravel())[0, 1],
+    })
+raw_tensor_audit = pd.DataFrame(raw_tensor_rows)
+raw_tensor_audit.groupby("split").agg(
+    paired_records=("ecg_id", "size"),
+    shape_matches=("shape_matches", "sum"),
+    maximum_absolute_difference_mV=("maximum_absolute_difference_mV", "max"),
+    median_RMSE_mV=("RMSE_mV", "median"),
+    minimum_Pearson=("Pearson", "min"),
+)
+```
+
+All 250 paired arrays match exactly at float32 precision: maximum absolute difference and RMSE are zero, and the minimum flattened Pearson correlation is 1.0 in every split. This establishes that the saved tensors reproduce the physical 500 Hz WFDB values for the fixed sample. It does not validate the subsequent 120-sample zero padding as physiologic signal. Any metric spanning the padded tail must either mask those samples or document that identical target/reconstruction padding cannot inflate performance.
+
+## EchoNext: population, waveform, and endpoint audit
+
+The local EchoNext metadata table contains **100,000 records and 39 fields**. The frozen external test array contains **5,442 × 1 × 2,500 × 12** values. At the declared 250 Hz, each trace spans 10 seconds. The singleton axis is a storage/channel wrapper, not an ECG lead. Lead order is explicitly:
+
+$$[I,II,III,aVR,aVL,aVF,V_1,V_2,V_3,V_4,V_5,V_6].$$
+
+The waveforms are stored as `float64` after official per-lead clipping and train-set z-scoring. Evaluation inverts that affine transform back to clipped microvolts before reconstruction inference. This is a critical domain-transfer detail because PTB-XL models expect 500 Hz, 5,000-sample, physical-mV inputs with no per-record normalization. Resampling, unit conversion, axis ordering, and inverse normalization must all be validated independently.
+
+Only the EchoNext **test** waveform array is present under the local `data/echonext/` tree. Train, validation, and `no_split` waveform distributions therefore cannot be compared from this repository snapshot; their metadata are auditable, but claiming split-wise waveform parity would exceed the available artifact.
+
+The 100,000-row metadata split is 72,475 train, 4,626 validation, 5,442 test, and 17,457 marked `no_split`. The unsplit records must not be silently added to training: their role is undefined by the local split field. The cohort is 53,581 male and 46,419 female records, with age 18–90 years (median 63; mean 61.18). Acquisition settings are heavily clinical—48,162 inpatient and 31,453 emergency records, compared with 17,194 outpatient and 3,191 procedural records—so this is not a consumer-wearable population sample.
+
+Race/ethnicity counts are 31,013 Hispanic, 29,211 White, 16,461 Black, 3,428 Asian, 7,429 other, and 12,458 unknown. These are record counts rather than unique-patient counts and should not be presented as independent population denominators when patients have repeated ECGs.
+
+```{python}
+#| label: echonext-schema-audit
+import json
+
+echo = pd.read_csv(ROOT / "data/echonext/echonext_metadata_100k.csv")
+wave = np.load(ROOT / "data/echonext/EchoNext_test_waveforms.npy", mmap_mode="r")
+provenance = json.loads((ROOT / "data/echonext/PROVENANCE.json").read_text())
+
+pd.DataFrame({
+    "quantity": ["metadata rows", "metadata columns", "test records",
+                 "samples per lead", "leads", "sampling rate (Hz)",
+                 "duration (s)", "stored dtype"],
+    "value": [len(echo), echo.shape[1], wave.shape[0], wave.shape[2],
+              wave.shape[3], provenance["sampling_rate_hz"],
+              wave.shape[2] / provenance["sampling_rate_hz"], str(wave.dtype)]
+})
+```
+
+### EchoNext patient-overlap audit
+
+The released test and validation partitions are patient-disjoint from training and from one another. The `no_split` rows are different: locally they overlap identified patients in the formal partitions and therefore cannot be treated as an extra development set. This table is computed from the actual metadata and makes that exclusion auditable.
+
+```{python}
+#| label: echonext-patient-overlap
+patient_column = next(
+    name for name in ["patient_key", "patient_id", "PatientID", "mrn"]
+    if name in echo.columns
+)
+split_sets = {
+    split: set(group[patient_column].dropna())
+    for split, group in echo.groupby("split")
+}
+pd.DataFrame([
+    {
+        "split_a": a,
+        "split_b": b,
+        "unique_a": len(split_sets[a]),
+        "unique_b": len(split_sets[b]),
+        "overlapping_patients": len(split_sets[a] & split_sets[b]),
+    }
+    for a, b in [
+        ("train", "val"), ("train", "test"),
+        ("val", "test"), ("no_split", "train"),
+        ("no_split", "val"), ("no_split", "test"),
+    ]
+])
+```
+
+### EchoNext demographics, setting, and time
+
+Patient-level and record-level denominators differ because training and `no_split` can contain repeated ECGs. The table below keeps both visible and describes age only after verifying its declared 18–90 range.
+
+```{python}
+#| label: echonext-demographic-eda
+echo_demographics = echo.groupby("split").agg(
+    records=("ecg_key", "size"),
+    patients=("patient_key", "nunique"),
+    age_median=("age_at_ecg", "median"),
+    age_q1=("age_at_ecg", lambda x: x.quantile(0.25)),
+    age_q3=("age_at_ecg", lambda x: x.quantile(0.75)),
+    acquisition_year_min=("acquisition_year", "min"),
+    acquisition_year_max=("acquisition_year", "max"),
+)
+sex_by_split = (
+    echo.groupby(["split", "sex"]).size()
+        .rename("records").reset_index()
+)
+setting_by_split = (
+    echo.groupby(["split", "location_setting"]).size()
+        .rename("records").reset_index()
+        .sort_values(["split", "records"], ascending=[True, False])
+)
+race_by_split = (
+    echo.groupby(["split", "race_ethnicity"]).size()
+        .rename("records").reset_index()
+        .sort_values(["split", "records"], ascending=[True, False])
+)
+print("Split-level record/patient and age/year summary")
+display(echo_demographics)
+print("Sex counts")
+display(sex_by_split)
+print("Care-setting counts")
+display(setting_by_split)
+print("Race/ethnicity counts")
+race_by_split
+```
+
+### Metadata missingness is structured, not random noise
+
+Clinical measurements have sharply different availability. In the local table, tricuspid-regurgitation maximum velocity is missing in **54.996%** of rows and pulmonary artery systolic pressure in **43.424%**. Several echo interpretation/measurement fields are missing in roughly 9–12%. By contrast, age, sex, acquisition year, location, race/ethnicity, and split are complete.
+
+This pattern matters because a missing measurement can mean “not measured,” “not clinically indicated,” “not obtainable,” or “not transferred”—not “normal.” Binary endpoint flags must come from the released endpoint definition, never from naïvely converting a missing continuous measurement to zero.
+
+```{python}
+#| label: echonext-missingness
+#| tbl-cap: "Highest EchoNext metadata missingness rates."
+missing = (echo.isna().mean() * 100).sort_values(ascending=False).head(15)
+missing.rename_axis("field").reset_index(name="missing_percent")
+```
+
+## Endpoint prevalence and effective difficulty
+
+The EchoNext classifier evaluates 12 echo-derived structural-heart-disease endpoints on the same 5,442 test records. Prevalence ranges from **0.37%** (20 pulmonary-regurgitation positives) to **42.59%** (2,318 composite SHD positives). Consequently:
+
+- accuracy is misleading for rare endpoints;
+- AUROC can look respectable while precision remains low;
+- average precision must be interpreted against prevalence;
+- F1 at a fixed 0.5 threshold mixes discrimination with calibration and threshold transport;
+- confidence intervals for the rarest endpoints will be wide even with 5,442 records.
+
+```{python}
+#| label: echonext-label-support
+#| tbl-cap: "EchoNext test-set endpoint support from the locked label audit."
+label_audit = json.loads(
+    (ROOT / "results/comprehensive_latest_48_models/raw/factorial_v4_2x4/"
+            "echonext_shd_label_audit.json").read_text()
+)
+support = pd.DataFrame(label_audit["label_summary"]).T
+support["prevalence_percent"] = 100 * support["positive"] / support["nonmissing"]
+support.sort_values("prevalence_percent")
+```
+
+### Endpoint burden and co-occurrence
+
+Structural-heart-disease endpoints overlap by construction: the composite label is positive when one or more component thresholds are met. Co-occurrence matters for macro metrics and error analysis because one ECG can contribute to multiple tasks. This block computes the test-set label-burden distribution and pairwise Jaccard overlap directly from the metadata.
+
+```{python}
+#| label: echonext-endpoint-cooccurrence
+#| tbl-cap: "Strongest pairwise EchoNext test-label overlaps (Jaccard index)."
+endpoint_columns = [
+    column for column in echo.columns
+    if column.endswith("_flag")
+]
+component_columns = [
+    column for column in endpoint_columns
+    if column != "shd_moderate_or_greater_flag"
+]
+echo_test = echo.loc[echo.split == "test"].copy()
+labels = echo_test[component_columns].fillna(0).astype(bool)
+burden = labels.sum(axis=1)
+burden_table = (
+    burden.value_counts().sort_index()
+          .rename_axis("positive_component_labels")
+          .reset_index(name="records")
+)
+
+cooccurrence = []
+for i, left in enumerate(component_columns):
+    for right in component_columns[i + 1:]:
+        intersection = int((labels[left] & labels[right]).sum())
+        union = int((labels[left] | labels[right]).sum())
+        cooccurrence.append({
+            "endpoint_a": left.removesuffix("_flag"),
+            "endpoint_b": right.removesuffix("_flag"),
+            "both_positive": intersection,
+            "jaccard": intersection / union if union else np.nan,
+        })
+print("Number of positive component endpoints per test ECG")
+display(burden_table)
+pd.DataFrame(cooccurrence).sort_values(
+    ["jaccard", "both_positive"], ascending=False
+).head(20)
+```
+
+The audit reports a single SHA-256 label hash shared by the official reference and all 48 reconstructed-signal tables. This is a valuable identity check: differences among reconstruction cells cannot be explained by accidentally changing label order. It does not verify clinical adjudication or eliminate spectrum bias; those are separate questions.
+
+## Signal-level EDA: what to measure
+
+### 1. Units and inverse normalization
+
+For each lead $\ell$, recover clipped microvolts using
+
+$$x_{\mu V,\ell}=z_\ell\sigma_\ell+\mu_\ell.$$
+
+Then convert once to millivolts if the reconstruction model expects mV:
+
+$$x_{mV,\ell}=10^{-3}x_{\mu V,\ell}.$$
+
+A thousand-fold unit error can produce finite tensors and plausible-looking normalized plots while destroying inference. Unit tests should assert known percentile ranges before and after conversion.
+
+### 2. Clipping occupancy
+
+Compute the fraction of values equal, or numerically close, to each provenance bound by lead. High occupancy indicates censored amplitude tails. Report this because peak-amplitude and ST-deviation errors are then conditional on the released clipping policy.
+
+In the released test tensor, approximately 0.120–0.144% of samples per lead lie at either documented clipping bound. The inverse-normalized microvolt percentiles show clinically meaningful lead heterogeneity: for example, the 0.1st/99.9th percentiles are −102/287 µV in lead I, −369/173 µV in V1, −527/299 µV in V3, and −246/426 µV in V5. A single global clipping range or scale would therefore distort the precordial leads differently.
+
+The rendered audit below independently reads a fixed 256-record sample from the 1.3 GB memory-mapped array, reverses the released affine normalization using `PROVENANCE.json`, and recomputes signal-validity and lead-law summaries. The full-array values in the table that follows come from the locked audit; the executable sample serves as a regression test that the live local artifact still has the same axes, scaling, and physiologic lead relations.
+
+```{python}
+#| label: echonext-live-waveform-audit
+rng = np.random.default_rng(20260731)
+echo_idx = np.sort(rng.choice(wave.shape[0], size=256, replace=False))
+z = np.asarray(wave[echo_idx, 0, :, :], dtype=np.float64)
+means = np.asarray(provenance["normalization"]["mean"], dtype=float)
+stds = np.asarray(provenance["normalization"]["std"], dtype=float)
+echo_uv = z * stds + means
+
+echo_laws = {
+    "III-(II-I)": echo_uv[:, :, 2] - (echo_uv[:, :, 1] - echo_uv[:, :, 0]),
+    "aVR+(I+II)/2": echo_uv[:, :, 3] + (echo_uv[:, :, 0] + echo_uv[:, :, 1]) / 2,
+    "aVL-(I-II/2)": echo_uv[:, :, 4] - (echo_uv[:, :, 0] - echo_uv[:, :, 1] / 2),
+    "aVF-(II-I/2)": echo_uv[:, :, 5] - (echo_uv[:, :, 1] - echo_uv[:, :, 0] / 2),
+}
+echo_live_audit = pd.DataFrame({
+    "quantity": [
+        "resolved waveform path", "sampled records", "finite values (%)",
+        "global 0.1st percentile (µV)", "global 99.9th percentile (µV)",
+        *[f"median record RMSE {name} (µV)" for name in echo_laws],
+    ],
+    "value": [
+        str((ROOT / "data/echonext/EchoNext_test_waveforms.npy").resolve()),
+        len(echo_idx), 100 * np.isfinite(echo_uv).mean(),
+        np.quantile(echo_uv, 0.001), np.quantile(echo_uv, 0.999),
+        *[np.median(np.sqrt(np.mean(residual ** 2, axis=1)))
+          for residual in echo_laws.values()],
+    ],
+})
+echo_live_audit
+```
+
+| Lead | 0.1st percentile (µV) | Median | 99.9th percentile (µV) | Bound occupancy |
+|---|---:|---:|---:|---:|
+| I | −102 | 0 | 287 | 0.132% |
+| II | −168 | 0 | 283 | 0.133% |
+| III | −295 | 0 | 191 | 0.122% |
+| aVR | −247 | 0 | 90 | 0.134% |
+| aVL | −114 | 0 | 259 | 0.120% |
+| aVF | −216.5 | 0 | 219.5 | 0.129% |
+| V1 | −369 | 0 | 173 | 0.144% |
+| V2 | −502 | 0 | 254 | 0.142% |
+| V3 | −527 | 0 | 299 | 0.126% |
+| V4 | −372 | 0 | 406 | 0.135% |
+| V5 | −246 | 0 | 426 | 0.139% |
+| V6 | −167 | 0 | 376 | 0.132% |
+
+### 3. Lead-law residuals
+
+The limb leads obey approximate linear relations:
+
+$$III \approx II-I,\quad aVR \approx-\frac{I+II}{2},\quad
+aVL \approx I-\frac{II}{2},\quad aVF \approx II-\frac{I}{2}.$$
+
+Residual distributions detect lead permutations, polarity errors, scaling inconsistencies, and corrupted records. These are pipeline diagnostics, not targets to “repair” after looking at test performance.
+
+The actual EchoNext test tensor passes a strong version of this check after inverse normalization. Median record-level residual RMSE is 2.34 µV for $III-(II-I)$, 0.86 µV for $aVR+(I+II)/2$, 1.53 µV for $aVL-(I-II/2)$, and 1.41 µV for $aVF-(II-I/2)$. Corresponding 99th percentiles are 16.57, 7.44, 11.88, and 9.87 µV. These nonzero residuals reflect quantization/clipping and acquisition representation; they also provide empirical tolerances for future pipeline tests. A residual orders of magnitude larger than these references is a red flag for lead or unit corruption.
+
+### 4. Spectral and morphology distributions
+
+Report per-lead power in prespecified bands (baseline, P/T, QRS, high-frequency), R-peak count, RR variability, QRS width, QT/QTc, peak amplitude, and flatline fraction. Compare distributions before and after resampling. A global Pearson score can conceal loss of high-frequency QRS energy or systematic ST smoothing.
+
+### 5. Cross-lead dependence
+
+Plot the $12\times12$ lead correlation matrix and the distribution of record-level condition numbers. Reconstruction difficulty depends on how much missing-lead information is identifiable from observed leads $I$, $II$, and $V_2$ (indices 0, 1, 7 in the locked registry). Strong average correlation does not imply that diagnostically important residual variation is recoverable.
+
+## Deep reconstruction diagnostics
+
+A useful diagnostic stack separates four questions.
+
+| Layer | Question | Minimum outputs |
+|---|---|---|
+| Sample fidelity | Are point amplitudes close? | MAE/MSE, bias, Bland–Altman, peak error |
+| Shape fidelity | Are morphology and timing preserved? | Pearson, derivative error, DTW, delineation deltas |
+| Physiologic consistency | Do leads form a coherent ECG? | Einthoven residuals, VCG trajectory error, interval consistency |
+| Diagnostic utility | Does a frozen model retain predictions? | per-task AUROC/AP/F1, calibration, paired probability drift |
+
+Failure analysis should be **record based**, not figure based. Rank records separately by MSE, missing-lead Pearson, QRS error, ST error, classifier probability drift, and signal-quality score. The intersection and disagreement among those lists reveal different failure modes:
+
+- low MSE + poor classifier fidelity: small but task-aligned feature loss;
+- high MSE + stable classifier output: nuisance amplitude or baseline mismatch;
+- strong global Pearson + poor QRS correlation: localized depolarization failure;
+- good morphology + lead-law violation: cross-lead incoherence;
+- good mean performance + subgroup tail failure: deployment inequity.
+
+## Statistical design for the factorial benchmark
+
+The locked experiment is a $3\times2^4$ design: three architectures crossed with toggles for MSE (E), correlation (C), MMD (M), and derivative loss (D). The 48 cells permit main-effect and interaction estimates; comparing only “MSE” with “full” wastes most of the design.
+
+Use paired patient-cluster BCa intervals because all cells predict the same test patients and some patients contribute multiple records. For each family and endpoint, estimate
+
+$$\Delta_k=\mathbb{E}[Y\mid k=1]-\mathbb{E}[Y\mid k=0]$$
+
+and prespecified two-way interactions. Family-wise morphology tests use the repository's corrected threshold; exploratory downstream endpoints must be labeled exploratory. The existing results show significant QRS and ST improvements for full-versus-base in all three architecture families, while ECGFounder AUROC changes are not significant. That supports improved morphology without detected diagnostic-utility loss; it is **not** proof of clinical equivalence.
+
+## Reproducible audit checklist
+
+- Record exact file hashes and waveform shapes.
+- Assert patient-disjoint splits and stable record order.
+- Validate axis order, lead order, sampling rate, unit, and duration.
+- Quantify invalid demographics and structured missingness.
+- Report endpoint support before any classifier metric.
+- Preserve rare-task uncertainty; do not hide it in macro averages.
+- Compare pre/post-resampling spectra and intervals.
+- Inspect clipping occupancy and lead-law residuals.
+- Use patient-clustered paired inference.
+- Publish per-record outputs so tail failures remain inspectable.

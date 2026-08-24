@@ -1,0 +1,9 @@
+{
+  "created_or_refreshed_at": "2026-08-24T00:12:22Z",
+  "expected_spatial_pair_sha256": "9b6bd307c75dc097f9f4b5c72770c7f15025e01640f5f599e66bfb39be7dd065",
+  "full_manifest": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/manifest.json",
+  "full_manifest_sha256": "008a7d9b49a8d912cc9bdd132a93c493128f17a9dcb944d2984e40112466aec6",
+  "purpose": "spatial_then_wavelet_before_3arch",
+  "supervisor_pid": 185553,
+  "version": 1
+}

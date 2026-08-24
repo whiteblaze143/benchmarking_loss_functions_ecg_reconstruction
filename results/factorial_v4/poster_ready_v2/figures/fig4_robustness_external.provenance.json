@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/scripts/style.py",
+  "sources": {
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_evidence/selected_robustness.csv": "aa9c1231f3dce473165c46a29a65580cb81a64fac88acd5d4abbff90fae8f298",
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_evidence/architecture_selected.csv": "1f6750dcccd87a8f182a57cce02aa652b6b88e4642eaa3d776449915844f662c"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig4_robustness_external.pdf",
+      "sha256": "fc63c5003f2e4f9387456c253ccf5dc2d0f6e5b8ca7e078f45b0b301b5d7b7a9"
+    },
+    "svg": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig4_robustness_external.svg",
+      "sha256": "c0d186a314fb89af6362748be2dd74e7a13bf0096aca015d429a006cf3d15f35"
+    },
+    "png": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig4_robustness_external.png",
+      "sha256": "ad65ec1a9d1825cb30be0e38de908e3e97f769eb3b06a356927a5ef6fa745410"
+    }
+  },
+  "caption": "Validation-selected models under severe NSTDB noise and external EchoNext shift. Latent models lead on clean PTB-XL, but U-Net degrades less at 0 dB. EchoNext Pearson can remain high despite negative R\u00b2, revealing amplitude-calibration failure.",
+  "style": "poster_v2_colorblind_vector"
+}

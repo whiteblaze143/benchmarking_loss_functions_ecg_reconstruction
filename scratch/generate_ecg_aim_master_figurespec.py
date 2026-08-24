@@ -1,0 +1,230 @@
+#!/usr/bin/env python3
+"""
+Generate publication-quality FigureSpec JSON and SVG for the ECG-AIM Master Architecture.
+"""
+
+import json
+import subprocess
+from pathlib import Path
+
+spec = {
+    "title": "ECG-AIM Architecture (Adaptive Axial Masked Autoencoder)",
+    "canvas": {"width": 1400, "height": 900},
+    "style": {
+        "font_family": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        "font_size": 13,
+        "bg_color": "#ffffff",
+        "palette": [
+            "#3B82F6",  # Blue
+            "#8B5CF6",  # Purple
+            "#10B981",  # Emerald
+            "#F59E0B",  # Amber
+            "#EF4444",  # Red
+            "#0EA5E9",  # Sky
+            "#6366F1",  # Indigo
+            "#F472B6"   # Pink
+        ]
+    },
+    "nodes": [
+        # --- Top Tier: Main Pipeline ---
+
+        # 1. Inputs (x: 150)
+        {
+            "id": "input_3lead",
+            "label": "3-Lead Physical Input\n(I, II, V2)",
+            "sublabel": "X, Y, Z Orthogonal Basis",
+            "x": 150, "y": 250,
+            "width": 200, "height": 80,
+            "shape": "rounded",
+            "fill": "#EFF6FF", "stroke": "#3B82F6", "text_color": "#1E3A8A"
+        },
+        {
+            "id": "patch_token",
+            "label": "Patch Tokenizer\n(25ms Patches)",
+            "sublabel": "1D Conv Embedding",
+            "x": 150, "y": 420,
+            "width": 200, "height": 80,
+            "shape": "rounded",
+            "fill": "#E0F2FE", "stroke": "#0284C7", "text_color": "#0369A1"
+        },
+        
+        # 2. Visible Encoder (x: 450)
+        {
+            "id": "visible_tokens",
+            "label": "Visible Tokens\n[3 × 200]",
+            "x": 450, "y": 250,
+            "width": 200, "height": 60,
+            "shape": "rect",
+            "fill": "#FDF4FF", "stroke": "#C026D3", "text_color": "#86198F"
+        },
+        {
+            "id": "bidir_encoder",
+            "label": "Bidirectional\nTransformer Encoder",
+            "sublabel": "Processes only observed tokens",
+            "x": 450, "y": 420,
+            "width": 220, "height": 90,
+            "shape": "rounded",
+            "fill": "#EDE9FE", "stroke": "#8B5CF6", "text_color": "#4C1D95"
+        },
+        
+        # 3. Latent Grid & Decoder (x: 800)
+        {
+            "id": "mask_tokens",
+            "label": "Learnable [MASK]\nTokens (9 Leads)",
+            "x": 800, "y": 200,
+            "width": 200, "height": 60,
+            "shape": "rect",
+            "fill": "#FEF2F2", "stroke": "#EF4444", "text_color": "#991B1B"
+        },
+        {
+            "id": "latent_grid",
+            "label": "Full 12×200 Latent Grid\n+ Positional & Lead Embed",
+            "x": 800, "y": 330,
+            "width": 240, "height": 70,
+            "shape": "rect",
+            "fill": "#F1F5F9", "stroke": "#64748B", "text_color": "#0F172A"
+        },
+        {
+            "id": "axial_decoder",
+            "label": "Adaptive Axial\nTransformer Decoder",
+            "sublabel": "Stacked ECGAdaptiveAxialBlocks",
+            "x": 800, "y": 480,
+            "width": 240, "height": 90,
+            "shape": "rounded",
+            "fill": "#FEF3C7", "stroke": "#F59E0B", "text_color": "#78350F"
+        },
+
+        # 4. Outputs (x: 1180)
+        {
+            "id": "output_head",
+            "label": "Linear Head +\nUnpatchify",
+            "x": 1180, "y": 330,
+            "width": 200, "height": 70,
+            "shape": "rounded",
+            "fill": "#F3F4F6", "stroke": "#4B5563", "text_color": "#1F2937"
+        },
+        {
+            "id": "recon_12lead",
+            "label": "12-Lead Waveform\nReconstruction",
+            "sublabel": "Supervised by 7-Factorial Loss",
+            "x": 1180, "y": 480,
+            "width": 220, "height": 90,
+            "shape": "rounded",
+            "fill": "#DCFCE7", "stroke": "#10B981", "text_color": "#065F46"
+        },
+
+        # --- Bottom Tier: Factorial Losses Visualization (y: 750) ---
+
+        # Panel 1: Waveform & Derivative
+        {
+            "id": "loss_waveform",
+            "label": "1. Waveform & Temporal Derivatives",
+            "sublabel": "L_MSE + L_Corr + L_Deriv",
+            "x": 200, "y": 750,
+            "width": 260, "height": 80,
+            "shape": "rounded",
+            "fill": "#E0F2FE", "stroke": "#0284C7", "text_color": "#0369A1"
+        },
+
+        # Panel 2: Kors 3D VCG
+        {
+            "id": "loss_vcg",
+            "label": "2. Kors 3D Vectorcardiogram",
+            "sublabel": "L_VCG: Spatial Loop Cosine Alignment",
+            "x": 530, "y": 750,
+            "width": 260, "height": 80,
+            "shape": "rounded",
+            "fill": "#FDF4FF", "stroke": "#C026D3", "text_color": "#86198F"
+        },
+
+        # Panel 3: Multiscale MMD
+        {
+            "id": "loss_mmd",
+            "label": "3. Multiscale RKHS MMD",
+            "sublabel": "L_MMD: IMQ / RBF Distribution Matching",
+            "x": 860, "y": 750,
+            "width": 260, "height": 80,
+            "shape": "rounded",
+            "fill": "#ECFDF5", "stroke": "#059669", "text_color": "#065F46"
+        },
+
+        # Panel 4: Biophysical Limb Consistency
+        {
+            "id": "loss_limb",
+            "label": "4. Biophysical Limb Consistency",
+            "sublabel": "L_limb: III = II - I  |  aVR = -0.5(I+II)",
+            "x": 1190, "y": 750,
+            "width": 260, "height": 80,
+            "shape": "rounded",
+            "fill": "#FFFBEB", "stroke": "#D97706", "text_color": "#92400E"
+        }
+    ],
+    "edges": [
+        # Main Flow
+        {"from": "input_3lead", "to": "patch_token", "color": "#3B82F6", "thickness": 2},
+        {"from": "patch_token", "to": "visible_tokens", "color": "#3B82F6", "thickness": 2},
+        {"from": "visible_tokens", "to": "bidir_encoder", "color": "#8B5CF6", "thickness": 2},
+        
+        # Grid Assembly
+        {"from": "bidir_encoder", "to": "latent_grid", "label": "Encoded Visible", "color": "#8B5CF6", "thickness": 2},
+        {"from": "mask_tokens", "to": "latent_grid", "label": "Unobserved", "color": "#EF4444", "thickness": 2},
+        
+        # Decoder
+        {"from": "latent_grid", "to": "axial_decoder", "color": "#F59E0B", "thickness": 2},
+        {"from": "axial_decoder", "to": "output_head", "color": "#F59E0B", "thickness": 2},
+        {"from": "output_head", "to": "recon_12lead", "color": "#10B981", "thickness": 2},
+        
+        # Connect Decoder to Losses (Dashed)
+        {"from": "recon_12lead", "to": "loss_waveform", "color": "#0284C7", "style": "dashed", "thickness": 2, "curve": True},
+        {"from": "recon_12lead", "to": "loss_vcg", "color": "#C026D3", "style": "dashed", "thickness": 2, "curve": True},
+        {"from": "recon_12lead", "to": "loss_mmd", "color": "#059669", "style": "dashed", "thickness": 2, "curve": True},
+        {"from": "recon_12lead", "to": "loss_limb", "color": "#D97706", "style": "dashed", "thickness": 2, "curve": True}
+    ],
+    "groups": [
+        {
+            "id": "grp_top",
+            "label": "Top Tier: End-to-End ECG-AIM Masked Autoencoder Pipeline",
+            "node_ids": [
+                "input_3lead", "patch_token", 
+                "visible_tokens", "bidir_encoder", 
+                "mask_tokens", "latent_grid", "axial_decoder",
+                "output_head", "recon_12lead"
+            ],
+            "fill": "#FAFAFA", "stroke": "#E5E7EB", "padding": 35
+        },
+        {
+            "id": "grp_bottom",
+            "label": "Bottom Tier: Combinatorial Factorial Loss Formulation Engine",
+            "node_ids": [
+                "loss_waveform", "loss_vcg", "loss_mmd", "loss_limb"
+            ],
+            "fill": "#FAFAFA", "stroke": "#E5E7EB", "padding": 35
+        }
+    ]
+}
+
+# Write FigureSpec JSON
+json_path = Path("results/figures/ecg_aim_master_spec.json")
+json_path.parent.mkdir(parents=True, exist_ok=True)
+with open(json_path, "w") as f:
+    json.dump(spec, f, indent=2)
+print(f"Saved FigureSpec JSON to {json_path}")
+
+# Render to SVG
+svg_path = Path("results/figures/ecg_aim_master_diagram.svg")
+cmd = [
+    "python3",
+    ".agents/skills/figure-spec/scripts/figure_renderer.py",
+    "render",
+    str(json_path),
+    "--output",
+    str(svg_path)
+]
+subprocess.run(cmd, check=True)
+print(f"Successfully rendered publication-quality ECG-AIM Master SVG to {svg_path}!")
+
+# Also copy to artifacts directory for instant embedding
+artifact_svg = Path("/home/mithunmanivannan/.gemini/antigravity-ide/brain/df14c00e-f738-4b5c-866b-9f8e43bebaa5/ecg_aim_master_diagram.svg")
+with open(svg_path, "r") as src, open(artifact_svg, "w") as dst:
+    dst.write(src.read())
+print(f"Copied SVG to artifact path: {artifact_svg}")

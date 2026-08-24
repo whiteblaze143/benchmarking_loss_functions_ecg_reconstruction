@@ -1,0 +1,716 @@
+{
+  "version": 1,
+  "created_at": "2026-08-22T08:00:00Z",
+  "purpose": "Priority A0-E1, PA1 fusion, canonical exact-Theta equivalence, capacity-matched, and permuted-geometry one-lead controls across masks 1010010, 1000000, and 1110000 before resuming the 3-lead queue",
+  "jobs": [
+    {
+      "id": "spatial_1lead_a0_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_a0_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_a0_1010010_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T08:53:03Z",
+      "completed": "2026-08-22T09:27:40Z",
+      "checkpoint_size_bytes": 189667118
+    },
+    {
+      "id": "spatial_1lead_b1_panorama_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_b1_panorama_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_b1_panorama_1010010_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T09:27:40Z",
+      "completed": "2026-08-22T10:02:16Z",
+      "checkpoint_size_bytes": 190886698
+    },
+    {
+      "id": "spatial_1lead_c1_panorama_hybrid_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_c1_panorama_hybrid_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_c1_panorama_hybrid_1010010_s42_l0.pt",
+      "status": "completed",
+      "attempts": 3,
+      "started": "2026-08-22T10:07:44Z",
+      "completed": "2026-08-22T10:42:14Z",
+      "checkpoint_size_bytes": 190888134
+    },
+    {
+      "id": "spatial_1lead_d1_panorama_relative_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_d1_panorama_relative_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_d1_panorama_relative_1010010_s42_l0.pt",
+      "status": "completed",
+      "attempts": 5,
+      "started": "2026-08-22T11:18:03Z",
+      "completed": "2026-08-22T11:52:48Z",
+      "checkpoint_size_bytes": 196805271
+    },
+    {
+      "id": "spatial_1lead_e1_panorama_film_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --use_spatial_film --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_e1_panorama_film_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_e1_panorama_film_1010010_s42_l0.pt",
+      "status": "completed",
+      "attempts": 2,
+      "started": "2026-08-22T11:52:48Z",
+      "completed": "2026-08-22T12:33:40Z",
+      "checkpoint_size_bytes": 225161675
+    },
+    {
+      "id": "spatial_1lead_a0_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_a0_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_a0_1010010_s42_l1.pt",
+      "status": "completed",
+      "attempts": 2,
+      "started": "2026-08-22T12:33:40Z",
+      "completed": "2026-08-22T13:08:28Z",
+      "checkpoint_size_bytes": 189691438
+    },
+    {
+      "id": "spatial_1lead_b1_panorama_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_b1_panorama_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_b1_panorama_1010010_s42_l1.pt",
+      "status": "completed",
+      "attempts": 2,
+      "started": "2026-08-22T13:08:28Z",
+      "completed": "2026-08-22T13:43:19Z",
+      "checkpoint_size_bytes": 190900266
+    },
+    {
+      "id": "spatial_1lead_c1_panorama_hybrid_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_c1_panorama_hybrid_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_c1_panorama_hybrid_1010010_s42_l1.pt",
+      "status": "completed",
+      "attempts": 2,
+      "started": "2026-08-22T13:43:19Z",
+      "completed": "2026-08-22T14:18:03Z",
+      "checkpoint_size_bytes": 190901702
+    },
+    {
+      "id": "spatial_1lead_d1_panorama_relative_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_d1_panorama_relative_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_d1_panorama_relative_1010010_s42_l1.pt",
+      "status": "completed",
+      "attempts": 2,
+      "started": "2026-08-22T14:18:03Z",
+      "completed": "2026-08-22T14:52:56Z",
+      "checkpoint_size_bytes": 196805271
+    },
+    {
+      "id": "spatial_1lead_e1_panorama_film_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --use_spatial_film --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_e1_panorama_film_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_e1_panorama_film_1010010_s42_l1.pt",
+      "status": "completed",
+      "attempts": 2,
+      "started": "2026-08-22T14:52:56Z",
+      "completed": "2026-08-22T15:32:17Z",
+      "checkpoint_size_bytes": 225161675
+    },
+    {
+      "id": "spatial_1lead_a0_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_a0_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_a0_1000000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 2,
+      "started": "2026-08-22T15:47:17Z",
+      "completed": "2026-08-22T16:21:52Z",
+      "checkpoint_size_bytes": 189691438
+    },
+    {
+      "id": "spatial_1lead_b1_panorama_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_b1_panorama_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_b1_panorama_1000000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 3,
+      "restart_reason": "controlled queue expansion for mask 1110000",
+      "started": "2026-08-22T16:25:52Z",
+      "completed": "2026-08-22T17:00:47Z",
+      "checkpoint_size_bytes": 190900266
+    },
+    {
+      "id": "spatial_1lead_c1_panorama_hybrid_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_c1_panorama_hybrid_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_c1_panorama_hybrid_1000000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 2,
+      "started": "2026-08-22T17:13:47Z",
+      "completed": "2026-08-22T17:48:38Z",
+      "checkpoint_size_bytes": 190901702
+    },
+    {
+      "id": "spatial_1lead_d1_panorama_relative_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_d1_panorama_relative_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_d1_panorama_relative_1000000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 2,
+      "started": "2026-08-22T17:48:38Z",
+      "completed": "2026-08-22T18:23:30Z",
+      "checkpoint_size_bytes": 196805271
+    },
+    {
+      "id": "spatial_1lead_e1_panorama_film_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --use_spatial_film --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_e1_panorama_film_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_e1_panorama_film_1000000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T18:23:30Z",
+      "completed": "2026-08-22T19:03:05Z",
+      "checkpoint_size_bytes": 225161675
+    },
+    {
+      "id": "spatial_1lead_a0_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_a0_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_a0_1000000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T19:03:05Z",
+      "completed": "2026-08-22T19:36:13Z",
+      "checkpoint_size_bytes": 189691438
+    },
+    {
+      "id": "spatial_1lead_b1_panorama_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_b1_panorama_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_b1_panorama_1000000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T19:36:13Z",
+      "completed": "2026-08-22T20:09:22Z",
+      "checkpoint_size_bytes": 190900266
+    },
+    {
+      "id": "spatial_1lead_c1_panorama_hybrid_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_c1_panorama_hybrid_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_c1_panorama_hybrid_1000000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T20:09:22Z",
+      "completed": "2026-08-22T20:42:44Z",
+      "checkpoint_size_bytes": 190901702
+    },
+    {
+      "id": "spatial_1lead_d1_panorama_relative_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_d1_panorama_relative_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_d1_panorama_relative_1000000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T20:42:44Z",
+      "completed": "2026-08-22T21:16:06Z",
+      "checkpoint_size_bytes": 196805271
+    },
+    {
+      "id": "spatial_1lead_e1_panorama_film_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --use_spatial_film --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_e1_panorama_film_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_e1_panorama_film_1000000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T21:16:06Z",
+      "completed": "2026-08-22T21:53:50Z",
+      "checkpoint_size_bytes": 225161675
+    },
+    {
+      "id": "spatial_1lead_pa1_panorama_author_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_panorama_author --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pa1_panorama_author_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_pa1_panorama_author_1010010_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T21:53:50Z",
+      "completed": "2026-08-22T22:28:23Z",
+      "checkpoint_size_bytes": 189765742
+    },
+    {
+      "id": "spatial_1lead_pa1_panorama_author_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_panorama_author --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pa1_panorama_author_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_pa1_panorama_author_1010010_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T22:28:23Z",
+      "completed": "2026-08-22T23:02:30Z",
+      "checkpoint_size_bytes": 189765742
+    },
+    {
+      "id": "spatial_1lead_pa1_panorama_author_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_panorama_author --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pa1_panorama_author_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_pa1_panorama_author_1000000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T23:02:30Z",
+      "completed": "2026-08-22T23:37:36Z",
+      "checkpoint_size_bytes": 189765742
+    },
+    {
+      "id": "spatial_1lead_pa1_panorama_author_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_panorama_author --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pa1_panorama_author_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_pa1_panorama_author_1000000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-22T23:37:36Z",
+      "completed": "2026-08-23T00:12:42Z",
+      "checkpoint_size_bytes": 189765742
+    },
+    {
+      "id": "spatial_1lead_t000_exact_theta_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t000_exact_theta_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t000_exact_theta_1010010_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T00:12:42Z",
+      "completed": "2026-08-23T00:47:19Z",
+      "checkpoint_size_bytes": 189732553
+    },
+    {
+      "id": "spatial_1lead_t001_exact_theta_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_spatial_film --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t001_exact_theta_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t001_exact_theta_1010010_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t010_exact_theta_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_relative_geometry --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t010_exact_theta_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t010_exact_theta_1010010_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t011_exact_theta_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_relative_geometry --use_spatial_film --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t011_exact_theta_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t011_exact_theta_1010010_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t100_exact_theta_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t100_exact_theta_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t100_exact_theta_1010010_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t101_exact_theta_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_spatial_film --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t101_exact_theta_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t101_exact_theta_1010010_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t110_exact_theta_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_relative_geometry --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t110_exact_theta_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t110_exact_theta_1010010_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t111_exact_theta_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_relative_geometry --use_spatial_film --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t111_exact_theta_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t111_exact_theta_1010010_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T00:47:19Z",
+      "completed": "2026-08-23T01:27:21Z",
+      "checkpoint_size_bytes": 223992613
+    },
+    {
+      "id": "spatial_1lead_t000_exact_theta_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t000_exact_theta_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t000_exact_theta_1010010_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T01:27:21Z",
+      "completed": "2026-08-23T02:01:55Z",
+      "checkpoint_size_bytes": 189732553
+    },
+    {
+      "id": "spatial_1lead_t001_exact_theta_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_spatial_film --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t001_exact_theta_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t001_exact_theta_1010010_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t010_exact_theta_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_relative_geometry --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t010_exact_theta_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t010_exact_theta_1010010_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t011_exact_theta_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_relative_geometry --use_spatial_film --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t011_exact_theta_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t011_exact_theta_1010010_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t100_exact_theta_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t100_exact_theta_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t100_exact_theta_1010010_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t101_exact_theta_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_spatial_film --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t101_exact_theta_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t101_exact_theta_1010010_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t110_exact_theta_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_relative_geometry --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t110_exact_theta_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t110_exact_theta_1010010_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t111_exact_theta_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_relative_geometry --use_spatial_film --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t111_exact_theta_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t111_exact_theta_1010010_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T02:01:55Z",
+      "completed": "2026-08-23T02:40:05Z",
+      "checkpoint_size_bytes": 223992613
+    },
+    {
+      "id": "spatial_1lead_t000_exact_theta_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t000_exact_theta_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t000_exact_theta_1000000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T02:40:05Z",
+      "completed": "2026-08-23T03:13:45Z",
+      "checkpoint_size_bytes": 189732553
+    },
+    {
+      "id": "spatial_1lead_t001_exact_theta_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_spatial_film --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t001_exact_theta_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t001_exact_theta_1000000_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t010_exact_theta_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_relative_geometry --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t010_exact_theta_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t010_exact_theta_1000000_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t011_exact_theta_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_relative_geometry --use_spatial_film --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t011_exact_theta_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t011_exact_theta_1000000_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t100_exact_theta_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t100_exact_theta_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t100_exact_theta_1000000_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t101_exact_theta_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_spatial_film --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t101_exact_theta_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t101_exact_theta_1000000_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t110_exact_theta_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_relative_geometry --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t110_exact_theta_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t110_exact_theta_1000000_s42_l0.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t111_exact_theta_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_relative_geometry --use_spatial_film --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t111_exact_theta_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t111_exact_theta_1000000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T03:13:45Z",
+      "completed": "2026-08-23T03:51:35Z",
+      "checkpoint_size_bytes": 223992613
+    },
+    {
+      "id": "spatial_1lead_t000_exact_theta_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t000_exact_theta_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t000_exact_theta_1000000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T03:51:36Z",
+      "completed": "2026-08-23T04:25:04Z",
+      "checkpoint_size_bytes": 189732553
+    },
+    {
+      "id": "spatial_1lead_t001_exact_theta_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_spatial_film --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t001_exact_theta_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t001_exact_theta_1000000_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t010_exact_theta_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_relative_geometry --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t010_exact_theta_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t010_exact_theta_1000000_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t011_exact_theta_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_relative_geometry --use_spatial_film --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t011_exact_theta_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t011_exact_theta_1000000_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t100_exact_theta_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t100_exact_theta_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t100_exact_theta_1000000_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t101_exact_theta_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_spatial_film --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t101_exact_theta_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t101_exact_theta_1000000_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t110_exact_theta_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_relative_geometry --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t110_exact_theta_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t110_exact_theta_1000000_s42_l1.pt",
+      "status": "cancelled",
+      "cancel_reason": "Redundant exact-Theta permutation-equivalence cell; retained only canonical T000/T111 controls",
+      "attempts": 0
+    },
+    {
+      "id": "spatial_1lead_t111_exact_theta_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_relative_geometry --use_spatial_film --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t111_exact_theta_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t111_exact_theta_1000000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T04:25:04Z",
+      "completed": "2026-08-23T05:02:58Z",
+      "checkpoint_size_bytes": 223992613
+    },
+    {
+      "id": "spatial_1lead_cm1_capacity_matched_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control fixed_random --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_cm1_capacity_matched_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_cm1_capacity_matched_1010010_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T05:02:58Z",
+      "completed": "2026-08-23T05:36:27Z",
+      "checkpoint_size_bytes": 190902787
+    },
+    {
+      "id": "spatial_1lead_cm1_capacity_matched_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control fixed_random --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_cm1_capacity_matched_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_cm1_capacity_matched_1010010_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T05:36:27Z",
+      "completed": "2026-08-23T06:09:39Z",
+      "checkpoint_size_bytes": 190902787
+    },
+    {
+      "id": "spatial_1lead_cm1_capacity_matched_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control fixed_random --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_cm1_capacity_matched_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_cm1_capacity_matched_1000000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T06:09:39Z",
+      "completed": "2026-08-23T06:42:59Z",
+      "checkpoint_size_bytes": 190902787
+    },
+    {
+      "id": "spatial_1lead_cm1_capacity_matched_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control fixed_random --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_cm1_capacity_matched_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_cm1_capacity_matched_1000000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T06:42:59Z",
+      "completed": "2026-08-23T07:16:13Z",
+      "checkpoint_size_bytes": 190902787
+    },
+    {
+      "id": "spatial_1lead_pg1_permuted_geometry_1010010_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control permuted --factorial_mask 1010010 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pg1_permuted_geometry_1010010_s42_l0 --checkpoint_path checkpoints/spatial_1lead_pg1_permuted_geometry_1010010_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T07:16:13Z",
+      "completed": "2026-08-23T07:49:32Z",
+      "checkpoint_size_bytes": 190902856
+    },
+    {
+      "id": "spatial_1lead_pg1_permuted_geometry_1010010_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control permuted --factorial_mask 1010010 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pg1_permuted_geometry_1010010_s42_l1 --checkpoint_path checkpoints/spatial_1lead_pg1_permuted_geometry_1010010_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T07:49:32Z",
+      "completed": "2026-08-23T08:22:47Z",
+      "checkpoint_size_bytes": 190902856
+    },
+    {
+      "id": "spatial_1lead_pg1_permuted_geometry_1000000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control permuted --factorial_mask 1000000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pg1_permuted_geometry_1000000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_pg1_permuted_geometry_1000000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T08:22:47Z",
+      "completed": "2026-08-23T08:55:52Z",
+      "checkpoint_size_bytes": 190902856
+    },
+    {
+      "id": "spatial_1lead_pg1_permuted_geometry_1000000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control permuted --factorial_mask 1000000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pg1_permuted_geometry_1000000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_pg1_permuted_geometry_1000000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T08:55:52Z",
+      "completed": "2026-08-23T09:28:55Z",
+      "checkpoint_size_bytes": 190902856
+    },
+    {
+      "id": "spatial_1lead_a0_1110000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim --factorial_mask 1110000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_a0_1110000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_a0_1110000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T09:28:55Z",
+      "completed": "2026-08-23T10:02:04Z",
+      "checkpoint_size_bytes": 189691438
+    },
+    {
+      "id": "spatial_1lead_b1_panorama_1110000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --factorial_mask 1110000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_b1_panorama_1110000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_b1_panorama_1110000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T10:02:04Z",
+      "completed": "2026-08-23T10:35:11Z",
+      "checkpoint_size_bytes": 190900266
+    },
+    {
+      "id": "spatial_1lead_c1_panorama_hybrid_1110000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --factorial_mask 1110000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_c1_panorama_hybrid_1110000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_c1_panorama_hybrid_1110000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T10:35:11Z",
+      "completed": "2026-08-23T11:08:22Z",
+      "checkpoint_size_bytes": 190901702
+    },
+    {
+      "id": "spatial_1lead_d1_panorama_relative_1110000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --factorial_mask 1110000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_d1_panorama_relative_1110000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_d1_panorama_relative_1110000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T11:08:22Z",
+      "completed": "2026-08-23T11:41:36Z",
+      "checkpoint_size_bytes": 196805271
+    },
+    {
+      "id": "spatial_1lead_e1_panorama_film_1110000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --use_spatial_film --factorial_mask 1110000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_e1_panorama_film_1110000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_e1_panorama_film_1110000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T11:41:36Z",
+      "completed": "2026-08-23T12:19:18Z",
+      "checkpoint_size_bytes": 225161675
+    },
+    {
+      "id": "spatial_1lead_a0_1110000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim --factorial_mask 1110000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_a0_1110000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_a0_1110000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T12:19:18Z",
+      "completed": "2026-08-23T12:52:28Z",
+      "checkpoint_size_bytes": 189691438
+    },
+    {
+      "id": "spatial_1lead_b1_panorama_1110000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --factorial_mask 1110000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_b1_panorama_1110000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_b1_panorama_1110000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T12:52:28Z",
+      "completed": "2026-08-23T13:25:38Z",
+      "checkpoint_size_bytes": 190900266
+    },
+    {
+      "id": "spatial_1lead_c1_panorama_hybrid_1110000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --factorial_mask 1110000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_c1_panorama_hybrid_1110000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_c1_panorama_hybrid_1110000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T13:25:38Z",
+      "completed": "2026-08-23T13:58:51Z",
+      "checkpoint_size_bytes": 190901702
+    },
+    {
+      "id": "spatial_1lead_d1_panorama_relative_1110000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --factorial_mask 1110000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_d1_panorama_relative_1110000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_d1_panorama_relative_1110000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T13:58:51Z",
+      "completed": "2026-08-23T14:32:12Z",
+      "checkpoint_size_bytes": 196805271
+    },
+    {
+      "id": "spatial_1lead_e1_panorama_film_1110000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama_hybrid --use_relative_geometry --use_spatial_film --factorial_mask 1110000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_e1_panorama_film_1110000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_e1_panorama_film_1110000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T14:32:12Z",
+      "completed": "2026-08-23T15:09:47Z",
+      "checkpoint_size_bytes": 225161675
+    },
+    {
+      "id": "spatial_1lead_pa1_panorama_author_1110000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_panorama_author --factorial_mask 1110000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pa1_panorama_author_1110000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_pa1_panorama_author_1110000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T15:09:47Z",
+      "completed": "2026-08-23T15:43:28Z",
+      "checkpoint_size_bytes": 189765742
+    },
+    {
+      "id": "spatial_1lead_pa1_panorama_author_1110000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_panorama_author --factorial_mask 1110000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pa1_panorama_author_1110000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_pa1_panorama_author_1110000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T15:43:28Z",
+      "completed": "2026-08-23T16:17:01Z",
+      "checkpoint_size_bytes": 189765742
+    },
+    {
+      "id": "spatial_1lead_t000_exact_theta_1110000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --factorial_mask 1110000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t000_exact_theta_1110000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t000_exact_theta_1110000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T16:17:01Z",
+      "completed": "2026-08-23T16:50:31Z",
+      "checkpoint_size_bytes": 189732553
+    },
+    {
+      "id": "spatial_1lead_t111_exact_theta_1110000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_relative_geometry --use_spatial_film --factorial_mask 1110000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t111_exact_theta_1110000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_t111_exact_theta_1110000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T16:50:31Z",
+      "completed": "2026-08-23T17:28:28Z",
+      "checkpoint_size_bytes": 223992613
+    },
+    {
+      "id": "spatial_1lead_t000_exact_theta_1110000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --factorial_mask 1110000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t000_exact_theta_1110000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t000_exact_theta_1110000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T17:28:28Z",
+      "completed": "2026-08-23T18:02:22Z",
+      "checkpoint_size_bytes": 189732553
+    },
+    {
+      "id": "spatial_1lead_t111_exact_theta_1110000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_exact_theta --use_learned_lead_id --use_relative_geometry --use_spatial_film --factorial_mask 1110000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_t111_exact_theta_1110000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_t111_exact_theta_1110000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T18:02:22Z",
+      "completed": "2026-08-23T18:40:25Z",
+      "checkpoint_size_bytes": 223992613
+    },
+    {
+      "id": "spatial_1lead_cm1_capacity_matched_1110000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control fixed_random --factorial_mask 1110000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_cm1_capacity_matched_1110000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_cm1_capacity_matched_1110000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T18:40:25Z",
+      "completed": "2026-08-23T19:13:49Z",
+      "checkpoint_size_bytes": 190902787
+    },
+    {
+      "id": "spatial_1lead_cm1_capacity_matched_1110000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control fixed_random --factorial_mask 1110000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_cm1_capacity_matched_1110000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_cm1_capacity_matched_1110000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T19:13:49Z",
+      "completed": "2026-08-23T19:47:13Z",
+      "checkpoint_size_bytes": 190902787
+    },
+    {
+      "id": "spatial_1lead_pg1_permuted_geometry_1110000_s42_l0",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control permuted --factorial_mask 1110000 --seed 42 --observed_leads 0 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pg1_permuted_geometry_1110000_s42_l0 --checkpoint_path checkpoints/spatial_1lead_pg1_permuted_geometry_1110000_s42_l0.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T19:47:13Z",
+      "completed": "2026-08-23T20:20:29Z",
+      "checkpoint_size_bytes": 190902856
+    },
+    {
+      "id": "spatial_1lead_pg1_permuted_geometry_1110000_s42_l1",
+      "cmd": "~/.venv/bin/python3 scripts/train_1lead_spatial_ecg_aim.py --architecture ecg_aim_spatial --lead_conditioning_mode panorama --geometry_control permuted --factorial_mask 1110000 --seed 42 --observed_leads 1 --batch_size 32 --num_workers 2 --run_name spatial_1lead_pg1_permuted_geometry_1110000_s42_l1 --checkpoint_path checkpoints/spatial_1lead_pg1_permuted_geometry_1110000_s42_l1.pt",
+      "status": "completed",
+      "attempts": 1,
+      "started": "2026-08-23T20:20:29Z",
+      "completed": "2026-08-23T20:53:47Z",
+      "checkpoint_size_bytes": 190902856
+    }
+  ]
+}

@@ -1,0 +1,1308 @@
+{
+  "root": "/home/mithunmanivannan/data/delineation_cache/train",
+  "records": 321,
+  "nonfinite": 0,
+  "class_counts": {
+    "bg": 9951132,
+    "P": 2431524,
+    "QRS": 2715612,
+    "T": 4161732,
+    "invalid": 0
+  },
+  "annotation_types": {
+    "integrated": 321
+  },
+  "sources": {
+    "ISP": 321
+  },
+  "unique_patient_ids": 321,
+  "missing_patient_ids": 0,
+  "records_with_fiducials": 0,
+  "valid_fiducial_channels": 0,
+  "files": [
+    {
+      "file": "data/delineation_cache/train/isp_1.pt",
+      "sha256": "eb0dda0b2e99982440f29317a7892466a26dd8db4289467ddfafdafc3130da08"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_10.pt",
+      "sha256": "3b47c18f453258766589657f8a8251084168f5b46f1669b2092769c665db8cd2"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_100.pt",
+      "sha256": "97f152c192a702de8c0e2b3105320d7eb26fc2c63ef1c0314ba302d895e4c4fa"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_102.pt",
+      "sha256": "addac6d4c4df1b4b4c7fbb2e453e99db6d64806e726f489637e741fff878eb28"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_103.pt",
+      "sha256": "0688e9e91eef7fd5140a9531757c68770ee3f32f1fb0b1b7cd3b270695bfd08c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_104.pt",
+      "sha256": "1194c6f7624794c8659ec583d6c298118fda97298db724dd6db60b316c18c7da"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_105.pt",
+      "sha256": "f239fa0b972452dc164e088fd2d0f2af194ad755492eeaf0315fe8c1fbbcf569"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_107.pt",
+      "sha256": "93b502d43521c6e3b147617227add00db6e58f6d3efa092d684cdb419f6dc2f3"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_108.pt",
+      "sha256": "7efdddc40d2a4abac59191f1d04a3f18dad658841766c1f529eb19bbd6b157e5"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_109.pt",
+      "sha256": "8a1560355b9b169b5cef56778698c377a13986273c9f43435057200e4906b379"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_11.pt",
+      "sha256": "821dbbc339c5cd15d8c41af3f07e5398935926f1693587250e8889db9f04b493"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_112.pt",
+      "sha256": "5a97ac98de4189ddc41c2ab699015d8c7c513ccae5f2b17ad92ce17944ba1d3f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_114.pt",
+      "sha256": "5cc351eca7cc1a72446d3bb81f198ffb43babae6d82db0075df17f37b0867d3e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_115.pt",
+      "sha256": "90444d715ac564e891ca4e4cd6adb9812b8412705b45418707bf4dfc9ce99628"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_116.pt",
+      "sha256": "ad5f8e5d7a4a1fa87febc5d9a06695b17647f668cbbd6cb682f75c8520ccbca5"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_117.pt",
+      "sha256": "3d8e3d79968856a86b5a4f61bd0a5627a54312fe9fde99cf7cb57eb1e70bebd8"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_118.pt",
+      "sha256": "54f98e5a373621b53cc57b56d8fedf7098ca437622810dc498a814c8566ef50e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_119.pt",
+      "sha256": "dcca897d9e1bda6fc9c461332f9d3c71c9261081aef7f32f523d1bf831cb88f9"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_12.pt",
+      "sha256": "c24de78d6bc188e4ba130c1a9cbfd90bb0bd1e7172db57a79a0b549f97f29b35"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_120.pt",
+      "sha256": "254ba640708c5030f397d0fa53b501c1e9177725b33f7284761ca9a2b8a80fc7"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_121.pt",
+      "sha256": "d8302593d9db84600fa27060f2d3c563c2e5442d741a1db1236eb905ce2401ca"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_123.pt",
+      "sha256": "d051e1912fda5505f9ac93703cd34511d1e4e4d1350db2d60c5b5050cfc38bc5"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_125.pt",
+      "sha256": "29cf651a4f091962ffa228b6588fd69905862c6f69f7df3c9e3eb313d41f9407"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_126.pt",
+      "sha256": "eefb7ad58756e26eabd80401b8a2e0af7bbbb7ecd1b5ecee0d6a3c213872354e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_128.pt",
+      "sha256": "20bcde0b724a49d5a06c02a83f62cb7e11f0e2901eca38159a0d7d745d735969"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_129.pt",
+      "sha256": "b962cc9f917a26a36f29051c7c79e034c7fede9c1cf32683ff4d0fe48fb4481f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_13.pt",
+      "sha256": "e5a5ce528479c352645ab555a299691ef9c366bc71d2b762e38ab860bd6fe6b8"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_130.pt",
+      "sha256": "1653b87566c5c117686bb6e1d49f2a8daab8f8772718238f37995ece9def7dc0"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_131.pt",
+      "sha256": "9f45bceed2d53718ff948684a6463b135f5e33708ebe8647beda55f1b16b1b89"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_132.pt",
+      "sha256": "d828d2fd430d3adfd27af5a72aafebf73a59b034c1889432fd6e87e6e80c985b"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_133.pt",
+      "sha256": "2b7351520d6e1533bc83cc0584dc1c02ef01d047c215b3b7d319456553bd0cca"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_134.pt",
+      "sha256": "864f84957efeaa9dd665266f868cafcc900282f74876785692a12c40bd63ce44"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_135.pt",
+      "sha256": "0a35c4280f9992d82dca40aa44f67de53380b263b49c82a8de66e905cd907743"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_137.pt",
+      "sha256": "4d632d77fadc8198f89e45703c0942d294aa9ba123552f4c62e568a111ae8996"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_138.pt",
+      "sha256": "4fc016b13a01a5698a475f74ece6b21ed5eae9f7dc26a4ff10e007e0e262e748"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_139.pt",
+      "sha256": "d79af6ab55681bfc4762956f819dbb3f44571707b5057bb0ff6534d4778479d7"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_14.pt",
+      "sha256": "ee096dad94530b1508b04aaf025d9b7adc13a8a8979b46a005353554925f129c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_140.pt",
+      "sha256": "baa7a7845f421d6fcc0a5920d919f7c8e85f02e822551bf9039c64aab6eb375e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_141.pt",
+      "sha256": "787614baeb301ef2825ca4537edf7cc8b35b50492fba442e5b558a4726aa9f64"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_142.pt",
+      "sha256": "0fb255d37ca48fe90ed9ca3702a4d5a2d6793d60f5acf066e91a1de5ed1057b4"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_143.pt",
+      "sha256": "32c10579889d63a0433d72cb2937f15c44b4aadeb1001b40fe195b3559fd0d9e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_145.pt",
+      "sha256": "08aa5b3a5467be762d9847a59f365d3f3c5c4fd8c601f9958ccd9d25618dac6f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_146.pt",
+      "sha256": "eef396d3e166597e2957be9a211576f484e6e58f1a6bf67ad1e0ee989323a8d7"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_149.pt",
+      "sha256": "448df5fccb1b78d13cad34408bd28173d31d26f4c0686f40c07716f6ddfc9ad9"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_15.pt",
+      "sha256": "fe0ae9f764d15c2c3387cff3922d291b6d71f045c097c744f30f876ee0d62720"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_151.pt",
+      "sha256": "da1f263ccf1bf8131091f580710e63e4fdc9a67214e581321a1e13f5231698cf"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_152.pt",
+      "sha256": "5b4137d0afe99790a72fc78e045e0caf8ca482ec639225739eac788ab60a9d0b"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_153.pt",
+      "sha256": "caeffffd26504d0dd8976f881a14d7a85cf4ef0064bacf9f8158729cbdbeb266"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_154.pt",
+      "sha256": "cd0218b6c121aca5a3cb8d13ea54998f161096c75daf1dd48ae007abd655567c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_156.pt",
+      "sha256": "90f45db190de23dc43fc6dbc6c6339b54a02777cd6f8a8ab5183b7ebd0278f20"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_157.pt",
+      "sha256": "a41a157e24f4f2cfdbd8f7dff69ba96496378b68bd54e84ddc419262cdd84e36"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_159.pt",
+      "sha256": "db31045017b244961f2042eddfd71691dfcb29c1e0abdf32cd8b89d189fd3573"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_16.pt",
+      "sha256": "cabcf7d35f2923106c5b459129d144e524ff4234e7d3164a5f7c63b613dc43de"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_160.pt",
+      "sha256": "565f3683550b1bde036bb07ddb1119181d69f6398d580e4a3b96e817ffd39806"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_161.pt",
+      "sha256": "b3cb782cce61f15a87b3f273ad8828e517fbd4c212f241b3eaede2d0b28d7eaf"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_163.pt",
+      "sha256": "144997ce3db15e4a9072a52cec15ca6c178de37b68ce487ef60be1586b6ef5f7"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_164.pt",
+      "sha256": "8dba9b8b2aec49ec8d74b02a975415e147d76aee31c44b9f3e5e6fddc76ef731"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_165.pt",
+      "sha256": "6453196632039664cb26ef812a4f5b0a5c37648f663865d2ad59949754b7e508"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_167.pt",
+      "sha256": "269dc828a19e56b911fd50adfe16133f4097c04ce7193521bc043b6868128d63"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_169.pt",
+      "sha256": "530c7c98a979122dca97512bf23087c91a326528e781632bdef36bc1c828dabd"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_17.pt",
+      "sha256": "817d385a095a9601c93cada7c3c31f7488e63ac935c6e08c578a63008dc5609e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_170.pt",
+      "sha256": "9988d4276929f9f051d83d33099c7d7c9bb1358a7ff03bc7638612c8ecd54f6a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_172.pt",
+      "sha256": "7f102580e593d137699973f5756ca58389eec13d315a7a37a68a8b567cb323fa"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_173.pt",
+      "sha256": "62492666676fe6bcd9375e8d1adbbdb131d3c1c02923c61ef2bdec011a9af52c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_174.pt",
+      "sha256": "6576b1e528057564f11434246cd189f9f176890ea49974be99bca8f084b864f9"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_176.pt",
+      "sha256": "c61897db0d642ab77fb6f6acd4da481165db8918eeb327a0f1f5c5466f4c5e0c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_177.pt",
+      "sha256": "f36fc7484e443bae1d4170451f88973faecc67d047063d629597cea918834d24"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_178.pt",
+      "sha256": "8e0eb028c1fd1fdf2e2f9b32d9d72ceb30b7a8e73d7c897a743f58c35799f603"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_179.pt",
+      "sha256": "dbcde87ac9ae67966152de1e5b7bc6a1b946ab6c5f0acf85333bdad2e1fde15e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_18.pt",
+      "sha256": "9ee01c8636c77a81c0376c21a9c650b35a1d9c3c1c76f438f9766d7ecd70c9d0"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_180.pt",
+      "sha256": "19427095ea6aea0ecc507809d41bac275c572a109756e1108865f4354cce3f61"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_181.pt",
+      "sha256": "c82e9a614e149bbb7ff1fee7a145fae50a1ddb5f32c40416715cbd69b791d78a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_182.pt",
+      "sha256": "7e7c31465273be50cb0788cb46f612cba77db6f9337d3382630879891f36ecca"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_184.pt",
+      "sha256": "37f7f090b9242f4b1f873a84f65a3176d6dbab4c1077387025d5c3ca8327fc3f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_185.pt",
+      "sha256": "246e9002731466127f64ac12556697ad65627db65f127cf245d553475ac37e89"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_186.pt",
+      "sha256": "a0d7194df44ab698d74986421f88c6ae1f6ad8657dc78a2b0044bb8ccdf35d36"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_187.pt",
+      "sha256": "1a169a9bdfacf1bf9dcd8f02e2b503abbb564a6ab762962e7a7342a35669ddfe"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_188.pt",
+      "sha256": "5b2eee8f58966b78d7abf2cbe2f09bc010f21f643a6538751a4e0063d4632fbc"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_19.pt",
+      "sha256": "486d4c4b1284f64f6e227d0fd459ae68bc2858d65c3272c9994e7c896c388fe3"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_190.pt",
+      "sha256": "f1c660b23464bdd458106a98c3efde3844c3643582360da8fd51c69a8a6a8695"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_191.pt",
+      "sha256": "ca164f83e9465d13625cd8a22a48192195c61d89e0a33eb3a1c4514fcc074a3d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_193.pt",
+      "sha256": "7596564b0fa5d83924569c0c1bb8f807b18a8849a9f6428453a08ab4e45ab400"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_195.pt",
+      "sha256": "c251692751dbff0fde61644c562d5656d4e4a12939c7dab30a1201ca0fe198eb"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_196.pt",
+      "sha256": "42c23ec1de5d3e52b7a24e42b7aa356df2d7792117a402ab901e22a9c3ff25d8"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_197.pt",
+      "sha256": "c98a84ea5e4256fbdc4628a47fe7efd09752924a75c5d235e2833c92812afcbe"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_198.pt",
+      "sha256": "2db7a996f2b17c8c0f1676158bbcce56ae1e5c1751c8059858330eb6275797b8"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_199.pt",
+      "sha256": "fc57a143632b6b372818a31f4ee5cc53dbb026bca088eb65f3aedc78d46a9124"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_2.pt",
+      "sha256": "303abebd97a5fe443e32a4f42a0e2056ac10335288e7b99c0980d4c578251dd7"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_20.pt",
+      "sha256": "58e08b82180056e348e33e390272b10ff570ff4450ec533c24e5103b4400d577"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_202.pt",
+      "sha256": "330ea7808bc564a2e44ffca2510341cac4e56f8d2b734a8fd4a8c93aacb9c482"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_203.pt",
+      "sha256": "f40482f179b879579c3752c46b43de4935bb6e7027db49c514ddc0ff88e00960"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_204.pt",
+      "sha256": "d96ce57e6798042d9417a50cb8a8cefdd179d3b4b058e74573f34dec70206821"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_205.pt",
+      "sha256": "63acb3f8b87222c75579322a53d38534d8e97570d9cf02569ed8edd355126895"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_206.pt",
+      "sha256": "6c81d1c26908e1d10d3a57f595535b9c0ac0cfbdbb3032b0d1c22538510b773c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_207.pt",
+      "sha256": "3e83c5206d3dd1d953acbb74dc48c3577af875ec8e1cfadd15141f2eabfec96b"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_208.pt",
+      "sha256": "4d04916948cb918df1da34bd531ac4af1ba3e283b4ef3429ad049492438a45ad"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_209.pt",
+      "sha256": "719ad18dfc51cba0d8d2d867be17e8d555be01e622547d56a2aba5347822ed7c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_210.pt",
+      "sha256": "afbecd13394e2b75cc4bfce66d93b9bf63e38e77e4a9f8d373614332b663e584"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_211.pt",
+      "sha256": "721a0725f4794500bf3fce9665cc44ff021ccb2475dd4465134d955e8d58ae92"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_212.pt",
+      "sha256": "9b1da68791e433315866cc41cc3d9a3369024bafe434ee5c5f0fb68a1d277213"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_213.pt",
+      "sha256": "1adc32c09c6a2a3d2fac6559f5c49aa6d171b4ac8f2247750c448198878530a6"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_215.pt",
+      "sha256": "75f2e88d1bcc32fd847cc2b001189d36f450e7157cce64aa08035af808989557"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_216.pt",
+      "sha256": "c8de7cc3af9d110f6c67f99a2084e1c0c4931398701f088bf3208a07e10bca0c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_217.pt",
+      "sha256": "e32cd311e18d40a40be61914a5a490d565a4307f0ba02528452be4b7a095fb46"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_219.pt",
+      "sha256": "e88b6fd82c88d8cff221869b0ba46215bda2f48d9a4e136d29dccf4dc27accee"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_22.pt",
+      "sha256": "6bdc4aebbbd01e2fcec54711e2850402fecb6697a50cc25878a68779f0fba3da"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_220.pt",
+      "sha256": "b3eb3cf068cda124e238726dce0fbee634f84628ad7336d70906672fdcd2b613"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_221.pt",
+      "sha256": "cd08fd933dedb4475d89b37586029451e958e3f59dd5d8b98d22c854b363390f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_223.pt",
+      "sha256": "7c5b22defdcb6afac1611e6ccc8e8b6fac1f4d774165a203d8e45b891b267bf7"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_224.pt",
+      "sha256": "53930c77386cfab797a9e0753c91320920b8409a47eee9cc223fae4fb4b657c6"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_225.pt",
+      "sha256": "98d2eb3625f9de84316b031bcc7e00d545a3419ed9b1bd993ddef12deec0a4d5"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_227.pt",
+      "sha256": "42d92eced77c1e81a35aba13ab40de26f805f761cbc30f968f811d764715c65a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_228.pt",
+      "sha256": "3f9187bd6df996c4d3a6b2e890f51c22a90a1649f9d0246af2d1af1f38bc1d8c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_229.pt",
+      "sha256": "5a9c930cf82cf8937f47003894dc72702607b9cb2e6106bb620b10cdd278d951"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_23.pt",
+      "sha256": "7c20344076fa71eb8851d8031bdb51d8c047a4f20bb99e3e63d2eb595c4dbd4d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_230.pt",
+      "sha256": "26f104f575d5405708b2dcabda925d75ef4eab4964682715bf3241c4e7c0f907"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_234.pt",
+      "sha256": "9bff12a0adef734d30049aafe5046b1c26ee8fbcb27497ac2f4af4898aea9512"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_235.pt",
+      "sha256": "d6b2435aea4f5aee5824b8550117dce952385f70e5b0bf888f16b168dd18ea76"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_236.pt",
+      "sha256": "924e7ac994e36e8973160564c87ff599ed871866e5f25e352ca81553ff42a737"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_238.pt",
+      "sha256": "08a378461f90546a16ae8ce82a8cd98ddc76bd7d7a472fd122f91b1c7c0b9595"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_239.pt",
+      "sha256": "87925c15d39aeea9ec8bb89132676c55bd7fda45dbf6327cc24e24703444fac3"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_24.pt",
+      "sha256": "d2d58e7b9c288d013a1bb154f175c927274f753d35cbdeb20e7b2635614131cb"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_240.pt",
+      "sha256": "f4d9aacfd6188594650faabed5d1beeaa161a890fab265aab818a8afe6004684"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_242.pt",
+      "sha256": "a8a8f802ba93a9de4d94fc6073ae22fa23f219fc52e329d1f16e116e9e22ba9f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_243.pt",
+      "sha256": "c9626520fbc19af8bfaea47bad11c5ec12bb5d95221a46c50b5014ba1f4a1dee"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_244.pt",
+      "sha256": "b9fdb661ed60e31adf3493d75cc27e273c54585e6e9357bf1f7d9b3d852fb8ae"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_245.pt",
+      "sha256": "d8ef3cf08386cc8d03534c6db32e0f2916f606080266b2373bb5204831cdc038"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_247.pt",
+      "sha256": "62ec4cfc9185721cd37c09204b0e518ba4e92407dc02fbec8a3f6c2966851bc6"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_248.pt",
+      "sha256": "8dd0c82c1757f1462bd48435d02924b4d57a974f07d28c4a9d26518a7fa59b84"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_249.pt",
+      "sha256": "b1214a7fb80a344211e806df400200a1eea2914a7b7d3f1d9c077e19b171aa31"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_25.pt",
+      "sha256": "3be040d203edc34d0276769b038a0180a3e47f299da685f0f1ae5b3d44966005"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_251.pt",
+      "sha256": "e36ed63feef149c410d55236b62b9e8bb6a7387e666b84ceb17ef8ed7019bf58"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_252.pt",
+      "sha256": "670c16d07210628975ea9e611d4b7ff395ce6b668db1ccf62070ec59f3c80b27"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_253.pt",
+      "sha256": "1f09c2f584f422fe57a9f4f579ee06ab7a9d0f760156167efb8cb0c35ddaa337"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_254.pt",
+      "sha256": "689dafff78387fdec89633660c89ad23ba00e9de1cde75c5022521432c61efdc"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_256.pt",
+      "sha256": "981521ff856fc232df7dbdf67a3bd4cad11d116bce6fef0424ebd69a8905d318"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_258.pt",
+      "sha256": "45917585747a2c8a0b86a610a8df739221898444d49ae85532a74e5980bf5d3d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_259.pt",
+      "sha256": "b3f6505163f877faec241398223f0842ccf6aff449859ac8702b96b8f068d8d1"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_26.pt",
+      "sha256": "fb07e7cde0a7b7db8bc1681acae822e18d051d110a597341bd67aa919f0d9f89"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_260.pt",
+      "sha256": "29beb7001a16b33fa4021726c21a2f31c902165e96c3f9ea066e571093f6495c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_261.pt",
+      "sha256": "686b68043947cbdd2273106774a007b6c11dfef5eecb2683eb488e86a52d9e08"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_264.pt",
+      "sha256": "7ccefdc0fa4856115ba579cfa871683b682f29928b66c21826309ff0a7efad21"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_265.pt",
+      "sha256": "f09531f669f3472a32cc959a3cd4fe715d946a78a1ae8d3c7cd40fce58e3b192"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_267.pt",
+      "sha256": "962c6d2667bee79da3178a9005a57c90129858d3b2f9c9e64740c6c68655056e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_269.pt",
+      "sha256": "f5f508df98fced07c84d96d637d656be8213884ec8c1fe97e82a569c1ffb0160"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_270.pt",
+      "sha256": "60454b9ee905c00688e4c476914851c2d67b66a56a6f35c04fecf728d90ea679"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_271.pt",
+      "sha256": "f84bd85c157906acfa8078127e6775bb46ed64183e9841b8fade88a41f83f802"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_272.pt",
+      "sha256": "174b658de3957b386796bdb70078aa9abde8f8a6288d1a12c0cdddd4f8f025b2"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_273.pt",
+      "sha256": "5bd01e9e19881419a138e5d531973efa8b4d5fd13f50e30788c96bd19eb4d1f1"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_274.pt",
+      "sha256": "d991a4132d8b5ff3d300972e2b1bb0b1686b1dd6fe454c634c051b3492ce4ac3"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_275.pt",
+      "sha256": "174a8ca08d5a23bd37d348f912ed72111f8f19b8da0f8939c73eee2d30a28f3d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_277.pt",
+      "sha256": "d4527b77a795fee2723e3a81f020d4910437959e9ce650176e17937ab27e0900"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_279.pt",
+      "sha256": "927688aedfc7a8b03aed77398d481f93d32a8c8cfaf02edab17fc499bb2026d0"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_28.pt",
+      "sha256": "fa16b29f0df10c8750a5f5360cd2f558d484abc8d68278ae9ee5edcae0b065dd"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_280.pt",
+      "sha256": "270076a18d9ec7a65e897d251857b54e987fc9371d385422d3e37c02d3fff946"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_282.pt",
+      "sha256": "cb46fb38ff1393e629ca1f946e6edfe20e99c653d5095b4a33b24c0fd83d5659"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_283.pt",
+      "sha256": "eca06b25abce863b50870aca831235063cd61f3e8c73329d7702484d1adeaccb"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_284.pt",
+      "sha256": "1fd87db51a1ab1e7b62d67fd657591b1e146ae2bd5e5874c8a5165b4b5fe682b"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_285.pt",
+      "sha256": "b26aa41c67b03cdd65933776ca45631ee610b516dd23d3cde657a1e9ae9bb816"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_286.pt",
+      "sha256": "a4903af2cab2f2d36247c9e4cd2fbdd30c53f1fb8e3843e5c2f10a9f869cc639"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_287.pt",
+      "sha256": "347c316335f98007d27805fc21d328a10358a5bb9977c6573f623afd3cc578e4"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_289.pt",
+      "sha256": "610424ff5fba0065b61464da8405714681405fa7a826243cdef768bc2795ae90"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_291.pt",
+      "sha256": "35850b9bace022a7215fa6f15c99334afba6d029251ab5aa1181b16d42c0f457"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_292.pt",
+      "sha256": "7883b0b759be43ff0194ddf519ef7ca0223f598e4e4de30936f8da580a98954c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_294.pt",
+      "sha256": "ff0497d1e1452086acff69fa0fe4468c7aab96133a29b29b4e6ad4a386db9762"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_295.pt",
+      "sha256": "03794a2f455088aaf72b892abddebd5fcf3d71f093942c552a70770703fbdec5"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_296.pt",
+      "sha256": "60dd95ff9aa44a91c386ffe18107d6f565e0933cf230943244ded6f3a1bcfa04"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_297.pt",
+      "sha256": "1284fbb88748040f874a92cb0bbfcfe4f2c6dc3e79ad6ff17b92e7f0e08f8564"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_298.pt",
+      "sha256": "9a456c989e0179bcfbba5918560a7ef2779b276c62999d06a242ed16bd90ea10"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_299.pt",
+      "sha256": "82e06205bb3240d85b37f583a95a4a2d1e2ce25ba592f09b7f5ee8d7805b0fe3"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_3.pt",
+      "sha256": "9f7ce19cd9c51b4176158ff9250ffa3d31edc017cda99b8c06f6466132527b77"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_30.pt",
+      "sha256": "aaa8baadb6c1849a518e9f89d8ae8c5f0ad1973fada36f551d853ac498e7439a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_300.pt",
+      "sha256": "bc6bf57f64867fd3f0363a7a7c570a87a6462866503a1b71795115e776b9896a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_303.pt",
+      "sha256": "cc79ae53fed7bd169d1f78ee16082aea7c8d5d07a695793174ba4db28c2f9f6e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_304.pt",
+      "sha256": "22872313e5be610b3f07227320cd670c6c9290320c12174d3f1e6dea42f1de24"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_305.pt",
+      "sha256": "43772f9f536992afe1c84cb84a3ae620de118f3c235a8371a69ba7df113e8131"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_306.pt",
+      "sha256": "c03b254133f5da83877b0d20f43c4533f578e7719f2c7a4567f40606d2391f1c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_307.pt",
+      "sha256": "a1a6369ee54f0c7a9d7eb86d62bb2193e70c31ddc9ebb823291b1d9a079a3824"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_308.pt",
+      "sha256": "e49a8a106eaf78f673be2872d04e8a4c385180d4aea22695199f5446a8778be4"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_309.pt",
+      "sha256": "fe849c504c9d2f355bdec58d469da4174f9320fb57f7cae53dafc7a9cc37d017"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_31.pt",
+      "sha256": "1d4542ffae57faf60590e74dc424f581e34180a8585a4e7536645849093c49da"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_310.pt",
+      "sha256": "9c50855fb928f9df3f991f59823b866a328f23f522366b5c41b371a7c8596b0a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_311.pt",
+      "sha256": "cbe6d8987d7992b84189d996b961393ea1580739ae59106e090e2a00a48c9e72"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_312.pt",
+      "sha256": "9b9568c4fae4a48d3a87e3fbffd500f2c16f111870d3a614c8767dc63b288c90"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_314.pt",
+      "sha256": "e2e4d19fe89008b96f1d7c07ae2a2c2d5d68a1a2cb8a044443aa4778f16e7104"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_315.pt",
+      "sha256": "f094dc313689d6765bc35a49bc207a547720a8bc25b0ce077e24718d0031bf0f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_317.pt",
+      "sha256": "cf298406c5a0ed3c292a200741c21e96088bccecf7bb6870dd760554c036c3f5"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_319.pt",
+      "sha256": "fda383f9dc8f4d11e1b4f740c543a90ca5b6fd100dec608075b96ffea2793772"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_32.pt",
+      "sha256": "af480316b020c01e290a8af3111ad610264b0c74889a9f9dfaa30db8ca5c6cfd"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_320.pt",
+      "sha256": "7dc71236790486ca71ae6a8ce36f86a1251651ee11782bd5dfb8abc7c7bd1b10"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_321.pt",
+      "sha256": "d773ac47341c017b4634aa343c0335ecd082d7d93c2ac1584cf7176e6fa54c6a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_322.pt",
+      "sha256": "c0d7687b78c4ba38517dbdbd12db7812c07e796183f37ac717e0aeff96c7c283"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_323.pt",
+      "sha256": "b9358b5aad6dd83831920dcef6a45dff475702d756b36342786a3d1aae8c6912"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_324.pt",
+      "sha256": "98341557d91e42bef4b9bd951e13c5a7b2d3291237e7c1b376a82b7c4bee6102"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_325.pt",
+      "sha256": "8671ef43964cc0d39daa15c6bc52b1aeba5897543e3c21fa717007c8c915a05f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_326.pt",
+      "sha256": "ef0709eb6d9a65e18b0682ff38758a02471626e678f00c77dff0ce31127eb704"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_327.pt",
+      "sha256": "83b44b9f60a5d63bba4ee532d32487c2190ecd85ebbf6401e4f0d732d00b1d7c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_328.pt",
+      "sha256": "6acb9c2da59ebb978787d7d07b94136920f23931285cda6a10367476775cd13d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_33.pt",
+      "sha256": "55d40dc1e4ba4d16ba99856fd36fb022059a408bb8bb79d1310d8cd641b8d3a0"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_330.pt",
+      "sha256": "31211a7fae8d67136a313a2a6a72c5736b041eb157e1ab409c79bbc108e722b6"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_331.pt",
+      "sha256": "bb0f9aaa5dd7e2341bc6cb3d719557d20670c97029adcec7a857f3f5770e0bfb"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_332.pt",
+      "sha256": "59f2938a1be5b320a4f933c63d5411500a40939d0a103cdef554ad84355e3c8d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_333.pt",
+      "sha256": "88c769c326c54f9c8b6697cba194d3f8d554de9ca3bcfef5b6271f3aeba6fb07"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_334.pt",
+      "sha256": "8985e26f4618d884c9367af91b4a887ce08ca3db8762578337459b8491b95d20"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_335.pt",
+      "sha256": "1d7d0a0e48f36ab1fb8f882448c6bca8f0e99d6fba43e759eec22882a311dae9"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_336.pt",
+      "sha256": "4fb1157cb71e129593b39495c75d2ef259ab3afe94f2c48d8ba68e00c2352d6c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_337.pt",
+      "sha256": "52f68808f0ddf7b6aa6f36abf60e5a52281b3c6efb0ae3a4290773ff342f642e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_338.pt",
+      "sha256": "1f9e6bfc1bbf42011d5e035e0de0f471c812fdf8019c9d956e6cbdf9fc466ca5"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_34.pt",
+      "sha256": "07b468eed165a468b13365b10536b5307fd0b2b3133b43cdb833828cc619c789"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_340.pt",
+      "sha256": "bf5a8220d42747e2f126795fbb9e4ecffd6dfb5025153dae6891ad68388f073d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_341.pt",
+      "sha256": "5539f484da7c3a6c46a732fb4c3cdc388871f21dbb50bd9cf5f60de0de009da1"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_342.pt",
+      "sha256": "f0927dcd75025909975716d8b140429c47c1030f7ac443618ae6fd2abae41f95"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_343.pt",
+      "sha256": "1ba1894775380ef718b7b2d53599c6bc901f41591644ab671105679e311fa82a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_344.pt",
+      "sha256": "3460d67fda899b923d471c441da2825c655b23feccfadb78e95a6b352e21d9c3"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_345.pt",
+      "sha256": "55183095232107acc9e689d4190acfe081c182b13dfbf104bf99f622101e5bba"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_346.pt",
+      "sha256": "7e88c70505297de6d1c6dcc1ecb726a4a2903fe69e983f8e1c7a0637411da366"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_347.pt",
+      "sha256": "4a4ef215c153a1bf33024f249a70763910a6c96c12896966e2f89e5f78cf3c86"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_348.pt",
+      "sha256": "7e22361ae3c00d51e69885a984f0709fec020fa137f0757da63412c4bf3fabbb"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_350.pt",
+      "sha256": "ca8f2e005a843e69a91b8cd9bbfccca6ebb7c7d8c29cb199cee1dd7256fa84ae"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_351.pt",
+      "sha256": "e6b40ed53e422def1a99c6e0dc35a43a4403267087b5336d95572bcec307f94f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_353.pt",
+      "sha256": "c41644713f8f1aebe226b2f554373da41312f2811124db00ea2f949601931ae1"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_354.pt",
+      "sha256": "fd4ebb94a9e3f77e8e6c6932c797739db08bf731182918b22cd7c8f4d6bb8e31"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_356.pt",
+      "sha256": "1536c7b6d05b9343f070869a571fc2904e077371baf527c7bb2a5e39f9633293"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_358.pt",
+      "sha256": "067950686bd7a0aaec6f27684ccc9593d1ac4bb08a854da14082560a1fef75ea"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_359.pt",
+      "sha256": "9f7f919be7bb06aab2897cbf8f70a0781e9772addca53c1aca56dea47629def7"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_36.pt",
+      "sha256": "7ac89fcee77a3f04155610e21fa6102dbe80140141bf71b7812fb36da59cb16b"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_361.pt",
+      "sha256": "e9919bc8563c7be9cdfddf03f5a81549458c256d86bff2fe8da7f30961aaf9b8"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_362.pt",
+      "sha256": "49f9a3d188c4cb27b82010d458c52e0ad32e4a4d9c10e08679b7b170a7ee31bd"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_364.pt",
+      "sha256": "cebc4bf9b2994b282b75219ec22ac46b8eb38bc92d5147c50b155ac00422dc28"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_365.pt",
+      "sha256": "c06da39b23511922650989c2db144a4ede39ac88c87178fba46c6350df13bc5e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_367.pt",
+      "sha256": "7825d48d9114221ce23d547f57bb9e6415156c19855e01b8cd92f54e235cda8b"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_368.pt",
+      "sha256": "f34cebab92210b9e2a20b89b52800175f7d91a3e3baed4f10f58a4c8e5cda09d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_369.pt",
+      "sha256": "3222258b02b0882aaa3857fc573f9945c60f94e25f1163e46d0334c234b12b37"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_37.pt",
+      "sha256": "55e6732bf8cc4815556b12d78d4e06bec6d3f17c2e3bf9e99d286bf7926728fc"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_370.pt",
+      "sha256": "ba72b104e793b102c02e1a5baffabe09782e21e58bd968f4241aacf0dc5435ac"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_372.pt",
+      "sha256": "6fe42ff4dc96e265ac16171b646fa440e9b7789fb560a79e31bc64562ee5a653"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_373.pt",
+      "sha256": "a3ae42c8f24c10f3cb44e47297b386f7c8ab986721a56a948e1ea56e227a653d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_374.pt",
+      "sha256": "3ff18b361d2079ef742b61992ed042db32a73de837cf56bdf6f0ab0996e6d16f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_375.pt",
+      "sha256": "e0cd272a78541ce0bdcd8222de554c22341ca69e7c4faf5c38c85fd54eb4396d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_376.pt",
+      "sha256": "58fb8c1cbe8685154f73266f57ff1bd056a43e1309dd74667033b229ee763492"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_377.pt",
+      "sha256": "e66a579bf1faaf088fd28bdd018a76743f602be90435d7a30957ff6717f303b3"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_378.pt",
+      "sha256": "3d83c19e02cee54ce2ee167a7c13382bdb1b3ac8e8d5db426eab70c3b55c3057"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_379.pt",
+      "sha256": "40476a61185aa3e3cf4617f72c6e1b00b9f7ed4d73e0441dbbc3731734f76c44"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_38.pt",
+      "sha256": "12e44adc9da94d158dadcb10e7427d628fb08fe6046df949a1f78160189707be"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_380.pt",
+      "sha256": "9428c03cfe53dcd3ed208b8c97d783f417836360c771d8e3e1999edd79ee518b"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_381.pt",
+      "sha256": "897bb70b86c86c0667d9c8a7bb36b71b474a9fe21950777d69c38bea70ea3a8a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_382.pt",
+      "sha256": "6db21f98600b585fca1b7696155af7630e460880e67f5ee5c3c33bee2b8481f8"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_384.pt",
+      "sha256": "cd074ee35a9eba7e009ca3b299297264e662f894a319eca29f3f6568e749805a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_385.pt",
+      "sha256": "088a3864d45f9e60a8bc810c37ed3adb9f70d3f6d02d4d5b56a73a98ec6ee9c9"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_389.pt",
+      "sha256": "bc8dc7c2cfb3851451db37947a69794812857d6e8df4b45aed2f0702f2e27525"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_39.pt",
+      "sha256": "4471a4f00772ad4ce17939ea847c2e32c67c47c8f565a3d980298865ad1aee3e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_390.pt",
+      "sha256": "016e252b234f5c2a110339e40926930b9077d8f93446812a64060146f386da36"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_391.pt",
+      "sha256": "0f1a821beadc5c1ab11c8a622f3abda4e81b7f19dc1ba08cecbe2214ddedc2fb"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_392.pt",
+      "sha256": "9e1218c7bc8dd4a933a92dd18736c66b8e8b43eb6815b7e6360afbf1e210ebe0"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_393.pt",
+      "sha256": "06b46d7589b9baa6d70b29e15300ef6ce5b820712542c55f2871ccec6418ec1d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_395.pt",
+      "sha256": "b0f4c67f491719249071f3d952613ffdbccb58716948d97c2a59e0fa4fc87e70"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_396.pt",
+      "sha256": "9d7d4f2881141d2e9f2dae0158a1ef68f5eaa44fa1b5f031bf73a3d4daa40494"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_397.pt",
+      "sha256": "343f6d9a5af9294f412903e6912a79dffbaf9b90d61c4d4dc7abe93ff114390c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_398.pt",
+      "sha256": "8123f4cbc001a365da74de0451fd329d0373383440224b00153099acd50a0d43"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_4.pt",
+      "sha256": "459f6b84c6a36123e4980b2c656664bec8975763789406222dfed58b6718707d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_40.pt",
+      "sha256": "c5e7ca906482296c90525db032352b680dce09815ac05e2ff28fcf6830832478"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_400.pt",
+      "sha256": "50bc64c579bdc6f986e962e98971c402b94eb6fb489ffd89e4d6f1de69556e71"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_401.pt",
+      "sha256": "4555ce38bdc02a8b5a0dd64fd2738af16d2294117f75bf2908789c5e98aa0cd4"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_402.pt",
+      "sha256": "62b6e9188541538d2d42104c02c18a7a4557ebabae70728bfd02393417461799"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_42.pt",
+      "sha256": "eef0669a5314713d87f008f43b9e8fdb407655f7cb263dd7ff23cf568a7f1c21"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_43.pt",
+      "sha256": "7491229410f0b144ef9421127d36caf8493956000c343d8d72ef8db71bbbfba2"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_44.pt",
+      "sha256": "5004c5f11a66311c85c77655aa09e83cf2bd65efc272718210d28995fdcece5a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_45.pt",
+      "sha256": "97f259b7bc63ef3771b70024e2e803ded193c4beff006df10c8f6bdab37de2a8"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_46.pt",
+      "sha256": "5f2daaa2a87cda51fec3dcdfc70fce3cda93deaafb16222ed1184fb06a537ee5"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_47.pt",
+      "sha256": "8504b1f2bf8fa02f110bc7d710a475801a5d608af6dac3f0b8a0515a2b137222"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_48.pt",
+      "sha256": "ccf6fecf8ab6082b419077f6b89bbdce7cf0af8cd8a687253816d7c017bdac22"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_49.pt",
+      "sha256": "688cd6bf37a079375c98cf1f2e2d1f94f6506ac135b030d7803167a3d4492a82"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_5.pt",
+      "sha256": "da83c1cc06461dc0aa746611871784aaab25afd2e65b30d4dae1e87a6471148f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_50.pt",
+      "sha256": "fbde4d876d32acc03a23c0d0e4bd5445fe1d53ede731143d3f96de8ad7347b10"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_51.pt",
+      "sha256": "da5d82cd5b768ae14c018b2083ccb7eb9b5c1581e9bcc7102552782c00c83f82"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_52.pt",
+      "sha256": "2ae614759b852db90452c59b540f2401bd8ea00a3a13ebd5f888c76a8b04f016"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_53.pt",
+      "sha256": "16de52d626292373747e8a2c922e85278465c6264308bb6935357a918adef7f4"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_54.pt",
+      "sha256": "d3c29d8565e6bcc1c2c8a89175bf25dc0e37684b704efc0dcd2d799181bc7bd7"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_55.pt",
+      "sha256": "03f2af516398281bf50d3e1a9cf45318fd13c9118a9a20b91e93cc3bd2251a00"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_56.pt",
+      "sha256": "46944b3f145ad34360dee071d8017c4ea7057470c11d78edb9f17962f86a7c48"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_57.pt",
+      "sha256": "2d6be99b4693d7812ddb5a2927d64553d59add4db8e820a66967f35d7e3abd82"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_58.pt",
+      "sha256": "18a1c959b8c3b550b04d14f4197a9e50238852e793880e4ee4ce2c1d8283466e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_59.pt",
+      "sha256": "9ab9b17ecdfeabfcf6f6402fdfd3ebaa3a50166cf4da62545d2fa1a2bf69ea17"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_6.pt",
+      "sha256": "2cca064e5654cf13fa313f098fb06f711bced44ea6a45f5e6f06c186202b9032"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_60.pt",
+      "sha256": "eb77565bd0b9db0a391bf28214703ff0bf39460bc62f8e2f2a9be472c41d9bc5"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_61.pt",
+      "sha256": "70bdeed925c29e6f5436e7e8f66eaf546f4afc3492cfa549c0bfab812268edd3"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_64.pt",
+      "sha256": "601449776c38814056ab24ba34a8fb2afb02330fda56d1b6c5020da11788d30b"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_65.pt",
+      "sha256": "29ff68c927759732e16c524b2fea549abc1e268ff9e12a492e4e7bf3584dd305"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_66.pt",
+      "sha256": "dc53c4b6e2cd96a8b2335ae0db2f48bb6623113e86073126b80648f868b5199c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_67.pt",
+      "sha256": "28ad675f74ea6148857d25238ae39ed6a1fe7dc467edf0485ddc88a7629bc3fc"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_68.pt",
+      "sha256": "e13c6f24f53316a4816c4bda14a01e9e7e82a380983ab91ffb25dc3cc65d3507"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_7.pt",
+      "sha256": "c0db3fbd0e2389d4e104b9dc44c0491a094daf2af277a00abf9282e09f06f190"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_70.pt",
+      "sha256": "dc0a5a2b047b5bf018dc7c0dfa2094e7088f03eed57d847e5f24fadf1d154cea"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_71.pt",
+      "sha256": "516f905de51ade4e8c3b5f6133bb6a4b5d7ebaf2a8d55a698ae635eddd8187b3"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_72.pt",
+      "sha256": "53b48ff0a3ca16505a585e7125e349149ec375c366a2f83779929b4b9bc9065d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_73.pt",
+      "sha256": "8d295b2f5cae940c33a469cb0da3e035b6f60e8699d6620e35a87259875d3113"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_74.pt",
+      "sha256": "1344cc90d473e97a1677272cc51820652b527ae87c1f16497d90d92d8e61a667"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_75.pt",
+      "sha256": "98ff65967a7df8af1cfa75a6c8f75830e5da903db2cd66b96e5d757228bfd360"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_76.pt",
+      "sha256": "1f3f4008f42e05980a4e05f07dd307f0c75caf1675a6426d3e75f21722ed4b0c"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_77.pt",
+      "sha256": "53e65e2b5d1af0b728f635ccbce7c342ee406c9cfc77dcdb4a396b4e4dde72aa"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_79.pt",
+      "sha256": "bf5855c5fdc3746041f11588ccf655ab4544cec9b7ef06f4c369c71cc0ae262a"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_8.pt",
+      "sha256": "8a39a2216c4e64d3ddc5b5decc69d527983cae99cd34b8f6e8fad844e74dffad"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_80.pt",
+      "sha256": "611127d96c6280f87d172dadf4d3eb62cb69c8153aa570a3ce2c3e6220013b46"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_81.pt",
+      "sha256": "eb317a3f1e23ffcabafe39e6e0d291ba9d7b82711499eb9a67ead50f3c09526d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_82.pt",
+      "sha256": "881b3eedeb39107c6d6d604564ccf96c83949ef7aee955bf4fcff4e4dd2b31ee"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_83.pt",
+      "sha256": "ca09d0288da59589fa0574baf6d84c798f1bf4206e09445efde3950140e0b0f0"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_84.pt",
+      "sha256": "887662e81abac9c3ea95a2b05aa9c89ba262e12269ec7e49e7375a4b15d0e3af"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_86.pt",
+      "sha256": "b3a2c90b8668f0d0133374404310cbc51e6db36394df727447508c82df3100aa"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_87.pt",
+      "sha256": "957f23ca59910fbf1bb24051886f8e98086a6f2ad75f4837fbd0a63c0a236289"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_88.pt",
+      "sha256": "167e784a5308592cdc330c0d47459f72353570d9483f92c9779bad5cb29510b4"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_89.pt",
+      "sha256": "b922e53330501a332d32ad451ff78dda53c006c0846248360838ab346cce070d"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_9.pt",
+      "sha256": "9b6e8570de7100c02158a9afd03e42d24991da8ba6835de17dc0c5c25e3c7291"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_90.pt",
+      "sha256": "8e8b39cf8020303d3dd4665a56b190b81e582080e69e9512865862e4d7683573"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_91.pt",
+      "sha256": "d7b38dd4a4e9c5375c3108282c85cb6c55879ce86a9c1f9326391d4ed75e9130"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_92.pt",
+      "sha256": "43428fb66cf05e381a4d82a0fa01b752f5699785278453066e472893f95490d9"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_93.pt",
+      "sha256": "04005813446ce562f5cf256372d8a924c1c2d92cabdceb03f381303c9fdfc557"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_94.pt",
+      "sha256": "d47c3c38cb6f0559f018a44631099efdbde853abe74657b8de51c53d28227660"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_95.pt",
+      "sha256": "be71c597c96699c1c565ca35e3b0d4623de7bcc09197aec44ee65fb9bd23d22f"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_96.pt",
+      "sha256": "bf57008d9bdfc1412d3267ec77df4d06f01bb9623483dc07c95200c349a03bff"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_97.pt",
+      "sha256": "34afb88cf963f623cd330ddf347fb85a4245ca76f4492e1b743707fd5de0482e"
+    },
+    {
+      "file": "data/delineation_cache/train/isp_98.pt",
+      "sha256": "d581f569f46dc124f6b172376d80d077fbba5b4fdcdae92e34e1bcb6c637e897"
+    }
+  ]
+}

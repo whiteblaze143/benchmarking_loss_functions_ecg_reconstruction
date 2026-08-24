@@ -1,0 +1,85 @@
+# Clinical Trust, Cath-Lab Safety, and Validation Requirements {#sec-cath-lab-atlas}
+
+Reconstructing a 12-lead ECG from three observed leads is an inverse problem, not a substitute for measuring all 12 leads. This chapter defines the evidence required before reconstructed signals can support ischemia, electrophysiology, or cath-lab claims. No STEMI AUROC, culprit-artery accuracy, mortality benefit, clinician confidence score, or workflow saving has been measured in this project; the previous synthetic examples have been withdrawn.
+
+::: {.callout-danger}
+## Current clinical-use boundary
+
+The models are research systems. Reconstructed leads must not trigger or cancel cath-lab activation, change medication, adjudicate QT safety, or replace a diagnostic 12-lead ECG. EchoNext and ECGFounder outputs are frozen-model transfer probes, not clinical adjudication.
+:::
+
+## Why global reconstruction accuracy is insufficient
+
+Low MSE can coexist with attenuation of rare but decisive morphology. Cath-lab decisions depend on localized amplitude, timing, contiguity, reciprocal changes, and clinical context. A valid assessment therefore needs at least four linked levels:
+
+| Level | Unit | Required evidence |
+|---|---|---|
+| Signal | patient × lead × time | paired error, correlation, spectral distortion, uncertainty |
+| Morphology | beat/segment | J point, ST deviation/slope, QRS, QT/QTc, T-wave and Q-wave measurements |
+| Diagnostic | patient/encounter | blinded reference labels, sensitivity, specificity, calibration, decision curves |
+| Workflow | site/clinician | prospective timing, overrides, failure modes, and patient-centered outcomes |
+
+Success at one level does not imply success at the next.
+
+## Prespecified ischemia validation
+
+The ischemia cohort must be independent of training and contain acquisition-time 12-lead signals with expert adjudication. Evaluation should retain clinically relevant strata: anterior, inferior, lateral, posterior, right-ventricular, left-main-equivalent, paced rhythm, bundle-branch block, LVH, and non-ischemic ST–T abnormalities.
+
+For each lead, measure signed and absolute J-point error at a prespecified offset, ST-slope error, T-wave polarity agreement, pathologic-Q agreement, and contiguous-lead pattern agreement. Patient-level diagnostic evaluation must report sensitivity at a prespecified false-positive rate, specificity, predictive values across plausible prevalence, calibration, and abstention coverage. Confidence intervals must be clustered by patient and site.
+
+### Non-inferiority is not “no significant difference”
+
+For paired diagnostic performance $D$, the hypothesis must specify a clinically justified margin $\delta$ before seeing test results:
+
+$$H_0: D_{\mathrm{reconstructed}}-D_{\mathrm{measured}}\le -\delta.$$
+
+Rejecting this null requires the lower confidence bound to exceed $-\delta$. Failure to detect a difference is not evidence of non-inferiority.
+
+## Electrophysiology and interval safety
+
+QT/QTc, PR, QRS duration, axis, Brugada morphology, pre-excitation, and atrial activity require separate analyses because their failure mechanisms differ. Interval validation must report:
+
+- the correction formula and heart-rate range for QTc;
+- paired bias and 95% limits of agreement, not correlation alone;
+- threshold reclassification around clinically chosen cut points;
+- delineation failure and abstention rates;
+- subgroup results for rhythm, conduction abnormality, sex, age, medication, and signal quality;
+- whether the same beats were measurable in the source and reconstruction.
+
+A model can have high correlation while producing clinically meaningful threshold crossings. Conversely, a few large errors can dominate safety even when average bias is small.
+
+## Culprit-artery localization requires a different reference standard
+
+LAD/RCA/LCx localization cannot be inferred responsibly from reconstruction metrics. It requires angiographic or adjudicated procedural ground truth, explicit handling of multivessel disease and prior infarction, temporal alignment between ECG and angiography, and a protocol for indeterminate cases. Any localization classifier must be frozen before external testing and compared against measured-ECG performance on the same encounters.
+
+## EchoNext and ECGFounder: what they can and cannot show
+
+A frozen downstream classifier can test whether its outputs change when measured ECGs are replaced by reconstructions. Useful paired quantities include logit shift, rank correlation, task-wise AUROC difference, calibration change, and decision-threshold reclassification. These are **model-mediated endpoints**. They show compatibility with that frozen network, not preservation of every diagnosis and not agreement with clinicians.
+
+The evaluation must disclose the classifier version, input scaling and lead order, label definitions, cohort overlap, missing-label handling, threshold selection, and confidence-interval method. Macro-averages must not hide task-level failures, especially for rare structural or conduction conditions.
+
+## Decision-curve and utility analysis
+
+Decision curves are admissible only after calibrated patient-level probabilities exist. For threshold probability $p_t$, net benefit is
+
+$$\mathrm{NB}(p_t)=\frac{\mathrm{TP}}{N}-\frac{\mathrm{FP}}{N}\frac{p_t}{1-p_t}.$$
+
+The threshold encodes relative harm and cannot be chosen from the same test set to maximize apparent benefit. Mortality, door-to-balloon time, and cost effects require observed or externally justified inputs with sensitivity analysis; they must never be invented from reconstruction accuracy.
+
+## Human-factors study before workflow claims
+
+A blinded, randomized reader study should compare measured ECG, reduced-lead ECG, and reduced-lead-plus-reconstruction conditions. It needs prespecified readers, washout, case-order randomization, time measurement, confidence capture, override/abstention options, and multi-reader multi-case analysis. The primary question is whether reconstruction changes correct decisions without increasing unsafe false reassurance.
+
+## Minimum release checklist
+
+- independent multisite cohort and locked analysis plan;
+- exact checkpoint, preprocessing, and evaluation digests;
+- patient-level pairing with no train/test identity leakage;
+- measured-ECG and reduced-lead baselines;
+- morphology, diagnostic, calibration, subgroup, and failure-rate reporting;
+- prespecified margins and multiplicity control;
+- uncertainty or abstention behavior under poor signal quality;
+- clinician-readable disclosure that leads are reconstructed;
+- prospective human-factors and workflow validation before clinical deployment.
+
+This checklist is intentionally demanding. The scientifically useful result may be that reconstruction helps some endpoints, harms others, and should abstain for specific morphologies. A trustworthy benchmark must make those boundaries visible.

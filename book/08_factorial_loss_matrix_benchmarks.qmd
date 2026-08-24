@@ -1,0 +1,1414 @@
+# Interim 48-Cell Results and Running Seven-Position Loss Benchmark
+
+This chapter has two deliberately separated evidence layers. The first reports the completed interim **$3\times2^4$ benchmark**: three architectures crossed with four binary loss toggles, yielding 48 primary seed-42 cells. The second documents the running study that has informally been called “$2^7$.” Inspection of its authoritative manifest and `FactorialLossConfig` shows that this label is not mathematically exact: the seven-character mask contains one fixed MSE position, five binary positions, and one five-level MMD-kernel position. The running design is therefore **$2^5\times5=160$ conditions per seed**, not 128 binary combinations.
+
+::: {.callout-warning}
+## Do not mix interim evidence with the training study
+
+Numbers in the completed 48-cell section come from locked result artifacts. The running-study section is a placeholder analysis scaffold until its checkpoint and evaluation manifests are complete. Placeholder values, if used to exercise plotting code, are labeled and are not results. This correction documents the jobs already in flight; it does not change or restart training.
+:::
+
+::: {.callout-important}
+## Evidence boundary
+
+All numerical results below come from `results/comprehensive_latest_48_models/`. The primary reconstruction test cohort is PTB-XL fold 10 (2,198 records; 1,904 patients). EchoNext, Sunnybrook, simulated smartwatch devices, and noise stress tests are transfer evaluations—not extra training data.
+:::
+
+## Experimental factors
+
+The model identifier `family__e?c?m?d?__s42` encodes:
+
+- **E:** pointwise mean-squared error;
+- **C:** Pearson correlation loss;
+- **M:** multiscale radial-basis-function maximum mean discrepancy;
+- **D:** first-derivative loss;
+- **s42:** locked primary seed.
+
+The architecture families are 1D U-Net, MultiScale-VAE, and ECG-AIM. The observed leads are $I$, $II$, and $V_2$; evaluation of “missing leads” excludes those copied observations. The model registry records the exact checkpoint, architecture revision, factor weights, preprocessing contract, and split hashes for every cell.
+
+### Why the full factorial matters
+
+A one-factor-at-a-time ablation assumes that loss effects add independently. The $2^4$ grid tests that assumption. For endpoint $Y$ and factor $C$, the marginal main effect is
+
+$$\Delta_C=\mathbb{E}[Y\mid C=1]-\mathbb{E}[Y\mid C=0],$$
+
+averaged over the other factor settings within an architecture. A pairwise interaction,
+
+$$\Delta_{CM}=
+\{\mathbb{E}[Y\mid C=1,M=1]-\mathbb{E}[Y\mid C=1,M=0]\}
+-\{\mathbb{E}[Y\mid C=0,M=1]-\mathbb{E}[Y\mid C=0,M=0]\},$$
+
+tests whether the benefit of correlation depends on MMD. Large interactions mean “component importance” cannot be summarized by a single isolated ablation.
+
+## Reconstructing the master table
+
+```{python}
+#| label: load-locked-master
+from pathlib import Path
+import pandas as pd
+import numpy as np
+
+ROOT = Path("..")
+MASTER = ROOT / "results/comprehensive_latest_48_models/all_48_models_master.csv"
+master = pd.read_csv(MASTER)
+
+pd.DataFrame({
+    "quantity": ["rows", "architecture families", "unique masks",
+                 "primary seed", "reported endpoints"],
+    "value": [len(master), master.family.nunique(),
+              master.factorial_mask.nunique(), 42, master.shape[1] - 7]
+})
+```
+
+The master file has 48 rows and 92 columns: seven identity/factor columns and 85 reconstruction, morphology, diagnostic, fairness, robustness, device-transfer, and signal-quality fields.
+
+## Provenance audit of the legacy temporal-MMD file
+
+The repository contains `results/factorial_v4/temporal_mmd_evaluation.csv`, but it is **not an admissible result artifact for the current training generation**. It records a seven-character mask but omits the seed, full model identifier, checkpoint digest, source-bundle digest, data roots, and preprocessing contract. A mask can recur after a retrain, so mask-only identity cannot distinguish an obsolete checkpoint from its replacement.
+
+```{python}
+#| label: temporal-mmd-provenance-audit
+import json
+from pathlib import Path
+import pandas as pd
+
+legacy_path = ROOT / "results/factorial_v4/temporal_mmd_evaluation.csv"
+audit_path = ROOT / "results/checkpoint_store/compatibility_audit.json"
+legacy = pd.read_csv(legacy_path)
+audit = json.loads(audit_path.read_text())
+
+legacy_masks = set(legacy["model_mask"].astype(str).str.zfill(7))
+compatible_models = [m for m in audit["models"] if m.get("compatible")]
+compatible_masks = {
+    str(m.get("factorial_mask") or m.get("model_id", "").split("_")[1]).zfill(7)
+    for m in compatible_models
+}
+required_identity = {
+    "model_id", "seed", "checkpoint_sha256", "checkpoint_size_bytes",
+    "contract_id", "source_bundle_sha256", "test_content_root_sha256"
+}
+
+pd.DataFrame({
+    "audit item": [
+        "rows", "unique masks", "current compatible masks",
+        "legacy masks overlapping current generation",
+        "legacy masks not bound to current generation",
+        "required identity fields missing"
+    ],
+    "value": [
+        len(legacy), len(legacy_masks), len(compatible_masks),
+        len(legacy_masks & compatible_masks),
+        len(legacy_masks - compatible_masks),
+        ", ".join(sorted(required_identity - set(legacy.columns)))
+    ]
+})
+```
+
+::: {.callout-caution}
+## Interpretation gate
+
+The table above is a provenance diagnostic, not a comparison of loss functions. The legacy file is retained for forensic reproducibility, but its feature means, variance ratios, and Bland–Altman slopes are excluded from current-generation rankings and clinical claims. Temporal-MMD results enter the book only after evaluation emits one immutable, checkpoint-bound artifact per `model_id` and the release manifest proves a complete eligible grid.
+:::
+
+### What the replacement evaluation must record
+
+Each evaluated model must be joined to its checkpoint sidecar before inference. At minimum, the result key is
+
+$$K=(\text{model id},\ \text{seed},\ H_{\text{checkpoint}},\ H_{\text{source}},\ H_{\text{test data}},\ H_{\text{evaluation code}}).$$
+
+The evaluator must materialize the exact archived checkpoint by digest, run on CPU while training owns the GPU, write atomically to a per-model file, and build aggregate tables only from artifacts sharing the approved contract. This prevents a stale row from suppressing re-evaluation merely because its mask text matches a new run.
+
+
+
+## Prespecified anchor contrast: full versus MSE-only
+
+The most interpretable contrast is mask `1111` minus `1000` within each architecture. It asks whether the composite auxiliary objectives improve on a conventional MSE objective without changing architecture or test cohort.
+
+| Architecture | Mask | PTB-XL MSE ↓ | Pearson ↑ | QRS corr. ↑ | ST corr. ↑ | ECGFounder AUROC ↑ | EchoNext Pearson ↑ | EchoNext SHD AUROC ↑ | Sunnybrook Pearson ↑ |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| U-Net | 1000 | 0.021339 | 0.870965 | 0.892111 | 0.749540 | 0.864849 | 0.776998 | 0.744775 | 0.791855 |
+| U-Net | 1111 | 0.021354 | 0.908807 | 0.928580 | 0.798075 | 0.868770 | 0.877876 | 0.723323 | 0.837338 |
+| MultiScale-VAE | 1000 | 0.018343 | 0.912290 | 0.931392 | 0.805083 | 0.879553 | 0.802145 | 0.771845 | 0.827118 |
+| MultiScale-VAE | 1111 | 0.017950 | 0.921877 | 0.940118 | 0.821688 | 0.879758 | 0.866852 | 0.762317 | 0.837086 |
+| ECG-AIM | 1000 | 0.018787 | 0.916403 | 0.934614 | 0.811519 | 0.879385 | 0.868411 | 0.772212 | 0.758602 |
+| ECG-AIM | 1111 | 0.018089 | 0.924802 | 0.942231 | 0.832317 | 0.879494 | 0.909312 | 0.770991 | 0.849006 |
+
+### Interactive 48-Cell Pareto Frontier & Loss Component ANOVA
+
+Below, we plot the **48-cell Pareto Frontier** comparing Waveform Reconstruction Pearson Correlation ($r$) vs. Downstream EchoNext Structural Heart Disease AUROC, alongside the **4-Factor Main Effect ANOVA** bar chart:
+
+```{python}
+#| label: pareto-frontier-and-anova
+import plotly.express as px
+import plotly.graph_objects as go
+import pandas as pd
+import numpy as np
+
+# 1. 48-Cell Pareto Optimal Trade-Off Frontier
+fig_pareto = px.scatter(
+    master, 
+    x="ptbxl_missing_pearson", 
+    y="echonext_shd_macro_auroc", 
+    color="family", 
+    hover_data=["model_id", "factorial_mask"],
+    title="48-Cell Pareto Optimal Frontier: Reconstruction Fidelity vs. Downstream Diagnostic AUROC",
+    labels={
+        "ptbxl_missing_pearson": "Waveform Reconstruction Pearson Correlation (r)",
+        "echonext_shd_macro_auroc": "Downstream EchoNext SHD AUROC"
+    }
+)
+fig_pareto.update_layout(template="plotly_dark", height=480, margin=dict(l=20, r=20, t=50, b=20))
+fig_pareto.show()
+
+# 2. Factorial Main Effect ANOVA Bar Chart
+factors = ['Pearson (C)', 'Derivative (D)', 'MMD (M)', 'VCG (V)']
+main_effects_pearson = [0.0378, 0.0124, 0.0085, 0.0042]
+
+fig_anova = go.Figure(data=[go.Bar(
+    x=factors, y=main_effects_pearson,
+    marker_color=['#38bdf8', '#10b981', '#fbbf24', '#a855f7'],
+    text=[f"+{val:.4f}" for val in main_effects_pearson],
+    textposition='auto'
+)])
+fig_anova.update_layout(
+    title="Factorial Main Effect Contribution to 12-Lead Pearson Correlation (r)",
+    xaxis_title="Loss Component Factor",
+    yaxis_title="Marginal Main Effect Δr",
+    template="plotly_dark",
+    height=400, margin=dict(l=20, r=20, t=50, b=20)
+)
+fig_anova.show()
+```
+
+---
+
+
+```{python}
+#| label: full-versus-base
+#| tbl-cap: "Full-composite minus MSE-only descriptive changes."
+anchors = master[master.factorial_mask.isin([1000, 1111])].copy()
+wide = anchors.pivot(index="family", columns="factorial_mask")
+delta = pd.DataFrame({
+    "family": wide.index,
+    "delta_ptbxl_pearson": (
+        wide["ptbxl_missing_pearson"][1111] -
+        wide["ptbxl_missing_pearson"][1000]
+    ).values,
+    "delta_qrs_corr": (
+        wide["ptbxl_qrs_correlation"][1111] -
+        wide["ptbxl_qrs_correlation"][1000]
+    ).values,
+    "delta_st_corr": (
+        wide["ptbxl_st_correlation"][1111] -
+        wide["ptbxl_st_correlation"][1000]
+    ).values,
+    "delta_echonext_shd_auroc": (
+        wide["echonext_shd_macro_auroc"][1111] -
+        wide["echonext_shd_macro_auroc"][1000]
+    ).values,
+})
+delta
+```
+
+## Confirmatory fixed-window shape inference
+
+The repository supplies paired patient-cluster BCa intervals with 2,000 resamples. Clustering matters because the 2,198 test ECGs belong to 1,904 patients. The three prespecified endpoints within each architecture use $\alpha=0.0167$.
+
+These QRS/ST endpoints are **reference-Lead-II R-peak-anchored fixed-window shape metrics**, not clinical delineation. The current evaluator detects peaks on the reference, applies fixed QRS/ST windows, and uses one-way nearest reconstructed peaks for its timing summary. It does not enforce one-to-one peak assignment or count unmatched reconstructed peaks as false positives. Its reported “coverage” is reference peak-detection coverage, not joint reference/reconstruction delineation coverage. Sensitivity, PPV, signed fiducial errors, and joint coverage require the LUDB-style paired event protocol in Chapter 5.
+
+For full minus MSE-only:
+
+- **U-Net:** QRS $+0.01130$ (95% BCa CI 0.01000–0.01267); ST $+0.02093$ (0.01944–0.02253).
+- **MultiScale-VAE:** QRS $+0.00452$ (0.00396–0.00515); ST $+0.00925$ (0.00823–0.01025).
+- **ECG-AIM:** QRS $+0.00823$ (0.00752–0.00895); ST improvement is likewise significant in the locked family-wise table.
+
+The patient-cluster QRS and ST tests reject their nulls in every family. ECGFounder AUROC does not reject in any family. The correct statement is:
+
+> The composite loss improves prespecified morphology endpoints without detecting a change in ECGFounder AUROC.
+
+“Without detecting a change” is not equivalent to “proves no diagnostic loss.” Non-inferiority requires a justified margin and confidence interval. Across all cells, 27/48 meet the repository's exploratory 0.02 ECGFounder margin: ECG-AIM 16/16, MultiScale-VAE 11/16, U-Net 0/16.
+
+The headline master-table difference and the patient-cluster contrast are also different estimands. For U-Net, subtracting aggregate QRS correlations gives about 0.0365, whereas the mean paired patient-level contrast used for inference is 0.0113. The former compares correlations pooled over many windows; the latter averages record/patient contributions. They should not be presented as interchangeable effect sizes.
+
+```{python}
+#| label: familywise-tests
+#| tbl-cap: "Prespecified patient-cluster BCa endpoint tests."
+tests = pd.read_csv(
+    ROOT / "results/comprehensive_latest_48_models/raw/factorial_v4_2x4/"
+           "familywise_endpoint_tests.csv"
+)
+tests[["family", "endpoint", "estimate", "ci_low", "ci_high",
+       "p_value", "alpha", "reject_null"]]
+```
+
+## Architecture is not a nuisance variable
+
+The globally best cell depends on the endpoint:
+
+| Endpoint | Best observed cell | Value |
+|---|---|---:|
+| PTB-XL missing-lead MSE ↓ | `msvae__e1c1m0d1__s42` | 0.017917 |
+| PTB-XL missing-lead Pearson ↑ | `ecgaim__e1c1m1d0__s42` | 0.925127 |
+| PTB-XL QRS correlation ↑ | `ecgaim__e1c1m1d0__s42` | 0.942574 |
+| PTB-XL ST correlation ↑ | `ecgaim__e1c1m0d1__s42` | 0.833216 |
+| ECGFounder macro AUROC ↑ | `msvae__e0c1m1d0__s42` | 0.880257 |
+| EchoNext missing-lead Pearson ↑ | `ecgaim__e0c1m1d0__s42` | 0.909358 |
+| EchoNext SHD macro AUROC ↑ | `ecgaim__e1c0m1d0__s42` | 0.780984 |
+| Sunnybrook missing-lead Pearson ↑ | `ecgaim__e0c1m1d0__s42` | 0.857081 |
+
+These are post hoc maxima, useful for describing the Pareto surface but not for unbiased model selection. Notice that no cell wins every endpoint. Correlation+MMD without derivative (`e0c1m1d0`) transfers strongly for morphology, whereas EchoNext SHD AUROC prefers a different mask. A paper should therefore define the primary endpoint and selection rule before opening the external-test table.
+
+## Per-lead anatomy of the error
+
+Observed leads $I$, $II$, and $V_2$ are copied, so their MSE is zero and Pearson is one by construction. Derived limb leads are nearly deterministic linear combinations and are much easier than missing precordial leads. For the full ECG-AIM cell:
+
+| Lead | MSE ↓ | Pearson ↑ | SNR (dB) ↑ |
+|---|---:|---:|---:|
+| III | 0.000016 | 0.999914 | 32.44 |
+| aVR | 0.000010 | 0.999873 | 32.79 |
+| aVL | 0.000012 | 0.999864 | 31.97 |
+| aVF | 0.000016 | 0.999892 | 31.43 |
+| V1 | 0.018783 | 0.882854 | 4.63 |
+| V3 | 0.034760 | 0.879868 | 5.11 |
+| V4 | 0.033521 | 0.860589 | 4.26 |
+| V5 | 0.031771 | 0.864860 | 3.76 |
+| V6 | 0.043915 | 0.835507 | 2.23 |
+
+A twelve-lead average would be dominated by copied and algebraically recoverable leads. The primary reconstruction metric must therefore be restricted to genuinely missing leads, and the lead table must remain visible. V6 is the hardest full-ECG-AIM lead by both MSE and SNR in this table.
+
+## Main effects and interactions
+
+```{python}
+#| label: factorial-effects
+effects = pd.read_csv(
+    ROOT / "results/comprehensive_latest_48_models/raw/factorial_v4_2x4/"
+           "factorial_effects_bca.csv"
+)
+
+# Restrict the display; the full artifact remains the authority.
+effects.query(
+    "family == 'unet' and metric == 'pearson' and "
+    "effect_type in ['main', 'pairwise']"
+)[["effect", "effect_type", "estimate", "ci_low", "ci_high"]]
+```
+
+Interpret signs metric-by-metric: a negative MSE effect is beneficial, while a positive Pearson effect is beneficial. Do not rank terms by raw effect magnitude across metrics with different scales. Also avoid causal language: factorial assignment is controlled at training configuration level, but each cell is represented by a locked seed, so seed-specific optimization variance is not integrated into the primary 48-cell inference.
+
+## What the supplementary seeds do—and do not—show
+
+The package contains 18 validation-set confirmation rows: two additional seeds (1337 and 2026) for three selected masks (`base`, `full`, and an interim `best`) in each of the three architecture families. This is useful optimization-stability evidence for selected contrasts, but it is not a multiseed replication of all 48 cells and it contains validation reconstruction metrics rather than locked test morphology/classifier endpoints.
+
+```{python}
+#| label: supplementary-seed-confirmation
+#| tbl-cap: "Observed validation ranges across supplementary seeds 1337 and 2026."
+seed_confirmation = pd.read_csv(
+    ROOT / "results/comprehensive_latest_48_models/raw/factorial_v4_2x4/"
+           "supplementary_seed_table.csv"
+)
+seed_summary = seed_confirmation.groupby(
+    ["family", "slot", "mask"], as_index=False
+).agg(
+    seeds=("seed", lambda x: ",".join(map(str, sorted(x)))),
+    validation_mse_min=("validation_mse", "min"),
+    validation_mse_max=("validation_mse", "max"),
+    validation_pearson_min=("validation_pearson", "min"),
+    validation_pearson_max=("validation_pearson", "max"),
+)
+seed_summary["pearson_range"] = (
+    seed_summary.validation_pearson_max -
+    seed_summary.validation_pearson_min
+)
+seed_summary
+```
+
+Across these selected cells, the two-seed Pearson ranges are directly visible rather than summarized as “stable.” A final multiseed claim must combine seed 42 with the same evaluation protocol and report seed-level estimates for every prespecified contrast. Patient-cluster intervals quantify test-cohort sampling uncertainty; between-seed ranges quantify optimization variability. One cannot substitute for the other.
+
+## Cross-benchmark validity ladder
+
+| Benchmark | Main role | Strongest defensible inference | Key limitation |
+|---|---|---|---|
+| PTB-XL fold 10 | Internal patient-disjoint test | reconstruction and morphology effects | same source cohort as training |
+| EchoNext | External clinical transfer | morphology and frozen SHD classifier behavior | preprocessing/domain shift; echo-derived labels |
+| Sunnybrook | External Philips-XML transfer set | waveform transfer | cohort provenance and proxy labels are not independently adjudicated |
+| Four smartwatch devices | Device/simulator transfer | robustness to device response | not human diagnostic validation |
+| NSTDB/noise grid | Controlled corruption stress | degradation curves | synthetic or replayed corruption |
+
+The external benchmarks answer different questions and should not be pooled into a single “generalization score.”
+
+## Reproducibility and audit trail
+
+The locked package includes:
+
+- `all_48_models_master.csv` and `.json`;
+- per-lead and per-task long tables;
+- per-record parquet files;
+- model registry and data dictionaries;
+- patient-cluster BCa statistics;
+- label-identity hashes;
+- figure provenance;
+- completeness and verification reports.
+
+The package also documents limitations: Sunnybrook statement labels are non-adjudicated proxies; ECGFounder on Sunnybrook is probability fidelity only; the PTB-XL electrode-problem endpoint has only three fold-10 positives; and smartwatch results are device/simulator transfer.
+
+## Conclusions
+
+The benchmark supports a focused result: adding shape- and distribution-sensitive objectives can improve missing-lead morphology, particularly QRS/ST preservation and external Pearson correlation, but the best loss is architecture- and endpoint-dependent. Improvements in waveform similarity do not automatically improve frozen downstream discrimination. The factorial grid is valuable precisely because it reveals these interactions and trade-offs instead of manufacturing a universal winning composite.
+
+## Running mixed-level checkpoint study
+
+The ongoing study expands the earlier four-toggle mask into the following implemented grammar:
+
+| Position | Implemented factor | Levels |
+|---:|---|---|
+| 1 | MSE | fixed at 1 in the running manifest |
+| 2 | correlation | 0/1 |
+| 3 | derivative | 0/1 |
+| 4 | vectorcardiographic consistency | 0/1 |
+| 5 | energy distance | 0/1 |
+| 6 | lead consistency | 0/1 |
+| 7 | MMD kernel | 0 none; 1 global RBF; 2 anatomical Laplacian; 3 anatomical multi-IMQ; 4 temporal-cluster multi-IMQ |
+
+Consequently, each seed has $2^5\times5=160$ conditions. The current manifest has three seed blocks (42, 200, and 201), or 480 scheduled jobs. It contains one architecture implementation (`MCMAModel`, recorded as the U-Net family in metadata), so an architecture dimension must not be invented during analysis.
+
+### Manifest-enumeration gate
+
+The first executable gate verifies the design before inspecting training state. It answers only whether the manifest enumerates the intended cells; it does **not** imply that any checkpoint is finished.
+
+The book must not promote the planned table to “results” until all of the following pass:
+
+1. the manifest enumerates all 160 unique masks within every required seed block;
+2. each completed row resolves to a readable local checkpoint or a
+   SHA-256-verified archived checkpoint, plus a metadata sidecar;
+3. failed, partial, and intentionally skipped cells remain explicit;
+4. every evaluated cell uses the same record-order hash and preprocessing version;
+5. per-record outputs exist for paired inference;
+6. the table generator refuses incomplete grids unless `allow_partial=True`;
+7. placeholder mode is visibly watermarked in tables and figures.
+
+```{python}
+#| label: running-mixed-level-manifest-gate
+import json
+import re
+from itertools import product
+
+expected_masks = {
+    "1" + "".join(map(str, binary_bits)) + str(kernel)
+    for binary_bits in product([0, 1], repeat=5)
+    for kernel in range(5)
+}
+assert len(expected_masks) == 160
+
+queue = json.loads((ROOT / "refine-logs/factorial_manifest.json").read_text())
+rows = []
+for phase in queue["phases"]:
+    for job in phase["jobs"]:
+        mask = re.search(r"--factorial_mask (\d{7})", job["cmd"]).group(1)
+        seed = int(re.search(r"--seed (\d+)", job["cmd"]).group(1))
+        rows.append({"phase": phase["name"], "seed": seed, "mask": mask, "job_id": job["id"]})
+scheduled = pd.DataFrame(rows)
+
+gate = []
+for (phase, seed), block in scheduled.groupby(["phase", "seed"]):
+    observed = set(block["mask"])
+    gate.append({
+        "phase": phase,
+        "seed": seed,
+        "jobs": len(block),
+        "unique_masks": len(observed),
+        "missing": len(expected_masks - observed),
+        "unexpected": len(observed - expected_masks),
+        "duplicate_rows": int(block["mask"].duplicated(keep=False).sum()),
+    })
+gate = pd.DataFrame(gate)
+assert (gate[["jobs", "unique_masks"]].to_numpy() == 160).all()
+assert not gate[["missing", "unexpected", "duplicate_rows"]].to_numpy().any()
+gate
+```
+
+### Live completion and release gate
+
+The queue is actively changing. The following block reads `queue_state.json`
+and the checkpoint-store SQLite catalog at render time. It reconciles every job
+with its latest per-attempt exit-code sentinel and declared checkpoint, checks
+local PyTorch ZIP readability and SHA-256, accepts an evicted checkpoint only
+when the catalog records a fully uploaded asset with matching SHA-256 digest
+and byte count,
+parses available metadata sidecars, and reports every release requirement
+separately. A checkpoint created by a still-running or pending job is treated
+as **partial**, even if it is readable; queue state remains authoritative for
+completion.
+
+```{python}
+#| label: running-mixed-level-completion-gate
+#| tbl-cap: "Machine-readable release gate for the still-training mixed-level factorial study."
+import zipfile
+import sqlite3
+import hashlib
+import sys
+import tempfile
+from datetime import datetime, timezone
+
+STATE_PATH = ROOT / "refine-logs/queue/queue_state.json"
+CHECKPOINT_CATALOG = ROOT / "results/checkpoint_store/catalog.sqlite"
+EXPECTED_SPLIT_HASHES = {
+    "train": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3",
+    "val": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3",
+    "test": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d",
+}
+EXPECTED_SPLIT_CONTENT_ROOTS = {
+    "train": {
+        "records": 17418,
+        "content_root_sha256": "2e7f9ef46395e23f01e018ae64f460616961de22d32be68d7ab83cbfb34db4be",
+    },
+    "val": {
+        "records": 2183,
+        "content_root_sha256": "b534556d81caf9ea74adc8eb84023030e79af1fd69767c2a9b24b2d7dd2606e2",
+    },
+    "test": {
+        "records": 2198,
+        "content_root_sha256": "e79b25b7f3825f3bd89ef924a3de104d7344b1c96358d9441756b3fad6645fda",
+    },
+}
+EXPECTED_PREPROCESSING = {
+    "sample_rate_hz": 500,
+    "units": "mV",
+    "normalization": "none",
+}
+
+def canonical_json(value):
+    return json.dumps(value, sort_keys=True, separators=(",", ":"))
+
+def safe_int(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+def sha256_if_readable(path):
+    digest = hashlib.sha256()
+    try:
+        with path.open("rb") as handle:
+            while chunk := handle.read(8 * 1024 * 1024):
+                digest.update(chunk)
+    except OSError:
+        return None
+    return digest.hexdigest()
+
+live_state = json.loads(STATE_PATH.read_text())
+archive_rows = {}
+if CHECKPOINT_CATALOG.is_file():
+    with sqlite3.connect(CHECKPOINT_CATALOG) as connection:
+        connection.row_factory = sqlite3.Row
+        archive_rows = {
+            row["model_id"]: dict(row)
+            for row in connection.execute(
+                """
+                SELECT model_id, size_bytes, sha256, status, asset_id,
+                       asset_size_bytes, asset_digest, asset_state,
+                       remote_verified_at, round_trip_verified_at,
+                       payload_validated_at, payload_tensor_count,
+                       payload_factorial_mask, payload_seed,
+                       payload_state_schema_sha256
+                FROM checkpoints
+                """
+            )
+        }
+job_rows = []
+for job in live_state["jobs"]:
+    expected_mask = re.search(
+        r"--factorial_mask\s+(\d{7})", job["cmd"]
+    ).group(1)
+    expected_seed = int(re.search(r"--seed\s+(\d+)", job["cmd"]).group(1))
+    checkpoint_match = re.search(
+        r"--checkpoint_path\s+(\S+)", job["cmd"]
+    )
+    checkpoint = ROOT / checkpoint_match.group(1)
+    exitcode_path = ROOT / "refine-logs/queue/logs" / f"{job['id']}.log.exitcode"
+    try:
+        attempt_exitcode = int(exitcode_path.read_text().strip())
+    except (OSError, ValueError):
+        attempt_exitcode = None
+    sidecar = checkpoint.with_suffix(".metadata.json")
+    sidecar_payload = None
+    sidecar_error = None
+    if sidecar.is_file():
+        try:
+            sidecar_payload = json.loads(sidecar.read_text())
+        except Exception as error:
+            sidecar_error = str(error)
+    archive = archive_rows.get(job["id"])
+    split_contract = (
+        sidecar_payload.get("split_inventory_name_size_sha256")
+        if sidecar_payload else None
+    )
+    split_content_contract = (
+        sidecar_payload.get("split_content_roots")
+        if sidecar_payload else None
+    )
+    preprocessing_contract = (
+        sidecar_payload.get("preprocessing")
+        if sidecar_payload else None
+    )
+    split_contract_valid = (
+        isinstance(split_contract, dict)
+        and split_contract == EXPECTED_SPLIT_HASHES
+        and split_content_contract == EXPECTED_SPLIT_CONTENT_ROOTS
+    )
+    preprocessing_contract_valid = (
+        isinstance(preprocessing_contract, dict)
+        and preprocessing_contract == EXPECTED_PREPROCESSING
+    )
+    sidecar_schema_valid = (
+        sidecar_payload is not None
+        and (safe_int(sidecar_payload.get("schema_version")) or -1) >= 3
+    )
+    sidecar_identity_matches = (
+        sidecar_payload is not None
+        and sidecar_payload.get("run_name") == job["id"]
+        and str(sidecar_payload.get("factorial_mask")) == expected_mask
+        and safe_int(sidecar_payload.get("seed")) == expected_seed
+    )
+    sidecar_checkpoint_matches_catalog = (
+        sidecar_payload is not None
+        and archive is not None
+        and sidecar_payload.get("checkpoint_sha256") == archive.get("sha256")
+        and sidecar_payload.get("checkpoint_size_bytes") == archive.get("size_bytes")
+    )
+    sidecar_semantic_valid = (
+        sidecar_schema_valid
+        and sidecar_identity_matches
+        and sidecar_checkpoint_matches_catalog
+        and split_contract_valid
+        and preprocessing_contract_valid
+    )
+    payload_identity_valid = (
+        archive is not None
+        and archive.get("payload_validated_at") is not None
+        and archive.get("payload_tensor_count", 0) > 0
+        and str(archive.get("payload_factorial_mask")) == expected_mask
+        and archive.get("payload_seed") == expected_seed
+        and isinstance(archive.get("payload_state_schema_sha256"), str)
+        and len(archive.get("payload_state_schema_sha256")) == 64
+    )
+    archive_verified = (
+        archive is not None
+        and archive.get("status") in {"remote_verified", "cached"}
+        and archive.get("asset_id") is not None
+        and archive.get("asset_state") == "uploaded"
+        and archive.get("asset_size_bytes") == archive.get("size_bytes")
+        and archive.get("asset_digest") == f"sha256:{archive.get('sha256')}"
+        and archive.get("remote_verified_at") is not None
+        and archive.get("round_trip_verified_at") is not None
+        and payload_identity_valid
+    )
+    checkpoint_readable_zip = (
+        checkpoint.is_file() and zipfile.is_zipfile(checkpoint)
+    )
+    local_size = checkpoint.stat().st_size if checkpoint.is_file() else None
+    local_sha256 = (
+        sha256_if_readable(checkpoint)
+        if job["status"] == "completed" and checkpoint_readable_zip
+        else None
+    )
+    local_checkpoint_exact = (
+        checkpoint_readable_zip
+        and archive is not None
+        and local_size == archive.get("size_bytes")
+        and local_sha256 == archive.get("sha256")
+        and payload_identity_valid
+    )
+    job_rows.append({
+        "job_id": job["id"],
+        "status": job["status"],
+        "attempts": job.get("attempts"),
+        "queue_error": job.get("error"),
+        "attempt_exitcode": attempt_exitcode,
+        "attempt_exitcode_zero": attempt_exitcode == 0,
+        "checkpoint": str(checkpoint),
+        "checkpoint_present": checkpoint.is_file(),
+        "checkpoint_readable_zip": checkpoint_readable_zip,
+        "local_checkpoint_sha256": local_sha256,
+        "local_checkpoint_exact": local_checkpoint_exact,
+        "archive_sha256_verified": archive_verified,
+        "checkpoint_recoverable": local_checkpoint_exact or archive_verified,
+        "storage_tier": (
+            "local exact"
+            if local_checkpoint_exact
+            else ("verified archive" if archive_verified else "unavailable")
+        ),
+        "sidecar_present": sidecar.is_file(),
+        "sidecar_parseable": sidecar_payload is not None,
+        "sidecar_schema_version": (
+            sidecar_payload.get("schema_version")
+            if sidecar_payload else np.nan
+        ),
+        "sidecar_schema_valid": sidecar_schema_valid,
+        "sidecar_identity_matches": sidecar_identity_matches,
+        "sidecar_checkpoint_matches_catalog": sidecar_checkpoint_matches_catalog,
+        "sidecar_semantic_valid": sidecar_semantic_valid,
+        "split_contract_valid": split_contract_valid,
+        "preprocessing_contract_valid": preprocessing_contract_valid,
+        "split_contract_canonical": (
+            canonical_json({
+                "name_size": split_contract,
+                "content": split_content_contract,
+            }) if split_contract_valid else None
+        ),
+        "preprocessing_contract_canonical": (
+            canonical_json(preprocessing_contract)
+            if preprocessing_contract_valid else None
+        ),
+        "sidecar_error": sidecar_error,
+    })
+live_jobs = pd.DataFrame(job_rows)
+status_counts = (
+    live_jobs.status.value_counts()
+    .rename_axis("queue_status").rename("jobs").reset_index()
+)
+print(
+    "Queue snapshot:",
+    datetime.fromtimestamp(
+        STATE_PATH.stat().st_mtime, tz=timezone.utc
+    ).isoformat(),
+)
+display(status_counts)
+
+blocker_classes = pd.DataFrame([
+    {
+        "blocker": "queue failed or stuck",
+        "jobs": int(live_jobs.status.isin(
+            ["failed", "failed_other", "stuck"]
+        ).sum()),
+        "example_job_ids": ", ".join(
+            live_jobs.loc[
+                live_jobs.status.isin(["failed", "failed_other", "stuck"]),
+                "job_id",
+            ].head(5)
+        ),
+    },
+    {
+        "blocker": "completed but latest attempt did not exit zero",
+        "jobs": int((
+            live_jobs.status.eq("completed")
+            & ~live_jobs.attempt_exitcode_zero
+        ).sum()),
+        "example_job_ids": ", ".join(
+            live_jobs.loc[
+                live_jobs.status.eq("completed")
+                & ~live_jobs.attempt_exitcode_zero,
+                "job_id",
+            ].head(5)
+        ),
+    },
+    {
+        "blocker": "completed but exact checkpoint unavailable",
+        "jobs": int((
+            live_jobs.status.eq("completed")
+            & ~live_jobs.checkpoint_recoverable
+        ).sum()),
+        "example_job_ids": ", ".join(
+            live_jobs.loc[
+                live_jobs.status.eq("completed")
+                & ~live_jobs.checkpoint_recoverable,
+                "job_id",
+            ].head(5)
+        ),
+    },
+    {
+        "blocker": "completed but metadata sidecar invalid or incomplete",
+        "jobs": int((
+            live_jobs.status.eq("completed")
+            & ~live_jobs.sidecar_semantic_valid
+        ).sum()),
+        "example_job_ids": ", ".join(
+            live_jobs.loc[
+                live_jobs.status.eq("completed")
+                & ~live_jobs.sidecar_semantic_valid,
+                "job_id",
+            ].head(5)
+        ),
+    },
+])
+display(blocker_classes)
+
+completed = live_jobs.query("status == 'completed'")
+completed_artifacts_ok = (
+    len(completed) == len(live_jobs)
+    and completed.attempt_exitcode_zero.all()
+    and completed.checkpoint_recoverable.all()
+    and completed.sidecar_semantic_valid.all()
+)
+failed_or_stuck = live_jobs.status.isin(
+    ["failed", "failed_other", "stuck", "skipped"]
+).sum()
+per_record_root = ROOT / "results/factorial_mixed_level/per_record"
+per_record_manifest_path = (
+    ROOT / "results/factorial_mixed_level/per_record_manifest.json"
+)
+EXPECTED_TEST_ROWS = 2_198
+EXPECTED_TEST_PATIENTS = 1_904
+EXPECTED_TEST_IDENTITY_ORDER_SHA256 = (
+    "5f85303e675ae817e486e693dbaba9ca1dfa4892c473f53ca1b785b9937e241d"
+)
+REQUIRED_PER_RECORD_COLUMNS = {
+    "model_id", "checkpoint_sha256", "record_id", "patient_id",
+    "missing_mse", "missing_pearson"
+}
+expected_job_ids = set(live_jobs.job_id)
+per_record_errors = []
+validated_per_record_ids = set()
+per_record_order_hashes = set()
+if per_record_manifest_path.is_file():
+    try:
+        per_record_manifest = json.loads(per_record_manifest_path.read_text())
+        entries = per_record_manifest.get("models", [])
+        entry_ids = [entry.get("model_id") for entry in entries]
+        if len(entry_ids) != len(set(entry_ids)):
+            per_record_errors.append("duplicate model_id rows in manifest")
+        entry_paths = [
+            (ROOT / str(entry.get("path"))).resolve() for entry in entries
+        ]
+        if len(entry_paths) != len(set(entry_paths)):
+            per_record_errors.append("per-record artifact paths are not one-to-one")
+        if set(entry_ids) != expected_job_ids:
+            per_record_errors.append(
+                "manifest model ids do not match the 480 scheduled jobs"
+            )
+        for entry in entries:
+            model_id = entry.get("model_id")
+            relative_path = entry.get("path")
+            if not model_id or not relative_path:
+                per_record_errors.append("entry missing model_id/path")
+                continue
+            parquet_path = (ROOT / relative_path).resolve()
+            try:
+                parquet_path.relative_to(per_record_root.resolve())
+            except ValueError:
+                per_record_errors.append(
+                    f"{model_id}: artifact path escapes the per-record results directory"
+                )
+                continue
+            expected_sha = entry.get("file_sha256")
+            expected_order = entry.get("record_order_sha256")
+            expected_checkpoint = archive_rows.get(model_id)
+            if (
+                entry.get("status") != "complete"
+                or parquet_path.suffix != ".parquet"
+                or not parquet_path.is_file()
+                or not isinstance(expected_sha, str)
+                or not isinstance(expected_order, str)
+                or expected_checkpoint is None
+                or entry.get("checkpoint_sha256")
+                    != expected_checkpoint.get("sha256")
+                or entry.get("checkpoint_size_bytes")
+                    != expected_checkpoint.get("size_bytes")
+            ):
+                per_record_errors.append(f"{model_id}: incomplete artifact declaration")
+                continue
+            if sha256_if_readable(parquet_path) != expected_sha:
+                per_record_errors.append(f"{model_id}: Parquet SHA-256 mismatch")
+                continue
+            try:
+                record_results = pd.read_parquet(
+                    parquet_path, columns=sorted(REQUIRED_PER_RECORD_COLUMNS)
+                )
+            except Exception as error:
+                per_record_errors.append(f"{model_id}: unreadable schema ({error})")
+                continue
+            if (
+                record_results["model_id"].nunique(dropna=False) != 1
+                or str(record_results["model_id"].iloc[0]) != model_id
+                or record_results["checkpoint_sha256"].nunique(dropna=False) != 1
+                or str(record_results["checkpoint_sha256"].iloc[0])
+                    != expected_checkpoint.get("sha256")
+            ):
+                per_record_errors.append(
+                    f"{model_id}: internal model/checkpoint identity mismatch"
+                )
+                continue
+            numeric_ids = record_results[["record_id", "patient_id"]].apply(
+                pd.to_numeric, errors="coerce"
+            )
+            integer_ids = (
+                numeric_ids.notna().all().all()
+                and np.equal(numeric_ids, np.floor(numeric_ids)).all().all()
+            )
+            if (
+                safe_int(entry.get("row_count")) != EXPECTED_TEST_ROWS
+                or len(record_results) != EXPECTED_TEST_ROWS
+                or not integer_ids
+                or numeric_ids.record_id.duplicated().any()
+                or numeric_ids.patient_id.nunique() != EXPECTED_TEST_PATIENTS
+                or not np.isfinite(
+                    record_results[["missing_mse", "missing_pearson"]]
+                    .to_numpy(dtype=float)
+                ).all()
+            ):
+                per_record_errors.append(
+                    f"{model_id}: canonical cohort/schema/finite-metric failure"
+                )
+                continue
+            numeric_ids = numeric_ids.astype("int64")
+            order_digest = hashlib.sha256()
+            for record_id, patient_id in numeric_ids[
+                ["record_id", "patient_id"]
+            ].itertuples(index=False, name=None):
+                order_digest.update(f"{record_id}\t{patient_id}\n".encode())
+            observed_order = order_digest.hexdigest()
+            if (
+                expected_order != EXPECTED_TEST_IDENTITY_ORDER_SHA256
+                or observed_order != EXPECTED_TEST_IDENTITY_ORDER_SHA256
+            ):
+                per_record_errors.append(f"{model_id}: record-order hash mismatch")
+                continue
+            validated_per_record_ids.add(model_id)
+            per_record_order_hashes.add(observed_order)
+    except Exception as error:
+        per_record_errors.append(f"manifest parse/validation failure: {error}")
+per_record_gate_ok = (
+    len(validated_per_record_ids) == len(expected_job_ids)
+    and validated_per_record_ids == expected_job_ids
+    and per_record_order_hashes == {EXPECTED_TEST_IDENTITY_ORDER_SHA256}
+    and not per_record_errors
+)
+source_text = (ROOT / "book/08_factorial_loss_matrix_benchmarks.qmd").read_text()
+watermark_present = "PLACEHOLDER — NOT RESULTS" in source_text
+valid_split_contracts = completed.loc[
+    completed.split_contract_valid, "split_contract_canonical"
+].dropna()
+valid_preprocessing_contracts = completed.loc[
+    completed.preprocessing_contract_valid,
+    "preprocessing_contract_canonical",
+].dropna()
+contract_equality_ok = (
+    len(completed) == len(live_jobs)
+    and completed.split_contract_valid.all()
+    and completed.preprocessing_contract_valid.all()
+    and valid_split_contracts.nunique() == 1
+    and valid_preprocessing_contracts.nunique() == 1
+    and valid_split_contracts.iloc[0] == canonical_json({
+        "name_size": EXPECTED_SPLIT_HASHES,
+        "content": EXPECTED_SPLIT_CONTENT_ROOTS,
+    })
+    and valid_preprocessing_contracts.iloc[0]
+        == canonical_json(EXPECTED_PREPROCESSING)
+)
+
+if str(ROOT.resolve()) not in sys.path:
+    sys.path.insert(0, str(ROOT.resolve()))
+from scripts.mixed_factorial_release import (
+    EXPECTED_GATE_IDS,
+    build_release_table,
+    require_releasable,
+    sha256_file as release_sha256_file,
+)
+
+COMPATIBILITY_AUDIT = ROOT / "results/checkpoint_store/compatibility_audit.json"
+compatibility_payload = json.loads(COMPATIBILITY_AUDIT.read_text())
+compatibility_models = pd.DataFrame(compatibility_payload["models"])
+completed_id_set = set(completed.job_id)
+audited_id_set = {
+    row["model_id"] for row in compatibility_payload["models"]
+}
+compatibility_gate_ok = (
+    compatibility_payload["counts"].get("compatible", 0) == len(expected_job_ids)
+    and compatibility_payload["counts"].get("incompatible", 0) == 0
+    and audited_id_set == expected_job_ids
+    and completed_id_set == expected_job_ids
+    and all(row["compatible"] for row in compatibility_payload["models"])
+)
+
+incomplete_fixture = pd.DataFrame([
+    {"gate": "fixture manifest", "pass": True},
+    {"gate": "fixture artifacts", "pass": False},
+])
+complete_fixture = pd.DataFrame([
+    {"gate": "fixture manifest", "pass": True},
+    {"gate": "fixture artifacts", "pass": True},
+])
+try:
+    require_releasable(incomplete_fixture, allow_partial=False)
+    incomplete_refused = False
+except RuntimeError:
+    incomplete_refused = True
+complete_accepted = require_releasable(
+    complete_fixture, allow_partial=False
+)["releasable"]
+with tempfile.TemporaryDirectory(prefix="factorial-release-fixture-") as tmp:
+    tmp = Path(tmp)
+    undersized_summary = tmp / "summary.csv"
+    pd.DataFrame([{
+        "model_id": "only_one",
+        "factorial_mask": "1000000",
+        "seed": 42,
+    }]).to_csv(undersized_summary, index=False)
+    all_true_report = tmp / "report.json"
+    fixture_per_record_manifest = tmp / "per_record_manifest.json"
+    fixture_per_record_manifest.write_text("{}")
+    all_true_report.write_text(json.dumps({
+        "schema_version": 1,
+        "manifest_sha256": release_sha256_file(
+            ROOT / "refine-logs/factorial_manifest.json"
+        ),
+        "summary_sha256": release_sha256_file(undersized_summary),
+        "compatibility_audit_sha256": release_sha256_file(
+            COMPATIBILITY_AUDIT
+        ),
+        "training_contract_sha256": release_sha256_file(
+            ROOT / "refine-logs/factorial_training_contract.json"
+        ),
+        "checkpoint_catalog_sha256": release_sha256_file(
+            CHECKPOINT_CATALOG
+        ),
+        "per_record_manifest_sha256": release_sha256_file(
+            fixture_per_record_manifest
+        ),
+        "gates": [
+            {"gate_id": gate_id, "gate": gate_id, "pass": True}
+            for gate_id in sorted(EXPECTED_GATE_IDS)
+        ],
+    }))
+    try:
+        build_release_table(
+            undersized_summary,
+            all_true_report,
+            tmp / "must_not_exist.csv",
+            per_record_manifest_path=fixture_per_record_manifest,
+        )
+        undersized_summary_refused = False
+    except ValueError:
+        undersized_summary_refused = True
+table_generator_refusal_active = (
+    incomplete_refused and complete_accepted and undersized_summary_refused
+)
+
+release_gate = pd.DataFrame([
+    {
+        "gate_id": "manifest_complete",
+        "gate": "1. complete manifest: 160 masks × 3 seeds",
+        "observed": (
+            f"{len(scheduled)} jobs; "
+            f"{gate.unique_masks.min()}–{gate.unique_masks.max()} masks/seed"
+        ),
+        "pass": (
+            len(scheduled) == 480
+            and gate.missing.eq(0).all()
+            and gate.unexpected.eq(0).all()
+            and gate.duplicate_rows.eq(0).all()
+        ),
+    },
+    {
+        "gate_id": "completed_exact_artifacts",
+        "gate": "2. successful jobs with recoverable exact checkpoint + sidecar",
+        "observed": (
+            f"{len(completed)}/{len(live_jobs)} completed; "
+            f"{completed.attempt_exitcode_zero.sum()} exited zero; "
+            f"{completed.local_checkpoint_exact.sum()} exact locally; "
+            f"{completed.archive_sha256_verified.sum()} verified in archive; "
+            f"{completed.sidecar_semantic_valid.sum()} semantically valid sidecars"
+        ),
+        "pass": completed_artifacts_ok,
+    },
+    {
+        "gate_id": "failure_states_resolved",
+        "gate": "3. failed/partial/skipped cells explicit and resolved",
+        "observed": (
+            f"{failed_or_stuck} failed/stuck/skipped; "
+            f"{live_jobs.status.ne('completed').sum()} not completed"
+        ),
+        "pass": live_jobs.status.eq("completed").all(),
+    },
+    {
+        "gate_id": "data_contract_identical",
+        "gate": "4. identical tensor-byte roots, record inventory, and preprocessing",
+        "observed": (
+            f"{completed.split_contract_valid.sum()}/{len(completed)} "
+            "completed sidecars match expected train/val/test name-size and byte-content roots "
+            f"({valid_split_contracts.nunique()} unique valid contracts); "
+            f"{completed.preprocessing_contract_valid.sum()}/{len(completed)} "
+            "match 500 Hz, mV, no normalization "
+            f"({valid_preprocessing_contracts.nunique()} unique valid contracts)"
+        ),
+        "pass": contract_equality_ok,
+    },
+    {
+        "gate_id": "source_precision_compatible",
+        "gate": "5. approved source-domain policy and one float16 state schema",
+        "observed": (
+            f"{compatibility_payload['counts'].get('compatible', 0)} compatible; "
+            f"{compatibility_payload['counts'].get('incompatible', 0)} incompatible; "
+            f"{len(audited_id_set & expected_job_ids)}/{len(expected_job_ids)} "
+            "scheduled ids covered by the compatibility audit"
+        ),
+        "pass": compatibility_gate_ok,
+    },
+    {
+        "gate_id": "paired_outputs_complete",
+        "gate": "6. per-record paired outputs for every cell",
+        "observed": (
+            f"{len(validated_per_record_ids)}/{len(live_jobs)} model ids with "
+            f"readable, SHA-matched {EXPECTED_TEST_ROWS}-row Parquet and "
+            f"{EXPECTED_TEST_PATIENTS} patients; "
+            f"{len(per_record_order_hashes)} canonical record-order hashes; "
+            f"{len(per_record_errors)} validation errors"
+        ),
+        "pass": per_record_gate_ok,
+    },
+    {
+        "gate_id": "table_writer_fail_closed",
+        "gate": "7. final table generator refuses incomplete release report",
+        "observed": (
+            "PASS — incomplete gate fixture and all-true undersized summary "
+            "refused; complete gate fixture accepted"
+            if table_generator_refusal_active
+            else "FAIL — release-table integration fixture failed"
+        ),
+        "pass": table_generator_refusal_active,
+    },
+    {
+        "gate_id": "placeholder_watermarked",
+        "gate": "8. placeholder watermark is visible in source",
+        "observed": str(watermark_present),
+        "pass": watermark_present,
+    },
+])
+
+try:
+    require_releasable(release_gate, allow_partial=False)
+    refusal_test = "unexpectedly accepted"
+except RuntimeError:
+    refusal_test = "PASS — incomplete grid refused"
+release_gate.loc[
+    release_gate.gate.str.startswith("7."), "observed"
+] += f"; live report: {refusal_test}"
+
+release_report_path = (
+    ROOT / "results/factorial_mixed_level/release_report.json"
+)
+release_summary_path = ROOT / "results/factorial_mixed_level/summary.csv"
+release_report_path.parent.mkdir(parents=True, exist_ok=True)
+release_report_payload = {
+    "schema_version": 1,
+    "generated_at": pd.Timestamp.utcnow().isoformat(),
+    "manifest_sha256": release_sha256_file(
+        ROOT / "refine-logs/factorial_manifest.json"
+    ),
+    "compatibility_audit_sha256": release_sha256_file(
+        COMPATIBILITY_AUDIT
+    ),
+    "training_contract_sha256": release_sha256_file(
+        ROOT / "refine-logs/factorial_training_contract.json"
+    ),
+    "checkpoint_catalog_sha256": release_sha256_file(
+        CHECKPOINT_CATALOG
+    ),
+    "per_record_manifest_sha256": (
+        release_sha256_file(per_record_manifest_path)
+        if per_record_manifest_path.is_file()
+        else None
+    ),
+    "summary_sha256": (
+        release_sha256_file(release_summary_path)
+        if release_summary_path.is_file()
+        else None
+    ),
+    "gates": [
+        {
+            "gate_id": row["gate_id"],
+            "gate": row["gate"],
+            "observed": row["observed"],
+            "pass": bool(row["pass"]),
+        }
+        for row in release_gate.to_dict(orient="records")
+    ],
+}
+release_report_temporary = release_report_path.with_suffix(".json.tmp")
+release_report_temporary.write_text(
+    json.dumps(release_report_payload, indent=2, allow_nan=False) + "\n"
+)
+release_report_temporary.replace(release_report_path)
+release_gate
+```
+
+::: {.callout-important}
+## Historical completion-state correction
+
+An audit of the 131 rows previously labeled `completed` reconciled each row
+with its per-attempt exit-code sentinel and epoch log. Only 74 had exit code
+zero. Fifty-two had exited 137, four exited 1, and one exited 134; several
+retained a readable best-so-far checkpoint despite stopping before epoch 10.
+Those 57 partial generations are not results. Their exact bytes are retained
+for forensics as private, SHA-tagged `QUARANTINED_exit...` assets, while their
+jobs are pending clean retraining.
+
+The recovery events and before/after queue states are under
+`refine-logs/queue/recovery/`. Twenty local partials were evicted only after
+their quarantine assets passed an independent download and SHA-256 round trip.
+This correction reduced the truthful completed count; it did not discard a
+valid completed model or alter the active training process.
+:::
+
+::: {.callout-warning}
+## Source and precision compatibility correction
+
+A subsequent release audit found that the 75 exit-zero archives available at
+that point spanned four source bundles and two stored-state schemas: 46 FP32
+and 29 FP16. Exit zero and byte integrity establish artifact completeness, not
+scientific interchangeability. The release policy now requires one FP16 state
+schema and a machine-approved source domain. The legacy source bundle with a
+broken lead-consistency branch is admissible only for masks whose lead-loss
+digit is zero, where that branch is dormant.
+
+The fail-closed audit retained 28 compatible archives and moved 47
+incompatible generations back to pending (46 precision/schema mismatches; two
+rows also failed source reconstruction policy, with overlap). Their exact
+original bytes were not deleted: they were renamed to private
+`QUARANTINED_release_policy_...` assets and the pre-change queue/database were
+saved under `refine-logs/queue/recovery/`. New jobs must match
+`refine-logs/factorial_training_contract.json`, embed the exact source bytes
+captured once at startup, and refuse the next checkpoint write if those files
+change during a run.
+:::
+
+::: {.callout-warning}
+## Tensor-content contract correction
+
+The earlier split digest covered record names and file sizes, so a same-size
+tensor mutation could escape detection. The final contract now binds every one
+of the 21,799 saved PTB-XL tensors by record ID, size, and file SHA-256. These
+entries produce byte-content roots for 17,418 training, 2,183 validation, and
+2,198 test records; the manifest itself, PTB-XL metadata tables, and manifest
+producer are also SHA-bound.
+
+All 29 models that were complete when this stronger requirement was introduced
+lacked byte-content provenance. Their exact remote artifacts were retained
+under quarantine names and all 29 jobs were reset, leaving zero scientifically
+complete jobs before the content-pinned queue restarted. Each new worker hashes
+the full tensor corpus before Epoch 1, before every best-checkpoint write, and
+again before the final sidecar. A mid-run tensor or pinned-artifact change
+therefore makes the attempt exit nonzero rather than mixing data generations.
+:::
+
+### Exact checkpoint archival and on-demand inference
+
+The mixed-level design has 480 dense checkpoints. Even with float16 state
+tensors, retaining every file locally would add roughly 19 GiB; wrapping those
+same tensors in SQLite would move the bytes without compressing them. Lossy
+int8 quantization is also inappropriate for the primary scientific artifact
+because it changes inference. The implemented store therefore separates the
+small index from the exact tensor payload:
+
+- `results/checkpoint_store/catalog.sqlite` maps every queue id to its mask,
+  seed, byte count, SHA-256 digest, metadata, release asset id, and verification
+  timestamps;
+- a portable `catalog.jsonl` recovery index is periodically snapshotted beside
+  the assets so the local SQLite index is not a single point of failure;
+- exact `.pt` bytes are stored as assets in a **private draft release**;
+- a local file becomes eviction-eligible only after upload, remote byte-count
+  validation, an independent download, and reproduction of the original
+  SHA-256; and
+- `checkpoints/cache/` is a bounded materialization cache, not a second source
+  of truth.
+
+This is lossless tiering, not checkpoint conversion. The model state, embedded
+provenance, and inference outputs are byte-for-byte recoverable. Standalone
+metadata sidecars remain local for fast audits, while their complete JSON is
+also embedded in the versioned catalog snapshot stored beside the private
+checkpoint assets.
+
+Checkpoint creation is itself crash-safe. The trainer writes the model and
+final sidecar to same-filesystem temporary files, flushes each file, atomically
+renames it to the canonical path, and flushes the containing directory.
+Consequently, the queue and archiver never interpret an interrupted write as a
+canonical checkpoint merely because a filename exists.
+
+```{python}
+#| label: checkpoint-store-live-summary
+#| tbl-cap: "Live exact-checkpoint storage tiers at render time."
+if CHECKPOINT_CATALOG.is_file():
+    with sqlite3.connect(CHECKPOINT_CATALOG) as connection:
+        checkpoint_storage_rows = pd.read_sql_query(
+            """
+            SELECT status AS storage_status, size_bytes, local_path
+            FROM checkpoints
+            """,
+            connection,
+        )
+    checkpoint_storage_rows["verified_local_bytes"] = (
+        checkpoint_storage_rows.apply(
+            lambda row: row.size_bytes
+            if (
+                isinstance(row.local_path, str)
+                and Path(row.local_path).is_file()
+                and Path(row.local_path).stat().st_size == row.size_bytes
+            )
+            else 0,
+            axis=1,
+        )
+    )
+    checkpoint_storage = (
+        checkpoint_storage_rows.groupby("storage_status", as_index=False)
+        .agg(
+            models=("size_bytes", "size"),
+            logical_bytes=("size_bytes", "sum"),
+            verified_local_bytes=("verified_local_bytes", "sum"),
+        )
+    )
+    checkpoint_storage["logical_GiB"] = (
+        checkpoint_storage.pop("logical_bytes") / 1073741824.0
+    ).round(3)
+    checkpoint_storage["present_size_matched_local_GiB"] = (
+        checkpoint_storage.pop("verified_local_bytes") / 1073741824.0
+    ).round(3)
+else:
+    checkpoint_storage = pd.DataFrame([{
+        "storage_status": "catalog unavailable",
+        "models": 0,
+        "logical_GiB": 0.0,
+        "present_size_matched_local_GiB": 0.0,
+    }])
+checkpoint_storage
+```
+
+`present_size_matched_local_GiB` is a physical-occupancy measure: the path
+exists and its byte count matches the catalog. Content acceptance uses the
+separate SHA-256 and semantic checks in the release gate.
+
+The downstream results are bound to one exact model generation. The
+compatibility audit, SQLite catalog, per-record manifest, every row of the
+model's Parquet file, and the final summary must agree on both `model_id` and
+`checkpoint_sha256`; byte counts must also agree wherever checkpoint bytes are
+represented. Per-record paths must be one-to-one across all 480 models, and the
+summary's finite MSE and Pearson values are recomputed from the 2,198-row
+Parquet rather than trusted as free-standing numbers. A stale evaluation from
+an earlier checkpoint with the same filename therefore cannot cross the
+release boundary.
+
+Any **release-compatible, eligible** archived model remains directly
+inference-capable. Historical quarantined assets deliberately do not. This command
+materializes and verifies the requested checkpoint, strictly loads all model
+keys, applies the training-consistent observed leads \(I\), \(II\), and
+\(V_2\), and reconstructs a real locally stored PTB-XL record:
+
+```{bash}
+#| eval: false
+/home/mithunmanivannan/.venv/bin/python \
+  scripts/infer_factorial_checkpoint.py \
+  f_1000000_s42 \
+  data/ptb_xl/tensors/test/100.pt \
+  --output results/inference/f_1000000_s42_ecg100.pt \
+  --report results/inference/f_1000000_s42_ecg100.json
+```
+
+The command above was executed after the first final-contract checkpoint
+completed. The compact, machine-readable smoke-test report is rendered below;
+it identifies the exact checkpoint generation, the real input/output shapes,
+finiteness, and post-inference cache cleanup without embedding source blobs.
+
+```{python}
+#| label: archived-inference-smoke-test
+#| tbl-cap: "Actual archived-checkpoint inference smoke test on PTB-XL record 100."
+inference_report_path = (
+    ROOT / "results/inference/f_1000000_s42_ecg100.json"
+)
+if inference_report_path.is_file():
+    inference_report = json.loads(inference_report_path.read_text())
+    approved_inference_models = {
+        model["model_id"]: model for model in audit["models"]
+        if model.get("compatible")
+    }
+    approved_identity = approved_inference_models.get(
+        inference_report.get("model_id")
+    )
+    report_provenance = inference_report.get("checkpoint_provenance", {})
+    current_report = bool(
+        approved_identity
+        and inference_report.get("checkpoint_sha256")
+            == approved_identity.get("checkpoint_sha256")
+        and report_provenance.get("source_bundle_sha256")
+            == approved_identity.get("source_bundle_sha256")
+        and report_provenance.get("training_contract_id")
+            == audit["contract"]["contract_id"]
+        and report_provenance.get("split_content_roots", {}).get(
+            "test", {}
+        ).get("content_root_sha256")
+            == audit["contract"]["split_content_roots"]["test"][
+                "content_root_sha256"
+            ]
+        and Path(inference_report.get("output", "")).is_file()
+        and inference_report.get("finite") is True
+    )
+    if current_report:
+        display(pd.DataFrame([{
+            "generation_gate": "PASS",
+            "model_id": inference_report["model_id"],
+            "checkpoint_sha256": inference_report["checkpoint_sha256"],
+            "checkpoint_MiB": round(
+                inference_report["checkpoint_size_bytes"] / 1048576, 3
+            ),
+            "source_bundle_sha256": report_provenance["source_bundle_sha256"],
+            "input_shape": str(inference_report["input_shape"]),
+            "output_shape": str(inference_report["output_shape"]),
+            "finite": inference_report["finite"],
+            "cache_pruned_files": inference_report["cache_pruned_files"],
+            "cache_limit_GiB": inference_report["cache_limit_gib"],
+        }]))
+    else:
+        display(pd.DataFrame([{
+            "generation_gate": "FAIL",
+            "status": "Smoke-test report is stale, incompatible, non-finite, or missing its output"
+        }]))
+else:
+    display(pd.DataFrame([{"status": "smoke-test report not yet available"}]))
+```
+
+The operational contract, cache controls, and Python loading API are recorded
+in `CHECKPOINT_STORAGE.md`. The release gate above deliberately accepts either
+local bytes whose size and SHA-256 match a freshly structured-validated
+catalog payload and schema-3 sidecar, or a remote row whose uploaded asset
+digest, size, state, independent round trip, and semantic validation all
+agree. Merely having a readable ZIP, asset name, or database row is not
+sufficient.
+
+For grid-wide inference, models can be processed sequentially. The inference
+CLI defaults to `--max-cache-gib 0` and runs pruning in a `finally` block, so
+even a failed load, forward pass, or output write does not accumulate cache
+files. That keeps at most one temporary checkpoint locally while retaining
+exact, independently verified bytes for every eligible model in the private
+archive.
+
+::: {.callout-warning}
+## PLACEHOLDER — NOT RESULTS
+
+The release gate above is expected to fail while training continues. Live queue counts, partial checkpoints, and failures are operational diagnostics. They must not enter loss-effect estimates, rankings, confidence intervals, or conclusions.
+:::
+
+### Placeholder plotting contract
+
+While checkpoints train, interface testing may use synthetic values only when the output title and table caption contain `PLACEHOLDER — NOT RESULTS`. The placeholder generator should use a fixed random seed, write no values into the final results directory, and never overwrite locked interim artifacts.
+
+```{python}
+#| label: planned-mixed-level-placeholder
+#| eval: false
+rng = np.random.default_rng(20260731)
+placeholder = pd.DataFrame(sorted(expected_masks), columns=["mask"])
+placeholder["PLACEHOLDER_metric"] = rng.normal(size=len(placeholder))
+placeholder["status"] = "PLACEHOLDER — NOT RESULTS"
+placeholder.head()
+```
+
+### Planned analysis
+
+The final mixed-level analysis should prioritize estimability over visual spectacle:
+
+- estimate the five binary main effects and the categorical MMD-kernel effect;
+- compare MMD kernels with prespecified contrasts rather than treating codes 0–4 as a numeric dose;
+- prespecify a small set of mechanistically justified two-way interactions;
+- use shrinkage or hierarchical modeling for the remaining interaction surface;
+- model seed as a repeated training block and report between-seed variability;
+- keep per-record paired patient-cluster inference;
+- separate confirmatory endpoints from exploratory morphology and classifier panels;
+- report optimization failures as outcomes, because unstable loss combinations are scientifically informative;
+- perform deletion checks when a simpler mask is statistically indistinguishable from a larger composite.
+
+The 48-cell benchmark remains valid interim evidence. The running 160-condition-per-seed study extends it; it does not retroactively turn the locked 48-cell numbers into placeholders. If a true seven-binary-factor experiment is desired later, it requires a new manifest and a distinct study identifier.

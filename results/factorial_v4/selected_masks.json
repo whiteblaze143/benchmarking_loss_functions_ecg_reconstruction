@@ -1,0 +1,11 @@
+{
+  "selected_on": "validation",
+  "candidate_space": "mse_on_nontrivial_2^3",
+  "selector": "lowest_missing_lead_mse_then_highest_pearson",
+  "mask_encoding": "ecmd_four_bit",
+  "masks": {
+    "unet": "1110",
+    "msvae": "1100",
+    "ecgaim": "1110"
+  }
+}

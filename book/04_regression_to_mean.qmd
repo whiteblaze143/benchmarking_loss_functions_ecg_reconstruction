@@ -1,0 +1,209 @@
+# Rigorous Agreement & The Mathematics of Regression to the Mean {#sec-regression-to-mean}
+
+A central theoretical finding in neural waveform reconstruction is that training models exclusively on **Mean Squared Error ($L_2$)** forces the predictions to converge to the **conditional expectation** $E[Y|X]$. When unobserved target channels are not uniquely determined by input leads, conditional expectation averages out stochastic variations, causing **variance collapse** and **amplitude blunting** (Presacan et al., 2025).
+
+This chapter presents the complete mathematical proof of $L_2$ variance shrinkage, followed by an advanced statistical battery using **Bland-Altman Agreement Analysis**.
+
+---
+
+## Mathematical Proof: Why $L_2$ Minimization Induces Regression to the Mean
+
+### Theorem 1: $L_2$ Minimization Yields the Conditional Expectation
+Let $X \in \mathbb{R}^{C_{in} \times T}$ be the input lead tensor and $Y \in \mathbb{R}^{C_{out} \times T}$ be the target 12-lead tensor with joint probability density $p(X, Y)$.
+
+**Objective**: Find a neural network function $f^*(X)$ minimizing the expected squared error:
+
+$$f^*(X) = \arg\min_f \mathbb{E}_{(X, Y)} \left[ \| f(X) - Y \|_2^2 \right]$$
+
+**Proof**:
+Using the law of total expectation, we expand the expected loss:
+
+$$\mathbb{E}_{(X,Y)} \left[ \| f(X) - Y \|_2^2 \right] = \mathbb{E}_{X} \left[ \mathbb{E}_{Y|X} \left[ \| f(X) - Y \|_2^2 \;\middle|\; X \right] \right]$$
+
+To minimize the outer expectation, we minimize the inner conditional expectation point-wise for every fixed value of $X = x$:
+
+$$\mathcal{L}(f(x)) = \int (f(x) - y)^2 \, p(y \mid x) \, dy$$
+
+Differentiating $\mathcal{L}(f(x))$ with respect to $f(x)$ and setting the derivative to zero:
+
+$$\frac{\partial \mathcal{L}}{\partial f(x)} = \int 2 \cdot (f(x) - y) \, p(y \mid x) \, dy = 0$$
+
+$$2 \cdot f(x) \int p(y \mid x) \, dy - 2 \int y \cdot p(y \mid x) \, dy = 0$$
+
+Since $\int p(y \mid x) \, dy = 1$:
+
+$$f^*(x) = \int y \cdot p(y \mid x) \, dy = \mathbb{E}[Y \mid X = x]$$
+
+$\blacksquare$
+
+---
+
+### Corollary 1: Variance Shrinkage & Amplitude Attenuation
+By the Law of Total Variance:
+
+$$\operatorname{Var}(Y) = \operatorname{Var}\big(\mathbb{E}[Y \mid X]\big) + \mathbb{E}\big[\operatorname{Var}(Y \mid X)\big]$$
+
+Since $\operatorname{Var}(Y \mid X) \ge 0$, it follows that:
+
+$$\operatorname{Var}\big(f^*(X)\big) = \operatorname{Var}\big(\mathbb{E}[Y \mid X]\big) \le \operatorname{Var}(Y)$$
+
+Equality holds **if and only if** $Y$ is a deterministic function of $X$ ($\operatorname{Var}(Y \mid X) = 0$). Whenever $X$ contains incomplete spatial information (e.g., Lead I only), $\operatorname{Var}(Y \mid X) > 0$, forcing:
+
+$$\operatorname{Var}(\hat{Y}) < \operatorname{Var}(Y)$$
+
+**Clinical Consequence**: $L_2$ models systematically shrink high-amplitude QRS peaks ($R$-waves) toward zero and flatten $P$-waves and $T$-waves, producing a false "low-voltage" clinical phenotype.
+
+---
+
+### Wasserstein-1 Distance ($W_1$ Earth Mover's Metric)
+
+To quantify the total probability mass shift caused by variance shrinkage, we compute the 1D **Wasserstein-1 Distance ($W_1$)** between the empirical cumulative distribution functions $F_P(u)$ (ground truth) and $F_Q(u)$ (prediction):
+
+$$W_1(P, Q) \triangleq \inf_{\gamma \in \Pi(P, Q)} \mathbb{E}_{(x, y) \sim \gamma} \left[ \|x - y\|_1 \right] = \int_{-\infty}^{\infty} \left| F_P(u) - F_Q(u) \right| \, du$$
+
+where $\Pi(P, Q)$ denotes the set of all joint distributions whose marginals are $P$ and $Q$.
+
+- **Physical Interpretation**: $W_1$ measures the minimum "work" (probability mass $\times$ transport distance) required to transform the predicted peak amplitude distribution $Q$ into the true physiological distribution $P$.
+- **$L_2$ Model vs. MMD Model**: An $L_2$ model produces a large $W_1$ distance due to probability mass concentration near the mean $\mu$, whereas MMD regularization forces $W_1(P, Q) \to 0$.
+
+---
+
+
+## Why Pearson Correlation ($r$) Cannot Prove Agreement
+
+A common misconception in model evaluation is using Pearson's correlation coefficient ($r$) to claim reconstruction accuracy. As proved by **Giavarina (2015)**:
+- Pearson correlation measures **linear association**, not agreement.
+- If $\hat{Y} = 0.5 \cdot Y + 0.1$, the correlation is perfect ($r = 1.0$), yet the predicted amplitudes suffer a $50\%$ clinical loss!
+
+To measure true clinical comparability, we must use **Bland-Altman Agreement Analysis**.
+
+---
+
+## Advanced Bland-Altman Statistical Battery
+
+Our evaluation battery executes four non-parametric statistical tests:
+
+1. **Mean Bias ($\bar{d}$)**:
+   $$\bar{d} = \frac{1}{N} \sum_{i=1}^{N} d_i, \quad d_i = \hat{y}_i - y_i$$
+2. **95% Limits of Agreement (LoA)**:
+   $$\text{LoA} = \left[ \bar{d} - 1.96 \cdot s_d, \;\; \bar{d} + 1.96 \cdot s_d \right], \quad s_d = \sqrt{\frac{1}{N-1} \sum_{i=1}^{N} (d_i - \bar{d})^2}$$
+3. **Non-Parametric BCa Bootstrap Confidence Intervals (9,999 Resamples)**:
+   Constructs 95% Confidence Intervals for $\bar{d}$ without assuming Gaussian errors.
+4. **Levene's Test for Homoscedasticity**:
+   Verifies whether error variance $s_d^2$ depends on peak amplitude magnitude.
+
+---
+
+## Python Implementation: Bland-Altman Statistical Suite
+
+::: {.callout-warning}
+## Demonstration inputs only
+
+The code below deliberately stipulates 30% attenuation for one synthetic sample and 1% attenuation for another. Its numerical output is a software/statistics demonstration, not a measurement of any repository checkpoint.
+:::
+
+```{python}
+import torch
+import numpy as np
+import plotly.graph_objects as go
+from scipy import stats
+
+def compute_ba_statistics(pred_peaks, target_peaks, model_name):
+    """
+    Computes Bland-Altman agreement statistics: Mean Bias, 95% LoA, 
+    BCa Bootstrap 95% CI, Shapiro-Wilk Normality, and Levene Homoscedasticity.
+    """
+    diff = pred_peaks - target_peaks
+    mean_val = (pred_peaks + target_peaks) / 2.0
+    
+    bias = np.mean(diff)
+    std_diff = np.std(diff, ddof=1)
+    
+    loa_lower = bias - 1.96 * std_diff
+    loa_upper = bias + 1.96 * std_diff
+    
+    # 1. Non-parametric BCa Bootstrap for Bias 95% CI (9,999 resamples)
+    res = stats.bootstrap(
+        (diff,), np.mean, 
+        confidence_level=0.95, n_resamples=9999, method='BCa'
+    )
+    ci_lower, ci_upper = res.confidence_interval
+    
+    # 2. Shapiro-Wilk test for normality of differences
+    stat_sw, p_value_sw = stats.shapiro(diff)
+    normality_msg = "Normal" if p_value_sw > 0.05 else "Non-Normal"
+    
+    # 3. Levene's Test for Homoscedasticity (Lower half vs Upper half)
+    median_val = np.median(mean_val)
+    diff_lower = diff[mean_val <= median_val]
+    diff_upper = diff[mean_val > median_val]
+    stat_lev, p_value_lev = stats.levene(diff_lower, diff_upper)
+    levene_msg = "Homoscedastic" if p_value_lev > 0.05 else "Heteroscedastic"
+    
+    # 4. Percentage bias calculation
+    pct_diff = (diff / mean_val) * 100
+    pct_bias = np.mean(pct_diff)
+    
+    print(f"=== {model_name} Bland-Altman Audit ===")
+    print(f"Mean Bias (\u0304d): {bias:.4f} mV (BCa 95% CI: [{ci_lower:.4f}, {ci_upper:.4f}])")
+    print(f"Limits of Agreement (95% LoA): [{loa_lower:.4f}, {loa_upper:.4f}]")
+    print(f"Shapiro-Wilk Normality Test: p = {p_value_sw:.4f} ({normality_msg})")
+    print(f"Levene Homoscedasticity Test: p = {p_value_lev:.4f} ({levene_msg})")
+    print(f"Percentage Bias: {pct_bias:.2f}%")
+    print("-" * 50)
+    
+    return mean_val, diff, bias, loa_lower, loa_upper, pct_diff, pct_bias
+
+# Simulate N=300 peak amplitudes to demonstrate the statistical interface only
+np.random.seed(42)
+target_peaks = np.random.normal(1.2, 0.4, 300)
+
+# 1. Stipulated MSE Model (30% amplitude attenuation factor)
+mse_peaks = target_peaks * 0.70 + np.random.normal(0, 0.03 * np.abs(target_peaks), 300)
+
+# 2. Stipulated Combinatorial Model (Preserves 99% peak amplitude)
+comp_peaks = target_peaks * 0.99 + np.random.normal(0, 0.02, 300)
+
+(mse_means, mse_diffs, mse_bias, mse_loa_l, mse_loa_u, mse_pct_diff, mse_pct_bias) = compute_ba_statistics(mse_peaks, target_peaks, "MSE Model ($L_2$)")
+(comp_means, comp_diffs, comp_bias, comp_loa_l, comp_loa_u, comp_pct_diff, comp_pct_bias) = compute_ba_statistics(comp_peaks, target_peaks, "Combinatorial Loss Model")
+```
+
+---
+
+## Interactive Absolute & Percentage Bland-Altman Plots
+
+```{python}
+fig_ba = go.Figure()
+
+# Add MSE Scatter points
+fig_ba.add_trace(go.Scatter(
+    x=mse_means, y=mse_diffs,
+    mode='markers', marker=dict(color='#f43f5e', opacity=0.6, size=6),
+    name='MSE Model ($L_2$ Loss)'
+))
+
+# Add MSE LoA Lines
+fig_ba.add_hline(y=mse_bias, line_dash="solid", line_color="#f43f5e", annotation_text=f"MSE Bias ({mse_bias:.2f} mV)")
+fig_ba.add_hline(y=mse_loa_u, line_dash="dash", line_color="#f43f5e", annotation_text="+1.96 SD")
+fig_ba.add_hline(y=mse_loa_l, line_dash="dash", line_color="#f43f5e", annotation_text="-1.96 SD")
+
+# Add Combinatorial Scatter points
+fig_ba.add_trace(go.Scatter(
+    x=comp_means, y=comp_diffs,
+    mode='markers', marker=dict(color='#10b981', opacity=0.7, size=6),
+    name='Combinatorial Composite Loss'
+))
+
+# Add Zero Bias Line
+fig_ba.add_hline(y=0.0, line_dash="solid", line_width=2, line_color="#e2e8f0", annotation_text="Ideal Zero Bias")
+
+fig_ba.update_layout(
+    title="DIDACTIC SIMULATION — Bland-Altman Analysis of Stipulated Peak Amplitudes",
+    xaxis_title="Mean Peak Amplitude (mV)",
+    yaxis_title="Difference (Predicted - Target) (mV)",
+    template="plotly_dark", height=450, margin=dict(l=20, r=20, t=40, b=20)
+)
+fig_ba.show()
+```
+
+This simulation demonstrates how conditional-mean shrinkage would appear in Bland–Altman diagnostics under the stipulated attenuation factors. It does not prove that the trained MSE cells attenuate amplitudes, nor that a composite loss is required or sufficient for clinical fidelity. Those are empirical hypotheses tested with the paired, generation-bound artifacts.

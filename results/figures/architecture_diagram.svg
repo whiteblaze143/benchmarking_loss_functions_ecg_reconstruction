@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1420 820" width="1420" height="820" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+  <rect width="1420" height="820" fill="#F8FAFC"/>
+  <defs>
+    <marker id="arrow-default" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#555555"/>
+    </marker>
+    <marker id="arrow-c0" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#3B82F6"/>
+    </marker>
+    <marker id="arrow-c1" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#8B5CF6"/>
+    </marker>
+    <marker id="arrow-c2" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#10B981"/>
+    </marker>
+    <marker id="arrow-c3" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#F59E0B"/>
+    </marker>
+    <marker id="arrow-c4" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#EF4444"/>
+    </marker>
+    <marker id="arrow-c5" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#0EA5E9"/>
+    </marker>
+    <marker id="arrow-c6" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#6366F1"/>
+    </marker>
+  </defs>
+  <rect x="25.0" y="180.0" width="230.0" height="480.0" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1" rx="8"/>
+  <text x="33.0" y="196.0" font-size="11" fill="#999999" font-weight="bold">1. 3D Physical Input Space</text>
+  <rect x="340.0" y="135.0" width="280.0" height="570.0" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1" rx="8"/>
+  <text x="348.0" y="151.0" font-size="11" fill="#999999" font-weight="bold">2. Tri-Architecture Generative Framework (480 Models)</text>
+  <rect x="700.0" y="157.5" width="280.0" height="525.0" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1" rx="8"/>
+  <text x="708.0" y="173.5" font-size="11" fill="#999999" font-weight="bold">3. 160-Configuration Combinatorial Factorial Loss Suite</text>
+  <rect x="1070.0" y="137.5" width="260.0" height="565.0" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1" rx="8"/>
+  <text x="1078.0" y="153.5" font-size="11" fill="#999999" font-weight="bold">4. Zero-Context Clinical Verification Cascade (212 Endpoints, 6 Datasets)</text>
+  <path d="M 140.0,275.0 L 140.0,385.0" stroke="#3B82F6" stroke-width="2" fill="none" marker-end="url(#arrow-c0)"/>
+  <rect x="97.0" y="312.0" width="86.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="140.0" y="324.0" font-size="10" fill="#777777" text-anchor="middle">3-Lead Anchor</text>
+  <path d="M 140.0,275.0 L 140.0,565.0" stroke="#F59E0B" stroke-width="2" fill="none" marker-end="url(#arrow-c3)" stroke-dasharray="8,4"/>
+  <rect x="97.0" y="402.0" width="86.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="140.0" y="414.0" font-size="10" fill="#777777" text-anchor="middle">Limb Geometry</text>
+  <path d="M 194.1,385.0 L 418.2,240.0" stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#arrow-default)"/>
+  <rect x="269.1" y="294.5" width="74.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="306.1" y="306.5" font-size="10" fill="#777777" text-anchor="middle">Zero-Filled</text>
+  <path d="M 230.0,420.0 L 365.0,420.0" stroke="#8B5CF6" stroke-width="2" fill="none" marker-end="url(#arrow-c1)"/>
+  <rect x="248.5" y="402.0" width="98.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="297.5" y="414.0" font-size="10" fill="#777777" text-anchor="middle">Sparse Waveform</text>
+  <path d="M 194.1,455.0 L 418.2,600.0" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrow-c2)"/>
+  <rect x="272.1" y="509.5" width="68.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="306.1" y="521.5" font-size="10" fill="#777777" text-anchor="middle">2D Patches</text>
+  <path d="M 230.0,610.6 L 370.0,627.1" stroke="#F59E0B" stroke-width="2" fill="none" marker-end="url(#arrow-c3)"/>
+  <rect x="248.0" y="600.8" width="104.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="300.0" y="612.8" font-size="10" fill="#777777" text-anchor="middle">Biophysical Bias</text>
+  <path d="M 590.0,206.1 L 725.0,213.6" stroke="#EF4444" stroke-width="2" fill="none" marker-end="url(#arrow-c4)"/>
+  <path d="M 595.0,420.0 L 725.0,420.0" stroke="#8B5CF6" stroke-width="2" fill="none" marker-end="url(#arrow-c1)"/>
+  <path d="M 556.5,462.5 L 772.5,582.5" stroke="#8B5CF6" stroke-width="2" fill="none" marker-end="url(#arrow-c1)"/>
+  <path d="M 514.3,600.0 L 807.9,257.5" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrow-c2)"/>
+  <path d="M 590.0,633.9 L 725.0,626.4" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrow-c2)"/>
+  <path d="M 955.0,213.6 L 1095.0,205.8" stroke="#0284C7" stroke-width="2" fill="none" marker-end="url(#arrow-default)"/>
+  <rect x="973.0" y="191.7" width="104.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="1025.0" y="203.7" font-size="10" fill="#777777" text-anchor="middle">Rhythm Alignment</text>
+  <path d="M 955.0,420.0 L 1095.0,420.0" stroke="#C026D3" stroke-width="2" fill="none" marker-end="url(#arrow-default)"/>
+  <rect x="985.0" y="402.0" width="80.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="1025.0" y="414.0" font-size="10" fill="#777777" text-anchor="middle">Spatial Axis</text>
+  <path d="M 955.0,626.4 L 1095.0,634.2" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#arrow-default)"/>
+  <rect x="973.0" y="612.3" width="104.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="1025.0" y="624.3" font-size="10" fill="#777777" text-anchor="middle">Distribution Fit</text>
+  <rect x="50.0" y="205.0" width="180.0" height="70.0" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2" rx="8"/>
+  <text x="140.0" y="229.6" font-size="13" fill="#1E3A8A" text-anchor="middle" font-weight="bold">3D Orthogonal Lead</text>
+  <text x="140.0" y="244.6" font-size="13" fill="#1E3A8A" text-anchor="middle" font-weight="bold">Input (I, II, V2)</text>
+  <text x="140.0" y="259.6" font-size="10" fill="#888888" text-anchor="middle">X (I), Y (II), Z (V2) Dipoles</text>
+  <rect x="50.0" y="385.0" width="180.0" height="70.0" fill="#F1F5F9" stroke="#64748B" stroke-width="2" rx="8"/>
+  <text x="140.0" y="409.6" font-size="13" fill="#0F172A" text-anchor="middle" font-weight="bold">12-Lead Sparse Canvas</text>
+  <text x="140.0" y="424.6" font-size="13" fill="#0F172A" text-anchor="middle" font-weight="bold">[B, 12, 5000]</text>
+  <text x="140.0" y="439.6" font-size="10" fill="#888888" text-anchor="middle">9 Unobserved Leads Masked</text>
+  <rect x="50.0" y="565.0" width="180.0" height="70.0" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2" rx="8"/>
+  <text x="140.0" y="589.5" font-size="13" fill="#78350F" text-anchor="middle" font-weight="bold">Einthoven Physics Prior</text>
+  <text x="140.0" y="604.5" font-size="13" fill="#78350F" text-anchor="middle" font-weight="bold">(III, aVR, aVL, aVF)</text>
+  <text x="140.0" y="619.5" font-size="10" fill="#888888" text-anchor="middle">Deterministic Kirchhoff Loops</text>
+  <rect x="370.0" y="160.0" width="220.0" height="80.0" fill="#FEE2E2" stroke="#EF4444" stroke-width="2" rx="8"/>
+  <text x="480.0" y="189.6" font-size="13" fill="#991B1B" text-anchor="middle" font-weight="bold">Deterministic U-Net</text>
+  <text x="480.0" y="204.6" font-size="13" fill="#991B1B" text-anchor="middle" font-weight="bold">(1D Conv MCMA)</text>
+  <text x="480.0" y="219.6" font-size="10" fill="#888888" text-anchor="middle">Skip-Connections | Severe R2M</text>
+  <rect x="365.0" y="377.5" width="230.0" height="85.0" fill="#EDE9FE" stroke="#8B5CF6" stroke-width="2" rx="8"/>
+  <text x="480.0" y="409.6" font-size="13" fill="#4C1D95" text-anchor="middle" font-weight="bold">MultiScale-VAE (WearECG)</text>
+  <text x="480.0" y="424.6" font-size="13" fill="#4C1D95" text-anchor="middle" font-weight="bold">(Hierarchical ResNet + Attention)</text>
+  <text x="480.0" y="439.6" font-size="10" fill="#888888" text-anchor="middle">q(z|x) ∈ ℝ^{4×625} | 41.8% Var Ret</text>
+  <rect x="370.0" y="600.0" width="220.0" height="80.0" fill="#DCFCE7" stroke="#10B981" stroke-width="2" rx="8"/>
+  <text x="480.0" y="629.5" font-size="13" fill="#065F46" text-anchor="middle" font-weight="bold">ECG-AIM</text>
+  <text x="480.0" y="644.5" font-size="13" fill="#065F46" text-anchor="middle" font-weight="bold">(Axial Spatio-Temporal MAE)</text>
+  <text x="480.0" y="659.5" font-size="10" fill="#888888" text-anchor="middle">Space×Time Attention (12×200)</text>
+  <rect x="725.0" y="182.5" width="230.0" height="75.0" fill="#E0F2FE" stroke="#0284C7" stroke-width="2" rx="8"/>
+  <text x="840.0" y="209.6" font-size="13" fill="#0369A1" text-anchor="middle" font-weight="bold">Waveform &amp; Derivative Losses</text>
+  <text x="840.0" y="224.6" font-size="13" fill="#0369A1" text-anchor="middle" font-weight="bold">(LMSE + LCorr + LDeriv)</text>
+  <text x="840.0" y="239.6" font-size="10" fill="#888888" text-anchor="middle">Phase &amp; High-Freq QRS Alignment</text>
+  <rect x="725.0" y="382.5" width="230.0" height="75.0" fill="#FDF4FF" stroke="#C026D3" stroke-width="2" rx="8"/>
+  <text x="840.0" y="409.6" font-size="13" fill="#86198F" text-anchor="middle" font-weight="bold">Kors 3D VCG Dipole Loss</text>
+  <text x="840.0" y="424.6" font-size="13" fill="#86198F" text-anchor="middle" font-weight="bold">(K_Kors ∈ ℝ^{3×8})</text>
+  <text x="840.0" y="439.6" font-size="10" fill="#888888" text-anchor="middle">Spatial Cosine Loop Orientation</text>
+  <rect x="725.0" y="582.5" width="230.0" height="75.0" fill="#ECFDF5" stroke="#059669" stroke-width="2" rx="8"/>
+  <text x="840.0" y="609.5" font-size="13" fill="#065F46" text-anchor="middle" font-weight="bold">Multiscale MMD Regularizer</text>
+  <text x="840.0" y="624.5" font-size="13" fill="#065F46" text-anchor="middle" font-weight="bold">(IMQ / Temporal RKHS Kernels)</text>
+  <text x="840.0" y="639.5" font-size="10" fill="#888888" text-anchor="middle">Non-Parametric Energy Matching</text>
+  <rect x="1095.0" y="162.5" width="210.0" height="75.0" fill="#F0FDF4" stroke="#22C55E" stroke-width="2" rx="8"/>
+  <text x="1200.0" y="189.6" font-size="13" fill="#15803D" text-anchor="middle" font-weight="bold">Macro Diagnostic AUROC</text>
+  <text x="1200.0" y="204.6" font-size="13" fill="#15803D" text-anchor="middle" font-weight="bold">(PTB-XL + EchoNext)</text>
+  <text x="1200.0" y="219.6" font-size="10" fill="#888888" text-anchor="middle">&gt;96% Global Retention (AFib, LBBB)</text>
+  <rect x="1095.0" y="382.5" width="210.0" height="75.0" fill="#FFFBEB" stroke="#F59E0B" stroke-width="2" rx="8"/>
+  <text x="1200.0" y="409.6" font-size="13" fill="#B45309" text-anchor="middle" font-weight="bold">Continuous Calipers &amp; LVH</text>
+  <text x="1200.0" y="424.6" font-size="13" fill="#B45309" text-anchor="middle" font-weight="bold">(Sunnybrook, LUDB, ISP)</text>
+  <text x="1200.0" y="439.6" font-size="10" fill="#888888" text-anchor="middle">QRS MAE (14ms) | Sokolow LVH aOR</text>
+  <rect x="1095.0" y="602.5" width="210.0" height="75.0" fill="#FEF2F2" stroke="#EF4444" stroke-width="2" rx="8"/>
+  <text x="1200.0" y="629.5" font-size="13" fill="#B91C1C" text-anchor="middle" font-weight="bold">Presacan Bland-Altman Audit</text>
+  <text x="1200.0" y="644.5" font-size="13" fill="#B91C1C" text-anchor="middle" font-weight="bold">(R² &amp; Variance Collapse)</text>
+  <text x="1200.0" y="659.5" font-size="10" fill="#888888" text-anchor="middle">U-Net R²=0.94 vs MS-VAE R²=0.58</text>
+</svg>

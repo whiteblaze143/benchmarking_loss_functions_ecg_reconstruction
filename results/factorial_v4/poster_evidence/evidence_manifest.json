@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "source_sha256": {
+    "results/factorial_v4/completeness.json": "66882ba9576530bc4724577d447d7fbb2814dfa580fd5057213923b495c803c6",
+    "results/factorial_v4_clinical/completeness.json": "a425dbeae72df437ab23935f71152c39a002bee144f3c71708f4e82c132718f0",
+    "results/factorial_v4_clinical/FINAL_COMPLETION.json": "f3f7a2997cbdf2e8f59945ed6be688935cfd3920af516db8db1fef18dfd9060f",
+    "results/factorial_v4/selected_masks.json": "4a645f296f0238019991eb5fcd7b34da196e9eeb6b11a0ce727c04af6fec1218",
+    "results/factorial_v4/main_primary_24_cell_table.parquet": "19db3bc47295d9e8e6b1b280cf2f08ddba9b145e303cad7dcb5ad95552a99ca7",
+    "results/factorial_v4/factorial_effects_bca.parquet": "9c0592378a781286e9524a56e8512c4a71974d337ff5ecff2657d290fa498ff8",
+    "results/factorial_v4/familywise_endpoint_tests.parquet": "5944861ca50fbe4c1b8b1526086d02f162c03f32a4101afef28eb9336b0f1736",
+    "results/factorial_v4/comprehensive_results.json": "af45f840b48ec08d44088c431d21a0f332e5614f02ac0dc4f798f8861b555d98",
+    "results/factorial_v4/echonext_results.json": "ddff5343e5fa8aa4f42857954a0c79095cfc908789f19437ea9479ef7bae1a84",
+    "results/factorial_v4/smartwatch_results.json": "fd452e0cd2d43d1bacb38097700ffb320a1f62eaa1cf1ad96868bc51210fc454",
+    "results/factorial_v4/CLAIM_SCOPE.md": "03338a4d2da0a9beabe7875ab03aee1731bf525af584d338a2d56fa9bf003dcd",
+    "results/factorial_v4/exclusions/msvae_mse_toggle.json": "c297fe4e770e4295989d1e92bf15a71254aee2d8dec9ce1b9983ac7f0d942abc"
+  },
+  "output_sha256": {
+    "architecture_selected.csv": "1f6750dcccd87a8f182a57cce02aa652b6b88e4642eaa3d776449915844f662c",
+    "component_effects.csv": "e7d578f0fcfcbb4d000467e089792e9600597bca0ae6a8799643cd04592662bd",
+    "familywise_endpoints.csv": "74072f81701ac031332f438133c492643236e631e234acfb2b19562e141b4e5b",
+    "selected_robustness.csv": "aa9c1231f3dce473165c46a29a65580cb81a64fac88acd5d4abbff90fae8f298",
+    "selected_smartwatch.csv": "8867fc10bf005909cceb868748e5ba6ae8ff2a9cab75e026d0192a9a084fd2d2",
+    "figure_inventory.csv": "17daa4e03dce235f37bc602d4ad499b4f8283bbbbb1244ab88193e0aa3bfacf9",
+    "poster_claims.json": "2acc34b6617d55d16b5660b1f28fd496f8470b27b33eadaa347f812b6e0e75de",
+    "gate_status.json": "99aec968172ce9aa300d3e6138ce16ad0b66e8196ebd981ee166561aa9e2e88b",
+    "POSTER_EVIDENCE_HANDOFF.md": "465a663f4c8cff4bcf129a7beb0e223ec5b82f47dadc016bd7976fe8052dd8b5",
+    "MANIFEST.md": "e8421ffd6f240739b848ee7475368bbb9cc11d7a769e999c4823498c68d26920"
+  },
+  "claim_policy": "Empirical interpretation only until independent postrun audit and result-to-claim verdict are available."
+}

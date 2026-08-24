@@ -1,0 +1,172 @@
+[
+  {
+    "id": "P1_architecture_balance",
+    "status": "empirically_supported_pending_independent_audit",
+    "statement": "Among validation-selected models, ECG-AIM has the highest PTB-XL R2 and is the only family with positive EchoNext R2.",
+    "values": {
+      "unet": {
+        "ptbxl_r2": 0.6624078841484686,
+        "echonext_r2": -35.24263967208491
+      },
+      "msvae": {
+        "ptbxl_r2": 0.8155224764386849,
+        "echonext_r2": -0.9656328665199605
+      },
+      "ecgaim": {
+        "ptbxl_r2": 0.819567949824188,
+        "echonext_r2": 0.5934690483627286
+      }
+    },
+    "qualifiers": [
+      "Selection used validation MSE with Pearson tie-breaker.",
+      "EchoNext SHD uses unchanged original tabular metadata in addition to waveform."
+    ],
+    "sources": [
+      "architecture_selected.csv",
+      "../main_primary_24_cell_table.parquet",
+      "../echonext_results.json"
+    ]
+  },
+  {
+    "id": "P2_correlation_is_architecture_dependent",
+    "status": "empirically_supported_pending_independent_audit",
+    "statement": "Correlation loss improves R2 in MultiScale-VAE and ECG-AIM but reduces R2 in U-Net.",
+    "values": {
+      "unet": {
+        "estimate": -0.028151786914617245,
+        "ci_low": -0.03707667619405553,
+        "ci_high": -0.020971938468177433
+      },
+      "msvae": {
+        "estimate": 0.014106580126805036,
+        "ci_low": 0.012673793877251198,
+        "ci_high": 0.01568908108696094
+      },
+      "ecgaim": {
+        "estimate": 0.013209546975440514,
+        "ci_low": 0.011700621981173267,
+        "ci_high": 0.015096524432403726
+      }
+    },
+    "qualifiers": [
+      "Conditional on each seed-42 trained model.",
+      "BCa resampling is paired at the PTB-XL patient-cluster level."
+    ],
+    "sources": [
+      "component_effects.csv",
+      "../factorial_effects_bca.parquet"
+    ]
+  },
+  {
+    "id": "P3_morphology_not_diagnostic_utility",
+    "status": "empirically_supported_pending_independent_audit",
+    "statement": "The full objective improves QRS and ST correlations in every family, without a significant ECGFounder AUROC improvement.",
+    "values": {
+      "unet": {
+        "QRS": {
+          "estimate": 0.011297185432240885,
+          "p_value": 0.0004997501249375312,
+          "reject_null": true
+        },
+        "ST": {
+          "estimate": 0.020933105689198886,
+          "p_value": 0.0004997501249375312,
+          "reject_null": true
+        },
+        "diagnostic_utility": {
+          "estimate": 0.003921008182341198,
+          "p_value": 0.10044977511244378,
+          "reject_null": false
+        }
+      },
+      "msvae": {
+        "QRS": {
+          "estimate": 0.004518431276393993,
+          "p_value": 0.0004997501249375312,
+          "reject_null": true
+        },
+        "ST": {
+          "estimate": 0.009246542112826972,
+          "p_value": 0.0004997501249375312,
+          "reject_null": true
+        },
+        "diagnostic_utility": {
+          "estimate": 0.00020563869462053246,
+          "p_value": 0.8765617191404298,
+          "reject_null": false
+        }
+      },
+      "ecgaim": {
+        "QRS": {
+          "estimate": 0.008230975665243504,
+          "p_value": 0.0004997501249375312,
+          "reject_null": true
+        },
+        "ST": {
+          "estimate": 0.013526011426663246,
+          "p_value": 0.0004997501249375312,
+          "reject_null": true
+        },
+        "diagnostic_utility": {
+          "estimate": 0.00010922905592447205,
+          "p_value": 0.927536231884058,
+          "reject_null": false
+        }
+      }
+    },
+    "qualifiers": [
+      "Alpha 0.0167 controls three prespecified endpoints within each architecture.",
+      "ECGFounder macro AUROC uses 31/150 fold-10 tasks with both classes."
+    ],
+    "sources": [
+      "familywise_endpoints.csv",
+      "../familywise_endpoint_tests.parquet"
+    ]
+  },
+  {
+    "id": "P4_severe_noise_changes_ranking",
+    "status": "empirically_supported_pending_independent_audit",
+    "statement": "At 0 dB NSTDB, U-Net's worse clean reconstruction can become competitive because it degrades less than the latent models.",
+    "values": {
+      "unet": {
+        "zero_db_mse_min": 0.033698537150645164,
+        "zero_db_mse_max": 0.03484795480330327
+      },
+      "msvae": {
+        "zero_db_mse_min": 0.033514177112311305,
+        "zero_db_mse_max": 0.038185104309335034
+      },
+      "ecgaim": {
+        "zero_db_mse_min": 0.038497167415848375,
+        "zero_db_mse_max": 0.04116342446262899
+      }
+    },
+    "qualifiers": [
+      "Absolute MSE and degradation from clean must be shown together.",
+      "Noise samples are deterministically paired across models."
+    ],
+    "sources": [
+      "selected_robustness.csv",
+      "../comprehensive_results.json"
+    ]
+  },
+  {
+    "id": "P5_smartwatch_domain_gap",
+    "status": "empirically_supported_pending_independent_audit",
+    "statement": "All selected family-device smartwatch evaluations have negative missing-eleven-lead R2.",
+    "values": {
+      "maximum_r2": -0.34321667401477546,
+      "minimum_r2": -4.518795757823519,
+      "cells": 12
+    },
+    "qualifiers": [
+      "This is zero-shot domain-gap analysis, not clinical validation.",
+      "ECGFounder values are Philips-referenced probability-fidelity proxies.",
+      "The dataset contains no human disease labels."
+    ],
+    "sources": [
+      "selected_smartwatch.csv",
+      "../smartwatch_results.json"
+    ]
+  }
+]

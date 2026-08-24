@@ -1,0 +1,86 @@
+model:
+  target: models.interpretable_diffusion.gaussian_diffusion.MLA_Diffusion
+  params:
+    feature_size: 4
+    temporal_size: 125 
+    n_layer_enc: 8
+    n_layer_dec: 2
+    d_model: 256
+    timesteps: 50
+    sampling_timesteps: 50
+    loss_type: 'l2'
+    beta_schedule: 'cosine'
+    n_heads: 4
+    mlp_hidden_times: 4
+    attn_pd: 0.0
+    resid_pd: 0.0
+    kernel_size: 1
+    padding_size: 0
+    use_ff: False
+    use_text: False
+
+solver:
+  base_lr: 1.0e-5
+  max_steps: 50000
+  results_folder: results/cond_syn/MIMIC_subset
+  gradient_accumulate_every: 1
+  save_cycle: 5000  # max_steps // 10
+  ema:
+    decay: 0.995
+    update_interval: 10
+    
+  vae:
+    lr: 1.0e-5
+    batch_size: 128
+    kld_weight: 0.0005
+    epochs: 100
+    checkpoint: results/vae/MIMIC_subset/checkpoints/VAE-100.pth
+
+
+  scheduler:
+    target: engine.lr_sch.ReduceLROnPlateauWithWarmup
+    params:
+      factor: 0.5
+      patience: 1000
+      min_lr: 1.0e-9
+      threshold: 1.0e-2
+      threshold_mode: rel
+      warmup_lr: 8.0e-4
+      warmup: 2500 
+      verbose: False
+  use_text: False
+
+dataloader:
+  train_dataset:
+    target: utils.data_utils.ecg_dataset.ECGDataset
+    params:
+      name: MIMIC_subset
+      data_root: data/datasets/MIMIC_subset
+      window: 5000  # seq_length
+      save2npy: True
+      auto_norm_type: None
+      seed: 42
+      period: train
+      condition_type: cond
+      use_text: False
+
+  test_dataset:
+    target: utils.data_utils.ecg_dataset.ECGDataset
+    params:
+      name: MIMIC_subset
+      data_root: data/datasets/MIMIC_subset
+      window: 5000  # seq_length
+      save2npy: True
+      auto_norm_type: None
+      seed: 42
+      period: test
+      use_text: False
+
+    # langevin_fn
+    coefficient: 1.0e-2
+    learning_rate: 5.0e-2
+    sampling_steps: 100
+
+  batch_size: 64
+  sample_size: 64
+  shuffle: True

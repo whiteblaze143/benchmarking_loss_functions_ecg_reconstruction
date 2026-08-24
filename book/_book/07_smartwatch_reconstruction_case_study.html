@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>11&nbsp; Four-Device Smartwatch Transfer Case Study – Benchmarking Loss Functions for Electrocardiogram Reconstruction</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./10_echonext_classifier_external_validation.html" rel="next">
+<link href="./08_factorial_loss_matrix_benchmarks.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-58b16e5bbcaf6fe162629cd441a17d0d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-baa5153929e6df0f7b5bdd98bde6b2d2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-58b16e5bbcaf6fe162629cd441a17d0d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script type="text/javascript">
+window.PlotlyConfig = {MathJaxConfig: 'local'};
+if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+</script>
+<script type="module">import "https://cdn.plot.ly/plotly-3.3.1.min"</script>
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08_factorial_loss_matrix_benchmarks.html">IV. Benchmark and External Validation</a></li><li class="breadcrumb-item"><a href="./07_smartwatch_reconstruction_case_study.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Four-Device Smartwatch Transfer Case Study</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Benchmarking Loss Functions for Electrocardiogram Reconstruction</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface &amp; Executive Summary</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">I. Data, Cohorts, and Measurement</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09_real_data_eda_and_diagnostics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_zhejiang_delineation_tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Zhejiang Cohort: Data Audit and Delineation Protocol</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_dataset_and_preprocessing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">PTB-XL Tensor, Lead, and Preprocessing Contract</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">II. Reconstruction Models and Objectives</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_network_architectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Implemented Reconstruction Architectures</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_loss_function_formulations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Implemented Loss Functions and Mixed-Level Design</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">III. Clinical and Statistical Evaluation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_clinical_metrics_and_delineation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Diagnostic Integrity &amp; Clinical Delineation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_regression_to_mean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Rigorous Agreement &amp; The Mathematics of Regression to the Mean</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06_fairness_robustness_sqi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Fairness, Noise Robustness, and Signal Quality Index (SQI)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">IV. Benchmark and External Validation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08_factorial_loss_matrix_benchmarks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interim 48-Cell Results and Running Seven-Position Loss Benchmark</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07_smartwatch_reconstruction_case_study.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Four-Device Smartwatch Transfer Case Study</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_echonext_classifier_external_validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">EchoNext Classifier and External Diagnostic Validation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_exhaustive_model_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Generation-Bound Exhaustive Model Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">V. Visual and Clinical Atlases</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13_engineering_ml_visual_atlas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Engineering, Storage, and Inference Diagnostics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14_cath_lab_clinical_trust_atlas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Clinical Trust, Cath-Lab Safety, and Validation Requirements</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-inverse-problem-actually-tested" id="toc-the-inverse-problem-actually-tested" class="nav-link active" data-scroll-target="#the-inverse-problem-actually-tested"><span class="header-section-number">11.1</span> The inverse problem actually tested</a></li>
+  <li><a href="#locked-data-and-pairing-contract" id="toc-locked-data-and-pairing-contract" class="nav-link" data-scroll-target="#locked-data-and-pairing-contract"><span class="header-section-number">11.2</span> Locked data and pairing contract</a></li>
+  <li><a href="#what-every-result-column-means" id="toc-what-every-result-column-means" class="nav-link" data-scroll-target="#what-every-result-column-means"><span class="header-section-number">11.3</span> What every result column means</a></li>
+  <li><a href="#device-stratified-distribution-across-all-48-models" id="toc-device-stratified-distribution-across-all-48-models" class="nav-link" data-scroll-target="#device-stratified-distribution-across-all-48-models"><span class="header-section-number">11.4</span> Device-stratified distribution across all 48 models</a></li>
+  <li><a href="#prespecified-mse-only-versus-full-composite-anchors" id="toc-prespecified-mse-only-versus-full-composite-anchors" class="nav-link" data-scroll-target="#prespecified-mse-only-versus-full-composite-anchors"><span class="header-section-number">11.5</span> Prespecified MSE-only versus full-composite anchors</a></li>
+  <li><a href="#simulator-and-paired-reference-calibration" id="toc-simulator-and-paired-reference-calibration" class="nav-link" data-scroll-target="#simulator-and-paired-reference-calibration"><span class="header-section-number">11.6</span> Simulator and paired-reference calibration</a></li>
+  <li><a href="#failure-analysis-required-for-a-publishable-transfer-claim" id="toc-failure-analysis-required-for-a-publishable-transfer-claim" class="nav-link" data-scroll-target="#failure-analysis-required-for-a-publishable-transfer-claim"><span class="header-section-number">11.7</span> Failure analysis required for a publishable transfer claim</a></li>
+  <li><a href="#reproduction-pointers" id="toc-reproduction-pointers" class="nav-link" data-scroll-target="#reproduction-pointers"><span class="header-section-number">11.8</span> Reproduction pointers</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08_factorial_loss_matrix_benchmarks.html">IV. Benchmark and External Validation</a></li><li class="breadcrumb-item"><a href="./07_smartwatch_reconstruction_case_study.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Four-Device Smartwatch Transfer Case Study</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-smartwatch" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Four-Device Smartwatch Transfer Case Study</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This chapter evaluates what the repository actually contains: a zero-shot transfer experiment using the <strong>Electrocardiogram-Capable Smartwatches v1.0.0</strong> dataset and reconstruction models trained on PTB-XL. It does not train a toy model on simulated sinusoids and does not treat a commercial watch trace as a clinical 12-lead measurement.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Evidence boundary
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The locked protocol uses an acquired watch <strong>Lead II</strong> signal, not Lead I. The remaining model inputs, I and V2, are zero-filled before inference. Signal endpoints use paired watch/Philips or simulator-calibrated records, and the downstream endpoint is frozen <strong>ECGFounder</strong> probability fidelity. Human diagnostic ground truth is unavailable. Device names identify dataset folders; they do not justify causal claims about proprietary filters, electrodes, or firmware.</p>
+</div>
+</div>
+<section id="the-inverse-problem-actually-tested" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="the-inverse-problem-actually-tested"><span class="header-section-number">11.1</span> The inverse problem actually tested</h2>
+<p>Let <span class="math inline">\(Y(t)\in\mathbb{R}^{12}\)</span> be the reference lead vector and let <span class="math inline">\(S_{II}\)</span> select Lead II. The wearable observation is</p>
+<p><span class="math display">\[x_{II}(t)=S_{II}Y(t)+n(t).\]</span></p>
+<p>The trained model expects I, II, and V2, so the out-of-domain adapter supplies</p>
+<p><span class="math display">\[\tilde{x}(t)=[0,\ x_{II}(t),\ 0].\]</span></p>
+<p>The primary transfer endpoint excludes the observed Lead II and scores the other eleven outputs. This is more difficult than the PTB-XL task, where all three expected inputs are present. A single measured projection cannot uniquely identify every spatial cardiac vector; reconstruction therefore estimates a conditional distribution learned from the training cohort. Physiologic losses can regularize that estimate, but no mathematical argument makes VCG or any other loss term “required,” and no loss can recover information absent from both the observation and learned prior.</p>
+</section>
+<section id="locked-data-and-pairing-contract" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="locked-data-and-pairing-contract"><span class="header-section-number">11.2</span> Locked data and pairing contract</h2>
+<p>The result bundle records four source conditions—amplitude, frequency, 2-Hz square-wave, and ST-segment tests—and four watch folders. Each WFDB header supplies its native sampling rate. Signals are resampled to 500 Hz with <code>scipy.signal.resample_poly</code>, aligned using 0.5–40 Hz band-passed normalized cross-correlation, and evaluated over 5,000 samples.</p>
+<div id="cell-smartwatch-contract-audit" class="cell" data-execution_count="1">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>ROOT <span class="op">=</span> Path(<span class="st">".."</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>RESULT_JSON <span class="op">=</span> (</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    ROOT <span class="op">/</span> <span class="st">"results/comprehensive_latest_48_models/"</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>           <span class="st">"smartwatch/four_device_results.json"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>SUMMARY_CSV <span class="op">=</span> (</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    ROOT <span class="op">/</span> <span class="st">"results/comprehensive_latest_48_models/"</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>           <span class="st">"tables/smartwatch_four_device_summary.csv"</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>payload <span class="op">=</span> json.loads(RESULT_JSON.read_text())</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>watch <span class="op">=</span> pd.read_csv(SUMMARY_CSV)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>protocol <span class="op">=</span> payload[<span class="st">"protocol"</span>]</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quantity"</span>: [</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"summary rows"</span>, <span class="st">"reconstruction models"</span>, <span class="st">"devices"</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"expected rows"</span>, <span class="st">"task"</span>, <span class="st">"evaluation sample rate"</span>,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"evaluation length"</span>, <span class="st">"human diagnostic ground truth"</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"value"</span>: [</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        <span class="bu">len</span>(watch), watch.model_id.nunique(), watch.device.nunique(),</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        watch.model_id.nunique() <span class="op">*</span> watch.device.nunique(),</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        protocol[<span class="st">"task"</span>], protocol[<span class="st">"evaluation_sample_rate_hz"</span>],</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        protocol[<span class="st">"evaluation_length_samples"</span>],</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        protocol[<span class="st">"evaluation_taxonomy"</span>][<span class="st">"human_diagnostic_ground_truth"</span>],</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="smartwatch-contract-audit" class="cell-output cell-output-display" data-execution_count="1">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">quantity</th>
+<th data-quarto-table-cell-role="th">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>summary rows</td>
+<td>192</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>reconstruction models</td>
+<td>48</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>devices</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>expected rows</td>
+<td>192</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>task</td>
+<td>lead_II_to_eleven_missing_leads_zero_shot_OOD</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>evaluation sample rate</td>
+<td>500</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>evaluation length</td>
+<td>5000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>human diagnostic ground truth</td>
+<td>unavailable</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>The 192 rows are the full Cartesian product of 48 locked reconstruction cells and four devices. This is not 192 independent cohorts: every model is evaluated against the corresponding paired device records.</p>
+<div class="cell" data-tbl-cap="Watch-to-reference pairing audit from the locked protocol." data-execution_count="2">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pairing_rows <span class="op">=</span> []</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> device, audit <span class="kw">in</span> protocol[<span class="st">"pairing_audit"</span>].items():</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    pairing_rows.append({</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"device"</span>: device,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"discovered_watch_records"</span>: audit[<span class="st">"discovered_watch_records"</span>],</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"paired_records"</span>: audit[<span class="st">"paired_records"</span>],</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"unmatched_records"</span>: <span class="bu">len</span>(audit[<span class="st">"unmatched_watch_record_ids"</span>]),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"unmatched_ids"</span>: <span class="st">", "</span>.join(audit[<span class="st">"unmatched_watch_record_ids"</span>]) <span class="kw">or</span> <span class="st">"none"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pairing_key"</span>: audit[<span class="st">"pairing_key"</span>],</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(pairing_rows)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="smartwatch-pairing-audit" class="cell-output cell-output-display" data-execution_count="2">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<caption>Watch-to-reference pairing audit from the locked protocol.</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">device</th>
+<th data-quarto-table-cell-role="th">discovered_watch_records</th>
+<th data-quarto-table-cell-role="th">paired_records</th>
+<th data-quarto-table-cell-role="th">unmatched_records</th>
+<th data-quarto-table-cell-role="th">unmatched_ids</th>
+<th data-quarto-table-cell-role="th">pairing_key</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>applewatch_serie8</td>
+<td>180</td>
+<td>180</td>
+<td>0</td>
+<td>none</td>
+<td>casefolded_relative_posix_path</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>fitbitsense2</td>
+<td>181</td>
+<td>180</td>
+<td>1</td>
+<td>st-segment/ST-m6/ST-m6_5</td>
+<td>casefolded_relative_posix_path</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>samsunggalaxy6</td>
+<td>179</td>
+<td>179</td>
+<td>0</td>
+<td>none</td>
+<td>casefolded_relative_posix_path</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>withingsscanwatch</td>
+<td>180</td>
+<td>180</td>
+<td>0</td>
+<td>none</td>
+<td>casefolded_relative_posix_path</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Apple Watch, Fitbit, and Withings contribute 180 paired records per model; Samsung contributes 179. One Fitbit ST-segment record is explicitly unmatched rather than silently dropped. These counts describe simulator/device test files, not unique patients.</p>
+</section>
+<section id="what-every-result-column-means" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="what-every-result-column-means"><span class="header-section-number">11.3</span> What every result column means</h2>
+<p>The signal table reports missing-11-lead MSE, RMSE, MAE, Pearson correlation, <span class="math inline">\(R^2\)</span>, derivative MSE, and SNR. It also reports fidelity between ECGFounder probabilities from the paired reference and reconstructed waveforms: MAE, RMSE, Pearson correlation, Bernoulli KL divergence, Jensen–Shannon divergence, and fixed-threshold agreement.</p>
+<p>Probability fidelity is a machine-mediated endpoint. It asks whether one frozen classifier changes, not whether clinical diagnoses are correct. In particular, high threshold agreement can coexist with poor probability correlation when most task probabilities lie far from their thresholds.</p>
+</section>
+<section id="device-stratified-distribution-across-all-48-models" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="device-stratified-distribution-across-all-48-models"><span class="header-section-number">11.4</span> Device-stratified distribution across all 48 models</h2>
+<div class="cell" data-tbl-cap="Descriptive distribution across all 48 reconstruction cells; models, not records, are the rows summarized here." data-execution_count="3">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>device_summary <span class="op">=</span> watch.groupby(<span class="st">"device"</span>, as_index<span class="op">=</span><span class="va">False</span>).agg(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    models<span class="op">=</span>(<span class="st">"model_id"</span>, <span class="st">"nunique"</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    paired_records<span class="op">=</span>(<span class="st">"n_paired_records"</span>, <span class="st">"first"</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    median_missing11_mse<span class="op">=</span>(<span class="st">"missing11_mse"</span>, <span class="st">"median"</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    q25_missing11_pearson<span class="op">=</span>(<span class="st">"missing11_pearson"</span>, <span class="kw">lambda</span> x: x.quantile(<span class="fl">0.25</span>)),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    median_missing11_pearson<span class="op">=</span>(<span class="st">"missing11_pearson"</span>, <span class="st">"median"</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    q75_missing11_pearson<span class="op">=</span>(<span class="st">"missing11_pearson"</span>, <span class="kw">lambda</span> x: x.quantile(<span class="fl">0.75</span>)),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    median_ecgfounder_probability_pearson<span class="op">=</span>(</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ecgfounder_fidelity_probability_pearson"</span>, <span class="st">"median"</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    median_threshold_agreement<span class="op">=</span>(</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ecgfounder_fidelity_threshold_agreement"</span>, <span class="st">"median"</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>device_summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="smartwatch-device-distribution" class="cell-output cell-output-display" data-execution_count="3">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<caption>Descriptive distribution across all 48 reconstruction cells; models, not records, are the rows summarized here.</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">device</th>
+<th data-quarto-table-cell-role="th">models</th>
+<th data-quarto-table-cell-role="th">paired_records</th>
+<th data-quarto-table-cell-role="th">median_missing11_mse</th>
+<th data-quarto-table-cell-role="th">q25_missing11_pearson</th>
+<th data-quarto-table-cell-role="th">median_missing11_pearson</th>
+<th data-quarto-table-cell-role="th">q75_missing11_pearson</th>
+<th data-quarto-table-cell-role="th">median_ecgfounder_probability_pearson</th>
+<th data-quarto-table-cell-role="th">median_threshold_agreement</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>applewatch_serie8</td>
+<td>48</td>
+<td>180</td>
+<td>0.034125</td>
+<td>0.395037</td>
+<td>0.422245</td>
+<td>0.492035</td>
+<td>0.510234</td>
+<td>0.964889</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>fitbitsense2</td>
+<td>48</td>
+<td>180</td>
+<td>0.034421</td>
+<td>0.380306</td>
+<td>0.417252</td>
+<td>0.483405</td>
+<td>0.557845</td>
+<td>0.963926</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>samsunggalaxy6</td>
+<td>48</td>
+<td>179</td>
+<td>0.035668</td>
+<td>0.344732</td>
+<td>0.392134</td>
+<td>0.461917</td>
+<td>0.450380</td>
+<td>0.957933</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>withingsscanwatch</td>
+<td>48</td>
+<td>180</td>
+<td>0.034100</td>
+<td>0.413560</td>
+<td>0.454914</td>
+<td>0.499017</td>
+<td>0.540962</td>
+<td>0.966241</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>This table describes the distribution of model outcomes within each device. It must not be read as a randomized comparison of watch hardware: the dataset conditions, alignment, record composition, and preprocessing can all contribute to differences.</p>
+<div id="cell-smartwatch-device-model-plot" class="cell" data-execution_count="4">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.box(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    watch,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"device"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"missing11_pearson"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    points<span class="op">=</span><span class="st">"all"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    hover_data<span class="op">=</span>[<span class="st">"model_id"</span>, <span class="st">"missing11_mse"</span>, <span class="st">"n_paired_records"</span>],</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>{<span class="st">"missing11_pearson"</span>: <span class="st">"Missing-11-lead Pearson"</span>, <span class="st">"device"</span>: <span class="st">"Device folder"</span>},</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>fig.update_layout(height<span class="op">=</span><span class="dv">500</span>, xaxis_tickangle<span class="op">=-</span><span class="dv">20</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="smartwatch-device-model-plot" class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="89bf5752-26fd-467f-8592-eb5d6546a3fa" class="plotly-graph-div" style="height:500px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("89bf5752-26fd-467f-8592-eb5d6546a3fa")) {                    Plotly.newPlot(                        "89bf5752-26fd-467f-8592-eb5d6546a3fa",                        [{"alignmentgroup":"True","boxpoints":"all","customdata":[["ecgaim__e0c0m0d0__s42",0.0341785343655672,180],["ecgaim__e0c0m0d0__s42",0.0341973547860347,180],["ecgaim__e0c0m0d0__s42",0.0358380320245327,179],["ecgaim__e0c0m0d0__s42",0.0339354218072602,180],["ecgaim__e0c0m0d1__s42",0.0347650614243324,180],["ecgaim__e0c0m0d1__s42",0.0350308696007006,180],["ecgaim__e0c0m0d1__s42",0.0362425682455346,179],["ecgaim__e0c0m0d1__s42",0.035117475441056,180],["ecgaim__e0c0m1d0__s42",0.0329738068952464,180],["ecgaim__e0c0m1d0__s42",0.033245256515657,180],["ecgaim__e0c0m1d0__s42",0.0343757791088098,179],["ecgaim__e0c0m1d0__s42",0.0337286056961676,180],["ecgaim__e0c0m1d1__s42",0.0341902511257595,180],["ecgaim__e0c0m1d1__s42",0.03459033106486,180],["ecgaim__e0c0m1d1__s42",0.0361968423164332,179],["ecgaim__e0c0m1d1__s42",0.034139801739394,180],["ecgaim__e0c1m0d0__s42",0.0348614682357479,180],["ecgaim__e0c1m0d0__s42",0.0349741229471534,180],["ecgaim__e0c1m0d0__s42",0.0362821470862176,179],["ecgaim__e0c1m0d0__s42",0.0344451906165691,180],["ecgaim__e0c1m0d1__s42",0.0351058241279679,180],["ecgaim__e0c1m0d1__s42",0.0354299321754532,180],["ecgaim__e0c1m0d1__s42",0.0364064488548019,179],["ecgaim__e0c1m0d1__s42",0.034866226259482,180],["ecgaim__e0c1m1d0__s42",0.033981230094216,180],["ecgaim__e0c1m1d0__s42",0.0346573575584334,180],["ecgaim__e0c1m1d0__s42",0.0356658400830549,179],["ecgaim__e0c1m1d0__s42",0.0342556974231835,180],["ecgaim__e0c1m1d1__s42",0.0347982611189948,180],["ecgaim__e0c1m1d1__s42",0.0351068079599708,180],["ecgaim__e0c1m1d1__s42",0.0360091218455301,179],["ecgaim__e0c1m1d1__s42",0.0346460287398521,180],["ecgaim__e1c0m0d0__s42",0.0340705078575827,180],["ecgaim__e1c0m0d0__s42",0.0340845148059575,180],["ecgaim__e1c0m0d0__s42",0.0356711144830443,179],["ecgaim__e1c0m0d0__s42",0.0334396278797496,180],["ecgaim__e1c0m0d1__s42",0.0346382615784924,180],["ecgaim__e1c0m0d1__s42",0.0352008102817728,180],["ecgaim__e1c0m0d1__s42",0.0360338628580026,179],["ecgaim__e1c0m0d1__s42",0.0346942150886612,180],["ecgaim__e1c0m1d0__s42",0.0347175129437687,180],["ecgaim__e1c0m1d0__s42",0.0348069075073858,180],["ecgaim__e1c0m1d0__s42",0.0352593133018729,179],["ecgaim__e1c0m1d0__s42",0.0349611807967677,180],["ecgaim__e1c0m1d1__s42",0.0337513147831926,180],["ecgaim__e1c0m1d1__s42",0.033992419099904,180],["ecgaim__e1c0m1d1__s42",0.0350459658923519,179],["ecgaim__e1c0m1d1__s42",0.0340593099798337,180],["ecgaim__e1c1m0d0__s42",0.0349127478383767,180],["ecgaim__e1c1m0d0__s42",0.0351502011925283,180],["ecgaim__e1c1m0d0__s42",0.0362690208252945,179],["ecgaim__e1c1m0d0__s42",0.0347914940672209,180],["ecgaim__e1c1m0d1__s42",0.0350399142864497,180],["ecgaim__e1c1m0d1__s42",0.0351758424057623,180],["ecgaim__e1c1m0d1__s42",0.0362667901670224,179],["ecgaim__e1c1m0d1__s42",0.0343465370066479,180],["ecgaim__e1c1m1d0__s42",0.0348198728628832,180],["ecgaim__e1c1m1d0__s42",0.0352029911596124,180],["ecgaim__e1c1m1d0__s42",0.0361681735494525,179],["ecgaim__e1c1m1d0__s42",0.0343709685446999,180],["ecgaim__e1c1m1d1__s42",0.0359338087020257,180],["ecgaim__e1c1m1d1__s42",0.0362169557509759,180],["ecgaim__e1c1m1d1__s42",0.0371928975777071,179],["ecgaim__e1c1m1d1__s42",0.0353584733126861,180],["msvae__e0c0m0d0__s42",0.1222535734665995,180],["msvae__e0c0m0d0__s42",0.1221735619254063,180],["msvae__e0c0m0d0__s42",0.1222127452596545,179],["msvae__e0c0m0d0__s42",0.1223241394166271,180],["msvae__e0c0m0d1__s42",0.0412719874392615,180],["msvae__e0c0m0d1__s42",0.0411726685426692,180],["msvae__e0c0m0d1__s42",0.0412640603976542,179],["msvae__e0c0m0d1__s42",0.0412708403778076,180],["msvae__e0c0m1d0__s42",0.031410050919658,180],["msvae__e0c0m1d0__s42",0.0323751555348406,180],["msvae__e0c0m1d0__s42",0.0344806385487817,179],["msvae__e0c0m1d0__s42",0.0274597298724241,180],["msvae__e0c0m1d1__s42",0.0247118500526505,180],["msvae__e0c0m1d1__s42",0.027509446858878,180],["msvae__e0c0m1d1__s42",0.0296621784525997,179],["msvae__e0c0m1d1__s42",0.0229816000813185,180],["msvae__e0c1m0d0__s42",0.3192551299124053,180],["msvae__e0c1m0d0__s42",0.3181359321239741,180],["msvae__e0c1m0d0__s42",0.3264056248313706,179],["msvae__e0c1m0d0__s42",0.3118098242680713,180],["msvae__e0c1m0d1__s42",0.1955602073962279,180],["msvae__e0c1m0d1__s42",0.1991500693211411,180],["msvae__e0c1m0d1__s42",0.1879387451295867,179],["msvae__e0c1m0d1__s42",0.1823362133295849,180],["msvae__e0c1m1d0__s42",0.0330006655614063,180],["msvae__e0c1m1d0__s42",0.0339399412505795,180],["msvae__e0c1m1d0__s42",0.0344572356216794,179],["msvae__e0c1m1d0__s42",0.0319398643169981,180],["msvae__e0c1m1d1__s42",0.0333038406626383,180],["msvae__e0c1m1d1__s42",0.0342517504312534,180],["msvae__e0c1m1d1__s42",0.0346904220410565,179],["msvae__e0c1m1d1__s42",0.0321799177443379,180],["msvae__e1c0m0d0__s42",0.0277880838365265,180],["msvae__e1c0m0d0__s42",0.0278366241509023,180],["msvae__e1c0m0d0__s42",0.0293662255945394,179],["msvae__e1c0m0d0__s42",0.027558468305029,180],["msvae__e1c0m0d1__s42",0.0275084641963303,180],["msvae__e1c0m0d1__s42",0.0273689932158499,180],["msvae__e1c0m0d1__s42",0.0291426073216738,179],["msvae__e1c0m0d1__s42",0.0272870734444049,180],["msvae__e1c0m1d0__s42",0.02777377475122,180],["msvae__e1c0m1d0__s42",0.027785317647144,180],["msvae__e1c0m1d0__s42",0.029566687928486,179],["msvae__e1c0m1d0__s42",0.0271708626386854,180],["msvae__e1c0m1d1__s42",0.0269985025062946,180],["msvae__e1c0m1d1__s42",0.0271061357378718,180],["msvae__e1c0m1d1__s42",0.0288054299861661,179],["msvae__e1c0m1d1__s42",0.0268169166734483,180],["msvae__e1c1m0d0__s42",0.0295912584832702,180],["msvae__e1c1m0d0__s42",0.0296492435798259,180],["msvae__e1c1m0d0__s42",0.0305809079303421,179],["msvae__e1c1m0d0__s42",0.0294631265736589,180],["msvae__e1c1m0d1__s42",0.0294710766482112,180],["msvae__e1c1m0d1__s42",0.0294911678899899,180],["msvae__e1c1m0d1__s42",0.0304343751828884,179],["msvae__e1c1m0d1__s42",0.0293933844229187,180],["msvae__e1c1m1d0__s42",0.0294296100616455,180],["msvae__e1c1m1d0__s42",0.0295690636867947,180],["msvae__e1c1m1d0__s42",0.0305371041944512,179],["msvae__e1c1m1d0__s42",0.0293745896965566,180],["msvae__e1c1m1d1__s42",0.029216920003024,180],["msvae__e1c1m1d1__s42",0.0294407833438449,180],["msvae__e1c1m1d1__s42",0.0303838252564019,179],["msvae__e1c1m1d1__s42",0.0291286586468629,180],["unet__e0c0m0d0__s42",0.3426731506470959,180],["unet__e0c0m0d0__s42",0.3417621463660039,180],["unet__e0c0m0d0__s42",0.3385783262641251,179],["unet__e0c0m0d0__s42",0.3450208665019333,180],["unet__e0c0m0d1__s42",0.1185925525002527,180],["unet__e0c0m0d1__s42",0.1204237774658203,180],["unet__e0c0m0d1__s42",0.1219984088779524,179],["unet__e0c0m0d1__s42",0.1166912105475531,180],["unet__e0c0m1d0__s42",0.0536249692620171,180],["unet__e0c0m1d0__s42",0.0544306495096225,180],["unet__e0c0m1d0__s42",0.057962936816741,179],["unet__e0c0m1d0__s42",0.0514659016957909,180],["unet__e0c0m1d1__s42",0.0393950346389924,180],["unet__e0c0m1d1__s42",0.0406033160462042,180],["unet__e0c0m1d1__s42",0.0426151231617537,179],["unet__e0c0m1d1__s42",0.0379369500424163,180],["unet__e0c1m0d0__s42",0.1159138260496505,180],["unet__e0c1m0d0__s42",0.1189460226151437,180],["unet__e0c1m0d0__s42",0.1197869962956713,179],["unet__e0c1m0d0__s42",0.1155237614279082,180],["unet__e0c1m0d1__s42",0.1105905767868504,180],["unet__e0c1m0d1__s42",0.1131368730579722,180],["unet__e0c1m0d1__s42",0.1116427734262631,179],["unet__e0c1m0d1__s42",0.1116194827709776,180],["unet__e0c1m1d0__s42",0.0356566011675439,180],["unet__e0c1m1d0__s42",0.0377725903821232,180],["unet__e0c1m1d0__s42",0.0398104472852467,179],["unet__e0c1m1d0__s42",0.0365534080844455,180],["unet__e0c1m1d1__s42",0.0347201938174469,180],["unet__e0c1m1d1__s42",0.0360638830512461,180],["unet__e0c1m1d1__s42",0.0380174237830073,179],["unet__e0c1m1d1__s42",0.0352425955500747,180],["unet__e1c0m0d0__s42",0.0299789252356326,180],["unet__e1c0m0d0__s42",0.0303803584967719,180],["unet__e1c0m0d0__s42",0.0309468095321229,179],["unet__e1c0m0d0__s42",0.0301314248580161,180],["unet__e1c0m0d1__s42",0.0320346150307703,180],["unet__e1c0m0d1__s42",0.0327998181275647,180],["unet__e1c0m0d1__s42",0.0328507245111731,179],["unet__e1c0m0d1__s42",0.0322035566988858,180],["unet__e1c0m1d0__s42",0.032739909767382,180],["unet__e1c0m1d0__s42",0.0331823653697004,180],["unet__e1c0m1d0__s42",0.0331868524763534,179],["unet__e1c0m1d0__s42",0.0324373547286216,180],["unet__e1c0m1d1__s42",0.0319683717484907,180],["unet__e1c0m1d1__s42",0.0326837188951896,180],["unet__e1c0m1d1__s42",0.0330658887864127,179],["unet__e1c0m1d1__s42",0.0321164580219923,180],["unet__e1c1m0d0__s42",0.0233997075406469,180],["unet__e1c1m0d0__s42",0.025237228345004,180],["unet__e1c1m0d0__s42",0.0269498304778758,179],["unet__e1c1m0d0__s42",0.0244532057636916,180],["unet__e1c1m0d1__s42",0.023417761159184,180],["unet__e1c1m0d1__s42",0.0250784593532061,180],["unet__e1c1m0d1__s42",0.0265905561843337,179],["unet__e1c1m0d1__s42",0.0248089512079412,180],["unet__e1c1m1d0__s42",0.0237369712359495,180],["unet__e1c1m1d0__s42",0.0257478841669872,180],["unet__e1c1m1d0__s42",0.027058190849773,179],["unet__e1c1m1d0__s42",0.0249853328650888,180],["unet__e1c1m1d1__s42",0.0240741636418814,180],["unet__e1c1m1d1__s42",0.0257494308980306,180],["unet__e1c1m1d1__s42",0.0271204292394232,179],["unet__e1c1m1d1__s42",0.0255593105215978,180]],"hovertemplate":"Device folder=%{x}\u003cbr\u003eMissing-11-lead Pearson=%{y}\u003cbr\u003emodel_id=%{customdata[0]}\u003cbr\u003emissing11_mse=%{customdata[1]}\u003cbr\u003en_paired_records=%{customdata[2]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":"#636efa"},"name":"","notched":false,"offsetgroup":"","orientation":"v","showlegend":false,"x":["applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch","applewatch_serie8","fitbitsense2","samsunggalaxy6","withingsscanwatch"],"x0":" ","xaxis":"x","y":{"dtype":"f8","bdata":"MH60ZSXn2T8vq5tdefXZPz+Yfdrax9Y\u002f0wnj\u002fyYX3T9XGSGg7qjYP7Aj9QZ35Nc\u002fKc22IhZa1T8S1dyj9grYP\u002ffggz9aC90\u002fH4s9n0Uc3D95rmJZEvzaPy+66NLeet0\u002fvaxuVhsI2z+Ah6byQVTaP78JRV0POdc\u002fbbLJ9oYK3D\u002fKCAGSAEzUP+mE8VNPkNM\u002f99S6ExBjzz826LGgwVnXPxgwjRHtntY\u002fqdeRItXw1j+5l8Hv5hLSP8aAaWT6h9o\u002fFXsOIEVC2T92wvjlmNPXPytfZBxKT9Y\u002fCR98UE3Q2j82nTCoekXYP5MRAka1LNg\u002ffAyg0fAr1j9gGgNunabaP9BjsZ+wR9k\u002f\u002f\u002f\u002f\u002fv08f2T\u002fA\u002fOhAKn7VP7x\u002fh+KA0ds\u002fmZmZ2X5I2T8fXlZv\u002foDXP1yRQjTRr9U\u002ffLSNNkPc2T+2QnGDBK3aP7ydIZFkFdo\u002fYm5fIo3c2D+Qa9BrHUfaPzBvZ0xUAt0\u002fA6YxyJPy3D+EN+X9ccjZPyTm7fTJTN8\u002fTTbZETxl2j9LY8D4wEPaP9Ul7aChA9U\u002frG52hQiH3D+Z1c2S17LaP9ooXyBAFNs\u002f1sT2psWn1j8wYBprac\u002fdP4h5O7eRTtk\u002fY5NNVgJl2D\u002f6BXLDh7zVP+GhqfCY\u002fds\u002fLBS38p8D0z9Zv1KAMHjTP4+T4Uln4c0\u002foosu2jVS1z+HJbkGqzE0P+kQ8zYCjFg\u002fvTddIy9UXT\u002fT3L9DV74lP1VXGRED846\u002fToQA6aPMi79hgqX3\u002fKKLv7HOkNhx5ny\u002f9DqSzPlO4D9Z+4Z96ODfP+mI06VbU9s\u002fTGPATNh\u002f4D9SryNtRz\u002fiPwvFrbBZVOE\u002fj8oKjZw33z\u002fnz3IUaQviP79wOhOPTuA\u002fVGSiWw5M4D9TWaG3bZ3eP9TrSA0BfuA\u002fBx98QIBI1z8REREp7JXXP5hTjVGJedY\u002fcFj7Ykj72D9jz4Grz8LZPysFaq20atk\u002fLk9PHojG2D829\u002f7Bi9XZP\u002fNnOddq1Nk\u002fHanXEeWT2T+MLrqoFOXYP2PANIVA+dk\u002fpU\u002f6lMgJ3T8AAAAQAo3cP+ypdcdzsNo\u002fxnEcJ7KF3T+wMkKcLMPdPyFeVug1gN0\u002f8R6yhqJD2z\u002fVza6uVCzeP2rQY0E8Jd0\u002fLOfPrH6t3D9z+xKeqIDaP8omm1h7I90\u002fAAAAGMXv3T826LFsN3ndP2NrphB4ZNs\u002f+aRPskHj3T\u002frZld5Y\u002f7aP+tXCqS2D9o\u002fCpbeII8L2T\u002fxhdPVqRPcP\u002fnC6TMBBNs\u002fcA16zDIo2j8Q3pS35CXZPzNRzW1I\u002fNs\u002fKUGe5OqA2j\u002fv7u5u76fZP67q45cW0tg\u002fzpCY1+1e2z8Fav0idS3aP4\u002fyhcMMMtk\u002fPzpAOvB42D+sjBBozL3aP0Ni3g46TLO\u002fRCaqaT4gsr\u002fh9iUcEWylv5Fcg7pRNLe\u002fXjidxo+y0D9BU5HVo6PPP4r6SbfECtA\u002fTs29QQE\u002fzz+2MyTxmiTePxy4JIfQntw\u002f\u002fHALCFUj3D+gx2LHL9jdP5GnBIfvx+E\u002feWgqzgoA4T9dFpQJNXTgP5NNNoZo2OE\u002f3r9D47nY4j\u002f6pE+o1SjiP0gHSFatXuE\u002fS5CnVIoW4j8pQZ4yhSrjP8TL6sbKbOI\u002frS5ph0Rz4T8ZMI0ByVDiP3azq1RQd+M\u002fvLu7u8GV4j+\u002fTcoszazhP9lz4Epn9eI\u002fWc6f5ZJR4z9azp\u002fpTJbiP6+J7Q0+uuE\u002fh5fVLZXe4j+Reh0JoR3fP9avFCjVn94\u002fGJ5AHy793T\u002fzOlIvhJbfP33SJ01rV94\u002f5DiO4\u002fOw3T8aPUr1ckDdPz3pk4Yyu94\u002ftUJx93X03T\u002f5s5yr9G7dP50Zq3wFw9w\u002fFMaP1s2p3j\u002fZkXr9eJfePxrlCwcu8d0\u002fn+\u002fdpalr3T9gGgMuU83ePxkS8xbBxeQ\u002fniExz2bV4z8B1jIJfjTjPwSX5PzTSOQ\u002fC7ZgD9PE5D9+tI2qidjjP0xFW8LuPOM\u002fTjbZxDch5D+MPQd+5NvkPwZbsAme2eM\u002f0StfBHlV4z\u002fzhdNxLzvkP7ck1zBMyuQ\u002fBLV+NT\u002fW4z92Vpf0IEjjP2dmZpY6FeQ\u002f"},"y0":" ","yaxis":"y","type":"box"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Device folder"},"tickangle":-20},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Missing-11-lead Pearson"}},"legend":{"tracegroupgap":0},"boxmode":"group","height":500},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('89bf5752-26fd-467f-8592-eb5d6546a3fa');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+<p>Missing-11-lead correlation for all 48 model cells within each device. Each point is a model–device result, not a patient.</p>
+</div>
+</div>
+</section>
+<section id="prespecified-mse-only-versus-full-composite-anchors" class="level2" data-number="11.5">
+<h2 data-number="11.5" class="anchored" data-anchor-id="prespecified-mse-only-versus-full-composite-anchors"><span class="header-section-number">11.5</span> Prespecified MSE-only versus full-composite anchors</h2>
+<p>To avoid selecting the best model after opening all device results, the next table uses the same six within-architecture anchors as the main 48-cell analysis.</p>
+<div class="cell" data-tbl-cap="Locked MSE-only and full-composite anchors on each device." data-execution_count="5">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>anchor_ids <span class="op">=</span> [</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"unet__e1c0m0d0__s42"</span>, <span class="st">"unet__e1c1m1d1__s42"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"msvae__e1c0m0d0__s42"</span>, <span class="st">"msvae__e1c1m1d1__s42"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ecgaim__e1c0m0d0__s42"</span>, <span class="st">"ecgaim__e1c1m1d1__s42"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>anchors <span class="op">=</span> watch[watch.model_id.isin(anchor_ids)].copy()</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>anchors[<span class="st">"family"</span>] <span class="op">=</span> anchors.model_id.<span class="bu">str</span>.split(<span class="st">"__"</span>).<span class="bu">str</span>[<span class="dv">0</span>]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>anchors[<span class="st">"loss"</span>] <span class="op">=</span> np.where(</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    anchors.model_id.<span class="bu">str</span>.contains(<span class="st">"__e1c0m0d0__"</span>), <span class="st">"MSE-only"</span>, <span class="st">"full composite"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>anchors[[</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"device"</span>, <span class="st">"family"</span>, <span class="st">"loss"</span>, <span class="st">"n_paired_records"</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"missing11_mse"</span>, <span class="st">"missing11_pearson"</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ecgfounder_fidelity_probability_mae"</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ecgfounder_fidelity_probability_pearson"</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ecgfounder_fidelity_threshold_agreement"</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>]].sort_values([<span class="st">"device"</span>, <span class="st">"family"</span>, <span class="st">"loss"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="smartwatch-anchor-contrast" class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<caption>Locked MSE-only and full-composite anchors on each device.</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">device</th>
+<th data-quarto-table-cell-role="th">family</th>
+<th data-quarto-table-cell-role="th">loss</th>
+<th data-quarto-table-cell-role="th">n_paired_records</th>
+<th data-quarto-table-cell-role="th">missing11_mse</th>
+<th data-quarto-table-cell-role="th">missing11_pearson</th>
+<th data-quarto-table-cell-role="th">ecgfounder_fidelity_probability_mae</th>
+<th data-quarto-table-cell-role="th">ecgfounder_fidelity_probability_pearson</th>
+<th data-quarto-table-cell-role="th">ecgfounder_fidelity_threshold_agreement</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">32</th>
+<td>applewatch_serie8</td>
+<td>ecgaim</td>
+<td>MSE-only</td>
+<td>180</td>
+<td>0.034071</td>
+<td>0.395001</td>
+<td>0.056411</td>
+<td>0.450581</td>
+<td>0.965370</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">60</th>
+<td>applewatch_serie8</td>
+<td>ecgaim</td>
+<td>full composite</td>
+<td>180</td>
+<td>0.035934</td>
+<td>0.297096</td>
+<td>0.059739</td>
+<td>0.466839</td>
+<td>0.961926</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">96</th>
+<td>applewatch_serie8</td>
+<td>msvae</td>
+<td>MSE-only</td>
+<td>180</td>
+<td>0.027788</td>
+<td>0.453722</td>
+<td>0.052068</td>
+<td>0.558638</td>
+<td>0.969815</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">124</th>
+<td>applewatch_serie8</td>
+<td>msvae</td>
+<td>full composite</td>
+<td>180</td>
+<td>0.029217</td>
+<td>0.409025</td>
+<td>0.043274</td>
+<td>0.643543</td>
+<td>0.977815</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">160</th>
+<td>applewatch_serie8</td>
+<td>unet</td>
+<td>MSE-only</td>
+<td>180</td>
+<td>0.029979</td>
+<td>0.486183</td>
+<td>0.056604</td>
+<td>0.554999</td>
+<td>0.963704</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">188</th>
+<td>applewatch_serie8</td>
+<td>unet</td>
+<td>full composite</td>
+<td>180</td>
+<td>0.024074</td>
+<td>0.649695</td>
+<td>0.052446</td>
+<td>0.555491</td>
+<td>0.966370</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">33</th>
+<td>fitbitsense2</td>
+<td>ecgaim</td>
+<td>MSE-only</td>
+<td>180</td>
+<td>0.034085</td>
+<td>0.392536</td>
+<td>0.058292</td>
+<td>0.498013</td>
+<td>0.962926</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">61</th>
+<td>fitbitsense2</td>
+<td>ecgaim</td>
+<td>full composite</td>
+<td>180</td>
+<td>0.036217</td>
+<td>0.304211</td>
+<td>0.061883</td>
+<td>0.473324</td>
+<td>0.961815</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">97</th>
+<td>fitbitsense2</td>
+<td>msvae</td>
+<td>MSE-only</td>
+<td>180</td>
+<td>0.027837</td>
+<td>0.446106</td>
+<td>0.052405</td>
+<td>0.587149</td>
+<td>0.969444</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">125</th>
+<td>fitbitsense2</td>
+<td>msvae</td>
+<td>full composite</td>
+<td>180</td>
+<td>0.029441</td>
+<td>0.393680</td>
+<td>0.045685</td>
+<td>0.664632</td>
+<td>0.976333</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">161</th>
+<td>fitbitsense2</td>
+<td>unet</td>
+<td>MSE-only</td>
+<td>180</td>
+<td>0.030380</td>
+<td>0.478505</td>
+<td>0.054937</td>
+<td>0.633158</td>
+<td>0.963630</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">189</th>
+<td>fitbitsense2</td>
+<td>unet</td>
+<td>full composite</td>
+<td>180</td>
+<td>0.025749</td>
+<td>0.619903</td>
+<td>0.050671</td>
+<td>0.631426</td>
+<td>0.969963</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">34</th>
+<td>samsunggalaxy6</td>
+<td>ecgaim</td>
+<td>MSE-only</td>
+<td>179</td>
+<td>0.035671</td>
+<td>0.335826</td>
+<td>0.066934</td>
+<td>0.439593</td>
+<td>0.957058</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">62</th>
+<td>samsunggalaxy6</td>
+<td>ecgaim</td>
+<td>full composite</td>
+<td>179</td>
+<td>0.037193</td>
+<td>0.233441</td>
+<td>0.070086</td>
+<td>0.423006</td>
+<td>0.955047</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">98</th>
+<td>samsunggalaxy6</td>
+<td>msvae</td>
+<td>MSE-only</td>
+<td>179</td>
+<td>0.029366</td>
+<td>0.417020</td>
+<td>0.061412</td>
+<td>0.474315</td>
+<td>0.962719</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">126</th>
+<td>samsunggalaxy6</td>
+<td>msvae</td>
+<td>full composite</td>
+<td>179</td>
+<td>0.030384</td>
+<td>0.382381</td>
+<td>0.056508</td>
+<td>0.565351</td>
+<td>0.964507</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">162</th>
+<td>samsunggalaxy6</td>
+<td>unet</td>
+<td>MSE-only</td>
+<td>179</td>
+<td>0.030947</td>
+<td>0.468578</td>
+<td>0.065125</td>
+<td>0.489684</td>
+<td>0.962458</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">190</th>
+<td>samsunggalaxy6</td>
+<td>unet</td>
+<td>full composite</td>
+<td>179</td>
+<td>0.027120</td>
+<td>0.602555</td>
+<td>0.059279</td>
+<td>0.531119</td>
+<td>0.967709</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">35</th>
+<td>withingsscanwatch</td>
+<td>ecgaim</td>
+<td>MSE-only</td>
+<td>180</td>
+<td>0.033440</td>
+<td>0.434662</td>
+<td>0.059359</td>
+<td>0.500689</td>
+<td>0.961000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">63</th>
+<td>withingsscanwatch</td>
+<td>ecgaim</td>
+<td>full composite</td>
+<td>180</td>
+<td>0.035358</td>
+<td>0.364393</td>
+<td>0.059181</td>
+<td>0.483034</td>
+<td>0.963815</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">99</th>
+<td>withingsscanwatch</td>
+<td>msvae</td>
+<td>MSE-only</td>
+<td>180</td>
+<td>0.027558</td>
+<td>0.461285</td>
+<td>0.052020</td>
+<td>0.603468</td>
+<td>0.967556</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">127</th>
+<td>withingsscanwatch</td>
+<td>msvae</td>
+<td>full composite</td>
+<td>180</td>
+<td>0.029129</td>
+<td>0.417834</td>
+<td>0.044582</td>
+<td>0.643402</td>
+<td>0.977148</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">163</th>
+<td>withingsscanwatch</td>
+<td>unet</td>
+<td>MSE-only</td>
+<td>180</td>
+<td>0.030131</td>
+<td>0.493562</td>
+<td>0.054057</td>
+<td>0.609044</td>
+<td>0.966296</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">191</th>
+<td>withingsscanwatch</td>
+<td>unet</td>
+<td>full composite</td>
+<td>180</td>
+<td>0.025559</td>
+<td>0.627591</td>
+<td>0.053282</td>
+<td>0.608575</td>
+<td>0.967444</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>The anchor table exposes endpoint discordance rather than supporting a universal winner. A mask can improve waveform correlation while worsening probability drift, and the direction can differ by architecture and device. Formal inference must retain pairing by record and correct for the repeated device/task comparisons; the 24 aggregate anchor rows alone do not supply uncertainty.</p>
+</section>
+<section id="simulator-and-paired-reference-calibration" class="level2" data-number="11.6">
+<h2 data-number="11.6" class="anchored" data-anchor-id="simulator-and-paired-reference-calibration"><span class="header-section-number">11.6</span> Simulator and paired-reference calibration</h2>
+<p>The bundle separately records checks against programmed simulator targets and paired Philips reference traces. Heart-rate, R-wave-amplitude, and ST-offset errors are simulator-calibrated protocol measurements. The square-wave value is the maximum cross-correlation used during lag alignment and is not an independent accuracy endpoint.</p>
+<div class="cell" data-tbl-cap="Selected device-protocol calibration measurements; these are simulator/paired-reference checks, not patient outcomes." data-execution_count="6">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>calibration_rows <span class="op">=</span> []</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> device, values <span class="kw">in</span> payload[<span class="st">"device_protocol_ground_truth"</span>].items():</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    calibration_rows.append({</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"device"</span>: device,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"heart_rate_records"</span>: values[<span class="st">"heart_rate"</span>][<span class="st">"n_records"</span>],</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"watch_vs_simulator_hr_mae_bpm"</span>: values[<span class="st">"heart_rate"</span>][<span class="st">"watch_vs_simulator"</span>][<span class="st">"mae"</span>],</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"r_wave_records"</span>: values[<span class="st">"r_wave_amplitude"</span>][<span class="st">"n_records"</span>],</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"watch_vs_simulator_r_amp_mae_uv"</span>: values[<span class="st">"r_wave_amplitude"</span>][<span class="st">"watch_vs_simulator"</span>][<span class="st">"mae"</span>],</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"st_records"</span>: values[<span class="st">"st_offset"</span>][<span class="st">"n_records"</span>],</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"watch_vs_simulator_st_mae_uv"</span>: values[<span class="st">"st_offset"</span>][<span class="st">"watch_vs_simulator"</span>][<span class="st">"mae"</span>],</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"square_wave_records"</span>: values[<span class="st">"square_wave"</span>][<span class="st">"n_records"</span>],</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"max_aligned_square_wave_correlation"</span>: values[<span class="st">"square_wave"</span>][<span class="st">"watch_vs_philips_max_aligned_cross_correlation"</span>],</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(calibration_rows)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="smartwatch-ground-truth-calibration" class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<caption>Selected device-protocol calibration measurements; these are simulator/paired-reference checks, not patient outcomes.</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">device</th>
+<th data-quarto-table-cell-role="th">heart_rate_records</th>
+<th data-quarto-table-cell-role="th">watch_vs_simulator_hr_mae_bpm</th>
+<th data-quarto-table-cell-role="th">r_wave_records</th>
+<th data-quarto-table-cell-role="th">watch_vs_simulator_r_amp_mae_uv</th>
+<th data-quarto-table-cell-role="th">st_records</th>
+<th data-quarto-table-cell-role="th">watch_vs_simulator_st_mae_uv</th>
+<th data-quarto-table-cell-role="th">square_wave_records</th>
+<th data-quarto-table-cell-role="th">max_aligned_square_wave_correlation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>applewatch_serie8</td>
+<td>75</td>
+<td>5.942597</td>
+<td>20</td>
+<td>541.457291</td>
+<td>80</td>
+<td>313.955894</td>
+<td>5</td>
+<td>0.996773</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>fitbitsense2</td>
+<td>76</td>
+<td>0.221479</td>
+<td>20</td>
+<td>483.421251</td>
+<td>79</td>
+<td>370.781200</td>
+<td>5</td>
+<td>0.980581</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>samsunggalaxy6</td>
+<td>75</td>
+<td>3.626966</td>
+<td>20</td>
+<td>470.484465</td>
+<td>79</td>
+<td>298.252199</td>
+<td>5</td>
+<td>0.963103</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>withingsscanwatch</td>
+<td>75</td>
+<td>0.211283</td>
+<td>20</td>
+<td>588.333786</td>
+<td>80</td>
+<td>401.782816</td>
+<td>5</td>
+<td>0.901838</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Large amplitude and ST-offset errors in these simulator conditions are warnings about transport and measurement—not estimates of patient-level diagnostic harm. The correct follow-up is a paired waveform audit stratified by programmed condition, followed by independently labeled clinical data if a diagnostic claim is intended.</p>
+</section>
+<section id="failure-analysis-required-for-a-publishable-transfer-claim" class="level2" data-number="11.7">
+<h2 data-number="11.7" class="anchored" data-anchor-id="failure-analysis-required-for-a-publishable-transfer-claim"><span class="header-section-number">11.7</span> Failure analysis required for a publishable transfer claim</h2>
+<ol type="1">
+<li>Preserve the device/condition/record pairing and expose unmatched records.</li>
+<li>Compare against simple baselines: Lead-II replication, conditional mean, linear transform, and zero-filled input.</li>
+<li>Report each missing lead separately; an eleven-lead average can hide precordial failure.</li>
+<li>Measure alignment sensitivity by repeating metrics before and after the prespecified lag correction.</li>
+<li>Stratify errors by amplitude, frequency, square-wave, and ST-segment protocol.</li>
+<li>Inspect records with favorable global correlation but large ST or ECGFounder probability drift.</li>
+<li>Use patient ECGs and adjudicated labels before making clinical-device claims.</li>
+</ol>
+</section>
+<section id="reproduction-pointers" class="level2" data-number="11.8">
+<h2 data-number="11.8" class="anchored" data-anchor-id="reproduction-pointers"><span class="header-section-number">11.8</span> Reproduction pointers</h2>
+<ul>
+<li>Locked aggregate results: <code>results/comprehensive_latest_48_models/tables/smartwatch_four_device_summary.csv</code></li>
+<li>Full protocol and per-model results: <code>results/comprehensive_latest_48_models/smartwatch/four_device_results.json</code></li>
+<li>Study manifest and digests: <code>results/comprehensive_latest_48_models/MANIFEST.json</code></li>
+</ul>
+<p>The defensible conclusion is narrow: PTB-XL-trained reconstruction models can be stress-tested zero-shot on paired/simulator smartwatch Lead-II signals, and their waveform and frozen-classifier fidelity vary materially across model and device conditions. The experiment does not establish that reconstructed leads are clinically interchangeable with a measured 12-lead ECG.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./08_factorial_loss_matrix_benchmarks.html" class="pagination-link" aria-label="Interim 48-Cell Results and Running Seven-Position Loss Benchmark">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interim 48-Cell Results and Running Seven-Position Loss Benchmark</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./10_echonext_classifier_external_validation.html" class="pagination-link" aria-label="EchoNext Classifier and External Diagnostic Validation">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">EchoNext Classifier and External Diagnostic Validation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Four-Device Smartwatch Transfer Case Study {#sec-smartwatch}</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>This chapter evaluates what the repository actually contains: a zero-shot transfer experiment using the **Electrocardiogram-Capable Smartwatches v1.0.0** dataset and reconstruction models trained on PTB-XL. It does not train a toy model on simulated sinusoids and does not treat a commercial watch trace as a clinical 12-lead measurement.</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Evidence boundary</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>The locked protocol uses an acquired watch **Lead II** signal, not Lead I. The remaining model inputs, I and V2, are zero-filled before inference. Signal endpoints use paired watch/Philips or simulator-calibrated records, and the downstream endpoint is frozen **ECGFounder** probability fidelity. Human diagnostic ground truth is unavailable. Device names identify dataset folders; they do not justify causal claims about proprietary filters, electrodes, or firmware.</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## The inverse problem actually tested</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>Let $Y(t)\in\mathbb{R}^{12}$ be the reference lead vector and let $S_{II}$ select Lead II. The wearable observation is</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>$$x_{II}(t)=S_{II}Y(t)+n(t).$$</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>The trained model expects I, II, and V2, so the out-of-domain adapter supplies</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>$$\tilde{x}(t)=<span class="co">[</span><span class="ot">0,\ x_{II}(t),\ 0</span><span class="co">]</span>.$$</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>The primary transfer endpoint excludes the observed Lead II and scores the other eleven outputs. This is more difficult than the PTB-XL task, where all three expected inputs are present. A single measured projection cannot uniquely identify every spatial cardiac vector; reconstruction therefore estimates a conditional distribution learned from the training cohort. Physiologic losses can regularize that estimate, but no mathematical argument makes VCG or any other loss term “required,” and no loss can recover information absent from both the observation and learned prior.</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Locked data and pairing contract</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>The result bundle records four source conditions—amplitude, frequency, 2-Hz square-wave, and ST-segment tests—and four watch folders. Each WFDB header supplies its native sampling rate. Signals are resampled to 500 Hz with <span class="in">`scipy.signal.resample_poly`</span>, aligned using 0.5–40 Hz band-passed normalized cross-correlation, and evaluated over 5,000 samples.</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: smartwatch-contract-audit</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>ROOT <span class="op">=</span> Path(<span class="st">".."</span>)</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>RESULT_JSON <span class="op">=</span> (</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    ROOT <span class="op">/</span> <span class="st">"results/comprehensive_latest_48_models/"</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>           <span class="st">"smartwatch/four_device_results.json"</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>SUMMARY_CSV <span class="op">=</span> (</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    ROOT <span class="op">/</span> <span class="st">"results/comprehensive_latest_48_models/"</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>           <span class="st">"tables/smartwatch_four_device_summary.csv"</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>payload <span class="op">=</span> json.loads(RESULT_JSON.read_text())</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>watch <span class="op">=</span> pd.read_csv(SUMMARY_CSV)</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>protocol <span class="op">=</span> payload[<span class="st">"protocol"</span>]</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quantity"</span>: [</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>        <span class="st">"summary rows"</span>, <span class="st">"reconstruction models"</span>, <span class="st">"devices"</span>,</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">"expected rows"</span>, <span class="st">"task"</span>, <span class="st">"evaluation sample rate"</span>,</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>        <span class="st">"evaluation length"</span>, <span class="st">"human diagnostic ground truth"</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>    <span class="st">"value"</span>: [</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>        <span class="bu">len</span>(watch), watch.model_id.nunique(), watch.device.nunique(),</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>        watch.model_id.nunique() <span class="op">*</span> watch.device.nunique(),</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>        protocol[<span class="st">"task"</span>], protocol[<span class="st">"evaluation_sample_rate_hz"</span>],</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>        protocol[<span class="st">"evaluation_length_samples"</span>],</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>        protocol[<span class="st">"evaluation_taxonomy"</span>][<span class="st">"human_diagnostic_ground_truth"</span>],</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>The 192 rows are the full Cartesian product of 48 locked reconstruction cells and four devices. This is not 192 independent cohorts: every model is evaluated against the corresponding paired device records.</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: smartwatch-pairing-audit</span></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Watch-to-reference pairing audit from the locked protocol."</span></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>pairing_rows <span class="op">=</span> []</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> device, audit <span class="kw">in</span> protocol[<span class="st">"pairing_audit"</span>].items():</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>    pairing_rows.append({</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>        <span class="st">"device"</span>: device,</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>        <span class="st">"discovered_watch_records"</span>: audit[<span class="st">"discovered_watch_records"</span>],</span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>        <span class="st">"paired_records"</span>: audit[<span class="st">"paired_records"</span>],</span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>        <span class="st">"unmatched_records"</span>: <span class="bu">len</span>(audit[<span class="st">"unmatched_watch_record_ids"</span>]),</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>        <span class="st">"unmatched_ids"</span>: <span class="st">", "</span>.join(audit[<span class="st">"unmatched_watch_record_ids"</span>]) <span class="kw">or</span> <span class="st">"none"</span>,</span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pairing_key"</span>: audit[<span class="st">"pairing_key"</span>],</span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(pairing_rows)</span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>Apple Watch, Fitbit, and Withings contribute 180 paired records per model; Samsung contributes 179. One Fitbit ST-segment record is explicitly unmatched rather than silently dropped. These counts describe simulator/device test files, not unique patients.</span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## What every result column means</span></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>The signal table reports missing-11-lead MSE, RMSE, MAE, Pearson correlation, $R^2$, derivative MSE, and SNR. It also reports fidelity between ECGFounder probabilities from the paired reference and reconstructed waveforms: MAE, RMSE, Pearson correlation, Bernoulli KL divergence, Jensen–Shannon divergence, and fixed-threshold agreement.</span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>Probability fidelity is a machine-mediated endpoint. It asks whether one frozen classifier changes, not whether clinical diagnoses are correct. In particular, high threshold agreement can coexist with poor probability correlation when most task probabilities lie far from their thresholds.</span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a><span class="fu">## Device-stratified distribution across all 48 models</span></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: smartwatch-device-distribution</span></span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Descriptive distribution across all 48 reconstruction cells; models, not records, are the rows summarized here."</span></span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>device_summary <span class="op">=</span> watch.groupby(<span class="st">"device"</span>, as_index<span class="op">=</span><span class="va">False</span>).agg(</span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>    models<span class="op">=</span>(<span class="st">"model_id"</span>, <span class="st">"nunique"</span>),</span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>    paired_records<span class="op">=</span>(<span class="st">"n_paired_records"</span>, <span class="st">"first"</span>),</span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>    median_missing11_mse<span class="op">=</span>(<span class="st">"missing11_mse"</span>, <span class="st">"median"</span>),</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>    q25_missing11_pearson<span class="op">=</span>(<span class="st">"missing11_pearson"</span>, <span class="kw">lambda</span> x: x.quantile(<span class="fl">0.25</span>)),</span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a>    median_missing11_pearson<span class="op">=</span>(<span class="st">"missing11_pearson"</span>, <span class="st">"median"</span>),</span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>    q75_missing11_pearson<span class="op">=</span>(<span class="st">"missing11_pearson"</span>, <span class="kw">lambda</span> x: x.quantile(<span class="fl">0.75</span>)),</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>    median_ecgfounder_probability_pearson<span class="op">=</span>(</span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ecgfounder_fidelity_probability_pearson"</span>, <span class="st">"median"</span></span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>    median_threshold_agreement<span class="op">=</span>(</span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ecgfounder_fidelity_threshold_agreement"</span>, <span class="st">"median"</span></span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>device_summary</span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>This table describes the distribution of model outcomes within each device. It must not be read as a randomized comparison of watch hardware: the dataset conditions, alignment, record composition, and preprocessing can all contribute to differences.</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: smartwatch-device-model-plot</span></span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Missing-11-lead correlation for all 48 model cells within each device. Each point is a model–device result, not a patient."</span></span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.box(</span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>    watch,</span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"device"</span>,</span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"missing11_pearson"</span>,</span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a>    points<span class="op">=</span><span class="st">"all"</span>,</span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a>    hover_data<span class="op">=</span>[<span class="st">"model_id"</span>, <span class="st">"missing11_mse"</span>, <span class="st">"n_paired_records"</span>],</span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>{<span class="st">"missing11_pearson"</span>: <span class="st">"Missing-11-lead Pearson"</span>, <span class="st">"device"</span>: <span class="st">"Device folder"</span>},</span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a>fig.update_layout(height<span class="op">=</span><span class="dv">500</span>, xaxis_tickangle<span class="op">=-</span><span class="dv">20</span>)</span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a>fig.show()</span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a><span class="fu">## Prespecified MSE-only versus full-composite anchors</span></span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>To avoid selecting the best model after opening all device results, the next table uses the same six within-architecture anchors as the main 48-cell analysis.</span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: smartwatch-anchor-contrast</span></span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Locked MSE-only and full-composite anchors on each device."</span></span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a>anchor_ids <span class="op">=</span> [</span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a>    <span class="st">"unet__e1c0m0d0__s42"</span>, <span class="st">"unet__e1c1m1d1__s42"</span>,</span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a>    <span class="st">"msvae__e1c0m0d0__s42"</span>, <span class="st">"msvae__e1c1m1d1__s42"</span>,</span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ecgaim__e1c0m0d0__s42"</span>, <span class="st">"ecgaim__e1c1m1d1__s42"</span>,</span>
+<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>anchors <span class="op">=</span> watch[watch.model_id.isin(anchor_ids)].copy()</span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a>anchors[<span class="st">"family"</span>] <span class="op">=</span> anchors.model_id.<span class="bu">str</span>.split(<span class="st">"__"</span>).<span class="bu">str</span>[<span class="dv">0</span>]</span>
+<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a>anchors[<span class="st">"loss"</span>] <span class="op">=</span> np.where(</span>
+<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a>    anchors.model_id.<span class="bu">str</span>.contains(<span class="st">"__e1c0m0d0__"</span>), <span class="st">"MSE-only"</span>, <span class="st">"full composite"</span></span>
+<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a>anchors[[</span>
+<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a>    <span class="st">"device"</span>, <span class="st">"family"</span>, <span class="st">"loss"</span>, <span class="st">"n_paired_records"</span>,</span>
+<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a>    <span class="st">"missing11_mse"</span>, <span class="st">"missing11_pearson"</span>,</span>
+<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ecgfounder_fidelity_probability_mae"</span>,</span>
+<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ecgfounder_fidelity_probability_pearson"</span>,</span>
+<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ecgfounder_fidelity_threshold_agreement"</span>,</span>
+<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a>]].sort_values([<span class="st">"device"</span>, <span class="st">"family"</span>, <span class="st">"loss"</span>])</span>
+<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a>The anchor table exposes endpoint discordance rather than supporting a universal winner. A mask can improve waveform correlation while worsening probability drift, and the direction can differ by architecture and device. Formal inference must retain pairing by record and correct for the repeated device/task comparisons; the 24 aggregate anchor rows alone do not supply uncertainty.</span>
+<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a><span class="fu">## Simulator and paired-reference calibration</span></span>
+<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a>The bundle separately records checks against programmed simulator targets and paired Philips reference traces. Heart-rate, R-wave-amplitude, and ST-offset errors are simulator-calibrated protocol measurements. The square-wave value is the maximum cross-correlation used during lag alignment and is not an independent accuracy endpoint.</span>
+<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: smartwatch-ground-truth-calibration</span></span>
+<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Selected device-protocol calibration measurements; these are simulator/paired-reference checks, not patient outcomes."</span></span>
+<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>calibration_rows <span class="op">=</span> []</span>
+<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> device, values <span class="kw">in</span> payload[<span class="st">"device_protocol_ground_truth"</span>].items():</span>
+<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a>    calibration_rows.append({</span>
+<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a>        <span class="st">"device"</span>: device,</span>
+<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a>        <span class="st">"heart_rate_records"</span>: values[<span class="st">"heart_rate"</span>][<span class="st">"n_records"</span>],</span>
+<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a>        <span class="st">"watch_vs_simulator_hr_mae_bpm"</span>: values[<span class="st">"heart_rate"</span>][<span class="st">"watch_vs_simulator"</span>][<span class="st">"mae"</span>],</span>
+<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>        <span class="st">"r_wave_records"</span>: values[<span class="st">"r_wave_amplitude"</span>][<span class="st">"n_records"</span>],</span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a>        <span class="st">"watch_vs_simulator_r_amp_mae_uv"</span>: values[<span class="st">"r_wave_amplitude"</span>][<span class="st">"watch_vs_simulator"</span>][<span class="st">"mae"</span>],</span>
+<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a>        <span class="st">"st_records"</span>: values[<span class="st">"st_offset"</span>][<span class="st">"n_records"</span>],</span>
+<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a>        <span class="st">"watch_vs_simulator_st_mae_uv"</span>: values[<span class="st">"st_offset"</span>][<span class="st">"watch_vs_simulator"</span>][<span class="st">"mae"</span>],</span>
+<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a>        <span class="st">"square_wave_records"</span>: values[<span class="st">"square_wave"</span>][<span class="st">"n_records"</span>],</span>
+<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a>        <span class="st">"max_aligned_square_wave_correlation"</span>: values[<span class="st">"square_wave"</span>][<span class="st">"watch_vs_philips_max_aligned_cross_correlation"</span>],</span>
+<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(calibration_rows)</span>
+<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a>Large amplitude and ST-offset errors in these simulator conditions are warnings about transport and measurement—not estimates of patient-level diagnostic harm. The correct follow-up is a paired waveform audit stratified by programmed condition, followed by independently labeled clinical data if a diagnostic claim is intended.</span>
+<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a><span class="fu">## Failure analysis required for a publishable transfer claim</span></span>
+<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Preserve the device/condition/record pairing and expose unmatched records.</span>
+<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Compare against simple baselines: Lead-II replication, conditional mean, linear transform, and zero-filled input.</span>
+<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Report each missing lead separately; an eleven-lead average can hide precordial failure.</span>
+<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Measure alignment sensitivity by repeating metrics before and after the prespecified lag correction.</span>
+<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Stratify errors by amplitude, frequency, square-wave, and ST-segment protocol.</span>
+<span id="cb7-202"><a href="#cb7-202" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Inspect records with favorable global correlation but large ST or ECGFounder probability drift.</span>
+<span id="cb7-203"><a href="#cb7-203" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>Use patient ECGs and adjudicated labels before making clinical-device claims.</span>
+<span id="cb7-204"><a href="#cb7-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-205"><a href="#cb7-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproduction pointers</span></span>
+<span id="cb7-206"><a href="#cb7-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-207"><a href="#cb7-207" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Locked aggregate results: <span class="in">`results/comprehensive_latest_48_models/tables/smartwatch_four_device_summary.csv`</span></span>
+<span id="cb7-208"><a href="#cb7-208" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Full protocol and per-model results: <span class="in">`results/comprehensive_latest_48_models/smartwatch/four_device_results.json`</span></span>
+<span id="cb7-209"><a href="#cb7-209" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Study manifest and digests: <span class="in">`results/comprehensive_latest_48_models/MANIFEST.json`</span></span>
+<span id="cb7-210"><a href="#cb7-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-211"><a href="#cb7-211" aria-hidden="true" tabindex="-1"></a>The defensible conclusion is narrow: PTB-XL-trained reconstruction models can be stress-tested zero-shot on paired/simulator smartwatch Lead-II signals, and their waveform and frozen-classifier fidelity vary materially across model and device conditions. The experiment does not establish that reconstructed leads are clinically interchangeable with a measured 12-lead ECG.</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

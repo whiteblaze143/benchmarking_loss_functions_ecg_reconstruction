@@ -1,0 +1,445 @@
+{
+  "schema_version": 2,
+  "protocol": {
+    "dataset": "PTB-XL",
+    "split": "val",
+    "n_samples": 2183,
+    "tensor_shape": [
+      12,
+      5000
+    ],
+    "sample_rate_hz": 500,
+    "classifier": "ECGFounder 12-lead frozen 150-task head",
+    "paper_parity_classifier": "separately retrained frozen ECG-FM five-superclass head",
+    "labels": [
+      "ABNORMAL ECG",
+      "NORMAL SINUS RHYTHM",
+      "NORMAL ECG",
+      "SINUS RHYTHM",
+      "SINUS BRADYCARDIA",
+      "ATRIAL FIBRILLATION",
+      "SINUS TACHYCARDIA",
+      "otherwise normal ecg",
+      "LEFT AXIS DEVIATION",
+      "PREMATURE VENTRICULAR COMPLEXES",
+      "BORDERLINE ECG",
+      "RIGHT BUNDLE BRANCH BLOCK",
+      "SEPTAL INFARCT",
+      "LEFT ATRIAL ENLARGEMENT",
+      "NONSPECIFIC T WAVE ABNORMALITY",
+      "LOW VOLTAGE QRS",
+      "PREMATURE ATRIAL COMPLEXES",
+      "ANTERIOR INFARCT",
+      "INCOMPLETE RIGHT BUNDLE BRANCH BLOCK",
+      "PREMATURE SUPRAVENTRICULAR COMPLEXES",
+      "LEFT BUNDLE BRANCH BLOCK",
+      "NONSPECIFIC T WAVE ABNORMALITY NOW EVIDENT IN",
+      "NONSPECIFIC T WAVE ABNORMALITY NO LONGER EVIDENT IN",
+      "T WAVE INVERSION NOW EVIDENT IN",
+      "LATERAL INFARCT",
+      "NONSPECIFIC ST ABNORMALITY",
+      "LEFT VENTRICULAR HYPERTROPHY",
+      "T WAVE INVERSION NO LONGER EVIDENT IN",
+      "WITH RAPID VENTRICULAR RESPONSE",
+      "QT HAS SHORTENED",
+      "QT HAS LENGTHENED",
+      "FUSION COMPLEXES",
+      "ATRIAL FLUTTER",
+      "MARKED SINUS BRADYCARDIA",
+      "WITH SINUS ARRHYTHMIA",
+      "NONSPECIFIC ST AND T WAVE ABNORMALITY",
+      "LEFT ANTERIOR FASCICULAR BLOCK",
+      "RIGHT AXIS DEVIATION",
+      "ECTOPIC ATRIAL RHYTHM",
+      "UNDETERMINED RHYTHM",
+      "ANTEROSEPTAL INFARCT",
+      "RIGHTWARD AXIS",
+      "ST NOW DEPRESSED IN",
+      "WITH SHORT PR",
+      "WITH MARKED SINUS ARRHYTHMIA",
+      "ST NO LONGER DEPRESSED IN",
+      "INVERTED T WAVES HAVE REPLACED NONSPECIFIC T WAVE ABNORMALITY IN",
+      "NON-SPECIFIC CHANGE IN ST SEGMENT IN",
+      "NONSPECIFIC T WAVE ABNORMALITY HAS REPLACED INVERTED T WAVES IN",
+      "JUNCTIONAL RHYTHM",
+      "ELECTRONIC ATRIAL PACEMAKER",
+      "ABERRANT CONDUCTION",
+      "ELECTRONIC VENTRICULAR PACEMAKER",
+      "T WAVE INVERSION LESS EVIDENT IN",
+      "ANTEROLATERAL INFARCT",
+      "WITH REPOLARIZATION ABNORMALITY",
+      "RSR' OR QR PATTERN IN V1 SUGGESTS RIGHT VENTRICULAR CONDUCTION DELAY",
+      "T WAVE INVERSION MORE EVIDENT IN",
+      "WIDE QRS RHYTHM",
+      "WITH PREMATURE VENTRICULAR OR ABERRANTLY CONDUCTED COMPLEXES",
+      "RIGHT ATRIAL ENLARGEMENT",
+      "INFERIOR INFARCT",
+      "INCOMPLETE LEFT BUNDLE BRANCH BLOCK",
+      "VOLTAGE CRITERIA FOR LEFT VENTRICULAR HYPERTROPHY",
+      "OR DIGITALIS EFFECT",
+      "BIFASCICULAR BLOCK",
+      "ST NO LONGER ELEVATED IN",
+      "WITH SLOW VENTRICULAR RESPONSE",
+      "ST ELEVATION NOW PRESENT IN",
+      "PREMATURE ECTOPIC COMPLEXES",
+      "LEFT POSTERIOR FASCICULAR BLOCK",
+      "T WAVE AMPLITUDE HAS DECREASED IN",
+      "WITH A COMPETING JUNCTIONAL PACEMAKER",
+      "RIGHT SUPERIOR AXIS DEVIATION",
+      "BIATRIAL ENLARGEMENT",
+      "VENTRICULAR-PACED RHYTHM",
+      "ATRIAL-PACED RHYTHM",
+      "T WAVE AMPLITUDE HAS INCREASED IN",
+      "WITH QRS WIDENING",
+      "WITH 1ST DEGREE AV BLOCK",
+      "PROLONGED QT",
+      "WITH PROLONGED AV CONDUCTION",
+      "RIGHT VENTRICULAR HYPERTROPHY",
+      "WITH QRS WIDENING AND REPOLARIZATION ABNORMALITY",
+      "ATRIAL-SENSED VENTRICULAR-PACED RHYTHM",
+      "AV SEQUENTIAL OR DUAL CHAMBER ELECTRONIC PACEMAKER",
+      "PULMONARY DISEASE PATTERN",
+      "ACUTE MI / STEMI",
+      "INFERIOR-POSTERIOR INFARCT",
+      "NONSPECIFIC INTRAVENTRICULAR CONDUCTION DELAY",
+      "PREMATURE VENTRICULAR AND FUSION COMPLEXES",
+      "IN A PATTERN OF BIGEMINY",
+      "AV DUAL-PACED RHYTHM",
+      "SUPRAVENTRICULAR TACHYCARDIA",
+      "VENTRICULAR-PACED COMPLEXES",
+      "WIDE QRS TACHYCARDIA",
+      "RSR' PATTERN IN V1",
+      "ST LESS DEPRESSED IN",
+      "VENTRICULAR TACHYCARDIA",
+      "EARLY REPOLARIZATION",
+      "ST MORE DEPRESSED IN",
+      "ANTEROLATERAL LEADS",
+      "ELECTRONIC DEMAND PACING",
+      "RBBB AND LEFT ANTERIOR FASCICULAR BLOCK",
+      "LATERAL INJURY PATTERN",
+      "BIVENTRICULAR PACEMAKER DETECTED",
+      "SUSPECT UNSPECIFIED PACEMAKER FAILURE",
+      "WOLFF-PARKINSON-WHITE",
+      "WITH VENTRICULAR ESCAPE COMPLEXES",
+      "INFERIOR INJURY PATTERN",
+      "CONSIDER RIGHT VENTRICULAR INVOLVEMENT IN ACUTE INFERIOR INFARCT",
+      "ST ELEVATION HAS REPLACED ST DEPRESSION IN",
+      "NONSPECIFIC INTRAVENTRICULAR BLOCK",
+      "MASKED BY FASCICULAR BLOCK",
+      "PEDIATRIC ECG ANALYSIS",
+      "BLOCKED",
+      "WITH UNDETERMINED RHYTHM IRREGULARITY",
+      "LEFTWARD AXIS",
+      "WITH 2ND DEGREE SA BLOCK MOBITZ I",
+      "ACUTE",
+      "ABNORMAL LEFT AXIS DEVIATION",
+      "WITH COMPLETE HEART BLOCK",
+      "NO P-WAVES FOUND",
+      "ST LESS ELEVATED IN",
+      "WITH RETROGRADE CONDUCTION",
+      "ST MORE ELEVATED IN",
+      "JUNCTIONAL BRADYCARDIA",
+      "WITH VARIABLE AV BLOCK",
+      "ANTERIOR INJURY PATTERN",
+      "WITH JUNCTIONAL ESCAPE COMPLEXES",
+      "ACUTE MI",
+      "ACUTE PERICARDITIS",
+      "POSTERIOR INFARCT",
+      "IDIOVENTRICULAR RHYTHM",
+      "WITH 2ND DEGREE SA BLOCK MOBITZ II",
+      "R IN AVL",
+      "SINUS/ATRIAL CAPTURE",
+      "AV DUAL-PACED COMPLEXES",
+      "INFEROLATERAL INJURY PATTERN",
+      "RBBB AND LEFT POSTERIOR FASCICULAR BLOCK",
+      "ANTEROLATERAL INJURY PATTERN",
+      "ATRIAL-PACED COMPLEXES",
+      "WITH SINUS PAUSE",
+      "BIVENTRICULAR HYPERTROPHY",
+      "ABNORMAL RIGHT AXIS DEVIATION",
+      "SUPRAVENTRICULAR COMPLEXES",
+      "WITH 2ND DEGREE AV BLOCK MOBITZ I",
+      "WITH 2:1 AV CONDUCTION",
+      "WITH AV DISSOCIATION",
+      "MULTIFOCAL ATRIAL TACHYCARDIA"
+    ],
+    "robustness_conditions": [],
+    "robustness_pairing": "FNV1a(condition_id,ecg_id,lead,base_seed=1337)",
+    "robustness_condition_batch": 4,
+    "fitbit_noise_provenance": null,
+    "fitbit_noise_status": "not_included_missing_verified_extraction_provenance",
+    "demographics": [
+      "age",
+      "sex"
+    ],
+    "missing_lead_metrics_primary": true
+  },
+  "models": {
+    "msvae__e1c1m1d0__s2026": {
+      "id": "msvae__e1c1m1d0__s2026",
+      "family": "multiscale_vae",
+      "loss": "base+correlation+mmd",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/factorial_v2/confirmation/msvae__e1c1m1d0__s2026/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.0005127976168965835,
+            "rmse": 0.022645035148936808,
+            "mae": 0.011489330710788085,
+            "pearson": 0.989699825255411,
+            "r2": 0.9718960300258579,
+            "derivative_mse": 0.00019580658133053962,
+            "snr_db": 17.352435924619844
+          },
+          "aVR": {
+            "mse": 0.0036399337351786343,
+            "rmse": 0.060331863349134464,
+            "mae": 0.010312814518382011,
+            "pearson": 0.9921112248398435,
+            "r2": 0.9792881164865324,
+            "derivative_mse": 0.00026381381961501865,
+            "snr_db": 8.259487061764062
+          },
+          "aVL": {
+            "mse": 0.0012679264276113961,
+            "rmse": 0.03560795455528717,
+            "mae": 0.010831303989412148,
+            "pearson": 0.988477778554891,
+            "r2": 0.9677996137411945,
+            "derivative_mse": 0.00018699606057766824,
+            "snr_db": 11.986950499239306
+          },
+          "aVF": {
+            "mse": 0.0011148293033631307,
+            "rmse": 0.03338905963580183,
+            "mae": 0.009772989252276558,
+            "pearson": 0.9916548307369021,
+            "r2": 0.976508981090481,
+            "derivative_mse": 0.0001662749802200029,
+            "snr_db": 13.233201486344564
+          },
+          "V1": {
+            "mse": 0.01663196654937926,
+            "rmse": 0.1289649818725194,
+            "mae": 0.06024393094701064,
+            "pearson": 0.8794225899385739,
+            "r2": 0.7296423266581642,
+            "derivative_mse": 0.0001679879142703397,
+            "snr_db": 4.843712195486073
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.03811211282517787,
+            "rmse": 0.1952232384353304,
+            "mae": 0.08811505243823008,
+            "pearson": 0.8786365718291104,
+            "r2": 0.6881970814264973,
+            "derivative_mse": 0.0005783767018005682,
+            "snr_db": 4.629782565605554
+          },
+          "V4": {
+            "mse": 0.10327981074739911,
+            "rmse": 0.32137176407923446,
+            "mae": 0.09613605169697306,
+            "pearson": 0.8569256823596964,
+            "r2": 0.6140432927895728,
+            "derivative_mse": 0.0007158896125977634,
+            "snr_db": 1.783339111550359
+          },
+          "V5": {
+            "mse": 0.029946432212728236,
+            "rmse": 0.17305037478355323,
+            "mae": 0.08336923644711978,
+            "pearson": 0.8684184742367055,
+            "r2": 0.665224734108436,
+            "derivative_mse": 0.00044397312163952534,
+            "snr_db": 3.912410043397825
+          },
+          "V6": {
+            "mse": 0.034463413751928074,
+            "rmse": 0.18564324321646633,
+            "mae": 0.08294048007016219,
+            "pearson": 0.8428076537879737,
+            "r2": 0.6556962162215285,
+            "derivative_mse": 0.00023769484591558502,
+            "snr_db": 2.6702229467226934
+          }
+        },
+        "all_leads": {
+          "mse": 0.019080768597471858,
+          "rmse": 0.096352292923022,
+          "mae": 0.03776759917252955,
+          "pearson": 0.940679552628259,
+          "r2": 0.8540246993790221,
+          "derivative_mse": 0.0002464011364972509,
+          "snr_db": 50.027224758824495
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.025441024796629144,
+          "rmse": 0.1284697238973627,
+          "mae": 0.05035679889670606,
+          "pearson": 0.920906070171012,
+          "r2": 0.805366265838696,
+          "derivative_mse": 0.00032853484866300127,
+          "snr_db": 7.630171314970029
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.938769134512217,
+        "st_correlation": 0.8190216073777353,
+        "j_point_amplitude_mae": 0.04193046388565517,
+        "r_peak_timing_mae_ms": 79.37724350069955,
+        "waveform_correlation": 0.9211619926358666,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.864462436224686,
+          "lateral": 0.8705879403142306,
+          "inferior": 0.9913964721981973
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.3086623646737557,
+          "40_100_hz": 0.5951204737676518,
+          "100_150_hz": 0.9152647774052484
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9565331687124339
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.9086346041892698
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.931933771595415
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9179327108227984
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9320752023651977
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/confirmation/plots/msvae__e1c1m1d0__s2026.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/confirmation/per_record/msvae__e1c1m1d0__s2026.parquet"
+    }
+  }
+}

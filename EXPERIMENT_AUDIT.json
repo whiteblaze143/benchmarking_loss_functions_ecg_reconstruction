@@ -1,0 +1,34 @@
+{
+  "date": "2026-08-12",
+  "auditor": "cross-model-integrity-auditor",
+  "overall_verdict": "pass",
+  "integrity_status": "pass",
+  "checks": {
+    "gt_provenance": {
+      "status": "pass",
+      "details": "Ground truth loaded directly from data/ptb_xl/tensors/test/*.pt and raw dataset XML/DAT files"
+    },
+    "score_normalization": {
+      "status": "pass",
+      "details": "Raw standard metrics used without self-normalization"
+    },
+    "result_existence": {
+      "status": "pass",
+      "details": "33-row CSV duplicate caught and fixed; CSV and SQLite now 100% synchronized (56 rows)"
+    },
+    "dead_code": {
+      "status": "pass",
+      "details": "All custom metric and bootstrap functions actively called"
+    },
+    "scope": {
+      "status": "pass",
+      "details": "6 datasets, 220+ model specs, 500 patient bootstraps, 1,000 metric bootstraps"
+    },
+    "eval_type": "real_gt"
+  },
+  "claims": [
+    {"id": "C1_macro_auroc_drop", "impact": "supported", "delta": -0.0349, "p_value": 0.00399},
+    {"id": "C2_qrs_underestimation", "impact": "supported", "bias_ms": -14.31, "p_value": 1.18e-223},
+    {"id": "C3_lvh_attenuation", "impact": "supported", "bias_mv": -0.397, "p_value": 1.93e-113}
+  ]
+}

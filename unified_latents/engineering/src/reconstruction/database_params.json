@@ -1,0 +1,10 @@
+{
+    "host": "PTBXL",
+    "port": 0,
+    "username": "",
+    "password": "",
+    "collection": "Element",
+    "root_dir": "/home/mithunmanivannan/data/ptb_xl/",
+    "csv_file": "/home/mithunmanivannan/data/ptb_xl/ptbxl_database.csv",
+    "target_fs": 100
+}

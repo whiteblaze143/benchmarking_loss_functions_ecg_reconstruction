@@ -1,0 +1,229 @@
+---
+title: "PTB-XL Tensor, Lead, and Preprocessing Contract"
+---
+
+## The contract actually used by training
+
+The active reconstruction study reads precomputed PTB-XL tensors from `data/ptb_xl/tensors/{train,val,test}`. Each file is named by ECG record ID and contains a 12-by-5,000 floating-point array in canonical lead order. The model observes **I, II, and V2**—indices `[0, 1, 7]`—and reconstructs the nine remaining leads. Earlier text in this chapter incorrectly selected II, V1, and V5; that would define a different inverse problem and has been removed.
+
+The content-pinned training contract declares 500 Hz, 10 seconds, mV, no normalization, train folds 1–8, validation fold 9, test fold 10, and batch size 1,024 for the running generation. “No normalization” and “no bandpass” mean the tensor values are passed to the model as stored; the Fourier/filter example later in this chapter is exploratory and is not a production transform.
+
+```{python}
+#| label: ptbxl-live-contract
+#| tbl-cap: "Live PTB-XL split and training contract read from repository artifacts."
+#| code-fold: true
+from pathlib import Path
+import hashlib
+import json
+
+import numpy as np
+import pandas as pd
+import torch
+from torch.utils.data import Dataset
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+from scipy import signal
+
+ROOT = Path("..").resolve()
+PTBXL = ROOT / "data" / "ptb_xl"
+TENSOR_ROOT = PTBXL / "tensors"
+CONTRACT_PATH = ROOT / "refine-logs" / "factorial_training_contract.json"
+CONTENT_PATH = ROOT / "refine-logs" / "ptbxl_tensor_content_manifest.json"
+
+contract = json.loads(CONTRACT_PATH.read_text())
+content_manifest = json.loads(CONTENT_PATH.read_text())
+
+def sha256_file(path, chunk_bytes=1024 * 1024):
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(chunk_bytes), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+split_rows = []
+for split in ("train", "val", "test"):
+    files = sorted((TENSOR_ROOT / split).glob("*.pt"), key=lambda path: int(path.stem))
+    declared = contract["split_content_roots"][split]
+    split_rows.append({
+        "Split": split,
+        "Files present": len(files),
+        "Contract records": declared["records"],
+        "Content-root SHA-256": declared["content_root_sha256"],
+        "First/last ECG ID": f"{files[0].stem} / {files[-1].stem}",
+    })
+display(pd.DataFrame(split_rows))
+
+display(pd.DataFrame([
+    ("Contract ID", contract["contract_id"]),
+    ("Approved source bundle", contract["approved_source_bundle_sha256"]),
+    ("Sampling rate", f"{contract['preprocessing']['sample_rate_hz']} Hz"),
+    ("Units", contract["preprocessing"]["units"]),
+    ("Normalization", contract["preprocessing"]["normalization"]),
+    ("Checkpoint state precision", contract["state_precision"]),
+    ("State-schema SHA-256", contract["state_schema_sha256"]),
+    ("Contract-file SHA-256", sha256_file(CONTRACT_PATH)),
+], columns=["Field", "Value"]))
+```
+
+## Canonical lead geometry
+
+The stored order is
+
+$$[I,II,III,aVR,aVL,aVF,V1,V2,V3,V4,V5,V6].$$
+
+The limb leads are linear combinations of three electrode potentials:
+
+$$I=\Phi_{LA}-\Phi_{RA},\qquad II=\Phi_{LL}-\Phi_{RA},\qquad III=II-I,$$
+
+$$aVR=-\frac{I+II}{2},\qquad aVL=I-\frac{II}{2},\qquad aVF=II-\frac{I}{2}.$$
+
+These identities motivate cross-lead residual checks, but digitized clinical leads need not satisfy them to machine precision because of acquisition, filtering, quantization, timing, and export behavior. The precordial leads V1–V6 are separate chest-electrode measurements relative to a central terminal; they cannot be exactly derived from I and II.
+
+The model observes `I`, `II`, and `V2`. The choice combines two limb views with one early precordial view; it is a study design choice, not a claim that this is the optimal sensor placement or that a smartwatch records all three.
+
+## Executable dataset loader
+
+The loader below mirrors the active tensor semantics: numeric record ordering, `weights_only=True`, float conversion, shape validation, no signal normalization, and selection of `[0,1,7]`. Padding to 5,120 is performed in the U-Net training/evaluation path, not persisted in these tensor files.
+
+```{python}
+#| label: ptbxl-production-loader
+#| code-fold: true
+class PTBXLTensorDataset(Dataset):
+    lead_names = ("I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6")
+    observed_indices = (0, 1, 7)
+
+    def __init__(self, tensor_root, split):
+        self.split = split
+        self.files = sorted(
+            (Path(tensor_root) / split).glob("*.pt"),
+            key=lambda path: int(path.stem),
+        )
+        if not self.files:
+            raise FileNotFoundError(f"No tensors found for split {split!r}")
+
+    def __len__(self):
+        return len(self.files)
+
+    def __getitem__(self, index):
+        path = self.files[index]
+        target = torch.load(path, map_location="cpu", weights_only=True).float()
+        if tuple(target.shape) != (12, 5000):
+            raise ValueError(f"Expected [12,5000] at {path}, got {tuple(target.shape)}")
+        if not torch.isfinite(target).all():
+            raise ValueError(f"Non-finite tensor at {path}")
+        observed = target[list(self.observed_indices)]
+        return observed, target, int(path.stem)
+
+datasets = {split: PTBXLTensorDataset(TENSOR_ROOT, split) for split in ("train", "val", "test")}
+observed, target, ecg_id = datasets["val"][0]
+metadata = pd.read_csv(PTBXL / "ptbxl_database.csv").set_index("ecg_id")
+patient_id = int(metadata.loc[ecg_id, "patient_id"])
+
+display(pd.DataFrame([
+    ("Selected split", "val"),
+    ("ECG record ID", ecg_id),
+    ("PTB-XL patient ID", patient_id),
+    ("Observed leads", "I, II, V2"),
+    ("Observed shape", str(tuple(observed.shape))),
+    ("Target shape", str(tuple(target.shape))),
+    ("Target dtype", str(target.dtype)),
+    ("Finite samples", f"{int(torch.isfinite(target).sum()):,}/{target.numel():,}"),
+], columns=["Field", "Observed value"]))
+```
+
+“Record” and “patient” are not synonyms. PTB-XL can contain multiple ECGs for one patient, so split integrity is audited on `patient_id` in the opening EDA chapter. File counts are record counts; uncertainty must cluster repeated records by patient.
+
+## Real 12-lead record view
+
+This visualization names the actual ECG and patient IDs instead of calling lexicographic “patient #1” a subject. It displays the stored tensor without filtering.
+
+```{python}
+#| label: real-ptbxl-12lead-grid
+#| fig-cap: "An actual validation tensor, identified by ECG and patient ID, displayed exactly as stored."
+lead_names = PTBXLTensorDataset.lead_names
+time_seconds = np.arange(target.shape[1]) / contract["preprocessing"]["sample_rate_hz"]
+view = time_seconds < 3
+
+fig = make_subplots(rows=6, cols=2, subplot_titles=lead_names, shared_xaxes=True)
+for lead_index, lead_name in enumerate(lead_names):
+    row, column = divmod(lead_index, 2)
+    fig.add_trace(
+        go.Scatter(
+            x=time_seconds[view], y=target[lead_index].numpy()[view],
+            mode="lines", line=dict(width=1), name=lead_name, showlegend=False,
+        ),
+        row=row + 1, col=column + 1,
+    )
+fig.update_layout(
+    title=f"PTB-XL validation ECG {ecg_id} (patient {patient_id}) — stored tensor, first 3 s",
+    height=820, margin=dict(l=20, r=20, t=65, b=20),
+)
+fig.update_xaxes(title_text="Time (s)", row=6)
+fig.update_yaxes(title_text="mV")
+fig.show()
+```
+
+## Spectral audit of the stored signal
+
+A periodogram is a record-level diagnostic, not proof of a universal “QRS band.” The example below uses Welch's method on the named Lead I tensor. Spectral summaries depend on window, detrending, segment length, and any upstream acquisition filtering, so those choices remain visible.
+
+```{python}
+#| label: real-ptbxl-spectrum
+#| fig-cap: "Welch spectrum of the named, unfiltered stored Lead I tensor."
+fs = contract["preprocessing"]["sample_rate_hz"]
+lead_i = target[0].numpy()
+frequencies, power = signal.welch(
+    lead_i, fs=fs, window="hann", nperseg=1000, noverlap=500, detrend="constant"
+)
+fig = go.Figure(go.Scatter(
+    x=frequencies, y=10 * np.log10(np.maximum(power, np.finfo(float).tiny)),
+    mode="lines", name="Lead I Welch PSD",
+))
+fig.update_layout(
+    title=f"PTB-XL ECG {ecg_id}, Lead I — exploratory spectrum",
+    xaxis_title="Frequency (Hz)", yaxis_title="Power/frequency (dB, mV²/Hz)",
+    height=420,
+)
+fig.update_xaxes(range=[0, 100])
+fig.show()
+```
+
+## Filtering demonstration—not the training transform
+
+Zero-phase forward-backward filtering applies a causal filter in both directions, canceling net phase while squaring its magnitude response. It can still change peak amplitudes, boundary shapes, edge samples, and noise content. The comparison below is therefore a sensitivity illustration only. The content-pinned checkpoints were trained on the **unfiltered stored tensors**, and filtered signals must not be substituted at inference without a separately trained/evaluated contract.
+
+```{python}
+#| label: ptbxl-filter-demonstration
+#| fig-cap: "Exploratory filtering of one real record; the green trace is not a production model input."
+#| code-fold: true
+sos = signal.butter(3, [0.5, 45.0], btype="bandpass", fs=fs, output="sos")
+filtered = signal.sosfiltfilt(sos, lead_i)
+window = time_seconds < 3
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(
+    x=time_seconds[window], y=lead_i[window], mode="lines",
+    name="Stored Lead I (production tensor)", line=dict(width=1.3),
+))
+fig.add_trace(go.Scatter(
+    x=time_seconds[window], y=filtered[window], mode="lines",
+    name="0.5–45 Hz demonstration", line=dict(width=1.3),
+))
+fig.update_layout(
+    title=f"FILTER DEMONSTRATION — PTB-XL ECG {ecg_id}, not a training transform",
+    xaxis_title="Time (s)", yaxis_title="mV", height=420,
+)
+fig.show()
+```
+
+## Provenance and reconstruction boundary
+
+The live tensor audit in the opening chapter pairs tensors back to raw 500 Hz WFDB records and verifies split membership, shapes, finite values, content roots, and sample agreement. The authoritative release metadata and local contract—not this plotting code—define units and sample rate. A downstream evaluator must reject a model when any of the following differ from its sidecar:
+
+1. lead order or observed indices;
+2. sampling rate, duration, units, scaling, filtering, or normalization;
+3. split record/patient membership or byte-content roots;
+4. padding/cropping and acquired-lead pass-through behavior;
+5. source bundle, state schema, or checkpoint digest.
+
+This contract is what makes archived per-model inference meaningful: materializing the exact bytes is necessary, but those bytes are usable only with the exact preprocessing and lead semantics recorded alongside them.

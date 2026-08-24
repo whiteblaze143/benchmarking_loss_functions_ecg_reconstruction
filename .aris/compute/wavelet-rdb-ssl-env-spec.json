@@ -1,0 +1,23 @@
+{
+  "base": "/home/mithunmanivannan/.venv Python 3.12 + torch 2.6.0+cu124",
+  "system_pkgs": ["tmux", "util-linux flock", "nvidia-smi"],
+  "pip_phases": [],
+  "env": {},
+  "run_commands": [
+    "python scripts/run_wavelet_ssl_after_spatial.py"
+  ],
+  "weight_dirs": {},
+  "resources": {
+    "gpu": "one NVIDIA A100 40GB after spatial queue quiescence",
+    "min_free_disk_gib": 8,
+    "min_available_ram_gib": 5,
+    "preflight_peak_gpu_memory_limit_gib": 36
+  },
+  "smoke": {
+    "cpu_tests": [
+      {"cmd": "python unified_latents/engineering/experimental/wavelet_ssl_ecg_aim.py --self-test --device cpu", "expect": "all self-tests pass"},
+      {"cmd": "pytest -q tests/test_rdb_wavelet_cache.py tests/test_wavelet_ssl_queue.py tests/test_3arch_queue.py", "expect": "all tests pass"}
+    ],
+    "gpu_preflight": "10 representative jobs, queued only after spatial completion; require <=36 GiB peak and no ECC increase"
+  }
+}

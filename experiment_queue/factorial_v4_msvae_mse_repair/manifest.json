@@ -1,0 +1,89 @@
+{
+  "project": "factorial_v4_msvae_mse_repair",
+  "cwd": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction",
+  "ssh": "localhost",
+  "conda": "none",
+  "default_cmd": "echo no-default",
+  "preconditions": [],
+  "gpus": [0],
+  "max_parallel": 1,
+  "gpu_free_threshold_mib": 500,
+  "oom_retry": {
+    "delay": 120,
+    "max_attempts": 3
+  },
+  "phases": [
+    {
+      "name": "repair_tests",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "msvae_attached_loss_tests",
+          "label": "Verify attached MultiScale-VAE reconstruction gradients",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python -m pytest -q tests/test_factorial_losses.py",
+          "expected_output": null
+        },
+        {
+          "id": "msvae_mse_off_smoke",
+          "label": "Smoke repaired MultiScale-VAE MSE-off route",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py smoke-cell --family msvae --mask 0010 --seed 42 --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/correction_2x4/msvae__e0c0m1d0__s42_smoke.json",
+          "expected_output": "results/factorial_v4/correction_2x4/msvae__e0c0m1d0__s42_smoke.json"
+        }
+      ]
+    },
+    {
+      "name": "replace_msvae_mse_off",
+      "depends_on": ["repair_tests"],
+      "jobs": [
+        {
+          "id": "repair_msvae__e0c0m0d0__s42",
+          "label": "Retrain repaired MSVAE mask 0000",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m0d0__s42 --run_tag msvae__e0c0m0d0__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c0m0d1__s42",
+          "label": "Retrain repaired MSVAE mask 0001",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m0d1__s42 --run_tag msvae__e0c0m0d1__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.05 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c0m1d0__s42",
+          "label": "Retrain repaired MSVAE mask 0010",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m1d0__s42 --run_tag msvae__e0c0m1d0__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.0 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c0m1d1__s42",
+          "label": "Retrain repaired MSVAE mask 0011",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m1d1__s42 --run_tag msvae__e0c0m1d1__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.05 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m1d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c1m0d0__s42",
+          "label": "Retrain repaired MSVAE mask 0100",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m0d0__s42 --run_tag msvae__e0c1m0d0__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c1m0d1__s42",
+          "label": "Retrain repaired MSVAE mask 0101",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m0d1__s42 --run_tag msvae__e0c1m0d1__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.05 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c1m1d0__s42",
+          "label": "Retrain repaired MSVAE mask 0110",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m1d0__s42 --run_tag msvae__e0c1m1d0__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.0 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "repair_msvae__e0c1m1d1__s42",
+          "label": "Retrain repaired MSVAE mask 0111",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m1d1__s42 --run_tag msvae__e0c1m1d1__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m1d1__s42/ul_ecp_best.pt"
+        }
+      ]
+    }
+  ]
+}

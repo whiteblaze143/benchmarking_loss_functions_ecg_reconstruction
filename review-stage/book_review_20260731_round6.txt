@@ -1,0 +1,31 @@
+ROUND 6 — 2026-07-31
+Score: 8.0/10
+Verdict: source/precision remediation verified; not release-ready.
+
+Verified:
+
+- The pinned four-file bundle, exact embedded sources/diff, startup capture,
+  live-source refusal, FP16 schema, atomic model/sidecar writes, 47-model
+  recovery, eight-gate report, and actual-data inference were correct.
+- The compatibility correction retained 28 eligible archives and preserved all
+  47 ineligible originals as private quarantine assets.
+- The unified 12-page render and queue snapshot were internally consistent.
+
+Major blockers:
+
+1. The final table writer SHA-bound compatibility/per-record artifacts but
+   trusted their contents and serialized gate booleans. A forged all-true
+   report with 480 incompatible audit rows and an empty per-record manifest was
+   accepted.
+2. The training split digest hashed record names and file sizes, not tensor
+   bytes, so a same-size mutation was undetected.
+
+Additional findings:
+
+- Legacy compatibility needed exact source-file maps rather than trusting a
+  claimed bundle string.
+- Embedded source validation needed diff bytes/hash and dirty-state
+  consistency.
+- Contract self-consistency and adversarial tests needed expansion.
+
+No reviewer edits were made.

@@ -1,0 +1,10 @@
+{
+  "completed_at": "2026-08-23T23:05:38Z",
+  "counts": {
+    "completed": 12
+  },
+  "database_sha256_note": "SQLite is live canonical state; use backup API for snapshots",
+  "manifest_sha256": "356b06f85053f4a69c34ebae6257d0636d70807edb9321a08435e4d79906a9ed",
+  "status": "completed",
+  "version": 1
+}

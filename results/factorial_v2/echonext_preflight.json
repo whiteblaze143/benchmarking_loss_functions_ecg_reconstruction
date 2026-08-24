@@ -1,0 +1,6 @@
+{
+  "data_root": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/data/echonext",
+  "waveform": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/data/echonext/EchoNext_test_waveforms.npy",
+  "provenance": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/data/echonext/PROVENANCE.json",
+  "status": "pass"
+}

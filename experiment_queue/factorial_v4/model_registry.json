@@ -1,0 +1,3650 @@
+{
+  "schema_version": 3,
+  "benchmark": "factorial_v4",
+  "data_dir": "data/ptb_xl/tensors/test",
+  "ptbxl_csv": "data/ptb_xl/ptbxl_database.csv",
+  "scp_statements_csv": "data/ptb_xl/scp_statements.csv",
+  "ecgfounder_repo": "ecg_fm_integration/ecgfounder_repo",
+  "ecgfounder_checkpoint": "ecg_fm_integration/ecgfounder_repo/checkpoint/12_lead_ECGFounder.pth",
+  "ecgfounder_labels_csv": "ecg_fm_integration/ecgfounder_repo/csv/ptbxl_label.csv",
+  "ecgfounder_tasks": "ecg_fm_integration/ecgfounder_repo/tasks.txt",
+  "five_superclass_backbone": "ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt",
+  "five_superclass_checkpoint": "checkpoints/factorial_v4/parity/ecgfm_five_superclass.pt",
+  "nstdb_dir": "data/mit-bih-noise-stress-test-database-1.0.0",
+  "fitbit_noise_dir": "data/fitbit_noise",
+  "split": "test",
+  "models": [
+    {
+      "id": "unet__e0c0m0d0__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0000",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e0c0m0d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e0c0m0d1__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0001",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e0c0m0d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e0c0m1d0__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0010",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e0c0m1d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e0c0m1d1__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0011",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e0c0m1d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e0c1m0d0__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0100",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base+correlation",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e0c1m0d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e0c1m0d1__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0101",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+correlation+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e0c1m0d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e0c1m1d0__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0110",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+correlation+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e0c1m1d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e0c1m1d1__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0111",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+correlation+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e0c1m1d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c0m0d0__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1000",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base+mse",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e1c0m0d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c0m0d1__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1001",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+mse+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e1c0m0d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c0m1d0__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1010",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+mse+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e1c0m1d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c0m1d1__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1011",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+mse+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e1c0m1d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c1m0d0__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1100",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base+mse+correlation",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e1c1m0d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c1m0d1__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1101",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+mse+correlation+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e1c1m0d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c1m1d0__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1110",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+mse+correlation+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e1c1m1d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c1m1d1__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1111",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+mse+correlation+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/primary/unet__e1c1m1d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e0c0m0d0__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0000",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e0c0m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e0c0m0d1__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0001",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e0c0m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e0c0m1d0__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0010",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e0c0m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e0c0m1d1__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0011",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e0c0m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e0c1m0d0__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0100",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base+correlation",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e0c1m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e0c1m0d1__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0101",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+correlation+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e0c1m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e0c1m1d0__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0110",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+correlation+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e0c1m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e0c1m1d1__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0111",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+correlation+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e0c1m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e1c0m0d0__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1000",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base+mse",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e1c0m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e1c0m0d1__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1001",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+mse+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e1c0m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e1c0m1d0__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1010",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+mse+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e1c0m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e1c0m1d1__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1011",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+mse+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e1c0m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e1c1m0d0__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1100",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base+mse+correlation",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e1c1m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e1c1m0d1__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1101",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+mse+correlation+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e1c1m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e1c1m1d0__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1110",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+mse+correlation+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e1c1m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "msvae__e1c1m1d1__s42",
+      "family": "multiscale_vae",
+      "kind": "msvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1111",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+mse+correlation+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "vae_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/msvae__e1c1m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "WearECG MultiScale-VAE",
+        "latent_channels": 4
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "62346fe87c7adfbeba5b24e8642df9895641666f79df70acfbf6fe50aa37500e",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "60a4ee7eefa02cabacf7322f09b6524e3f4c013d3acffec32d0b1cb17f6cada6",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e0c0m0d0__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0000",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e0c0m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e0c0m0d1__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0001",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e0c0m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e0c0m1d0__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0010",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e0c0m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e0c0m1d1__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0011",
+      "factors": {
+        "mse": false,
+        "correlation": false,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e0c0m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e0c1m0d0__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0100",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base+correlation",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e0c1m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e0c1m0d1__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0101",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+correlation+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e0c1m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e0c1m1d0__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0110",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+correlation+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e0c1m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e0c1m1d1__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "0111",
+      "factors": {
+        "mse": false,
+        "correlation": true,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+correlation+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e0c1m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e1c0m0d0__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1000",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base+mse",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e1c0m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e1c0m0d1__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1001",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+mse+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e1c0m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e1c0m1d0__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1010",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+mse+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e1c0m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e1c0m1d1__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1011",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+mse+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e1c0m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e1c1m0d0__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1100",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base+mse+correlation",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e1c1m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e1c1m0d1__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1101",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+mse+correlation+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e1c1m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e1c1m1d0__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1110",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+mse+correlation+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e1c1m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "ecgaim__e1c1m1d1__s42",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "1111",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+mse+correlation+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/primary/ecgaim__e1c1m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    }
+  ]
+}

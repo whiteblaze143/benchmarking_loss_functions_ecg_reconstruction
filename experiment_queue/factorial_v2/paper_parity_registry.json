@@ -1,0 +1,398 @@
+{
+  "schema_version": 3,
+  "benchmark": "factorial_v2",
+  "data_dir": "data/ptb_xl/tensors/test",
+  "ptbxl_csv": "data/ptb_xl/ptbxl_database.csv",
+  "scp_statements_csv": "data/ptb_xl/scp_statements.csv",
+  "ecgfounder_repo": "ecg_fm_integration/ecgfounder_repo",
+  "ecgfounder_checkpoint": "ecg_fm_integration/ecgfounder_repo/checkpoint/12_lead_ECGFounder.pth",
+  "ecgfounder_labels_csv": "ecg_fm_integration/ecgfounder_repo/csv/ptbxl_label.csv",
+  "ecgfounder_tasks": "ecg_fm_integration/ecgfounder_repo/tasks.txt",
+  "five_superclass_backbone": "ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt",
+  "five_superclass_checkpoint": "checkpoints/factorial_v2/parity/ecgfm_five_superclass.pt",
+  "nstdb_dir": "data/mit-bih-noise-stress-test-database-1.0.0",
+  "fitbit_noise_dir": "data/fitbit_noise",
+  "split": "test",
+  "models": [
+    {
+      "id": "unet__e1c0m0d0__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "paper_parity",
+      "seed": 42,
+      "factorial_mask": "1000",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base+correlation",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v2/paper_parity/unet__e1c0m0d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "d85f8d1adfd628c5d11e9474dc199a7ebea0f3d8",
+      "architecture_provenance": {
+        "git_commit": "d85f8d1adfd628c5d11e9474dc199a7ebea0f3d8",
+        "git_dirty_for_sources": false,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "84e2c45d24fedd93df83255d6c81e3a5433256691217302e315589922dd57818",
+          "scripts/train_m1_pearson.py": "d22062282f6314cbb6bc76bdee44f1ad453154a9097d95fc5f677b16be1e07fa",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "b16cbf652fe9fbd3367b312276c4db86605c82dbdd2bfe13f180a7b26ae69cc1",
+        "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c1m1d1__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "paper_parity",
+      "seed": 42,
+      "factorial_mask": "1111",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+correlation+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v2/paper_parity/unet__e1c1m1d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "d85f8d1adfd628c5d11e9474dc199a7ebea0f3d8",
+      "architecture_provenance": {
+        "git_commit": "d85f8d1adfd628c5d11e9474dc199a7ebea0f3d8",
+        "git_dirty_for_sources": false,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "84e2c45d24fedd93df83255d6c81e3a5433256691217302e315589922dd57818",
+          "scripts/train_m1_pearson.py": "d22062282f6314cbb6bc76bdee44f1ad453154a9097d95fc5f677b16be1e07fa",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "b16cbf652fe9fbd3367b312276c4db86605c82dbdd2bfe13f180a7b26ae69cc1",
+        "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c1m0d1__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "paper_parity",
+      "seed": 42,
+      "factorial_mask": "1101",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": false,
+        "derivative": true
+      },
+      "loss": "base+correlation+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v2/paper_parity/unet__e1c1m0d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "d85f8d1adfd628c5d11e9474dc199a7ebea0f3d8",
+      "architecture_provenance": {
+        "git_commit": "d85f8d1adfd628c5d11e9474dc199a7ebea0f3d8",
+        "git_dirty_for_sources": false,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "84e2c45d24fedd93df83255d6c81e3a5433256691217302e315589922dd57818",
+          "scripts/train_m1_pearson.py": "d22062282f6314cbb6bc76bdee44f1ad453154a9097d95fc5f677b16be1e07fa",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "b16cbf652fe9fbd3367b312276c4db86605c82dbdd2bfe13f180a7b26ae69cc1",
+        "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c1m1d0__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "paper_parity",
+      "seed": 42,
+      "factorial_mask": "1110",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+correlation+mmd+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v2/paper_parity/unet__e1c1m1d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "d85f8d1adfd628c5d11e9474dc199a7ebea0f3d8",
+      "architecture_provenance": {
+        "git_commit": "d85f8d1adfd628c5d11e9474dc199a7ebea0f3d8",
+        "git_dirty_for_sources": false,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "84e2c45d24fedd93df83255d6c81e3a5433256691217302e315589922dd57818",
+          "scripts/train_m1_pearson.py": "d22062282f6314cbb6bc76bdee44f1ad453154a9097d95fc5f677b16be1e07fa",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "b16cbf652fe9fbd3367b312276c4db86605c82dbdd2bfe13f180a7b26ae69cc1",
+        "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    },
+    {
+      "id": "unet__e1c0m1d1__s42",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "paper_parity",
+      "seed": 42,
+      "factorial_mask": "1011",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": true,
+        "derivative": true
+      },
+      "loss": "base+correlation+derivative",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v2/paper_parity/unet__e1c0m1d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "d85f8d1adfd628c5d11e9474dc199a7ebea0f3d8",
+      "architecture_provenance": {
+        "git_commit": "d85f8d1adfd628c5d11e9474dc199a7ebea0f3d8",
+        "git_dirty_for_sources": false,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "84e2c45d24fedd93df83255d6c81e3a5433256691217302e315589922dd57818",
+          "scripts/train_m1_pearson.py": "d22062282f6314cbb6bc76bdee44f1ad453154a9097d95fc5f677b16be1e07fa",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "b16cbf652fe9fbd3367b312276c4db86605c82dbdd2bfe13f180a7b26ae69cc1",
+        "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    }
+  ]
+}

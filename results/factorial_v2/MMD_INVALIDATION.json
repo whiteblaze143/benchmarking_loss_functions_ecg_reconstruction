@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "timestamp": "2026-07-25T02:47:00Z",
+  "status": "invalid_for_mmd_factorial_inference",
+  "legacy_implementation": {
+    "kernel": "fixed_bandwidth_gaussian_over_flattened_euclidean_distance",
+    "sigma": 1.0,
+    "test_shape": [
+      8,
+      9,
+      5000
+    ],
+    "loss": 0.25,
+    "gradient_l1": 9.274437481340127e-22,
+    "gradient_max": 1.6447554199375746e-26
+  },
+  "tensor_identical_unet_mmd_toggle_pairs": [
+    [
+      "unet__e0c1m0d0__s42",
+      "unet__e0c1m1d0__s42"
+    ],
+    [
+      "unet__e0c1m0d1__s42",
+      "unet__e0c1m1d1__s42"
+    ]
+  ],
+  "corrective_implementation": {
+    "name": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+    "test_shape": [
+      8,
+      9,
+      5000
+    ],
+    "loss": 0.018085628747940063,
+    "gradient_l1": 0.23860281705856323,
+    "gradient_max": 3.730049684236292e-06,
+    "regression_test": "tests/test_factorial_losses.py::test_mmd_gradient_is_live_at_full_ecg_dimensionality"
+  },
+  "actions": {
+    "legacy_echonext_cells_preserved": 10,
+    "legacy_echonext_partial": "results/factorial_v3_clinical/echonext_results.json.partial",
+    "legacy_primary_and_confirmation_weights_deleted": true,
+    "metadata_archive": "results/factorial_v2/legacy_checkpoint_metadata_20260725.tar.gz",
+    "metadata_archive_sha256": "c0d16cc8dadb4e83eda13d37d33ff62e5d3460f39d70e53714dbf481c1b87ca8",
+    "corrective_queue": "experiment_queue/factorial_v4/manifest.json"
+  }
+}

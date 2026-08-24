@@ -1,0 +1,9 @@
+statement,occurences,proposed label
+ sinus rhythm nonspecific st elevation in chest leads is within normal limits ,1,['generic_st_elevation']
+ sinus rhythm st and t abnormality in anterolateral leads including slight st elevation in v5 and xxxx possible causes include acute ischaemia progress trace advised to exclude acute antero - lateral infarct ,1,['lateral_st_elevation']
+ sinus rhythm left axis deviation left anterior fascicular block right bundle branch block bifascicular block st elevation v2 - xxxx cant exclude recent damage progress trace advised to rule out recent infarct ,1,['generic_st_elevation']
+ sinus rhythm non - specific st elevation almost certainly a normal variant ,1,['generic_st_elevation']
+ sinus rhythm r - s transition zone in v leads displaced to the right nonspecific st elevation v2 - v4 is almost certainly a normal variant of repolarization ,1,['generic_st_elevation']
+ sinus rhythm p wave vector consistent with respiratory disease st elevation antero - septaly consistent with tansmural ischaemia suggest early progress tracing ,1,['generic_st_elevation']
+ sinus rhythm slight nonspecific st elevation in anterolateral leads probably a normal variant ,1,['lateral_st_elevation']
+ sinus bradycardia possible left ventricular hypertrophy small lateral q wave noted in i avl these are not definitely abnormal non - specific st elevation in chest leads v2 - v6 is almost certainly a normal variant ,1,['generic_st_elevation']

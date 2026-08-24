@@ -1,0 +1,36 @@
+#
+# sierraecg NodeJS CI job
+#
+on:
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'sierraecg-js/**'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # Cover the supported NodeJS versions
+        node-version: ['18.x', '20.x', '22.x']
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      name: Use Node.js ${{ matrix.node-version }}
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+      working-directory: sierraecg-js
+    - run: npm run-script lint --workspace=@sierraecg/core
+      working-directory: sierraecg-js
+    - run: npm run-script ci --workspace=@sierraecg/core
+      working-directory: sierraecg-js
+    - run: npm run-script lint --workspace=sierraecg
+      working-directory: sierraecg-js
+    - run: npm run-script ci --workspace=sierraecg
+      working-directory: sierraecg-js

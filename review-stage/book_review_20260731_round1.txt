@@ -1,0 +1,52 @@
+Score: 4/10  
+Verdict: not ready
+
+The book has a useful evidence scaffold, and all enabled Python blocks executed successfully in `/home/mithunmanivannan/.venv`. The locked 48-row table, PTB-XL/EchoNext counts, LUDB annotations, ISP intervals, and Sunnybrook inventory generally verify. However, major scientific and editorial problems remain.
+
+1. The stated $2^7=128$ design does not match the training manifest.
+
+   `refine-logs/factorial_manifest.json` contains 480 jobs: 160 unique masks across seeds 42, 200, and 201. MSE is always enabled, five positions are binary, and the last position is a five-level MMD-kernel selector `{0,1,2,3,4}`. This is a $2^5\times5=160$ mixed-level grid, not seven binary factors. Chapter 8’s 128-mask gate therefore cannot validate the running experiment; it also checks masks globally rather than within every architecture/seed block.
+
+   Minimum fix: reconcile the scientific design with the running jobs immediately. Either change the experiment to a true seven-binary-factor grid or describe and analyze the actual 160-condition mixed-level design. Generate factor names and expected cells directly from the authoritative manifest/configuration, validating every architecture/seed block separately.
+
+2. The “real-data EDA” remains substantially a plan rather than completed EDA.
+
+   Chapter 9 never loads PTB-XL waveform tensors. It provides metadata counts and several hard-coded EchoNext signal summaries, but not executable PTB-XL amplitude, NaN/Inf, flatline, clipping, PSD, resampling, correlation, or outlier analyses. The promised spectral, cross-lead, and morphology distributions are listed as requirements rather than shown. EchoNext’s split-patient structure is also omitted: test has 5,442 unique patients and no train/test overlap, while `no_split` overlaps 2,499 test and 2,119 validation patients.
+
+   Minimum fix: add executable, artifact-backed waveform EDA by dataset and split, including signal validity, lead-wise quantiles/RMS, flatline/clipping rates, spectra, correlation matrices, lead-law residual distributions, demographic distributions, endpoint co-occurrence, and algorithmically selected outliers. Clearly explain the `no_split` patient overlaps and demonstrate that those rows never enter fitting.
+
+3. EchoNext still lacks the actual deep classifier diagnostics it promises.
+
+   Chapter 10 now correctly discloses the seven unchanged tabular covariates, but only displays reconstructed per-task summaries. It does not report original-waveform reference metrics, paired probability drift, patient-level tails, confidence intervals, reliability diagrams, subgroup analyses, or waveform-versus-tabular ablations. The archived data already show material behavior omitted from the chapter: original macro AUROC is 0.8026; mean absolute probability drift is 0.184→0.207 for U-Net MSE-only→full and 0.114→0.172 for MultiScale-VAE, despite improved waveform Pearson.
+
+   Minimum fix: load the archived reference and reconstruction probability files, report paired drift distributions and tail cases, add reference-versus-reconstruction per-task estimates with uncertainty, produce calibration/subgroup panels, and run tabular-only/waveform-only or masked-input ablations before attributing utility to reconstructed ECG information.
+
+4. The “confirmatory morphology” endpoints are heuristic windows, not clinical delineation.
+
+   The evaluator detects peaks only from reference Lead II, uses fixed QRS/ST windows, and computes reconstruction timing with unconstrained one-way nearest peaks. It does not enforce one-to-one matching or penalize false-positive peaks—the exact failure Chapter 5 warns against. “Morphology coverage” is reference peak-detection coverage, not joint reference/reconstruction delineation coverage. The aggregate and per-record estimands also differ: for U-Net, the headline QRS change is about 0.0365, while the patient-cluster test estimates 0.0113.
+
+   Minimum fix: rename these as reference-Lead-II fixed-window shape metrics; document units and aggregation; explain the two estimands; remove “clinical delineation” implications. Run actual LUDB annotation-based matching with sensitivity, PPV, signed timing errors, and joint coverage when compatible checkpoints are available.
+
+5. Earlier chapters still contain synthetic evidence presented with clinical certainty.
+
+   Chapter 4’s own execution reports Levene $p=0.465$—homoscedastic—yet the text claims heteroscedasticity and says the simulation “conclusively proves” MSE failure and definitive clinical preservation. Chapter 7 calls itself single-lead Lead-I reconstruction while its tutorial supplies three channels `[II,V1,V5]`, then prints “Successfully reconstructed” from synthetic sinusoids. Chapter 3 claims a six-component loss but its executable wrapper omits MMD. Chapter 5 is duplicated and out of order, retaining “clinically dangerous” wording for a synthetic timing example. The index similarly overstates unvalidated clinical consequences.
+
+   Minimum fix: remove inferential language from synthetic tutorials, correct the demonstrated inputs, make the loss code match its formula or label it partial, deduplicate Chapter 5, and ensure every clinical claim points to a real artifact or is explicitly hypothetical.
+
+6. Dataset provenance remains incomplete.
+
+   LUDB, ISP, and EchoNext lack proper citations, versions, licenses, download/source identifiers, and file hashes in the book. Sunnybrook lacks cohort selection, subject independence, inclusion/exclusion, ethics/consent or data-governance context. Chapter 8 calls it a “cath-lab” cohort without supporting provenance. ISP class semantics and raw waveform linkage remain unknown.
+
+   Minimum fix: add a provenance table with citation, version, license, source URL/DOI, acquisition dates where permissible, patient/record unit, inclusion/exclusion, split method, hashes, and ethics/governance status. Remove unsupported “cath-lab” wording and keep ISP classes semantically unnamed until documented.
+
+7. The published book artifact is stale.
+
+   The current `_book` directory does not include Chapters 9–11, and no Quarto executable is available. Python chunks pass in the virtual environment, but the complete navigation, cross-references, math, embedded figures, and new chapters have not been rendered.
+
+   Minimum fix: install/use Quarto, perform a clean render with the configured virtual-environment kernel, verify Chapters 9–11 and links, and treat the rendered artifact—not isolated block execution—as the release gate.
+
+8. Interim inference does not include training variability.
+
+   The 48-cell grid uses one primary seed. Patient-cluster intervals quantify test-cohort uncertainty but cannot establish stability across optimization seeds.
+
+   Minimum fix: retain explicit “single-seed interim” labeling everywhere, avoid general loss-ranking claims, and require multi-seed estimates for the final factorial analysis.

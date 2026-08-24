@@ -1,0 +1,227 @@
+{
+  "project": "ecg_comprehensive_loss_benchmark",
+  "cwd": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction",
+  "ssh": "localhost",
+  "conda": "none",
+  "default_cmd": "echo 'no default'",
+  "preconditions": [],
+  "gpus": [
+    0
+  ],
+  "max_parallel": 1,
+  "gpu_free_threshold_mib": 500,
+  "oom_retry": {
+    "delay": 120,
+    "max_attempts": 3
+  },
+  "phases": [
+    {
+      "name": "validate_2epoch",
+      "comment": "2-epoch smoke test across all model families x loss combos to confirm stability before committing to 10-epoch full run",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "val_unet_mse",
+          "label": "UNet | MSE only | 2ep",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0 --batch_size 256 --epochs 2",
+          "env": {
+            "EPOCHS_OVERRIDE": "2"
+          }
+        },
+        {
+          "id": "val_unet_pearson",
+          "label": "UNet | MSE+Pearson | 2ep",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0 --batch_size 256 --epochs 2",
+          "env": {
+            "EPOCHS_OVERRIDE": "2"
+          }
+        },
+        {
+          "id": "val_unet_full",
+          "label": "UNet | MSE+Pearson+MMD+Deriv | 2ep",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --batch_size 256 --epochs 2",
+          "env": {
+            "EPOCHS_OVERRIDE": "2"
+          }
+        },
+        {
+          "id": "val_cnvae_mse",
+          "label": "cnVAE | MSE/ELBO only | 2ep",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/baselines/train_cnvae.py --backbone ecgfm --ptbxl_root data/ptb_xl --fm_checkpoint ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt --epochs 2 --max_steps 20 --batch_size 16 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0"
+        },
+        {
+          "id": "val_cnvae_pearson",
+          "label": "cnVAE | ELBO+Pearson | 2ep",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/baselines/train_cnvae.py --backbone ecgfm --ptbxl_root data/ptb_xl --fm_checkpoint ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt --epochs 2 --max_steps 20 --batch_size 16 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0"
+        },
+        {
+          "id": "val_cnvae_full",
+          "label": "cnVAE | ELBO+Pearson+MMD+Deriv | 2ep",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/baselines/train_cnvae.py --backbone ecgfm --ptbxl_root data/ptb_xl --fm_checkpoint ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt --epochs 2 --max_steps 20 --batch_size 16 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05"
+        },
+        {
+          "id": "val_msvae_mse",
+          "label": "MultiScale-VAE | MSE only | 2ep",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --debug --epochs 2 --batch_size 16 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0"
+        },
+        {
+          "id": "val_msvae_full",
+          "label": "MultiScale-VAE | MSE+Pearson | 2ep",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --debug --epochs 2 --batch_size 16 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0 --run_tag pearson_probe"
+        }
+      ]
+    },
+    {
+      "name": "train_full_grid",
+      "comment": "Full 10-epoch training: 4 model families x 4 loss configs = 16 training jobs",
+      "depends_on": [
+        "validate_2epoch"
+      ],
+      "jobs": [
+        {
+          "id": "unet_mse_full",
+          "label": "UNet | MSE only",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0 --batch_size 256 --run_name unet_mse_full --checkpoint_path checkpoints/comprehensive/unet_mse_full.pt"
+        },
+        {
+          "id": "unet_pearson_full",
+          "label": "UNet | MSE+Pearson",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0 --batch_size 256 --run_name unet_pearson_full --checkpoint_path checkpoints/comprehensive/unet_pearson_full.pt"
+        },
+        {
+          "id": "unet_mmd_full",
+          "label": "UNet | MSE+MMD",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.0 --batch_size 256 --run_name unet_mmd_full --checkpoint_path checkpoints/comprehensive/unet_mmd_full.pt"
+        },
+        {
+          "id": "unet_deriv_full",
+          "label": "UNet | MSE+Deriv",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.05 --batch_size 256 --run_name unet_deriv_full --checkpoint_path checkpoints/comprehensive/unet_deriv_full.pt"
+        },
+        {
+          "id": "unet_all_full",
+          "label": "UNet | MSE+Pearson+MMD+Deriv",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --batch_size 256 --run_name unet_all_full --checkpoint_path checkpoints/comprehensive/unet_all_full.pt"
+        },
+        {
+          "id": "cnvae_mse_full",
+          "label": "cnVAE | ELBO only",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/baselines/train_cnvae.py --backbone ecgfm --ptbxl_root data/ptb_xl --input_leads 0,1,7 --fm_checkpoint ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt --save_dir checkpoints/comprehensive/cnvae --name cnvae_mse_full --no-save_optimizer_state --epochs 10 --batch_size 16 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0"
+        },
+        {
+          "id": "cnvae_pearson_full",
+          "label": "cnVAE | ELBO+Pearson",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/baselines/train_cnvae.py --backbone ecgfm --ptbxl_root data/ptb_xl --input_leads 0,1,7 --fm_checkpoint ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt --save_dir checkpoints/comprehensive/cnvae --name cnvae_pearson_full --no-save_optimizer_state --epochs 10 --batch_size 16 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0"
+        },
+        {
+          "id": "cnvae_mmd_full",
+          "label": "cnVAE | ELBO+MMD",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/baselines/train_cnvae.py --backbone ecgfm --ptbxl_root data/ptb_xl --input_leads 0,1,7 --fm_checkpoint ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt --save_dir checkpoints/comprehensive/cnvae --name cnvae_mmd_full --no-save_optimizer_state --epochs 10 --batch_size 16 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.0"
+        },
+        {
+          "id": "cnvae_all_full",
+          "label": "cnVAE | ELBO+Pearson+MMD+Deriv",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/baselines/train_cnvae.py --backbone ecgfm --ptbxl_root data/ptb_xl --input_leads 0,1,7 --fm_checkpoint ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt --save_dir checkpoints/comprehensive/cnvae --name cnvae_all_full --no-save_optimizer_state --epochs 10 --batch_size 16 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05"
+        },
+        {
+          "id": "msvae_mse_full",
+          "label": "MultiScale-VAE | MSE only",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --fast_eval --batch_size 32 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0"
+        },
+        {
+          "id": "msvae_pearson_full",
+          "label": "MultiScale-VAE | MSE+Pearson",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --fast_eval --batch_size 32 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0 --run_tag pearson --resume checkpoints/wearecg_fm/engineering_baseline_I-II-V2_bs32_pearson/ul_ecp_best.pt",
+          "expected_output": "checkpoints/wearecg_fm/engineering_baseline_I-II-V2_bs32_pearson/ul_ecp_best.pt"
+        },
+        {
+          "id": "alitok_mse_full",
+          "label": "AliTok-VAE | MSE only",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --fast_eval --batch_size 32 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4",
+          "expected_output": "checkpoints/wearecg_fm/engineering_alitok_I-II-V2_bs32/ul_ecp_best.pt"
+        },
+        {
+          "id": "alitok_pearson_full",
+          "label": "AliTok-VAE | MSE+Pearson",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --fast_eval --batch_size 32 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0 --run_tag pearson",
+          "expected_output": "checkpoints/wearecg_fm/engineering_alitok_I-II-V2_bs32_pearson/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae_mmd_full",
+          "label": "MultiScale-VAE | MSE+MMD",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --fast_eval --batch_size 32 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.0 --run_tag mmd",
+          "expected_output": "checkpoints/wearecg_fm/engineering_baseline_I-II-V2_bs32_mmd/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae_all_full",
+          "label": "MultiScale-VAE | MSE+Pearson+MMD+Deriv",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --fast_eval --batch_size 32 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_tag all",
+          "expected_output": "checkpoints/wearecg_fm/engineering_baseline_I-II-V2_bs32_all/ul_ecp_best.pt"
+        }
+      ]
+    },
+    {
+      "name": "comprehensive_eval",
+      "comment": "Comprehensive downstream evaluation across all 5 clinical tasks for every trained model checkpoint",
+      "depends_on": [
+        "train_full_grid"
+      ],
+      "jobs": [
+        {
+          "id": "eval_oracle_all",
+          "label": "Unified cross-family inference, signal metrics, and oracle AUROC",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/evaluate_comprehensive_registry.py --registry experiment_queue/comprehensive_v1/model_registry.json --output results/comprehensive/comprehensive_results.json --batch_size 8 --robustness_samples 256 --morphology_samples 128",
+          "expected_output": "results/comprehensive/comprehensive_results.json"
+        },
+        {
+          "id": "eval_clinical_f1_all",
+          "label": "Clinical F1: per-pathology sensitivity/specificity",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/summarize_comprehensive_results.py --section clinical --output results/comprehensive/clinical.json",
+          "expected_output": "results/comprehensive/clinical.json"
+        },
+        {
+          "id": "eval_fairness_all",
+          "label": "Fairness: demographic subgroup disparity analysis",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/summarize_comprehensive_results.py --section fairness --output results/comprehensive/fairness.json",
+          "expected_output": "results/comprehensive/fairness.json"
+        },
+        {
+          "id": "eval_robustness_all",
+          "label": "Robustness: noise injection and signal degradation stress tests",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/summarize_comprehensive_results.py --section robustness --output results/comprehensive/robustness.json",
+          "expected_output": "results/comprehensive/robustness.json"
+        },
+        {
+          "id": "eval_morphology_all",
+          "label": "Morphology: R-peak timing and waveform correlation",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/summarize_comprehensive_results.py --section morphology --output results/comprehensive/morphology.json",
+          "expected_output": "results/comprehensive/morphology.json"
+        },
+        {
+          "id": "eval_ece_all",
+          "label": "ECE: calibration of downstream diagnostic uncertainty",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/summarize_comprehensive_results.py --section calibration --output results/comprehensive/calibration.json",
+          "expected_output": "results/comprehensive/calibration.json"
+        },
+        {
+          "id": "eval_sensitivity_specificity",
+          "label": "Sensitivity/Specificity: clinical decision thresholds",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/summarize_comprehensive_results.py --section sensitivity_specificity --output results/comprehensive/sensitivity_specificity.json",
+          "expected_output": "results/comprehensive/sensitivity_specificity.json"
+        },
+        {
+          "id": "plot_all_reconstructions",
+          "label": "Visual comparison of reconstruction quality across all models",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/summarize_comprehensive_results.py --section plots --output results/comprehensive/plots.json",
+          "expected_output": "results/comprehensive/plots.json"
+        },
+        {
+          "id": "generate_final_report",
+          "label": "Aggregate all results into a paper-ready markdown report",
+          "cmd": "PYTHONPATH=. ~/.venv/bin/python scripts/summarize_comprehensive_results.py --section report --output results/comprehensive/COMPREHENSIVE_REPORT.md",
+          "expected_output": "results/comprehensive/COMPREHENSIVE_REPORT.md"
+        }
+      ]
+    }
+  ]
+}

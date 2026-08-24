@@ -1,0 +1,24 @@
+# Data and CSV files
+*.csv
+/data/
+
+# Model weights
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.weights
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# NumPy arrays
+*.npy

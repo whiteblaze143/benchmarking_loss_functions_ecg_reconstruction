@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "reviewed_at": "2026-07-26T19:38:33Z",
+  "review_method": "original-resolution PNG inspection plus provenance input/output SHA-256 verification",
+  "figures": {
+    "ptbxl_ecgfounder_task_rank": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "aa97a4ca2f620afa3c6f056ad518183ad5b8cb8c5e2a745c8cbda5a1d39382a5",
+      "notes": "Both panels are legible; rank trends, prevalence scatter, zero reference, and legends are unobscured."
+    },
+    "ptbxl_five_superclasses": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "f502c731c9bed4d35afc3b4a811d7a4a962ef0468f29776d47b2c7264c86b4e4",
+      "notes": "All five task labels, nine comparison rows, annotations, and color scale are legible without clipping."
+    },
+    "echonext_shd_tasks": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "62c51a84687173325ecc6cd27e08b154f65c3138101aa842d7b599fe23ab2273",
+      "notes": "Reviewed after moving the legend outside the plotting area; all 12 SHD task points and reference markers remain visible."
+    },
+    "echonext_shd_stress": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "ab54752840700c8cf4e3c99c999d7be28cc65c5dc3ddeaa9701bbb47afff1201",
+      "notes": "All Gaussian, BW, EM, MA, and baseline-drift panels are readable with consistent scales and an unobstructed legend."
+    },
+    "smartwatch_radar": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "07d10545e38d68b3d852a324eb2711db4ca79c3e947f1cc8ff84dcd165e85ec5",
+      "notes": "Reviewed after shortening and padding axis labels; all six relative metrics and three family profiles are legible and unclipped."
+    },
+    "smartwatch_protocol_accuracy": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "e70b591627e850baa2333831f305d992be06b70aee8bbb2a7a7f283d78ca543f",
+      "notes": "Four calibrated protocol panels, device labels, units, and value annotations are legible without overlap."
+    },
+    "smartwatch_task_rank": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "761acc860eb80253d7c56a52318457296ceaeb78c13a17a1a3aed09cd84ba810",
+      "notes": "Both 150-task rank panels and the family legend are legible; probability-fidelity behavior is not visually obscured."
+    },
+    "echonext_shd_calibration": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS",
+      "png_sha256": "57349517dd2004946372fe7ce29d9a1c3555105b4efea42a49bac95bbcf6373a",
+      "notes": "Reliability curves, identity line, axes, and legend are legible with no clipping or overlap."
+    }
+  }
+}

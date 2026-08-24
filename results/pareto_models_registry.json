@@ -1,0 +1,64 @@
+{
+  "schema_version": 3,
+  "ptbxl_csv": "data/ptb_xl/ptbxl_database.csv",
+  "scp_statements_csv": "data/ptb_xl/scp_statements.csv",
+  "ecgfounder_repo": "ecg_fm_integration/ecgfounder_repo",
+  "ecgfounder_checkpoint": "ecg_fm_integration/ecgfounder_repo/checkpoint/12_lead_ECGFounder.pth",
+  "ecgfounder_labels_csv": "ecg_fm_integration/ecgfounder_repo/csv/ptbxl_label.csv",
+  "ecgfounder_tasks": "ecg_fm_integration/ecgfounder_repo/tasks.txt",
+  "five_superclass_backbone": "ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt",
+  "five_superclass_checkpoint": "checkpoints/factorial_v4/parity/ecgfm_five_superclass.pt",
+  "nstdb_dir": "data/mit-bih-noise-stress-test-database-1.0.0",
+  "fitbit_noise_dir": "data/fitbit_noise",
+  "split": "test",
+  "models": [
+    {
+      "id": "f_1000000_s201",
+      "family": "unet",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_1000000_s201.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "factorial_mask": "1000000"
+    },
+    {
+      "id": "f_1000002_s201",
+      "family": "unet",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_1000002_s201.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "factorial_mask": "1000002"
+    },
+    {
+      "id": "f_1000101_s201",
+      "family": "unet",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_1000101_s201.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "factorial_mask": "1000101"
+    },
+    {
+      "id": "f_1000100_s201",
+      "family": "unet",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_1000100_s201.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "factorial_mask": "1000100"
+    }
+  ]
+}

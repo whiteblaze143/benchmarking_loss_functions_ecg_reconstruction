@@ -1,0 +1,27 @@
+{
+  "base": "/home/mithunmanivannan/.venv Python 3.12 + torch 2.6.0+cu124, executed CPU-only",
+  "system_pkgs": ["tmux", "util-linux taskset"],
+  "pip_phases": [
+    ["--target external/semiseg/runtime_deps --no-deps", "mergedeep==1.3.4", "tensorboard==2.21.0", "torchmetrics==1.5.2", "lightning-utilities==0.15.3", "absl-py==2.5.0", "grpcio==1.83.0", "markdown==3.10.3", "protobuf==7.36.0", "tensorboard-data-server==0.7.2", "werkzeug==3.1.8"]
+  ],
+  "env": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "OMP_NUM_THREADS": "7",
+    "MKL_NUM_THREADS": "7",
+    "OPENBLAS_NUM_THREADS": "7",
+    "NUMEXPR_NUM_THREADS": "7",
+    "SEMISEG_CPU_ONLY": "1"
+  },
+  "run_commands": [],
+  "weight_dirs": {},
+  "smoke": {
+    "import_names": ["torch", "numpy", "mergedeep", "tensorboard", "torchmetrics", "wfdb"],
+    "cpu_tests": [
+      {
+        "cmd": "PYTHONPATH=external/semiseg/runtime_deps taskset -c <first-seven-affinity-cpus> /home/mithunmanivannan/.venv/bin/python3 -c 'import torch; torch.manual_seed(42); torch.set_num_threads(7); x=torch.randn(8,8); print(\"WITNESS\", tuple((x@x).shape), torch.get_num_threads())'",
+        "expect": "^WITNESS (8, 8) 7$"
+      }
+    ],
+    "cli_checks": ["tmux", "taskset"]
+  }
+}

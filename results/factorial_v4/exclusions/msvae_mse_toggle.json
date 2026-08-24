@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "status": "quarantined",
+  "scope": "MultiScale-VAE MSE-off/on toggle in the exploratory 2^4 supplement",
+  "primary_mse_on_2x2x2_status": "valid_and_retained",
+  "finding": {
+    "matched_pairs_checked": 8,
+    "state_tensors_per_pair": 238,
+    "maximum_absolute_tensor_difference": 0.0,
+    "comprehensive_signal_summaries_identical": true
+  },
+  "root_cause": "The historical model returned detached reconstruction loss as decoder_loss, so trainer lambda_mse changed the scalar loss value but not its gradient.",
+  "action": [
+    "Exclude MultiScale-VAE from all MSE-toggle effects and interactions.",
+    "Blank MultiScale-VAE MSE-off cells in the exploratory 2^4 heatmap.",
+    "Retain the prespecified MSE-on correlation/MMD/derivative 2^3 analysis.",
+    "Keep reconstruction loss attached in the repaired source for any future MSE-toggle rerun."
+  ],
+  "claim_policy": "No MultiScale-VAE MSE main-effect or MSE-interaction claim is permitted from factorial_v4."
+}

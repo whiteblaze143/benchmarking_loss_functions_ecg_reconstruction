@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/figures/figure_smartwatch_protocol.py",
+  "script_sha256": "8f7f6095430d9db048eb22ccb8c361f39f5fc61989460133925ca9e39b1a8981",
+  "common_helper_sha256": "e57c67c3e4dc0ed56aaab3c3e573bcb4b030954212f41e35f81fe3707434ff3e",
+  "inputs": {
+    "results/factorial_v4_clinical/smartwatch_protocol_metrics.parquet": "de03c20b4fda09114d4d6484ff4d7b6d970d370f9d949709347a70babdf11330"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "results/factorial_v4_clinical/figures/smartwatch_protocol_accuracy.pdf",
+      "sha256": "7fe58a8213c05ef7e5741c1ff64d1750348a72094c57bf2fb1b43de6e30a2fc5"
+    },
+    "svg": {
+      "path": "results/factorial_v4_clinical/figures/smartwatch_protocol_accuracy.svg",
+      "sha256": "4a1e511acddd09ad110ddcd1d855e5daaa477170277ad8a130fb6b58e46e864a"
+    },
+    "png": {
+      "path": "results/factorial_v4_clinical/figures/smartwatch_protocol_accuracy.png",
+      "sha256": "e70b591627e850baa2333831f305d992be06b70aee8bbb2a7a7f283d78ca543f"
+    }
+  },
+  "metadata": {
+    "evaluation_type": "calibrated simulator targets for panels A-C; paired-device reference under simulated 2-Hz stimulus for panel D",
+    "not_attributed_to_reconstruction_model": true,
+    "square_wave_endpoint": "watch-versus-Philips cross-correlation maximized during lag alignment; not an independent accuracy estimate"
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "project": "factorial_v4_complete_2x4_postprocess",
+  "cwd": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction",
+  "ssh": "localhost",
+  "conda": "none",
+  "default_cmd": "echo no-default",
+  "preconditions": [],
+  "gpus": [0],
+  "max_parallel": 1,
+  "gpu_free_threshold_mib": 500,
+  "oom_retry": {
+    "delay": 120,
+    "max_attempts": 3
+  },
+  "phases": [
+    {
+      "name": "repair_attestation",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "verify_msvae_mse_repair",
+          "label": "Attest repaired MSE-off checkpoints differ from MSE-on pairs",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/verify_msvae_mse_repair.py --queue-state experiment_queue/factorial_v4_msvae_mse_repair/queue_state.json --manifest experiment_queue/factorial_v4_msvae_mse_repair/manifest.json --output results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json",
+          "expected_output": "results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json"
+        },
+        {
+          "id": "build_msvae_mse_off_registry",
+          "label": "Build exact eight-cell repaired evaluation registry",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/subset_model_registry.py --registry experiment_queue/factorial_v4/model_registry.json --output experiment_queue/factorial_v4_2x4_postprocess/msvae_mse_off_registry.json --prefix msvae__e0 --expected-count 8",
+          "expected_output": "experiment_queue/factorial_v4_2x4_postprocess/msvae_mse_off_registry.json"
+        }
+      ]
+    },
+    {
+      "name": "ptbxl_repaired_evaluation",
+      "depends_on": ["repair_attestation"],
+      "jobs": [
+        {
+          "id": "evaluate_repaired_msvae_ptbxl",
+          "label": "Evaluate eight repaired cells on clean PTB-XL and 17 stress conditions",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4_2x4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_comprehensive_registry.py --registry experiment_queue/factorial_v4_2x4_postprocess/msvae_mse_off_registry.json --output results/factorial_v4/correction_2x4/comprehensive_msvae_e0.json --batch_size 32 --robustness_samples 2198 --robustness_condition_batch 9 --morphology_samples 2198",
+          "expected_output": "results/factorial_v4/correction_2x4/comprehensive_msvae_e0.json"
+        }
+      ]
+    },
+    {
+      "name": "ptbxl_merge",
+      "depends_on": ["ptbxl_repaired_evaluation"],
+      "jobs": [
+        {
+          "id": "merge_repaired_msvae_ptbxl",
+          "label": "Merge repaired PTB-XL cells into provenance-bound 48-cell result",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/merge_repaired_model_results.py --base results/factorial_v4/comprehensive_results.json --replacement results/factorial_v4/correction_2x4/comprehensive_msvae_e0.json --attestation results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json --output results/factorial_v4_2x4/comprehensive_results.json",
+          "expected_output": "results/factorial_v4_2x4/comprehensive_results.json"
+        }
+      ]
+    },
+    {
+      "name": "echonext_repaired_evaluation",
+      "depends_on": ["repair_attestation"],
+      "jobs": [
+        {
+          "id": "evaluate_repaired_msvae_echonext",
+          "label": "Evaluate eight repaired cells on EchoNext clean and stress data",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4_2x4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_echonext.py --registry experiment_queue/factorial_v4_2x4_postprocess/msvae_mse_off_registry.json --data_dir data/echonext --output results/factorial_v4/correction_2x4/echonext_msvae_e0.json --batch_size 32 --robustness_condition_batch 9 --robustness_samples 2198 --morphology_samples 2198 --skip_ecgfounder --resume --device cuda",
+          "expected_output": "results/factorial_v4/correction_2x4/echonext_msvae_e0.json"
+        }
+      ]
+    },
+    {
+      "name": "echonext_merge",
+      "depends_on": ["echonext_repaired_evaluation"],
+      "jobs": [
+        {
+          "id": "merge_repaired_msvae_echonext",
+          "label": "Merge repaired EchoNext cells into 48-cell result",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/merge_repaired_model_results.py --base results/factorial_v4/echonext_results.json --replacement results/factorial_v4/correction_2x4/echonext_msvae_e0.json --attestation results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json --output results/factorial_v4_2x4/echonext_results.json",
+          "expected_output": "results/factorial_v4_2x4/echonext_results.json"
+        }
+      ]
+    },
+    {
+      "name": "smartwatch_repaired_evaluation",
+      "depends_on": ["repair_attestation"],
+      "jobs": [
+        {
+          "id": "evaluate_repaired_msvae_smartwatch",
+          "label": "Evaluate eight repaired cells on four smartwatch devices",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4_2x4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_smartwatch.py --registry experiment_queue/factorial_v4_2x4_postprocess/msvae_mse_off_registry.json --data_dir data/physionet.org/files/ecg-capable-smartwatches/1.0.0 --output results/factorial_v4/correction_2x4/smartwatch_msvae_e0.json --batch_size 16 --robustness_samples 0 --device cuda",
+          "expected_output": "results/factorial_v4/correction_2x4/smartwatch_msvae_e0.json"
+        }
+      ]
+    },
+    {
+      "name": "smartwatch_merge",
+      "depends_on": ["smartwatch_repaired_evaluation"],
+      "jobs": [
+        {
+          "id": "merge_repaired_msvae_smartwatch",
+          "label": "Merge repaired smartwatch cells into 48-cell result",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/merge_repaired_model_results.py --base results/factorial_v4/smartwatch_results.json --replacement results/factorial_v4/correction_2x4/smartwatch_msvae_e0.json --attestation results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json --output results/factorial_v4_2x4/smartwatch_results.json",
+          "expected_output": "results/factorial_v4_2x4/smartwatch_results.json"
+        }
+      ]
+    },
+    {
+      "name": "complete_2x4_statistics",
+      "depends_on": ["ptbxl_merge", "echonext_merge", "smartwatch_merge"],
+      "jobs": [
+        {
+          "id": "analyze_complete_repaired_2x4",
+          "label": "Estimate four-factor main effects and interactions",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4_2x4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/analyze_factorial_v2.py --input results/factorial_v4_2x4/comprehensive_results.json --registry experiment_queue/factorial_v4/model_registry.json --paper-parity results/factorial_v4/paper_parity_results.json --echonext results/factorial_v4_2x4/echonext_results.json --smartwatch results/factorial_v4_2x4/smartwatch_results.json --msvae-mse-repair-attestation results/factorial_v4/correction_2x4/MSVAE_MSE_REPAIR_ATTESTATION.json --output-dir results/factorial_v4_2x4 --require-complete",
+          "expected_output": "results/factorial_v4_2x4/statistics.json"
+        }
+      ]
+    }
+  ]
+}

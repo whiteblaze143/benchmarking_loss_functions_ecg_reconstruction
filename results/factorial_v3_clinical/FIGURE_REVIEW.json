@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "inspection_mode": "original_resolution_png",
+  "figures": {
+    "ptbxl_ecgfounder_task_rank": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS"
+    },
+    "ptbxl_five_superclasses": {
+      "data_hash_gate": "PASS",
+      "visual_review": "PASS"
+    },
+    "echonext_shd_tasks": {
+      "data_hash_gate": "PENDING",
+      "visual_review": "PENDING"
+    },
+    "echonext_shd_stress": {
+      "data_hash_gate": "PENDING",
+      "visual_review": "PENDING"
+    },
+    "smartwatch_radar": {
+      "data_hash_gate": "PENDING",
+      "visual_review": "PENDING"
+    },
+    "smartwatch_protocol_accuracy": {
+      "data_hash_gate": "PENDING",
+      "visual_review": "PENDING"
+    },
+    "smartwatch_task_rank": {
+      "data_hash_gate": "PENDING",
+      "visual_review": "PENDING"
+    },
+    "echonext_shd_calibration": {
+      "data_hash_gate": "PENDING",
+      "visual_review": "PENDING"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "selected_on": "validation",
+  "selector": "lowest_missing_lead_mse_then_highest_pearson",
+  "masks": {
+    "unet": "101",
+    "msvae": "110",
+    "ecgaim": "100"
+  }
+}

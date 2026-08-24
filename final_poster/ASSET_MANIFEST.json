@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "assets": [
+    {
+      "path": "assets/figures/clinical_effects.pdf",
+      "sha256": "d378eb1c6d71769cbf35d2d3d8dea9e2df2612f3b2bc40c59f2a110cdf406dfd",
+      "bytes": 29106,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/figures/clinical_effects.png",
+      "sha256": "4923c4e779171e5f93c5b35b31d2537f2051b65a103092ab81b46526e0b2ed19",
+      "bytes": 213010,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/figures/conditional_r2_effects.pdf",
+      "sha256": "8e9a53ec8716e4c60791ce40bad6c9807ebe88bafb6af0dab96b2233b9760fed",
+      "bytes": 27981,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/figures/conditional_r2_effects.png",
+      "sha256": "a0e45585b3c6cad1a08cadeae0d0283c0ae5e9eff88e38fae9aa6b0b11097951",
+      "bytes": 187083,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/figures/echonext_representative_reconstructions.pdf",
+      "sha256": "b4da74d5f4f09d89333f085f631aabca8bc6b0380a23ffc938ca421d432b12ed",
+      "bytes": 185819,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/figures/echonext_representative_reconstructions.png",
+      "sha256": "e4d566d9773e4947ae6093ff2dc89003e22fc4ad912580b16e9ce35bcc68cff5",
+      "bytes": 813056,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/figures/external_scorecard.pdf",
+      "sha256": "4c6e97e5ae5cc9678dc5422f7b236f102269500891e53a5744bac9deaf77d048",
+      "bytes": 30361,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/figures/external_scorecard.png",
+      "sha256": "0e96495cb24728023d04665896447200248cf78b3498cbe23ca9b0db00be5233",
+      "bytes": 274877,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/figures/factorial_atlas.pdf",
+      "sha256": "ac6cef3592b50500b1ebcf5d09e8050c2c6caef020216e69994df9c18c36cd99",
+      "bytes": 43490,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/figures/factorial_atlas.png",
+      "sha256": "b4b2132813022b002dcb94cfba551aa9994a17d11b67f2d36d40431b4faf7d58",
+      "bytes": 445172,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/figures/noise_stress.pdf",
+      "sha256": "e0bf8eb292f15dda4969bba7aea878b5db9f763190a7a0d9d3ebcd7841c80e43",
+      "bytes": 26653,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/figures/noise_stress.png",
+      "sha256": "51e70294c18e7b6fc89ae45ec50e997511f2d0f9043b0860edb6018fd7d0e3c1",
+      "bytes": 295524,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/logos/embc2026.png",
+      "sha256": "ae5695b2c68ac01ce68bd8315209ea53be92ef074c66b68255f5248679d675ba",
+      "bytes": 87681,
+      "provenance": "Official EMBC 2026 PowerPoint template"
+    },
+    {
+      "path": "assets/logos/ieee_embs.png",
+      "sha256": "a42efa6ee837053ba088124df9128430081f316393e918fc8b7e24ce666fb49d",
+      "bytes": 35883,
+      "provenance": "Official EMBC 2026 PowerPoint template"
+    },
+    {
+      "path": "assets/qr/project_qr.png",
+      "sha256": "62a7d0183546ebd0c524e0e1b7131762ef43b38373c99d53af7cbb9050a14aef",
+      "bytes": 1030,
+      "provenance": "Generated from locked factorial_v4_2x4 results"
+    },
+    {
+      "path": "assets/template/IEEE-EMBSPosterTemplate2026.pptx",
+      "sha256": "48bfb3d4e8e287a6f766e9d5dacd426febac8e970e8268703a6d08e773795bdd",
+      "bytes": 444637,
+      "provenance": "Official EMBC 2026 PowerPoint template"
+    },
+    {
+      "path": "assets/template/image1.png",
+      "sha256": "6b900b1f62a2d7a3d121694e9ee975ccd8603d04b9bf3ccb88255b9ffbf7900e",
+      "bytes": 121667,
+      "provenance": "Official EMBC 2026 PowerPoint template"
+    },
+    {
+      "path": "assets/template/image2.png",
+      "sha256": "66d1f55b10f4422158d5947098e19917106d91713b0937130035f25beb970442",
+      "bytes": 39438,
+      "provenance": "Official EMBC 2026 PowerPoint template"
+    },
+    {
+      "path": "assets/template/image3.png",
+      "sha256": "649980710b08080d6172cee6fe72a276118b92fb49f5cc33f7101408b9842363",
+      "bytes": 112751,
+      "provenance": "Official EMBC 2026 PowerPoint template"
+    },
+    {
+      "path": "assets/template/image4.png",
+      "sha256": "95373e0e6bcbe736882de33967ec5b5493d3664da2cefa152dc2b4700059fcdf",
+      "bytes": 18431,
+      "provenance": "Official EMBC 2026 PowerPoint template"
+    },
+    {
+      "path": "assets/template/image5.png",
+      "sha256": "3d2efc97172d222ed2a7ad94a4a985faea5380aacbd9ac2a006a747699e87588",
+      "bytes": 1091,
+      "provenance": "Official EMBC 2026 PowerPoint template"
+    },
+    {
+      "path": "data/all_48_models_master.csv",
+      "sha256": "4706d93b36e9b2e977f228b2babe080a77c82e6334222b65bb460f335799698b",
+      "bytes": 83299,
+      "provenance": "Locked comprehensive_latest_48_models evidence package"
+    },
+    {
+      "path": "data/completeness_verification.json",
+      "sha256": "1eb0259ffc21a0dc3648114cbda68c59cc54c11776bc90ff208d70d53bdc2fa2",
+      "bytes": 982,
+      "provenance": "Locked comprehensive_latest_48_models evidence package"
+    },
+    {
+      "path": "data/factorial_effects_mse_on_conditional.csv",
+      "sha256": "9c4a6196d5d761149d3d02b72093c2e7358c88565d10494680362ee6d6fb32b0",
+      "bytes": 39769,
+      "provenance": "Locked comprehensive_latest_48_models evidence package"
+    },
+    {
+      "path": "data/familywise_endpoint_tests.csv",
+      "sha256": "74072f81701ac031332f438133c492643236e631e234acfb2b19562e141b4e5b",
+      "bytes": 3070,
+      "provenance": "Locked comprehensive_latest_48_models evidence package"
+    },
+    {
+      "path": "data/poster_summary.csv",
+      "sha256": "045b9c6f9e968a5de15a77982a178cf3eaca3c22f3de9246f092a9e0d3b7910a",
+      "bytes": 582,
+      "provenance": "Locked comprehensive_latest_48_models evidence package"
+    }
+  ]
+}

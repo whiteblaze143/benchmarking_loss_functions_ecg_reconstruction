@@ -1,0 +1,62 @@
+project: ecg_ablation_grid
+cwd: /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction
+ssh: localhost
+default_cmd: >
+  python scripts/train_m1_pearson.py
+
+preconditions: []
+
+gpus: [0, 1, 2, 3, 4, 5, 6, 7]
+max_parallel: 8
+gpu_free_threshold_mib: 500
+oom_retry:
+  delay: 120
+  max_attempts: 3
+
+phases:
+  - name: train_ablations
+    jobs:
+      - id: m0_mse
+        cmd: python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0
+      - id: m1_pearson
+        cmd: python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0
+      - id: m1_mmd
+        cmd: python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.0
+      - id: m1_deriv
+        cmd: python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.05
+      - id: m1_full
+        cmd: python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05
+      
+      # Sweeps
+      - id: m1_full_mmd_0.05
+        cmd: python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.05 --lambda_deriv 0.05
+      - id: m1_full_mmd_0.15
+        cmd: python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.15 --lambda_deriv 0.05
+      - id: m1_full_deriv_0.025
+        cmd: python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.025
+      - id: m1_full_deriv_0.075
+        cmd: python scripts/train_m1_pearson.py --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.075
+      
+      # M2 Ablations
+      - id: m2_no_temporal
+        cmd: python scripts/train_m2_uncertainty.py --disable_temporal_attn
+      - id: m2_no_crosslead
+        cmd: python scripts/train_m2_uncertainty.py --disable_cross_lead_attn
+        
+      # Baseline
+      - id: cnvae_baseline
+        cmd: python scripts/baselines/train_cnvae.py --backbone ecgfm --epochs 50
+
+  - name: evaluation_suite
+    depends_on: train_ablations
+    jobs:
+      - id: eval_oracle
+        cmd: python scripts/evaluate_oracle_on_recons.py
+      - id: eval_ablation
+        cmd: python scripts/evaluate_ablation_suite.py
+      - id: eval_ece
+        cmd: python scripts/evaluate_ece.py
+      - id: plot_recons
+        cmd: python scripts/plot_reconstructions.py
+      - id: eval_clinical_f1
+        cmd: python scripts/evaluate_clinical_f1.py

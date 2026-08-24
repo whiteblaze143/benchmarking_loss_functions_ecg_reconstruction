@@ -1,0 +1,95 @@
+{
+  "schema_version": 3,
+  "benchmark": "factorial_v4",
+  "data_dir": "data/ptb_xl/tensors/val",
+  "ptbxl_csv": "data/ptb_xl/ptbxl_database.csv",
+  "scp_statements_csv": "data/ptb_xl/scp_statements.csv",
+  "ecgfounder_repo": "ecg_fm_integration/ecgfounder_repo",
+  "ecgfounder_checkpoint": "ecg_fm_integration/ecgfounder_repo/checkpoint/12_lead_ECGFounder.pth",
+  "ecgfounder_labels_csv": "ecg_fm_integration/ecgfounder_repo/csv/ptbxl_label.csv",
+  "ecgfounder_tasks": "ecg_fm_integration/ecgfounder_repo/tasks.txt",
+  "five_superclass_backbone": "ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt",
+  "five_superclass_checkpoint": "checkpoints/factorial_v4/parity/ecgfm_five_superclass.pt",
+  "nstdb_dir": "data/mit-bih-noise-stress-test-database-1.0.0",
+  "fitbit_noise_dir": "data/fitbit_noise",
+  "split": "val",
+  "models": [
+    {
+      "id": "ecgaim__e1c1m1d0__s2026",
+      "family": "ecg_aim",
+      "kind": "alitok",
+      "cohort": "confirmation",
+      "seed": 2026,
+      "factorial_mask": "1110",
+      "factors": {
+        "mse": true,
+        "correlation": true,
+        "mmd": true,
+        "derivative": false
+      },
+      "loss": "base+mse+correlation+mmd",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "tokenizer_reconstruction_objective",
+      "checkpoint": "checkpoints/factorial_v4/confirmation/ecgaim__e1c1m1d0__s2026/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "ECG-AIM",
+        "width": 384,
+        "encoder_depth": 8,
+        "decoder_depth": 4,
+        "heads": 8,
+        "patch_size": 25
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "unified_latents/engineering/experimental/alitok_vae_exp.py": "bdf79dda93c43ef31d1422718f1b3f1be2ea1cd367a3ee8530b8aa0676651b31",
+          "unified_latents/engineering/trainers/train_multi_scale_vae.py": "f124c3e8dea0ac20044ddc1c6009534ca4c106c5da295781987b13c72e8f4347"
+        },
+        "source_bundle_sha256": "e5974308ad121765b9fc4ff2df35fca156d660f3e539e3fcc4eeb90942edc483",
+        "source_diff_sha256": "c4f07d0a1ceab8517b43d683d3b7757a92865b22dbd1b61605f3b9bce1629fb2"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": "OneCycleLR"
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    }
+  ]
+}

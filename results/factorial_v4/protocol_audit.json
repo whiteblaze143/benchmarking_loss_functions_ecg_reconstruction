@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "timestamp": "2026-07-25T23:58:00.259840+00:00",
+  "manifest": "experiment_queue/factorial_v4/manifest.json",
+  "registry": "experiment_queue/factorial_v4/model_registry.json",
+  "phase_count": 18,
+  "job_count": 91,
+  "checks": {
+    "registry_active_primary_cells_48": true,
+    "unique_job_ids": true,
+    "primary_training_runs_48": true,
+    "confirmation_runs_18": true,
+    "paper_parity_anchor_runs_5": true,
+    "factor_and_selector_contracts": true,
+    "source_hashes_match_registry": true,
+    "identical_split_inventories": true,
+    "throughput_and_epoch_contracts": true,
+    "cnvae_excluded_from_active_registry": true,
+    "active_grid_progresses_after_smoke": true,
+    "full_robustness_all_records_and_safe_throughput": true,
+    "external_datasets_required_for_finalization": true,
+    "echonext_full_external_contract": true,
+    "smartwatch_clean_only_contract": true
+  },
+  "status": "pass"
+}

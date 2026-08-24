@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "timestamp": "2026-07-25T02:57:00Z",
+  "status": "pass",
+  "implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+  "tests": {
+    "focused_queue_suite_passed": 37,
+    "focused_queue_suite_failed": 0,
+    "factorial_loss_tests_passed": 23,
+    "full_dimensional_gradient_shape": [
+      4,
+      9,
+      5000
+    ],
+    "minimum_gradient_l1": 0.0001
+  },
+  "smoke_cells": [
+    "unet__e0c0m1d0__s42",
+    "unet__e1c1m1d1__s42",
+    "msvae__e0c0m1d0__s42",
+    "msvae__e1c1m1d1__s42",
+    "ecgaim__e0c0m1d0__s42",
+    "ecgaim__e1c1m1d1__s42"
+  ],
+  "smoke_contract": {
+    "completed": 6,
+    "finite_output_shape": [
+      1,
+      12,
+      5000
+    ],
+    "observed_lead_mse": 0.0
+  },
+  "unet_mmd_only_epoch_metrics": {
+    "train_mmd_epoch_1": 0.0664,
+    "train_mmd_epoch_2": 0.0377,
+    "validation_mmd_epoch_1": 0.053,
+    "validation_mmd_epoch_2": 0.0232
+  },
+  "completed_primary_mmd_only_validation": {
+    "cell": "unet__e0c0m1d0__s42",
+    "records": 2183,
+    "best_epoch": 10,
+    "missing_lead_mse": 0.042398739606142044,
+    "missing_lead_pearson": 0.6559389366043938,
+    "all_lead_mse": 0.037281654154260956,
+    "final_train_mmd": 0.0017,
+    "final_validation_mmd": 0.0017
+  },
+  "throughput_observation": {
+    "gpu": "NVIDIA A100-PCIE-40GB",
+    "unet_batch_size": 256,
+    "sampled_memory_mib": 8397,
+    "sampled_sm_utilization_peak_percent": 95,
+    "oom": false
+  }
+}

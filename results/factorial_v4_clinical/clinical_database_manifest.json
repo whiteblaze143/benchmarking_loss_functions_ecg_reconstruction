@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "classification_rows": 25020,
+  "smartwatch_fidelity_rows": 28800,
+  "smartwatch_protocol_rows": 16,
+  "classification_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4_clinical/classification_task_metrics.parquet",
+  "smartwatch_fidelity_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4_clinical/smartwatch_task_fidelity.parquet",
+  "smartwatch_protocol_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4_clinical/smartwatch_protocol_metrics.parquet",
+  "evaluation_type_separation": {
+    "real_gt": "classification_task_metrics",
+    "simulation_only": "condition/evaluation_type fields and calibrated scalar smartwatch protocol rows",
+    "paired_device_reference": "2-Hz square-wave watch-versus-Philips maximum aligned cross-correlation",
+    "frozen_classifier_probability_fidelity_proxy": "smartwatch_task_fidelity"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "cnvae": {
+    "status": "excluded_after_validity_gate_diagnosis",
+    "reason": "four analytic limb leads learned; five missing chest leads remained collapsed",
+    "evidence": "results/factorial_v2/exclusions/cnvae.json"
+  }
+}

@@ -1,0 +1,85 @@
+model:
+  target: models.interpretable_diffusion.gaussian_diffusion.MLA_Diffusion
+  params:
+    channels: 12
+    feature_size: 1000 
+    n_layer_enc: 4
+    n_layer_dec: 4
+    d_model: 128
+    timesteps: 100
+    sampling_timesteps: 100
+    loss_type: 'mal_mse_loss'
+    beta_schedule: 'cosine'
+    n_heads: 4
+    mlp_hidden_times: 2
+    attn_pd: 0.2
+    resid_pd: 0.0
+    kernel_size: 1
+    padding_size: 0
+    use_ff: True
+    use_text: False
+
+solver:
+  base_lr: 1.0e-5
+  max_steps: 10000
+  results_folder: results/test/cond_syn/PTBXL
+  gradient_accumulate_every: 1
+  save_cycle: 1000  # max_steps // 10
+  ema:
+    decay: 0.995
+    update_interval: 10
+    
+  vae:
+    lr: 1.0e-5
+    batch_size: 128
+    epochs: 100
+    checkpoint: results/vae1to12/PTBXL/checkpoints/VAE-100.pth
+
+
+  scheduler:
+    target: engine.lr_sch.ReduceLROnPlateauWithWarmup
+    params:
+      factor: 0.5
+      patience: 1000
+      min_lr: 1.0e-9
+      threshold: 1.0e-2
+      threshold_mode: rel
+      warmup_lr: 8.0e-4
+      warmup: 500 
+      verbose: False
+  use_text: False
+
+dataloader:
+  train_dataset:
+    target: utils.data_utils.ecg_dataset.ECGDataset
+    params:
+      name: PTBXL
+      data_root: data/datasets/PTBXL/all/data
+      window: 1000  # seq_length
+      save2npy: True
+      auto_norm_type: None
+      seed: 42
+      period: train
+      condition_type: cond
+      use_text: False
+
+  test_dataset:
+    target: utils.data_utils.ecg_dataset.ECGDataset
+    params:
+      name: PTBXL
+      data_root: data/datasets/PTBXL/all/data
+      window: 1000  # seq_length
+      save2npy: True
+      auto_norm_type: None
+      seed: 42
+      period: test
+      use_text: False
+
+    # langevin_fn
+    coefficient: 1.0e-2
+    learning_rate: 5.0e-2
+    sampling_steps: 100
+
+  batch_size: 64
+  sample_size: 64
+  shuffle: True

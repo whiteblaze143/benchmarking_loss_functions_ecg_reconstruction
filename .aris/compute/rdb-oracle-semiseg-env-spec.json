@@ -1,0 +1,26 @@
+{
+  "base": "/home/mithunmanivannan/.venv Python 3.12 + torch 2.6.0+cu124, CPU-only",
+  "dependency_path": "external/semiseg/runtime_deps",
+  "system_pkgs": ["tmux", "util-linux taskset", "util-linux flock", "sqlite3"],
+  "sequence": [
+    "fixed-region RDB oracle: 31 frozen LUDB-qualified models on 2398 records",
+    "learned blinded RDB: same 31 models plus original ceiling"
+  ],
+  "resources": {
+    "oracle_cpu_threads": 7,
+    "learned_cpu_cores": [0, 1, 2, 3, 4, 5],
+    "gpu": false,
+    "oracle_min_free_disk_gib": 5,
+    "learned_min_free_disk_gib": 8
+  },
+  "checkpoint": {
+    "path": "results/semiseg_ludb_training/vit_tiny_mean_teacher_full_s42/best-MeanIoU.pth",
+    "state": "model_ema",
+    "sha256": "b404e0dbe198b7f5d4961b7a5fe04a2bd16d281a9a030a3db2ba4996ce696fb4"
+  },
+  "storage": "separate SQLite databases; learned track aggregate-only with no raw predictions, per-record rows, or CSV",
+  "run_commands": [
+    "RDB_ORACLE_CONFIRM_PRODUCTION=I_UNDERSTAND_RDB_PRODUCTION scripts/run_ecgaim_rdb_oracle_daemon.sh",
+    "scripts/run_rdb_semiseg_after_oracle.sh"
+  ]
+}

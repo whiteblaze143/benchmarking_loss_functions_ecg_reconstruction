@@ -1,0 +1,10 @@
+{
+  "core_completeness": "complete",
+  "clinical_completeness": "PASS",
+  "final_gate": "FAIL",
+  "final_gate_passed": 9,
+  "final_gate_total": 10,
+  "unresolved_final_checks": [
+    "fresh_postrun_audit_pass"
+  ]
+}

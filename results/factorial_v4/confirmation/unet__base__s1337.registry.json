@@ -1,0 +1,95 @@
+{
+  "schema_version": 3,
+  "benchmark": "factorial_v4",
+  "data_dir": "data/ptb_xl/tensors/val",
+  "ptbxl_csv": "data/ptb_xl/ptbxl_database.csv",
+  "scp_statements_csv": "data/ptb_xl/scp_statements.csv",
+  "ecgfounder_repo": "ecg_fm_integration/ecgfounder_repo",
+  "ecgfounder_checkpoint": "ecg_fm_integration/ecgfounder_repo/checkpoint/12_lead_ECGFounder.pth",
+  "ecgfounder_labels_csv": "ecg_fm_integration/ecgfounder_repo/csv/ptbxl_label.csv",
+  "ecgfounder_tasks": "ecg_fm_integration/ecgfounder_repo/tasks.txt",
+  "five_superclass_backbone": "ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt",
+  "five_superclass_checkpoint": "checkpoints/factorial_v4/parity/ecgfm_five_superclass.pt",
+  "nstdb_dir": "data/mit-bih-noise-stress-test-database-1.0.0",
+  "fitbit_noise_dir": "data/fitbit_noise",
+  "split": "val",
+  "models": [
+    {
+      "id": "unet__e1c0m0d0__s1337",
+      "family": "unet",
+      "kind": "unet",
+      "cohort": "confirmation",
+      "seed": 1337,
+      "factorial_mask": "1000",
+      "factors": {
+        "mse": true,
+        "correlation": false,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base+mse",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "mmd_implementation": "adaptive_multiscale_rbf_mean_squared_distance_v2",
+      "base_objective": "mse",
+      "checkpoint": "checkpoints/factorial_v4/confirmation/unet__e1c0m0d0__s1337/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "MCMA-U-Net",
+        "input_leads": [
+          0,
+          1,
+          7
+        ]
+      },
+      "architecture_revision": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+      "architecture_provenance": {
+        "git_commit": "ec7a55a31dca1a32efbbdc039df59a02d794fb5d",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+          "scripts/train_m1_pearson.py": "bd89363842c2d4b7c135f80fdaf4dc353a7b0677ae71e962a7e042a2b945dfaf",
+          "scripts/train_mcma_3lead.py": "fb51a2b2d1793b848bbe44bbffeab3b4f5392f1d264a161d53c991fe5cc2915f"
+        },
+        "source_bundle_sha256": "4cc1f5d627917bc89c22a4a550ba1f38793dfb94201a18fcb771e67499ee5a82",
+        "source_diff_sha256": "85392fb8a3a856559b4646a2aa1aee09205c3b7eaa0e6ec5c3fcf085e2b45051"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "AdamW",
+        "scheduler": null
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    }
+  ]
+}

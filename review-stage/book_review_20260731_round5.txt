@@ -1,0 +1,43 @@
+ROUND 5 — 2026-07-31
+Score: 7.5/10
+Verdict: book structure strong; mixed-factorial release not ready.
+
+Critical blocker:
+
+- The 75 verified checkpoints spanned four source bundles and two stored-state
+  schemas: 46 FP32 and 29 FP16.
+- The release gate checked only that a state-schema hash existed; it did not
+  enforce an approved source bundle/domain, clean or exactly reconstructable
+  source, or one precision/schema.
+- The legacy 75ae bundle contains a broken lead-consistency active branch.
+  Its 61 accepted masks all had the lead digit disabled, so a controlled
+  dormant-branch exception is plausible but must be explicit and machine
+  enforced.
+- Two checkpoints recorded dirty source bundles without embedding the source
+  bytes. Source provenance was recomputed during best-checkpoint writes, so a
+  live source edit could misdescribe code already executing.
+
+Verified strengths:
+
+- Historical queue truth reconciled exactly to 74 exit-zero generations and
+  57 quarantined nonzero-exit partials.
+- Exact remote round trips, strict model loading, payload identity, state
+  finiteness/dtype/schema, generation invalidation, and error materialization
+  refusal were implemented correctly.
+- Actual-data inference on a remote checkpoint produced a finite
+  1 x 12 x 5000 reconstruction.
+- The mixed release binds the exact 480 identities and canonical
+  2,198-record/1,904-patient test cohort.
+- EDA is first, all 12 rendered pages share one sidebar, and incomplete work is
+  distinguished from results.
+
+Required follow-ups:
+
+1. Pin/capture source once at startup, embed exact sources, and gate an explicit
+   source-bundle-to-mask-domain policy.
+2. Enforce one precision/schema or declare and quantify a normalization policy.
+3. Add adversarial strict-load tests.
+4. Bind the compatibility audit into the release report.
+5. Contain per-record paths to the intended results directory.
+
+No reviewer edits were made.

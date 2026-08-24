@@ -1,0 +1,803 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-08-10T19:52:33.877607+00:00",
+  "state": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/queue_3arch/queue_state.json",
+  "database": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/checkpoint_store/catalog.sqlite",
+  "before_counts": {
+    "completed": 65,
+    "failed": 91
+  },
+  "after_queue_counts": {
+    "pending": 319,
+    "completed": 1
+  },
+  "inference_addressable_3arch": [
+    "factorial_msvae_1111112_s42"
+  ],
+  "changes": [
+    {
+      "id": "msvae_f_1000000_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000001_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000002_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000003_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000004_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000010_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000011_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000012_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000013_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000014_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000100_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000101_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000102_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000103_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000104_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000110_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000111_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000112_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000113_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1000114_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001000_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001001_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001002_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001003_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001004_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001010_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001011_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001100_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001101_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001102_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001103_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001104_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010000_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010001_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010002_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010003_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010004_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010100_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010101_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010102_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010103_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010104_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011000_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011001_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011002_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011003_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011004_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011100_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011101_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011102_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011103_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011104_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100000_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100001_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100002_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100003_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100004_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100100_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100101_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100102_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100103_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100104_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101000_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101001_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101002_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101003_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101004_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101100_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101101_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101102_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101103_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101104_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110000_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110001_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110002_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110003_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110004_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110100_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110101_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110102_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110103_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110104_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111000_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111001_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111002_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111003_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111004_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111100_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111101_s42",
+      "before": "completed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111102_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111103_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111104_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001012_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001013_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001014_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001110_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001111_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001112_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001113_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1001114_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010010_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010011_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010012_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010111_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011012_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011013_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011014_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010013_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010014_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010110_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010112_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010113_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1010114_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011010_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011011_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011110_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011111_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011112_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011113_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1011114_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100010_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100011_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100012_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100013_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100014_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100110_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100111_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100112_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100113_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1100114_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101010_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101011_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101012_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101013_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101014_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101110_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101111_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101112_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101113_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1101114_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110010_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110011_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110012_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110013_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110014_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110110_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110111_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110112_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110113_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1110114_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111010_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111011_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111012_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111013_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111014_s42",
+      "before": "failed",
+      "after": "pending"
+    },
+    {
+      "id": "msvae_f_1111110_s42",
+      "before": "failed",
+      "after": "pending"
+    }
+  ],
+  "restored_jobs": [
+    "ecg_aim_f_1111114_s42"
+  ],
+  "applied": true
+}

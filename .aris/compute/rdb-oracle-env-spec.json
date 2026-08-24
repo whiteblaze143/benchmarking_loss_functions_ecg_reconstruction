@@ -1,0 +1,35 @@
+{
+  "base": "existing host /usr Python 3.12 venv; CPU-only execution",
+  "system_pkgs": ["tmux", "util-linux/taskset"],
+  "pip_phases": [
+    ["torch==2.6.0+cu124"],
+    ["numpy==2.3.5", "openpyxl==3.1.5"]
+  ],
+  "env": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "OMP_NUM_THREADS": "7",
+    "MKL_NUM_THREADS": "7",
+    "OPENBLAS_NUM_THREADS": "7"
+  },
+  "run_commands": [
+    "/home/mithunmanivannan/.venv/bin/python3 scripts/evaluate_ecgaim_rdb_oracle_daemon.py"
+  ],
+  "weight_dirs": {
+    "ecgaim": {
+      "path": "checkpoints plus results/checkpoint_store",
+      "source": "project checkpoint-store resolver",
+      "gated": true
+    }
+  },
+  "smoke": {
+    "import_names": ["torch", "numpy", "openpyxl"],
+    "gpu_tests": [],
+    "cpu_tests": [
+      {
+        "cmd": "CUDA_VISIBLE_DEVICES='' /home/mithunmanivannan/.venv/bin/python3 -c 'import torch; torch.manual_seed(0); x=torch.randn(2,12,5000); print(\"WITNESS\", tuple(x.shape), x.device)'",
+        "expect": "^WITNESS (2, 12, 5000) cpu$"
+      }
+    ],
+    "cli_checks": ["tmux -V", "taskset --version"]
+  }
+}

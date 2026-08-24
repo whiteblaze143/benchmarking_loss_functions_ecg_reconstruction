@@ -1,0 +1,37 @@
+{
+  "model_id": "factorial_ecg_aim_1000001_s42",
+  "threads": 6,
+  "cpu_only": true,
+  "runs": [
+    {
+      "batch_size": 2,
+      "records": 48,
+      "seconds": 44.07201869413257,
+      "records_per_second": 1.0891264213043723
+    },
+    {
+      "batch_size": 4,
+      "records": 48,
+      "seconds": 41.18177379062399,
+      "records_per_second": 1.1655641703060478
+    },
+    {
+      "batch_size": 8,
+      "records": 48,
+      "seconds": 41.72490728693083,
+      "records_per_second": 1.1503920109376653
+    },
+    {
+      "batch_size": 12,
+      "records": 48,
+      "seconds": 44.06517474586144,
+      "records_per_second": 1.0892955781256288
+    },
+    {
+      "batch_size": 4,
+      "records": 48,
+      "seconds": 41.537915082182735,
+      "records_per_second": 1.1555707575845353
+    }
+  ]
+}

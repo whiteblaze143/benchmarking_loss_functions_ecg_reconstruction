@@ -1,0 +1,13 @@
+{
+  "model_id": "factorial_ecg_aim_1000001_s42",
+  "threads": 8,
+  "cpu_only": true,
+  "runs": [
+    {
+      "batch_size": 4,
+      "records": 48,
+      "seconds": 60.110599745996296,
+      "records_per_second": 0.7985280500083027
+    }
+  ]
+}

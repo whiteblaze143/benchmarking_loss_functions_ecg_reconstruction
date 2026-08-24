@@ -1,0 +1,19 @@
+{
+  "base": "/home/mithunmanivannan/.venv Python 3.12 + torch 2.6.0+cu124, CPU-only",
+  "dependency_path": "external/semiseg/runtime_deps",
+  "system_pkgs": ["tmux", "util-linux taskset"],
+  "env": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "OMP_NUM_THREADS": "6",
+    "MKL_NUM_THREADS": "6",
+    "OPENBLAS_NUM_THREADS": "6"
+  },
+  "run_commands": ["scripts/run_ecgaim_ludb_semiseg_blinded.sh"],
+  "resources": {"cpu_cores": [0, 1, 2, 3, 4, 5], "gpu": false, "min_free_disk_gib": 8},
+  "checkpoint": {
+    "path": "results/semiseg_ludb_training/vit_tiny_mean_teacher_full_s42/best-MeanIoU.pth",
+    "state": "model_ema",
+    "sha256": "b404e0dbe198b7f5d4961b7a5fe04a2bd16d281a9a030a3db2ba4996ce696fb4"
+  },
+  "smoke": "two official test records, one reconstruction model, temporary compact SQLite database"
+}

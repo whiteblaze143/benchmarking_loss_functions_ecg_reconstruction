@@ -1,0 +1,29 @@
+{
+  "source_sha256": {
+    "comprehensive_results": "1f0a8f0906b0ebf394969778e6c5e83eb793cec582604f0e790833e553fc2f8d",
+    "model_registry": "16d4025b197f60a523d1de3d4d395e701e489d7344214c4fd0c93cf66a666d53",
+    "paper_parity_results": "0208d5f25c693b1d9569298e4cb47dbb8f5aa704ff04688f3358128a658cbaf8",
+    "echonext_results": "8b403b38a9100fca986a9bf6932d7a889b2dab6a335df671d616a1c51c2cdc55",
+    "smartwatch_results": "0f471258b68c3c6e33936b058127e349c173ce366d6449296d0a974ccb60d90b",
+    "main_table": "0b1fac502a45801b1914be7d7dd933fc079d915db927bce612ea0a897509be82",
+    "primary_main_table": "c80a39888ef22bee663a4ea3c2f72d969697deb792fccdb32f0d283e2a3a80ee",
+    "effects_table": "678a598fe88b3b0a91caa270ab12a34f9f835d59bf0799aabd958b7259461e12"
+  },
+  "core_coverage_passed": true,
+  "generated_figures": {
+    "factorial_heatmaps": "results/factorial_v2/plots/factorial_heatmaps.png",
+    "factorial_effect_forest": "results/factorial_v2/plots/factorial_effect_forest.png",
+    "morphology_diagnostic_pareto": "results/factorial_v2/plots/morphology_diagnostic_pareto.png",
+    "nstdb_degradation": "results/factorial_v2/plots/nstdb_degradation.png",
+    "echonext_external_heatmap": "results/factorial_v2/plots/echonext_external_heatmap.png",
+    "echonext_representative_reconstructions": "results/factorial_v2/plots/echonext_representative_reconstructions.png",
+    "factorial_heatmaps_svg": "results/factorial_v2/plots/factorial_heatmaps.svg",
+    "factorial_effect_forest_svg": "results/factorial_v2/plots/factorial_effect_forest.svg",
+    "morphology_diagnostic_pareto_svg": "results/factorial_v2/plots/morphology_diagnostic_pareto.svg",
+    "nstdb_degradation_svg": "results/factorial_v2/plots/nstdb_degradation.svg",
+    "echonext_external_heatmap_svg": "results/factorial_v2/plots/echonext_external_heatmap.svg",
+    "echonext_representative_reconstructions_svg": "results/factorial_v2/plots/echonext_representative_reconstructions.svg",
+    "factorial_heatmaps_4factor_supplementary": "results/factorial_v2/plots/factorial_heatmaps_4factor_supplementary.png",
+    "factorial_heatmaps_4factor_supplementary_svg": "results/factorial_v2/plots/factorial_heatmaps_4factor_supplementary.svg"
+  }
+}

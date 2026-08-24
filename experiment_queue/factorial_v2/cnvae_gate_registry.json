@@ -1,0 +1,93 @@
+{
+  "schema_version": 3,
+  "benchmark": "factorial_v2",
+  "data_dir": "data/ptb_xl/tensors/val",
+  "ptbxl_csv": "data/ptb_xl/ptbxl_database.csv",
+  "scp_statements_csv": "data/ptb_xl/scp_statements.csv",
+  "ecgfounder_repo": "ecg_fm_integration/ecgfounder_repo",
+  "ecgfounder_checkpoint": "ecg_fm_integration/ecgfounder_repo/checkpoint/12_lead_ECGFounder.pth",
+  "ecgfounder_labels_csv": "ecg_fm_integration/ecgfounder_repo/csv/ptbxl_label.csv",
+  "ecgfounder_tasks": "ecg_fm_integration/ecgfounder_repo/tasks.txt",
+  "five_superclass_backbone": "ecg_fm_integration/checkpoints/mimic_iv_ecg_physionet_pretrained.pt",
+  "five_superclass_checkpoint": "checkpoints/factorial_v2/parity/ecgfm_five_superclass.pt",
+  "nstdb_dir": "data/mit-bih-noise-stress-test-database-1.0.0",
+  "fitbit_noise_dir": "data/fitbit_noise",
+  "split": "val",
+  "models": [
+    {
+      "id": "cnvae__c0m0d0__s42",
+      "family": "cnvae",
+      "kind": "cnvae",
+      "cohort": "primary",
+      "seed": 42,
+      "factorial_mask": "000",
+      "factors": {
+        "correlation": false,
+        "mmd": false,
+        "derivative": false
+      },
+      "loss": "base",
+      "weights": {
+        "corr": 0.5,
+        "mmd": 0.1,
+        "deriv": 0.05
+      },
+      "loss_implementation": "scripts.common_loss:{pearson_loss,mmd_loss,derivative_loss}",
+      "base_objective": "r2_elbo",
+      "checkpoint": "checkpoints/factorial_v2/primary/cnvae__c0m0d0__s42/best_model.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "architecture": {
+        "name": "cNVAE-ECG-FM bridge",
+        "backbone": "ECG-FM frozen",
+        "inference_latent": "conditional_posterior_mean",
+        "inference_inputs": "observed_leads_only",
+        "numerical_precision": "float32_with_TF32"
+      },
+      "architecture_revision": "d395bd3f61620973707226804071eea35e9012c2",
+      "architecture_provenance": {
+        "git_commit": "d395bd3f61620973707226804071eea35e9012c2",
+        "git_dirty_for_sources": true,
+        "source_file_sha256": {
+          "scripts/baselines/cnvae_ecg.py": "dc4db552e3ddf25c8046efe96e9e988e1c74137448619b26acb7062131eb1cde",
+          "scripts/baselines/train_cnvae.py": "a0c9795a25c12b04452c97a2e7de3355eac1b0d14706252c153a03fe79363be6",
+          "scripts/common_loss.py": "d6273bf0df199ba205c3f6a929302e26bcb529b0b77a9008576579ee1791e7af"
+        },
+        "source_bundle_sha256": "d3bf07b47b4bcde381d322282efc190c3f6efef36de3bf9083a7b19856fb7407",
+        "source_diff_sha256": "f738a83b688b02c78e57936726ab578e27f1b85212b0c2e61eac3a3a5742c722"
+      },
+      "preprocessing": {
+        "sample_rate_hz": 500,
+        "shape": [
+          12,
+          5000
+        ],
+        "units": "mV",
+        "normalization": "none",
+        "split_inventory": {
+          "train": {
+            "count": 17418,
+            "inventory_sha256": "160c90c4b46616fe979ecdb8d40a8e3b9aeb7c0a7e9daa31418c227c993317d3"
+          },
+          "val": {
+            "count": 2183,
+            "inventory_sha256": "f3e7c39436ef68da4b728bf48d1d9aec1b24a8c5742f7d46ba948b8a71a7dfa3"
+          },
+          "test": {
+            "count": 2198,
+            "inventory_sha256": "c4779caee846a1af30d42c4977fb4b4ecdc2373bf80a4ba0863a938170346d3d"
+          }
+        }
+      },
+      "optimizer": {
+        "name": "Adamax",
+        "scheduler": "warmup+CosineAnnealingLR",
+        "early_stopping_patience": 5
+      },
+      "checkpoint_selector": "lowest_missing_lead_val_mse_then_highest_missing_lead_val_pearson"
+    }
+  ]
+}

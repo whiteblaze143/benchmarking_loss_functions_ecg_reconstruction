@@ -1,0 +1,77 @@
+dataloader:
+  batch_size: 16
+  sample_size: 64
+  shuffle: true
+  test_dataset:
+    coefficient: 0.01
+    learning_rate: 0.05
+    params:
+      auto_norm_type: None
+      data_root: data/datasets/MIMIC
+      name: MIMIC
+      period: test
+      save2npy: false
+      seed: 42
+      use_text: false
+      window: 5000
+    sampling_steps: 100
+    target: utils.data_utils.ecg_dataset.ECGDataset
+  train_dataset:
+    params:
+      auto_norm_type: None
+      condition_type: cond
+      data_root: data/datasets/MIMIC
+      name: MIMIC
+      period: train
+      save2npy: false
+      seed: 42
+      use_text: false
+      window: 5000
+    target: utils.data_utils.ecg_dataset.ECGDataset
+model:
+  params:
+    attn_pd: 0.0
+    beta_schedule: cosine
+    d_model: 256
+    feature_size: 4
+    kernel_size: 1
+    loss_type: l2
+    mlp_hidden_times: 4
+    n_heads: 4
+    n_layer_dec: 2
+    n_layer_enc: 8
+    padding_size: 0
+    resid_pd: 0.0
+    sampling_timesteps: 100
+    temporal_size: 125
+    timesteps: 100
+    use_ff: false
+    use_text: false
+  target: models.latent_diffusion.gaussian_diffusion.MLA_Diffusion
+solver:
+  base_lr: 1.0e-05
+  ema:
+    decay: 0.995
+    update_interval: 10
+  gradient_accumulate_every: 1
+  max_steps: 500000
+  results_folder: results/cond_syn/MIMIC
+  save_cycle: 50000
+  scheduler:
+    params:
+      factor: 0.5
+      min_lr: 1.0e-09
+      patience: 1000
+      threshold: 0.01
+      threshold_mode: rel
+      verbose: false
+      warmup: 2500
+      warmup_lr: 0.0008
+    target: engine.lr_sch.ReduceLROnPlateauWithWarmup
+  use_text: false
+  vae:
+    batch_size: 16
+    checkpoint: results/vae/MIMIC/checkpoints/VAE-10.pth
+    epochs: 10
+    kld_weight: 0.0001
+    lr: 1.0e-05

@@ -1,0 +1,43 @@
+{
+  "project": "vcg_loss_experiments",
+  "cwd": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction",
+  "conda": "base",
+  "gpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "max_parallel": 8,
+  "oom_retry": {
+    "delay": 120,
+    "max_attempts": 3
+  },
+  "phases": [
+    {
+      "name": "train_vcg_baseline",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "msvae_vcg_seed42",
+          "cmd": "/home/mithunmanivannan/.venv/bin/python3 scripts/train_m1_pearson.py  --seed 42  --factorial_mask 11111  --loss_protocol paper_parity  --epochs 10  --batch_size 256  --run_name msvae_vcg_seed42  --checkpoint_path checkpoints/msvae_vcg_seed42.pt\n",
+          "expected_output": "checkpoints/msvae_vcg_seed42.pt"
+        },
+        {
+          "id": "msvae_vcg_seed200",
+          "cmd": "/home/mithunmanivannan/.venv/bin/python3 scripts/train_m1_pearson.py  --seed 200  --factorial_mask 11111  --loss_protocol paper_parity  --epochs 10  --batch_size 256  --run_name msvae_vcg_seed200  --checkpoint_path checkpoints/msvae_vcg_seed200.pt\n",
+          "expected_output": "checkpoints/msvae_vcg_seed200.pt"
+        },
+        {
+          "id": "msvae_vcg_seed201",
+          "cmd": "/home/mithunmanivannan/.venv/bin/python3 scripts/train_m1_pearson.py  --seed 201  --factorial_mask 11111  --loss_protocol paper_parity  --epochs 10  --batch_size 256  --run_name msvae_vcg_seed201  --checkpoint_path checkpoints/msvae_vcg_seed201.pt\n",
+          "expected_output": "checkpoints/msvae_vcg_seed201.pt"
+        }
+      ]
+    }
+  ]
+}

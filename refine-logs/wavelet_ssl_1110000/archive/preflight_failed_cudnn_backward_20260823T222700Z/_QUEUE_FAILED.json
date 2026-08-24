@@ -1,0 +1,10 @@
+{
+  "counts": {
+    "failed": 1,
+    "pending": 11
+  },
+  "manifest_sha256": "10523d39264c9108a5827145a587f7d71f0c313d9b5a444eb4f8e9565577c7a7",
+  "status": "incomplete",
+  "stopped_at": "2026-08-23T22:26:50Z",
+  "version": 1
+}

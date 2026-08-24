@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/scripts/style.py",
+  "sources": {
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_evidence/selected_smartwatch.csv": "8867fc10bf005909cceb868748e5ba6ae8ff2a9cab75e026d0192a9a084fd2d2"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig5_smartwatch_domain_gap.pdf",
+      "sha256": "a549599add9e34fb40a5b547f927daab865ff8875d6e2306a4dd8aa4e034f338"
+    },
+    "svg": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig5_smartwatch_domain_gap.svg",
+      "sha256": "2d0698508b35a3429d4dbe01ce693c2ed8cbe97deb393a28c4a002431d0d7322"
+    },
+    "png": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig5_smartwatch_domain_gap.png",
+      "sha256": "bcaef495efb15a94599bc7f026588758e29dfd72d2c1707ef007cc7d2e360210"
+    }
+  },
+  "caption": "Zero-shot smartwatch transfer using only the physically acquired lead II. All 12 selected family-device cells have negative missing-eleven-lead R\u00b2. Panel C is a Philips-referenced frozen-classifier probability-fidelity proxy on simulator signals, not diagnostic accuracy.",
+  "style": "poster_v2_colorblind_vector"
+}

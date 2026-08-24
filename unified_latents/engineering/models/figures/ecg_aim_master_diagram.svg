@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" width="1400" height="900" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+  <rect width="1400" height="900" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow-default" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#555555"/>
+    </marker>
+    <marker id="arrow-c0" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#3B82F6"/>
+    </marker>
+    <marker id="arrow-c1" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#8B5CF6"/>
+    </marker>
+    <marker id="arrow-c2" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#10B981"/>
+    </marker>
+    <marker id="arrow-c3" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#F59E0B"/>
+    </marker>
+    <marker id="arrow-c4" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#EF4444"/>
+    </marker>
+    <marker id="arrow-c5" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#0EA5E9"/>
+    </marker>
+    <marker id="arrow-c6" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#6366F1"/>
+    </marker>
+    <marker id="arrow-c7" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#F472B6"/>
+    </marker>
+  </defs>
+  <rect x="15.0" y="135.0" width="1310.0" height="425.0" fill="#FAFAFA" stroke="#E5E7EB" stroke-width="1" rx="8"/>
+  <text x="23.0" y="151.0" font-size="11" fill="#999999" font-weight="bold">Top Tier: End-to-End ECG-AIM Masked Autoencoder Pipeline</text>
+  <rect x="35.0" y="675.0" width="1320.0" height="150.0" fill="#FAFAFA" stroke="#E5E7EB" stroke-width="1" rx="8"/>
+  <text x="43.0" y="691.0" font-size="11" fill="#999999" font-weight="bold">Bottom Tier: Combinatorial Factorial Loss Formulation Engine</text>
+  <path d="M 150.0,290.0 L 150.0,380.0" stroke="#3B82F6" stroke-width="2" fill="none" marker-end="url(#arrow-c0)"/>
+  <path d="M 220.6,380.0 L 397.1,280.0" stroke="#3B82F6" stroke-width="2" fill="none" marker-end="url(#arrow-c0)"/>
+  <path d="M 450.0,280.0 L 450.0,375.0" stroke="#8B5CF6" stroke-width="2" fill="none" marker-end="url(#arrow-c1)"/>
+  <path d="M 560.0,391.7 L 680.0,360.9" stroke="#8B5CF6" stroke-width="2" fill="none" marker-end="url(#arrow-c1)"/>
+  <rect x="571.0" y="358.3" width="98.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="620.0" y="370.3" font-size="10" fill="#777777" text-anchor="middle">Encoded Visible</text>
+  <path d="M 800.0,230.0 L 800.0,295.0" stroke="#EF4444" stroke-width="2" fill="none" marker-end="url(#arrow-c4)"/>
+  <rect x="766.0" y="244.5" width="68.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="800.0" y="256.5" font-size="10" fill="#777777" text-anchor="middle">Unobserved</text>
+  <path d="M 800.0,365.0 L 800.0,435.0" stroke="#F59E0B" stroke-width="2" fill="none" marker-end="url(#arrow-c3)"/>
+  <path d="M 914.0,435.0 L 1091.3,365.0" stroke="#F59E0B" stroke-width="2" fill="none" marker-end="url(#arrow-c3)"/>
+  <path d="M 1180.0,365.0 L 1180.0,435.0" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrow-c2)"/>
+  <path d="M 1070.0,510.3 Q 692.0,583.3 330.0,714.2" stroke="#0284C7" stroke-width="2" fill="none" marker-end="url(#arrow-default)" stroke-dasharray="8,4"/>
+  <path d="M 1071.7,525.0 Q 837.5,589.8 626.3,710.0" stroke="#C026D3" stroke-width="2" fill="none" marker-end="url(#arrow-default)" stroke-dasharray="8,4"/>
+  <path d="M 1126.7,525.0 Q 997.7,594.6 907.4,710.0" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#arrow-default)" stroke-dasharray="8,4"/>
+  <path d="M 1181.7,525.0 Q 1155.1,618.6 1188.5,710.0" stroke="#D97706" stroke-width="2" fill="none" marker-end="url(#arrow-default)" stroke-dasharray="8,4"/>
+  <rect x="50.0" y="210.0" width="200.0" height="80.0" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2" rx="8"/>
+  <text x="150.0" y="239.6" font-size="13" fill="#1E3A8A" text-anchor="middle" font-weight="bold">3-Lead Physical Input</text>
+  <text x="150.0" y="254.6" font-size="13" fill="#1E3A8A" text-anchor="middle" font-weight="bold">(I, II, V2)</text>
+  <text x="150.0" y="269.6" font-size="10" fill="#888888" text-anchor="middle">X, Y, Z Orthogonal Basis</text>
+  <rect x="50.0" y="380.0" width="200.0" height="80.0" fill="#E0F2FE" stroke="#0284C7" stroke-width="2" rx="8"/>
+  <text x="150.0" y="409.6" font-size="13" fill="#0369A1" text-anchor="middle" font-weight="bold">Patch Tokenizer</text>
+  <text x="150.0" y="424.6" font-size="13" fill="#0369A1" text-anchor="middle" font-weight="bold">(25ms Patches)</text>
+  <text x="150.0" y="439.6" font-size="10" fill="#888888" text-anchor="middle">1D Conv Embedding</text>
+  <rect x="350.0" y="220.0" width="200.0" height="60.0" fill="#FDF4FF" stroke="#C026D3" stroke-width="2" rx="0"/>
+  <text x="450.0" y="247.1" font-size="13" fill="#86198F" text-anchor="middle" font-weight="bold">Visible Tokens</text>
+  <text x="450.0" y="262.1" font-size="13" fill="#86198F" text-anchor="middle" font-weight="bold">[3 × 200]</text>
+  <rect x="340.0" y="375.0" width="220.0" height="90.0" fill="#EDE9FE" stroke="#8B5CF6" stroke-width="2" rx="8"/>
+  <text x="450.0" y="409.6" font-size="13" fill="#4C1D95" text-anchor="middle" font-weight="bold">Bidirectional</text>
+  <text x="450.0" y="424.6" font-size="13" fill="#4C1D95" text-anchor="middle" font-weight="bold">Transformer Encoder</text>
+  <text x="450.0" y="439.6" font-size="10" fill="#888888" text-anchor="middle">Processes only observed tokens</text>
+  <rect x="700.0" y="170.0" width="200.0" height="60.0" fill="#FEF2F2" stroke="#EF4444" stroke-width="2" rx="0"/>
+  <text x="800.0" y="197.1" font-size="13" fill="#991B1B" text-anchor="middle" font-weight="bold">Learnable [MASK]</text>
+  <text x="800.0" y="212.1" font-size="13" fill="#991B1B" text-anchor="middle" font-weight="bold">Tokens (9 Leads)</text>
+  <rect x="680.0" y="295.0" width="240.0" height="70.0" fill="#F1F5F9" stroke="#64748B" stroke-width="2" rx="0"/>
+  <text x="800.0" y="327.1" font-size="13" fill="#0F172A" text-anchor="middle" font-weight="bold">Full 12×200 Latent Grid</text>
+  <text x="800.0" y="342.1" font-size="13" fill="#0F172A" text-anchor="middle" font-weight="bold">+ Positional &amp; Lead Embed</text>
+  <rect x="680.0" y="435.0" width="240.0" height="90.0" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2" rx="8"/>
+  <text x="800.0" y="469.6" font-size="13" fill="#78350F" text-anchor="middle" font-weight="bold">Adaptive Axial</text>
+  <text x="800.0" y="484.6" font-size="13" fill="#78350F" text-anchor="middle" font-weight="bold">Transformer Decoder</text>
+  <text x="800.0" y="499.6" font-size="10" fill="#888888" text-anchor="middle">Stacked ECGAdaptiveAxialBlocks</text>
+  <rect x="1080.0" y="295.0" width="200.0" height="70.0" fill="#F3F4F6" stroke="#4B5563" stroke-width="2" rx="8"/>
+  <text x="1180.0" y="327.1" font-size="13" fill="#1F2937" text-anchor="middle" font-weight="bold">Linear Head +</text>
+  <text x="1180.0" y="342.1" font-size="13" fill="#1F2937" text-anchor="middle" font-weight="bold">Unpatchify</text>
+  <rect x="1070.0" y="435.0" width="220.0" height="90.0" fill="#DCFCE7" stroke="#10B981" stroke-width="2" rx="8"/>
+  <text x="1180.0" y="469.6" font-size="13" fill="#065F46" text-anchor="middle" font-weight="bold">12-Lead Waveform</text>
+  <text x="1180.0" y="484.6" font-size="13" fill="#065F46" text-anchor="middle" font-weight="bold">Reconstruction</text>
+  <text x="1180.0" y="499.6" font-size="10" fill="#888888" text-anchor="middle">Supervised by 7-Factorial Loss</text>
+  <rect x="70.0" y="710.0" width="260.0" height="80.0" fill="#E0F2FE" stroke="#0284C7" stroke-width="2" rx="8"/>
+  <text x="200.0" y="747.0" font-size="13" fill="#0369A1" text-anchor="middle" font-weight="bold">1. Waveform &amp; Temporal Derivatives</text>
+  <text x="200.0" y="762.0" font-size="10" fill="#888888" text-anchor="middle">L_MSE + L_Corr + L_Deriv</text>
+  <rect x="400.0" y="710.0" width="260.0" height="80.0" fill="#FDF4FF" stroke="#C026D3" stroke-width="2" rx="8"/>
+  <text x="530.0" y="747.0" font-size="13" fill="#86198F" text-anchor="middle" font-weight="bold">2. Kors 3D Vectorcardiogram</text>
+  <text x="530.0" y="762.0" font-size="10" fill="#888888" text-anchor="middle">L_VCG: Spatial Loop Cosine Alignment</text>
+  <rect x="730.0" y="710.0" width="260.0" height="80.0" fill="#ECFDF5" stroke="#059669" stroke-width="2" rx="8"/>
+  <text x="860.0" y="747.0" font-size="13" fill="#065F46" text-anchor="middle" font-weight="bold">3. Multiscale RKHS MMD</text>
+  <text x="860.0" y="762.0" font-size="10" fill="#888888" text-anchor="middle">L_MMD: IMQ / RBF Distribution Matching</text>
+  <rect x="1060.0" y="710.0" width="260.0" height="80.0" fill="#FFFBEB" stroke="#D97706" stroke-width="2" rx="8"/>
+  <text x="1190.0" y="747.0" font-size="13" fill="#92400E" text-anchor="middle" font-weight="bold">4. Biophysical Limb Consistency</text>
+  <text x="1190.0" y="762.0" font-size="10" fill="#888888" text-anchor="middle">L_limb: III = II - I  |  aVR = -0.5(I+II)</text>
+</svg>

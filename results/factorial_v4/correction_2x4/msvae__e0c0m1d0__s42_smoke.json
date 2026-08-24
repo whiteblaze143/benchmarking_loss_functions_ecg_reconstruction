@@ -1,0 +1,12 @@
+{
+  "id": "msvae__e0c0m1d0__s42",
+  "status": "pass",
+  "checkpoint_sha256": "bbea6a4317c038e8e9c96f40be8c70691173de6eaefd3968d6e4e3d292ac607a",
+  "output_shape": [
+    1,
+    12,
+    5000
+  ],
+  "finite": true,
+  "observed_lead_mse": 0.0
+}

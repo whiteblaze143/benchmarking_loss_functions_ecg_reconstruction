@@ -1,0 +1,20 @@
+Faithful Round-7 recap supplied by reviewer `/root/book_review_round1`
+
+Score: 8.4/10
+
+Substantial progress, but the release path was not fully fail-closed.
+
+Verified:
+
+- All 21,799 tensor files independently rehashed and matched the pinned manifest.
+- Training contract, source bundle, metadata hashes, and 162-tensor float16 schema recomputed exactly.
+- Tensor bytes were revalidated before checkpoint writes and final metadata.
+- Queue was 479 pending, 1 running, 0 completed.
+- All 29 prior generations remained preserved and quarantined.
+- Legacy hashes and embedded diffs were verified.
+- Twenty focused tests passed.
+- Twelve rendered pages had no execution errors or broken local assets.
+
+Remaining Round-7 blockers were checkpoint-generation binding, unvalidated
+summary metrics, reusable per-record paths, the vacuous 0/0 compatibility
+pass, and a narrow transient tensor-mutation race.

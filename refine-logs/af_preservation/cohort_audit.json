@@ -1,0 +1,168 @@
+{
+  "label_map": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/configs/af_label_map.yaml",
+  "label_map_sha256": "711f963d5dddf1b11415c6ba36a7bef343c03b778e831e07aeafa5c61bab9b46",
+  "mapping": {
+    "endpoint": "strict_atrial_fibrillation",
+    "ptbxl": {
+      "atrial_flutter": [
+        "AFLT"
+      ],
+      "conflict_policy": "exclude_primary_strict_analysis",
+      "positive": [
+        "AFIB"
+      ]
+    },
+    "rdb": {
+      "atrial_flutter": [
+        "AFL",
+        "AFIB"
+      ],
+      "duplicate_policy": "exclude_mapping_flagged_duplicate",
+      "negative": [
+        "AFL",
+        "AFIB",
+        "SI",
+        "SA",
+        "AT",
+        "SVT",
+        "VT",
+        "SVT/VT",
+        "ST",
+        "SR",
+        "SB"
+      ],
+      "positive": [
+        "AF"
+      ]
+    },
+    "version": 1
+  },
+  "ptbxl": {
+    "conflicting_AFIB_AFLT_ecg_ids": [
+      17,
+      4769,
+      5390,
+      10943,
+      10986,
+      11886,
+      13386,
+      13987,
+      14019,
+      15478,
+      15513,
+      16929,
+      17049,
+      17096,
+      19170,
+      20085,
+      21006
+    ],
+    "counts": {
+      "test": {
+        "AF": 150,
+        "AFL": 5,
+        "conflict_AFIB_AFLT": 2,
+        "other": 2041
+      },
+      "train": {
+        "AF": 1198,
+        "AFL": 46,
+        "conflict_AFIB_AFLT": 13,
+        "other": 16161
+      },
+      "val": {
+        "AF": 149,
+        "AFL": 5,
+        "conflict_AFIB_AFLT": 2,
+        "other": 2027
+      }
+    },
+    "metadata_sha256": "7600de9c1b27d181d850b3c6038a35d7c3ddb6bb33b702e3a20252a6859d216b",
+    "patient_counts": {
+      "test": 1904,
+      "train": 15023,
+      "val": 1942
+    },
+    "patient_overlaps": {
+      "train_test": 0,
+      "train_val": 0,
+      "val_test": 0
+    },
+    "records": 21799
+  },
+  "purpose": "cohort_audit_only_no_test_scoring",
+  "rdb": {
+    "counts": {
+      "test": {
+        "AF": 60,
+        "AFL": 60,
+        "AT": 18,
+        "SB": 60,
+        "SI": 60,
+        "SR": 60,
+        "ST": 21,
+        "SVT/VT": 21
+      },
+      "train": {
+        "AF": 280,
+        "AFL": 280,
+        "AT": 85,
+        "SB": 280,
+        "SI": 278,
+        "SR": 280,
+        "ST": 98,
+        "SVT/VT": 97
+      },
+      "val": {
+        "AF": 60,
+        "AFL": 60,
+        "AT": 18,
+        "SB": 60,
+        "SI": 60,
+        "SR": 60,
+        "ST": 21,
+        "SVT/VT": 21
+      }
+    },
+    "manifest_sha256": "f37f48fb68f0210233c9c4f4efef4305e9930e8102f803799d71afffea1e594f",
+    "patient_counts": {
+      "test": 360,
+      "train": 1678,
+      "val": 360
+    },
+    "patient_overlaps": {
+      "train_test": 0,
+      "train_val": 0,
+      "val_test": 0
+    },
+    "records": 2398,
+    "released_aliases_by_canonical_group": {
+      "AF": {
+        "AF": 400
+      },
+      "AFL": {
+        "AFIB": 400
+      },
+      "AT": {
+        "AT": 121
+      },
+      "SB": {
+        "SB": 400
+      },
+      "SI": {
+        "SI": 398
+      },
+      "SR": {
+        "SR": 400
+      },
+      "ST": {
+        "ST": 140
+      },
+      "SVT/VT": {
+        "VT": 139
+      }
+    },
+    "test_role": "untouched; excluded from architecture selection and sweep training"
+  },
+  "version": 1
+}

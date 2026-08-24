@@ -1,0 +1,51 @@
+Project root: /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction
+
+Act as the independent read-only experiment-integrity reviewer backend. Audit
+the CURRENT factorial_v4 snapshot adversarially. Do not use SKILL.md, delegate,
+spawn, modify files, dump entire multi-million-line JSON files, or invoke
+another reviewer. You have at most TWO shell calls: use targeted rg/sed and one
+compact Python/pyarrow program to inspect schemas, values, counts, hashes,
+queues, and claims. After those calls, you MUST return the final report in this
+same turn.
+
+Read/inspect:
+- scripts/evaluate_comprehensive_registry.py
+- scripts/evaluate_echonext.py
+- scripts/evaluate_smartwatch.py
+- scripts/clinical_metrics.py
+- scripts/smartwatch_protocol.py
+- scripts/echonext_classifier.py
+- scripts/backfill_ptbxl_clinical_metrics.py
+- scripts/build_clinical_metrics_database.py
+- scripts/analyze_factorial_v2.py
+- scripts/check_factorial_v3_completeness.py
+- scripts/check_factorial_v4_final.py
+- scripts/figures/*.py
+- results/factorial_v4/{completeness.json,statistics.json,main_48_cell_table.parquet,main_primary_24_cell_table.parquet,factorial_effects_bca.parquet,factorial_effects_4factor_supplementary.parquet,familywise_endpoint_tests.parquet,ecgfounder_noninferiority.parquet,figure_provenance.json,FIGURE_REVIEW.json,CLAIM_SCOPE.md,MANIFEST.md}
+- results/factorial_v4/exclusions/msvae_mse_toggle.json
+- results/factorial_v4_clinical/{completeness.json,classification_task_metrics.parquet,smartwatch_protocol_metrics.parquet,smartwatch_task_fidelity.parquet,FIGURE_REVIEW.json,MANIFEST.md}
+- results/factorial_v4_clinical/figures/*.provenance.json
+- refine-logs/{EXPERIMENT_PLAN.md,EXPERIMENT_TRACKER.md}
+- experiment_queue/factorial_v4/{queue_state.json,model_registry.json,manifest.json}
+- experiment_queue/factorial_v4_clinical/{queue_state.json,manifest.json}
+- data/echonext/PROVENANCE.json
+- MANIFEST.md
+
+Audit:
+A. Ground-truth provenance. FAIL if GT is derived from model outputs without
+explicit proxy labeling; check official classifiers/scripts when available.
+B. Score normalization. FAIL if a reported performance metric is normalized by
+the model's own predictions. Distinguish an explicitly labeled relative-only
+visual from an absolute performance claim.
+C. Result existence/agreement. Verify files, keys, numbers, queues DONE rather
+than IN_PROGRESS, quarantines, and figure hashes.
+D. Dead code. WARN for defined-but-unused metric functions affecting claims.
+E. Scope. Verify cells, seeds, records, tasks, stress conditions, datasets, and
+whether scope language is justified.
+F. Classify each evaluation as real_gt, synthetic_proxy,
+self_supervised_proxy, simulation_only, or human_eval.
+
+For A-F return Status PASS|WARN|FAIL, exact file:line evidence, and details.
+Then give Overall verdict PASS|WARN|FAIL and state whether any warning is an
+already-disclosed claim-scope limitation or an unresolved integrity defect.
+Do not inherit the historical pre-repair EXPERIMENT_AUDIT verdict.

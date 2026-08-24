@@ -1,0 +1,710 @@
+{
+  "project": "ecg_factorial_v4",
+  "cwd": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction",
+  "ssh": "localhost",
+  "conda": "none",
+  "default_cmd": "echo no-default",
+  "preconditions": [],
+  "gpus": [
+    0
+  ],
+  "max_parallel": 1,
+  "gpu_free_threshold_mib": 500,
+  "oom_retry": {
+    "delay": 120,
+    "max_attempts": 3
+  },
+  "phases": [
+    {
+      "name": "preflight",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "factorial_preflight",
+          "label": "Storage, data, split, and dependency gates",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py preflight --output /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/preflight.json",
+          "expected_output": "results/factorial_v4/preflight.json"
+        }
+      ]
+    },
+    {
+      "name": "loss_unit_tests",
+      "depends_on": [
+        "preflight"
+      ],
+      "jobs": [
+        {
+          "id": "factorial_loss_tests",
+          "label": "Loss routing, inference, robustness, statistics, and EchoNext unit tests",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python -m pytest -q tests/test_factorial_losses.py tests/test_factorial_analysis.py tests/test_robustness_stress.py tests/test_echonext_streaming.py"
+        }
+      ]
+    },
+    {
+      "name": "protocol_audit",
+      "depends_on": [
+        "loss_unit_tests"
+      ],
+      "jobs": [
+        {
+          "id": "audit_generated_protocol",
+          "label": "Audit generated grid, commands, dependencies, and source hashes",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py audit-generated --manifest experiment_queue/factorial_v4/manifest.json --registry experiment_queue/factorial_v4/model_registry.json --output /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/protocol_audit.json",
+          "expected_output": "results/factorial_v4/protocol_audit.json"
+        }
+      ]
+    },
+    {
+      "name": "smoke_factorial",
+      "depends_on": [
+        "protocol_audit"
+      ],
+      "jobs": [
+        {
+          "id": "smoke_unet__e0c0m1d0__s42",
+          "label": "Smoke unet 0010",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py smoke-cell --family unet --mask 0010 --seed 42 --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/smoke/unet__e0c0m1d0__s42.json",
+          "expected_output": "results/factorial_v4/smoke/unet__e0c0m1d0__s42.json"
+        },
+        {
+          "id": "smoke_unet__e1c1m1d1__s42",
+          "label": "Smoke unet 1111",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py smoke-cell --family unet --mask 1111 --seed 42 --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/smoke/unet__e1c1m1d1__s42.json",
+          "expected_output": "results/factorial_v4/smoke/unet__e1c1m1d1__s42.json"
+        },
+        {
+          "id": "smoke_msvae__e0c0m1d0__s42",
+          "label": "Smoke msvae 0010",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py smoke-cell --family msvae --mask 0010 --seed 42 --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/smoke/msvae__e0c0m1d0__s42.json",
+          "expected_output": "results/factorial_v4/smoke/msvae__e0c0m1d0__s42.json"
+        },
+        {
+          "id": "smoke_msvae__e1c1m1d1__s42",
+          "label": "Smoke msvae 1111",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py smoke-cell --family msvae --mask 1111 --seed 42 --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/smoke/msvae__e1c1m1d1__s42.json",
+          "expected_output": "results/factorial_v4/smoke/msvae__e1c1m1d1__s42.json"
+        },
+        {
+          "id": "smoke_ecgaim__e0c0m1d0__s42",
+          "label": "Smoke ecgaim 0010",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py smoke-cell --family ecgaim --mask 0010 --seed 42 --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/smoke/ecgaim__e0c0m1d0__s42.json",
+          "expected_output": "results/factorial_v4/smoke/ecgaim__e0c0m1d0__s42.json"
+        },
+        {
+          "id": "smoke_ecgaim__e1c1m1d1__s42",
+          "label": "Smoke ecgaim 1111",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py smoke-cell --family ecgaim --mask 1111 --seed 42 --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/smoke/ecgaim__e1c1m1d1__s42.json",
+          "expected_output": "results/factorial_v4/smoke/ecgaim__e1c1m1d1__s42.json"
+        }
+      ]
+    },
+    {
+      "name": "train_primary",
+      "depends_on": [
+        "smoke_factorial"
+      ],
+      "jobs": [
+        {
+          "id": "unet__e0c0m0d0__s42",
+          "label": "Primary unet 0000",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 0000 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e0c0m0d0__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c0m0d0__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c0m0d0__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e0c0m0d0__s42/best.pt"
+        },
+        {
+          "id": "unet__e0c0m0d1__s42",
+          "label": "Primary unet 0001",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 0001 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e0c0m0d1__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c0m0d1__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c0m0d1__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e0c0m0d1__s42/best.pt"
+        },
+        {
+          "id": "unet__e0c0m1d0__s42",
+          "label": "Primary unet 0010",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 0010 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e0c0m1d0__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c0m1d0__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c0m1d0__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e0c0m1d0__s42/best.pt"
+        },
+        {
+          "id": "unet__e0c0m1d1__s42",
+          "label": "Primary unet 0011",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 0011 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e0c0m1d1__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c0m1d1__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c0m1d1__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e0c0m1d1__s42/best.pt"
+        },
+        {
+          "id": "unet__e0c1m0d0__s42",
+          "label": "Primary unet 0100",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 0100 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e0c1m0d0__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c1m0d0__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c1m0d0__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e0c1m0d0__s42/best.pt"
+        },
+        {
+          "id": "unet__e0c1m0d1__s42",
+          "label": "Primary unet 0101",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 0101 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e0c1m0d1__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c1m0d1__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c1m0d1__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e0c1m0d1__s42/best.pt"
+        },
+        {
+          "id": "unet__e0c1m1d0__s42",
+          "label": "Primary unet 0110",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 0110 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e0c1m1d0__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c1m1d0__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c1m1d0__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e0c1m1d0__s42/best.pt"
+        },
+        {
+          "id": "unet__e0c1m1d1__s42",
+          "label": "Primary unet 0111",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 0111 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e0c1m1d1__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c1m1d1__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e0c1m1d1__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e0c1m1d1__s42/best.pt"
+        },
+        {
+          "id": "unet__e1c0m0d0__s42",
+          "label": "Primary unet 1000",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 1000 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c0m0d0__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c0m0d0__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c0m0d0__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e1c0m0d0__s42/best.pt"
+        },
+        {
+          "id": "unet__e1c0m0d1__s42",
+          "label": "Primary unet 1001",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 1001 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c0m0d1__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c0m0d1__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c0m0d1__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e1c0m0d1__s42/best.pt"
+        },
+        {
+          "id": "unet__e1c0m1d0__s42",
+          "label": "Primary unet 1010",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 1010 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c0m1d0__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c0m1d0__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c0m1d0__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e1c0m1d0__s42/best.pt"
+        },
+        {
+          "id": "unet__e1c0m1d1__s42",
+          "label": "Primary unet 1011",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 1011 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c0m1d1__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c0m1d1__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c0m1d1__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e1c0m1d1__s42/best.pt"
+        },
+        {
+          "id": "unet__e1c1m0d0__s42",
+          "label": "Primary unet 1100",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 1100 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c1m0d0__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c1m0d0__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c1m0d0__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e1c1m0d0__s42/best.pt"
+        },
+        {
+          "id": "unet__e1c1m0d1__s42",
+          "label": "Primary unet 1101",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 1101 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c1m0d1__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c1m0d1__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c1m0d1__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e1c1m0d1__s42/best.pt"
+        },
+        {
+          "id": "unet__e1c1m1d0__s42",
+          "label": "Primary unet 1110",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 1110 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c1m1d0__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c1m1d0__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c1m1d0__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e1c1m1d0__s42/best.pt"
+        },
+        {
+          "id": "unet__e1c1m1d1__s42",
+          "label": "Primary unet 1111",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol extended --factorial_mask 1111 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c1m1d1__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c1m1d1__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/unet__e1c1m1d1__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/primary/unet__e1c1m1d1__s42/best.pt"
+        },
+        {
+          "id": "msvae__e0c0m0d0__s42",
+          "label": "Primary msvae 0000",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e0c0m0d0__s42 --run_tag msvae__e0c0m0d0__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e0c0m0d1__s42",
+          "label": "Primary msvae 0001",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e0c0m0d1__s42 --run_tag msvae__e0c0m0d1__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.05  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e0c0m1d0__s42",
+          "label": "Primary msvae 0010",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e0c0m1d0__s42 --run_tag msvae__e0c0m1d0__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.0  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e0c0m1d1__s42",
+          "label": "Primary msvae 0011",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e0c0m1d1__s42 --run_tag msvae__e0c0m1d1__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.05  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c0m1d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e0c1m0d0__s42",
+          "label": "Primary msvae 0100",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e0c1m0d0__s42 --run_tag msvae__e0c1m0d0__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e0c1m0d1__s42",
+          "label": "Primary msvae 0101",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e0c1m0d1__s42 --run_tag msvae__e0c1m0d1__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.05  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e0c1m1d0__s42",
+          "label": "Primary msvae 0110",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e0c1m1d0__s42 --run_tag msvae__e0c1m1d0__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.0  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e0c1m1d1__s42",
+          "label": "Primary msvae 0111",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e0c1m1d1__s42 --run_tag msvae__e0c1m1d1__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e0c1m1d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e1c0m0d0__s42",
+          "label": "Primary msvae 1000",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e1c0m0d0__s42 --run_tag msvae__e1c0m0d0__s42 --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e1c0m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e1c0m0d1__s42",
+          "label": "Primary msvae 1001",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e1c0m0d1__s42 --run_tag msvae__e1c0m0d1__s42 --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.05  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e1c0m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e1c0m1d0__s42",
+          "label": "Primary msvae 1010",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e1c0m1d0__s42 --run_tag msvae__e1c0m1d0__s42 --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.0  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e1c0m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e1c0m1d1__s42",
+          "label": "Primary msvae 1011",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e1c0m1d1__s42 --run_tag msvae__e1c0m1d1__s42 --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.05  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e1c0m1d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e1c1m0d0__s42",
+          "label": "Primary msvae 1100",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e1c1m0d0__s42 --run_tag msvae__e1c1m0d0__s42 --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e1c1m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e1c1m0d1__s42",
+          "label": "Primary msvae 1101",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e1c1m0d1__s42 --run_tag msvae__e1c1m0d1__s42 --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.05  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e1c1m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e1c1m1d0__s42",
+          "label": "Primary msvae 1110",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e1c1m1d0__s42 --run_tag msvae__e1c1m1d0__s42 --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.0  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e1c1m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "msvae__e1c1m1d1__s42",
+          "label": "Primary msvae 1111",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/msvae__e1c1m1d1__s42 --run_tag msvae__e1c1m1d1__s42 --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05  --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/msvae__e1c1m1d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e0c0m0d0__s42",
+          "label": "Primary ecgaim 0000",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e0c0m0d0__s42 --run_tag ecgaim__e0c0m0d0__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e0c0m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e0c0m0d1__s42",
+          "label": "Primary ecgaim 0001",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e0c0m0d1__s42 --run_tag ecgaim__e0c0m0d1__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.05 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e0c0m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e0c0m1d0__s42",
+          "label": "Primary ecgaim 0010",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e0c0m1d0__s42 --run_tag ecgaim__e0c0m1d0__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.0 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e0c0m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e0c0m1d1__s42",
+          "label": "Primary ecgaim 0011",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e0c0m1d1__s42 --run_tag ecgaim__e0c0m1d1__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.05 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e0c0m1d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e0c1m0d0__s42",
+          "label": "Primary ecgaim 0100",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e0c1m0d0__s42 --run_tag ecgaim__e0c1m0d0__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e0c1m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e0c1m0d1__s42",
+          "label": "Primary ecgaim 0101",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e0c1m0d1__s42 --run_tag ecgaim__e0c1m0d1__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.05 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e0c1m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e0c1m1d0__s42",
+          "label": "Primary ecgaim 0110",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e0c1m1d0__s42 --run_tag ecgaim__e0c1m1d0__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.0 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e0c1m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e0c1m1d1__s42",
+          "label": "Primary ecgaim 0111",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e0c1m1d1__s42 --run_tag ecgaim__e0c1m1d1__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e0c1m1d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e1c0m0d0__s42",
+          "label": "Primary ecgaim 1000",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e1c0m0d0__s42 --run_tag ecgaim__e1c0m0d0__s42 --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e1c0m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e1c0m0d1__s42",
+          "label": "Primary ecgaim 1001",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e1c0m0d1__s42 --run_tag ecgaim__e1c0m0d1__s42 --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.05 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e1c0m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e1c0m1d0__s42",
+          "label": "Primary ecgaim 1010",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e1c0m1d0__s42 --run_tag ecgaim__e1c0m1d0__s42 --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.0 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e1c0m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e1c0m1d1__s42",
+          "label": "Primary ecgaim 1011",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e1c0m1d1__s42 --run_tag ecgaim__e1c0m1d1__s42 --lambda_mse 1.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.05 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e1c0m1d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e1c1m0d0__s42",
+          "label": "Primary ecgaim 1100",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e1c1m0d0__s42 --run_tag ecgaim__e1c1m0d0__s42 --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e1c1m0d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e1c1m0d1__s42",
+          "label": "Primary ecgaim 1101",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e1c1m0d1__s42 --run_tag ecgaim__e1c1m0d1__s42 --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.05 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e1c1m0d1__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e1c1m1d0__s42",
+          "label": "Primary ecgaim 1110",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e1c1m1d0__s42 --run_tag ecgaim__e1c1m1d0__s42 --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.0 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e1c1m1d0__s42/ul_ecp_best.pt"
+        },
+        {
+          "id": "ecgaim__e1c1m1d1__s42",
+          "label": "Primary ecgaim 1111",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family alitok --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/primary/ecgaim__e1c1m1d1__s42 --run_tag ecgaim__e1c1m1d1__s42 --lambda_mse 1.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --alitok_architecture ecg_aim_v1 --alitok_patch_size 25 --alitok_width 384 --alitok_encoder_depth 8 --alitok_decoder_depth 4 --alitok_heads 8 --alitok_lr 1e-4 --alitok_max_lr 5e-4 --fast_eval",
+          "expected_output": "checkpoints/factorial_v4/primary/ecgaim__e1c1m1d1__s42/ul_ecp_best.pt"
+        }
+      ]
+    },
+    {
+      "name": "paper_parity_anchor",
+      "depends_on": [
+        "smoke_factorial"
+      ],
+      "jobs": [
+        {
+          "id": "paper_unet__e1c0m0d0__s42",
+          "label": "Paper parity U-Net 1000",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol paper_parity --factorial_mask 1000 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c0m0d0__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/paper_parity/unet__e1c0m0d0__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/paper_parity/unet__e1c0m0d0__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/paper_parity/unet__e1c0m0d0__s42/best.pt"
+        },
+        {
+          "id": "paper_unet__e1c1m1d1__s42",
+          "label": "Paper parity U-Net 1111",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol paper_parity --factorial_mask 1111 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c1m1d1__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/paper_parity/unet__e1c1m1d1__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/paper_parity/unet__e1c1m1d1__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/paper_parity/unet__e1c1m1d1__s42/best.pt"
+        },
+        {
+          "id": "paper_unet__e1c1m0d1__s42",
+          "label": "Paper parity U-Net 1101",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol paper_parity --factorial_mask 1101 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c1m0d1__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/paper_parity/unet__e1c1m0d1__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/paper_parity/unet__e1c1m0d1__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/paper_parity/unet__e1c1m0d1__s42/best.pt"
+        },
+        {
+          "id": "paper_unet__e1c1m1d0__s42",
+          "label": "Paper parity U-Net 1110",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol paper_parity --factorial_mask 1110 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c1m1d0__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/paper_parity/unet__e1c1m1d0__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/paper_parity/unet__e1c1m1d0__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/paper_parity/unet__e1c1m1d0__s42/best.pt"
+        },
+        {
+          "id": "paper_unet__e1c0m1d1__s42",
+          "label": "Paper parity U-Net 1011",
+          "cmd": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_m1_pearson.py --seed 42 --epochs 10 --batch_size 256 --data_dir data/ptb_xl/tensors --loss_protocol paper_parity --factorial_mask 1011 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --run_name unet__e1c0m1d1__s42 --checkpoint_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/paper_parity/unet__e1c0m1d1__s42/best.pt --metadata_path /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/paper_parity/unet__e1c0m1d1__s42/run_metadata.json",
+          "expected_output": "checkpoints/factorial_v4/paper_parity/unet__e1c0m1d1__s42/best.pt"
+        }
+      ]
+    },
+    {
+      "name": "validation_evaluation",
+      "depends_on": [
+        "train_primary",
+        "paper_parity_anchor"
+      ],
+      "jobs": [
+        {
+          "id": "evaluate_primary_validation",
+          "label": "Evaluate all 48 active cells on validation only",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_comprehensive_registry.py --registry experiment_queue/factorial_v4/validation_registry.json --output /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/validation_results.json --skip_oracle --skip_robustness --batch_size 8 --morphology_samples 2183",
+          "expected_output": "results/factorial_v4/validation_results.json"
+        }
+      ]
+    },
+    {
+      "name": "validation_selection",
+      "depends_on": [
+        "validation_evaluation"
+      ],
+      "jobs": [
+        {
+          "id": "select_confirmation_masks",
+          "label": "Lock best nontrivial mask per family from validation",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py select --input /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/validation_results.json --output /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json",
+          "expected_output": "results/factorial_v4/selected_masks.json"
+        }
+      ]
+    },
+    {
+      "name": "confirmation_seeds",
+      "depends_on": [
+        "validation_selection"
+      ],
+      "jobs": [
+        {
+          "id": "confirm_unet_base_s1337",
+          "label": "Confirmation unet base seed 1337",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family unet --slot base --seed 1337 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/unet__base__s1337.json",
+          "expected_output": "results/factorial_v4/confirmation/unet__base__s1337.json"
+        },
+        {
+          "id": "confirm_unet_full_s1337",
+          "label": "Confirmation unet full seed 1337",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family unet --slot full --seed 1337 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/unet__full__s1337.json",
+          "expected_output": "results/factorial_v4/confirmation/unet__full__s1337.json"
+        },
+        {
+          "id": "confirm_unet_best_s1337",
+          "label": "Confirmation unet best seed 1337",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family unet --slot best --seed 1337 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/unet__best__s1337.json",
+          "expected_output": "results/factorial_v4/confirmation/unet__best__s1337.json"
+        },
+        {
+          "id": "confirm_unet_base_s2026",
+          "label": "Confirmation unet base seed 2026",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family unet --slot base --seed 2026 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/unet__base__s2026.json",
+          "expected_output": "results/factorial_v4/confirmation/unet__base__s2026.json"
+        },
+        {
+          "id": "confirm_unet_full_s2026",
+          "label": "Confirmation unet full seed 2026",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family unet --slot full --seed 2026 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/unet__full__s2026.json",
+          "expected_output": "results/factorial_v4/confirmation/unet__full__s2026.json"
+        },
+        {
+          "id": "confirm_unet_best_s2026",
+          "label": "Confirmation unet best seed 2026",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family unet --slot best --seed 2026 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/unet__best__s2026.json",
+          "expected_output": "results/factorial_v4/confirmation/unet__best__s2026.json"
+        },
+        {
+          "id": "confirm_msvae_base_s1337",
+          "label": "Confirmation msvae base seed 1337",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family msvae --slot base --seed 1337 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/msvae__base__s1337.json",
+          "expected_output": "results/factorial_v4/confirmation/msvae__base__s1337.json"
+        },
+        {
+          "id": "confirm_msvae_full_s1337",
+          "label": "Confirmation msvae full seed 1337",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family msvae --slot full --seed 1337 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/msvae__full__s1337.json",
+          "expected_output": "results/factorial_v4/confirmation/msvae__full__s1337.json"
+        },
+        {
+          "id": "confirm_msvae_best_s1337",
+          "label": "Confirmation msvae best seed 1337",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family msvae --slot best --seed 1337 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/msvae__best__s1337.json",
+          "expected_output": "results/factorial_v4/confirmation/msvae__best__s1337.json"
+        },
+        {
+          "id": "confirm_msvae_base_s2026",
+          "label": "Confirmation msvae base seed 2026",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family msvae --slot base --seed 2026 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/msvae__base__s2026.json",
+          "expected_output": "results/factorial_v4/confirmation/msvae__base__s2026.json"
+        },
+        {
+          "id": "confirm_msvae_full_s2026",
+          "label": "Confirmation msvae full seed 2026",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family msvae --slot full --seed 2026 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/msvae__full__s2026.json",
+          "expected_output": "results/factorial_v4/confirmation/msvae__full__s2026.json"
+        },
+        {
+          "id": "confirm_msvae_best_s2026",
+          "label": "Confirmation msvae best seed 2026",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family msvae --slot best --seed 2026 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/msvae__best__s2026.json",
+          "expected_output": "results/factorial_v4/confirmation/msvae__best__s2026.json"
+        },
+        {
+          "id": "confirm_ecgaim_base_s1337",
+          "label": "Confirmation ecgaim base seed 1337",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family ecgaim --slot base --seed 1337 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/ecgaim__base__s1337.json",
+          "expected_output": "results/factorial_v4/confirmation/ecgaim__base__s1337.json"
+        },
+        {
+          "id": "confirm_ecgaim_full_s1337",
+          "label": "Confirmation ecgaim full seed 1337",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family ecgaim --slot full --seed 1337 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/ecgaim__full__s1337.json",
+          "expected_output": "results/factorial_v4/confirmation/ecgaim__full__s1337.json"
+        },
+        {
+          "id": "confirm_ecgaim_best_s1337",
+          "label": "Confirmation ecgaim best seed 1337",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family ecgaim --slot best --seed 1337 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/ecgaim__best__s1337.json",
+          "expected_output": "results/factorial_v4/confirmation/ecgaim__best__s1337.json"
+        },
+        {
+          "id": "confirm_ecgaim_base_s2026",
+          "label": "Confirmation ecgaim base seed 2026",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family ecgaim --slot base --seed 2026 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/ecgaim__base__s2026.json",
+          "expected_output": "results/factorial_v4/confirmation/ecgaim__base__s2026.json"
+        },
+        {
+          "id": "confirm_ecgaim_full_s2026",
+          "label": "Confirmation ecgaim full seed 2026",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family ecgaim --slot full --seed 2026 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/ecgaim__full__s2026.json",
+          "expected_output": "results/factorial_v4/confirmation/ecgaim__full__s2026.json"
+        },
+        {
+          "id": "confirm_ecgaim_best_s2026",
+          "label": "Confirmation ecgaim best seed 2026",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py train-selected --family ecgaim --slot best --seed 2026 --selection /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json --marker /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/confirmation/ecgaim__best__s2026.json",
+          "expected_output": "results/factorial_v4/confirmation/ecgaim__best__s2026.json"
+        }
+      ]
+    },
+    {
+      "name": "five_superclass_parity",
+      "depends_on": [
+        "confirmation_seeds"
+      ],
+      "jobs": [
+        {
+          "id": "train_five_superclass_parity",
+          "label": "Retrain leakage-free ECG-FM five-superclass parity head",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/train_five_superclass_parity.py --output /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/checkpoints/factorial_v4/parity/ecgfm_five_superclass.pt --epochs 20 --batch_size 32 --seed 42",
+          "expected_output": "checkpoints/factorial_v4/parity/ecgfm_five_superclass.pt"
+        }
+      ]
+    },
+    {
+      "name": "paper_parity_evaluation",
+      "depends_on": [
+        "five_superclass_parity",
+        "paper_parity_anchor"
+      ],
+      "jobs": [
+        {
+          "id": "evaluate_paper_parity_anchor",
+          "label": "Evaluate five separately labeled paper-parity U-Net anchors",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_comprehensive_registry.py --registry experiment_queue/factorial_v4/paper_parity_registry.json --output /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/paper_parity_results.json --batch_size 8 --skip_robustness --morphology_samples 2198",
+          "expected_output": "results/factorial_v4/paper_parity_results.json"
+        }
+      ]
+    },
+    {
+      "name": "clean_ptbxl_evaluation",
+      "depends_on": [
+        "five_superclass_parity"
+      ],
+      "jobs": [
+        {
+          "id": "evaluate_factorial_clean_ptbxl",
+          "label": "All 48 active cells: clean PTB-XL, morphology, and diagnostic utility",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_comprehensive_registry.py --registry experiment_queue/factorial_v4/model_registry.json --output /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/clean_results.json --batch_size 8 --skip_robustness --morphology_samples 2198",
+          "expected_output": "results/factorial_v4/clean_results.json"
+        }
+      ]
+    },
+    {
+      "name": "full_robustness_evaluation",
+      "depends_on": [
+        "clean_ptbxl_evaluation",
+        "paper_parity_evaluation"
+      ],
+      "jobs": [
+        {
+          "id": "evaluate_factorial_ptbxl",
+          "label": "All 48 active cells: clean, ECGFounder, morphology, and 17 stresses",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_comprehensive_registry.py --registry experiment_queue/factorial_v4/model_registry.json --output /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/comprehensive_results.json --batch_size 32 --robustness_samples 2198 --robustness_condition_batch 9 --morphology_samples 2198",
+          "expected_output": "results/factorial_v4/comprehensive_results.json"
+        }
+      ]
+    },
+    {
+      "name": "factorial_statistics",
+      "depends_on": [
+        "full_robustness_evaluation"
+      ],
+      "jobs": [
+        {
+          "id": "analyze_factorial",
+          "label": "Paired marginal effects, interactions, CIs, and interim poster figures",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/analyze_factorial_v2.py --input /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/comprehensive_results.json --registry experiment_queue/factorial_v4/model_registry.json --paper-parity /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/paper_parity_results.json --output-dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4",
+          "expected_output": "results/factorial_v4/statistics.json"
+        }
+      ]
+    },
+    {
+      "name": "echonext_preflight",
+      "depends_on": [
+        "factorial_statistics"
+      ],
+      "jobs": [
+        {
+          "id": "echonext_preflight",
+          "label": "EchoNext acquisition, units, lead-order, and provenance gate",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/factorial_v2.py echonext-preflight --output /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/echonext_preflight.json",
+          "expected_output": "results/factorial_v4/echonext_preflight.json"
+        }
+      ]
+    },
+    {
+      "name": "echonext_external",
+      "depends_on": [
+        "echonext_preflight"
+      ],
+      "jobs": [
+        {
+          "id": "evaluate_echonext_factorial",
+          "label": "All 48 active primary cells on EchoNext",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_echonext.py --registry experiment_queue/factorial_v4/model_registry.json --data_dir data/echonext --output /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/echonext_results.json --batch_size 32 --robustness_condition_batch 9 --robustness_samples 2198 --morphology_samples 2198 --skip_ecgfounder --resume --device cuda",
+          "expected_output": "results/factorial_v4/echonext_results.json"
+        }
+      ]
+    },
+    {
+      "name": "smartwatch_external",
+      "depends_on": [
+        "factorial_statistics"
+      ],
+      "jobs": [
+        {
+          "id": "evaluate_smartwatch_factorial",
+          "label": "All active primary cells on Smartwatches zero-shot",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/evaluate_smartwatch.py --registry experiment_queue/factorial_v4/model_registry.json --data_dir data/physionet.org/files/ecg-capable-smartwatches/1.0.0 --output /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/smartwatch_results.json --batch_size 16 --robustness_samples 0 --device cuda",
+          "expected_output": "results/factorial_v4/smartwatch_results.json"
+        }
+      ]
+    },
+    {
+      "name": "poster_finalization",
+      "depends_on": [
+        "echonext_external",
+        "smartwatch_external"
+      ],
+      "jobs": [
+        {
+          "id": "finalize_factorial_poster",
+          "label": "Completeness gate, EchoNext figure, tables, and final report",
+          "cmd": "FACTORIAL_RUN_ID=factorial_v4 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/analyze_factorial_v2.py --input /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/comprehensive_results.json --registry experiment_queue/factorial_v4/model_registry.json --paper-parity /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/paper_parity_results.json --echonext /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/echonext_results.json --smartwatch /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/smartwatch_results.json --output-dir /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4 --require-complete",
+          "expected_output": "results/factorial_v4/COMPLETENESS_REPORT.md"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6563 @@
+{
+  "schema_version": 2,
+  "protocol": {
+    "dataset": "PTB-XL",
+    "split": "val",
+    "n_samples": 2183,
+    "tensor_shape": [
+      12,
+      5000
+    ],
+    "sample_rate_hz": 500,
+    "classifier": "ECGFounder 12-lead frozen 150-task head",
+    "paper_parity_classifier": "separately retrained frozen ECG-FM five-superclass head",
+    "labels": [
+      "ABNORMAL ECG",
+      "NORMAL SINUS RHYTHM",
+      "NORMAL ECG",
+      "SINUS RHYTHM",
+      "SINUS BRADYCARDIA",
+      "ATRIAL FIBRILLATION",
+      "SINUS TACHYCARDIA",
+      "otherwise normal ecg",
+      "LEFT AXIS DEVIATION",
+      "PREMATURE VENTRICULAR COMPLEXES",
+      "BORDERLINE ECG",
+      "RIGHT BUNDLE BRANCH BLOCK",
+      "SEPTAL INFARCT",
+      "LEFT ATRIAL ENLARGEMENT",
+      "NONSPECIFIC T WAVE ABNORMALITY",
+      "LOW VOLTAGE QRS",
+      "PREMATURE ATRIAL COMPLEXES",
+      "ANTERIOR INFARCT",
+      "INCOMPLETE RIGHT BUNDLE BRANCH BLOCK",
+      "PREMATURE SUPRAVENTRICULAR COMPLEXES",
+      "LEFT BUNDLE BRANCH BLOCK",
+      "NONSPECIFIC T WAVE ABNORMALITY NOW EVIDENT IN",
+      "NONSPECIFIC T WAVE ABNORMALITY NO LONGER EVIDENT IN",
+      "T WAVE INVERSION NOW EVIDENT IN",
+      "LATERAL INFARCT",
+      "NONSPECIFIC ST ABNORMALITY",
+      "LEFT VENTRICULAR HYPERTROPHY",
+      "T WAVE INVERSION NO LONGER EVIDENT IN",
+      "WITH RAPID VENTRICULAR RESPONSE",
+      "QT HAS SHORTENED",
+      "QT HAS LENGTHENED",
+      "FUSION COMPLEXES",
+      "ATRIAL FLUTTER",
+      "MARKED SINUS BRADYCARDIA",
+      "WITH SINUS ARRHYTHMIA",
+      "NONSPECIFIC ST AND T WAVE ABNORMALITY",
+      "LEFT ANTERIOR FASCICULAR BLOCK",
+      "RIGHT AXIS DEVIATION",
+      "ECTOPIC ATRIAL RHYTHM",
+      "UNDETERMINED RHYTHM",
+      "ANTEROSEPTAL INFARCT",
+      "RIGHTWARD AXIS",
+      "ST NOW DEPRESSED IN",
+      "WITH SHORT PR",
+      "WITH MARKED SINUS ARRHYTHMIA",
+      "ST NO LONGER DEPRESSED IN",
+      "INVERTED T WAVES HAVE REPLACED NONSPECIFIC T WAVE ABNORMALITY IN",
+      "NON-SPECIFIC CHANGE IN ST SEGMENT IN",
+      "NONSPECIFIC T WAVE ABNORMALITY HAS REPLACED INVERTED T WAVES IN",
+      "JUNCTIONAL RHYTHM",
+      "ELECTRONIC ATRIAL PACEMAKER",
+      "ABERRANT CONDUCTION",
+      "ELECTRONIC VENTRICULAR PACEMAKER",
+      "T WAVE INVERSION LESS EVIDENT IN",
+      "ANTEROLATERAL INFARCT",
+      "WITH REPOLARIZATION ABNORMALITY",
+      "RSR' OR QR PATTERN IN V1 SUGGESTS RIGHT VENTRICULAR CONDUCTION DELAY",
+      "T WAVE INVERSION MORE EVIDENT IN",
+      "WIDE QRS RHYTHM",
+      "WITH PREMATURE VENTRICULAR OR ABERRANTLY CONDUCTED COMPLEXES",
+      "RIGHT ATRIAL ENLARGEMENT",
+      "INFERIOR INFARCT",
+      "INCOMPLETE LEFT BUNDLE BRANCH BLOCK",
+      "VOLTAGE CRITERIA FOR LEFT VENTRICULAR HYPERTROPHY",
+      "OR DIGITALIS EFFECT",
+      "BIFASCICULAR BLOCK",
+      "ST NO LONGER ELEVATED IN",
+      "WITH SLOW VENTRICULAR RESPONSE",
+      "ST ELEVATION NOW PRESENT IN",
+      "PREMATURE ECTOPIC COMPLEXES",
+      "LEFT POSTERIOR FASCICULAR BLOCK",
+      "T WAVE AMPLITUDE HAS DECREASED IN",
+      "WITH A COMPETING JUNCTIONAL PACEMAKER",
+      "RIGHT SUPERIOR AXIS DEVIATION",
+      "BIATRIAL ENLARGEMENT",
+      "VENTRICULAR-PACED RHYTHM",
+      "ATRIAL-PACED RHYTHM",
+      "T WAVE AMPLITUDE HAS INCREASED IN",
+      "WITH QRS WIDENING",
+      "WITH 1ST DEGREE AV BLOCK",
+      "PROLONGED QT",
+      "WITH PROLONGED AV CONDUCTION",
+      "RIGHT VENTRICULAR HYPERTROPHY",
+      "WITH QRS WIDENING AND REPOLARIZATION ABNORMALITY",
+      "ATRIAL-SENSED VENTRICULAR-PACED RHYTHM",
+      "AV SEQUENTIAL OR DUAL CHAMBER ELECTRONIC PACEMAKER",
+      "PULMONARY DISEASE PATTERN",
+      "ACUTE MI / STEMI",
+      "INFERIOR-POSTERIOR INFARCT",
+      "NONSPECIFIC INTRAVENTRICULAR CONDUCTION DELAY",
+      "PREMATURE VENTRICULAR AND FUSION COMPLEXES",
+      "IN A PATTERN OF BIGEMINY",
+      "AV DUAL-PACED RHYTHM",
+      "SUPRAVENTRICULAR TACHYCARDIA",
+      "VENTRICULAR-PACED COMPLEXES",
+      "WIDE QRS TACHYCARDIA",
+      "RSR' PATTERN IN V1",
+      "ST LESS DEPRESSED IN",
+      "VENTRICULAR TACHYCARDIA",
+      "EARLY REPOLARIZATION",
+      "ST MORE DEPRESSED IN",
+      "ANTEROLATERAL LEADS",
+      "ELECTRONIC DEMAND PACING",
+      "RBBB AND LEFT ANTERIOR FASCICULAR BLOCK",
+      "LATERAL INJURY PATTERN",
+      "BIVENTRICULAR PACEMAKER DETECTED",
+      "SUSPECT UNSPECIFIED PACEMAKER FAILURE",
+      "WOLFF-PARKINSON-WHITE",
+      "WITH VENTRICULAR ESCAPE COMPLEXES",
+      "INFERIOR INJURY PATTERN",
+      "CONSIDER RIGHT VENTRICULAR INVOLVEMENT IN ACUTE INFERIOR INFARCT",
+      "ST ELEVATION HAS REPLACED ST DEPRESSION IN",
+      "NONSPECIFIC INTRAVENTRICULAR BLOCK",
+      "MASKED BY FASCICULAR BLOCK",
+      "PEDIATRIC ECG ANALYSIS",
+      "BLOCKED",
+      "WITH UNDETERMINED RHYTHM IRREGULARITY",
+      "LEFTWARD AXIS",
+      "WITH 2ND DEGREE SA BLOCK MOBITZ I",
+      "ACUTE",
+      "ABNORMAL LEFT AXIS DEVIATION",
+      "WITH COMPLETE HEART BLOCK",
+      "NO P-WAVES FOUND",
+      "ST LESS ELEVATED IN",
+      "WITH RETROGRADE CONDUCTION",
+      "ST MORE ELEVATED IN",
+      "JUNCTIONAL BRADYCARDIA",
+      "WITH VARIABLE AV BLOCK",
+      "ANTERIOR INJURY PATTERN",
+      "WITH JUNCTIONAL ESCAPE COMPLEXES",
+      "ACUTE MI",
+      "ACUTE PERICARDITIS",
+      "POSTERIOR INFARCT",
+      "IDIOVENTRICULAR RHYTHM",
+      "WITH 2ND DEGREE SA BLOCK MOBITZ II",
+      "R IN AVL",
+      "SINUS/ATRIAL CAPTURE",
+      "AV DUAL-PACED COMPLEXES",
+      "INFEROLATERAL INJURY PATTERN",
+      "RBBB AND LEFT POSTERIOR FASCICULAR BLOCK",
+      "ANTEROLATERAL INJURY PATTERN",
+      "ATRIAL-PACED COMPLEXES",
+      "WITH SINUS PAUSE",
+      "BIVENTRICULAR HYPERTROPHY",
+      "ABNORMAL RIGHT AXIS DEVIATION",
+      "SUPRAVENTRICULAR COMPLEXES",
+      "WITH 2ND DEGREE AV BLOCK MOBITZ I",
+      "WITH 2:1 AV CONDUCTION",
+      "WITH AV DISSOCIATION",
+      "MULTIFOCAL ATRIAL TACHYCARDIA"
+    ],
+    "robustness_conditions": [],
+    "robustness_pairing": "FNV1a(condition_id,ecg_id,lead,base_seed=1337)",
+    "robustness_condition_batch": 4,
+    "fitbit_noise_provenance": null,
+    "fitbit_noise_status": "not_included_missing_verified_extraction_provenance",
+    "demographics": [
+      "age",
+      "sex"
+    ],
+    "missing_lead_metrics_primary": true
+  },
+  "models": {
+    "unet__e1c0m0d0__s42": {
+      "id": "unet__e1c0m0d0__s42",
+      "family": "unet",
+      "loss": "base",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_v2/primary/unet__e1c0m0d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.003985894273521154,
+            "rmse": 0.06313393915732768,
+            "mae": 0.034504177779557235,
+            "pearson": 0.9167433885931696,
+            "r2": 0.8074475406125986,
+            "derivative_mse": 0.0006000050253654537,
+            "snr_db": 8.446638159113125
+          },
+          "aVR": {
+            "mse": 0.007553634046099353,
+            "rmse": 0.08691164505461482,
+            "mae": 0.027709637325355016,
+            "pearson": 0.9497880653891605,
+            "r2": 0.8565713262754572,
+            "derivative_mse": 0.0010223109835655044,
+            "snr_db": 5.088862430225641
+          },
+          "aVL": {
+            "mse": 0.00413145291673116,
+            "rmse": 0.06427637915075148,
+            "mae": 0.03157012109621042,
+            "pearson": 0.9089847755606875,
+            "r2": 0.7155438512768485,
+            "derivative_mse": 0.0011960610443668349,
+            "snr_db": 6.856862961641158
+          },
+          "aVF": {
+            "mse": 0.005071393367122523,
+            "rmse": 0.071213716144592,
+            "mae": 0.03340804105611007,
+            "pearson": 0.9009398905115831,
+            "r2": 0.7543413084251205,
+            "derivative_mse": 0.0006549715026291545,
+            "snr_db": 6.654012259944765
+          },
+          "V1": {
+            "mse": 0.021033416144125953,
+            "rmse": 0.14502901828298348,
+            "mae": 0.07227050898679069,
+            "pearson": 0.8293936175050618,
+            "r2": 0.6183554066248679,
+            "derivative_mse": 0.0008331200090023395,
+            "snr_db": 3.824050080178154
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.042319973870913914,
+            "rmse": 0.20571819042300055,
+            "mae": 0.09805236432804626,
+            "pearson": 0.8505974396947213,
+            "r2": 0.6608347015756563,
+            "derivative_mse": 0.00109874079806803,
+            "snr_db": 4.174958911423723
+          },
+          "V4": {
+            "mse": 0.10652061111093714,
+            "rmse": 0.32637495478504036,
+            "mae": 0.10321598215212366,
+            "pearson": 0.8219461151617578,
+            "r2": 0.5848615468230971,
+            "derivative_mse": 0.0013078058458376954,
+            "snr_db": 1.6491569527124188
+          },
+          "V5": {
+            "mse": 0.033496413559679916,
+            "rmse": 0.18302025450665266,
+            "mae": 0.09281515509360327,
+            "pearson": 0.8263267380788246,
+            "r2": 0.5768112318263489,
+            "derivative_mse": 0.0016689989988873425,
+            "snr_db": 3.4258778286322005
+          },
+          "V6": {
+            "mse": 0.036953052768541265,
+            "rmse": 0.19223176836449604,
+            "mae": 0.08981089261972844,
+            "pearson": 0.8042443295547409,
+            "r2": 0.5905167384263413,
+            "derivative_mse": 0.000651297497361864,
+            "snr_db": 2.367302665004578
+          }
+        },
+        "all_leads": {
+          "mse": 0.021755486838139364,
+          "rmse": 0.11149248882245492,
+          "mae": 0.04861307336979376,
+          "pearson": 0.9007470300041424,
+          "r2": 0.7637736376555281,
+          "derivative_mse": 0.0007527759754236849,
+          "snr_db": 47.845239793336624
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.02900731578418582,
+          "rmse": 0.14865665176327322,
+          "mae": 0.064817431159725,
+          "pearson": 0.8676627066721897,
+          "r2": 0.6850315168740374,
+          "derivative_mse": 0.0010037013005649133,
+          "snr_db": 4.720858027652863
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.8884434845709996,
+        "st_correlation": 0.7469597583528131,
+        "j_point_amplitude_mae": 0.0534977941489599,
+        "r_peak_timing_mae_ms": 68.22605426323602,
+        "waveform_correlation": 0.8679088070622765,
+        "n_peak_matches": 399497,
+        "regional_correlation": {
+          "anterior": 0.8301252250396203,
+          "lateral": 0.8295754859790102,
+          "inferior": 0.9153982972996544
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.4187627843033192,
+          "40_100_hz": 0.7529620228956075,
+          "100_150_hz": 2.48016458284915
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9161114405808456
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8388460685255554
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.8816383749824918
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.8546264759339013
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.876916728795477
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/unet__e1c0m0d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/unet__e1c0m0d0__s42.parquet"
+    },
+    "unet__e1c0m0d1__s42": {
+      "id": "unet__e1c0m0d1__s42",
+      "family": "unet",
+      "loss": "base+derivative",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_v2/primary/unet__e1c0m0d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.004120499435543632,
+            "rmse": 0.0641911164846323,
+            "mae": 0.03512681580009233,
+            "pearson": 0.9103475564999478,
+            "r2": 0.7918305913079402,
+            "derivative_mse": 0.0005878837574321288,
+            "snr_db": 8.302397317150412
+          },
+          "aVR": {
+            "mse": 0.007818229250136833,
+            "rmse": 0.08842075124164481,
+            "mae": 0.02924836677974154,
+            "pearson": 0.94537925523626,
+            "r2": 0.8453825510154336,
+            "derivative_mse": 0.0009265989242695483,
+            "snr_db": 4.939337826979673
+          },
+          "aVL": {
+            "mse": 0.004299501149784356,
+            "rmse": 0.06557058143546049,
+            "mae": 0.032358462609689935,
+            "pearson": 0.8991753123410514,
+            "r2": 0.6918800745980215,
+            "derivative_mse": 0.0010046471329615875,
+            "snr_db": 6.683710345101988
+          },
+          "aVF": {
+            "mse": 0.004808305738783734,
+            "rmse": 0.06934194790156774,
+            "mae": 0.03221119608440041,
+            "pearson": 0.9076079522804333,
+            "r2": 0.7688462347597689,
+            "derivative_mse": 0.0005920395898872641,
+            "snr_db": 6.885364495575235
+          },
+          "V1": {
+            "mse": 0.021110808851562725,
+            "rmse": 0.145295591301191,
+            "mae": 0.07287497649181889,
+            "pearson": 0.8251891448527261,
+            "r2": 0.6137211934667195,
+            "derivative_mse": 0.0007760317180541408,
+            "snr_db": 3.8080994897639093
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.04291947504900707,
+            "rmse": 0.207170159649036,
+            "mae": 0.0993520688988777,
+            "pearson": 0.8483427666329049,
+            "r2": 0.6576746518711295,
+            "derivative_mse": 0.001091982714508442,
+            "snr_db": 4.113868805873265
+          },
+          "V4": {
+            "mse": 0.10694512637772256,
+            "rmse": 0.32702465714028744,
+            "mae": 0.10424296757570932,
+            "pearson": 0.8197170858038056,
+            "r2": 0.582248876414821,
+            "derivative_mse": 0.0012306650906467019,
+            "snr_db": 1.631883465822848
+          },
+          "V5": {
+            "mse": 0.03345862848803476,
+            "rmse": 0.18291699890396945,
+            "mae": 0.09270217202396716,
+            "pearson": 0.8287723535143668,
+            "r2": 0.591686006538157,
+            "derivative_mse": 0.0014173456999338476,
+            "snr_db": 3.4307795804208556
+          },
+          "V6": {
+            "mse": 0.03706532163178762,
+            "rmse": 0.19252356123806671,
+            "mae": 0.09029191509811255,
+            "pearson": 0.8040425035858504,
+            "r2": 0.5982075422333295,
+            "derivative_mse": 0.0006215467823744903,
+            "snr_db": 2.354128156490153
+          }
+        },
+        "all_leads": {
+          "mse": 0.021878824664363607,
+          "rmse": 0.11187128044132133,
+          "mae": 0.04903407844686749,
+          "pearson": 0.899047827562279,
+          "r2": 0.7617898101837768,
+          "derivative_mse": 0.0006873951175056792,
+          "snr_db": 47.81706039619517
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.029171766219151476,
+          "rmse": 0.14916170725509512,
+          "mae": 0.06537877126248998,
+          "pearson": 0.8653971034163718,
+          "r2": 0.6823864135783689,
+          "derivative_mse": 0.0009165268233409057,
+          "snr_db": 4.683285498130927
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.8867597032969363,
+        "st_correlation": 0.7507554868940037,
+        "j_point_amplitude_mae": 0.052549773461179804,
+        "r_peak_timing_mae_ms": 66.11590575148249,
+        "waveform_correlation": 0.8656226320760437,
+        "n_peak_matches": 399497,
+        "regional_correlation": {
+          "anterior": 0.8279480666430001,
+          "lateral": 0.8287231817237094,
+          "inferior": 0.9146296153615596
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.42227430208675043,
+          "40_100_hz": 0.7506771552644844,
+          "100_150_hz": 2.590290302369967
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9140356476182535
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8363871889732543
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.8810765081013133
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.8531385910461657
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.8736938381017583
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/unet__e1c0m0d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/unet__e1c0m0d1__s42.parquet"
+    },
+    "unet__e1c0m1d0__s42": {
+      "id": "unet__e1c0m1d0__s42",
+      "family": "unet",
+      "loss": "base+mmd",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_v2/primary/unet__e1c0m1d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.0038941806567791017,
+            "rmse": 0.0624033705562376,
+            "mae": 0.03437621770029597,
+            "pearson": 0.9152847255963663,
+            "r2": 0.8039797714310286,
+            "derivative_mse": 0.0006285771473574343,
+            "snr_db": 8.547734954860776
+          },
+          "aVR": {
+            "mse": 0.007626571644963445,
+            "rmse": 0.08733024473207117,
+            "mae": 0.0282766422231537,
+            "pearson": 0.946578305410891,
+            "r2": 0.8479235798625623,
+            "derivative_mse": 0.001063373287259179,
+            "snr_db": 5.0471282915481925
+          },
+          "aVL": {
+            "mse": 0.004182309291628158,
+            "rmse": 0.06467077617926166,
+            "mae": 0.032126127621016805,
+            "pearson": 0.903452274070876,
+            "r2": 0.7002361027734628,
+            "derivative_mse": 0.0012189640264586622,
+            "snr_db": 6.803729571657458
+          },
+          "aVF": {
+            "mse": 0.004932181572488181,
+            "rmse": 0.0702294921844675,
+            "mae": 0.03287228663361952,
+            "pearson": 0.9033317821483463,
+            "r2": 0.7635850258721052,
+            "derivative_mse": 0.0006889389943168365,
+            "snr_db": 6.774894680246739
+          },
+          "V1": {
+            "mse": 0.021085686815500368,
+            "rmse": 0.1452091140924025,
+            "mae": 0.07230992504893996,
+            "pearson": 0.827354082534797,
+            "r2": 0.6212733062210293,
+            "derivative_mse": 0.0008792428425370149,
+            "snr_db": 3.813270707303491
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.042729873822186445,
+            "rmse": 0.20671205533830495,
+            "mae": 0.0991361923993644,
+            "pearson": 0.8480495144017945,
+            "r2": 0.6539754513147715,
+            "derivative_mse": 0.0011434213991230154,
+            "snr_db": 4.133096716455397
+          },
+          "V4": {
+            "mse": 0.10694952905631316,
+            "rmse": 0.32703138848788377,
+            "mae": 0.10451072959463038,
+            "pearson": 0.81807531602766,
+            "r2": 0.5749155116692848,
+            "derivative_mse": 0.0013499588349668102,
+            "snr_db": 1.6317046807088507
+          },
+          "V5": {
+            "mse": 0.033991230137152675,
+            "rmse": 0.18436710698265207,
+            "mae": 0.09407917962487117,
+            "pearson": 0.8202672791055076,
+            "r2": 0.5741032844992117,
+            "derivative_mse": 0.0017024726593686226,
+            "snr_db": 3.3621921083224713
+          },
+          "V6": {
+            "mse": 0.03707725751652283,
+            "rmse": 0.19255455724683024,
+            "mae": 0.09026864760185238,
+            "pearson": 0.8019750241669722,
+            "r2": 0.5899751591289256,
+            "derivative_mse": 0.0006774304041988086,
+            "snr_db": 2.3527298536575674
+          }
+        },
+        "all_leads": {
+          "mse": 0.021872401709461198,
+          "rmse": 0.11170900881667593,
+          "mae": 0.04899632903731202,
+          "pearson": 0.8986973586219343,
+          "r2": 0.7608305993976985,
+          "derivative_mse": 0.0007793649662988653,
+          "snr_db": 47.84346973632706
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.029163202279281597,
+          "rmse": 0.14894534508890128,
+          "mae": 0.06532843871641603,
+          "pearson": 0.8649298114959123,
+          "r2": 0.6811074658635979,
+          "derivative_mse": 0.0010391532883984869,
+          "snr_db": 4.718497951640105
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.8855860324346558,
+        "st_correlation": 0.7474560993668018,
+        "j_point_amplitude_mae": 0.05351645338793834,
+        "r_peak_timing_mae_ms": 66.59163397972951,
+        "waveform_correlation": 0.8651745623431392,
+        "n_peak_matches": 399497,
+        "regional_correlation": {
+          "anterior": 0.8273359863249604,
+          "lateral": 0.8254861991670753,
+          "inferior": 0.9154872605850302
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.41569234743393446,
+          "40_100_hz": 0.773040034271039,
+          "100_150_hz": 2.6086672543534495
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9126611760793959
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8363725407624043
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.8795499861866456
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.8529609678871745
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.8756541523711912
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/unet__e1c0m1d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/unet__e1c0m1d0__s42.parquet"
+    },
+    "unet__e1c0m1d1__s42": {
+      "id": "unet__e1c0m1d1__s42",
+      "family": "unet",
+      "loss": "base+mmd+derivative",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_v2/primary/unet__e1c0m1d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.0040569423551467705,
+            "rmse": 0.06369413124571816,
+            "mae": 0.034903111741698994,
+            "pearson": 0.9134785188647842,
+            "r2": 0.7990837874239975,
+            "derivative_mse": 0.0005769000205028364,
+            "snr_db": 8.369907538147913
+          },
+          "aVR": {
+            "mse": 0.007751697415689564,
+            "rmse": 0.0880437244537597,
+            "mae": 0.029091677846659558,
+            "pearson": 0.9460182390898889,
+            "r2": 0.8458254750147359,
+            "derivative_mse": 0.0009226029774310211,
+            "snr_db": 4.976453717192941
+          },
+          "aVL": {
+            "mse": 0.004308239451123114,
+            "rmse": 0.06563718040198797,
+            "mae": 0.0320700784414993,
+            "pearson": 0.9013283583640616,
+            "r2": 0.6986778492890418,
+            "derivative_mse": 0.0009944528059538825,
+            "snr_db": 6.674892706345784
+          },
+          "aVF": {
+            "mse": 0.0047735013716274375,
+            "rmse": 0.06909053026014084,
+            "mae": 0.031926894320996047,
+            "pearson": 0.9113785970445843,
+            "r2": 0.7788428265295932,
+            "derivative_mse": 0.000578570303030628,
+            "snr_db": 6.916914725934003
+          },
+          "V1": {
+            "mse": 0.021109408245008034,
+            "rmse": 0.14529077136903099,
+            "mae": 0.07293615632068111,
+            "pearson": 0.8258244568636479,
+            "r2": 0.610661483116779,
+            "derivative_mse": 0.0007698159313108685,
+            "snr_db": 3.808387634041732
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.04257880996934766,
+            "rmse": 0.20634633500342975,
+            "mae": 0.09877866209819128,
+            "pearson": 0.8515002538564824,
+            "r2": 0.6608450993779489,
+            "derivative_mse": 0.001078711098647987,
+            "snr_db": 4.148477628072128
+          },
+          "V4": {
+            "mse": 0.10665610792760286,
+            "rmse": 0.3265824672691461,
+            "mae": 0.10386141895918032,
+            "pearson": 0.8235460873104485,
+            "r2": 0.5930477533654996,
+            "derivative_mse": 0.0012131522120239014,
+            "snr_db": 1.643636131491109
+          },
+          "V5": {
+            "mse": 0.03335268755435288,
+            "rmse": 0.1826271818606225,
+            "mae": 0.0924187840432461,
+            "pearson": 0.8302221156236943,
+            "r2": 0.602572155146221,
+            "derivative_mse": 0.0014152746220843938,
+            "snr_db": 3.4445525770306302
+          },
+          "V6": {
+            "mse": 0.037041265063912726,
+            "rmse": 0.19246107415244446,
+            "mae": 0.09014256582290713,
+            "pearson": 0.8050293251837932,
+            "r2": 0.6020723972034411,
+            "derivative_mse": 0.0006294762721262446,
+            "snr_db": 2.356947780362856
+          }
+        },
+        "all_leads": {
+          "mse": 0.021802388279484258,
+          "rmse": 0.11164778300135669,
+          "mae": 0.04884411246625498,
+          "pearson": 0.9006938293501157,
+          "r2": 0.7659690688722716,
+          "derivative_mse": 0.0006815796869259803,
+          "snr_db": 47.83294380914857
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.029069851039312342,
+          "rmse": 0.1488637106684756,
+          "mae": 0.06512548328833997,
+          "pearson": 0.8675917724668206,
+          "r2": 0.6879587584963621,
+          "derivative_mse": 0.000908772915901307,
+          "snr_db": 4.704463382068789
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.8890681494891026,
+        "st_correlation": 0.7498530605912166,
+        "j_point_amplitude_mae": 0.05261479379463266,
+        "r_peak_timing_mae_ms": 66.87909045624873,
+        "waveform_correlation": 0.8678158518096883,
+        "n_peak_matches": 399497,
+        "regional_correlation": {
+          "anterior": 0.8307743757436448,
+          "lateral": 0.8298738657393858,
+          "inferior": 0.9177136117463
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.4170671275880352,
+          "40_100_hz": 0.7496704876732377,
+          "100_150_hz": 2.513928508184968
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9164242684228269
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8384725991388283
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.8838219417384968
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.8551421134379754
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.8759536652731439
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/unet__e1c0m1d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/unet__e1c0m1d1__s42.parquet"
+    },
+    "unet__e1c1m0d0__s42": {
+      "id": "unet__e1c1m0d0__s42",
+      "family": "unet",
+      "loss": "base+correlation",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_v2/primary/unet__e1c1m0d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.005616376377058531,
+            "rmse": 0.07494248712885455,
+            "mae": 0.030657689283356118,
+            "pearson": 0.980165197824154,
+            "r2": 0.8809378317502241,
+            "derivative_mse": 0.0004682194258194678,
+            "snr_db": 6.957333866973209
+          },
+          "aVR": {
+            "mse": 0.008485967684163449,
+            "rmse": 0.09211931222150678,
+            "mae": 0.033456692618117984,
+            "pearson": 0.9851236708165307,
+            "r2": 0.6250512369226219,
+            "derivative_mse": 0.0007124705221170998,
+            "snr_db": 4.583408100116603
+          },
+          "aVL": {
+            "mse": 0.004548388346498623,
+            "rmse": 0.06744174038752723,
+            "mae": 0.03206065070466388,
+            "pearson": 0.9796683540379187,
+            "r2": 0.5684882453478535,
+            "derivative_mse": 0.0007238607100932818,
+            "snr_db": 6.439315657866629
+          },
+          "aVF": {
+            "mse": 0.0047851034086666905,
+            "rmse": 0.06917444187463091,
+            "mae": 0.02996005002701987,
+            "pearson": 0.9781036435929777,
+            "r2": 0.7531642675727428,
+            "derivative_mse": 0.0005121003200163662,
+            "snr_db": 6.906371967330125
+          },
+          "V1": {
+            "mse": 0.020382405398583336,
+            "rmse": 0.1427669618594699,
+            "mae": 0.07112445411140418,
+            "pearson": 0.8552512224802882,
+            "r2": 0.5287777809063557,
+            "derivative_mse": 0.000812713394533134,
+            "snr_db": 3.9605938711127333
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.042924425903264396,
+            "rmse": 0.20718210806743037,
+            "mae": 0.09742684693557103,
+            "pearson": 0.8610256422674553,
+            "r2": 0.6504232819835035,
+            "derivative_mse": 0.00108468508788818,
+            "snr_db": 4.113367866688723
+          },
+          "V4": {
+            "mse": 0.10540253622183492,
+            "rmse": 0.32465756763370685,
+            "mae": 0.10144229012182203,
+            "pearson": 0.8410141199376678,
+            "r2": 0.5924897803880183,
+            "derivative_mse": 0.0014484689611547897,
+            "snr_db": 1.6949828349842588
+          },
+          "V5": {
+            "mse": 0.03267556879285602,
+            "rmse": 0.1807638481357819,
+            "mae": 0.09194917435062844,
+            "pearson": 0.848937498119737,
+            "r2": 0.5628557574896434,
+            "derivative_mse": 0.0017199522349475626,
+            "snr_db": 3.533629365420703
+          },
+          "V6": {
+            "mse": 0.036731810849618324,
+            "rmse": 0.19165544826489625,
+            "mae": 0.08852419544312586,
+            "pearson": 0.8254897896980289,
+            "r2": 0.589887508464635,
+            "derivative_mse": 0.000659855647565514,
+            "snr_db": 2.3933824943151376
+          }
+        },
+        "all_leads": {
+          "mse": 0.021796048581878693,
+          "rmse": 0.1125586596311504,
+          "mae": 0.04805017029964245,
+          "pearson": 0.9295649282312298,
+          "r2": 0.7293396409021331,
+          "derivative_mse": 0.000678527192011283,
+          "snr_db": 47.68646177466431
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.029061398109171584,
+          "rmse": 0.15007821284153386,
+          "mae": 0.06406689373285661,
+          "pearson": 0.9060865709749731,
+          "r2": 0.6391195212028442,
+          "derivative_mse": 0.0009047029226817106,
+          "snr_db": 4.509154002756458
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9254354455737007,
+        "st_correlation": 0.7950423937862441,
+        "j_point_amplitude_mae": 0.052798543934621155,
+        "r_peak_timing_mae_ms": 68.37925018085876,
+        "waveform_correlation": 0.9062743229540341,
+        "n_peak_matches": 399483,
+        "regional_correlation": {
+          "anterior": 0.8438238274747799,
+          "lateral": 0.8496561352942736,
+          "inferior": 0.965285648718498
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.757792838954581,
+          "40_100_hz": 0.9032137798576767,
+          "100_150_hz": 1.7346293592936406
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9467459598692536
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.890159006392661
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9202314440248328
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.8977267414892066
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9143264341299139
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/unet__e1c1m0d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/unet__e1c1m0d0__s42.parquet"
+    },
+    "unet__e1c1m0d1__s42": {
+      "id": "unet__e1c1m0d1__s42",
+      "family": "unet",
+      "loss": "base+correlation+derivative",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_v2/primary/unet__e1c1m0d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.00601108879267596,
+            "rmse": 0.07753121173228211,
+            "mae": 0.031805850634922195,
+            "pearson": 0.9798699159224646,
+            "r2": 0.8781135120470481,
+            "derivative_mse": 0.000424510710912873,
+            "snr_db": 6.66236447510318
+          },
+          "aVR": {
+            "mse": 0.00838460132740421,
+            "rmse": 0.09156746871790336,
+            "mae": 0.032707642826179925,
+            "pearson": 0.984758441075785,
+            "r2": 0.6424868820295714,
+            "derivative_mse": 0.0006594246693831477,
+            "snr_db": 4.635597660693625
+          },
+          "aVL": {
+            "mse": 0.004708187892073292,
+            "rmse": 0.06861623635899372,
+            "mae": 0.033020343736132184,
+            "pearson": 0.9801543900249094,
+            "r2": 0.5175632174769728,
+            "derivative_mse": 0.0006929217296650762,
+            "snr_db": 6.28935317805153
+          },
+          "aVF": {
+            "mse": 0.004553135585915971,
+            "rmse": 0.06747692632238053,
+            "mae": 0.027540847326777584,
+            "pearson": 0.982400436768333,
+            "r2": 0.800134334005023,
+            "derivative_mse": 0.00047395253764532136,
+            "snr_db": 7.1221794111131
+          },
+          "V1": {
+            "mse": 0.02019501167468614,
+            "rmse": 0.14210915408476027,
+            "mae": 0.07041746494574554,
+            "pearson": 0.854632793955993,
+            "r2": 0.555997591197791,
+            "derivative_mse": 0.0007709725413644954,
+            "snr_db": 4.000707138384984
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.0429244119515727,
+            "rmse": 0.20718207439731048,
+            "mae": 0.09721108197130526,
+            "pearson": 0.8604300315916347,
+            "r2": 0.6505981010687335,
+            "derivative_mse": 0.0010163842467831256,
+            "snr_db": 4.11336927827282
+          },
+          "V4": {
+            "mse": 0.10532335576098062,
+            "rmse": 0.3245356001442378,
+            "mae": 0.10109756865909872,
+            "pearson": 0.8406335447995531,
+            "r2": 0.5985842868105512,
+            "derivative_mse": 0.0013866038884445678,
+            "snr_db": 1.6982465666992739
+          },
+          "V5": {
+            "mse": 0.03225975875260357,
+            "rmse": 0.17961001851957917,
+            "mae": 0.0904777094800375,
+            "pearson": 0.8502878225346634,
+            "r2": 0.5953699565512621,
+            "derivative_mse": 0.0015547534707658565,
+            "snr_db": 3.589249774563158
+          },
+          "V6": {
+            "mse": 0.03668494623020817,
+            "rmse": 0.19153314655747752,
+            "mae": 0.08794708084756499,
+            "pearson": 0.8265328352679586,
+            "r2": 0.6072538414243924,
+            "derivative_mse": 0.0006298020877093379,
+            "snr_db": 2.398927018257714
+          }
+        },
+        "all_leads": {
+          "mse": 0.021753708164010052,
+          "rmse": 0.11251348640291042,
+          "mae": 0.04768546586898032,
+          "pearson": 0.9299750176617746,
+          "r2": 0.7371751435509454,
+          "derivative_mse": 0.0006341104902228169,
+          "snr_db": 47.68042914769193
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.02900494421868007,
+          "rmse": 0.1500179818705472,
+          "mae": 0.06358062115864044,
+          "pearson": 0.906633356882366,
+          "r2": 0.6495668580679274,
+          "derivative_mse": 0.0008454806536304224,
+          "snr_db": 4.5011105001265985
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9261228660554603,
+        "st_correlation": 0.795605832575472,
+        "j_point_amplitude_mae": 0.05229599070774048,
+        "r_peak_timing_mae_ms": 69.66784569055504,
+        "waveform_correlation": 0.9068360359219069,
+        "n_peak_matches": 399483,
+        "regional_correlation": {
+          "anterior": 0.8440727083060421,
+          "lateral": 0.848812397228281,
+          "inferior": 0.9679210345313218
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.7307521905472212,
+          "40_100_hz": 0.9233029509499323,
+          "100_150_hz": 1.7582198449866866
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9475280931072904
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8904090621213067
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9208387100429616
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.8979917675790698
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9156669174291022
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/unet__e1c1m0d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/unet__e1c1m0d1__s42.parquet"
+    },
+    "unet__e1c1m1d0__s42": {
+      "id": "unet__e1c1m1d0__s42",
+      "family": "unet",
+      "loss": "base+correlation+mmd",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_v2/primary/unet__e1c1m1d0__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.005606414545909342,
+            "rmse": 0.07487599445689748,
+            "mae": 0.030831283047894956,
+            "pearson": 0.9798554364989451,
+            "r2": 0.8804082238122622,
+            "derivative_mse": 0.0004725279518882613,
+            "snr_db": 6.965043837627932
+          },
+          "aVR": {
+            "mse": 0.008541852339265328,
+            "rmse": 0.09242214204001836,
+            "mae": 0.03392286002857664,
+            "pearson": 0.9846523438251407,
+            "r2": 0.619900014058636,
+            "derivative_mse": 0.0007235235860310038,
+            "snr_db": 4.554901239647078
+          },
+          "aVL": {
+            "mse": 0.004520679797331128,
+            "rmse": 0.06723600075354816,
+            "mae": 0.0316907324979243,
+            "pearson": 0.9794971231905298,
+            "r2": 0.5771459547740518,
+            "derivative_mse": 0.0007127517725813953,
+            "snr_db": 6.465853571703152
+          },
+          "aVF": {
+            "mse": 0.0047778872842478524,
+            "rmse": 0.06912226330385784,
+            "mae": 0.03009806302988469,
+            "pearson": 0.9787617028988232,
+            "r2": 0.7502286937659451,
+            "derivative_mse": 0.0005200691385040299,
+            "snr_db": 6.912926242475396
+          },
+          "V1": {
+            "mse": 0.02044388153873012,
+            "rmse": 0.1429821021622291,
+            "mae": 0.0712225939790426,
+            "pearson": 0.8547341918595821,
+            "r2": 0.5289700095717972,
+            "derivative_mse": 0.0008202060769949457,
+            "snr_db": 3.9475146662099503
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.04289029310630976,
+            "rmse": 0.20709971778423494,
+            "mae": 0.09728514857796754,
+            "pearson": 0.8618508481782782,
+            "r2": 0.6534759491832225,
+            "derivative_mse": 0.0010682008293255293,
+            "snr_db": 4.116822678712145
+          },
+          "V4": {
+            "mse": 0.10531509681243827,
+            "rmse": 0.3245228756381255,
+            "mae": 0.10091315010968993,
+            "pearson": 0.8417033956949721,
+            "r2": 0.5984803406787039,
+            "derivative_mse": 0.001440924906569183,
+            "snr_db": 1.6985871327959468
+          },
+          "V5": {
+            "mse": 0.032690832276285324,
+            "rmse": 0.18080606260931995,
+            "mae": 0.09206652307514744,
+            "pearson": 0.8490327122120807,
+            "r2": 0.5631143295104166,
+            "derivative_mse": 0.0017765849541612928,
+            "snr_db": 3.5316011531770957
+          },
+          "V6": {
+            "mse": 0.036746363701254635,
+            "rmse": 0.1916934106881471,
+            "mae": 0.08844152761573809,
+            "pearson": 0.8255678522876245,
+            "r2": 0.5936116161173874,
+            "derivative_mse": 0.000677195495672825,
+            "snr_db": 2.3916621948431165
+          }
+        },
+        "all_leads": {
+          "mse": 0.021794441783480976,
+          "rmse": 0.11256338078636487,
+          "mae": 0.04803932349682218,
+          "pearson": 0.9296379672204981,
+          "r2": 0.7304445942893687,
+          "derivative_mse": 0.0006843320593107055,
+          "snr_db": 47.68667233236297
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.02905925571130797,
+          "rmse": 0.15008450771515316,
+          "mae": 0.06405243132909624,
+          "pearson": 0.9061839562939975,
+          "r2": 0.6405927923858248,
+          "derivative_mse": 0.0009124427457476074,
+          "snr_db": 4.509434746354645
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9256747785539005,
+        "st_correlation": 0.7949495496594541,
+        "j_point_amplitude_mae": 0.05284642345896231,
+        "r_peak_timing_mae_ms": 68.29754958283581,
+        "waveform_correlation": 0.9063731438324962,
+        "n_peak_matches": 399483,
+        "regional_correlation": {
+          "anterior": 0.8441656601918873,
+          "lateral": 0.8496194281567854,
+          "inferior": 0.9653544574907803
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.7553214126948142,
+          "40_100_hz": 0.8964379101741344,
+          "100_150_hz": 1.721968679631085
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9470160699430996
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8900825712335977
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.920337971106782
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.8980704780412495
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9144727426769362
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/unet__e1c1m1d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/unet__e1c1m1d0__s42.parquet"
+    },
+    "unet__e1c1m1d1__s42": {
+      "id": "unet__e1c1m1d1__s42",
+      "family": "unet",
+      "loss": "base+correlation+mmd+derivative",
+      "kind": "unet",
+      "checkpoint": "checkpoints/factorial_v2/primary/unet__e1c1m1d1__s42/best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.005957245485006098,
+            "rmse": 0.07718319431719639,
+            "mae": 0.031777602960688774,
+            "pearson": 0.9795988151036541,
+            "r2": 0.8777472366720943,
+            "derivative_mse": 0.00045438040674063797,
+            "snr_db": 6.701440939088243
+          },
+          "aVR": {
+            "mse": 0.008450797951838536,
+            "rmse": 0.09192822173760644,
+            "mae": 0.03308992005093514,
+            "pearson": 0.9846511190766541,
+            "r2": 0.6336622024095774,
+            "derivative_mse": 0.0006510738357922963,
+            "snr_db": 4.601444652030732
+          },
+          "aVL": {
+            "mse": 0.004752396951309323,
+            "rmse": 0.06893763087972579,
+            "mae": 0.033605727586034126,
+            "pearson": 0.9800051065742887,
+            "r2": 0.5103514190392925,
+            "derivative_mse": 0.0007293812799346258,
+            "snr_db": 6.248763953285941
+          },
+          "aVF": {
+            "mse": 0.004550142925854839,
+            "rmse": 0.06745474724476283,
+            "mae": 0.027721512233648507,
+            "pearson": 0.9820015499256535,
+            "r2": 0.7986400950899705,
+            "derivative_mse": 0.0004689159721462859,
+            "snr_db": 7.1250348566449535
+          },
+          "V1": {
+            "mse": 0.02019842385586063,
+            "rmse": 0.1421211590716197,
+            "mae": 0.07048518146929039,
+            "pearson": 0.8548820356245823,
+            "r2": 0.5483822224340033,
+            "derivative_mse": 0.000762381849024299,
+            "snr_db": 3.9999734095305826
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.04295315929487983,
+            "rmse": 0.20725143978964253,
+            "mae": 0.0972788736606376,
+            "pearson": 0.8614113290431136,
+            "r2": 0.6536349095830774,
+            "derivative_mse": 0.0010247814048342295,
+            "snr_db": 4.110461694173086
+          },
+          "V4": {
+            "mse": 0.10529817760430833,
+            "rmse": 0.324496806770588,
+            "mae": 0.10107514780405405,
+            "pearson": 0.8409676997420223,
+            "r2": 0.5987878482766616,
+            "derivative_mse": 0.0013928598353987285,
+            "snr_db": 1.6992848968628285
+          },
+          "V5": {
+            "mse": 0.03239862991451835,
+            "rmse": 0.17999619416676105,
+            "mae": 0.09098446458160359,
+            "pearson": 0.8492023847652476,
+            "r2": 0.5850701847045836,
+            "derivative_mse": 0.001637224103354163,
+            "snr_db": 3.570594477611024
+          },
+          "V6": {
+            "mse": 0.03669932246642871,
+            "rmse": 0.19157067225029176,
+            "mae": 0.08813117645585204,
+            "pearson": 0.8257537388331946,
+            "r2": 0.6010720390439088,
+            "derivative_mse": 0.0006313923908122911,
+            "snr_db": 2.3972254219205484
+          }
+        },
+        "all_leads": {
+          "mse": 0.021771524704167055,
+          "rmse": 0.11257833885234952,
+          "mae": 0.04784580056689535,
+          "pearson": 0.9298728148907007,
+          "r2": 0.7339456797710975,
+          "derivative_mse": 0.0006460325898364631,
+          "snr_db": 47.675781631025984
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.029028699605556072,
+          "rmse": 0.15010445180313273,
+          "mae": 0.06379440075586046,
+          "pearson": 0.9064970865209345,
+          "r2": 0.6452609063614632,
+          "derivative_mse": 0.0008613767864486175,
+          "snr_db": 4.49491381123866
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.926037518257021,
+        "st_correlation": 0.7940435908992757,
+        "j_point_amplitude_mae": 0.052470482428455936,
+        "r_peak_timing_mae_ms": 69.20305995499183,
+        "waveform_correlation": 0.9067002980587977,
+        "n_peak_matches": 399483,
+        "regional_correlation": {
+          "anterior": 0.8443741008816982,
+          "lateral": 0.8483511022668294,
+          "inferior": 0.9678295730160382
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.739513226875791,
+          "40_100_hz": 0.9213499810893525,
+          "100_150_hz": 1.7560705274214794
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9476189411970776
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8902794342810425
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.920840857609031
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.8976360011188498
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9158557598736597
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/unet__e1c1m1d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/unet__e1c1m1d1__s42.parquet"
+    },
+    "msvae__e1c0m0d0__s42": {
+      "id": "msvae__e1c0m0d0__s42",
+      "family": "multiscale_vae",
+      "loss": "base",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/factorial_v2/primary/msvae__e1c0m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.000903740118972981,
+            "rmse": 0.030062270688904737,
+            "mae": 0.016697270914899937,
+            "pearson": 0.9732721484258969,
+            "r2": 0.9430662645312881,
+            "derivative_mse": 0.0002528794338652129,
+            "snr_db": 14.891460287211206
+          },
+          "aVR": {
+            "mse": 0.004176833151110912,
+            "rmse": 0.0646284237090068,
+            "mae": 0.013353701970951851,
+            "pearson": 0.9848741331725179,
+            "r2": 0.9662578635624227,
+            "derivative_mse": 0.0003006092719027837,
+            "snr_db": 7.661950564183262
+          },
+          "aVL": {
+            "mse": 0.0014559181512193947,
+            "rmse": 0.0381564955311595,
+            "mae": 0.014523793802160874,
+            "pearson": 0.9735477989658106,
+            "r2": 0.9433556743242628,
+            "derivative_mse": 0.00022633148343968512,
+            "snr_db": 11.38652143431565
+          },
+          "aVF": {
+            "mse": 0.001694627191820551,
+            "rmse": 0.04116584982507407,
+            "mae": 0.014227177959726974,
+            "pearson": 0.9773293469840105,
+            "r2": 0.9509284659039248,
+            "derivative_mse": 0.00021566488736121818,
+            "snr_db": 11.41454353512248
+          },
+          "V1": {
+            "mse": 0.016920056460595054,
+            "rmse": 0.13007711735964575,
+            "mae": 0.06162581514785773,
+            "pearson": 0.8707372507697335,
+            "r2": 0.7183751239724188,
+            "derivative_mse": 0.0001902418528882109,
+            "snr_db": 4.769130145049557
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.038706519745753766,
+            "rmse": 0.19673972589630637,
+            "mae": 0.08952499968685582,
+            "pearson": 0.8713391278241132,
+            "r2": 0.6825333686798907,
+            "derivative_mse": 0.000611352821269958,
+            "snr_db": 4.5625715806600144
+          },
+          "V4": {
+            "mse": 0.10377707887755257,
+            "rmse": 0.3221444999958133,
+            "mae": 0.09727345398480446,
+            "pearson": 0.8489006987635935,
+            "r2": 0.6148381560044283,
+            "derivative_mse": 0.00074651563168163,
+            "snr_db": 1.7624790261368373
+          },
+          "V5": {
+            "mse": 0.03073933890845543,
+            "rmse": 0.17532637824484779,
+            "mae": 0.08483256601079363,
+            "pearson": 0.8602211096392713,
+            "r2": 0.6509528655935961,
+            "derivative_mse": 0.00047943471526887147,
+            "snr_db": 3.7989156958010324
+          },
+          "V6": {
+            "mse": 0.034885579950854256,
+            "rmse": 0.186776818558552,
+            "mae": 0.08407755423880912,
+            "pearson": 0.8360365892952863,
+            "r2": 0.6429135341792821,
+            "derivative_mse": 0.00026358193278332707,
+            "snr_db": 2.617346414355749
+          }
+        },
+        "all_leads": {
+          "mse": 0.01943830771302791,
+          "rmse": 0.09875646498410919,
+          "mae": 0.03967802780973837,
+          "pearson": 0.9330215169866861,
+          "r2": 0.8427684430626261,
+          "derivative_mse": 0.00027388433587174145,
+          "snr_db": 49.54333949616663
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.02591774361737055,
+          "rmse": 0.1316752866454789,
+          "mae": 0.05290403707965116,
+          "pearson": 0.9106953559822482,
+          "r2": 0.7903579240835017,
+          "derivative_mse": 0.00036517911449565523,
+          "snr_db": 6.9849909647595325
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9291198986273432,
+        "st_correlation": 0.8006793193926671,
+        "j_point_amplitude_mae": 0.04399679834004647,
+        "r_peak_timing_mae_ms": 86.25398517806595,
+        "waveform_correlation": 0.9109569771917563,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8584943396839761,
+          "lateral": 0.8638038016359951,
+          "inferior": 0.9774950970883903
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.3018565339410949,
+          "40_100_hz": 0.696208528968858,
+          "100_150_hz": 0.8011141949255629
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9483085327031014
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8962257211273218
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9222056232979515
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9065358835817157
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9213183676495768
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/msvae__e1c0m0d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/msvae__e1c0m0d0__s42.parquet"
+    },
+    "msvae__e1c0m0d1__s42": {
+      "id": "msvae__e1c0m0d1__s42",
+      "family": "multiscale_vae",
+      "loss": "base+derivative",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/factorial_v2/primary/msvae__e1c0m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.000909068866962148,
+            "rmse": 0.030150768928207252,
+            "mae": 0.016673973119144203,
+            "pearson": 0.9734212029597326,
+            "r2": 0.9427927105021597,
+            "derivative_mse": 0.00025096772677243363,
+            "snr_db": 14.865928060366949
+          },
+          "aVR": {
+            "mse": 0.004129059928652894,
+            "rmse": 0.06425776162186864,
+            "mae": 0.01357746089947535,
+            "pearson": 0.9848826445956542,
+            "r2": 0.9656230506687278,
+            "derivative_mse": 0.00029746710840441515,
+            "snr_db": 7.711909973713852
+          },
+          "aVL": {
+            "mse": 0.0016688199092639569,
+            "rmse": 0.0408511922624537,
+            "mae": 0.01458772419725489,
+            "pearson": 0.9736249784346409,
+            "r2": 0.9430312112117109,
+            "derivative_mse": 0.00022471776445626916,
+            "snr_db": 10.793796316257975
+          },
+          "aVF": {
+            "mse": 0.001488805935833905,
+            "rmse": 0.03858504808645319,
+            "mae": 0.014164471295750365,
+            "pearson": 0.9775050666099615,
+            "r2": 0.9513308166420028,
+            "derivative_mse": 0.00021343034340545915,
+            "snr_db": 11.976904326374386
+          },
+          "V1": {
+            "mse": 0.016910192557250583,
+            "rmse": 0.13003919623425308,
+            "mae": 0.0616848379501224,
+            "pearson": 0.8702991842076804,
+            "r2": 0.719114937587883,
+            "derivative_mse": 0.00018816189266714417,
+            "snr_db": 4.771662694491724
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.03877802408788928,
+            "rmse": 0.19692136523975573,
+            "mae": 0.08965801187219065,
+            "pearson": 0.8711438152804267,
+            "r2": 0.6825005488006882,
+            "derivative_mse": 0.0006101585912665898,
+            "snr_db": 4.554556059499197
+          },
+          "V4": {
+            "mse": 0.1038019567736889,
+            "rmse": 0.3221831106276195,
+            "mae": 0.09739641185975435,
+            "pearson": 0.8484266493443879,
+            "r2": 0.6150415873942547,
+            "derivative_mse": 0.0007448975094507201,
+            "snr_db": 1.7614380411422585
+          },
+          "V5": {
+            "mse": 0.030753933081144158,
+            "rmse": 0.17536799332017275,
+            "mae": 0.08494232312498211,
+            "pearson": 0.8598099613320757,
+            "r2": 0.6528134074060402,
+            "derivative_mse": 0.00047759357509792973,
+            "snr_db": 3.796854277183812
+          },
+          "V6": {
+            "mse": 0.034882609328839194,
+            "rmse": 0.18676886605866405,
+            "mae": 0.08416277064604329,
+            "pearson": 0.8356548377913835,
+            "r2": 0.6460829283521637,
+            "derivative_mse": 0.0002616815460766605,
+            "snr_db": 2.6177162461553305
+          }
+        },
+        "all_leads": {
+          "mse": 0.019443539205793753,
+          "rmse": 0.09876044186495399,
+          "mae": 0.03973733208039313,
+          "pearson": 0.9328973617129952,
+          "r2": 0.8431942665471358,
+          "derivative_mse": 0.0002724230047998018,
+          "snr_db": 49.54216010552909
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.02592471894105834,
+          "rmse": 0.131680589153272,
+          "mae": 0.05298310944052417,
+          "pearson": 0.9105298156173269,
+          "r2": 0.7909256887295145,
+          "derivative_mse": 0.00036323067306640234,
+          "snr_db": 6.983418443909499
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9290439162089055,
+        "st_correlation": 0.8002509213343844,
+        "j_point_amplitude_mae": 0.04405796473736017,
+        "r_peak_timing_mae_ms": 86.54881201773026,
+        "waveform_correlation": 0.9107925941597191,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8582040637916046,
+          "lateral": 0.8634566845917114,
+          "inferior": 0.9776236126246503
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.3032647860858943,
+          "40_100_hz": 0.7007196338255584,
+          "100_150_hz": 0.8189529029726993
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9482637638716108
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.896201507916701
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9220442279721145
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9064621476536873
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.92105053956677
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/msvae__e1c0m0d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/msvae__e1c0m0d1__s42.parquet"
+    },
+    "msvae__e1c0m1d0__s42": {
+      "id": "msvae__e1c0m1d0__s42",
+      "family": "multiscale_vae",
+      "loss": "base+mmd",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/factorial_v2/primary/msvae__e1c0m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.000864432292174594,
+            "rmse": 0.029401229433045722,
+            "mae": 0.016482399211189804,
+            "pearson": 0.973529567971887,
+            "r2": 0.9439397943822605,
+            "derivative_mse": 0.0002526180644749605,
+            "snr_db": 15.084586084575164
+          },
+          "aVR": {
+            "mse": 0.004202461971190344,
+            "rmse": 0.06482639872143403,
+            "mae": 0.013314796982475556,
+            "pearson": 0.9849669792430421,
+            "r2": 0.9664666409127711,
+            "derivative_mse": 0.0002997526757529899,
+            "snr_db": 7.635383914639901
+          },
+          "aVL": {
+            "mse": 0.0015831511432404808,
+            "rmse": 0.039788831890877126,
+            "mae": 0.014392242484763298,
+            "pearson": 0.973770843860593,
+            "r2": 0.9438931591402648,
+            "derivative_mse": 0.00022637802746805843,
+            "snr_db": 11.022667250541996
+          },
+          "aVF": {
+            "mse": 0.0015409611486591334,
+            "rmse": 0.039255077998383,
+            "mae": 0.014053596117034507,
+            "pearson": 0.9775576779343259,
+            "r2": 0.9515904200715971,
+            "derivative_mse": 0.00021499840829958912,
+            "snr_db": 11.827368350385134
+          },
+          "V1": {
+            "mse": 0.016899270418440592,
+            "rmse": 0.12999719388679354,
+            "mae": 0.06158081049095639,
+            "pearson": 0.8708445124816195,
+            "r2": 0.7186899525388577,
+            "derivative_mse": 0.00018986806606211232,
+            "snr_db": 4.774468669129169
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.03864393013619088,
+            "rmse": 0.19658059450564005,
+            "mae": 0.08941680475952316,
+            "pearson": 0.8717497512391004,
+            "r2": 0.6839267974100799,
+            "derivative_mse": 0.0006093805140749945,
+            "snr_db": 4.5695999374521765
+          },
+          "V4": {
+            "mse": 0.10371165610997982,
+            "rmse": 0.3220429414068562,
+            "mae": 0.09715041606796482,
+            "pearson": 0.8493028936504061,
+            "r2": 0.6167511995429573,
+            "derivative_mse": 0.0007449466102133114,
+            "snr_db": 1.7652177529299797
+          },
+          "V5": {
+            "mse": 0.030687435654462393,
+            "rmse": 0.17517829675636876,
+            "mae": 0.08473804545243072,
+            "pearson": 0.8604985255469874,
+            "r2": 0.6532206390628125,
+            "derivative_mse": 0.00047791317906611773,
+            "snr_db": 3.8062549390958074
+          },
+          "V6": {
+            "mse": 0.03485870551171785,
+            "rmse": 0.18670486204627307,
+            "mae": 0.08400937224880468,
+            "pearson": 0.8362328105162875,
+            "r2": 0.6461259713153253,
+            "derivative_mse": 0.0002633912647430363,
+            "snr_db": 2.6206933326362716
+          }
+        },
+        "all_leads": {
+          "mse": 0.019416000365504674,
+          "rmse": 0.09864795222047262,
+          "mae": 0.03959487365126191,
+          "pearson": 0.9332044635370208,
+          "r2": 0.8437170478647439,
+          "derivative_mse": 0.00027327056751293085,
+          "snr_db": 49.563449625212435
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.025888000487339566,
+          "rmse": 0.13153060296063016,
+          "mae": 0.052793164868349216,
+          "pearson": 0.9109392847160276,
+          "r2": 0.7916227304863253,
+          "derivative_mse": 0.0003643607566839078,
+          "snr_db": 7.0118044701539555
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9293571677824108,
+        "st_correlation": 0.8011217805052612,
+        "j_point_amplitude_mae": 0.04397663100113198,
+        "r_peak_timing_mae_ms": 86.23318641547968,
+        "waveform_correlation": 0.9111986836422985,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8587985229530198,
+          "lateral": 0.8640804735922215,
+          "inferior": 0.9777248176910668
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.29989541644265943,
+          "40_100_hz": 0.692991153079608,
+          "100_150_hz": 0.7976734781943865
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9485137998657432
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8965521578506269
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9225297973457287
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9067879156417058
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9217044964830997
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/msvae__e1c0m1d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/msvae__e1c0m1d0__s42.parquet"
+    },
+    "msvae__e1c0m1d1__s42": {
+      "id": "msvae__e1c0m1d1__s42",
+      "family": "multiscale_vae",
+      "loss": "base+mmd+derivative",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/factorial_v2/primary/msvae__e1c0m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.0009140466292517151,
+            "rmse": 0.030233204085106744,
+            "mae": 0.016758691319576163,
+            "pearson": 0.9732251176034645,
+            "r2": 0.9429927949123409,
+            "derivative_mse": 0.00025098303833894327,
+            "snr_db": 14.842212392641972
+          },
+          "aVR": {
+            "mse": 0.004192123301816653,
+            "rmse": 0.06474660841941185,
+            "mae": 0.013425345663646466,
+            "pearson": 0.985047184432585,
+            "r2": 0.966122040768255,
+            "derivative_mse": 0.000297867913186077,
+            "snr_db": 7.646081356343963
+          },
+          "aVL": {
+            "mse": 0.0014712043334953948,
+            "rmse": 0.03835628153895258,
+            "mae": 0.014528680134736995,
+            "pearson": 0.9735742718377247,
+            "r2": 0.9432177248756873,
+            "derivative_mse": 0.00022454105057085559,
+            "snr_db": 11.341161084705133
+          },
+          "aVF": {
+            "mse": 0.0016823557487169755,
+            "rmse": 0.041016530188656565,
+            "mae": 0.014382697824922876,
+            "pearson": 0.977348039087985,
+            "r2": 0.950545958843572,
+            "derivative_mse": 0.00021313197589112234,
+            "snr_db": 11.446106877768667
+          },
+          "V1": {
+            "mse": 0.01692199888801662,
+            "rmse": 0.13008458359089528,
+            "mae": 0.0616210123884312,
+            "pearson": 0.8709259349929593,
+            "r2": 0.7179698369615514,
+            "derivative_mse": 0.000188552374885102,
+            "snr_db": 4.768631602332267
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.03871482408482494,
+            "rmse": 0.19676082965068262,
+            "mae": 0.08952107365285372,
+            "pearson": 0.8714882509456116,
+            "r2": 0.6827813650127731,
+            "derivative_mse": 0.000607868155251648,
+            "snr_db": 4.561639918028018
+          },
+          "V4": {
+            "mse": 0.10374879867267128,
+            "rmse": 0.32210060334105445,
+            "mae": 0.09725540963285187,
+            "pearson": 0.8489045462256661,
+            "r2": 0.6168741788877241,
+            "derivative_mse": 0.0007435894340103612,
+            "snr_db": 1.7636626796790411
+          },
+          "V5": {
+            "mse": 0.030710200729055576,
+            "rmse": 0.1752432615795985,
+            "mae": 0.0847729066311412,
+            "pearson": 0.8603918096967864,
+            "r2": 0.654662595721379,
+            "derivative_mse": 0.00047651061011456404,
+            "snr_db": 3.803034376445073
+          },
+          "V6": {
+            "mse": 0.03490363111648874,
+            "rmse": 0.18682513513039067,
+            "mae": 0.08405191806403531,
+            "pearson": 0.836085072253966,
+            "r2": 0.6434653675780075,
+            "derivative_mse": 0.00026174718086492796,
+            "snr_db": 2.6150997857775184
+          }
+        },
+        "all_leads": {
+          "mse": 0.01943826529202816,
+          "rmse": 0.09878058646039577,
+          "mae": 0.03969314460934966,
+          "pearson": 0.9330825189230624,
+          "r2": 0.8432193219634407,
+          "derivative_mse": 0.0002720659777594668,
+          "snr_db": 49.536898778740444
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.025917687056037544,
+          "rmse": 0.13170744861386105,
+          "mae": 0.0529241928124662,
+          "pearson": 0.9107766918974165,
+          "r2": 0.7909590959512545,
+          "derivative_mse": 0.0003627546370126224,
+          "snr_db": 6.976403341524627
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9293260392320771,
+        "st_correlation": 0.8003155774702901,
+        "j_point_amplitude_mae": 0.04403760481140193,
+        "r_peak_timing_mae_ms": 86.5346958900544,
+        "waveform_correlation": 0.9110378845058794,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8585938058264612,
+          "lateral": 0.8639368321403156,
+          "inferior": 0.9774641276736615
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.30128304073006584,
+          "40_100_hz": 0.6962839755176384,
+          "100_150_hz": 0.8136374407833921
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.948386540420444
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8964924308454865
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9224270074540597
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9070448537254941
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9214384848082499
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/msvae__e1c0m1d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/msvae__e1c0m1d1__s42.parquet"
+    },
+    "msvae__e1c1m0d0__s42": {
+      "id": "msvae__e1c1m0d0__s42",
+      "family": "multiscale_vae",
+      "loss": "base+correlation",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/factorial_v2/primary/msvae__e1c1m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.0004990989268727113,
+            "rmse": 0.0223405220814714,
+            "mae": 0.011251777319705,
+            "pearson": 0.989202394542266,
+            "r2": 0.97213599073521,
+            "derivative_mse": 0.00019961125427369597,
+            "snr_db": 17.470029546206494
+          },
+          "aVR": {
+            "mse": 0.0031963246156357867,
+            "rmse": 0.05653604704642682,
+            "mae": 0.010681596744273488,
+            "pearson": 0.9918156408466334,
+            "r2": 0.9766365838498628,
+            "derivative_mse": 0.0002598054089648118,
+            "snr_db": 8.82391304177689
+          },
+          "aVL": {
+            "mse": 0.001196677548657084,
+            "rmse": 0.034593027457236004,
+            "mae": 0.01083838073478835,
+            "pearson": 0.9881754758103528,
+            "r2": 0.9653953177853566,
+            "derivative_mse": 0.000189921683745126,
+            "snr_db": 12.238119608008017
+          },
+          "aVF": {
+            "mse": 0.0010973506117544205,
+            "rmse": 0.033126282794096,
+            "mae": 0.009883688778075612,
+            "pearson": 0.9909383810500295,
+            "r2": 0.9750523357504942,
+            "derivative_mse": 0.0001685786201113526,
+            "snr_db": 13.301831141927709
+          },
+          "V1": {
+            "mse": 0.01665188392118418,
+            "rmse": 0.12904217884546193,
+            "mae": 0.06034444958647074,
+            "pearson": 0.8793916544999434,
+            "r2": 0.7282539934288511,
+            "derivative_mse": 0.00017166202396903484,
+            "snr_db": 4.8385144761242165
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.037809412401158274,
+            "rmse": 0.19444642552939428,
+            "mae": 0.08807756540016248,
+            "pearson": 0.8780347129045907,
+            "r2": 0.6897489326403221,
+            "derivative_mse": 0.0005725835861365255,
+            "snr_db": 4.664413540159422
+          },
+          "V4": {
+            "mse": 0.10319276929113551,
+            "rmse": 0.3212363137802691,
+            "mae": 0.09596645696817381,
+            "pearson": 0.8571211200649456,
+            "r2": 0.6220867384807046,
+            "derivative_mse": 0.000713552487923507,
+            "snr_db": 1.7870007722303747
+          },
+          "V5": {
+            "mse": 0.0300947108927092,
+            "rmse": 0.173478272105498,
+            "mae": 0.0835040589748912,
+            "pearson": 0.8680792870567416,
+            "r2": 0.6691536628156969,
+            "derivative_mse": 0.0004480857981880937,
+            "snr_db": 3.890959171516321
+          },
+          "V6": {
+            "mse": 0.03453733468643307,
+            "rmse": 0.18584223063241861,
+            "mae": 0.08309930540146873,
+            "pearson": 0.8428198241663263,
+            "r2": 0.6524505318712871,
+            "derivative_mse": 0.0002385045867090732,
+            "snr_db": 2.660917695124438
+          }
+        },
+        "all_leads": {
+          "mse": 0.019022963574628356,
+          "rmse": 0.09588677502268933,
+          "mae": 0.03780393999233412,
+          "pearson": 0.9404648742451523,
+          "r2": 0.8542428406131489,
+          "derivative_mse": 0.0002468587875017684,
+          "snr_db": 50.11090452201981
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.025363951432837803,
+          "rmse": 0.1278490333635858,
+          "mae": 0.05040525332311215,
+          "pearson": 0.9206198323268701,
+          "r2": 0.8056571208175317,
+          "derivative_mse": 0.0003291450500023578,
+          "snr_db": 7.741744332563765
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.938380969313411,
+        "st_correlation": 0.8180640329822171,
+        "j_point_amplitude_mae": 0.04200143690292432,
+        "r_peak_timing_mae_ms": 80.0430692065685,
+        "waveform_correlation": 0.9208697775284377,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8641813546757062,
+          "lateral": 0.8701715682762053,
+          "inferior": 0.9908347129151869
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.31780829034090474,
+          "40_100_hz": 0.5977426560271614,
+          "100_150_hz": 0.8783588026445287
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9563959001448915
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.9086314662129376
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9314125685558506
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.917541563025028
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9317501912559036
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/msvae__e1c1m0d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/msvae__e1c1m0d0__s42.parquet"
+    },
+    "msvae__e1c1m0d1__s42": {
+      "id": "msvae__e1c1m0d1__s42",
+      "family": "multiscale_vae",
+      "loss": "base+correlation+derivative",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/factorial_v2/primary/msvae__e1c1m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.0005089738543515242,
+            "rmse": 0.022560448895168825,
+            "mae": 0.011340320542772812,
+            "pearson": 0.9891696271140588,
+            "r2": 0.9718635107364558,
+            "derivative_mse": 0.0001995226932746462,
+            "snr_db": 17.384941172074498
+          },
+          "aVR": {
+            "mse": 0.00328777754884546,
+            "rmse": 0.05733914499576585,
+            "mae": 0.010672809494934222,
+            "pearson": 0.9918113303086215,
+            "r2": 0.9767285743220596,
+            "derivative_mse": 0.0002592389187128675,
+            "snr_db": 8.701397581061334
+          },
+          "aVL": {
+            "mse": 0.0012288796216044686,
+            "rmse": 0.035055379353309934,
+            "mae": 0.010846836360244647,
+            "pearson": 0.9881631516558393,
+            "r2": 0.9653214796715465,
+            "derivative_mse": 0.00018978985314473319,
+            "snr_db": 12.122797615155562
+          },
+          "aVF": {
+            "mse": 0.0010810978263657517,
+            "rmse": 0.03288005210406078,
+            "mae": 0.010029324846883679,
+            "pearson": 0.9909202315312594,
+            "r2": 0.9747224762742256,
+            "derivative_mse": 0.00016761102836584132,
+            "snr_db": 13.3666353012064
+          },
+          "V1": {
+            "mse": 0.016652952480621968,
+            "rmse": 0.1290463191285283,
+            "mae": 0.06035626893403931,
+            "pearson": 0.8793169083641147,
+            "r2": 0.7292672333999124,
+            "derivative_mse": 0.00017121406023717635,
+            "snr_db": 4.8382357961979885
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.03777935487796995,
+            "rmse": 0.19436912017594243,
+            "mae": 0.08803450877966817,
+            "pearson": 0.8780163377455162,
+            "r2": 0.6904127055005201,
+            "derivative_mse": 0.0005720052700985346,
+            "snr_db": 4.667867444123802
+          },
+          "V4": {
+            "mse": 0.10313865020094909,
+            "rmse": 0.32115206709742516,
+            "mae": 0.09592530927461493,
+            "pearson": 0.8572353944284786,
+            "r2": 0.6223457715842247,
+            "derivative_mse": 0.0007126682095426566,
+            "snr_db": 1.7892790120476976
+          },
+          "V5": {
+            "mse": 0.03010049431207144,
+            "rmse": 0.17349494030683268,
+            "mae": 0.0835060090355517,
+            "pearson": 0.8680854852845021,
+            "r2": 0.6691368871252853,
+            "derivative_mse": 0.00044743019404053946,
+            "snr_db": 3.890124650854837
+          },
+          "V6": {
+            "mse": 0.03452887074378342,
+            "rmse": 0.18581945738749595,
+            "mae": 0.08307829554055843,
+            "pearson": 0.8428477072355346,
+            "r2": 0.6545972351191298,
+            "derivative_mse": 0.00023834094247949554,
+            "snr_db": 2.661982135709641
+          }
+        },
+        "all_leads": {
+          "mse": 0.019025587622213586,
+          "rmse": 0.09597641078704415,
+          "mae": 0.037815806900772325,
+          "pearson": 0.9404638478056603,
+          "r2": 0.85453298947778,
+          "derivative_mse": 0.00024648509749137425,
+          "snr_db": 50.08986799829963
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.02536745016295145,
+          "rmse": 0.12796854771605887,
+          "mae": 0.05042107586769643,
+          "pearson": 0.9206184637408806,
+          "r2": 0.8060439859703733,
+          "derivative_mse": 0.00032864679665516565,
+          "snr_db": 7.713695634270195
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9383728399166317,
+        "st_correlation": 0.8179703181542898,
+        "j_point_amplitude_mae": 0.04204115263297208,
+        "r_peak_timing_mae_ms": 79.9142169929144,
+        "waveform_correlation": 0.9208728831132136,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8642078974235463,
+          "lateral": 0.8701488991619023,
+          "inferior": 0.9908187993205431
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.317369171529138,
+          "40_100_hz": 0.5981796407728206,
+          "100_150_hz": 0.8789117868336255
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9563929209137766
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.9086240020620153
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9314598736471891
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9175103851412743
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9318748147037818
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/msvae__e1c1m0d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/msvae__e1c1m0d1__s42.parquet"
+    },
+    "msvae__e1c1m1d0__s42": {
+      "id": "msvae__e1c1m1d0__s42",
+      "family": "multiscale_vae",
+      "loss": "base+correlation+mmd",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/factorial_v2/primary/msvae__e1c1m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.0004793582390712261,
+            "rmse": 0.02189425127907383,
+            "mae": 0.011111396401615466,
+            "pearson": 0.9892387285289336,
+            "r2": 0.9725342163840839,
+            "derivative_mse": 0.00019966424626403223,
+            "snr_db": 17.645293943986182
+          },
+          "aVR": {
+            "mse": 0.003045510769764109,
+            "rmse": 0.05518614653845754,
+            "mae": 0.01067358033568609,
+            "pearson": 0.9918378610650279,
+            "r2": 0.976804989278726,
+            "derivative_mse": 0.00025624630849061355,
+            "snr_db": 9.033820439619934
+          },
+          "aVL": {
+            "mse": 0.0011895732279387408,
+            "rmse": 0.034490190314620486,
+            "mae": 0.010814627440064204,
+            "pearson": 0.9881884650904489,
+            "r2": 0.965814144415862,
+            "derivative_mse": 0.0001894167501040118,
+            "snr_db": 12.263979223701691
+          },
+          "aVF": {
+            "mse": 0.001080008435434996,
+            "rmse": 0.03286348179111574,
+            "mae": 0.009770299068351323,
+            "pearson": 0.9909634957114765,
+            "r2": 0.975325523250648,
+            "derivative_mse": 0.0001663009651894868,
+            "snr_db": 13.371013767164317
+          },
+          "V1": {
+            "mse": 0.01666655079330046,
+            "rmse": 0.12909899609718295,
+            "mae": 0.06033369403442439,
+            "pearson": 0.8793662862388901,
+            "r2": 0.7278424402032486,
+            "derivative_mse": 0.0001714371117350822,
+            "snr_db": 4.834690921930927
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.03780399685072014,
+            "rmse": 0.19443249947146218,
+            "mae": 0.08804367905047526,
+            "pearson": 0.8780371892687054,
+            "r2": 0.6884755165927519,
+            "derivative_mse": 0.0005724794384444642,
+            "snr_db": 4.665035637139057
+          },
+          "V4": {
+            "mse": 0.10317332649038737,
+            "rmse": 0.3212060498969273,
+            "mae": 0.0959349678714069,
+            "pearson": 0.8571126155224187,
+            "r2": 0.6237449566814477,
+            "derivative_mse": 0.000712112842808334,
+            "snr_db": 1.7878191141261857
+          },
+          "V5": {
+            "mse": 0.03007944992421911,
+            "rmse": 0.17343428128319704,
+            "mae": 0.08347685214718492,
+            "pearson": 0.8681151184312695,
+            "r2": 0.6695770314129678,
+            "derivative_mse": 0.0004476327125764833,
+            "snr_db": 3.8931620288410818
+          },
+          "V6": {
+            "mse": 0.034541250304197205,
+            "rmse": 0.1858527651238937,
+            "mae": 0.08304963230162764,
+            "pearson": 0.8428775385001686,
+            "r2": 0.6527470698664618,
+            "derivative_mse": 0.00023802254010604076,
+            "snr_db": 2.66042534827331
+          }
+        },
+        "all_leads": {
+          "mse": 0.019004918752919445,
+          "rmse": 0.09570488848299423,
+          "mae": 0.03776739405423635,
+          "pearson": 0.940478108196445,
+          "r2": 0.8544054906738499,
+          "derivative_mse": 0.0002461094096432124,
+          "snr_db": 50.150866307995535
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.02533989167055926,
+          "rmse": 0.12760651797732564,
+          "mae": 0.05035652540564847,
+          "pearson": 0.9206374775952599,
+          "r2": 0.8058739875651331,
+          "derivative_mse": 0.0003281458795242832,
+          "snr_db": 7.795026713864743
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9383994820553049,
+        "st_correlation": 0.8182141644260126,
+        "j_point_amplitude_mae": 0.04197566262142945,
+        "r_peak_timing_mae_ms": 79.92363275041735,
+        "waveform_correlation": 0.9208857346151141,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.864196294706789,
+          "lateral": 0.8702379978375748,
+          "inferior": 0.9908549606507087
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.31541537410842,
+          "40_100_hz": 0.5976026066377759,
+          "100_150_hz": 0.8800039132750485
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9563896877662337
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.9086062117143797
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9314416761491526
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.917510170692335
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9317466109788403
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/msvae__e1c1m1d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/msvae__e1c1m1d0__s42.parquet"
+    },
+    "msvae__e1c1m1d1__s42": {
+      "id": "msvae__e1c1m1d1__s42",
+      "family": "multiscale_vae",
+      "loss": "base+correlation+mmd+derivative",
+      "kind": "msvae",
+      "checkpoint": "checkpoints/factorial_v2/primary/msvae__e1c1m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 0.0005088075152461374,
+            "rmse": 0.022556762073625225,
+            "mae": 0.011247560606819744,
+            "pearson": 0.9891752965178339,
+            "r2": 0.9725069217708097,
+            "derivative_mse": 0.0001993670764118653,
+            "snr_db": 17.386360733453696
+          },
+          "aVR": {
+            "mse": 0.003201496500101758,
+            "rmse": 0.05658176826595081,
+            "mae": 0.010623957496884216,
+            "pearson": 0.991829099100334,
+            "r2": 0.977028749975326,
+            "derivative_mse": 0.00025767158630235764,
+            "snr_db": 8.816891522002434
+          },
+          "aVL": {
+            "mse": 0.0012187898202495077,
+            "rmse": 0.03491117042222314,
+            "mae": 0.010754732738150623,
+            "pearson": 0.9881677068377437,
+            "r2": 0.9665372374950064,
+            "derivative_mse": 0.0001897077737092155,
+            "snr_db": 12.158602857460659
+          },
+          "aVF": {
+            "mse": 0.0010857709153769925,
+            "rmse": 0.03295103815325084,
+            "mae": 0.009918937989958809,
+            "pearson": 0.9909254385143914,
+            "r2": 0.9754675357537264,
+            "derivative_mse": 0.00016676155880736016,
+            "snr_db": 13.347903202871985
+          },
+          "V1": {
+            "mse": 0.016647826522848116,
+            "rmse": 0.12902645667787718,
+            "mae": 0.06033480364405885,
+            "pearson": 0.8793151233374281,
+            "r2": 0.7298801676483259,
+            "derivative_mse": 0.00017133095821723391,
+            "snr_db": 4.839572807078726
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.03780879244557554,
+            "rmse": 0.19444483136760293,
+            "mae": 0.08807862230651269,
+            "pearson": 0.8779343735227004,
+            "r2": 0.6914027150595783,
+            "derivative_mse": 0.0005719969970339184,
+            "snr_db": 4.664484751394642
+          },
+          "V4": {
+            "mse": 0.10318281309553314,
+            "rmse": 0.3212208167219758,
+            "mae": 0.09593252132064532,
+            "pearson": 0.8571520718859796,
+            "r2": 0.622965698388537,
+            "derivative_mse": 0.0007124083723227826,
+            "snr_db": 1.787419806378137
+          },
+          "V5": {
+            "mse": 0.03008618590861245,
+            "rmse": 0.17345369961062362,
+            "mae": 0.08348034416335032,
+            "pearson": 0.8680681952958362,
+            "r2": 0.6700431075709924,
+            "derivative_mse": 0.0004472026488024874,
+            "snr_db": 3.8921895797598265
+          },
+          "V6": {
+            "mse": 0.034541375364058075,
+            "rmse": 0.18585310157233878,
+            "mae": 0.08307270623004824,
+            "pearson": 0.8427744835710722,
+            "r2": 0.6541518940054054,
+            "derivative_mse": 0.00023830377562659557,
+            "snr_db": 2.66040962425965
+          }
+        },
+        "all_leads": {
+          "mse": 0.019023488173966808,
+          "rmse": 0.09591663707212235,
+          "mae": 0.03778701554136907,
+          "pearson": 0.9404451490486098,
+          "r2": 0.8549986689723089,
+          "derivative_mse": 0.0002462292289361514,
+          "snr_db": 50.10074917965195
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.02536465089862241,
+          "rmse": 0.12788884942949647,
+          "mae": 0.050382687388492095,
+          "pearson": 0.9205935320648132,
+          "r2": 0.8066648919630786,
+          "derivative_mse": 0.0003283056385815352,
+          "snr_db": 7.728203876073307
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9383685561313205,
+        "st_correlation": 0.8179788109398007,
+        "j_point_amplitude_mae": 0.04201690615510803,
+        "r_peak_timing_mae_ms": 80.14998635941564,
+        "waveform_correlation": 0.9208437802276402,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8641423777939542,
+          "lateral": 0.8701539777913458,
+          "inferior": 0.9908142587072631
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.3127589867307855,
+          "40_100_hz": 0.5994716379210383,
+          "100_150_hz": 0.8791533209811719
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9563755467745566
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.908555979682446
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9313863378826672
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9175764589763903
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9317487512790072
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/msvae__e1c1m1d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/msvae__e1c1m1d1__s42.parquet"
+    },
+    "ecgaim__e1c0m0d0__s42": {
+      "id": "ecgaim__e1c0m0d0__s42",
+      "family": "ecg_aim",
+      "loss": "base",
+      "kind": "alitok",
+      "checkpoint": "checkpoints/factorial_v2/primary/ecgaim__e1c0m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 4.3450432024687955e-05,
+            "rmse": 0.006591694169535474,
+            "mae": 0.0036377030068999085,
+            "pearson": 0.9988083819757619,
+            "r2": 0.9966193717715394,
+            "derivative_mse": 4.397040358412385e-06,
+            "snr_db": 28.071954917318067
+          },
+          "aVR": {
+            "mse": 7.712832536109806e-05,
+            "rmse": 0.008782273359506527,
+            "mae": 0.003745873541838523,
+            "pearson": 0.99901069111634,
+            "r2": 0.9974715195278809,
+            "derivative_mse": 4.475962742309449e-06,
+            "snr_db": 24.998282816854548
+          },
+          "aVL": {
+            "mse": 4.315278994561989e-05,
+            "rmse": 0.006569078317817492,
+            "mae": 0.0038729355857943485,
+            "pearson": 0.9983363706367692,
+            "r2": 0.9963447659921056,
+            "derivative_mse": 6.212835305317025e-06,
+            "snr_db": 26.667802246531803
+          },
+          "aVF": {
+            "mse": 4.9536715750294545e-05,
+            "rmse": 0.00703823243082342,
+            "mae": 0.0035800625754341966,
+            "pearson": 0.9989863221819009,
+            "r2": 0.9975893181832733,
+            "derivative_mse": 4.891965258474752e-06,
+            "snr_db": 26.756013145023744
+          },
+          "V1": {
+            "mse": 0.017590152789756786,
+            "rmse": 0.13262787335155754,
+            "mae": 0.06335914153982836,
+            "pearson": 0.8609653211655662,
+            "r2": 0.6946483849660006,
+            "derivative_mse": 0.0002519332498803821,
+            "snr_db": 4.600452106117089
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.04038373473757623,
+            "rmse": 0.20095704699655653,
+            "mae": 0.09138131696812013,
+            "pearson": 0.8651222627860824,
+            "r2": 0.6508558340374068,
+            "derivative_mse": 0.0008338566196291951,
+            "snr_db": 4.3783480147457645
+          },
+          "V4": {
+            "mse": 0.10596001848333536,
+            "rmse": 0.3255150050048928,
+            "mae": 0.10016198662248053,
+            "pearson": 0.836253089092218,
+            "r2": 0.568118262580377,
+            "derivative_mse": 0.000986212473985096,
+            "snr_db": 1.672073192194932
+          },
+          "V5": {
+            "mse": 0.03182828811596579,
+            "rmse": 0.17840484330859907,
+            "mae": 0.08686163586744518,
+            "pearson": 0.8532693795637969,
+            "r2": 0.6204352848474115,
+            "derivative_mse": 0.0006229720312491224,
+            "snr_db": 3.6477281202070255
+          },
+          "V6": {
+            "mse": 0.03581139178134081,
+            "rmse": 0.18923898060743408,
+            "mae": 0.08564833019219895,
+            "pearson": 0.8297814248190306,
+            "r2": 0.5854063766351054,
+            "derivative_mse": 0.00033057609745743623,
+            "snr_db": 2.503593888332108
+          }
+        },
+        "all_leads": {
+          "mse": 0.01931557118092139,
+          "rmse": 0.08797708562889357,
+          "mae": 0.03685408215833668,
+          "pearson": 0.9367111036114554,
+          "r2": 0.8422907598784252,
+          "derivative_mse": 0.00025379402298881214,
+          "snr_db": 54.5792836432074
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.025754094907895184,
+          "rmse": 0.11730278083852477,
+          "mae": 0.04913877621111557,
+          "pearson": 0.9156148048152739,
+          "r2": 0.7897210131712334,
+          "derivative_mse": 0.00033839203065174944,
+          "snr_db": 13.699583160813896
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9336529275838455,
+        "st_correlation": 0.8078146642879666,
+        "j_point_amplitude_mae": 0.04041353780011099,
+        "r_peak_timing_mae_ms": 75.42350635601174,
+        "waveform_correlation": 0.9158265965891544,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8489968690148533,
+          "lateral": 0.8615600550400485,
+          "inferior": 0.9991251203452377
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.28404892373005125,
+          "40_100_hz": 0.3633699429643581,
+          "100_150_hz": 0.4465656289391837
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.952939980748079
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.9003588640715345
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.927568041288505
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9083161813557914
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9264028615354876
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/ecgaim__e1c0m0d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/ecgaim__e1c0m0d0__s42.parquet"
+    },
+    "ecgaim__e1c0m0d1__s42": {
+      "id": "ecgaim__e1c0m0d1__s42",
+      "family": "ecg_aim",
+      "loss": "base+derivative",
+      "kind": "alitok",
+      "checkpoint": "checkpoints/factorial_v2/primary/ecgaim__e1c0m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 4.112577546751396e-05,
+            "rmse": 0.006412938130647602,
+            "mae": 0.0033764673055665406,
+            "pearson": 0.9989832213205643,
+            "r2": 0.9968841535696675,
+            "derivative_mse": 4.164912144480035e-06,
+            "snr_db": 28.310754906075854
+          },
+          "aVR": {
+            "mse": 3.1521109995686894e-05,
+            "rmse": 0.005614366393074725,
+            "mae": 0.003178061587604098,
+            "pearson": 0.9992217971707396,
+            "r2": 0.9980741814086047,
+            "derivative_mse": 4.398687056505679e-06,
+            "snr_db": 28.884406810982988
+          },
+          "aVL": {
+            "mse": 4.5603125675850596e-05,
+            "rmse": 0.0067530086388106,
+            "mae": 0.003730742187779593,
+            "pearson": 0.9985841955551029,
+            "r2": 0.9968787202909349,
+            "derivative_mse": 5.762669443120962e-06,
+            "snr_db": 26.427944933487883
+          },
+          "aVF": {
+            "mse": 3.40722293412527e-05,
+            "rmse": 0.005837142223832884,
+            "mae": 0.0033572118747796807,
+            "pearson": 0.9990002607676725,
+            "r2": 0.9977158032258716,
+            "derivative_mse": 5.514145967697131e-06,
+            "snr_db": 28.38127973959969
+          },
+          "V1": {
+            "mse": 0.017772008377054227,
+            "rmse": 0.13331169632501955,
+            "mae": 0.06387701339407137,
+            "pearson": 0.8584781003227706,
+            "r2": 0.6977469344724497,
+            "derivative_mse": 0.00025255415195281453,
+            "snr_db": 4.555783131302257
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.04079933024191059,
+            "rmse": 0.2019884408621211,
+            "mae": 0.09187658681340902,
+            "pearson": 0.8629467313681728,
+            "r2": 0.6603377863348376,
+            "derivative_mse": 0.0008401472708432348,
+            "snr_db": 4.333882482189011
+          },
+          "V4": {
+            "mse": 0.10637161891236525,
+            "rmse": 0.32614662180124643,
+            "mae": 0.10075063833323193,
+            "pearson": 0.8347999037158528,
+            "r2": 0.5628831806774812,
+            "derivative_mse": 0.0009926817895922785,
+            "snr_db": 1.655235756081002
+          },
+          "V5": {
+            "mse": 0.03196047600515928,
+            "rmse": 0.17877493114292975,
+            "mae": 0.08745673511625701,
+            "pearson": 0.8508753269787944,
+            "r2": 0.6322785754625371,
+            "derivative_mse": 0.0006310903678929252,
+            "snr_db": 3.629728538675941
+          },
+          "V6": {
+            "mse": 0.035628231972289426,
+            "rmse": 0.18875442239134274,
+            "mae": 0.08574412009168862,
+            "pearson": 0.8293903646150206,
+            "r2": 0.6224523040334183,
+            "derivative_mse": 0.0003286971573782846,
+            "snr_db": 2.5258631737761665
+          }
+        },
+        "all_leads": {
+          "mse": 0.019390332312438256,
+          "rmse": 0.08779946399241878,
+          "mae": 0.03694563139203232,
+          "pearson": 0.9360233251512242,
+          "r2": 0.8471043032896503,
+          "derivative_mse": 0.0002554175960226118,
+          "snr_db": 55.030002895277875
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.025853776416584342,
+          "rmse": 0.11706595198989171,
+          "mae": 0.0492608418560431,
+          "pearson": 0.914697766868299,
+          "r2": 0.796139071052867,
+          "derivative_mse": 0.00034055679469681573,
+          "snr_db": 14.30054216357453
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9327545548749762,
+        "st_correlation": 0.8070753844346183,
+        "j_point_amplitude_mae": 0.04045830364452852,
+        "r_peak_timing_mae_ms": 75.33885964714686,
+        "waveform_correlation": 0.9148672046481579,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.846460584613,
+          "lateral": 0.8599637398057148,
+          "inferior": 0.999192351595528
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.2838249786561542,
+          "40_100_hz": 0.36560748164637713,
+          "100_150_hz": 0.4431398735436399
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.952010705040174
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8995555942060982
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9265105277461273
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9074400910698603
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9241240681882329
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/ecgaim__e1c0m0d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/ecgaim__e1c0m0d1__s42.parquet"
+    },
+    "ecgaim__e1c0m1d0__s42": {
+      "id": "ecgaim__e1c0m1d0__s42",
+      "family": "ecg_aim",
+      "loss": "base+mmd",
+      "kind": "alitok",
+      "checkpoint": "checkpoints/factorial_v2/primary/ecgaim__e1c0m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 8.812622118585982e-05,
+            "rmse": 0.009387556720779898,
+            "mae": 0.003806465250278251,
+            "pearson": 0.9985435905666238,
+            "r2": 0.9925627092456687,
+            "derivative_mse": 5.685565248485376e-06,
+            "snr_db": 25.000844425360746
+          },
+          "aVR": {
+            "mse": 9.098882716946028e-05,
+            "rmse": 0.009538806380751224,
+            "mae": 0.003660209844487007,
+            "pearson": 0.9989973112797442,
+            "r2": 0.9971386850071347,
+            "derivative_mse": 5.446409252991112e-06,
+            "snr_db": 24.280541165027007
+          },
+          "aVL": {
+            "mse": 4.069441412219311e-05,
+            "rmse": 0.0063792173596917915,
+            "mae": 0.003962109259667879,
+            "pearson": 0.9983102033512886,
+            "r2": 0.9962468022771566,
+            "derivative_mse": 6.388043991182526e-06,
+            "snr_db": 26.922543036142788
+          },
+          "aVF": {
+            "mse": 4.777404822944994e-05,
+            "rmse": 0.006911877330324226,
+            "mae": 0.0036769547158842833,
+            "pearson": 0.9988583220946259,
+            "r2": 0.9971968986766359,
+            "derivative_mse": 5.376964792607599e-06,
+            "snr_db": 26.913364806319162
+          },
+          "V1": {
+            "mse": 0.017768683368090475,
+            "rmse": 0.13329922493432014,
+            "mae": 0.06372124240401683,
+            "pearson": 0.8592261025188059,
+            "r2": 0.6845987524071037,
+            "derivative_mse": 0.0002617667517471127,
+            "snr_db": 4.556595739599137
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.04064445853065145,
+            "rmse": 0.20160470860238222,
+            "mae": 0.09149567053563759,
+            "pearson": 0.8647955378096857,
+            "r2": 0.6551851358809059,
+            "derivative_mse": 0.0008461883457690978,
+            "snr_db": 4.350399398134897
+          },
+          "V4": {
+            "mse": 0.10729645724329334,
+            "rmse": 0.32756137935247087,
+            "mae": 0.10094539387275252,
+            "pearson": 0.8344452993835925,
+            "r2": 0.5357422526418971,
+            "derivative_mse": 0.0010110484848727883,
+            "snr_db": 1.6176396210532829
+          },
+          "V5": {
+            "mse": 0.031887381395242984,
+            "rmse": 0.17857038218932889,
+            "mae": 0.08718508837599848,
+            "pearson": 0.8513391517031045,
+            "r2": 0.6174669205132177,
+            "derivative_mse": 0.0006369723158810417,
+            "snr_db": 3.6396723647977334
+          },
+          "V6": {
+            "mse": 0.035797536765922934,
+            "rmse": 0.18920236987396044,
+            "mae": 0.0858201521925461,
+            "pearson": 0.8293326323697505,
+            "r2": 0.5916286472656068,
+            "derivative_mse": 0.00033937838499566674,
+            "snr_db": 2.505274448826399
+          }
+        },
+        "all_leads": {
+          "mse": 0.019471841734492342,
+          "rmse": 0.08853796022866749,
+          "mae": 0.03702277387093908,
+          "pearson": 0.9361540125897685,
+          "r2": 0.838980566992944,
+          "derivative_mse": 0.0002598542722125812,
+          "snr_db": 54.28683585636875
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.025962455645989795,
+          "rmse": 0.1180506136382233,
+          "mae": 0.04936369849458544,
+          "pearson": 0.914872016786358,
+          "r2": 0.7853074226572585,
+          "derivative_mse": 0.00034647236295010824,
+          "snr_db": 13.30965277836235
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9327321937562452,
+        "st_correlation": 0.8077080835746469,
+        "j_point_amplitude_mae": 0.04057868172230347,
+        "r_peak_timing_mae_ms": 74.72663518069395,
+        "waveform_correlation": 0.9150927104444059,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8476733783649187,
+          "lateral": 0.8603202696284997,
+          "inferior": 0.9989827931026147
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.29259743664532,
+          "40_100_hz": 0.3686133596366174,
+          "100_150_hz": 0.46827526639681294
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9521036816593991
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.8993291914761063
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9268983942771946
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9079861316835317
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9253032058405727
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/ecgaim__e1c0m1d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/ecgaim__e1c0m1d0__s42.parquet"
+    },
+    "ecgaim__e1c0m1d1__s42": {
+      "id": "ecgaim__e1c0m1d1__s42",
+      "family": "ecg_aim",
+      "loss": "base+mmd+derivative",
+      "kind": "alitok",
+      "checkpoint": "checkpoints/factorial_v2/primary/ecgaim__e1c0m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 6.120441943420711e-05,
+            "rmse": 0.007823325343752944,
+            "mae": 0.004003792487794087,
+            "pearson": 0.9985902017810943,
+            "r2": 0.9951678009356483,
+            "derivative_mse": 5.167719280013511e-06,
+            "snr_db": 26.58406807987639
+          },
+          "aVR": {
+            "mse": 4.652574107125982e-05,
+            "rmse": 0.006820978014277704,
+            "mae": 0.004064753544204999,
+            "pearson": 0.9989406353718525,
+            "r2": 0.9975080594959688,
+            "derivative_mse": 4.74631799818196e-06,
+            "snr_db": 27.193488842001358
+          },
+          "aVL": {
+            "mse": 4.553270062011041e-05,
+            "rmse": 0.006747792277486794,
+            "mae": 0.004253357419386622,
+            "pearson": 0.9982229657419985,
+            "r2": 0.995907065740595,
+            "derivative_mse": 6.174960896196394e-06,
+            "snr_db": 26.434656941361553
+          },
+          "aVF": {
+            "mse": 4.823380637157963e-05,
+            "rmse": 0.006945056254025566,
+            "mae": 0.003959997277602765,
+            "pearson": 0.9986967350221041,
+            "r2": 0.9968182458497492,
+            "derivative_mse": 5.6610627488795496e-06,
+            "snr_db": 26.871769886553395
+          },
+          "V1": {
+            "mse": 0.017459029402756877,
+            "rmse": 0.1321326205096867,
+            "mae": 0.06297553849615638,
+            "pearson": 0.861782548190583,
+            "r2": 0.7036108364220119,
+            "derivative_mse": 0.00025274517193567806,
+            "snr_db": 4.632947260374997
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.04044210356617542,
+            "rmse": 0.20110222168383773,
+            "mae": 0.09143211441214785,
+            "pearson": 0.8653003331777211,
+            "r2": 0.6540028999226387,
+            "derivative_mse": 0.0008447422058944577,
+            "snr_db": 4.372075450151472
+          },
+          "V4": {
+            "mse": 0.10594226928375426,
+            "rmse": 0.3254877406043955,
+            "mae": 0.09991065934968006,
+            "pearson": 0.8389252779738269,
+            "r2": 0.5622654283095869,
+            "derivative_mse": 0.0009840745095250683,
+            "snr_db": 1.6728007331323638
+          },
+          "V5": {
+            "mse": 0.0316775978525243,
+            "rmse": 0.17798201553113255,
+            "mae": 0.0866537734209481,
+            "pearson": 0.8539198902949684,
+            "r2": 0.6266897402386353,
+            "derivative_mse": 0.0006204460445642962,
+            "snr_db": 3.668338516146759
+          },
+          "V6": {
+            "mse": 0.03535489056421648,
+            "rmse": 0.18802896203568342,
+            "mae": 0.08532341930408627,
+            "pearson": 0.830762654993439,
+            "r2": 0.6377196993458669,
+            "derivative_mse": 0.0003313031997141354,
+            "snr_db": 2.559310913953442
+          }
+        },
+        "all_leads": {
+          "mse": 0.019256448944743706,
+          "rmse": 0.0877558926878566,
+          "mae": 0.036881450476000596,
+          "pearson": 0.9370951035456323,
+          "r2": 0.847474148021725,
+          "derivative_mse": 0.0002545884327130756,
+          "snr_db": 54.63705099122629
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.025675265259658277,
+          "rmse": 0.11700785691714209,
+          "mae": 0.049175267301334126,
+          "pearson": 0.9161268047275097,
+          "r2": 0.7966321973623002,
+          "derivative_mse": 0.00033945124361743406,
+          "snr_db": 13.776606291505749
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9339376837858335,
+        "st_correlation": 0.8086513433291352,
+        "j_point_amplitude_mae": 0.04047253822381424,
+        "r_peak_timing_mae_ms": 74.55424563722104,
+        "waveform_correlation": 0.9163068265012174,
+        "n_peak_matches": 399516,
+        "regional_correlation": {
+          "anterior": 0.8502829936759068,
+          "lateral": 0.8618106161690299,
+          "inferior": 0.9989229615009123
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.2850694139995055,
+          "40_100_hz": 0.36752962444726084,
+          "100_150_hz": 0.45785055989097434
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9531255903917248
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.9009977781293674
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9277060220498166
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9088668478348901
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9259250219884371
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/ecgaim__e1c0m1d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/ecgaim__e1c0m1d1__s42.parquet"
+    },
+    "ecgaim__e1c1m0d0__s42": {
+      "id": "ecgaim__e1c1m0d0__s42",
+      "family": "ecg_aim",
+      "loss": "base+correlation",
+      "kind": "alitok",
+      "checkpoint": "checkpoints/factorial_v2/primary/ecgaim__e1c1m0d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 1.1566163203583034e-05,
+            "rmse": 0.0034009062326949024,
+            "mae": 0.001383706694745821,
+            "pearson": 0.9998283303226291,
+            "r2": 0.9991012515139263,
+            "derivative_mse": 9.94800030825621e-07,
+            "snr_db": 33.82000274603977
+          },
+          "aVR": {
+            "mse": 1.836256233687746e-05,
+            "rmse": 0.00428515604580247,
+            "mae": 0.001338328677014479,
+            "pearson": 0.9999076423435325,
+            "r2": 0.9997102649617075,
+            "derivative_mse": 8.92861919466064e-07,
+            "snr_db": 31.231089004514764
+          },
+          "aVL": {
+            "mse": 7.587756142463916e-06,
+            "rmse": 0.0027545881983454287,
+            "mae": 0.0013854222156561354,
+            "pearson": 0.9998612423528513,
+            "r2": 0.9996066324982794,
+            "derivative_mse": 1.7209286022478e-06,
+            "snr_db": 34.216757389781655
+          },
+          "aVF": {
+            "mse": 4.014572598453077e-05,
+            "rmse": 0.0063360654971781,
+            "mae": 0.0013800175284553,
+            "pearson": 0.9998895994196012,
+            "r2": 0.9996712045062315,
+            "derivative_mse": 1.8413725451545796e-06,
+            "snr_db": 27.66889208298014
+          },
+          "V1": {
+            "mse": 0.01719975915647569,
+            "rmse": 0.1311478522754974,
+            "mae": 0.060902581616557636,
+            "pearson": 0.8768376434717602,
+            "r2": 0.7063009385608283,
+            "derivative_mse": 0.00021139571202884134,
+            "snr_db": 4.697924567658897
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.039080158851892643,
+            "rmse": 0.1976870224670619,
+            "mae": 0.08817282883717933,
+            "pearson": 0.8774686224461694,
+            "r2": 0.6630376807277049,
+            "derivative_mse": 0.0007083857855135733,
+            "snr_db": 4.520849616707395
+          },
+          "V4": {
+            "mse": 0.10516811753262963,
+            "rmse": 0.3242963421511714,
+            "mae": 0.09714212369687285,
+            "pearson": 0.8515571075680602,
+            "r2": 0.5611460277152837,
+            "derivative_mse": 0.0008732213860336581,
+            "snr_db": 1.7046524431104841
+          },
+          "V5": {
+            "mse": 0.031197067353007885,
+            "rmse": 0.17662691570937847,
+            "mae": 0.08390578484668461,
+            "pearson": 0.8664074503277837,
+            "r2": 0.6129228136051263,
+            "derivative_mse": 0.000547377756903502,
+            "snr_db": 3.734723221988415
+          },
+          "V6": {
+            "mse": 0.03572084280547886,
+            "rmse": 0.18899958414102094,
+            "mae": 0.0833884946801277,
+            "pearson": 0.8414571502587689,
+            "r2": 0.5336641552139192,
+            "derivative_mse": 0.0002950956048898974,
+            "snr_db": 2.514588915061076
+          }
+        },
+        "all_leads": {
+          "mse": 0.019036967325596014,
+          "rmse": 0.08629453605984592,
+          "mae": 0.034916607399441156,
+          "pearson": 0.9427678990425964,
+          "r2": 0.8395967474419171,
+          "derivative_mse": 0.00022007718403893053,
+          "snr_db": 56.313719604917196
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.02538262310079468,
+          "rmse": 0.1150593814131279,
+          "mae": 0.04655547653258821,
+          "pearson": 0.9236905320567952,
+          "r2": 0.786128996589223,
+          "derivative_mse": 0.00029343624538524066,
+          "snr_db": 16.012164443093624
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9407971802791698,
+        "st_correlation": 0.829163416685868,
+        "j_point_amplitude_mae": 0.03827415362588878,
+        "r_peak_timing_mae_ms": 75.30449538597848,
+        "waveform_correlation": 0.9239045889344457,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8613289438450399,
+          "lateral": 0.8699615101447234,
+          "inferior": 0.9999110956406829
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.2844725538759273,
+          "40_100_hz": 0.32699596170157086,
+          "100_150_hz": 0.35015356205518744
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9581626857371626
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.9113856742207189
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9334663154370182
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9198233905905953
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9337276146903543
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/ecgaim__e1c1m0d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/ecgaim__e1c1m0d0__s42.parquet"
+    },
+    "ecgaim__e1c1m0d1__s42": {
+      "id": "ecgaim__e1c1m0d1__s42",
+      "family": "ecg_aim",
+      "loss": "base+correlation+derivative",
+      "kind": "alitok",
+      "checkpoint": "checkpoints/factorial_v2/primary/ecgaim__e1c1m0d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 4.024693094879949e-05,
+            "rmse": 0.006344046890495016,
+            "mae": 0.0014967253328079593,
+            "pearson": 0.9996819972336647,
+            "r2": 0.9965093740890509,
+            "derivative_mse": 1.5998446058093055e-06,
+            "snr_db": 28.404568220894305
+          },
+          "aVR": {
+            "mse": 7.664707588715341e-05,
+            "rmse": 0.00875483157388841,
+            "mae": 0.001754576488989403,
+            "pearson": 0.9998384223200562,
+            "r2": 0.9992491203986118,
+            "derivative_mse": 1.4055250007125787e-06,
+            "snr_db": 25.02546592567421
+          },
+          "aVL": {
+            "mse": 1.3239454708402987e-05,
+            "rmse": 0.0036386061491185035,
+            "mae": 0.0014274853942703339,
+            "pearson": 0.999840073011034,
+            "r2": 0.9995711276796614,
+            "derivative_mse": 1.9557770863183112e-06,
+            "snr_db": 31.799190056903825
+          },
+          "aVF": {
+            "mse": 2.8298683902756423e-05,
+            "rmse": 0.005319650731275168,
+            "mae": 0.0014429867446067626,
+            "pearson": 0.9998785906628737,
+            "r2": 0.9996310590987789,
+            "derivative_mse": 2.2932503719995325e-06,
+            "snr_db": 29.18762286183764
+          },
+          "V1": {
+            "mse": 0.017031400208903518,
+            "rmse": 0.13050440685625722,
+            "mae": 0.06075566534862789,
+            "pearson": 0.8770213142426474,
+            "r2": 0.7180695356822483,
+            "derivative_mse": 0.00020977613114464026,
+            "snr_db": 4.740644681633613
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.03910481762259147,
+            "rmse": 0.19774938083996993,
+            "mae": 0.08809344276082226,
+            "pearson": 0.877888201356644,
+            "r2": 0.6397423199486744,
+            "derivative_mse": 0.0007089754620279755,
+            "snr_db": 4.5181101726650725
+          },
+          "V4": {
+            "mse": 0.10500203286213335,
+            "rmse": 0.32404017167958254,
+            "mae": 0.09736769262393352,
+            "pearson": 0.852182476552211,
+            "r2": 0.572377818388727,
+            "derivative_mse": 0.0008705071382339429,
+            "snr_db": 1.7115163741496195
+          },
+          "V5": {
+            "mse": 0.031768013440148304,
+            "rmse": 0.1782358365765659,
+            "mae": 0.0841961057948673,
+            "pearson": 0.8659661516267337,
+            "r2": 0.5962824392799276,
+            "derivative_mse": 0.000553609108164498,
+            "snr_db": 3.655960349535936
+          },
+          "V6": {
+            "mse": 0.03648104953110573,
+            "rmse": 0.19100012966253643,
+            "mae": 0.08361564336366954,
+            "pearson": 0.8412172587923756,
+            "r2": 0.45133321114870806,
+            "derivative_mse": 0.0003005411226116592,
+            "snr_db": 2.4231326453690647
+          }
+        },
+        "all_leads": {
+          "mse": 0.019128812150860788,
+          "rmse": 0.08713225507997409,
+          "mae": 0.03501252698771625,
+          "pearson": 0.9427928738165202,
+          "r2": 0.8310638338095323,
+          "derivative_mse": 0.00022088861327062962,
+          "snr_db": 55.260113879985575
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.025505082867814388,
+          "rmse": 0.11617634010663212,
+          "mae": 0.046683369316955,
+          "pearson": 0.92372383175536,
+          "r2": 0.7747517784127098,
+          "derivative_mse": 0.00029451815102750616,
+          "snr_db": 14.607356809851476
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9409644359808282,
+        "st_correlation": 0.8287545484096485,
+        "j_point_amplitude_mae": 0.03837546454017925,
+        "r_peak_timing_mae_ms": 75.57746725634037,
+        "waveform_correlation": 0.9239515914289946,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.861572463562193,
+          "lateral": 0.8696094214483826,
+          "inferior": 0.9999020151296403
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.2803868331537594,
+          "40_100_hz": 0.32979762725506306,
+          "100_150_hz": 0.3499089021923712
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9583499485421056
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.9118717716335208
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9333881820155062
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9195898535715198
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9343675625288753
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/ecgaim__e1c1m0d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/ecgaim__e1c1m0d1__s42.parquet"
+    },
+    "ecgaim__e1c1m1d0__s42": {
+      "id": "ecgaim__e1c1m1d0__s42",
+      "family": "ecg_aim",
+      "loss": "base+correlation+mmd",
+      "kind": "alitok",
+      "checkpoint": "checkpoints/factorial_v2/primary/ecgaim__e1c1m1d0__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 6.58147828640656e-06,
+            "rmse": 0.0025654391995146874,
+            "mae": 0.0014388595095261815,
+            "pearson": 0.9998916367353019,
+            "r2": 0.999680524127941,
+            "derivative_mse": 9.775311657463148e-07,
+            "snr_db": 36.26866137886675
+          },
+          "aVR": {
+            "mse": 4.7969291617550326e-05,
+            "rmse": 0.006925986689097109,
+            "mae": 0.0017785241218318756,
+            "pearson": 0.999866321771668,
+            "r2": 0.9993241336768338,
+            "derivative_mse": 1.1869512462614958e-06,
+            "snr_db": 27.060788784806547
+          },
+          "aVL": {
+            "mse": 1.615316438268097e-05,
+            "rmse": 0.004019099946838965,
+            "mae": 0.00179966199161042,
+            "pearson": 0.9998490706639065,
+            "r2": 0.9994473217061174,
+            "derivative_mse": 1.8924731403847813e-06,
+            "snr_db": 30.935314912423554
+          },
+          "aVF": {
+            "mse": 4.580614850013779e-05,
+            "rmse": 0.006768023973076469,
+            "mae": 0.0016544521015497506,
+            "pearson": 0.9998775941758761,
+            "r2": 0.9995603648774186,
+            "derivative_mse": 2.0198795195271317e-06,
+            "snr_db": 27.096047475814935
+          },
+          "V1": {
+            "mse": 0.017086152974302157,
+            "rmse": 0.13071401215746595,
+            "mae": 0.061015573073984336,
+            "pearson": 0.8761144036062802,
+            "r2": 0.7126633351787317,
+            "derivative_mse": 0.00020930684310983475,
+            "snr_db": 4.726705320761048
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.03892803770127342,
+            "rmse": 0.1973018948243362,
+            "mae": 0.08811513384453376,
+            "pearson": 0.8778023365927682,
+            "r2": 0.6548837879847563,
+            "derivative_mse": 0.0007006243221341339,
+            "snr_db": 4.537787698334091
+          },
+          "V4": {
+            "mse": 0.1047661698485098,
+            "rmse": 0.3236760260638866,
+            "mae": 0.0969972583108466,
+            "pearson": 0.8530834121983695,
+            "r2": 0.5703279632141544,
+            "derivative_mse": 0.0008693601116624326,
+            "snr_db": 1.7212827779368753
+          },
+          "V5": {
+            "mse": 0.03163370799590184,
+            "rmse": 0.17785867422170287,
+            "mae": 0.08402845100546123,
+            "pearson": 0.8662810734090486,
+            "r2": 0.5923793182097823,
+            "derivative_mse": 0.0005511103652736097,
+            "snr_db": 3.6743599132229017
+          },
+          "V6": {
+            "mse": 0.03593779144007516,
+            "rmse": 0.18957265477930924,
+            "mae": 0.08342833409084402,
+            "pearson": 0.8412040668073402,
+            "r2": 0.5009752540920396,
+            "derivative_mse": 0.0002958598012907696,
+            "snr_db": 2.48829204693753
+          }
+        },
+        "all_leads": {
+          "mse": 0.019039030836904097,
+          "rmse": 0.08661681765460233,
+          "mae": 0.035021354004182347,
+          "pearson": 0.9428308263300466,
+          "r2": 0.8357701669223147,
+          "derivative_mse": 0.0002193615232118917,
+          "snr_db": 55.84703296502233
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.02538537444920546,
+          "rmse": 0.11548909020613646,
+          "mae": 0.04669513867224314,
+          "pearson": 0.9237744351067287,
+          "r2": 0.7810268892297527,
+          "derivative_mse": 0.0002924820309491889,
+          "snr_db": 15.38991558990047
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9408673928923083,
+        "st_correlation": 0.8288774662358755,
+        "j_point_amplitude_mae": 0.03840793796701131,
+        "r_peak_timing_mae_ms": 75.61754304292654,
+        "waveform_correlation": 0.9239771296696125,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8616136341711252,
+          "lateral": 0.8699162490926652,
+          "inferior": 0.9999002779521196
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.28400656517561884,
+          "40_100_hz": 0.33022984382054305,
+          "100_150_hz": 0.3499376796240339
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.958234984046297
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.9115688654815647
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9336868916900697
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9191552266210767
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9345771775398333
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/ecgaim__e1c1m1d0__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/ecgaim__e1c1m1d0__s42.parquet"
+    },
+    "ecgaim__e1c1m1d1__s42": {
+      "id": "ecgaim__e1c1m1d1__s42",
+      "family": "ecg_aim",
+      "loss": "base+correlation+mmd+derivative",
+      "kind": "alitok",
+      "checkpoint": "checkpoints/factorial_v2/primary/ecgaim__e1c1m1d1__s42/ul_ecp_best.pt",
+      "observed_leads": [
+        0,
+        1,
+        7
+      ],
+      "signal": {
+        "n_samples": 2183,
+        "per_lead": {
+          "I": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.00806957207152
+          },
+          "II": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 175.6516003143206
+          },
+          "III": {
+            "mse": 2.4745904958021515e-05,
+            "rmse": 0.004974525601303255,
+            "mae": 0.0015725145239487079,
+            "pearson": 0.9997959905843695,
+            "r2": 0.997966048152852,
+            "derivative_mse": 1.095591340826655e-06,
+            "snr_db": 30.516862501067756
+          },
+          "aVR": {
+            "mse": 7.224654545559558e-05,
+            "rmse": 0.008499796789076523,
+            "mae": 0.0019251136902107102,
+            "pearson": 0.9998606554259415,
+            "r2": 0.9993188720856901,
+            "derivative_mse": 1.8401997144596117e-06,
+            "snr_db": 25.282250979084
+          },
+          "aVL": {
+            "mse": 8.347949295539786e-06,
+            "rmse": 0.0028892817957997426,
+            "mae": 0.0015174974701025591,
+            "pearson": 0.9998348354474154,
+            "r2": 0.999511089228841,
+            "derivative_mse": 1.7739713887061195e-06,
+            "snr_db": 33.80209301387495
+          },
+          "aVF": {
+            "mse": 3.383272223505633e-05,
+            "rmse": 0.005816590258481023,
+            "mae": 0.0014997757555637893,
+            "pearson": 0.999869484667706,
+            "r2": 0.9996267723698601,
+            "derivative_mse": 1.842899747770121e-06,
+            "snr_db": 28.41191581061425
+          },
+          "V1": {
+            "mse": 0.017003493958637903,
+            "rmse": 0.13039744613541288,
+            "mae": 0.0608236723916879,
+            "pearson": 0.8771196744117614,
+            "r2": 0.7155077017287405,
+            "derivative_mse": 0.0002074432572436576,
+            "snr_db": 4.747766509694683
+          },
+          "V2": {
+            "mse": 0.0,
+            "rmse": 0.0,
+            "mae": 0.0,
+            "pearson": 1.0,
+            "r2": 1.0,
+            "derivative_mse": 0.0,
+            "snr_db": 180.99548538477163
+          },
+          "V3": {
+            "mse": 0.03854340653814857,
+            "rmse": 0.19632474764570199,
+            "mae": 0.0879100591864872,
+            "pearson": 0.8774754202698984,
+            "r2": 0.6788654658863209,
+            "derivative_mse": 0.0006913371593655921,
+            "snr_db": 4.580911862566721
+          },
+          "V4": {
+            "mse": 0.10516927927797451,
+            "rmse": 0.32429813332483814,
+            "mae": 0.09706580187054441,
+            "pearson": 0.8515762181878362,
+            "r2": 0.5635723371162799,
+            "derivative_mse": 0.0008668592694818347,
+            "snr_db": 1.7046044687987054
+          },
+          "V5": {
+            "mse": 0.031822628282310216,
+            "rmse": 0.1783889802715129,
+            "mae": 0.08382152063262283,
+            "pearson": 0.866084285575318,
+            "r2": 0.585874015292169,
+            "derivative_mse": 0.0005545071586006948,
+            "snr_db": 3.6485004687200324
+          },
+          "V6": {
+            "mse": 0.0358839723741686,
+            "rmse": 0.1894306532063082,
+            "mae": 0.08324745726923957,
+            "pearson": 0.8415563649340502,
+            "r2": 0.504754602390312,
+            "derivative_mse": 0.0002948357887310849,
+            "snr_db": 2.494800750282569
+          }
+        },
+        "all_leads": {
+          "mse": 0.019046829462765334,
+          "rmse": 0.08675167958570289,
+          "mae": 0.03494861773253397,
+          "pearson": 0.9427644107920247,
+          "r2": 0.8370830753542555,
+          "derivative_mse": 0.00021846127463455225,
+          "snr_db": 55.570405136322286
+        },
+        "missing_leads": {
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            11
+          ],
+          "names": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ],
+          "mse": 0.025395772617020446,
+          "rmse": 0.11566890611427054,
+          "mae": 0.04659815697671196,
+          "pearson": 0.923685881056033,
+          "r2": 0.7827774338056739,
+          "derivative_mse": 0.0002912816995127363,
+          "snr_db": 15.021078484967072
+        },
+        "observed_leads": {
+          "indices": [
+            0,
+            1,
+            7
+          ],
+          "names": [
+            "I",
+            "II",
+            "V2"
+          ],
+          "mse": 0.0,
+          "rmse": 0.0,
+          "mae": 0.0,
+          "pearson": 1.0,
+          "r2": 1.0
+        }
+      },
+      "robustness": {
+        "n_samples": 0,
+        "clean_subset": {},
+        "conditions": {}
+      },
+      "morphology": {
+        "protocol": {
+          "qrs_window_ms": [
+            -50,
+            100
+          ],
+          "st_window_ms": [
+            120,
+            240
+          ],
+          "j_point_ms": 100,
+          "sample_rate_hz": 500,
+          "evaluated_leads": [
+            "III",
+            "aVR",
+            "aVL",
+            "aVF",
+            "V1",
+            "V3",
+            "V4",
+            "V5",
+            "V6"
+          ]
+        },
+        "detector_coverage": {
+          "attempted_records": 2183,
+          "successful_records": 2182,
+          "fraction": 0.9995419147961521
+        },
+        "qrs_correlation": 0.9407045962220445,
+        "st_correlation": 0.8293578222543565,
+        "j_point_amplitude_mae": 0.03834461651389225,
+        "r_peak_timing_mae_ms": 75.38454183905111,
+        "waveform_correlation": 0.9239015797639839,
+        "n_peak_matches": 399543,
+        "regional_correlation": {
+          "anterior": 0.8613444258980476,
+          "lateral": 0.8699884076017201,
+          "inferior": 0.9998946071749031
+        },
+        "spectral_relative_error": {
+          "0.5_40_hz": 0.2805121224051467,
+          "40_100_hz": 0.3264308314564097,
+          "100_150_hz": 0.34611122876578665
+        },
+        "class_stratified_qrs_correlation": {
+          "NORM": {
+            "n": 942,
+            "mean": 0.9580987574365207
+          },
+          "MI": {
+            "n": 412,
+            "mean": 0.9114280698216216
+          },
+          "STTC": {
+            "n": 509,
+            "mean": 0.9334934477155427
+          },
+          "CD": {
+            "n": 495,
+            "mean": 0.9189383933686842
+          },
+          "HYP": {
+            "n": 216,
+            "mean": 0.9338754436003763
+          }
+        }
+      },
+      "example_plot": "results/factorial_v2/plots/ecgaim__e1c1m1d1__s42.png",
+      "clinical": {
+        "status": "oracle_skipped"
+      },
+      "fairness": {
+        "status": "oracle_skipped"
+      },
+      "paper_parity_clinical": {
+        "status": "parity_classifier_skipped"
+      },
+      "per_record_parquet": "results/factorial_v2/per_record/ecgaim__e1c1m1d1__s42.parquet"
+    }
+  }
+}

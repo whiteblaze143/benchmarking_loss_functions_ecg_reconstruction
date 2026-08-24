@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "source_metadata": "data/ptb_xl/ptbxl_database.csv",
+  "tensor_root": "data/ptb_xl/tensors",
+  "record_count": 21799,
+  "split_counts": {
+    "test": 2198,
+    "train": 17418,
+    "val": 2183
+  },
+  "expected_split_counts": {
+    "train": 17418,
+    "val": 2183,
+    "test": 2198
+  },
+  "metadata_tensor_alignment": {
+    "both": 21799,
+    "left_only": 0,
+    "right_only": 0
+  },
+  "shape_12_by_5000": 21799,
+  "float32": 21799,
+  "records_with_nonfinite_values": 0,
+  "records_with_flat_leads": 1,
+  "unique_signal_hashes": 21799,
+  "duplicate_hash_groups": 0,
+  "records_in_duplicate_hash_groups": 0,
+  "minimum": -32.69200134277344,
+  "maximum": 32.715999603271484,
+  "record_rms_quantiles": {
+    "0.0": 0.052315426803060415,
+    "0.01": 0.10149254613486729,
+    "0.5": 0.18976696123444695,
+    "0.99": 0.5819439706357502,
+    "1.0": 4.260331984538877
+  },
+  "audit_script": "scripts/audit_ptbxl_tensors_for_book.py",
+  "torch_version": "2.6.0+cu124",
+  "numpy_version": "2.3.5",
+  "pandas_version": "2.3.3"
+}

@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "minimum_free_gib": 3.0,
+  "checks": {
+    "free_disk_gib": 4.8631591796875,
+    "registry_models": 48,
+    "ptbxl_per_record_models": 48,
+    "comprehensive_results": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/comprehensive_results.json",
+    "echonext": {
+      "waveform_shape": [
+        5442,
+        1,
+        2500,
+        12
+      ],
+      "test_metadata_rows": 5442,
+      "shd_tasks": 12,
+      "official_classifier": {
+        "name": "EchoNext_Mini_multilabel",
+        "source_repository": "https://github.com/PierreElias/IntroECG",
+        "source_commit": "15233e9392e9dc10c136a5624abf10199207bce9",
+        "repository_root": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/ecg_fm_integration/echonext_minimodel_repo/7-EchoNext Minimodel",
+        "weights": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/ecg_fm_integration/echonext_minimodel_repo/7-EchoNext Minimodel/models/echonext_multilabel_minimodel/weights.pt",
+        "weights_sha256": "aac57aad0ec9763021c6264e89c74e3d78f8b711159b1880e5bd4515d5e21cd6",
+        "tabular_transformer": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/ecg_fm_integration/echonext_minimodel_repo/7-EchoNext Minimodel/models/echonext_multilabel_minimodel/tabular_transformer.joblib",
+        "tabular_transformer_sha256": "495386a8f6555addc8ddfb257a7364d062c4ecc553246d34fc1242ab91b74b59",
+        "waveform_normalization_params": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/ecg_fm_integration/echonext_minimodel_repo/7-EchoNext Minimodel/models/echonext_multilabel_minimodel/waveform_normalization_params.json",
+        "waveform_normalization_params_sha256": "f3fc58aa37984bb58c7d47aa73f7a623c40fe0fd13f4c1ba4e1de050a53c2b1c",
+        "tasks": [
+          "lvef_lte_45",
+          "lvwt_gte_13",
+          "aortic_stenosis_moderate_or_greater",
+          "aortic_regurgitation_moderate_or_greater",
+          "mitral_regurgitation_moderate_or_greater",
+          "tricuspid_regurgitation_moderate_or_greater",
+          "pulmonary_regurgitation_moderate_or_greater",
+          "rv_systolic_dysfunction_moderate_or_greater",
+          "pericardial_effusion_moderate_large",
+          "pasp_gte_45",
+          "tr_max_gte_32",
+          "shd_moderate_or_greater"
+        ],
+        "threshold": 0.5,
+        "threshold_source": "fixed_predefined_0.5"
+      }
+    },
+    "smartwatch": {
+      "applewatch_serie8": {
+        "paired_records": 180,
+        "input_leads": [
+          "II"
+        ]
+      },
+      "fitbitsense2": {
+        "paired_records": 180,
+        "input_leads": [
+          "II"
+        ]
+      },
+      "samsunggalaxy6": {
+        "paired_records": 179,
+        "input_leads": [
+          "II"
+        ]
+      },
+      "withingsscanwatch": {
+        "paired_records": 180,
+        "input_leads": [
+          "II"
+        ]
+      }
+    },
+    "nstdb": {
+      "bw": true,
+      "em": true,
+      "ma": true
+    }
+  }
+}

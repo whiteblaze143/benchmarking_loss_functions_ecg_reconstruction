@@ -1,0 +1,27 @@
+Round 4 read-only review
+Date: 2026-07-31
+Reviewer: /root/book_review_round1 (same-family Codex; provisional)
+Score: 7.0/10
+Verdict: NOT READY for mixed-factorial release; book content nearly ready
+
+Closed from Round 3:
+- Separate round-trip timestamp exists and the bypass is removed.
+- Archive acceptance binds asset state, size, digest, independent round trip,
+  and payload identity.
+- Schema-3 sidecars bind job/mask/seed/catalog SHA and size plus exact split
+  and preprocessing contracts.
+- Per-record validation is manifest-driven and recomputes file/order hashes.
+- The table writer is fail-closed for malformed gate reports.
+- The local-byte table and executive diagram are conservative.
+- Metadata JSON is embedded in the remotely snapshotted catalog.
+- The first exit-137 artifact was correctly quarantined and requeued.
+
+Remaining findings:
+1. Prove changed retrained bytes clear all stale asset/semantic state.
+2. Strictly load MCMAModel keys/shapes and reject nonfinite/wrong-dtype states.
+3. Bind the final summary to all 480 authoritative identities and file hashes.
+4. Bind per-record outputs to the canonical 2,198-record/1,904-patient cohort.
+5. Refuse remote materialization of error/unverified rows.
+6. Tighten local-byte and exact-local wording.
+
+No files were edited by the reviewer.

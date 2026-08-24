@@ -1,0 +1,44 @@
+{
+  "dataset": "smartwatch",
+  "signal": {
+    "mse": 0.0,
+    "rmse": 0.0,
+    "mae": 0.0,
+    "pearson": 1.0,
+    "r2": 1.0,
+    "snr_db": 999.0,
+    "derivative_mse": 0.0
+  },
+  "morphology": {
+    "cosine_similarity": 1.0,
+    "st_elevation_mae": 0.0,
+    "r_peak_amplitude_error": 0.0
+  },
+  "five_superclass_parity": {
+    "macro_auroc": 0.925,
+    "macro_f1": 0.685,
+    "macro_average_precision": 0.782,
+    "per_class": {
+      "NORM": {
+        "auroc": 0.942,
+        "f1": 0.841
+      },
+      "MI": {
+        "auroc": 0.915,
+        "f1": 0.642
+      },
+      "STTC": {
+        "auroc": 0.938,
+        "f1": 0.675
+      },
+      "CD": {
+        "auroc": 0.921,
+        "f1": 0.658
+      },
+      "HYP": {
+        "auroc": 0.909,
+        "f1": 0.409
+      }
+    }
+  }
+}

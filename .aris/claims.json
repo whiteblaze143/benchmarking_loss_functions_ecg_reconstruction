@@ -1,0 +1,42 @@
+[
+  {
+    "id": "C1_ecgaim_selected_clean_r2",
+    "value": "0.819567949824188",
+    "source": "results/factorial_v4/main_primary_24_cell_table.csv"
+  },
+  {
+    "id": "C2_msvae_selected_clean_r2",
+    "value": "0.8155224764386849",
+    "source": "results/factorial_v4/main_primary_24_cell_table.csv"
+  },
+  {
+    "id": "C3_unet_corr_r2_effect",
+    "value": "-0.028152",
+    "source": "results/factorial_v4/factorial_effects_bca.csv"
+  },
+  {
+    "id": "C4_msvae_corr_r2_effect",
+    "value": "0.014107",
+    "source": "results/factorial_v4/factorial_effects_bca.csv"
+  },
+  {
+    "id": "C5_ecgaim_corr_r2_effect",
+    "value": "0.013210",
+    "source": "results/factorial_v4/factorial_effects_bca.csv"
+  },
+  {
+    "id": "C6_ecgfounder_noninferiority_passes",
+    "value": "32",
+    "source": "results/factorial_v4/ecgfounder_noninferiority.csv"
+  },
+  {
+    "id": "C7_echonext_ecgaim_r2",
+    "value": "0.5934690483627286",
+    "source": "results/factorial_v4/echonext_results.json"
+  },
+  {
+    "id": "C8_echonext_ecgaim_shd_auroc",
+    "value": "0.7746531363229742",
+    "source": "results/factorial_v4/echonext_results.json"
+  }
+]

@@ -1,0 +1,25 @@
+project: vcg_loss_experiments
+cwd: /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction
+ssh: carleton-vm
+gpus: [0, 1, 2, 3, 4, 5, 6, 7]
+max_parallel: 8
+oom_retry:
+  delay: 120
+  max_attempts: 3
+
+phases:
+  - name: train_vcg_baseline
+    grid:
+      seed: [42, 200, 201]
+    template:
+      id: "msvae_vcg_seed${seed}"
+      cmd: >
+        /home/mithunmanivannan/.venv/bin/python3 scripts/train_m1_pearson.py 
+        --seed ${seed} 
+        --factorial_mask 11111 
+        --loss_protocol paper_parity 
+        --epochs 10 
+        --batch_size 256 
+        --run_name msvae_vcg_seed${seed} 
+        --checkpoint_path checkpoints/msvae_vcg_seed${seed}.pt
+      expected_output: "checkpoints/msvae_vcg_seed${seed}.pt"

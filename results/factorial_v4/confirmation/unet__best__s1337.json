@@ -1,0 +1,15 @@
+{
+  "family": "unet",
+  "slot": "best",
+  "mask": "1110",
+  "seed": 1337,
+  "checkpoint": "checkpoints/factorial_v4/confirmation/unet__e1c1m1d0__s1337/best.pt",
+  "sha256": "1f67cc55ba37fb6f9e935d44754aa8ac5f3b3a3ef5ee8eb4263ffe19ee1f1659",
+  "validation_evaluation": "results/factorial_v4/confirmation/unet__best__s1337.evaluation.json",
+  "validation_metrics": {
+    "n_samples": 2183,
+    "mse": 0.02955263580519922,
+    "r2": 0.5952861999114756,
+    "pearson": 0.9048347700556563
+  }
+}

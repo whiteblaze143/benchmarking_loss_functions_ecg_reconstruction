@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/figures/figure_ptbxl_superclasses.py",
+  "script_sha256": "1d74b33af69919f531d9c6fe38726b9a4f625389ff51434ed4a894a7bd0367bb",
+  "common_helper_sha256": "e57c67c3e4dc0ed56aaab3c3e573bcb4b030954212f41e35f81fe3707434ff3e",
+  "inputs": {
+    "results/factorial_v4_clinical/classification_task_metrics.parquet": "bad90daf6490a6bd0f6e73b07dc70094f86c70990a76fa5f9080fa81345d51b8",
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": "4a645f296f0238019991eb5fcd7b34da196e9eeb6b11a0ce727c04af6fec1218"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "results/factorial_v4_clinical/figures/ptbxl_five_superclasses.pdf",
+      "sha256": "233b94befeb1f792e0d8bd65c379b334b01974f7d97568069fe6bfd718891d8f"
+    },
+    "svg": {
+      "path": "results/factorial_v4_clinical/figures/ptbxl_five_superclasses.svg",
+      "sha256": "8d02b516095918cb91af436e7d383bc8cbaba80c47e8c504afb4dadc9a9bcef4"
+    },
+    "png": {
+      "path": "results/factorial_v4_clinical/figures/ptbxl_five_superclasses.png",
+      "sha256": "f502c731c9bed4d35afc3b4a811d7a4a962ef0468f29776d47b2c7264c86b4e4"
+    }
+  },
+  "metadata": {
+    "selection": "base, validation-best, and full per family"
+  }
+}

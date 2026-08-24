@@ -1,0 +1,178 @@
+# Fairness, Noise Robustness, and Signal Quality Index (SQI) {#sec-fairness-robustness}
+
+ECG reconstruction models intended for wearable or clinical use must be evaluated across patient subgroups and realistic signal degradation. This chapter formulates measurement interfaces; its executable waveform example is synthetic and does not report robustness or fairness for a trained checkpoint.
+
+1. **Signal Quality Index (SQI) Metrics**: Higher-order statistical moments that quantify corruption.
+2. **Deterministic Noise-Stress Testing**: Controlled Gaussian, baseline wander, and electromyographic (EMG) noise injection.
+3. **Demographic Subgroup Fairness & Paired Disparity Metrics**.
+
+---
+
+## Signal Quality Index (SQI) Formulations
+
+Signal Quality Indices (SQIs) evaluate whether a recorded or reconstructed ECG is suitable for clinical delineation without requiring ground-truth clean signals.
+
+### 1. Kurtosis SQI ($kSQI$)
+Kurtosis measures the "peakedness" of the signal amplitude distribution:
+
+$$kSQI = \frac{\frac{1}{N} \sum_{i=1}^{N} (x_i - \bar{x})^4}{\left[ \frac{1}{N} \sum_{i=1}^{N} (x_i - \bar{x})^2 \right]^2}$$
+
+- **Interpretation boundary**: QRS complexes can increase kurtosis and Gaussian noise has population kurtosis 3, but fixed cutoffs such as 2 or 5 are not universal quality labels. Rhythm, lead, filtering, record length, and estimator convention can all change the value; thresholds require cohort-specific validation.
+
+### 2. Skewness SQI ($sSQI$)
+Skewness measures asymmetry around the mean:
+
+$$sSQI = \frac{\frac{1}{N} \sum_{i=1}^{N} (x_i - \bar{x})^3}{\left[ \frac{1}{N} \sum_{i=1}^{N} (x_i - \bar{x})^2 \right]^{3/2}}$$
+
+### 3. Relative QRS Power Spectral SQI ($pSQI$)
+Measures the proportion of signal power concentrated within the QRS frequency band ($5 - 15\text{ Hz}$) relative to the total physiological band ($5 - 40\text{ Hz}$):
+
+$$pSQI = \frac{\int_{5}^{15} P(f) \, df}{\int_{5}^{40} P(f) \, df}$$
+
+where $P(f) = |X(f)|^2$ is the Power Spectral Density obtained via Fast Fourier Transform.
+
+---
+
+## Noise Stress Testing Mathematics & Noise Models
+
+To benchmark model robustness, we corrupt clean ECG signals $x(t)$ with three distinct physical noise models:
+
+$$x_{\text{corrupted}}(t) = x(t) + n_{\text{artifact}}(t)$$
+
+### 1. Additive White Gaussian Noise (AWGN)
+Noise variance $\sigma_n^2$ is parameterized by target Signal-to-Noise Ratio (SNR in dB):
+
+$$\text{SNR}_{\text{dB}} = 10 \log_{10} \left( \frac{P_{\text{signal}}}{P_{\text{noise}}} \right) \implies \sigma_n = \sqrt{\frac{P_{\text{signal}}}{10^{\text{SNR}_{\text{dB}} / 10}}}$$
+
+where $P_{\text{signal}} = \frac{1}{T} \sum_{t=1}^{T} x(t)^2$.
+
+### 2. Respiratory Baseline Wander ($n_{\text{BW}}$)
+Simulates low-frequency chest impedance drift caused by respiration ($0.1 - 0.5\text{ Hz}$):
+
+$$n_{\text{BW}}(t) = A_{\text{BW}} \cdot \sin(2\pi f_{\text{resp}} t + \phi)$$
+
+### 3. Electromyographic (EMG) Muscle Tremor Noise ($n_{\text{EMG}}$)
+Modeled as a high-frequency filtered autoregressive process ($> 35\text{ Hz}$) simulating random muscle contractions.
+
+---
+
+## Subgroup Fairness & Disparity Metrics
+
+When evaluating performance across demographic subgroups $A \in \{\text{Male}, \text{Female}\}$ or age brackets $A \in \{\text{Age} \le 65, \text{Age} > 65\}$, reporting global aggregate metrics hides disparities.
+
+### 1. Absolute Performance Disparity ($\Delta_{\text{perf}}$)
+$$\Delta_{\text{perf}} = \text{Metric}(A = \text{Group}_1) - \text{Metric}(A = \text{Group}_2)$$
+
+### 2. Paired Reconstruction Degradation ($\Delta_{\text{recon}}$)
+Measures the change in metric induced specifically by model reconstruction:
+
+$$\Delta_{\text{recon}}(A_g) = \text{Metric}\big(\hat{Y}_{A_g}\big) - \text{Metric}\big(Y_{A_g}\big)$$
+
+$$\text{Fairness Disparity} = \Delta_{\text{recon}}(\text{Male}) - \Delta_{\text{recon}}(\text{Female})$$
+
+Using patient-clustered non-parametric bootstrapping ensures that repeated recordings from the same patient do not artificially shrink confidence intervals.
+
+---
+
+## Python Implementation: SQI Computation & Noise Stress Suite
+
+```{python}
+#| label: didactic-sqi-noise-simulation
+#| fig-cap: "DIDACTIC SIMULATION — stipulated ECG-like signal and synthetic corruptions; not a model robustness result."
+import numpy as np
+import scipy.signal as signal
+from scipy import stats
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+def compute_sqi_metrics(ecg_signal, fs=500):
+    """
+    Calculates kSQI, sSQI, and pSQI for a 1D ECG signal.
+    """
+    # 1. Kurtosis SQI
+    ksqi = stats.kurtosis(ecg_signal, fisher=False)
+    
+    # 2. Skewness SQI
+    ssqi = stats.skew(ecg_signal)
+    
+    # 3. Power Spectrum SQI (pSQI)
+    freqs, psd = signal.welch(ecg_signal, fs=fs, nperseg=fs)
+    
+    qrs_power = np.sum(psd[(freqs >= 5) & (freqs <= 15)])
+    total_power = np.sum(psd[(freqs >= 5) & (freqs <= 40)]) + 1e-8
+    psqi = qrs_power / total_power
+    
+    return {"kSQI": round(ksqi, 3), "sSQI": round(ssqi, 3), "pSQI": round(psqi, 3)}
+
+def inject_noise_stress(ecg_signal, snr_db=12, noise_type="gaussian", fs=500, rng=None):
+    """
+    Injects synthetic AWGN or Baseline Wander at a target SNR in dB.
+    """
+    p_signal = np.mean(ecg_signal ** 2)
+    t = np.linspace(0, len(ecg_signal) / fs, len(ecg_signal))
+    
+    rng = np.random.default_rng(20260801) if rng is None else rng
+    if noise_type == "gaussian":
+        p_noise = p_signal / (10 ** (snr_db / 10.0))
+        noise = rng.normal(0, np.sqrt(p_noise), len(ecg_signal))
+    elif noise_type == "baseline_wander":
+        # Respiratory drift at 0.3 Hz
+        drift = np.sin(2 * np.pi * 0.3 * t)
+        p_drift = np.mean(drift ** 2)
+        scale = np.sqrt((p_signal / (10 ** (snr_db / 10.0))) / p_drift)
+        noise = scale * drift
+    else:
+        raise ValueError(f"Unknown noise type: {noise_type}")
+        
+    return ecg_signal + noise
+
+# Simulate a deterministic ECG-like teaching signal. This is not an acquired ECG.
+fs = 500
+t = np.linspace(0, 2.0, 1000)
+clean_ecg = np.sin(2 * np.pi * 1.2 * t) ** 21 + 0.2 * np.sin(2 * np.pi * 1.2 * t + 0.8) ** 3
+
+# Inject AWGN (12 dB) and Baseline Wander (6 dB)
+rng = np.random.default_rng(20260801)
+noisy_awgn = inject_noise_stress(clean_ecg, snr_db=12, noise_type="gaussian", fs=fs, rng=rng)
+noisy_bw = inject_noise_stress(clean_ecg, snr_db=6, noise_type="baseline_wander", fs=fs, rng=rng)
+
+# Compute SQI Metrics
+sqi_clean = compute_sqi_metrics(clean_ecg, fs=fs)
+sqi_awgn = compute_sqi_metrics(noisy_awgn, fs=fs)
+sqi_bw = compute_sqi_metrics(noisy_bw, fs=fs)
+
+print("==================================================")
+print(f"Clean ECG SQI Metrics:     {sqi_clean}")
+print(f"AWGN 12dB Corrupted SQI:    {sqi_awgn}")
+print(f"Baseline Drift 6dB SQI:    {sqi_bw}")
+print("==================================================")
+```
+
+---
+
+## Interactive Noise Stress Response Viewer
+
+```{python}
+fig_noise = make_subplots(
+    rows=3, cols=1, 
+    subplot_titles=(
+        f"Clean Signal (kSQI: {sqi_clean['kSQI']}, pSQI: {sqi_clean['pSQI']})", 
+        f"AWGN 12dB Corrupted (kSQI: {sqi_awgn['kSQI']}, pSQI: {sqi_awgn['pSQI']})", 
+        f"Baseline Drift 6dB (kSQI: {sqi_bw['kSQI']}, pSQI: {sqi_bw['pSQI']})"
+    )
+)
+
+fig_noise.add_trace(go.Scatter(x=t, y=clean_ecg, mode='lines', line=dict(color='#10b981')), row=1, col=1)
+fig_noise.add_trace(go.Scatter(x=t, y=noisy_awgn, mode='lines', line=dict(color='#f43f5e')), row=2, col=1)
+fig_noise.add_trace(go.Scatter(x=t, y=noisy_bw, mode='lines', line=dict(color='#fbbf24')), row=3, col=1)
+
+fig_noise.update_layout(
+    title="DIDACTIC SIMULATION — Noise and SQI Response",
+    template="plotly_dark",
+    height=600, margin=dict(l=20, r=20, t=60, b=20),
+    showlegend=False
+)
+fig_noise.show()
+```
+
+This suite is a starting interface, not a completed benchmark. A reportable robustness analysis must corrupt named records deterministically, evaluate named checkpoints, retain paired record-level results, include realistic artifact sources and clean-signal baselines, and bind outputs to code/data/checkpoint digests. A reportable fairness analysis additionally requires adequate subgroup support, patient-clustered uncertainty, missing-demographic handling, intersectional checks, and a prespecified disparity estimand.

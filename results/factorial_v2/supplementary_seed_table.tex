@@ -1,0 +1,24 @@
+\begin{tabular}{lllrllrrrr}
+\toprule
+family & slot & mask & seed & checkpoint & checkpoint_sha256 & n_samples & validation_mse & validation_r2 & validation_pearson \\
+\midrule
+unet & base & 000 & 1337 & checkpoints/factorial_v2/confirmation/unet__e1c0m0d0__s1337/best.pt & d00c9c221787ac91fc11fb70a93de828bbbb5bc13ddf8c9a8d15e5ae6e918d10 & 2183 & 0.0295 & 0.6599 & 0.8613 \\
+unet & base & 000 & 2026 & checkpoints/factorial_v2/confirmation/unet__e1c0m0d0__s2026/best.pt & 619943c978739a021b6e2cb5c6932d359fe4d222eca0851c7cffac5c81ad075e & 2183 & 0.0290 & 0.6661 & 0.8704 \\
+unet & full & 111 & 1337 & checkpoints/factorial_v2/confirmation/unet__e1c1m1d1__s1337/best.pt & ead1c95e5eec0b57e35e0c56cc3b55a5294d7df0d9e39e7375cf554f02160455 & 2183 & 0.0296 & 0.6087 & 0.9028 \\
+unet & full & 111 & 2026 & checkpoints/factorial_v2/confirmation/unet__e1c1m1d1__s2026/best.pt & 0a01e86876b08310b426a8021e2248397aae38996cd9e4c38093ff8dbbd04d30 & 2183 & 0.0293 & 0.6181 & 0.9034 \\
+unet & best & 101 & 1337 & checkpoints/factorial_v2/confirmation/unet__e1c1m0d1__s1337/best.pt & da86f93ce951f5a1c26a1f643b23afb0fe06e121ee03a16b1475b1e81d092b39 & 2183 & 0.0296 & 0.6093 & 0.9031 \\
+unet & best & 101 & 2026 & checkpoints/factorial_v2/confirmation/unet__e1c1m0d1__s2026/best.pt & d1fbcfb49c922c725d2807bb30a7c7b4fd4a432140274a1fe816f1a75db34c0b & 2183 & 0.0294 & 0.6151 & 0.9026 \\
+msvae & base & 000 & 1337 & checkpoints/factorial_v2/confirmation/msvae__e1c0m0d0__s1337/ul_ecp_best.pt & d9f42d9c842c04475a9b39135a8d1468801f82d64f6414c2bd5fbec9267eb0c2 & 2183 & 0.0260 & 0.7881 & 0.9104 \\
+msvae & base & 000 & 2026 & checkpoints/factorial_v2/confirmation/msvae__e1c0m0d0__s2026/ul_ecp_best.pt & d9acc3ac519d2637793174b7a9a15b4fdea8a8309eec7fddc28824aa9247bd36 & 2183 & 0.0259 & 0.7881 & 0.9105 \\
+msvae & full & 111 & 1337 & checkpoints/factorial_v2/confirmation/msvae__e1c1m1d1__s1337/ul_ecp_best.pt & 0d74289e9f8e33c840da688368974e4db67434d6975db62d57c7ace3ea37f061 & 2183 & 0.0254 & 0.8026 & 0.9207 \\
+msvae & full & 111 & 2026 & checkpoints/factorial_v2/confirmation/msvae__e1c1m1d1__s2026/ul_ecp_best.pt & e079240f2828caca7ecfeed3553b05abbb7e7827cc79ba472821a22100bc0dc7 & 2183 & 0.0254 & 0.8051 & 0.9209 \\
+msvae & best & 110 & 1337 & checkpoints/factorial_v2/confirmation/msvae__e1c1m1d0__s1337/ul_ecp_best.pt & 971cd40c2f2a0f2f63a987f11b55c064c5893c46cd9f8982fad9269712a77710 & 2183 & 0.0254 & 0.8034 & 0.9206 \\
+msvae & best & 110 & 2026 & checkpoints/factorial_v2/confirmation/msvae__e1c1m1d0__s2026/ul_ecp_best.pt & 95acccbd6b6bc9e303d24a87dcb9198cbef40aa50e250417f364250948cf0413 & 2183 & 0.0254 & 0.8054 & 0.9209 \\
+ecgaim & base & 000 & 1337 & checkpoints/factorial_v2/confirmation/ecgaim__e1c0m0d0__s1337/ul_ecp_best.pt & 34425c17161774d30c08dc9ff00609fc2e7f86d85ec45bdc4fa14934c5a81f6c & 2183 & 0.0258 & 0.7947 & 0.9156 \\
+ecgaim & base & 000 & 2026 & checkpoints/factorial_v2/confirmation/ecgaim__e1c0m0d0__s2026/ul_ecp_best.pt & 11ee9ce0205eb687a659407cb3d41554acc008dab3d66c0a9b3f486b9276ace1 & 2183 & 0.0259 & 0.7750 & 0.9155 \\
+ecgaim & full & 111 & 1337 & checkpoints/factorial_v2/confirmation/ecgaim__e1c1m1d1__s1337/ul_ecp_best.pt & 4ad23e507ad2fe96dc03768a71756170f27b1a8a5ce42d0ce46e10539c3d6e12 & 2183 & 0.0253 & 0.7956 & 0.9235 \\
+ecgaim & full & 111 & 2026 & checkpoints/factorial_v2/confirmation/ecgaim__e1c1m1d1__s2026/ul_ecp_best.pt & 45eb129cbd1ae71d675cd573c51c2c450c84aba9e9021914101d1d64916c59ba & 2183 & 0.0252 & 0.8028 & 0.9232 \\
+ecgaim & best & 100 & 1337 & checkpoints/factorial_v2/confirmation/ecgaim__e1c1m0d0__s1337/ul_ecp_best.pt & 589de129a0ca718392192a7378bfef07647bad82fef395542bd3f9d38a532fb0 & 2183 & 0.0252 & 0.8021 & 0.9237 \\
+ecgaim & best & 100 & 2026 & checkpoints/factorial_v2/confirmation/ecgaim__e1c1m0d0__s2026/ul_ecp_best.pt & a370378effcb6944924dfc49a296fda051c3f9391d3c7ea6c15598da589226e0 & 2183 & 0.0254 & 0.7835 & 0.9233 \\
+\bottomrule
+\end{tabular}

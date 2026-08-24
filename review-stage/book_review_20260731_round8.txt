@@ -1,0 +1,51 @@
+Round-8 final review supplied by reviewer `/root/book_review_round1`
+
+Score: 9.5/10
+Verdict: Almost
+
+The Round-7 release-path defects are resolved:
+
+- Compatibility audit, SQLite catalog, per-record manifest, internal Parquet
+  identity, and summary are joined by exact checkpoint SHA-256 and size.
+- Catalog validation checks exact mask, seed, 162 tensors, state schema,
+  metadata, and the full training contract.
+- Canonically resolved per-record paths must be one-to-one.
+- Parquet files require constant internal model_id and checkpoint_sha256.
+- The summary has an exact registered schema; extra/unvalidated result columns
+  are rejected.
+- Required metrics must be finite and equal per-record recomputations.
+- Numeric-only 64-character checkpoint digests remain strings when CSV is read.
+- The source/precision gate is non-vacuous and requires all 480 identities.
+- Materialization conditionally updates by model ID plus digest and rejects a
+  generation swap during download.
+- Identity-aware loading holds the store lock through materialization, SHA
+  verification, and deserialization.
+- The full positive 480-model writer fixture passes.
+
+Independent evidence:
+
+- The focused suite and compilation passed.
+- A real private-release checkpoint was downloaded, strictly loaded, and run
+  on PTB-XL record 100.
+- Output was finite with shape [1, 12, 5000].
+- Checkpoint SHA and size matched the live catalog.
+- Default cleanup pruned one cache file; the cache ended empty.
+- Queue was 478 pending, 1 completed, and 1 running.
+- Compatibility audit was 1 compatible and 0 incompatible.
+- Catalog was 1 remotely verified generation and 131 quarantined/error rows.
+- Fresh book had 12 pages, no execution-error markers, and zero missing local
+  links/assets.
+- The rendered report truthfully showed 1/480 completed and remained
+  fail-closed.
+
+Remaining limitations:
+
+- The scientific release is incomplete until the remaining jobs and all
+  per-record evaluations finish.
+- The reviewed report did not yet hash a canonical catalog snapshot.
+- The full positive fixture mocks Parquet decoding; real PyArrow behavior is
+  covered incrementally until actual per-record files exist.
+- A tensor mutation consumed and restored between full corpus checks remains a
+  narrow theoretical race; immutable input snapshots would eliminate it.
+
+No workspace files were modified by the reviewer.

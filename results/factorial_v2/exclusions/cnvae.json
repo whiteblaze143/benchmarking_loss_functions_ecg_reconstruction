@@ -1,0 +1,37 @@
+{
+  "family": "cnvae",
+  "status": "excluded_from_active_poster_grid",
+  "decision_timestamp": "2026-07-22T23:28:22Z",
+  "decision": "stop_after_gate_diagnosis_and_defer_architecture_rework",
+  "run_id": "3zvx6s3l",
+  "checkpoint": "checkpoints/factorial_v2/primary/cnvae__e1c0m0d0__s42/best_model.pt",
+  "best_observed_epoch": 2,
+  "validation": {
+    "missing_lead_mse": 0.05050919730310289,
+    "missing_lead_pearson": 0.4446285475408927,
+    "missing_lead_r2": 0.4433463120112454,
+    "gate_thresholds": {
+      "pearson": 0.7,
+      "r2": 0.5
+    },
+    "per_lead_r2": {
+      "III": 0.9999842391396961,
+      "aVR": 0.9999838001536627,
+      "aVL": 0.9999334638136147,
+      "aVF": 0.9999202803103593,
+      "V1": -0.001938666181339726,
+      "V3": -0.0008505120589635777,
+      "V4": -0.004198236245269816,
+      "V5": -0.0016930390295511397,
+      "V6": -0.0010245391855995259
+    }
+  },
+  "diagnosis": "The aggregate score is almost entirely the four deterministic Einthoven-derived limb leads; all five unobserved chest leads converged to approximately zero R2. Continuing the remaining masks would not constitute a valid factorial comparison.",
+  "sanity_baseline": {
+    "method": "global pointwise linear regression from I, II, and V2 fitted on the canonical training split and evaluated on all 2183 validation records",
+    "mean_missing_chest_lead_pearson": 0.7715641060630142,
+    "mean_nine_missing_lead_pearson_with_exact_limb_derivations": 0.8730911700350078,
+    "interpretation": "The acquired leads contain ample predictive signal; the failure is specific to the current cNVAE optimization/decoder path rather than the dataset or task."
+  },
+  "follow_up": "Retain the implementation and checkpoint for later diagnosis; test a direct lead-aware observed-signal skip, lower optimizer epsilon/weight decay, and chest-only reconstruction weighting before re-entering cNVAE into a future grid."
+}

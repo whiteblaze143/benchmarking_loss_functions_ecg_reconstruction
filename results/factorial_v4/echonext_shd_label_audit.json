@@ -1,0 +1,517 @@
+{
+  "status": "pass",
+  "labels": [
+    "lvef_lte_45_flag",
+    "lvwt_gte_13_flag",
+    "aortic_stenosis_moderate_or_greater_flag",
+    "aortic_regurgitation_moderate_or_greater_flag",
+    "mitral_regurgitation_moderate_or_greater_flag",
+    "tricuspid_regurgitation_moderate_or_greater_flag",
+    "pulmonary_regurgitation_moderate_or_greater_flag",
+    "rv_systolic_dysfunction_moderate_or_greater_flag",
+    "pericardial_effusion_moderate_large_flag",
+    "pasp_gte_45_flag",
+    "tr_max_gte_32_flag",
+    "shd_moderate_or_greater_flag"
+  ],
+  "records_per_model": 5442,
+  "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3",
+  "label_summary": {
+    "lvef_lte_45_flag": {
+      "nonmissing": 5442,
+      "positive": 962,
+      "negative": 4480
+    },
+    "lvwt_gte_13_flag": {
+      "nonmissing": 5442,
+      "positive": 1061,
+      "negative": 4381
+    },
+    "aortic_stenosis_moderate_or_greater_flag": {
+      "nonmissing": 5442,
+      "positive": 286,
+      "negative": 5156
+    },
+    "aortic_regurgitation_moderate_or_greater_flag": {
+      "nonmissing": 5442,
+      "positive": 66,
+      "negative": 5376
+    },
+    "mitral_regurgitation_moderate_or_greater_flag": {
+      "nonmissing": 5442,
+      "positive": 337,
+      "negative": 5105
+    },
+    "tricuspid_regurgitation_moderate_or_greater_flag": {
+      "nonmissing": 5442,
+      "positive": 353,
+      "negative": 5089
+    },
+    "pulmonary_regurgitation_moderate_or_greater_flag": {
+      "nonmissing": 5442,
+      "positive": 20,
+      "negative": 5422
+    },
+    "rv_systolic_dysfunction_moderate_or_greater_flag": {
+      "nonmissing": 5442,
+      "positive": 419,
+      "negative": 5023
+    },
+    "pericardial_effusion_moderate_large_flag": {
+      "nonmissing": 5442,
+      "positive": 69,
+      "negative": 5373
+    },
+    "pasp_gte_45_flag": {
+      "nonmissing": 5442,
+      "positive": 699,
+      "negative": 4743
+    },
+    "tr_max_gte_32_flag": {
+      "nonmissing": 5442,
+      "positive": 375,
+      "negative": 5067
+    },
+    "shd_moderate_or_greater_flag": {
+      "nonmissing": 5442,
+      "positive": 2318,
+      "negative": 3124
+    }
+  },
+  "model_checks": {
+    "unet__e0c0m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e0c0m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e0c0m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e0c0m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e0c1m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e0c1m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e0c1m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e0c1m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e1c0m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e1c0m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e1c0m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e1c0m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e1c1m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e1c1m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e1c1m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "unet__e1c1m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e0c0m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e0c0m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e0c0m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e0c0m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e0c1m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e0c1m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e0c1m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e0c1m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e1c0m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e1c0m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e1c0m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e1c0m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e1c1m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e1c1m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e1c1m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "msvae__e1c1m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e0c0m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e0c0m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e0c0m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e0c0m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e0c1m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e0c1m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e0c1m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e0c1m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e1c0m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e1c0m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e1c0m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e1c0m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e1c1m0d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e1c1m0d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e1c1m1d0__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    },
+    "ecgaim__e1c1m1d1__s42": {
+      "status": "pass",
+      "records": 5442,
+      "label_shape": [
+        5442,
+        12
+      ],
+      "label_hash": "a3030dbeedf75683cda617b15b0e061a80b67ec16ecc3a850aa222c5231d13e3"
+    }
+  },
+  "prediction_metrics_status": "computed_with_official_frozen_echonext_minimodel",
+  "interpretation": "Echocardiography-derived SHD labels are identity-checked across the official reference and every reconstructed clean table."
+}

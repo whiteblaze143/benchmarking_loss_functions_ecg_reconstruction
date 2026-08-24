@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "llm-chat": {
+      "command": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/Auto-claude-code-research-in-sleep/.venv/bin/python3",
+      "args": [
+        "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/Auto-claude-code-research-in-sleep/mcp-servers/llm-chat/server.py"
+      ],
+      "env": {
+        "LLM_BASE_URL": "https://api.ollama.com/v1",
+        "LLM_API_KEY": "acc8fd52802842a6a18723fd828d4d6f.K-g6fwQq8RiqPsw2rRVrReHJ",
+        "LLM_MODEL": "nemotron-3-nano:30b"
+      }
+    }
+  }
+}

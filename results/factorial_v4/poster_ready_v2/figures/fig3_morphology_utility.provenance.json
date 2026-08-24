@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/scripts/style.py",
+  "sources": {
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_evidence/familywise_endpoints.csv": "74072f81701ac031332f438133c492643236e631e234acfb2b19562e141b4e5b"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig3_morphology_utility.pdf",
+      "sha256": "aed36e9499771271f5e9252ce8f091eed3a504b54fea96bb5a084e5f65790088"
+    },
+    "svg": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig3_morphology_utility.svg",
+      "sha256": "06a67fbc7971fa6c6420fbf78e7e4931cd3c07b22e93426890fd68799c37e2b5"
+    },
+    "png": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig3_morphology_utility.png",
+      "sha256": "525fde83ae9918c2ab6bb139521f4a27db01b2c18952afa5edf4011d753d939d"
+    }
+  },
+  "caption": "Full objective minus MSE-only base for the three prespecified endpoint families. QRS and ST improve in all architectures, whereas diagnostic AUROC changes are not significant at within-architecture \u03b1=0.0167. Error bars are 95% patient-cluster BCa intervals.",
+  "style": "poster_v2_colorblind_vector"
+}

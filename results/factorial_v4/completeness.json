@@ -1,0 +1,33 @@
+{
+  "checks": {
+    "primary_cells_48": true,
+    "confirmation_configurations_9": true,
+    "confirmation_runs_18": true,
+    "confirmation_validation_records_2183": true,
+    "clean_records_2198": true,
+    "stress_records_2198": true,
+    "core_stress_conditions_17": true,
+    "fitbit_conditions_all_or_none": true,
+    "ecgfounder_complete": true,
+    "ecgfounder_noninferiority_tested_48": true,
+    "ecgfounder_noninferiority_passes_32": true,
+    "morphology_coverage_reported": true,
+    "per_record_artifacts_present": true,
+    "paper_parity_anchors_5": true,
+    "paper_parity_records_2198": true,
+    "paper_parity_metrics_complete": true,
+    "echonext_cells_48": true,
+    "echonext_clean_records_5442": true,
+    "echonext_morphology_records_2198": true,
+    "echonext_stress_records_2198": true,
+    "echonext_stress_conditions_17": true,
+    "echonext_per_record_artifacts_present": true,
+    "echonext_shd_labels_attached": true,
+    "smartwatch_cells_48": true,
+    "smartwatch_protocol_complete": true,
+    "factorial_effect_rows_complete": true,
+    "supplemental_4factor_effect_rows_complete_valid_families": true,
+    "familywise_endpoint_tests_9": true
+  },
+  "status": "complete"
+}

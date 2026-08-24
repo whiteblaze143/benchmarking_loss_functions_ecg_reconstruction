@@ -1,0 +1,38 @@
+=== EFFECT OF VCG BY LEAD (MAE) ===
+lead            V3         V6
+has_vcg                      
+False    28.465737  41.024671
+True     23.170605  15.108577
+
+=== EFFECT OF EINTHOVEN BY LEAD (MAE) ===
+lead                  V3         V6
+has_einthoven                      
+False          26.496767  18.737148
+True           26.436434  37.750892
+
+=== EFFECT OF MMD KERNEL BY FEATURE (MAE) ===
+clinical_feature     P_Amp  QT_Interval_ms  ...     S_Amp     T_Amp
+mmd_kernel                                  ...                    
+0                 0.034948      185.924844  ...  0.198861  0.125930
+1                 0.046370      177.694456  ...  0.120159  0.107166
+2                 0.040437      171.165272  ...  0.163235  0.111537
+3                 0.070439      167.154728  ...  0.185914  0.166372
+4                 0.065355      159.557439  ...  0.139081  0.153158
+
+[5 rows x 6 columns]
+
+=== EFFECT OF ED ON VARIANCE RATIO BY FEATURE ===
+clinical_feature     P_Amp  QT_Interval_ms  ...     S_Amp     T_Amp
+has_ed                                      ...                    
+False             1.433082        1.523467  ...  1.374899  1.086163
+True              0.711731        2.360534  ...  0.764117  0.477855
+
+[2 rows x 6 columns]
+
+=== EFFECT OF DERIVATIVE ON FEATURES (MAE) ===
+clinical_feature     P_Amp  QT_Interval_ms  ...     S_Amp     T_Amp
+has_deriv                                   ...                    
+False             0.037265      125.113856  ...  0.134061  0.106521
+True              0.082331      276.813133  ...  0.210852  0.185491
+
+[2 rows x 6 columns]

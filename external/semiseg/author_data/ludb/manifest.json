@@ -1,0 +1,16 @@
+{
+  "index_hashes": {
+    "LUDB_test.csv": "4951bcfa5debec934699394ca52de006facaf2bcb5ac52409b6832676df98e14",
+    "LUDB_train_labeled_1over2.csv": "58a2a317634ca20fd934a5441c71308cb2d2028f70eaa200a85cc94f0aeb4ec6",
+    "LUDB_train_unlabeled.csv": "1d582795d2a2a612d4da0b935fc97688e62edf5fbcc08ff8178b302277321ae7",
+    "LUDB_valid.csv": "c109898bfbf7049a6e4d2d7c330780b58afdd4e4c21905448795c697aee25b94"
+  },
+  "label_dependent_edge_padding": true,
+  "label_dtype": "float64",
+  "protocol": "semiseg_ludb_author_data_v1",
+  "raw_root": "/home/mithunmanivannan/data/ludb",
+  "records": 200,
+  "signal_dtype": "float64",
+  "streams": 2369,
+  "train_labeled_all_sha256": "1d582795d2a2a612d4da0b935fc97688e62edf5fbcc08ff8178b302277321ae7"
+}

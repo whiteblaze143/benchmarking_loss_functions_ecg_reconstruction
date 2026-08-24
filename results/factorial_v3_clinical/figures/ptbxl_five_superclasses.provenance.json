@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/figures/figure_ptbxl_superclasses.py",
+  "inputs": {
+    "results/factorial_v3_clinical/ptbxl_task_metrics.parquet": "2fc52d5e1ae52a31dd17f5048b4df56e9bf6e6e37ab665bfed92f382dc467c13"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "results/factorial_v3_clinical/figures/ptbxl_five_superclasses.pdf",
+      "sha256": "4996c3eeb20732769a3705718dfa56c7959d3ee27182ed2426721a936446ba91"
+    },
+    "svg": {
+      "path": "results/factorial_v3_clinical/figures/ptbxl_five_superclasses.svg",
+      "sha256": "bcc86e44e0a9a282e1729f871446d055118887866b71dcc5b23e909f5a918278"
+    },
+    "png": {
+      "path": "results/factorial_v3_clinical/figures/ptbxl_five_superclasses.png",
+      "sha256": "ccb41844831797f18b4d0db9dcffb5a615b9229ca0551aca2d4e09fc48626107"
+    }
+  },
+  "metadata": {
+    "selection": "base, validation-best, and full per family"
+  }
+}

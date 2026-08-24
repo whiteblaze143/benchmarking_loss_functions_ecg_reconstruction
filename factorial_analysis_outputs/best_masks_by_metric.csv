@@ -1,0 +1,6 @@
+outcome_group,criterion,best_model_id,best_mask,value
+biomarker,mean_mae,f_1000004_s42,1000004,0.3473
+biomarker,mean_pearson,f_1000000_s42,1000000,0.5772
+biomarker,mean_r2,f_1000000_s42,1000000,0.3331
+biomarker,mean_auroc,f_1011000_s42,1011000,0.834
+biomarker,mean_auprc,f_1011004_s42,1011004,0.0596

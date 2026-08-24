@@ -1,0 +1,856 @@
+# EchoNext Classifier and External Diagnostic Validation
+
+EchoNext supplies a **frozen multimodal downstream classifier** whose predictions use the ECG waveform plus seven tabular covariates. The benchmark changes the waveform while those covariates remain unchanged. Retained performance therefore cannot be attributed solely to reconstructed morphology.
+
+## What is being evaluated?
+
+For every external test ECG $x_i$, a reconstruction model observes only leads $I$, $II$, and $V_2$ and predicts the full 12-lead signal $\hat{x}_i$. Let $z_i$ contain sex, age, ventricular rate, atrial rate, PR interval, QRS duration, and QTc. The official frozen ResNet1D-tabular minimodel produces:
+
+$$f(x_i,z_i)=(p_{i1},\ldots,p_{i12}),\qquad
+f(\hat{x}_i,z_i)=(\hat p_{i1},\ldots,\hat p_{i12}).$$
+
+There are two distinct evaluation questions:
+
+1. **Label utility:** how well does $f(\hat{x})$ predict the released binary echo-derived labels?
+2. **Probability fidelity:** how close is $f(\hat{x},z)$ to $f(x,z)$ on a paired record?
+
+They are not interchangeable. AUROC can remain stable while individual probabilities shift substantially, and probability fidelity can be high for a poorly discriminating classifier. Since $z$ is fixed, both mix waveform information with a tabular-information floor.
+
+## The 12 classifier endpoints
+
+The test-set supports are fixed and identity-checked across every model:
+
+| Endpoint | Positive / 5,442 | Prevalence |
+|---|---:|---:|
+| LVEF ≤45% | 962 | 17.68% |
+| LV wall thickness ≥13 mm | 1,061 | 19.50% |
+| Moderate-or-greater aortic stenosis | 286 | 5.26% |
+| Moderate-or-greater aortic regurgitation | 66 | 1.21% |
+| Moderate-or-greater mitral regurgitation | 337 | 6.19% |
+| Moderate-or-greater tricuspid regurgitation | 353 | 6.49% |
+| Moderate-or-greater pulmonary regurgitation | 20 | 0.37% |
+| Moderate-or-greater RV systolic dysfunction | 419 | 7.70% |
+| Moderate/large pericardial effusion | 69 | 1.27% |
+| PASP ≥45 mmHg | 699 | 12.84% |
+| TR maximum velocity ≥3.2 m/s | 375 | 6.89% |
+| Moderate-or-greater composite SHD | 2,318 | 42.59% |
+
+The extreme support imbalance changes what “good” means. For pulmonary regurgitation, one error moves sensitivity by five percentage points. A stable macro AUROC can therefore coexist with unusable thresholded performance for a rare endpoint.
+
+## Frozen-classifier contract
+
+The benchmark table states that probabilities were computed with the **official frozen EchoNext minimodel** and uses an official fixed threshold of 0.5. A credible external evaluation must preserve:
+
+- classifier weights and architecture;
+- the official lead order;
+- official clipping and train-derived z-score parameters;
+- sampling rate and temporal length expected by the classifier;
+- one-to-one record and label order;
+- no threshold tuning on the external test labels.
+
+The official tabular transformer and exact seven covariates are part of this contract. Atrial-rate and PR-interval missingness is handled by the repository adapter before transformation. Rates and intervals are not recomputed from each reconstruction, so unchanged ECG-machine measurements can retain label information across all loss cells.
+
+### Isolating waveform contribution
+
+The current protocol measures end-to-end degradation with covariates held constant. Waveform attribution additionally requires: original waveform + original tabular; reconstructed waveform + original tabular; tabular-only; waveform-only or masked-tabular; and, if intended, reconstructed waveform + intervals recomputed from that reconstruction.
+
+If a threshold is recalibrated using the same 5,442 labels, the result is no longer a clean external test. Threshold adaptation requires a separate validation subset and must be reported as a different protocol.
+
+## Understanding every reported metric
+
+### Discrimination
+
+AUROC estimates
+
+$$P(s^+>s^-),$$
+
+the probability that a random positive receives a higher score than a random negative. It is threshold independent but can be optimistic under extreme class imbalance. Average precision (AP) emphasizes positive-class ranking and should always be compared with the task prevalence baseline.
+
+### Thresholded utility
+
+At threshold 0.5, the repository reports sensitivity, specificity, precision, negative predictive value, F1, accuracy, and balanced accuracy. F1 is
+
+$$F_1=\frac{2\,\mathrm{precision}\,\mathrm{recall}}
+{\mathrm{precision}+\mathrm{recall}}.$$
+
+These values characterize the frozen operating point, not the best achievable operating point. Poor F1 may reflect calibration/threshold transport even when ranking remains useful.
+
+### Calibration
+
+Brier score, log loss, expected calibration error (ECE), and maximum calibration error (MCE) quantify probability quality. ECE depends on binning and can understate localized miscalibration, especially for rare labels. Reliability diagrams and class-conditional calibration curves should accompany summary numbers.
+
+## Reading the real classifier table
+
+The long table contains **576 rows = 48 reconstruction models × 12 tasks** and 28 fields. Every row retains sample size, support, prevalence, threshold source, discrimination, thresholded metrics, calibration, and confusion counts.
+
+## Interactive EchoNext Downstream Diagnostic Performance Viewer
+
+Below, we load `results/comprehensive_latest_48_models/tables/echonext_shd_per_task.csv` and compare downstream classification AUROC and F1-scores across key structural heart disease endpoints (e.g., LVEF $\le 45\%$, Aortic Stenosis, Composite SHD):
+
+```{python}
+#| label: echonext-shd-interactive-plot
+from pathlib import Path
+import pandas as pd
+import numpy as np
+import plotly.express as px
+
+ROOT = Path("..")
+
+# Load EchoNext per-task results
+echonext_df = pd.read_csv(ROOT / "results/comprehensive_latest_48_models/tables/echonext_shd_per_task.csv")
+
+# Filter key diagnostic tasks
+selected_tasks = [
+    "lvef_lte_45", 
+    "aortic_stenosis_moderate_or_greater", 
+    "composite_shd_moderate_or_greater"
+]
+sub_df = echonext_df[echonext_df['task'].isin(selected_tasks)].copy()
+sub_df['family'] = sub_df['model_id'].str.split("__").str[0]
+
+# Interactive Scatter Plot: AUROC vs F1 Score grouped by Family & Task
+fig_shd = px.scatter(
+    sub_df, 
+    x="auroc", 
+    y="f1", 
+    color="family", 
+    symbol="task",
+    hover_data=["model_id", "sensitivity", "specificity", "brier"],
+    title="EchoNext Structural Heart Disease Diagnostic Performance (AUROC vs F1)",
+    labels={"auroc": "Downstream Classifier AUROC", "f1": "Downstream F1-Score at 0.5 Threshold"}
+)
+
+fig_shd.update_layout(
+    template="plotly_dark",
+    height=500,
+    margin=dict(l=20, r=20, t=50, b=20)
+)
+fig_shd.show()
+```
+
+### Task-level AUROC heterogeneity across model families
+
+This view shows the distribution of reconstructed-waveform AUROC across the 16 loss cells in each architecture family, separately for every endpoint. It is a task-level discrimination overview—not paired probability drift. Paired $p_{\text{recon}}-p_{\text{ref}}$ is computed later from the archived record-level probabilities, where the original-waveform prediction for the same patient is actually available.
+
+```{python}
+#| label: echonext-task-auroc-boxplots
+import plotly.express as px
+
+echonext_df['family'] = echonext_df['model_id'].str.split("__").str[0]
+
+fig_task_auroc = px.box(
+    echonext_df, 
+    x="task", 
+    y="auroc", 
+    color="family",
+    title="EchoNext 12-Task Diagnostic AUROC Variation Across Model Families",
+    labels={"auroc": "Task AUROC Score", "task": "Structural Heart Disease Task"}
+)
+fig_task_auroc.update_layout(
+    template="plotly_dark", 
+    height=480, 
+    xaxis_tickangle=-45,
+    margin=dict(l=20, r=20, t=50, b=80)
+)
+fig_task_auroc.show()
+```
+
+---
+
+
+
+```{python}
+#| label: echonext-classifier-table
+from pathlib import Path
+import pandas as pd
+import numpy as np
+
+ROOT = Path("..")
+tasks = pd.read_csv(
+    ROOT / "results/comprehensive_latest_48_models/tables/echonext_shd_per_task.csv"
+)
+
+pd.DataFrame({
+    "quantity": ["rows", "models", "tasks", "records per row",
+                 "minimum positives", "maximum positives"],
+    "value": [len(tasks), tasks.model_id.nunique(), tasks.task.nunique(),
+              int(tasks.n.min()), int(tasks.support_positive.min()),
+              int(tasks.support_positive.max())]
+})
+```
+
+The table above contains label-based metrics for reconstructions. The manifest refers to a companion 34 MB JSON, but that loose file is not present in the current checkout. The locked tar archive does contain the reference and per-record reconstructed probabilities, so the next blocks recompute the reference and fidelity summaries directly from those record-level artifacts rather than relying on a missing path or transcribed values.
+
+### Architecture × loss decoding
+
+A model ID such as `unet__e1c0m1d1__s42` encodes:
+
+- architecture family: U-Net, MultiScale-VAE (`msvae`), or ECG-AIM;
+- `e`: MSE toggle;
+- `c`: correlation-loss toggle;
+- `m`: MMD toggle;
+- `d`: derivative-loss toggle;
+- seed 42 for the locked primary grid.
+
+The design includes cells with `e0`; for U-Net and MultiScale-VAE these are auxiliary-loss-only objectives, while ECG-AIM also retains its tokenizer base reconstruction objective. Interpretation must therefore be architecture aware: “all toggles off” is not necessarily an identical mathematical objective across families.
+
+## A concrete rare-task example
+
+For `ecgaim__e0c0m0d0__s42`, the aortic-stenosis task has AUROC 0.851 but only 286 positives. At the frozen 0.5 threshold, sensitivity is 0.790 and specificity 0.740, while precision is only 0.144 because false positives (1,341) greatly outnumber true positives (226). This is not a contradiction: discrimination, calibration, threshold choice, and prevalence answer different questions.
+
+The pulmonary-regurgitation task is more fragile: just 20 positives support its estimates. Its metrics should be shown with uncertainty and treated as exploratory rather than given equal evidential weight in an unqualified macro mean.
+
+## Required aggregate views
+
+No single summary is sufficient. The external chapter should include:
+
+1. **Per-task heatmap:** AUROC or AP for all 48 cells × 12 tasks.
+2. **Architecture-stratified factorial effects:** whether each loss term helps consistently within U-Net, MultiScale-VAE, and ECG-AIM.
+3. **Prevalence-versus-performance plot:** exposes metrics dominated by rare-task variance.
+4. **Calibration panel:** ECE/Brier plus reliability plots for common and rare endpoints.
+5. **Probability-drift analysis:** paired $\hat p-p$ distributions against the original 12-lead classifier.
+6. **Worst-record audit:** ECG overlays for large diagnostic drift despite acceptable morphology metrics.
+
+```{python}
+#| label: echonext-macro-summary
+#| tbl-cap: "Descriptive macro classifier metrics across 12 EchoNext tasks."
+macro = (
+    tasks.groupby("model_id", as_index=False)
+    .agg(macro_auroc=("auroc", "mean"),
+         macro_ap=("average_precision", "mean"),
+         macro_f1=("f1", "mean"),
+         macro_brier=("brier", "mean"),
+         macro_ece=("ece", "mean"))
+)
+macro.sort_values("macro_auroc", ascending=False).head(12)
+```
+
+This table is descriptive ranking, not a significance analysis. Model selection after inspecting all 48 external-test rows would leak test information. Confirmatory claims should be tied to prespecified contrasts such as full composite versus MSE-only within architecture.
+
+## Original-waveform reference and paired probability fidelity
+
+The original-waveform reference reaches macro AUROC **0.8026**, macro AP **0.3115**, macro Brier **0.1639**, and macro ECE **0.2516**. These are the correct reference values for asking how much the reconstruction-plus-fixed-tabular pipeline degrades the frozen multimodal classifier. They are not an upper bound on an ECG-only classifier because the same seven tabular covariates are supplied.
+
+```{python}
+#| label: echonext-reference-and-anchor-fidelity
+#| tbl-cap: "Original-waveform reference and reconstructed anchor metrics recomputed from locked per-record EchoNext artifacts."
+import io
+import re
+import tarfile
+from sklearn.metrics import average_precision_score, brier_score_loss, roc_auc_score
+
+ARCHIVE = (
+    ROOT / "results/comprehensive_latest_48_models/"
+           "referenced_artifacts/factorial_v4.tar.gz"
+)
+reference_member = "factorial_v4/echonext_reference_shd.parquet"
+archive_prefix = "factorial_v4/echonext_per_record/"
+
+anchor_ids = [
+    "unet__e1c0m0d0__s42", "unet__e1c1m1d1__s42",
+    "msvae__e1c0m0d0__s42", "msvae__e1c1m1d1__s42",
+    "ecgaim__e1c0m0d0__s42", "ecgaim__e1c1m1d1__s42",
+]
+
+target_members = {reference_member}
+for model_id in anchor_ids:
+    target_members.add(f"{archive_prefix}{model_id}__echonext_shd.parquet")
+    target_members.add(f"{archive_prefix}{model_id}.parquet")
+archived = {}
+with tarfile.open(ARCHIVE, mode="r:gz") as bundle:
+    for member in bundle:
+        if member.name in target_members:
+            payload = bundle.extractfile(member)
+            archived[member.name] = pd.read_parquet(io.BytesIO(payload.read()))
+missing_members = sorted(target_members - set(archived))
+if missing_members:
+    raise FileNotFoundError(f"Missing required archive members: {missing_members}")
+
+reference_records = archived[reference_member].sort_values("row_index")
+reference_label = np.stack(reference_records.labels)
+reference_probability = np.stack(reference_records.probabilities)
+task_names = (
+    tasks[["task", "task_index"]].drop_duplicates()
+    .sort_values("task_index").task.tolist()
+)
+
+def fixed_bin_ece(y, p, bins=10):
+    edges = np.linspace(0, 1, bins + 1)
+    index = np.clip(np.digitize(p, edges) - 1, 0, bins - 1)
+    return sum(
+        (index == b).mean() * abs(p[index == b].mean() - y[index == b].mean())
+        for b in range(bins) if (index == b).any()
+    )
+
+reference_per_task = {}
+for task_index, task in enumerate(task_names):
+    y = reference_label[:, task_index]
+    p = reference_probability[:, task_index]
+    reference_per_task[task] = {
+        "auroc": roc_auc_score(y, p),
+        "average_precision": average_precision_score(y, p),
+        "brier": brier_score_loss(y, p),
+        "ece": fixed_bin_ece(y, p),
+        "support_positive": int(y.sum()),
+    }
+reference_macro = {
+    metric: float(np.mean([row[metric] for row in reference_per_task.values()]))
+    for metric in ("auroc", "average_precision", "brier", "ece")
+}
+
+echo_results = {
+    "shd_reference": {"clinical": {
+        "macro": reference_macro,
+        "per_task": reference_per_task,
+    }},
+    "models": {},
+}
+for model_id in anchor_ids:
+    per_task = tasks.query("model_id == @model_id").set_index("task")
+    clean = archived[f"{archive_prefix}{model_id}__echonext_shd.parquet"].query(
+        "condition == 'clean'"
+    ).sort_values("row_index")
+    reconstructed_probability = np.stack(clean.probabilities)
+    mask_match = re.search(r"__e([01])c([01])m([01])d([01])__", model_id)
+    factorial_mask = "".join(mask_match.groups())
+    echo_results["models"][model_id] = {
+        "family": model_id.split("__", 1)[0],
+        "factorial_mask": factorial_mask,
+        "shd_clinical": {
+            "macro": {
+                "auroc": float(per_task.auroc.mean()),
+                "average_precision": float(per_task.average_precision.mean()),
+                "brier": float(per_task.brier.mean()),
+                "ece": float(per_task.ece.mean()),
+            },
+            "per_task": per_task.to_dict(orient="index"),
+        },
+        "shd_probability_fidelity": {"macro": {
+            "probability_mae": float(np.abs(reconstructed_probability - reference_probability).mean()),
+            "probability_pearson": float(np.corrcoef(reconstructed_probability.ravel(), reference_probability.ravel())[0, 1]),
+            "threshold_agreement": float(((reconstructed_probability >= 0.5) == (reference_probability >= 0.5)).mean()),
+        }},
+    }
+
+anchor_rows = [{
+    "input": "original 12-lead",
+    "family": "reference",
+    "loss": "not applicable",
+    "macro_AUROC": reference_macro["auroc"],
+    "macro_AP": reference_macro["average_precision"],
+    "macro_Brier": reference_macro["brier"],
+    "macro_ECE": reference_macro["ece"],
+    "probability_MAE_vs_original": 0.0,
+    "probability_Pearson_vs_original": 1.0,
+    "threshold_agreement_vs_original": 1.0,
+}]
+for model_id in anchor_ids:
+    model = echo_results["models"][model_id]
+    clinical = model["shd_clinical"]["macro"]
+    fidelity = model["shd_probability_fidelity"]["macro"]
+    anchor_rows.append({
+        "input": "reconstructed 12-lead",
+        "family": model["family"],
+        "loss": "MSE-only" if model["factorial_mask"] == "1000" else "full",
+        "macro_AUROC": clinical["auroc"],
+        "macro_AP": clinical["average_precision"],
+        "macro_Brier": clinical["brier"],
+        "macro_ECE": clinical["ece"],
+        "probability_MAE_vs_original": fidelity["probability_mae"],
+        "probability_Pearson_vs_original": fidelity["probability_pearson"],
+        "threshold_agreement_vs_original": fidelity["threshold_agreement"],
+    })
+anchor_fidelity = pd.DataFrame(anchor_rows)
+print(f"Recomputed from locked record-level archive: {ARCHIVE.resolve()}")
+anchor_fidelity
+```
+
+The anchor comparison reveals a scientifically important non-monotonic relationship. U-Net's external waveform Pearson improves from MSE-only to full, yet mean absolute classifier-probability drift worsens from **0.184 to 0.207**, threshold agreement falls from **0.714 to 0.667**, and macro AUROC falls from **0.7448 to 0.7233**. MultiScale-VAE similarly moves from probability MAE **0.114 to 0.172** and threshold agreement **0.840 to 0.741**. ECG-AIM behaves differently: its full composite slightly improves probability MAE (**0.0949 to 0.0907**) and threshold agreement (**0.8875 to 0.9003**) while macro AUROC is nearly unchanged. The interaction between architecture and loss therefore matters more than a universal “full loss” claim.
+
+### Per-task reference deltas
+
+Macro averages can hide a collapse on a rare endpoint. The next table joins the reference and reconstructed task metrics by the artifact's task index and reports signed deltas for all six prespecified anchor models.
+
+```{python}
+#| label: echonext-per-task-reference-deltas
+#| tbl-cap: "Per-task reconstructed-minus-original classifier changes for six anchor models."
+reference_tasks = (
+    pd.DataFrame(echo_results["shd_reference"]["clinical"]["per_task"])
+      .T.rename_axis("task").reset_index()
+).rename(columns={
+    "auroc": "reference_auroc",
+    "average_precision": "reference_ap",
+    "brier": "reference_brier",
+    "ece": "reference_ece",
+})
+delta_rows = []
+for model_id in anchor_ids:
+    model = echo_results["models"][model_id]
+    reconstructed = (
+        pd.DataFrame(model["shd_clinical"]["per_task"])
+          .T.rename_axis("task").reset_index()
+    )
+    joined = reconstructed.merge(
+        reference_tasks[
+            ["task", "reference_auroc", "reference_ap",
+             "reference_brier", "reference_ece"]
+        ],
+        on="task",
+        validate="one_to_one",
+    )
+    joined["model_id"] = model_id
+    joined["delta_auroc"] = joined["auroc"] - joined["reference_auroc"]
+    joined["delta_ap"] = joined["average_precision"] - joined["reference_ap"]
+    joined["delta_brier"] = joined["brier"] - joined["reference_brier"]
+    joined["delta_ece"] = joined["ece"] - joined["reference_ece"]
+    delta_rows.append(joined)
+task_deltas = pd.concat(delta_rows, ignore_index=True)
+task_deltas[[
+    "model_id", "task", "support_positive",
+    "reference_auroc", "auroc", "delta_auroc",
+    "reference_ap", "average_precision", "delta_ap",
+    "delta_brier", "delta_ece",
+]].sort_values(["model_id", "delta_auroc"])
+```
+
+The aggregate JSON stores historical paths that are not materialized as loose files, but the record-level data are present inside the locked `factorial_v4.tar.gz` archive. The next audit reads those Parquet members directly from the archive. It does not rerun the classifier, approximate record-level variation from macro summaries, or extract hundreds of megabytes into an undocumented working directory.
+
+```{python}
+#| label: echonext-record-level-load
+#| tbl-cap: "Record-level EchoNext archive integrity and join audit."
+import io
+import tarfile
+
+ARCHIVE = (
+    ROOT / "results/comprehensive_latest_48_models/"
+           "referenced_artifacts/factorial_v4.tar.gz"
+)
+archive_prefix = "factorial_v4/echonext_per_record/"
+reference_member = "factorial_v4/echonext_reference_shd.parquet"
+target_members = {reference_member}
+for model_id in anchor_ids:
+    target_members.add(f"{archive_prefix}{model_id}__echonext_shd.parquet")
+    target_members.add(f"{archive_prefix}{model_id}.parquet")
+
+archived = {}
+with tarfile.open(ARCHIVE, mode="r:gz") as bundle:
+    for member in bundle:
+        if member.name in target_members:
+            payload = bundle.extractfile(member)
+            archived[member.name] = pd.read_parquet(io.BytesIO(payload.read()))
+
+missing_members = sorted(target_members - set(archived))
+if missing_members:
+    raise FileNotFoundError(f"Missing required archive members: {missing_members}")
+
+reference_records = archived[reference_member].sort_values("row_index")
+test_metadata = pd.read_csv(
+    ROOT / "data/echonext/echonext_metadata_100k.csv"
+).query("split == 'test'")
+
+archive_gate = pd.DataFrame({
+    "quantity": [
+        "archive exists", "required Parquet members found",
+        "reference records", "unique reference ECG keys",
+        "test metadata records", "reference keys matched to metadata",
+        "reference label vectors with 12 tasks",
+        "reference probability vectors with 12 tasks",
+    ],
+    "value": [
+        ARCHIVE.is_file(), len(archived), len(reference_records),
+        reference_records.ecg_key.nunique(), len(test_metadata),
+        reference_records.ecg_key.isin(test_metadata.ecg_key).sum(),
+        reference_records.labels.map(len).eq(12).sum(),
+        reference_records.probabilities.map(len).eq(12).sum(),
+    ],
+})
+print(f"Loaded record-level classifier outputs from: {ARCHIVE.resolve()}")
+archive_gate
+```
+
+The identity checks above are deliberately strict: all 5,442 reference rows have unique ECG keys, all keys join the released test metadata, and every label/probability vector has exactly 12 entries. The archived reconstruction files also contain the clean external cohort plus 17 noise conditions. The analysis below selects `condition == "clean"` explicitly; noise-stress rows are not silently pooled into clean external validation.
+
+### Paired drift distribution and patient-cluster uncertainty
+
+Mean absolute probability drift can hide a small tail of severe diagnostic changes. We therefore report the full record-level distribution and a patient-cluster interval. The interval first averages repeated ECGs within patient, then resamples patients; its estimand is the mean drift for an equally weighted EchoNext test patient, not an artificially independent mean over ECG rows.
+
+```{python}
+#| label: echonext-record-drift-tails
+#| tbl-cap: "Paired record-level probability drift relative to the original 12-lead classifier."
+task_names = list(echo_results["shd_reference"]["clinical"]["per_task"])
+reference_probability = np.stack(reference_records.probabilities)
+reference_label = np.stack(reference_records.labels)
+reference_lookup = reference_records[["row_index", "ecg_key"]].copy()
+reference_lookup["reference_probability"] = list(reference_probability)
+reference_lookup["labels"] = list(reference_label)
+
+rng = np.random.default_rng(20260731)
+record_frames = []
+for model_id in anchor_ids:
+    shd_member = f"{archive_prefix}{model_id}__echonext_shd.parquet"
+    clean = (
+        archived[shd_member].query("condition == 'clean'")
+        .sort_values("row_index")
+    )
+    if len(clean) != len(reference_records):
+        raise ValueError(f"{model_id}: clean row count does not match reference")
+    if not np.array_equal(clean.ecg_key.to_numpy(),
+                          reference_records.ecg_key.to_numpy()):
+        raise ValueError(f"{model_id}: ECG order/key mismatch")
+    reconstructed_probability = np.stack(clean.probabilities)
+    absolute_delta = np.abs(reconstructed_probability - reference_probability)
+    threshold_delta = (
+        (reconstructed_probability >= 0.5) !=
+        (reference_probability >= 0.5)
+    )
+    frame = reference_records[["row_index", "ecg_key"]].copy()
+    frame["model_id"] = model_id
+    frame["family"] = echo_results["models"][model_id]["family"]
+    frame["loss"] = (
+        "MSE-only"
+        if echo_results["models"][model_id]["factorial_mask"] == "1000"
+        else "full"
+    )
+    frame["probability_drift"] = absolute_delta.mean(axis=1)
+    frame["threshold_disagreement"] = threshold_delta.mean(axis=1)
+    frame["largest_task_index"] = absolute_delta.argmax(axis=1)
+    frame["largest_task"] = frame["largest_task_index"].map(
+        lambda index: task_names[index]
+    )
+    frame["largest_task_drift"] = absolute_delta.max(axis=1)
+    frame["reference_probability_vector"] = list(reference_probability)
+    frame["reconstructed_probability_vector"] = list(
+        reconstructed_probability
+    )
+    record_frames.append(frame)
+
+record_drift = (
+    pd.concat(record_frames, ignore_index=True)
+    .merge(
+        test_metadata[[
+            "ecg_key", "patient_key", "age_at_ecg", "sex",
+            "race_ethnicity", "location_setting", "acquisition_year",
+        ]],
+        on="ecg_key", how="left", validate="many_to_one",
+    )
+)
+
+tail_rows = []
+for model_id, group in record_drift.groupby("model_id", sort=False):
+    patient_means = group.groupby("patient_key").probability_drift.mean()
+    bootstrap = np.array([
+        rng.choice(patient_means.to_numpy(), len(patient_means), replace=True).mean()
+        for _ in range(1000)
+    ])
+    tail_rows.append({
+        "model_id": model_id,
+        "patients": patient_means.size,
+        "record_mean": group.probability_drift.mean(),
+        "patient_weighted_mean": patient_means.mean(),
+        "patient_bootstrap_95%_low": np.quantile(bootstrap, 0.025),
+        "patient_bootstrap_95%_high": np.quantile(bootstrap, 0.975),
+        "median": group.probability_drift.median(),
+        "p90": group.probability_drift.quantile(0.90),
+        "p95": group.probability_drift.quantile(0.95),
+        "p99": group.probability_drift.quantile(0.99),
+        "maximum": group.probability_drift.max(),
+        "threshold_disagreement": group.threshold_disagreement.mean(),
+    })
+drift_tails = pd.DataFrame(tail_rows)
+drift_tails
+```
+
+All 5,442 test ECGs map to 5,442 unique patient keys, so the patient-cluster and record estimands coincide in this release; the code nevertheless preserves the correct clustering unit if repeated test ECGs are introduced later. The tail analysis sharpens the architecture interaction:
+
+- U-Net full loss raises mean drift from **0.1839 to 0.2066**, the 95th percentile from **0.3258 to 0.3712**, and task-level threshold disagreement from **28.6% to 33.3%**.
+- MultiScale-VAE full loss raises mean drift from **0.1145 to 0.1721**, the 95th percentile from **0.2734 to 0.3537**, and threshold disagreement from **16.0% to 25.9%**.
+- ECG-AIM full loss slightly lowers mean drift from **0.0949 to 0.0907** and threshold disagreement from **11.2% to 10.0%**; its 95th-percentile drift is nearly unchanged (**0.2300 versus 0.2277**).
+
+Even ECG-AIM has individual records with mean drift above 0.53. The maximum is therefore an audit trigger, not a population estimate; its record is identified below.
+
+### Calibration and reliability on the composite endpoint
+
+Brier score and equal-width ECE are recomputed from the archived labels and probabilities for the composite SHD task. The reliability diagram uses the same fixed ten bins for the original waveform and every reconstruction. Empty bins are omitted rather than assigned invented observed rates.
+
+```{python}
+#| label: echonext-composite-reliability
+#| fig-cap: "Reliability of the frozen EchoNext composite-SHD output for original and reconstructed waveforms. Marker size is proportional to bin support."
+import plotly.graph_objects as go
+
+composite_index = task_names.index("shd_moderate_or_greater")
+composite_labels = reference_label[:, composite_index]
+bin_edges = np.linspace(0, 1, 11)
+
+def reliability_rows(name, probabilities):
+    bin_id = np.clip(np.digitize(probabilities, bin_edges) - 1, 0, 9)
+    rows = []
+    for index in range(10):
+        selected = bin_id == index
+        if selected.any():
+            rows.append({
+                "input": name,
+                "bin": index,
+                "n": selected.sum(),
+                "mean_probability": probabilities[selected].mean(),
+                "observed_prevalence": composite_labels[selected].mean(),
+            })
+    return rows
+
+reliability = reliability_rows(
+    "original 12-lead", reference_probability[:, composite_index]
+)
+calibration_rows = []
+for name, probabilities in [
+    ("original 12-lead", reference_probability),
+    *[
+        (
+            model_id,
+            np.stack(
+                archived[
+                    f"{archive_prefix}{model_id}__echonext_shd.parquet"
+                ].query("condition == 'clean'").sort_values("row_index").probabilities
+            ),
+        )
+        for model_id in anchor_ids
+    ],
+]:
+    task_probability = probabilities[:, composite_index]
+    rel = pd.DataFrame(reliability_rows(name, task_probability))
+    reliability.extend(rel.to_dict("records"))
+    calibration_rows.append({
+        "input": name,
+        "Brier": np.mean((task_probability - composite_labels) ** 2),
+        "ECE_10_equal_width": np.average(
+            np.abs(rel.mean_probability - rel.observed_prevalence),
+            weights=rel.n,
+        ),
+        "maximum_bin_gap": np.abs(
+            rel.mean_probability - rel.observed_prevalence
+        ).max(),
+    })
+
+reliability = pd.DataFrame(reliability).drop_duplicates(
+    ["input", "bin"], keep="first"
+)
+fig = go.Figure()
+fig.add_trace(go.Scatter(
+    x=[0, 1], y=[0, 1], mode="lines", name="perfect calibration",
+    line=dict(color="black", dash="dash"),
+))
+for name, group in reliability.groupby("input", sort=False):
+    fig.add_trace(go.Scatter(
+        x=group.mean_probability, y=group.observed_prevalence,
+        mode="lines+markers", name=name,
+        marker=dict(size=5 + 12 * np.sqrt(group.n / group.n.max())),
+        customdata=group[["n", "bin"]],
+        hovertemplate=(
+            "mean predicted=%{x:.3f}<br>observed=%{y:.3f}"
+            "<br>n=%{customdata[0]}<br>bin=%{customdata[1]}<extra></extra>"
+        ),
+    ))
+fig.update_layout(
+    xaxis_title="Mean predicted probability",
+    yaxis_title="Observed composite-SHD prevalence",
+    legend_title="Waveform input",
+)
+fig.show()
+pd.DataFrame(calibration_rows)
+```
+
+For composite SHD, the original-waveform classifier has ten-bin ECE **0.0153**. U-Net MSE-only/full rise to **0.1628/0.2105**, and MultiScale-VAE to **0.0691/0.1769**. ECG-AIM remains closer at **0.0342/0.0441**, although its full-loss value is slightly worse than MSE-only despite lower paired probability drift. Calibration is evaluated against the echo-derived label, whereas paired drift uses the original-waveform classifier as its reference. A reconstruction can therefore improve Brier score by chance while moving away from the original classifier—or preserve probabilities while changing calibration. The two endpoints must not be collapsed into a single notion of “preservation.”
+
+### Subgroup transport audit
+
+The next table reports paired drift by sex, valid age band, race/ethnicity, and acquisition setting. Groups with fewer than 100 records or 100 patients are suppressed from comparison. This is a stability rule, not a claim that 100 observations guarantee adequate event support for all 12 diseases.
+
+```{python}
+#| label: echonext-subgroup-probability-drift
+#| tbl-cap: "Largest adequately supported subgroup probability-drift estimates within each anchor model."
+record_drift["age_band"] = pd.cut(
+    record_drift.age_at_ecg,
+    bins=[0, 40, 55, 65, 75, 120],
+    labels=["≤40", "41–55", "56–65", "66–75", ">75"],
+    include_lowest=True,
+)
+subgroup_rows = []
+for model_id, model_group in record_drift.groupby("model_id", sort=False):
+    for dimension in ["sex", "age_band", "race_ethnicity", "location_setting"]:
+        for level, group in model_group.groupby(dimension, observed=True):
+            subgroup_rows.append({
+                "model_id": model_id,
+                "dimension": dimension,
+                "group": str(level),
+                "records": len(group),
+                "patients": group.patient_key.nunique(),
+                "mean_probability_drift": group.probability_drift.mean(),
+                "p95_probability_drift": group.probability_drift.quantile(0.95),
+                "threshold_disagreement": group.threshold_disagreement.mean(),
+            })
+subgroup_drift = pd.DataFrame(subgroup_rows)
+supported_subgroups = subgroup_drift.query(
+    "records >= 100 and patients >= 100"
+)
+(
+    supported_subgroups.sort_values(
+        ["model_id", "mean_probability_drift"],
+        ascending=[True, False],
+    )
+    .groupby("model_id", as_index=False, group_keys=False)
+    .head(6)
+)
+```
+
+The supported subgroup screen identifies younger (≤40 years) and outpatient records among the higher-drift strata for both ECG-AIM anchors; ECG-AIM MSE-only reaches mean drift **0.1081** in outpatients versus **0.0949** overall. For MultiScale-VAE full loss, outpatient mean drift reaches **0.2160** versus **0.1721** overall. These differences are hypotheses for transport review, not adjusted effects: age, setting, race/ethnicity, disease burden, and signal characteristics are correlated. The table compares reconstruction-induced change within the same records and fixed covariates; it is not a fairness verdict and does not estimate task-specific subgroup AUROC where positive support may be sparse.
+
+### Algorithmic worst-record audit
+
+Cases are selected by a prespecified score—mean absolute drift over all 12 classifier outputs—rather than visual attractiveness. The table reports the most affected task and joins the corresponding clean missing-lead morphology row by the archived `row_index`.
+
+```{python}
+#| label: echonext-worst-records
+#| tbl-cap: "Highest paired classifier-drift records for each prespecified anchor model."
+morphology_frames = []
+for model_id in anchor_ids:
+    member = f"{archive_prefix}{model_id}.parquet"
+    morphology = archived[member].query("condition == 'clean'").copy()
+    morphology = morphology.rename(columns={"ecg_id": "row_index"})
+    morphology["model_id"] = model_id
+    morphology_frames.append(morphology)
+morphology = pd.concat(morphology_frames, ignore_index=True)
+record_drift = record_drift.merge(
+    morphology[[
+        "model_id", "row_index", "pearson", "rmse", "mae",
+        "derivative_mse",
+    ]],
+    on=["model_id", "row_index"],
+    how="left",
+    validate="one_to_one",
+)
+
+worst_records = (
+    record_drift.sort_values(
+        ["model_id", "probability_drift"], ascending=[True, False]
+    )
+    .groupby("model_id", as_index=False, group_keys=False)
+    .head(3)
+    .copy()
+)
+worst_records["reference_probability_on_largest_task"] = worst_records.apply(
+    lambda row: row.reference_probability_vector[row.largest_task_index],
+    axis=1,
+)
+worst_records["reconstructed_probability_on_largest_task"] = worst_records.apply(
+    lambda row: row.reconstructed_probability_vector[row.largest_task_index],
+    axis=1,
+)
+worst_records[[
+    "model_id", "ecg_key", "patient_key", "sex", "age_at_ecg",
+    "location_setting", "probability_drift", "largest_task",
+    "largest_task_drift", "reference_probability_on_largest_task",
+    "reconstructed_probability_on_largest_task", "pearson", "rmse",
+]]
+```
+
+Two records recur across architectures: ECG key **6677264** is in the worst three for both ECG-AIM anchors and both MultiScale-VAE anchors, while **7215435** recurs for both ECG-AIM anchors. Pulmonary-regurgitation probability is often the largest-changing output, including flips from approximately 0.06 to 0.80–0.92 and from 0.86 to 0.09–0.12. Because that endpoint has only 20 positives, these rows demand label and waveform adjudication rather than an assumption that either the original or reconstructed probability is clinically correct.
+
+These identifiers make the failure tail reproducible. Waveform overlays still require the corresponding reconstruction tensors, which are not stored in these probability/morphology Parquets; the table therefore does not pretend that a numeric row is already a clinician-adjudicated failure.
+
+## Morphology–diagnostic discordance
+
+External results show that the full composite loss improves EchoNext missing-lead Pearson relative to MSE-only by approximately **+0.1009 for U-Net**, **+0.0647 for MultiScale-VAE**, and **+0.0409 for ECG-AIM**. That is evidence of better transferred morphology. It does not guarantee better SHD classification.
+
+The scientifically interesting records are those where morphology and diagnostic outputs disagree. Define, for record $i$,
+
+$$D_i^{prob}=\frac{1}{12}\sum_{k=1}^{12}
+|f_k(\hat{x}_i,z_i)-f_k(x_i,z_i)|,$$
+
+and compare it with missing-lead Pearson, QRS correlation, ST correlation, and amplitude error. Stratify the scatter plot into four quadrants:
+
+- high morphology / low probability drift: desired preservation;
+- high morphology / high probability drift: classifier-sensitive subtle failure;
+- low morphology / low probability drift: task-irrelevant waveform mismatch;
+- low morphology / high probability drift: clear reconstruction failure.
+
+This diagnostic is stronger than selecting a few attractive overlays because it defines how cases are chosen. The archived record-level files permit an executed first step:
+
+```{python}
+#| label: echonext-morphology-diagnostic-discordance
+#| tbl-cap: "Association and discordant tails between missing-lead morphology and classifier drift."
+from scipy.stats import spearmanr
+
+discordance_rows = []
+for model_id, group in record_drift.groupby("model_id", sort=False):
+    rho, p_value = spearmanr(
+        group.pearson, group.probability_drift, nan_policy="omit"
+    )
+    high_drift = group.probability_drift >= group.probability_drift.quantile(0.90)
+    morphology_median = group.pearson.median()
+    discordance_rows.append({
+        "model_id": model_id,
+        "records": len(group),
+        "Spearman_rho_Pearson_vs_drift": rho,
+        "nominal_p_value": p_value,
+        "morphology_Pearson_median": morphology_median,
+        "drift_p90": group.probability_drift.quantile(0.90),
+        "high_morphology_high_drift_records": (
+            high_drift & (group.pearson >= morphology_median)
+        ).sum(),
+        "low_morphology_high_drift_records": (
+            high_drift & (group.pearson < morphology_median)
+        ).sum(),
+    })
+pd.DataFrame(discordance_rows)
+```
+
+Missing-lead Pearson has only a weak association with probability drift (Spearman $\rho$ **0.039–0.185**) and the sign is positive for all six anchors: globally higher waveform correlation does not imply lower classifier change. Among each model's top drift decile, **266–302 records** still have at-or-above-median morphology correlation. The nominal correlation p-values are diagnostic only; six anchor comparisons, large sample size, and data-dependent tail inspection make them unsuitable as confirmatory evidence. A high-morphology/high-drift row is particularly valuable for waveform review because a favorable global correlation failed to protect the downstream classifier.
+
+## Statistical inference
+
+AUROCs from different reconstructions are paired because predictions refer to the same patients. Use a paired method (patient-cluster bootstrap or a paired DeLong implementation where its assumptions are appropriate). For twelve tasks and multiple architecture contrasts, prespecify multiplicity control.
+
+“No significant decrease” is not equivalence. If diagnostic preservation is the claim, specify a non-inferiority margin $\delta$ before seeing results and test
+
+$$H_0:\mathrm{AUROC}_{recon}-\mathrm{AUROC}_{oracle}\le-\delta.$$
+
+The repository uses an exploratory 0.02 ECGFounder margin elsewhere; that margin cannot automatically be imported into EchoNext without clinical justification. Report the estimate and confidence interval even when a p-value is supplied.
+
+## Subgroup and transport diagnostics
+
+EchoNext metadata enable stratification by age, sex, race/ethnicity, location setting, acquisition year, and relevant ECG intervals. For each prespecified subgroup:
+
+- report $n$ and positive support per task;
+- compare morphology and classifier metrics;
+- estimate paired reconstruction-induced degradation, not only absolute classifier performance;
+- avoid unstable claims where event counts are too small;
+- test whether preprocessing failures cluster by site/era rather than physiology.
+
+Acquisition setting is especially important: emergency, inpatient, and outpatient populations can differ in disease spectrum and signal quality. A model may retain overall AUROC while degrading preferentially in a high-acuity subgroup.
+
+## Failure modes specific to EchoNext
+
+1. **Unit inversion error:** standardized values are treated as physical mV.
+2. **Lead-axis error:** `(N,1,T,12)` is interpreted as `(N,12,T)`.
+3. **Resampling distortion:** 250→500 Hz interpolation smooths QRS energy or shifts fiducials.
+4. **Clipping mismatch:** reconstruction output is compared with clipped external targets without acknowledging censoring.
+5. **Threshold leakage:** 0.5 is replaced after inspecting test labels.
+6. **Macro masking:** common SHD endpoints hide collapse on rare valve lesions.
+7. **Classifier shortcut:** preserved nuisance/site features sustain AUROC despite physiologic distortion.
+8. **Label ambiguity:** echo-derived labels are treated as direct ECG diagnoses.
+
+## Interpretation boundaries
+
+The strongest defensible conclusion is conditional:
+
+> Under the official frozen EchoNext waveform-plus-tabular contract, selected loss compositions improve external missing-lead morphology while permitting measurement of SHD-associated discrimination and calibration with seven covariates held unchanged.
+
+Do not claim that reconstructed ECGs replace echocardiography, that classifier fidelity proves clinical safety, that retained AUROC is attributable only to waveform reconstruction, or that a nonsignificant AUROC difference proves equivalence. External validation does not eliminate waveform ablations or clinician-adjudicated prospective evaluation.
+
+## Reproduction pointers
+
+- Cohort and endpoints: `data/echonext/echonext_metadata_100k.csv`
+- Waveforms: `data/echonext/EchoNext_test_waveforms.npy`
+- Normalization/lead provenance: `data/echonext/PROVENANCE.json`
+- Per-task metrics: `results/comprehensive_latest_48_models/tables/echonext_shd_per_task.csv`
+- Label identity audit: `results/comprehensive_latest_48_models/raw/factorial_v4_2x4/echonext_shd_label_audit.json`
+- Record-level reference, reconstructed predictions, noise conditions, and morphology metrics: `results/comprehensive_latest_48_models/referenced_artifacts/factorial_v4.tar.gz`
+- External heatmap and representative reconstructions: `results/comprehensive_latest_48_models/raw/factorial_v4_2x4/plots/`

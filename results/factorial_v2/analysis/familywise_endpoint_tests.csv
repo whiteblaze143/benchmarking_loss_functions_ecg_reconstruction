@@ -1,0 +1,10 @@
+family,comparison,endpoint,metric,alpha,p_value,reject_null,bootstrap_unit,estimate,ci_low,ci_high,n
+unet,full_111_minus_base_000,QRS,qrs_correlation,0.0167,,False,paired_ptbxl_record,,,,0
+unet,full_111_minus_base_000,ST,st_correlation,0.0167,,False,paired_ptbxl_record,,,,0
+unet,full_111_minus_base_000,diagnostic_utility,ecgfounder_auroc,0.0167,,False,paired_ptbxl_record,,,,0
+msvae,full_111_minus_base_000,QRS,qrs_correlation,0.0167,,False,paired_ptbxl_record,,,,0
+msvae,full_111_minus_base_000,ST,st_correlation,0.0167,,False,paired_ptbxl_record,,,,0
+msvae,full_111_minus_base_000,diagnostic_utility,ecgfounder_auroc,0.0167,,False,paired_ptbxl_record,,,,0
+ecgaim,full_111_minus_base_000,QRS,qrs_correlation,0.0167,,False,paired_ptbxl_record,,,,0
+ecgaim,full_111_minus_base_000,ST,st_correlation,0.0167,,False,paired_ptbxl_record,,,,0
+ecgaim,full_111_minus_base_000,diagnostic_utility,ecgfounder_auroc,0.0167,,False,paired_ptbxl_record,,,,0

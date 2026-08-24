@@ -1,0 +1,15 @@
+{
+  "family": "msvae",
+  "slot": "best",
+  "mask": "110",
+  "seed": 2026,
+  "checkpoint": "checkpoints/factorial_v2/confirmation/msvae__e1c1m1d0__s2026/ul_ecp_best.pt",
+  "sha256": "95acccbd6b6bc9e303d24a87dcb9198cbef40aa50e250417f364250948cf0413",
+  "validation_evaluation": "results/factorial_v2/confirmation/msvae__best__s2026.evaluation.json",
+  "validation_metrics": {
+    "n_samples": 2183,
+    "mse": 0.025441024796629144,
+    "r2": 0.805366265838696,
+    "pearson": 0.920906070171012
+  }
+}

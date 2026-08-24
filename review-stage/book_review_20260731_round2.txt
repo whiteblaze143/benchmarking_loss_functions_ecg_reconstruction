@@ -1,0 +1,62 @@
+Score: 6/10
+Verdict: NOT READY
+Reviewer independence: same-family Codex reviewer; provisional
+
+RESOLVED OR SUBSTANTIALLY IMPROVED
+
+- The running factorial study is now described as 160 mixed-level conditions
+  per seed rather than an invalid 128-cell binary design.
+- Real PTB-XL and EchoNext waveform EDA, split audits, endpoint composition,
+  provenance, and supporting-dataset inventories were added.
+- EchoNext original-waveform reference metrics and anchor-level aggregate
+  fidelity were added.
+- Fixed-window morphology metrics, synthetic demonstrations, and dataset
+  provenance are framed more accurately.
+- The complete Quarto book rendered with the project venv.
+
+CRITICAL
+
+Chapter 10's assertion that record-level EchoNext prediction sidecars are
+unavailable is false. The locked archive
+`results/comprehensive_latest_48_models/referenced_artifacts/factorial_v4.tar.gz`
+contains 97 EchoNext Parquet members, including:
+
+- `factorial_v4/echonext_reference_shd.parquet` (5,442 x 4);
+- clean and noise-condition SHD predictions for the reconstruction models;
+- clean per-record morphology metrics for the same external records.
+
+Minimum fix: stream the archived Parquets and compute paired probability-drift
+tails, patient-cluster uncertainty after joining `patient_key`, reliability and
+calibration, subgroup transport diagnostics, morphology--diagnostic
+discordance, and algorithmically selected worst cases. At minimum, distinguish
+"not materialized as loose files" from "present in the archive."
+
+MAJOR
+
+1. PTB-XL waveform EDA does not yet audit the actual model-input tensors under
+   `data/ptb_xl/tensors/{train,val,test}/*.pt`. These are float32 arrays with
+   expected shape 12 x 5000. Audit every tensor for inventory/metadata
+   alignment, shape, dtype, finite values, flatlines, and duplicate hashes.
+   Compare the tensor distribution and a paired sample with raw high-resolution
+   WFDB data, and document units, resampling, selected leads, and padding.
+
+2. Chapter 8 labels its executable code as a "completion gate," but only
+   manifest enumeration is implemented. The remaining requirements are prose.
+   Implement a machine-readable report for all seven gates or rename the
+   existing code as a manifest gate. Surface the queue state without promoting
+   it to results. At review time the live state contained pending, completed,
+   running, failed, and stuck jobs.
+
+3. Several chapter sources are newer than their rendered HTML. Perform a final
+   full-book render and validate the book from `index.html`.
+
+MINOR
+
+- Chapter 9 lists duplicate hashing as mandatory without executing it over the
+  full tensor inventory.
+- Chapter 4 retains outcome-laden simulation comments such as "suffers,"
+  "preserves," and "ensure high statistical power." Use neutral stipulated
+  scenario language.
+
+Overall: a major improvement from 4/10 to 6/10, but the archived EchoNext
+record-level evidence is the main blocker.

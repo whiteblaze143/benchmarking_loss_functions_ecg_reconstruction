@@ -1,0 +1,142 @@
+{
+  "project": "ecg_factorial_v4_clinical",
+  "cwd": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction",
+  "ssh": "localhost",
+  "conda": "none",
+  "default_cmd": "echo no-default",
+  "preconditions": [],
+  "gpus": [
+    0
+  ],
+  "max_parallel": 1,
+  "gpu_free_threshold_mib": 500,
+  "oom_retry": {
+    "delay": 120,
+    "max_attempts": 3
+  },
+  "phases": [
+    {
+      "name": "integrity_tests",
+      "depends_on": [],
+      "jobs": [
+        {
+          "id": "v3_integrity_tests",
+          "label": "Clinical metrics, EchoNext, smartwatch, factorial, and queue regressions",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python -m pytest -p no:cacheprovider -q tests/test_smartwatch_protocol.py tests/test_clinical_metrics.py tests/test_echonext_classifier.py tests/test_echonext_streaming.py tests/test_factorial_losses.py tests/test_factorial_analysis.py tests/test_clinical_queue_generator.py tests/test_clinical_figures.py tests/test_queue_manager.py"
+        }
+      ]
+    },
+    {
+      "name": "preflight",
+      "depends_on": [
+        "integrity_tests"
+      ],
+      "jobs": [
+        {
+          "id": "v3_preflight",
+          "label": "Frozen registry, official EchoNext, watch header, NSTDB, and disk gates",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/preflight_factorial_v3.py --registry experiment_queue/factorial_v4/model_registry.json --comprehensive results/factorial_v4/comprehensive_results.json --output results/factorial_v4_clinical/preflight.json",
+          "expected_output": "results/factorial_v4_clinical/preflight.json"
+        }
+      ]
+    },
+    {
+      "name": "ptbxl_task_backfill",
+      "depends_on": [
+        "preflight"
+      ],
+      "jobs": [
+        {
+          "id": "v3_ptbxl_task_backfill",
+          "label": "Backfill 150 ECGFounder and five superclass extensive task metrics",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/backfill_ptbxl_clinical_metrics.py --comprehensive results/factorial_v4/comprehensive_results.json --registry experiment_queue/factorial_v4/model_registry.json --output results/factorial_v4_clinical/ptbxl_clinical_metrics.json --database results/factorial_v4_clinical/ptbxl_task_metrics.parquet",
+          "expected_output": "results/factorial_v4_clinical/ptbxl_clinical_metrics.json"
+        }
+      ]
+    },
+    {
+      "name": "clinical_databases",
+      "depends_on": [
+        "ptbxl_task_backfill"
+      ],
+      "jobs": [
+        {
+          "id": "v3_clinical_databases",
+          "label": "Normalize real-GT, stress, simulator, and proxy task databases",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/build_clinical_metrics_database.py --ptbxl results/factorial_v4_clinical/ptbxl_task_metrics.parquet --echonext results/factorial_v4/echonext_results.json --smartwatch results/factorial_v4/smartwatch_results.json --registry experiment_queue/factorial_v4/model_registry.json --output_dir results/factorial_v4_clinical",
+          "expected_output": "results/factorial_v4_clinical/clinical_database_manifest.json"
+        }
+      ]
+    },
+    {
+      "name": "poster_figures",
+      "depends_on": [
+        "clinical_databases"
+      ],
+      "jobs": [
+        {
+          "id": "fig_ptbxl_task_rank",
+          "label": "ECGFounder task-rank and prevalence retention",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/figures/figure_ptbxl_task_rank.py --database results/factorial_v4_clinical/classification_task_metrics.parquet --selection results/factorial_v4/selected_masks.json --output results/factorial_v4_clinical/figures/ptbxl_ecgfounder_task_rank",
+          "expected_output": "results/factorial_v4_clinical/figures/ptbxl_ecgfounder_task_rank.provenance.json"
+        },
+        {
+          "id": "fig_ptbxl_superclasses",
+          "label": "Five-superclass heatmap",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/figures/figure_ptbxl_superclasses.py --database results/factorial_v4_clinical/classification_task_metrics.parquet --selection results/factorial_v4/selected_masks.json --output results/factorial_v4_clinical/figures/ptbxl_five_superclasses",
+          "expected_output": "results/factorial_v4_clinical/figures/ptbxl_five_superclasses.provenance.json"
+        },
+        {
+          "id": "fig_echonext_shd",
+          "label": "EchoNext 12-task SHD comparison",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/figures/figure_echonext_shd.py --database results/factorial_v4_clinical/classification_task_metrics.parquet --selection results/factorial_v4/selected_masks.json --output results/factorial_v4_clinical/figures/echonext_shd_tasks",
+          "expected_output": "results/factorial_v4_clinical/figures/echonext_shd_tasks.provenance.json"
+        },
+        {
+          "id": "fig_echonext_stress",
+          "label": "EchoNext SHD degradation curves",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/figures/figure_echonext_stress.py --database results/factorial_v4_clinical/classification_task_metrics.parquet --selection results/factorial_v4/selected_masks.json --output results/factorial_v4_clinical/figures/echonext_shd_stress",
+          "expected_output": "results/factorial_v4_clinical/figures/echonext_shd_stress.provenance.json"
+        },
+        {
+          "id": "fig_smartwatch_radar",
+          "label": "Direction-corrected smartwatch profile radar",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/figures/figure_smartwatch_radar.py --results results/factorial_v4/smartwatch_results.json --selection results/factorial_v4/selected_masks.json --output results/factorial_v4_clinical/figures/smartwatch_radar",
+          "expected_output": "results/factorial_v4_clinical/figures/smartwatch_radar.provenance.json"
+        },
+        {
+          "id": "fig_smartwatch_protocol",
+          "label": "Calibrated smartwatch simulator accuracy",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/figures/figure_smartwatch_protocol.py --database results/factorial_v4_clinical/smartwatch_protocol_metrics.parquet --output results/factorial_v4_clinical/figures/smartwatch_protocol_accuracy",
+          "expected_output": "results/factorial_v4_clinical/figures/smartwatch_protocol_accuracy.provenance.json"
+        },
+        {
+          "id": "fig_smartwatch_task_rank",
+          "label": "Smartwatch 150-task probability-fidelity rank",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/figures/figure_smartwatch_task_rank.py --database results/factorial_v4_clinical/smartwatch_task_fidelity.parquet --selection results/factorial_v4/selected_masks.json --output results/factorial_v4_clinical/figures/smartwatch_task_rank",
+          "expected_output": "results/factorial_v4_clinical/figures/smartwatch_task_rank.provenance.json"
+        },
+        {
+          "id": "fig_echonext_calibration",
+          "label": "EchoNext composite SHD reliability",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/figures/figure_echonext_calibration.py --results results/factorial_v4/echonext_results.json --selection results/factorial_v4/selected_masks.json --output results/factorial_v4_clinical/figures/echonext_shd_calibration",
+          "expected_output": "results/factorial_v4_clinical/figures/echonext_shd_calibration.provenance.json"
+        }
+      ]
+    },
+    {
+      "name": "completeness",
+      "depends_on": [
+        "poster_figures"
+      ],
+      "jobs": [
+        {
+          "id": "v3_completeness",
+          "label": "Strict per-task, per-record, taxonomy, and figure-hash gate",
+          "cmd": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python scripts/check_factorial_v3_completeness.py --result_dir results/factorial_v4_clinical --evaluation_dir results/factorial_v4",
+          "expected_output": "results/factorial_v4_clinical/completeness.json"
+        }
+      ]
+    }
+  ]
+}

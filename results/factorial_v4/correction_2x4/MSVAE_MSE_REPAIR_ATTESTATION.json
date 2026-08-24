@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-27T02:35:27.807633+00:00",
+  "status": "PASS",
+  "scope": "repaired MultiScale-VAE MSE-off cells for complete 2^4 analysis",
+  "queue_complete": true,
+  "gradient_test": "tests/test_factorial_losses.py::test_msvae_mse_toggle_changes_reconstruction_gradient",
+  "source_sha256": {
+    "unified_latents/engineering/trainers/train_multi_scale_vae.py": "d0d0e51eda4fa7f9ab6b025656b5601c2c6853e5bc5f7710a632646eaa491baa",
+    "unified_latents/engineering/experimental/Multi_Scale_VAE.py": "17484e84d1a4e04015665331d6896ece8e178a1923783c1e63d476122f00d1a1",
+    "scripts/common_loss.py": "20365a8c7530bedd5f9b9d3964e6f9bb26689382d8eba2fcbed66de5372251da",
+    "tests/test_factorial_losses.py": "06ecd0e5d8c2c76fef3f2581a3f1fd95ee0bf2f22d61abefe8ef042e3a39aeff"
+  },
+  "pairs": [
+    {
+      "mse_off_id": "msvae__e0c0m0d0__s42",
+      "mse_on_id": "msvae__e1c0m0d0__s42",
+      "status": "pass",
+      "mse_off_checkpoint_sha256": "d37d8d87b3d18f11229044bf39dbacb4251fe3b8165c81ca1bd19586e3745a35",
+      "mse_on_checkpoint_sha256": "0be4ff76e5a3e1d864ebd032c7c1220ee4c9cb13b987edef1ff7e2c8705d36a3",
+      "training_command": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m0d0__s42 --run_tag msvae__e0c0m0d0__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.0 --fast_eval",
+      "state_tensors_compared": 238,
+      "changed_state_tensors": 234,
+      "maximum_absolute_tensor_difference": 0.08721409738063812
+    },
+    {
+      "mse_off_id": "msvae__e0c0m0d1__s42",
+      "mse_on_id": "msvae__e1c0m0d1__s42",
+      "status": "pass",
+      "mse_off_checkpoint_sha256": "c816a4ff297ced4462e1424236995771a3de11f72bfab6efc8a7dd673f48be86",
+      "mse_on_checkpoint_sha256": "aeb95ded3168e3c5999d706bfa7e95ab53a41be2aae16dd4e74edabf2481d9a4",
+      "training_command": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m0d1__s42 --run_tag msvae__e0c0m0d1__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.0 --lambda_deriv 0.05 --fast_eval",
+      "state_tensors_compared": 238,
+      "changed_state_tensors": 234,
+      "maximum_absolute_tensor_difference": 0.08361142873764038
+    },
+    {
+      "mse_off_id": "msvae__e0c0m1d0__s42",
+      "mse_on_id": "msvae__e1c0m1d0__s42",
+      "status": "pass",
+      "mse_off_checkpoint_sha256": "8d7f40ffc4c8c04140f39eaf67d17732a9aff2fbcb805091f5606ef3ea37bae8",
+      "mse_on_checkpoint_sha256": "f0ee4c8a2a011b3b34d695768f6a67e6f0ef76d68a6cea0dbc063c31cbde9f13",
+      "training_command": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m1d0__s42 --run_tag msvae__e0c0m1d0__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.0 --fast_eval",
+      "state_tensors_compared": 238,
+      "changed_state_tensors": 234,
+      "maximum_absolute_tensor_difference": 0.08982983231544495
+    },
+    {
+      "mse_off_id": "msvae__e0c0m1d1__s42",
+      "mse_on_id": "msvae__e1c0m1d1__s42",
+      "status": "pass",
+      "mse_off_checkpoint_sha256": "8b1c10e0584adfff43f5b3e2bae95baba3f9ff517e4fdb292139eef39abe2619",
+      "mse_on_checkpoint_sha256": "5672574f20f1975e37a341156dbf0c69a31727b6d5160420440d2e04e41500ad",
+      "training_command": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c0m1d1__s42 --run_tag msvae__e0c0m1d1__s42 --lambda_mse 0.0 --lambda_corr 0.0 --lambda_mmd 0.1 --lambda_deriv 0.05 --fast_eval",
+      "state_tensors_compared": 238,
+      "changed_state_tensors": 234,
+      "maximum_absolute_tensor_difference": 0.09009820222854614
+    },
+    {
+      "mse_off_id": "msvae__e0c1m0d0__s42",
+      "mse_on_id": "msvae__e1c1m0d0__s42",
+      "status": "pass",
+      "mse_off_checkpoint_sha256": "83282126a833a8be47f3df72f3da6895f6c606b9930e36c369aa950fd841de0e",
+      "mse_on_checkpoint_sha256": "46df2192fad9334a50d4ce912f342ef47cdef6a1a07b00f93a23513bfd401bf1",
+      "training_command": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m0d0__s42 --run_tag msvae__e0c1m0d0__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.0 --fast_eval",
+      "state_tensors_compared": 238,
+      "changed_state_tensors": 234,
+      "maximum_absolute_tensor_difference": 0.10528452694416046
+    },
+    {
+      "mse_off_id": "msvae__e0c1m0d1__s42",
+      "mse_on_id": "msvae__e1c1m0d1__s42",
+      "status": "pass",
+      "mse_off_checkpoint_sha256": "ef9cefc868fbb6db36cdb7dc37a9fc95382743c72162a8594b93966520e5fd3e",
+      "mse_on_checkpoint_sha256": "eb7670a2fdd417cae73c20b143105715937cea0ee29a390ac86b824c167c40bb",
+      "training_command": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m0d1__s42 --run_tag msvae__e0c1m0d1__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.0 --lambda_deriv 0.05 --fast_eval",
+      "state_tensors_compared": 238,
+      "changed_state_tensors": 234,
+      "maximum_absolute_tensor_difference": 0.04806041717529297
+    },
+    {
+      "mse_off_id": "msvae__e0c1m1d0__s42",
+      "mse_on_id": "msvae__e1c1m1d0__s42",
+      "status": "pass",
+      "mse_off_checkpoint_sha256": "1238bf191f4c96675f1cd2513d4bb769b6a9344bab53e01da72803c665a82948",
+      "mse_on_checkpoint_sha256": "b24cd5eb4435cf9b3997a552de8145cf895a20db317e8d358228b29ff5812f30",
+      "training_command": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m1d0__s42 --run_tag msvae__e0c1m1d0__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.0 --fast_eval",
+      "state_tensors_compared": 238,
+      "changed_state_tensors": 234,
+      "maximum_absolute_tensor_difference": 0.04916193336248398
+    },
+    {
+      "mse_off_id": "msvae__e0c1m1d1__s42",
+      "mse_on_id": "msvae__e1c1m1d1__s42",
+      "status": "pass",
+      "mse_off_checkpoint_sha256": "48c20d6717c7880ef1785303809f99dbfa3ea126f0223818f9b25f6476ab6c30",
+      "mse_on_checkpoint_sha256": "7180ee40d3c6316a218876c448a8e7c1b5280988ad03a8661f4f9bfe6109d11a",
+      "training_command": "PYTHONPATH=. /home/mithunmanivannan/.venv/bin/python unified_latents/engineering/train_multi_scale_vae.py --model_family baseline --data_dir data/ptb_xl/tensors --regime current --no-fm_perceptual --no-mask_aware_encoder --no-split_latent --epochs 10 --batch_size 32 --seed 42 --save_dir checkpoints/factorial_v4/primary/msvae__e0c1m1d1__s42 --run_tag msvae__e0c1m1d1__s42 --lambda_mse 0.0 --lambda_corr 0.5 --lambda_mmd 0.1 --lambda_deriv 0.05 --fast_eval",
+      "state_tensors_compared": 238,
+      "changed_state_tensors": 234,
+      "maximum_absolute_tensor_difference": 0.04821120202541351
+    }
+  ]
+}

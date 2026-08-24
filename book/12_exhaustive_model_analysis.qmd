@@ -1,0 +1,116 @@
+# Generation-Bound Exhaustive Model Analysis
+
+An exhaustive model chapter is useful only when every row names the exact model that produced it. This chapter therefore separates what is currently knowable from what must wait for the compatible grid. It deliberately does not turn partial queue output or a mask-only legacy CSV into clinical conclusions.
+
+::: {.callout-important}
+## Current evidence status
+
+Training is active. A completed queue flag is not sufficient evidence: the checkpoint must also pass the current content-pinned compatibility contract. Model rankings, factorial effects, and clinical diagnoses remain closed until the release gate is complete.
+:::
+
+## Live generation inventory
+
+```{python}
+#| label: exhaustive-live-inventory
+import json
+import re
+from collections import Counter
+from pathlib import Path
+import pandas as pd
+
+ROOT = Path("..")
+state = json.loads((ROOT / "refine-logs/queue/queue_state.json").read_text())
+audit = json.loads((ROOT / "results/checkpoint_store/compatibility_audit.json").read_text())
+manifest = json.loads((ROOT / "refine-logs/factorial_manifest.json").read_text())
+status = Counter(job.get("status", "unknown") for job in state["jobs"])
+manifest_jobs = [job for phase in manifest["phases"] for job in phase["jobs"]]
+identities = []
+for job in manifest_jobs:
+    match = re.fullmatch(r"f_(\d{7})_s(\d+)", job["id"])
+    assert match is not None, job["id"]
+    identities.append((job["id"], match.group(1), int(match.group(2))))
+
+manifest_seeds = sorted({seed for _, _, seed in identities})
+manifest_masks = sorted({mask for _, mask, _ in identities})
+assert len(identities) == 480
+assert len({model_id for model_id, _, _ in identities}) == 480
+assert manifest_seeds == [42, 200, 201]
+assert len(manifest_masks) == 160
+assert {mask[0] for mask in manifest_masks} == {"1"}
+assert all({mask[position] for mask in manifest_masks} == {"0", "1"} for position in range(1, 6))
+assert {mask[6] for mask in manifest_masks} == set("01234")
+
+pd.DataFrame({
+    "quantity": ["pending", "running", "queue-completed", "contract-compatible", "contract-incompatible"],
+    "count": [status["pending"], status["running"], status["completed"],
+              audit["counts"]["compatible"], audit["counts"]["incompatible"]]
+})
+```
+
+The compatible count is the meaningful numerator. Earlier checkpoints produced under a different source bundle or optimizer regime were preserved under quarantine names and requeued; they are not silently pooled with the current generation.
+
+```{python}
+#| label: exhaustive-manifest-identity
+#| tbl-cap: "Authoritative 480-job identity design parsed from the executable queue manifest."
+seed_counts = Counter(seed for _, _, seed in identities)
+kernel_counts = Counter(int(mask[-1]) for _, mask, _ in identities)
+display(pd.DataFrame({
+    "seed": manifest_seeds,
+    "scheduled identities": [seed_counts[seed] for seed in manifest_seeds],
+    "unique masks": [len({mask for _, mask, value in identities if value == seed}) for seed in manifest_seeds],
+}))
+display(pd.DataFrame({
+    "MMD kernel level": sorted(kernel_counts),
+    "scheduled identities": [kernel_counts[level] for level in sorted(kernel_counts)],
+}))
+```
+
+The seed blocks are **42, 200, and 201**, with 160 distinct masks in each block. These values are parsed from `factorial_manifest.json`; they are not inferred from whatever subset has happened to finish.
+
+## Seven-position mask decoded
+
+The label often shortened to “$2^7$” is a seven-character configuration code, not seven binary factors. The first position is fixed MSE, five positions are binary toggles, and the final position selects one of five MMD kernels. Consequently each seed has $2^5\times5=160$ conditions.
+
+| Position | Implemented role | Levels | Training weight / normalizer | Interpretation rule |
+|---:|---|---:|---:|---|
+| 1 | MSE anchor | fixed at 1 | 1.0 / 0.18 | not an estimable factor |
+| 2 | Pearson correlation loss | 0/1 | 1.7 / 1.0 | binary main effect and prespecified interactions |
+| 3 | first-difference L1 loss | 0/1 | 4.1 / 0.12 | binary main effect and prespecified interactions |
+| 4 | Kors-vectorcardiogram angle/magnitude loss | 0/1 | 5.0 / 1.0 | binary main effect and prespecified interactions |
+| 5 | empirical energy-distance loss | 0/1 | 1.0 / 0.05 | binary main effect; composite scale changes sharply |
+| 6 | Goldberger limb-lead consistency loss | 0/1 | 1.0 / 0.1 | binary main effect and prespecified interactions |
+| 7 | MMD kernel selector | 0–4 | 2.3 / 0.042 when active | categorical, never a numeric dose |
+
+With the manifest-bound seeds 42, 200, and 201, the planned grid contains 480 model identities. The primary analysis must retain seed as a training-replicate block and must not treat model fits—or three seeds—as independent patient samples. Patient-level uncertainty is estimated from the test cohort; seed variability addresses optimization replication and is a different uncertainty source.
+
+## Model-level evidence contract
+
+For each model, the final table will include:
+
+- full `model_id`, mask, seed, architecture, and observed-lead set;
+- checkpoint SHA-256, byte size, state schema, and archive locator;
+- source-bundle, environment, preprocessing, and train/validation/test content roots;
+- convergence diagnostics and prespecified exclusion status;
+- paired patient-level reconstruction, morphology, calibration, and downstream-task metrics;
+- uncertainty intervals and subgroup denominators;
+- inference recipe proving that the archived model can be materialized and loaded.
+
+## Why the previous model-by-model prose was withdrawn
+
+The previous draft assigned clinical diagnoses such as “strictly preserves T-wave termination” from aggregate feature means in a legacy CSV. That inference was not supported. A mean QT difference cannot establish waveform-level boundary preservation; it also cannot distinguish delineator failure, pairing error, variance collapse, or checkpoint-generation mismatch. The source file lacked the identity fields needed to resolve those alternatives.
+
+The correct diagnostic chain is:
+
+1. verify checkpoint and dataset identity;
+2. retain paired per-record outputs and delineation quality flags;
+3. report valid-pair denominators and failure rates;
+4. estimate paired bias, limits of agreement, robust slope, and coverage;
+5. stratify by heart rate, rhythm, morphology, sex, age, and signal quality;
+6. inspect representative waveforms under a prespecified selection rule;
+7. only then make a bounded claim about preservation.
+
+## Planned factorial analysis
+
+For endpoint $Y$, a hierarchical model will estimate binary main effects, categorical kernel contrasts, prespecified interactions, seed variability, and paired patient uncertainty. The estimand is a within-architecture, within-cohort contrast—not the largest observed cell mean. Multiplicity control applies within endpoint families, while clinical non-inferiority uses prespecified margins rather than a non-significant superiority test.
+
+The release gate requires all eligible cells, matching contract digests, no duplicate identities, no unresolved checkpoint load failures, and complete primary endpoints. Until then, this chapter is an auditable analysis specification rather than a leaderboard.

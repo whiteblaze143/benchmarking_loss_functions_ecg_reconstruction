@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/figures/figure_ptbxl_task_rank.py",
+  "script_sha256": "df33b4294e1124f68665e673ba6514a1bce71e8e7d6e2fdd049be0dcc786ac0f",
+  "common_helper_sha256": "e57c67c3e4dc0ed56aaab3c3e573bcb4b030954212f41e35f81fe3707434ff3e",
+  "inputs": {
+    "results/factorial_v4_clinical/classification_task_metrics.parquet": "bad90daf6490a6bd0f6e73b07dc70094f86c70990a76fa5f9080fa81345d51b8",
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": "4a645f296f0238019991eb5fcd7b34da196e9eeb6b11a0ce727c04af6fec1218"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "results/factorial_v4_clinical/figures/ptbxl_ecgfounder_task_rank.pdf",
+      "sha256": "8373cb174b6a013466172f0fdf21b8ca7167c6aaa34be9df9f69246ff17f1441"
+    },
+    "svg": {
+      "path": "results/factorial_v4_clinical/figures/ptbxl_ecgfounder_task_rank.svg",
+      "sha256": "66279ab0e7fd0d51ab56cb1824706aafe035a22ef18efdf01a8f7a53382fb7e2"
+    },
+    "png": {
+      "path": "results/factorial_v4_clinical/figures/ptbxl_ecgfounder_task_rank.png",
+      "sha256": "aa97a4ca2f620afa3c6f056ad518183ad5b8cb8c5e2a745c8cbda5a1d39382a5"
+    }
+  },
+  "metadata": {
+    "task_filter": "31/150 ECGFounder tasks with both classes",
+    "selection": "validation-selected masks only",
+    "undefined_tasks": "excluded from AUROC/AP plot and retained in database"
+  }
+}

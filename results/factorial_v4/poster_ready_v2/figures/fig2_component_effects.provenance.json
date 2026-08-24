@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/scripts/style.py",
+  "sources": {
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_evidence/component_effects.csv": "e7d578f0fcfcbb4d000467e089792e9600597bca0ae6a8799643cd04592662bd"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig2_component_effects.pdf",
+      "sha256": "65793f0c582fa991f4c66c326e23579156985cb9667c22836266f38fc3e2ff3f"
+    },
+    "svg": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig2_component_effects.svg",
+      "sha256": "88f65c4118b708ca5919c7660e400136daa79fd131b47dcbaddd192c8b0b8242"
+    },
+    "png": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/poster_ready_v2/figures/fig2_component_effects.png",
+      "sha256": "0923d0d6348c3ac5b5bb8cfa7a42f07eb3306e0c46ae97fc56ca5abaa19768d8"
+    }
+  },
+  "caption": "Average matched on/off component effects within each architecture. Intervals are 95% patient-cluster BCa intervals over 1,904 patients (2,198 ECGs), conditional on the seed-42 trained models.",
+  "style": "poster_v2_colorblind_vector"
+}

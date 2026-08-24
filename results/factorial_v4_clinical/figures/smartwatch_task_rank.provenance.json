@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "script": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/figures/figure_smartwatch_task_rank.py",
+  "script_sha256": "4b1dc3f1c22cb2c13873425b5b5cb5b731ac37840337b80cc4206ebf2cb1577a",
+  "common_helper_sha256": "e57c67c3e4dc0ed56aaab3c3e573bcb4b030954212f41e35f81fe3707434ff3e",
+  "inputs": {
+    "results/factorial_v4_clinical/smartwatch_task_fidelity.parquet": "22b515779e240765345bfbfea9b54010dc8b7103d8529ce27fc5c70855c6a735",
+    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/selected_masks.json": "4a645f296f0238019991eb5fcd7b34da196e9eeb6b11a0ce727c04af6fec1218"
+  },
+  "outputs": {
+    "pdf": {
+      "path": "results/factorial_v4_clinical/figures/smartwatch_task_rank.pdf",
+      "sha256": "ee58ef327260586b5cd5487654821c607f21fbed61dbe434c10fc8d222a43110"
+    },
+    "svg": {
+      "path": "results/factorial_v4_clinical/figures/smartwatch_task_rank.svg",
+      "sha256": "95f304aaaa6da40a64af1707025fc3021fcce2cb00f18bdc130e7a0cd01f2a08"
+    },
+    "png": {
+      "path": "results/factorial_v4_clinical/figures/smartwatch_task_rank.png",
+      "sha256": "761acc860eb80253d7c56a52318457296ceaeb78c13a17a1a3aed09cd84ba810"
+    }
+  },
+  "metadata": {
+    "tasks": 150,
+    "aggregation": "mean across four watch devices",
+    "evaluation_type": "frozen-classifier probability-fidelity proxy",
+    "diagnostic_ground_truth": "unavailable"
+  }
+}

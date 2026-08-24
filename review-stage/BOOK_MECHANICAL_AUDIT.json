@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-24T16:31:45.673445+00:00",
+  "generated_at": "2026-08-24T17:02:57.789713+00:00",
   "book": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/book",
   "chapters": [
     {
@@ -134,11 +134,11 @@
     },
     {
       "chapter": "09_real_data_eda_and_diagnostics.qmd",
-      "source_bytes": 43544,
-      "source_mtime": 1787588699.3091016,
-      "headings": 27,
-      "python_blocks": 20,
-      "all_blocks": 20,
+      "source_bytes": 55217,
+      "source_mtime": 1787590665.2927563,
+      "headings": 35,
+      "python_blocks": 27,
+      "all_blocks": 27,
       "unlabeled_blocks": [],
       "labels": [
         "repository-data-path-audit",
@@ -159,21 +159,28 @@
         "echonext-label-support",
         "echonext-endpoint-cooccurrence",
         "real-dataset-umap-build",
-        "real-dataset-umap-panels",
+        "ptbxl-purpose-embedding",
+        "echonext-purpose-embedding",
+        "ludb-purpose-embedding",
+        "isp-purpose-embedding",
+        "sunnybrook-purpose-embedding",
+        "zhejiang-purpose-embedding",
+        "rdb-purpose-embedding",
+        "curated-embedding-findings",
         "echonext-live-waveform-audit"
       ],
       "html_exists": true,
       "html_complete": true,
-      "html_bytes": 495009,
+      "html_bytes": 430084,
       "html_stale": false,
-      "local_resource_count": 44,
+      "local_resource_count": 50,
       "missing_local_resources": [],
       "generator": "quarto-1.10.18",
       "external_resources": [],
       "external_runtime": [],
-      "output_blocks": 40,
+      "output_blocks": 41,
       "identifier_hits": [],
-      "expected_executable_blocks": 20
+      "expected_executable_blocks": 27
     },
     {
       "chapter": "11_dataset_atlas_ludb_isp_sunnybrook.qmd",

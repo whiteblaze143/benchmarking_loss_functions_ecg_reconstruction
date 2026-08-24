@@ -1,6 +1,6 @@
 # Quarto Book Mechanical Audit
 
-Generated: `2026-08-24T16:31:44.918447+00:00`
+Generated: `2026-08-24T17:02:56.928214+00:00`
 
 > This audit verifies structure and deployed artifacts, not scientific truth.
 
@@ -31,7 +31,7 @@ Generated: `2026-08-24T16:31:44.918447+00:00`
 | `15_live_results_observatory.qmd` | 4 | 2 | 3 | quarto-1.10.18 | complete | False | 0 |
 | `16_three_lead_ecgaim_live.qmd` | 30 | 23 | 42 | quarto-1.10.18 | complete | False | 0 |
 | `17_one_lead_wavelet_ssl_live.qmd` | 9 | 10 | 13 | quarto-1.10.18 | complete | False | 0 |
-| `09_real_data_eda_and_diagnostics.qmd` | 27 | 20 | 40 | quarto-1.10.18 | complete | False | 0 |
+| `09_real_data_eda_and_diagnostics.qmd` | 35 | 27 | 41 | quarto-1.10.18 | complete | False | 0 |
 | `11_dataset_atlas_ludb_isp_sunnybrook.qmd` | 20 | 13 | 13 | quarto-1.10.18 | complete | False | 0 |
 | `05_zhejiang_delineation_tutorial.qmd` | 7 | 5 | 9 | quarto-1.10.18 | complete | False | 0 |
 | `01_dataset_and_preprocessing.qmd` | 7 | 5 | 6 | quarto-1.10.18 | complete | False | 0 |

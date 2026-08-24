@@ -626,6 +626,17 @@ geographic/demographic description is not encoded in its arrays. The plots use
 those datasets, but their legends and interpretations remain inside the local
 evidence boundary.
 
+| Dataset | Locally verified signal inventory | Acquisition contract used here | Locally usable labels | Role in this study | Principal limitation |
+|---|---:|---|---|---|---|
+| PTB-XL | 21,799 metadata-linked records | 12 leads; paired 500/100 Hz; 10 s; mV | SCP statements, demographics, quality flags, official folds | reconstruction development, morphology, diagnostic retention | repeated patients require clustered inference |
+| EchoNext | 100,000 metadata rows; 5,442 retained test waveforms | 12 leads; 250 Hz; 10 s; clipped/train-standardized µV | 12 echo-derived endpoints, continuous echo measures, setting/demographics | external downstream phenotype retention | only test waveforms retained; clinical missingness is structured |
+| LUDB | 200 records | 12 leads; 500 Hz; 10 s; mV | lead-specific expert P/QRS/T annotations; overlapping header diagnoses | external delineation and morphology | small; diagnoses are not mutually exclusive |
+| ISP | 403 train + 72 test | 12 channels; header-declared 1,000 Hz; unit token `mkv` | serialized three-class intervals, age, binary sex field | delineation split/transport audit | citation, license, class dictionary, and patient independence unresolved locally |
+| Sunnybrook | 20 XML records | decoded 12 leads; asserted 500 Hz centered 10 s; XML scale | machine-derived intervals, amplitudes, ST features, statements | local acquisition/QC and transfer stress | tiny; governance and stronger physical-ground-truth claims unresolved |
+| Zhejiang | 334 masks + 4,008 lead arrays | 12 × 20,000 stored samples; units/rate not independently documented locally | dense observed 0/1/2/3 masks | dense semantic segmentation audit | provenance, diagnosis, demographics, and patient unit unresolved locally |
+| RDB | source manual: 2,399; bound cache: 2,398 after one declared duplicate exclusion | 12 × 5,000; 500 Hz; mV in cache | six onset/offset fiducials, segmentation, released/canonical rhythm, split | primary rhythm-diverse external delineation | raw source tree unavailable in current checkout; figure is cache-bound |
+| NSTDB/Fitbit stress | no versioned raw corpus beneath `data/` | perturbation protocol only | noise type and SNR only after retained generation | robustness degradation curves | not an independent patient cohort and therefore not UMAP-eligible here |
+
 ### Shared feature and sampling contract
 
 Each ECG is mapped to the same 96-dimensional vector: for every canonical lead,
@@ -646,16 +657,19 @@ tokens before plotting.
 #| label: real-dataset-umap-build
 #| tbl-cap: "Provenance, feature contract, and stability diagnostics for every real-cohort UMAP."
 import sys
+import matplotlib.pyplot as plt
 if str((ROOT / "book").resolve()) not in sys.path:
     sys.path.insert(0, str((ROOT / "book").resolve()))
-from real_dataset_umap import build_all
+from real_dataset_umap import build_all, curated_figure
 
 dataset_umaps, dataset_umap_diagnostics = build_all()
 display(dataset_umap_diagnostics[[
     "dataset", "source", "records_embedded", "sample", "selection", "group",
     "features", "n_neighbors", "min_dist", "metric", "primary_seed",
     "sensitivity_seeds", "trustworthiness_k5",
-    "mean_pairwise_distance_rank_stability",
+    "mean_pairwise_distance_rank_stability", "imbalance_chance_same_group",
+    "original_knn_same_group", "umap_knn_same_group",
+    "original_silhouette", "umap_silhouette",
 ]])
 ```
 
@@ -665,27 +679,202 @@ survive projection. The stability column compares all pairwise distances from
 the seed-42 map with seeds 7 and 101 using Spearman rank correlation; it is
 rotation/reflection invariant. Low values invalidate visual cluster claims.
 
-```{python}
-#| label: real-dataset-umap-panels
-#| fig-cap: "Separate descriptive waveform-feature UMAPs for every locally supported real ECG cohort."
-import plotly.express as px
+Panel B in every curated figure is the main protection against an attractive
+but misleading projection. It compares same-group nearest-neighbor frequency
+in the original 96-dimensional space, in the two-dimensional UMAP, and under
+the observed group imbalance. If the UMAP bar rises far above the original-space
+bar, the projection has visually amplified grouping. Panel C returns to a raw,
+purpose-linked measurement rather than asking UMAP to carry the claim.
 
-for dataset, projection in dataset_umaps.items():
-    diag = dataset_umap_diagnostics.set_index("dataset").loc[dataset]
-    fig = px.scatter(
-        projection, x="umap_1", y="umap_2", color="group",
-        hover_name="record", opacity=0.78,
-        title=(f"{dataset} waveform-feature UMAP · n={len(projection)} · "
-               f"T(5)={diag.trustworthiness_k5:.3f} · "
-               f"seed stability={diag.mean_pairwise_distance_rank_stability:.3f}"),
-        labels={"group": str(diag["group"]), "umap_1": "UMAP 1", "umap_2": "UMAP 2"},
-    )
-    fig.update_traces(marker={"size": 7, "line": {"width": 0.25, "color": "white"}})
-    fig.update_layout(height=520, legend_title_text=str(diag["group"]))
-    fig.show()
+### PTB-XL — development-cohort support and split transport
+
+PTB-XL is the reconstruction development cohort: 21,799 ten-second, 12-lead
+records in paired 500 Hz and 100 Hz releases. Official folds define training
+(1–8), validation (9), and holdout test (10); the patient-overlap audit above is
+the relevant independence gate. Diagnostic SCP labels and clinical metadata
+support reconstruction, morphology, and downstream diagnostic-retention work.
+
+The curated question is not whether diagnoses form attractive clusters. It is
+whether official splits occupy comparable broad waveform support. Panel C shows
+global RMS by split; a split-specific island plus shifted RMS would trigger a
+device/site/quality investigation before interpreting model generalization.
+
+```{python}
+#| label: ptbxl-purpose-embedding
+#| fig-cap: "PTB-XL split support: waveform-feature UMAP, original-space projection check, and global RMS by official split."
+ptb_diag = dataset_umap_diagnostics.set_index("dataset").loc["PTB-XL"]
+ptb_fig = curated_figure("PTB-XL", dataset_umaps["PTB-XL"], ptb_diag)
+display(ptb_fig); plt.close(ptb_fig)
 ```
 
-### Interpretation and falsification rules
+### EchoNext — structural-heart-disease phenotype
+
+EchoNext contains 100,000 ECG–echocardiogram pairs, but only the 5,442-record
+official test waveform array is locally retained. Signals are 250 Hz and stored
+after released clipping and train-set normalization; the earlier audit reverses
+that affine transform for physical interpretation. Twelve echo-derived
+endpoints make this a transport and downstream-task cohort, not extra PTB-XL
+reconstruction training data.
+
+The figure asks whether the released composite SHD endpoint aligns with broad
+ECG phenotype while showing LVEF outside the embedding. Visible separation is
+hypothesis generating: spectrum, care setting, age, and endpoint co-occurrence
+remain potential explanations.
+
+```{python}
+#| label: echonext-purpose-embedding
+#| fig-cap: "EchoNext structural phenotype: composite-SHD coloring, projection check, and LVEF distribution."
+echo_diag = dataset_umap_diagnostics.set_index("dataset").loc["EchoNext"]
+echo_fig = curated_figure("EchoNext", dataset_umaps["EchoNext"], echo_diag)
+display(echo_fig); plt.close(echo_fig)
+```
+
+### LUDB — expert morphology and atrial-fibrillation contrast
+
+LUDB contributes 200 ten-second, 500 Hz, 12-lead ECGs with independently
+cardiologist-annotated P, QRS, and T boundaries on every lead. It is a
+morphology/delineation benchmark. Header diagnoses overlap and are not one
+mutually exclusive disease target.
+
+AF is used as a narrow contrast because organized P-wave behavior is relevant
+to delineation. The 15 AF records are compared with the heterogeneous remainder,
+and age is shown explicitly as a basic confounding axis. This is not an estimate
+of AF diagnostic performance.
+
+```{python}
+#| label: ludb-purpose-embedding
+#| fig-cap: "LUDB morphology: AF header contrast, projection check, and age distribution."
+ludb_diag = dataset_umap_diagnostics.set_index("dataset").loc["LUDB"]
+ludb_fig = curated_figure("LUDB", dataset_umaps["LUDB"], ludb_diag)
+display(ludb_fig); plt.close(ludb_fig)
+```
+
+### ISP — delineation split-shift audit under unresolved provenance
+
+The local ISP package contains 403 training and 72 test records linked to
+12-channel WFDB signals and serialized interval targets. Headers declare 1,000
+Hz and the nonstandard unit token `mkv`. Although the reference manual assigns
+P/QRS/T semantics and a multicenter origin, no citation, license, source ID, or
+authoritative class dictionary is present locally. Those claims remain
+provisional here.
+
+The defensible question is whether the provided test split shifts relative to
+training in waveform features or interval burden. Patient independence remains
+unverified, so split mixing cannot certify leakage freedom.
+
+```{python}
+#| label: isp-purpose-embedding
+#| fig-cap: "ISP split shift: train/test waveform UMAP, projection check, and interval burden."
+isp_diag = dataset_umap_diagnostics.set_index("dataset").loc["ISP"]
+isp_fig = curated_figure("ISP", dataset_umaps["ISP"], isp_diag)
+display(isp_fig); plt.close(isp_fig)
+```
+
+### Sunnybrook — physical-acquisition quality control
+
+Sunnybrook is a 20-record local Philips XML transfer set with owner metadata and
+179 machine-extracted features. The production decoder verifies sampling rate,
+lead order, resolution, and the centered ten-second crop. Cohort selection,
+subject multiplicity, adjudication, distribution authority, and the stronger
+“fully measured gold standard” claim are not independently established locally.
+
+With 20 records, a disease-cluster UMAP would be especially unstable. This
+figure marks the two records whose maximum absolute amplitude exceeds 5 mV and
+shows the raw maxima. Its purpose is retained-transient and influence analysis,
+not prevalence generalization.
+
+```{python}
+#| label: sunnybrook-purpose-embedding
+#| fig-cap: "Sunnybrook quality control: amplitude-outlier UMAP, projection check, and per-record peak amplitude."
+sunny_diag = dataset_umap_diagnostics.set_index("dataset").loc["Sunnybrook"]
+sunny_fig = curated_figure("Sunnybrook", dataset_umaps["Sunnybrook"], sunny_diag)
+display(sunny_fig); plt.close(sunny_fig)
+```
+
+### Zhejiang — dense-mask burden and waveform phenotype
+
+The Zhejiang tree contains 334 record-level masks and 4,008 lead files (12 per
+record), each 20,000 samples long. Local arrays establish signal–mask pairing
+and the observed `0/1/2/3` mask convention. They do not independently establish
+institution, ethnicity, units, sampling rate, patient independence, or clinical
+diagnoses; those fields require external provenance.
+
+The embedding is colored by QRS-mask-coverage quartile and Panel C exposes the
+underlying percentage. This tests whether gross segmentation burden tracks
+waveform phenotype; it does not turn a derived quartile into a clinical class.
+
+```{python}
+#| label: zhejiang-purpose-embedding
+#| fig-cap: "Zhejiang dense masks: QRS-coverage UMAP, projection check, and raw QRS-mask fraction."
+zhejiang_diag = dataset_umap_diagnostics.set_index("dataset").loc["Zhejiang"]
+zhejiang_fig = curated_figure("Zhejiang", dataset_umaps["Zhejiang"], zhejiang_diag)
+display(zhejiang_fig); plt.close(zhejiang_fig)
+```
+
+### RDB — rhythm-diverse delineation and P-wave absence
+
+RDB supplies 2,399 ten-second, 500 Hz, 12-lead records spanning eight canonical
+rhythm groups with lead-specific and consensus P/QRS/T intervals. The raw
+`data/rdb/` entry is empty in this checkout, so this figure reads the
+generation-bound cache built from the raw CSV/annotation package. Cache records
+are source-bound, while public display labels are pseudonymized.
+
+The figure asks whether rhythm diversity corresponds to broad waveform regimes
+and shows P-mask coverage by rhythm. This is directly relevant to AF
+hallucination: a model should not invent organized P waves when the reference
+mask supports their absence. Rhythm separation itself is not reconstruction
+quality.
+
+```{python}
+#| label: rdb-purpose-embedding
+#| fig-cap: "RDB rhythm diversity: rhythm UMAP, projection check, and P-mask coverage by canonical rhythm."
+rdb_diag = dataset_umap_diagnostics.set_index("dataset").loc["RDB"]
+rdb_fig = curated_figure("RDB", dataset_umaps["RDB"], rdb_diag)
+display(rdb_fig); plt.close(rdb_fig)
+```
+
+The RDB codes are displayed exactly as retained by the cache. The source prefix
+`SI` maps to canonical `SA`, and source `VT` maps to canonical `SVT`; the figure
+does not silently relabel `AFIB` as atrial flutter without an authoritative
+cache mapping.
+
+### NSTDB and Fitbit noise stress — perturbations, not cohort embeddings
+
+The reference manual describes electrode motion, baseline wander, muscle
+artifact, and wearable-motion streams across calibrated SNR levels. No
+versioned raw NSTDB/Fitbit corpus is present beneath the local `data/` entry, so
+this chapter does not invent a noise UMAP or repeat patients at several SNRs as
+if independent. The appropriate visualization is a paired degradation curve by
+SNR and noise type once a hash-bound stress-result table is retained.
+
+```{python}
+#| label: curated-embedding-findings
+#| tbl-cap: "Original-space group enrichment and projection amplification for the seven curated figures."
+reading = {
+    "PTB-XL": "split labels add essentially no neighborhood structure; broad split mixing in these features",
+    "EchoNext": "composite SHD adds modest local structure; insufficient for a diagnostic claim",
+    "LUDB": "same-group agreement is explained by severe AF/non-AF imbalance",
+    "ISP": "train/test agreement is near imbalance expectation; no strong split island",
+    "Sunnybrook": "n=20 and two amplitude outliers make projection inference unstable",
+    "Zhejiang": "QRS burden enriches local neighborhoods, but silhouette rejects clean clusters",
+    "RDB": "rhythm codes enrich local neighborhoods modestly while overlapping globally",
+}
+embedding_findings = dataset_umap_diagnostics[[
+    "dataset", "records_embedded", "trustworthiness_k5",
+    "mean_pairwise_distance_rank_stability", "imbalance_chance_same_group",
+    "original_knn_same_group", "umap_knn_same_group", "original_silhouette",
+]].copy()
+embedding_findings["original_enrichment_over_chance"] = (
+    embedding_findings.original_knn_same_group - embedding_findings.imbalance_chance_same_group
+)
+embedding_findings["projection_amplification"] = (
+    embedding_findings.umap_knn_same_group - embedding_findings.original_knn_same_group
+)
+embedding_findings["narrow_reading"] = embedding_findings.dataset.map(reading)
+display(embedding_findings)
+```
+
+### Cross-figure interpretation and falsification rules
 
 For each panel, the only admissible first-pass question is whether its displayed
 group is locally mixed or separated in this **specified feature representation**.

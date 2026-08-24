@@ -44,12 +44,12 @@
     },
     "09_real_data_eda_and_diagnostics.qmd": {
       "status": "complete",
-      "started_at": "2026-08-24T16:29:29.957117+00:00",
+      "started_at": "2026-08-24T17:00:45.574447+00:00",
       "source": "book/09_real_data_eda_and_diagnostics.qmd",
-      "input_sha256": "c383cf5717d990a74822e7535501938f596b480046ad8e8f1743c2eb007e2a52",
+      "input_sha256": "c33ee497d4fbd0951c51229d562320ec3fa2907c0ba47346569772929ee414c2",
       "returncode": 0,
-      "completed_at": "2026-08-24T16:31:33.956276+00:00",
-      "duration_seconds": 123.999,
+      "completed_at": "2026-08-24T17:02:44.718298+00:00",
+      "duration_seconds": 119.144,
       "log": "review-stage/render-round3/09_real_data_eda_and_diagnostics.log"
     },
     "11_dataset_atlas_ludb_isp_sunnybrook.qmd": {
@@ -202,7 +202,7 @@
   },
   "input_snapshot_manifest": "review-stage/render-round3/input-snapshot/SNAPSHOT_MANIFEST.json",
   "input_snapshot_sha256": "4ffa8d7c288cdf55242a5f233f2d6654a40ba485eb1452d01b31a1dd1da02cff",
-  "completed_at": "2026-08-24T16:31:33.957096+00:00",
+  "completed_at": "2026-08-24T17:02:44.719110+00:00",
   "counts": {
     "complete": 19,
     "error": 0,

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-24T16:31:46.067590+00:00",
+  "generated_at": "2026-08-24T17:02:58.233218+00:00",
   "release_status": "documentation_preview_verified_scientific_gate_pending",
   "render_contract": {
     "quarto_binary": ".tools/quarto-1.10.18/bin/quarto",
@@ -9,47 +9,25 @@
     "python_version": "3.12.3",
     "sequential": true
   },
-  "git_commit": "c922f97693732327045dcefbc04c655a3c809a5a",
+  "git_commit": "5cc99a5aa96feac086fb8094bb6d0a2c7acc05f8",
   "git_dirty": true,
   "git_changed_paths": [
-    " M .github/workflows/pages.yml",
+    " M MANIFEST.md",
     " M book/09_real_data_eda_and_diagnostics.qmd",
-    " M book/README.md",
-    " M book/_book/01_dataset_and_preprocessing.html",
-    " M book/_book/02_network_architectures.html",
-    " M book/_book/03_loss_function_formulations.html",
-    " M book/_book/04_regression_to_mean.html",
-    " M book/_book/05_clinical_metrics_and_delineation.html",
-    " M book/_book/05_zhejiang_delineation_tutorial.html",
-    " M book/_book/06_fairness_robustness_sqi.html",
-    " M book/_book/07_smartwatch_reconstruction_case_study.html",
-    " M book/_book/08_factorial_loss_matrix_benchmarks.html",
     " M book/_book/09_real_data_eda_and_diagnostics.html",
-    " M book/_book/10_echonext_classifier_external_validation.html",
-    " M book/_book/11_dataset_atlas_ludb_isp_sunnybrook.html",
-    " M book/_book/12_exhaustive_model_analysis.html",
-    " M book/_book/14_cath_lab_clinical_trust_atlas.html",
-    " M book/_book/15_live_results_observatory.html",
-    " M book/_book/16_three_lead_ecgaim_live.html",
-    " M book/_book/17_one_lead_wavelet_ssl_live.html",
-    " M book/_book/index.html",
     " M book/_book/search.json",
-    " M book/_book/site_libs/vendor/MANIFEST.json",
-    " M book/index.qmd",
-    " M review-stage/AUTO_PAPER_IMPROVEMENT_STATE_20260824.json",
+    " M book/real_dataset_umap.py",
+    " M refine-logs/wavelet_ssl_1110000/full/manifest.state.json",
     " M review-stage/BOOK_MECHANICAL_AUDIT.json",
     " M review-stage/BOOK_MECHANICAL_AUDIT.md",
-    " M review-stage/REVIEW_STATE.json",
     " M review-stage/render-round3/render_state.json",
-    " M scripts/build_book_release_manifest.py",
-    " M scripts/render_quarto_chapters.py",
-    " M scripts/vendor_book_runtime.py",
-    "?? book/_book/RELEASE_MANIFEST.json",
-    "?? book/_book/site_libs/vendor/fonts/",
-    "?? book/_book/site_libs/vendor/katex-0.16.22.min.css",
-    "?? book/_book/site_libs/vendor/katex-0.16.22.min.js",
-    "?? book/real_dataset_umap.py",
-    "?? review-stage/render-umap/"
+    "?? book/_book/09_real_data_eda_and_diagnostics_files/",
+    "?? refine-logs/wavelet_ssl_1110000/full/runs/ssl_log_magnitude_phase_sin_both_cross_attn_1110000_s42_l0/_SUCCESS.json",
+    "?? refine-logs/wavelet_ssl_1110000/full/runs/ssl_log_magnitude_phase_sin_both_cross_attn_1110000_s42_l0/summary.json",
+    "?? refine-logs/wavelet_ssl_1110000/full/runs/ssl_log_magnitude_real_local_gated_add_1110000_s42_l0/",
+    "?? review-stage/REAL_DATA_FIGURE_REVIEW_20260824.md",
+    "?? review-stage/real-dataset-figure-review/",
+    "?? review-stage/render-curated-datasets/"
   ],
   "quarto_config_sha256": "84670a8b0f6bb3788ee2c070fa1b0750f72d8c574839e2e47bacb20f8568b381",
   "mandatory_scientific_gate": {
@@ -133,8 +111,8 @@
       "bytes": 7895
     },
     "book/09_real_data_eda_and_diagnostics.qmd": {
-      "sha256": "4d7a9d7d1d60d91000bec7e2c9dc04e6bf91fa2aef866bee96f9feabdd80bf17",
-      "bytes": 43544
+      "sha256": "f97ac0d395768f59a3dc540e8ed40ae6825233f67bede571925ec25501b82dbe",
+      "bytes": 55217
     },
     "book/11_dataset_atlas_ludb_isp_sunnybrook.qmd": {
       "sha256": "37b7647241e89760b422b291bc85b44b31adced4d9fbb2561d70c18e98755d2d",
@@ -215,9 +193,9 @@
       "output_blocks": 13
     },
     "book/_book/09_real_data_eda_and_diagnostics.html": {
-      "sha256": "3d23786f4118159e6893ed34c675e572fa62a0050bfa5595408a266874e1fd4e",
-      "bytes": 495009,
-      "output_blocks": 40
+      "sha256": "01a57569d38c2217c0aa5ae6412733a37958921b46c0878664306ba6239b6c9d",
+      "bytes": 430084,
+      "output_blocks": 41
     },
     "book/_book/11_dataset_atlas_ludb_isp_sunnybrook.html": {
       "sha256": "6d772ee9419f7a6a83c0fad76b217971c9ff40a02bbbf1b57d315e0548f15930",
@@ -334,8 +312,8 @@
   },
   "analysis_modules": {
     "book/real_dataset_umap.py": {
-      "sha256": "08705e7ed376980eeabfc813a366765fb7fdc6c76e2e19519817b82a5b65c088",
-      "bytes": 10321
+      "sha256": "d7f918a21837bcc98c5d3a8b097b5b6ed2164f68e79d06ac682ae2116c6a00fd",
+      "bytes": 16844
     }
   },
   "external_reference_links": [

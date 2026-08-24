@@ -1,0 +1,271 @@
+{
+  "started_at": "2026-08-24T17:22:53.181189+00:00",
+  "status": "complete",
+  "chapters": {
+    "index.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:22:56.399284+00:00",
+      "source": "book/index.qmd",
+      "input_sha256": "48b2fbaa5f7bbcf754e64aa719c16816d7465b009ad10a303811a18f1056392a",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:23:00.574538+00:00",
+      "duration_seconds": 4.175,
+      "log": "review-stage/render-round4-expanded/index.log"
+    },
+    "15_live_results_observatory.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:23:00.575629+00:00",
+      "source": "book/15_live_results_observatory.qmd",
+      "input_sha256": "908e5290f40ca0e5e5fa6bab13008824f03b24c1c7bea30c8b6c7fcfc82b053f",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:23:12.495633+00:00",
+      "duration_seconds": 11.92,
+      "log": "review-stage/render-round4-expanded/15_live_results_observatory.log"
+    },
+    "16_three_lead_ecgaim_live.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:23:12.497324+00:00",
+      "source": "book/16_three_lead_ecgaim_live.qmd",
+      "input_sha256": "0902d6b1525bea18f7168ea7d6d7db10808b8d1fe5748e2ee4f1cf994506e1d9",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:23:54.818524+00:00",
+      "duration_seconds": 42.321,
+      "log": "review-stage/render-round4-expanded/16_three_lead_ecgaim_live.log"
+    },
+    "17_one_lead_wavelet_ssl_live.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:23:54.819282+00:00",
+      "source": "book/17_one_lead_wavelet_ssl_live.qmd",
+      "input_sha256": "c891d92806fd9709a0b54366a5abb634d05f6491f6d42a31f404ab8f55731c0f",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:24:27.845985+00:00",
+      "duration_seconds": 33.027,
+      "log": "review-stage/render-round4-expanded/17_one_lead_wavelet_ssl_live.log"
+    },
+    "18_seven_mask_design_and_coverage.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:24:27.846659+00:00",
+      "source": "book/18_seven_mask_design_and_coverage.qmd",
+      "input_sha256": "9da5958efcdebf63f0fe7296f8c19e65f25f7d07165bf078a41deafc59170b32",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:24:39.645737+00:00",
+      "duration_seconds": 11.799,
+      "log": "review-stage/render-round4-expanded/18_seven_mask_design_and_coverage.log"
+    },
+    "19_seven_mask_reconstruction_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:24:39.647476+00:00",
+      "source": "book/19_seven_mask_reconstruction_results.qmd",
+      "input_sha256": "3ca9fd1bc6acf41379067ef95d44e1e934103b96f0417adff311af3e57bbf8cc",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:24:51.495231+00:00",
+      "duration_seconds": 11.848,
+      "log": "review-stage/render-round4-expanded/19_seven_mask_reconstruction_results.log"
+    },
+    "20_missing_leads_v2_clinical_biomarkers.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:24:51.496028+00:00",
+      "source": "book/20_missing_leads_v2_clinical_biomarkers.qmd",
+      "input_sha256": "b4e9cf1743e166963ebefa7de031fe06dccfd503d4c674324076d0c10ebc75ad",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:25:03.819099+00:00",
+      "duration_seconds": 12.323,
+      "log": "review-stage/render-round4-expanded/20_missing_leads_v2_clinical_biomarkers.log"
+    },
+    "21_one_lead_architecture_and_spatial_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:25:03.820027+00:00",
+      "source": "book/21_one_lead_architecture_and_spatial_results.qmd",
+      "input_sha256": "c49832d6cdb2889ed0cca54febf46bad1ca44c58ec9a798f44fd9232ed78332f",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:25:14.922693+00:00",
+      "duration_seconds": 11.103,
+      "log": "review-stage/render-round4-expanded/21_one_lead_architecture_and_spatial_results.log"
+    },
+    "22_one_lead_wavelet_ssl_mechanisms.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:25:14.923443+00:00",
+      "source": "book/22_one_lead_wavelet_ssl_mechanisms.qmd",
+      "input_sha256": "6041051830963dda166470c9c73d23c451c5f702b9a572032fa0689b6cdc5c0e",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:25:29.398007+00:00",
+      "duration_seconds": 14.475,
+      "log": "review-stage/render-round4-expanded/22_one_lead_wavelet_ssl_mechanisms.log"
+    },
+    "23_evidence_synthesis_and_run_gaps.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:25:29.398791+00:00",
+      "source": "book/23_evidence_synthesis_and_run_gaps.qmd",
+      "input_sha256": "551d86bd70ac89fbfd584a3344caafde5321aa6685c8650d6e70a28fd1bcb9fe",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:25:40.706770+00:00",
+      "duration_seconds": 11.308,
+      "log": "review-stage/render-round4-expanded/23_evidence_synthesis_and_run_gaps.log"
+    },
+    "09_real_data_eda_and_diagnostics.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:25:40.708123+00:00",
+      "source": "book/09_real_data_eda_and_diagnostics.qmd",
+      "input_sha256": "01fe78d36b08df0e93fe86dee55b611825948b194c37eb30cac8e12bdee1b54f",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:27:30.362274+00:00",
+      "duration_seconds": 109.654,
+      "log": "review-stage/render-round4-expanded/09_real_data_eda_and_diagnostics.log"
+    },
+    "11_dataset_atlas_ludb_isp_sunnybrook.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:27:30.363245+00:00",
+      "source": "book/11_dataset_atlas_ludb_isp_sunnybrook.qmd",
+      "input_sha256": "2b9158e4def359e90cbfff38c648c8d452257601f7639a6755e9c70ac48dfc89",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:28:14.266777+00:00",
+      "duration_seconds": 43.904,
+      "log": "review-stage/render-round4-expanded/11_dataset_atlas_ludb_isp_sunnybrook.log"
+    },
+    "05_zhejiang_delineation_tutorial.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:28:14.268508+00:00",
+      "source": "book/05_zhejiang_delineation_tutorial.qmd",
+      "input_sha256": "5754f2b8187cf23b3543e9bcfe3b80c8fb4136b6b3a5d46222261ae0a0285b79",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:28:31.508098+00:00",
+      "duration_seconds": 17.24,
+      "log": "review-stage/render-round4-expanded/05_zhejiang_delineation_tutorial.log"
+    },
+    "01_dataset_and_preprocessing.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:28:31.509172+00:00",
+      "source": "book/01_dataset_and_preprocessing.qmd",
+      "input_sha256": "f7f0f7c620379df4ced1adea34c9cd6bf4dd7d8e3d5a6e369e8f97788ed68e43",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:28:47.316699+00:00",
+      "duration_seconds": 15.808,
+      "log": "review-stage/render-round4-expanded/01_dataset_and_preprocessing.log"
+    },
+    "02_network_architectures.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:28:47.317904+00:00",
+      "source": "book/02_network_architectures.qmd",
+      "input_sha256": "7b82bf565d03884e2f7ffbe46029ab4e9dd4a6347d3b516e6899196dbed5e208",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:29:02.328961+00:00",
+      "duration_seconds": 15.011,
+      "log": "review-stage/render-round4-expanded/02_network_architectures.log"
+    },
+    "03_loss_function_formulations.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:29:02.329892+00:00",
+      "source": "book/03_loss_function_formulations.qmd",
+      "input_sha256": "acce116d527f690d99f61db012762d250159d641d2c122aec2115c2e09873204",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:29:18.069062+00:00",
+      "duration_seconds": 15.739,
+      "log": "review-stage/render-round4-expanded/03_loss_function_formulations.log"
+    },
+    "05_clinical_metrics_and_delineation.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:29:18.070623+00:00",
+      "source": "book/05_clinical_metrics_and_delineation.qmd",
+      "input_sha256": "b3828e1c1532db0330eb9dc31789e6270e7b75e1929cb70f4411dc198a1c63b4",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:29:31.211591+00:00",
+      "duration_seconds": 13.141,
+      "log": "review-stage/render-round4-expanded/05_clinical_metrics_and_delineation.log"
+    },
+    "04_regression_to_mean.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:29:31.212425+00:00",
+      "source": "book/04_regression_to_mean.qmd",
+      "input_sha256": "aa4fd2f41e792f352a65b3c98c967c05940982120a9b65edb5d0926d61e47d51",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:29:46.615979+00:00",
+      "duration_seconds": 15.404,
+      "log": "review-stage/render-round4-expanded/04_regression_to_mean.log"
+    },
+    "06_fairness_robustness_sqi.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:29:46.617391+00:00",
+      "source": "book/06_fairness_robustness_sqi.qmd",
+      "input_sha256": "cfeff2360762f2423b445b795d7d045c3d230a437f10dd49fb6f2ea70c1bc234",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:30:03.267206+00:00",
+      "duration_seconds": 16.65,
+      "log": "review-stage/render-round4-expanded/06_fairness_robustness_sqi.log"
+    },
+    "08_factorial_loss_matrix_benchmarks.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:30:03.268132+00:00",
+      "source": "book/08_factorial_loss_matrix_benchmarks.qmd",
+      "input_sha256": "7c0ea5296dbeff93c7638c04131ad4f344c284a368a61ceef2f61f7751e70dc8",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:30:16.520200+00:00",
+      "duration_seconds": 13.252,
+      "log": "review-stage/render-round4-expanded/08_factorial_loss_matrix_benchmarks.log"
+    },
+    "07_smartwatch_reconstruction_case_study.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:30:16.521031+00:00",
+      "source": "book/07_smartwatch_reconstruction_case_study.qmd",
+      "input_sha256": "3273b2b75a5306f342133e47a4853bf9afe972970c9b01180e70e06d52562ef7",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:30:29.385250+00:00",
+      "duration_seconds": 12.864,
+      "log": "review-stage/render-round4-expanded/07_smartwatch_reconstruction_case_study.log"
+    },
+    "10_echonext_classifier_external_validation.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:30:29.386138+00:00",
+      "source": "book/10_echonext_classifier_external_validation.qmd",
+      "input_sha256": "ca94d6d1d6ad0e12d9952d51bff4d0eca73bc55e3edfa82addef8f5101650d57",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:30:40.545251+00:00",
+      "duration_seconds": 11.159,
+      "log": "review-stage/render-round4-expanded/10_echonext_classifier_external_validation.log"
+    },
+    "12_exhaustive_model_analysis.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:30:40.546102+00:00",
+      "source": "book/12_exhaustive_model_analysis.qmd",
+      "input_sha256": "c76f864ec704dd44e65538552c547727306d8a1b609d922a0a749d69b0cd473b",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:30:53.822709+00:00",
+      "duration_seconds": 13.277,
+      "log": "review-stage/render-round4-expanded/12_exhaustive_model_analysis.log"
+    },
+    "13_engineering_ml_visual_atlas.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:30:53.823564+00:00",
+      "source": "book/13_engineering_ml_visual_atlas.qmd",
+      "input_sha256": "1c276fdab3769d678d2fffbf45ffb230fd10ab1f5859d6cf6625eda9a19dcde6",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:31:09.293982+00:00",
+      "duration_seconds": 15.47,
+      "log": "review-stage/render-round4-expanded/13_engineering_ml_visual_atlas.log"
+    },
+    "14_cath_lab_clinical_trust_atlas.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:31:09.294903+00:00",
+      "source": "book/14_cath_lab_clinical_trust_atlas.qmd",
+      "input_sha256": "ee97901581c7e2ca086d49daaad6704e76200ab3f2eabf2bc7d652e257918852",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:31:13.031556+00:00",
+      "duration_seconds": 3.737,
+      "log": "review-stage/render-round4-expanded/14_cath_lab_clinical_trust_atlas.log"
+    }
+  },
+  "render_contract": {
+    "quarto_binary": ".tools/quarto-1.10.18/bin/quarto",
+    "quarto_version": "1.10.18",
+    "python": "/home/mithunmanivannan/.venv/bin/python3",
+    "python_version": "3.12.3",
+    "sequential": true
+  },
+  "input_snapshot_manifest": "review-stage/render-round4-expanded/input-snapshot/SNAPSHOT_MANIFEST.json",
+  "input_snapshot_sha256": "a72b72d3c8815d357d730a4c0165cae35ba179305278a3cfea9b424dfd945f16",
+  "completed_at": "2026-08-24T17:31:13.032240+00:00",
+  "counts": {
+    "complete": 25,
+    "error": 0,
+    "running": 0
+  }
+}

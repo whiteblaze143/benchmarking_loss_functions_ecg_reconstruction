@@ -1,0 +1,81 @@
+{
+  "started_at": "2026-08-24T17:20:12.946617+00:00",
+  "status": "complete",
+  "chapters": {
+    "18_seven_mask_design_and_coverage.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:20:16.086029+00:00",
+      "source": "book/18_seven_mask_design_and_coverage.qmd",
+      "input_sha256": "9da5958efcdebf63f0fe7296f8c19e65f25f7d07165bf078a41deafc59170b32",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:20:28.167771+00:00",
+      "duration_seconds": 12.082,
+      "log": "review-stage/render-expanded/18_seven_mask_design_and_coverage.log"
+    },
+    "19_seven_mask_reconstruction_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:20:28.168435+00:00",
+      "source": "book/19_seven_mask_reconstruction_results.qmd",
+      "input_sha256": "3ca9fd1bc6acf41379067ef95d44e1e934103b96f0417adff311af3e57bbf8cc",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:20:40.211229+00:00",
+      "duration_seconds": 12.043,
+      "log": "review-stage/render-expanded/19_seven_mask_reconstruction_results.log"
+    },
+    "20_missing_leads_v2_clinical_biomarkers.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:20:40.211901+00:00",
+      "source": "book/20_missing_leads_v2_clinical_biomarkers.qmd",
+      "input_sha256": "b4e9cf1743e166963ebefa7de031fe06dccfd503d4c674324076d0c10ebc75ad",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:20:52.192187+00:00",
+      "duration_seconds": 11.98,
+      "log": "review-stage/render-expanded/20_missing_leads_v2_clinical_biomarkers.log"
+    },
+    "21_one_lead_architecture_and_spatial_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:20:52.192965+00:00",
+      "source": "book/21_one_lead_architecture_and_spatial_results.qmd",
+      "input_sha256": "c49832d6cdb2889ed0cca54febf46bad1ca44c58ec9a798f44fd9232ed78332f",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:21:03.741383+00:00",
+      "duration_seconds": 11.548,
+      "log": "review-stage/render-expanded/21_one_lead_architecture_and_spatial_results.log"
+    },
+    "22_one_lead_wavelet_ssl_mechanisms.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:21:03.742143+00:00",
+      "source": "book/22_one_lead_wavelet_ssl_mechanisms.qmd",
+      "input_sha256": "6041051830963dda166470c9c73d23c451c5f702b9a572032fa0689b6cdc5c0e",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:21:15.795726+00:00",
+      "duration_seconds": 12.054,
+      "log": "review-stage/render-expanded/22_one_lead_wavelet_ssl_mechanisms.log"
+    },
+    "23_evidence_synthesis_and_run_gaps.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-24T17:21:15.796951+00:00",
+      "source": "book/23_evidence_synthesis_and_run_gaps.qmd",
+      "input_sha256": "551d86bd70ac89fbfd584a3344caafde5321aa6685c8650d6e70a28fd1bcb9fe",
+      "returncode": 0,
+      "completed_at": "2026-08-24T17:21:27.139299+00:00",
+      "duration_seconds": 11.342,
+      "log": "review-stage/render-expanded/23_evidence_synthesis_and_run_gaps.log"
+    }
+  },
+  "render_contract": {
+    "quarto_binary": ".tools/quarto-1.10.18/bin/quarto",
+    "quarto_version": "1.10.18",
+    "python": "/home/mithunmanivannan/.venv/bin/python3",
+    "python_version": "3.12.3",
+    "sequential": true
+  },
+  "input_snapshot_manifest": "review-stage/render-expanded/input-snapshot/SNAPSHOT_MANIFEST.json",
+  "input_snapshot_sha256": "d2b934196f782d9e303e1ed10203db85a8b5560c4a254fb132b12895a0681d8f",
+  "completed_at": "2026-08-24T17:21:27.140946+00:00",
+  "counts": {
+    "complete": 6,
+    "error": 0,
+    "running": 0
+  }
+}

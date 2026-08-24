@@ -1,0 +1,155 @@
+---
+title: "One-Lead Wavelet and SSL: Live Results"
+subtitle: "Matched A0 comparisons, mechanism tests, and queue health"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: one-lead-controls
+# Edit and rerun.
+BASELINE = "A0_raw"
+TOP_K = 8
+EMBED_SEED = 42
+PRIMARY_METRIC = "metric.miou_wave"
+```
+
+```{python}
+#| label: one-lead-setup
+import numpy as np
+import pandas as pd
+import plotly.express as px
+from live_results import *
+
+QUEUE_DB = ROOT / "refine-logs/wavelet_ssl_1110000/full/queue.sqlite"
+CHECKPOINT_DB = ROOT / "results/onelead_checkpoint_store/catalog.sqlite"
+q = load_onelead_queue(QUEUE_DB)
+```
+
+## Live 120-run queue
+
+```{python}
+#| label: one-lead-status
+display(source_inventory({"queue": QUEUE_DB, "checkpoint catalog": CHECKPOINT_DB}))
+display(q.status.value_counts(dropna=False).rename_axis("status").reset_index(name="jobs"))
+visible = [c for c in ["ordinal", "id", "cell_name", "observed_lead", "seed", "status", "started_at", "completed_at", "error"] if c in q]
+display(q.query("status != 'pending'")[visible])
+```
+
+## Registered comparison hierarchy
+
+The principal comparison is:
+
+`A0 → A0 + wavelet → A0 + wavelet + SSL`.
+
+E1 is reserved for complementarity:
+
+`A0 + wavelet + SSL` versus `E1 + wavelet + SSL`.
+
+Current `1110000` evidence does not authorize calling E1 an improved base
+architecture. The highest-value mechanism contrast is matched **Morlet
+magnitude + Morlet phase** versus **Morlet magnitude + UEG-repolarization
+phase**. A gain concentrated on T-on/T-off would specifically support the
+physiological second-view hypothesis.
+
+## Raw completed runs and matched improvements
+
+```{python}
+#| label: one-lead-deltas
+completed = q.query("status == 'completed'").copy()
+results = matched_deltas(completed, BASELINE)
+metrics = numeric_metrics(results, "metric.")
+raw_cols = [c for c in ["id", "cell_name", "seed", "observed_lead", *metrics] if c in results]
+display(results[raw_cols].sort_values(PRIMARY_METRIC, ascending=False) if PRIMARY_METRIC in results else results[raw_cols])
+display(leaderboard(results, metrics, id_col="id", group_cols=("observed_lead",), k=TOP_K))
+```
+
+```{python}
+#| label: one-lead-modular-comparison
+plot_metrics = [m for m in ["metric.miou_wave", "metric.boundary_f1_smoke", "metric.val_missing_pearson", "metric.val_missing_mse"] if m in results]
+long = results.melt(id_vars=[c for c in ["id", "cell_name", "observed_lead", "seed"] if c in results],
+                    value_vars=plot_metrics, var_name="metric", value_name="value")
+if not long.empty:
+    fig = px.scatter(long, x="cell_name", y="value", color="observed_lead",
+                     symbol="seed", facet_row="metric", hover_name="id",
+                     title="Completed configurations; switch metrics by editing plot_metrics")
+    fig.update_xaxes(tickangle=45)
+    fig.update_layout(height=max(650, 230 * len(plot_metrics)))
+    fig.show()
+```
+
+## Improvement heatmap relative to matched A0
+
+Positive values always mean improvement; error metrics are sign-flipped after
+subtraction. Missing cells mean that a seed/lead-matched A0 is not yet available.
+
+```{python}
+#| label: one-lead-improvement-heatmap
+improvements = [c for c in results if c.startswith("improvement.metric.")]
+if improvements:
+    imp = results.groupby(["cell_name", "observed_lead"])[improvements].mean().reset_index()
+    imp["configuration"] = imp.cell_name + " · Lead " + imp.observed_lead
+    pivot = imp.set_index("configuration")[improvements]
+    fig = px.imshow(pivot, color_continuous_scale="RdBu", color_continuous_midpoint=0,
+                    aspect="auto", title=f"Mean matched improvement over {BASELINE}")
+    fig.update_layout(height=max(450, 24 * len(pivot)))
+    fig.show()
+```
+
+## Replication and stability audit
+
+```{python}
+#| label: one-lead-replication
+if not results.empty:
+    replication = results.groupby(["cell_name", "observed_lead"])[metrics].agg(["count", "mean", "std"])
+    display(replication)
+    display(results.groupby(["cell_name", "observed_lead"]).seed.nunique().reset_index(name="n_seeds").query("n_seeds < 2"))
+```
+
+## Performance-profile UMAP
+
+This embedding groups completed runs by standardized outcome vectors. It helps
+spot configurations that trade reconstruction for delineation and repeated
+runs that unexpectedly separate. It is not a neural latent-space UMAP.
+
+```{python}
+#| label: one-lead-performance-umap
+matrix = model_metric_matrix(results, "id", metrics)
+embedding, method = performance_embedding(matrix, EMBED_SEED)
+if not embedding.empty:
+    meta = results[["id", "cell_name", "observed_lead", "seed"]].drop_duplicates("id")
+    embedding = embedding.merge(meta, left_on="id", right_on="id", how="left")
+    fig = px.scatter(embedding, x="axis_1", y="axis_2", color="cell_name",
+                     symbol="observed_lead", hover_name="id", hover_data=["seed"],
+                     title=f"{method} of one-lead performance profiles")
+    fig.update_traces(marker={"size": 10, "opacity": .85})
+    fig.show()
+```
+
+## RDB supervision and checkpoint footprint
+
+RDB supervision uses six observed boundaries—P/QRS/T onset and offset—and does
+not invent peaks. The split counts below are read from the live cache.
+
+```{python}
+#| label: one-lead-rdb-checkpoints
+split_counts = pd.DataFrame({"split": s, "records": len(list((ROOT / f"data/rdb_wavelet_delineation_cache/{s}").glob("*.pt")))} for s in ("train", "val", "test"))
+display(split_counts)
+checkpoints = read_sql(CHECKPOINT_DB, "select * from checkpoints")
+if not checkpoints.empty:
+    display(checkpoints.groupby(["architecture", "status"], dropna=False).agg(
+        models=("model_id", "size"), bytes=("size_bytes", "sum")
+    ).reset_index())
+```
+
+## What to inspect next
+
+1. Require seed replication before elevating a screen result to a claim.
+2. Compare Morlet-phase and UEG-phase views at matched architecture, SSL,
+   optimizer, seed, lead, and compute.
+3. Inspect whether any gain is localized to T-on/T-off rather than a generic
+   lift across all boundary channels.
+4. Promote a configuration to external evaluation only after reconstruction,
+   delineation, storage, and resume gates all pass.
+

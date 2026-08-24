@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Dataset Atlas: LUDB, ISP, and Sunnybrook – Benchmarking Loss Functions for Electrocardiogram Reconstruction</title>
+<title>5&nbsp; Dataset Atlas: LUDB, ISP, and Sunnybrook – Benchmarking Loss Functions for Electrocardiogram Reconstruction</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -322,7 +322,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./11_dataset_atlas_ludb_isp_sunnybrook.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./11_dataset_atlas_ludb_isp_sunnybrook.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -358,58 +358,64 @@ window.Quarto = {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">I. Data, Cohorts, and Measurement</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Live Experiment Observatory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./09_real_data_eda_and_diagnostics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></a>
+  <a href="./15_live_results_observatory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Live Experiment Observatory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span></a>
+  <a href="./16_three_lead_ecgaim_live.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Three-Lead ECG-AIM: Live Results</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05_zhejiang_delineation_tutorial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Zhejiang Cohort: Data Audit and Delineation Protocol</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./01_dataset_and_preprocessing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">PTB-XL Tensor, Lead, and Preprocessing Contract</span></span></a>
+  <a href="./17_one_lead_wavelet_ssl_live.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL: Live Results</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
- <span class="menu-text">II. Reconstruction Models and Objectives</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">I. Data, Cohorts, and Measurement</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02_network_architectures.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Implemented Reconstruction Architectures</span></span></a>
+  <a href="./09_real_data_eda_and_diagnostics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03_loss_function_formulations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Implemented Loss Functions and Mixed-Level Design</span></span></a>
+  <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_zhejiang_delineation_tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Zhejiang Cohort: Data Audit and Delineation Protocol</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_dataset_and_preprocessing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">PTB-XL Tensor, Lead, and Preprocessing Contract</span></span></a>
   </div>
 </li>
       </ul>
@@ -417,7 +423,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
- <span class="menu-text">III. Clinical and Statistical Evaluation</span></a>
+ <span class="menu-text">II. Reconstruction Models and Objectives</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -425,20 +431,14 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05_clinical_metrics_and_delineation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Diagnostic Integrity &amp; Clinical Delineation</span></span></a>
+  <a href="./02_network_architectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Implemented Reconstruction Architectures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04_regression_to_mean.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Rigorous Agreement &amp; The Mathematics of Regression to the Mean</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./06_fairness_robustness_sqi.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Fairness, Noise Robustness, and Signal Quality Index (SQI)</span></span></a>
+  <a href="./03_loss_function_formulations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Implemented Loss Functions and Mixed-Level Design</span></span></a>
   </div>
 </li>
       </ul>
@@ -446,7 +446,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
- <span class="menu-text">IV. Benchmark and External Validation</span></a>
+ <span class="menu-text">III. Clinical and Statistical Evaluation</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -454,26 +454,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./08_factorial_loss_matrix_benchmarks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interim 48-Cell Results and Running Seven-Position Loss Benchmark</span></span></a>
+  <a href="./05_clinical_metrics_and_delineation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Diagnostic Integrity &amp; Clinical Delineation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07_smartwatch_reconstruction_case_study.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Four-Device Smartwatch Transfer Case Study</span></span></a>
+  <a href="./04_regression_to_mean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Rigorous Agreement &amp; The Mathematics of Regression to the Mean</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./10_echonext_classifier_external_validation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">EchoNext Classifier and External Diagnostic Validation</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./12_exhaustive_model_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Generation-Bound Exhaustive Model Analysis</span></span></a>
+  <a href="./06_fairness_robustness_sqi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Fairness, Noise Robustness, and Signal Quality Index (SQI)</span></span></a>
   </div>
 </li>
       </ul>
@@ -481,7 +475,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
- <span class="menu-text">V. Visual and Clinical Atlases</span></a>
+ <span class="menu-text">IV. Benchmark and External Validation</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -489,14 +483,49 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./08_factorial_loss_matrix_benchmarks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Interim 48-Cell Results and Running Seven-Position Loss Benchmark</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07_smartwatch_reconstruction_case_study.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Four-Device Smartwatch Transfer Case Study</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_echonext_classifier_external_validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EchoNext Classifier and External Diagnostic Validation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_exhaustive_model_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Generation-Bound Exhaustive Model Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">V. Visual and Clinical Atlases</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./13_engineering_ml_visual_atlas.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Engineering, Storage, and Inference Diagnostics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Engineering, Storage, and Inference Diagnostics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./14_cath_lab_clinical_trust_atlas.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Clinical Trust, Cath-Lab Safety, and Validation Requirements</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Clinical Trust, Cath-Lab Safety, and Validation Requirements</span></span></a>
   </div>
 </li>
       </ul>
@@ -511,33 +540,33 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#provenance-and-governance-ledger" id="toc-provenance-and-governance-ledger" class="nav-link active" data-scroll-target="#provenance-and-governance-ledger"><span class="header-section-number">2.1</span> Provenance and governance ledger</a>
+  <li><a href="#provenance-and-governance-ledger" id="toc-provenance-and-governance-ledger" class="nav-link active" data-scroll-target="#provenance-and-governance-ledger"><span class="header-section-number">5.1</span> Provenance and governance ledger</a>
   <ul class="collapse">
-  <li><a href="#reproducible-local-fingerprints" id="toc-reproducible-local-fingerprints" class="nav-link" data-scroll-target="#reproducible-local-fingerprints"><span class="header-section-number">2.1.1</span> Reproducible local fingerprints</a></li>
+  <li><a href="#reproducible-local-fingerprints" id="toc-reproducible-local-fingerprints" class="nav-link" data-scroll-target="#reproducible-local-fingerprints"><span class="header-section-number">5.1.1</span> Reproducible local fingerprints</a></li>
   </ul></li>
-  <li><a href="#ludb-lead-specific-morphology-ground-truth" id="toc-ludb-lead-specific-morphology-ground-truth" class="nav-link" data-scroll-target="#ludb-lead-specific-morphology-ground-truth"><span class="header-section-number">2.2</span> LUDB: lead-specific morphology ground truth</a>
+  <li><a href="#ludb-lead-specific-morphology-ground-truth" id="toc-ludb-lead-specific-morphology-ground-truth" class="nav-link" data-scroll-target="#ludb-lead-specific-morphology-ground-truth"><span class="header-section-number">5.2</span> LUDB: lead-specific morphology ground truth</a>
   <ul class="collapse">
-  <li><a href="#acquisition-and-inventory" id="toc-acquisition-and-inventory" class="nav-link" data-scroll-target="#acquisition-and-inventory"><span class="header-section-number">2.2.1</span> Acquisition and inventory</a></li>
-  <li><a href="#demographics-and-diagnoses" id="toc-demographics-and-diagnoses" class="nav-link" data-scroll-target="#demographics-and-diagnoses"><span class="header-section-number">2.2.2</span> Demographics and diagnoses</a></li>
-  <li><a href="#annotation-grammar-and-counts" id="toc-annotation-grammar-and-counts" class="nav-link" data-scroll-target="#annotation-grammar-and-counts"><span class="header-section-number">2.2.3</span> Annotation grammar and counts</a></li>
-  <li><a href="#real-waveform-eda" id="toc-real-waveform-eda" class="nav-link" data-scroll-target="#real-waveform-eda"><span class="header-section-number">2.2.4</span> Real waveform EDA</a></li>
-  <li><a href="#diagnostics-ludb-enables" id="toc-diagnostics-ludb-enables" class="nav-link" data-scroll-target="#diagnostics-ludb-enables"><span class="header-section-number">2.2.5</span> Diagnostics LUDB enables</a></li>
+  <li><a href="#acquisition-and-inventory" id="toc-acquisition-and-inventory" class="nav-link" data-scroll-target="#acquisition-and-inventory"><span class="header-section-number">5.2.1</span> Acquisition and inventory</a></li>
+  <li><a href="#demographics-and-diagnoses" id="toc-demographics-and-diagnoses" class="nav-link" data-scroll-target="#demographics-and-diagnoses"><span class="header-section-number">5.2.2</span> Demographics and diagnoses</a></li>
+  <li><a href="#annotation-grammar-and-counts" id="toc-annotation-grammar-and-counts" class="nav-link" data-scroll-target="#annotation-grammar-and-counts"><span class="header-section-number">5.2.3</span> Annotation grammar and counts</a></li>
+  <li><a href="#real-waveform-eda" id="toc-real-waveform-eda" class="nav-link" data-scroll-target="#real-waveform-eda"><span class="header-section-number">5.2.4</span> Real waveform EDA</a></li>
+  <li><a href="#diagnostics-ludb-enables" id="toc-diagnostics-ludb-enables" class="nav-link" data-scroll-target="#diagnostics-ludb-enables"><span class="header-section-number">5.2.5</span> Diagnostics LUDB enables</a></li>
   </ul></li>
-  <li><a href="#isp-delineation-targets" id="toc-isp-delineation-targets" class="nav-link" data-scroll-target="#isp-delineation-targets"><span class="header-section-number">2.3</span> ISP delineation targets</a>
+  <li><a href="#isp-delineation-targets" id="toc-isp-delineation-targets" class="nav-link" data-scroll-target="#isp-delineation-targets"><span class="header-section-number">5.3</span> ISP delineation targets</a>
   <ul class="collapse">
-  <li><a href="#local-data-contract" id="toc-local-data-contract" class="nav-link" data-scroll-target="#local-data-contract"><span class="header-section-number">2.3.1</span> Local data contract</a></li>
-  <li><a href="#executed-isp-waveform-inventory-and-eda" id="toc-executed-isp-waveform-inventory-and-eda" class="nav-link" data-scroll-target="#executed-isp-waveform-inventory-and-eda"><span class="header-section-number">2.3.2</span> Executed ISP waveform inventory and EDA</a></li>
-  <li><a href="#interval-integrity" id="toc-interval-integrity" class="nav-link" data-scroll-target="#interval-integrity"><span class="header-section-number">2.3.3</span> Interval integrity</a></li>
+  <li><a href="#local-data-contract" id="toc-local-data-contract" class="nav-link" data-scroll-target="#local-data-contract"><span class="header-section-number">5.3.1</span> Local data contract</a></li>
+  <li><a href="#executed-isp-waveform-inventory-and-eda" id="toc-executed-isp-waveform-inventory-and-eda" class="nav-link" data-scroll-target="#executed-isp-waveform-inventory-and-eda"><span class="header-section-number">5.3.2</span> Executed ISP waveform inventory and EDA</a></li>
+  <li><a href="#interval-integrity" id="toc-interval-integrity" class="nav-link" data-scroll-target="#interval-integrity"><span class="header-section-number">5.3.3</span> Interval integrity</a></li>
   </ul></li>
-  <li><a href="#sunnybrook-local-transfer-set" id="toc-sunnybrook-local-transfer-set" class="nav-link" data-scroll-target="#sunnybrook-local-transfer-set"><span class="header-section-number">2.4</span> Sunnybrook local transfer set</a>
+  <li><a href="#sunnybrook-local-transfer-set" id="toc-sunnybrook-local-transfer-set" class="nav-link" data-scroll-target="#sunnybrook-local-transfer-set"><span class="header-section-number">5.4</span> Sunnybrook local transfer set</a>
   <ul class="collapse">
-  <li><a href="#acquisition-contract" id="toc-acquisition-contract" class="nav-link" data-scroll-target="#acquisition-contract"><span class="header-section-number">2.4.1</span> Acquisition contract</a></li>
-  <li><a href="#executed-sunnybrook-waveform-eda" id="toc-executed-sunnybrook-waveform-eda" class="nav-link" data-scroll-target="#executed-sunnybrook-waveform-eda"><span class="header-section-number">2.4.2</span> Executed Sunnybrook waveform EDA</a></li>
-  <li><a href="#hyperfeatures-and-evidence-level" id="toc-hyperfeatures-and-evidence-level" class="nav-link" data-scroll-target="#hyperfeatures-and-evidence-level"><span class="header-section-number">2.4.3</span> Hyperfeatures and evidence level</a></li>
-  <li><a href="#retained-transients-and-robust-analysis" id="toc-retained-transients-and-robust-analysis" class="nav-link" data-scroll-target="#retained-transients-and-robust-analysis"><span class="header-section-number">2.4.4</span> Retained transients and robust analysis</a></li>
+  <li><a href="#acquisition-contract" id="toc-acquisition-contract" class="nav-link" data-scroll-target="#acquisition-contract"><span class="header-section-number">5.4.1</span> Acquisition contract</a></li>
+  <li><a href="#executed-sunnybrook-waveform-eda" id="toc-executed-sunnybrook-waveform-eda" class="nav-link" data-scroll-target="#executed-sunnybrook-waveform-eda"><span class="header-section-number">5.4.2</span> Executed Sunnybrook waveform EDA</a></li>
+  <li><a href="#hyperfeatures-and-evidence-level" id="toc-hyperfeatures-and-evidence-level" class="nav-link" data-scroll-target="#hyperfeatures-and-evidence-level"><span class="header-section-number">5.4.3</span> Hyperfeatures and evidence level</a></li>
+  <li><a href="#retained-transients-and-robust-analysis" id="toc-retained-transients-and-robust-analysis" class="nav-link" data-scroll-target="#retained-transients-and-robust-analysis"><span class="header-section-number">5.4.4</span> Retained transients and robust analysis</a></li>
   </ul></li>
-  <li><a href="#cross-dataset-role-matrix" id="toc-cross-dataset-role-matrix" class="nav-link" data-scroll-target="#cross-dataset-role-matrix"><span class="header-section-number">2.5</span> Cross-dataset role matrix</a></li>
-  <li><a href="#minimum-gate-for-final-factorial-results" id="toc-minimum-gate-for-final-factorial-results" class="nav-link" data-scroll-target="#minimum-gate-for-final-factorial-results"><span class="header-section-number">2.6</span> Minimum gate for final factorial results</a></li>
+  <li><a href="#cross-dataset-role-matrix" id="toc-cross-dataset-role-matrix" class="nav-link" data-scroll-target="#cross-dataset-role-matrix"><span class="header-section-number">5.5</span> Cross-dataset role matrix</a></li>
+  <li><a href="#minimum-gate-for-final-factorial-results" id="toc-minimum-gate-for-final-factorial-results" class="nav-link" data-scroll-target="#minimum-gate-for-final-factorial-results"><span class="header-section-number">5.6</span> Minimum gate for final factorial results</a></li>
   </ul>
 </nav>
     </div>
@@ -545,9 +574,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./11_dataset_atlas_ludb_isp_sunnybrook.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./11_dataset_atlas_ludb_isp_sunnybrook.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span id="sec-dataset-atlas" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-dataset-atlas" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -581,8 +610,8 @@ window.Quarto = {
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>ROOT <span class="op">=</span> Path(<span class="st">".."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<section id="provenance-and-governance-ledger" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="provenance-and-governance-ledger"><span class="header-section-number">2.1</span> Provenance and governance ledger</h2>
+<section id="provenance-and-governance-ledger" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="provenance-and-governance-ledger"><span class="header-section-number">5.1</span> Provenance and governance ledger</h2>
 <p>The local files do not all have the same documentation status. LUDB is the public PhysioNet release v1.0.1, cited as Kalyakulina et al.&nbsp;with DOI <a href="https://doi.org/10.13026/eegm-h675">10.13026/eegm-h675</a>, and is distributed under the Open Data Commons Attribution License v1.0. Its source states that 200 ten-second ECGs were collected in 2017–2018, annotated by cardiologists, with written consent and institutional review approval. EchoNext is a restricted PhysioNet resource; the local provenance identifies v1.1.1, while the canonical dataset record and version history are available under DOI <a href="https://doi.org/10.13026/2j37-ba56">10.13026/2j37-ba56</a>. It uses the PhysioNet Restricted Health Data License/Data Use Agreement 1.5.0; its source documents de-identification and IRB-approved retrospective use.</p>
 <p>The ISP folder in this repository does not include a citation, version, license, data-use terms, or a source identifier. Its three class meanings and sampling rate therefore remain unknown in this book. Sunnybrook has a local <code>METADATA.json</code> and README but no accompanying license, cohort selection protocol, subject identifiers, consent/ethics statement, or distribution authority. Until those fields are supplied by the data owner, Sunnybrook is a local exploratory transfer set and ISP is a locally present delineation artifact—not a fully provenance-resolved public benchmark.</p>
 <table class="caption-top table">
@@ -631,8 +660,8 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<section id="reproducible-local-fingerprints" class="level3" data-number="2.1.1">
-<h3 data-number="2.1.1" class="anchored" data-anchor-id="reproducible-local-fingerprints"><span class="header-section-number">2.1.1</span> Reproducible local fingerprints</h3>
+<section id="reproducible-local-fingerprints" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="reproducible-local-fingerprints"><span class="header-section-number">5.1.1</span> Reproducible local fingerprints</h3>
 <p>The following fingerprints identify the exact artifacts read by this book. A tree hash includes each relative path, file size, and file digest, so a renamed, added, removed, or changed record alters the result.</p>
 <div class="cell" data-tbl-cap="SHA-256 fingerprints of the actual local dataset artifacts." data-execution_count="2">
 <details open="" class="code-fold">
@@ -703,9 +732,9 @@ window.Quarto = {
 <th data-quarto-table-cell-role="th">0</th>
 <td>LUDB</td>
 <td>/home/mithunmanivannan/data/ludb</td>
-<td>400</td>
-<td>24050739</td>
-<td>be3178637f110d50aac58fda1472a590e2e1d89d19b904...</td>
+<td>402</td>
+<td>24171462</td>
+<td>4755dac7c342ca82247ed33ee6399dc274ab20fcfb0669...</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">1</th>
@@ -744,8 +773,8 @@ window.Quarto = {
 <td>EchoNext: PROVENANCE.json</td>
 <td>/home/mithunmanivannan/data/echonext/PROVENANC...</td>
 <td>1</td>
-<td>294</td>
-<td>86b1d2bcaf05bc3ed2a5632f7b99cbfff9deb5f3819bb3...</td>
+<td>1242</td>
+<td>b17b167f3aee88a86208ace84c17edf90e06fbc22afd8b...</td>
 </tr>
 </tbody>
 </table>
@@ -755,10 +784,10 @@ window.Quarto = {
 </div>
 </section>
 </section>
-<section id="ludb-lead-specific-morphology-ground-truth" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="ludb-lead-specific-morphology-ground-truth"><span class="header-section-number">2.2</span> LUDB: lead-specific morphology ground truth</h2>
-<section id="acquisition-and-inventory" class="level3" data-number="2.2.1">
-<h3 data-number="2.2.1" class="anchored" data-anchor-id="acquisition-and-inventory"><span class="header-section-number">2.2.1</span> Acquisition and inventory</h3>
+<section id="ludb-lead-specific-morphology-ground-truth" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="ludb-lead-specific-morphology-ground-truth"><span class="header-section-number">5.2</span> LUDB: lead-specific morphology ground truth</h2>
+<section id="acquisition-and-inventory" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="acquisition-and-inventory"><span class="header-section-number">5.2.1</span> Acquisition and inventory</h3>
 <p>The local LUDB copy contains 200 WFDB records. Every record has 12 leads, 5,000 samples at 500 Hz, ten seconds of duration, and physical units of mV. Each lead has a separate annotation stream, allowing a wave to be present or bounded differently across leads.</p>
 <div id="cell-ludb-inventory" class="cell" data-execution_count="3">
 <details open="" class="code-fold">
@@ -797,13 +826,13 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">count</th>
-<td>199.000000</td>
-<td>199.0</td>
-<td>199.0</td>
-<td>199.0</td>
-<td>199.0</td>
-<td>199</td>
-<td>199</td>
+<td>200.000000</td>
+<td>200.0</td>
+<td>200.0</td>
+<td>200.0</td>
+<td>200.0</td>
+<td>200</td>
+<td>200</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">unique</th>
@@ -832,12 +861,12 @@ window.Quarto = {
 <td>NaN</td>
 <td>NaN</td>
 <td>NaN</td>
-<td>199</td>
-<td>199</td>
+<td>200</td>
+<td>200</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">mean</th>
-<td>101.000000</td>
+<td>100.500000</td>
 <td>500.0</td>
 <td>5000.0</td>
 <td>10.0</td>
@@ -847,7 +876,7 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">std</th>
-<td>57.590508</td>
+<td>57.879185</td>
 <td>0.0</td>
 <td>0.0</td>
 <td>0.0</td>
@@ -857,7 +886,7 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">min</th>
-<td>2.000000</td>
+<td>1.000000</td>
 <td>500.0</td>
 <td>5000.0</td>
 <td>10.0</td>
@@ -867,7 +896,7 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">25%</th>
-<td>51.500000</td>
+<td>50.750000</td>
 <td>500.0</td>
 <td>5000.0</td>
 <td>10.0</td>
@@ -877,7 +906,7 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">50%</th>
-<td>101.000000</td>
+<td>100.500000</td>
 <td>500.0</td>
 <td>5000.0</td>
 <td>10.0</td>
@@ -887,7 +916,7 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">75%</th>
-<td>150.500000</td>
+<td>150.250000</td>
 <td>500.0</td>
 <td>5000.0</td>
 <td>10.0</td>
@@ -913,8 +942,8 @@ window.Quarto = {
 </div>
 <p>All 200 records should share exactly one schema. A mismatch is an integrity failure, not a reason to silently resample or reorder one record.</p>
 </section>
-<section id="demographics-and-diagnoses" class="level3" data-number="2.2.2">
-<h3 data-number="2.2.2" class="anchored" data-anchor-id="demographics-and-diagnoses"><span class="header-section-number">2.2.2</span> Demographics and diagnoses</h3>
+<section id="demographics-and-diagnoses" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="demographics-and-diagnoses"><span class="header-section-number">5.2.2</span> Demographics and diagnoses</h3>
 <p>The local headers yield 115 male and 85 female records. Age ranges from 11 to 90 years (mean 51.98, median 56). Diagnoses are overlapping free-text statements. Frequent statements include sinus rhythm (143), left ventricular hypertrophy (108), left atrial hypertrophy (102), normal electrical axis (75), left-axis deviation (66), incomplete right bundle-branch block (29), sinus bradycardia (25), and atrial fibrillation (15).</p>
 <div id="cell-ludb-demographics" class="cell" data-execution_count="4">
 <details open="" class="code-fold">
@@ -965,37 +994,37 @@ window.Quarto = {
 <tr class="odd">
 <th data-quarto-table-cell-role="th">0</th>
 <td>records</td>
-<td>199.000000</td>
+<td>200.000</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">1</th>
 <td>age mean</td>
-<td>51.979899</td>
+<td>51.975</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2</th>
 <td>age median</td>
-<td>56.000000</td>
+<td>56.000</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">3</th>
 <td>age minimum</td>
-<td>11.000000</td>
+<td>11.000</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">4</th>
 <td>age maximum</td>
-<td>90.000000</td>
+<td>90.000</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">5</th>
 <td>male</td>
-<td>115.000000</td>
+<td>115.000</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">6</th>
 <td>female</td>
-<td>84.000000</td>
+<td>85.000</td>
 </tr>
 </tbody>
 </table>
@@ -1005,8 +1034,8 @@ window.Quarto = {
 </div>
 <p>One record can have rhythm, axis, chamber, conduction, and repolarization statements simultaneously. Converting these into a single mutually exclusive target would be invalid.</p>
 </section>
-<section id="annotation-grammar-and-counts" class="level3" data-number="2.2.3">
-<h3 data-number="2.2.3" class="anchored" data-anchor-id="annotation-grammar-and-counts"><span class="header-section-number">2.2.3</span> Annotation grammar and counts</h3>
+<section id="annotation-grammar-and-counts" class="level3" data-number="5.2.3">
+<h3 data-number="5.2.3" class="anchored" data-anchor-id="annotation-grammar-and-counts"><span class="header-section-number">5.2.3</span> Annotation grammar and counts</h3>
 <p>LUDB uses <code>p</code> for P peaks, <code>N</code> for QRS fiducials, <code>t</code> for T peaks, <code>(</code> for onsets, and <code>)</code> for offsets. Across the 2,400 lead-specific annotation streams, the local files contain 16,797 P peaks, 21,965 QRS markers, 19,661 T peaks, 58,321 onsets, and 58,423 offsets.</p>
 <div id="cell-ludb-annotation-audit" class="cell" data-execution_count="5">
 <details open="" class="code-fold">
@@ -1042,27 +1071,27 @@ window.Quarto = {
 <tr class="odd">
 <th data-quarto-table-cell-role="th">0</th>
 <td>(</td>
-<td>58129</td>
+<td>58321</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">1</th>
 <td>N</td>
-<td>21893</td>
+<td>21965</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2</th>
 <td>)</td>
-<td>58231</td>
+<td>58423</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">3</th>
 <td>t</td>
-<td>19601</td>
+<td>19661</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">4</th>
 <td>p</td>
-<td>16737</td>
+<td>16797</td>
 </tr>
 </tbody>
 </table>
@@ -1072,8 +1101,8 @@ window.Quarto = {
 </div>
 <p>Onset and offset totals do not need to be identical: waves may be absent, annotations can touch record boundaries, and pairing is wave- and lead-specific. A correct parser uses the symbol sequence and cardiac-cycle context rather than pairing the <span class="math inline">\(j\)</span>th onset with the <span class="math inline">\(j\)</span>th offset globally.</p>
 </section>
-<section id="real-waveform-eda" class="level3" data-number="2.2.4">
-<h3 data-number="2.2.4" class="anchored" data-anchor-id="real-waveform-eda"><span class="header-section-number">2.2.4</span> Real waveform EDA</h3>
+<section id="real-waveform-eda" class="level3" data-number="5.2.4">
+<h3 data-number="5.2.4" class="anchored" data-anchor-id="real-waveform-eda"><span class="header-section-number">5.2.4</span> Real waveform EDA</h3>
 <p>Median within-record maxima range from about 0.59 to 0.79 mV by lead; median minima range from −0.21 mV in V6 to −0.78 mV in aVR. Median RMS amplitude is approximately 0.107–0.118 mV. These are cohort sanity references, not universal clipping limits.</p>
 <div id="cell-ludb-waveform-eda" class="cell" data-execution_count="6">
 <details open="" class="code-fold">
@@ -1121,87 +1150,87 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">avf</th>
-<td>-0.296433</td>
-<td>0.703567</td>
-<td>0.111196</td>
-<td>0.457516</td>
+<td>-0.296574</td>
+<td>0.703426</td>
+<td>0.111117</td>
+<td>0.457403</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">avl</th>
-<td>-0.372832</td>
-<td>0.627168</td>
-<td>0.109234</td>
-<td>0.495303</td>
+<td>-0.368310</td>
+<td>0.631690</td>
+<td>0.109095</td>
+<td>0.495201</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">avr</th>
-<td>-0.779787</td>
-<td>0.220213</td>
-<td>0.117978</td>
-<td>0.462593</td>
+<td>-0.780067</td>
+<td>0.219933</td>
+<td>0.117886</td>
+<td>0.462442</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">i</th>
-<td>-0.245205</td>
-<td>0.754795</td>
-<td>0.116439</td>
-<td>0.547522</td>
+<td>-0.244497</td>
+<td>0.755503</td>
+<td>0.116365</td>
+<td>0.547516</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">ii</th>
-<td>-0.238220</td>
-<td>0.761780</td>
-<td>0.115319</td>
-<td>0.527161</td>
+<td>-0.237436</td>
+<td>0.762564</td>
+<td>0.115281</td>
+<td>0.526733</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">iii</th>
-<td>-0.410219</td>
-<td>0.589781</td>
-<td>0.107374</td>
-<td>0.508606</td>
+<td>-0.410589</td>
+<td>0.589411</td>
+<td>0.107316</td>
+<td>0.508454</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">v1</th>
-<td>-0.715297</td>
-<td>0.284703</td>
-<td>0.114747</td>
-<td>0.584737</td>
+<td>-0.716097</td>
+<td>0.283903</td>
+<td>0.114741</td>
+<td>0.584727</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">v2</th>
-<td>-0.655664</td>
-<td>0.344336</td>
-<td>0.117593</td>
-<td>0.572174</td>
+<td>-0.654721</td>
+<td>0.345279</td>
+<td>0.117606</td>
+<td>0.572144</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">v3</th>
-<td>-0.569798</td>
-<td>0.430202</td>
-<td>0.115822</td>
-<td>0.518612</td>
+<td>-0.569091</td>
+<td>0.430909</td>
+<td>0.115698</td>
+<td>0.518258</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">v4</th>
-<td>-0.354472</td>
-<td>0.645528</td>
-<td>0.109470</td>
-<td>0.508434</td>
+<td>-0.354418</td>
+<td>0.645582</td>
+<td>0.109143</td>
+<td>0.508268</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">v5</th>
-<td>-0.236062</td>
-<td>0.763938</td>
-<td>0.115365</td>
-<td>0.528698</td>
+<td>-0.235912</td>
+<td>0.764088</td>
+<td>0.115257</td>
+<td>0.528402</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">v6</th>
-<td>-0.208665</td>
-<td>0.791335</td>
-<td>0.118123</td>
-<td>0.540264</td>
+<td>-0.208008</td>
+<td>0.791992</td>
+<td>0.118121</td>
+<td>0.540186</td>
 </tr>
 </tbody>
 </table>
@@ -1210,16 +1239,16 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="diagnostics-ludb-enables" class="level3" data-number="2.2.5">
-<h3 data-number="2.2.5" class="anchored" data-anchor-id="diagnostics-ludb-enables"><span class="header-section-number">2.2.5</span> Diagnostics LUDB enables</h3>
+<section id="diagnostics-ludb-enables" class="level3" data-number="5.2.5">
+<h3 data-number="5.2.5" class="anchored" data-anchor-id="diagnostics-ludb-enables"><span class="header-section-number">5.2.5</span> Diagnostics LUDB enables</h3>
 <p>For P, QRS, and T waves, report onset, peak, and offset error by lead. Matching must be beat-aware and limited to a physiologic window; unconstrained nearest-neighbor matching can pair adjacent cycles. Minimum outputs are sensitivity, positive predictive value, median/IQR/95th-percentile timing error, cycle-mismatch rate, error versus wave amplitude, and interval consistency across leads.</p>
 <p>A reconstruction can have high sample correlation but erase a low-amplitude P wave or shift its boundary enough to corrupt PR measurement. LUDB is designed to reveal precisely that failure.</p>
 </section>
 </section>
-<section id="isp-delineation-targets" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="isp-delineation-targets"><span class="header-section-number">2.3</span> ISP delineation targets</h2>
-<section id="local-data-contract" class="level3" data-number="2.3.1">
-<h3 data-number="2.3.1" class="anchored" data-anchor-id="local-data-contract"><span class="header-section-number">2.3.1</span> Local data contract</h3>
+<section id="isp-delineation-targets" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="isp-delineation-targets"><span class="header-section-number">5.3</span> ISP delineation targets</h2>
+<section id="local-data-contract" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="local-data-contract"><span class="header-section-number">5.3.1</span> Local data contract</h3>
 <p>The ISP CSVs contain 403 training and 72 test rows. Each row includes <code>file_name</code>, age, binary sex coding, and a serialized list of <code>(class, onset, offset)</code> intervals. The training split contains 14,148 intervals and the test split 2,558.</p>
 <p>Training class counts are 4,312 / 5,048 / 4,788 for classes 0/1/2; test counts are 793 / 900 / 865. Median widths are 116/110/182 samples in training and 114/110/182 in test. The ordering suggests P/QRS/T-like triplets, but the semantic mapping must come from source documentation rather than inference from sequence alone.</p>
 <p>The WFDB files are present and link one-to-one to the CSV <code>file_name</code> inside each split. Their headers declare 12 channels, 1,000 samples/s, approximately 9,998–10,000 samples, and a nonstandard unit token <code>mkv</code>. The numerical scale is consistent with microvolt-like values, but the book does not silently relabel <code>mkv</code> as µV without authoritative provenance.</p>
@@ -1306,8 +1335,8 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="executed-isp-waveform-inventory-and-eda" class="level3" data-number="2.3.2">
-<h3 data-number="2.3.2" class="anchored" data-anchor-id="executed-isp-waveform-inventory-and-eda"><span class="header-section-number">2.3.2</span> Executed ISP waveform inventory and EDA</h3>
+<section id="executed-isp-waveform-inventory-and-eda" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="executed-isp-waveform-inventory-and-eda"><span class="header-section-number">5.3.2</span> Executed ISP waveform inventory and EDA</h3>
 <div class="cell" data-tbl-cap="Schema audit of every local ISP WFDB record." data-execution_count="8">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -1679,8 +1708,8 @@ window.Quarto = {
 </div>
 <p>This audit establishes the live file contract and exposes flatlines/extreme records. It does not resolve acquisition device, cohort selection, class semantics, or whether train and test folders contain distinct people.</p>
 </section>
-<section id="interval-integrity" class="level3" data-number="2.3.3">
-<h3 data-number="2.3.3" class="anchored" data-anchor-id="interval-integrity"><span class="header-section-number">2.3.3</span> Interval integrity</h3>
+<section id="interval-integrity" class="level3" data-number="5.3.3">
+<h3 data-number="5.3.3" class="anchored" data-anchor-id="interval-integrity"><span class="header-section-number">5.3.3</span> Interval integrity</h3>
 <div id="cell-isp-integrity" class="cell" data-execution_count="10">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -1762,10 +1791,10 @@ window.Quarto = {
 <p>Train and test ages have similar means (55.86 and 55.17), but test variability is larger (SD 19.16 versus 16.43). Sex coding 1 occurs in 153/403 training and 27/72 test rows. Similar marginals do not establish subject independence; <code>file_name</code> can restart within split directories.</p>
 </section>
 </section>
-<section id="sunnybrook-local-transfer-set" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="sunnybrook-local-transfer-set"><span class="header-section-number">2.4</span> Sunnybrook local transfer set</h2>
-<section id="acquisition-contract" class="level3" data-number="2.4.1">
-<h3 data-number="2.4.1" class="anchored" data-anchor-id="acquisition-contract"><span class="header-section-number">2.4.1</span> Acquisition contract</h3>
+<section id="sunnybrook-local-transfer-set" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="sunnybrook-local-transfer-set"><span class="header-section-number">5.4</span> Sunnybrook local transfer set</h2>
+<section id="acquisition-contract" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="acquisition-contract"><span class="header-section-number">5.4.1</span> Acquisition contract</h3>
 <p>The repository contains 20 Philips Sierra XML ECGs. Local owner-supplied metadata declares Philips PageWriter TC hardware, 500 Hz, 5 µV/bit, 0.05–150 Hz bandwidth, 60 Hz notch filtering, 12 leads, and fully measured 10-wire acquisition. The feature dictionary contains 179 machine-extracted fields. These declarations are technically checked where possible below, but cohort and governance claims remain unresolved.</p>
 <div id="cell-sunnybrook-provenance" class="cell" data-execution_count="11">
 <details open="" class="code-fold">
@@ -1846,8 +1875,8 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="executed-sunnybrook-waveform-eda" class="level3" data-number="2.4.2">
-<h3 data-number="2.4.2" class="anchored" data-anchor-id="executed-sunnybrook-waveform-eda"><span class="header-section-number">2.4.2</span> Executed Sunnybrook waveform EDA</h3>
+<section id="executed-sunnybrook-waveform-eda" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="executed-sunnybrook-waveform-eda"><span class="header-section-number">5.4.2</span> Executed Sunnybrook waveform EDA</h3>
 <p>This block reuses the evaluator’s production XML decoder, including the <code>parsedwaveforms@resolution</code> attribute, 500 Hz assertion, lead-order assertion, and centered ten-second crop. It does not trust the README’s scale without checking each XML.</p>
 <div class="cell" data-tbl-cap="Lead-wise EDA of all 20 decoded Sunnybrook XML records." data-execution_count="12">
 <details open="" class="code-fold">
@@ -2323,20 +2352,20 @@ window.Quarto = {
 <p>The ranked table makes outlier selection algorithmic. ECG010 and ECG008 appear because of their decoded amplitudes, not because they were selected after viewing model performance. They remain in the primary descriptive analysis; robust medians and leave-one-record-out sensitivity should accompany means.</p>
 <p>Fully measured limb leads make Sunnybrook valuable for detecting models that exploit algebraic limb-lead identities while failing on independently acquired morphology.</p>
 </section>
-<section id="hyperfeatures-and-evidence-level" class="level3" data-number="2.4.3">
-<h3 data-number="2.4.3" class="anchored" data-anchor-id="hyperfeatures-and-evidence-level"><span class="header-section-number">2.4.3</span> Hyperfeatures and evidence level</h3>
+<section id="hyperfeatures-and-evidence-level" class="level3" data-number="5.4.3">
+<h3 data-number="5.4.3" class="anchored" data-anchor-id="hyperfeatures-and-evidence-level"><span class="header-section-number">5.4.3</span> Hyperfeatures and evidence level</h3>
 <p>The Philips XLI pipeline supplies global heart rate, PR/QRS/QT/QTc and axes; per-lead P/Q/R/S/T amplitudes; P/QRS/T durations; ST onset/midpoint/J+80/end/slope; measured-lead flags; and diagnostic statements. These are machine-derived reference features, not cardiologist-adjudicated truth.</p>
 <p>The set includes sinus rhythms, atrial fibrillation/flutter, old inferior MI, chamber/conduction findings, poor R-wave progression, and a mislaced-lead warning. With only 20 records, these are cases for external stress testing, not stable prevalence or broad clinical-effect estimation.</p>
 </section>
-<section id="retained-transients-and-robust-analysis" class="level3" data-number="2.4.4">
-<h3 data-number="2.4.4" class="anchored" data-anchor-id="retained-transients-and-robust-analysis"><span class="header-section-number">2.4.4</span> Retained transients and robust analysis</h3>
+<section id="retained-transients-and-robust-analysis" class="level3" data-number="5.4.4">
+<h3 data-number="5.4.4" class="anchored" data-anchor-id="retained-transients-and-robust-analysis"><span class="header-section-number">5.4.4</span> Retained transients and robust analysis</h3>
 <p>The comprehensive package retains a 20.44 mV V5 transient in ECG010 and a 6.66 mV V4 transient in ECG008 without clipping. Final analyses should report median/IQR and per-record influence alongside means, with an explicitly labeled sensitivity analysis excluding flagged transients. Silent removal would hide a real robustness failure.</p>
 <p>Provenance also notes an approximately 18 µV physical Einthoven residual. This is an empirical acquisition reference, not a universal “errors below 18 µV are perfect” threshold: lead-law residual and reconstruction error are different quantities.</p>
 <p>Sunnybrook superclass endpoints use non-adjudicated Philips statement proxies. ECGFounder has probability-fidelity evaluation only because compatible 150-task labels are absent. Those qualifications must appear beside every result table, not only in an appendix.</p>
 </section>
 </section>
-<section id="cross-dataset-role-matrix" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="cross-dataset-role-matrix"><span class="header-section-number">2.5</span> Cross-dataset role matrix</h2>
+<section id="cross-dataset-role-matrix" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="cross-dataset-role-matrix"><span class="header-section-number">5.5</span> Cross-dataset role matrix</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
@@ -2379,8 +2408,8 @@ window.Quarto = {
 </tbody>
 </table>
 </section>
-<section id="minimum-gate-for-final-factorial-results" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="minimum-gate-for-final-factorial-results"><span class="header-section-number">2.6</span> Minimum gate for final factorial results</h2>
+<section id="minimum-gate-for-final-factorial-results" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="minimum-gate-for-final-factorial-results"><span class="header-section-number">5.6</span> Minimum gate for final factorial results</h2>
 <p>Every endpoint in the running mixed-level loss study must preserve:</p>
 <ol type="1">
 <li>source file/hash and provenance version;</li>
@@ -2866,12 +2895,12 @@ window.Quarto = {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./09_real_data_eda_and_diagnostics.html" class="pagination-link" aria-label="Real-Cohort EDA, Integrity Checks, and Deep Diagnostics">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./05_zhejiang_delineation_tutorial.html" class="pagination-link" aria-label="Zhejiang Cohort: Data Audit and Delineation Protocol">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Zhejiang Cohort: Data Audit and Delineation Protocol</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Zhejiang Cohort: Data Audit and Delineation Protocol</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">

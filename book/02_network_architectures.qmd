@@ -20,8 +20,6 @@ import pandas as pd
 
 ROOT = Path("..").resolve()
 REGISTRY_PATH = ROOT / "results/comprehensive_latest_48_models/provenance/model_registry.json"
-registry = json.loads(REGISTRY_PATH.read_text())
-models = pd.DataFrame(registry["models"])
 
 def sha256_file(path):
     digest = hashlib.sha256()
@@ -30,30 +28,42 @@ def sha256_file(path):
             digest.update(chunk)
     return digest.hexdigest()
 
-rows = []
-for family, group in models.groupby("family", sort=False):
-    architecture = group.iloc[0]["architecture"]
-    rows.append({
-        "Registry family": family,
-        "Cells": len(group),
-        "Declared architecture": architecture.get("name"),
-        "Architecture fields": ", ".join(
-            f"{key}={value}" for key, value in architecture.items() if key != "name"
-        ),
-        "Kinds": ", ".join(sorted(group["kind"].unique())),
-        "Seeds": ", ".join(map(str, sorted(group["seed"].unique()))),
-        "Observed leads": ", ".join(map(str, group.iloc[0]["observed_leads"])),
-        "Unique masks": group["factorial_mask"].nunique(),
-    })
-
-architecture_table = pd.DataFrame(rows)
-display(architecture_table)
-display(pd.DataFrame([
-    ("Registry schema", registry["schema_version"]),
-    ("Registry benchmark", registry["benchmark"]),
-    ("Registry SHA-256", sha256_file(REGISTRY_PATH)),
-    ("Registered models", len(models)),
-], columns=["Field", "Value"]))
+if REGISTRY_PATH.exists():
+    registry = json.loads(REGISTRY_PATH.read_text())
+    models = pd.DataFrame(registry["models"])
+    rows = []
+    for family, group in models.groupby("family", sort=False):
+        architecture = group.iloc[0]["architecture"]
+        rows.append({
+            "Registry family": family, "Cells": len(group),
+            "Declared architecture": architecture.get("name"),
+            "Architecture fields": ", ".join(f"{k}={v}" for k, v in architecture.items() if k != "name"),
+            "Kinds": ", ".join(sorted(group["kind"].unique())),
+            "Seeds": ", ".join(map(str, sorted(group["seed"].unique()))),
+            "Observed leads": ", ".join(map(str, group.iloc[0]["observed_leads"])),
+            "Unique masks": group["factorial_mask"].nunique(),
+        })
+    display(pd.DataFrame(rows))
+    display(pd.DataFrame([
+        ("Registry schema", registry["schema_version"]),
+        ("Registry benchmark", registry["benchmark"]),
+        ("Registry SHA-256", sha256_file(REGISTRY_PATH)),
+        ("Registered models", len(models)),
+    ], columns=["Field", "Value"]))
+else:
+    import sqlite3
+    catalog = ROOT / "results/checkpoint_store/catalog.sqlite"
+    with sqlite3.connect(f"file:{catalog.resolve()}?mode=ro", uri=True) as con:
+        current = pd.read_sql_query("select model_id, factorial_mask, seed, metadata_json from checkpoints", con)
+    current["family"] = current.metadata_json.map(lambda x: json.loads(x or "{}").get("family", "unknown"))
+    display(current.groupby("family").agg(
+        Cells=("model_id", "size"), Seeds=("seed", "nunique"), Unique_masks=("factorial_mask", "nunique")
+    ).reset_index())
+    display(pd.DataFrame([{
+        "evidence_status": "current checkpoint catalog fallback",
+        "catalog": str(catalog), "registered_models": len(current),
+        "legacy_registry": "unavailable; legacy architecture fields are not reconstructed"
+    }]))
 ```
 
 ## Shared tensor and lead contract

@@ -1,0 +1,14 @@
+---
+title: "ECG-AIM Experiment Analysis"
+format: html
+---
+
+## [Three-lead benchmark and ECG-AIM deep dive](three_lead_ecgaim_benchmark.html)
+
+U-Net, cNVAE, MSVAE and ECG-AIM with observed leads **I, II and V2**, clinical biomarkers, and the completed LUDB/RDB oracle and blinded evaluations.
+
+## [One-lead spatial, wavelet and SSL development](one_lead_wavelet_dashboard.html)
+
+Source lead I versus II, A0–E1 controls, the live 120-run queue, and RDB-supervised six-boundary training.
+
+These are separate scientific tracks. Existing LUDB/RDB leaderboards are three-lead ECG-AIM results and are not attributed to unfinished one-lead models.

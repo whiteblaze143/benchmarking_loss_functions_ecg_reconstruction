@@ -1,0 +1,4094 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Three-Lead Benchmark and ECG-AIM Deep Dive</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="three_lead_ecgaim_benchmark_files/libs/clipboard/clipboard.min.js"></script>
+<script src="three_lead_ecgaim_benchmark_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="three_lead_ecgaim_benchmark_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="three_lead_ecgaim_benchmark_files/libs/quarto-html/popper.min.js"></script>
+<script src="three_lead_ecgaim_benchmark_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="three_lead_ecgaim_benchmark_files/libs/quarto-html/anchor.min.js"></script>
+<link href="three_lead_ecgaim_benchmark_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="three_lead_ecgaim_benchmark_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="three_lead_ecgaim_benchmark_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="three_lead_ecgaim_benchmark_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="three_lead_ecgaim_benchmark_files/libs/bootstrap/bootstrap-17d83cdcbd741501231445d8cae5afc1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#contract-and-architecture-comparison" id="toc-contract-and-architecture-comparison" class="nav-link active" data-scroll-target="#contract-and-architecture-comparison">Contract and architecture comparison</a></li>
+  <li><a href="#ecg-aim-novel-model-and-experiment-logic" id="toc-ecg-aim-novel-model-and-experiment-logic" class="nav-link" data-scroll-target="#ecg-aim-novel-model-and-experiment-logic">ECG-AIM: novel model and experiment logic</a></li>
+  <li><a href="#clinical-biomarkers-and-canonical-160-model-cohort" id="toc-clinical-biomarkers-and-canonical-160-model-cohort" class="nav-link" data-scroll-target="#clinical-biomarkers-and-canonical-160-model-cohort">Clinical biomarkers and canonical 160-model cohort</a></li>
+  <li><a href="#ludbrdb-blinded-delineation-three-lead-ecg-aim" id="toc-ludbrdb-blinded-delineation-three-lead-ecg-aim" class="nav-link" data-scroll-target="#ludbrdb-blinded-delineation-three-lead-ecg-aim">LUDB/RDB blinded delineation — three-lead ECG-AIM</a></li>
+  <li><a href="#ludbrdb-oracle-morphology-three-lead-ecg-aim" id="toc-ludbrdb-oracle-morphology-three-lead-ecg-aim" class="nav-link" data-scroll-target="#ludbrdb-oracle-morphology-three-lead-ecg-aim">LUDB/RDB oracle morphology — three-lead ECG-AIM</a></li>
+  <li><a href="#cross-endpoint-consistency" id="toc-cross-endpoint-consistency" class="nav-link" data-scroll-target="#cross-endpoint-consistency">Cross-endpoint consistency</a></li>
+  <li><a href="#configurable-rdb-waveform" id="toc-configurable-rdb-waveform" class="nav-link" data-scroll-target="#configurable-rdb-waveform">Configurable RDB waveform</a></li>
+  <li><a href="#interpretation-template" id="toc-interpretation-template" class="nav-link" data-scroll-target="#interpretation-template">Interpretation template</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Three-Lead Benchmark and ECG-AIM Deep Dive</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<p class="subtitle lead">Observed I + II + V2 → twelve-lead reconstruction</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="ddc55912" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Edit these controls and rerun.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>TOP_K<span class="op">=</span><span class="dv">10</span><span class="op">;</span> RECORD_ID<span class="op">=</span><span class="st">'AF0293'</span><span class="op">;</span> RDB_SPLIT<span class="op">=</span><span class="st">'test'</span><span class="op">;</span> VIEW_LEADS<span class="op">=</span>[<span class="st">'I'</span>,<span class="st">'II'</span>,<span class="st">'V2'</span>,<span class="st">'V1'</span>,<span class="st">'V3'</span>,<span class="st">'V6'</span>]<span class="op">;</span> WINDOW<span class="op">=</span>(<span class="dv">0</span>,<span class="dv">10</span>)<span class="op">;</span> RECONSTRUCTION_NPZ<span class="op">=</span><span class="va">None</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="b7030ea2" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys,json,numpy <span class="im">as</span> np,pandas <span class="im">as</span> pd,matplotlib.pyplot <span class="im">as</span> plt,seaborn <span class="im">as</span> sns</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>R<span class="op">=</span>Path.cwd().resolve()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="kw">not</span> (R<span class="op">/</span><span class="st">'results'</span>).exists():R<span class="op">=</span>R.parent</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>sys.path.insert(<span class="dv">0</span>,<span class="bu">str</span>(R<span class="op">/</span><span class="st">'notebooks'</span>))<span class="op">;</span><span class="im">from</span> experiment_dashboard_helpers <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">'whitegrid'</span>)<span class="op">;</span>pd.set_option(<span class="st">'display.max_columns'</span>,<span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="contract-and-architecture-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="contract-and-architecture-comparison">Contract and architecture comparison</h2>
+<p>Every model receives leads <strong>I, II and V2</strong>. Primary reconstruction metrics must use the nine missing leads so observed-lead passthrough cannot inflate performance.</p>
+<ul>
+<li><strong>MCMA-U-Net:</strong> convolutional reconstruction control.</li>
+<li><strong>cNVAE:</strong> conditional variational ECG-FM bridge.</li>
+<li><strong>MSVAE:</strong> multiscale variational reconstruction.</li>
+<li><strong>ECG-AIM:</strong> our novel tokenized transformer reconstructor.</li>
+</ul>
+<div id="4498c47e" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>paths<span class="op">=</span>[R<span class="op">/</span><span class="st">'results/factorial_v4/main_48_cell_table.csv'</span>,R<span class="op">/</span><span class="st">'results/factorial_v2/main_48_cell_table.csv'</span>,R<span class="op">/</span><span class="st">'results/factorial_v2/all_48_models_benchmark.csv'</span>]<span class="op">;</span>p<span class="op">=</span><span class="bu">next</span>((x <span class="cf">for</span> x <span class="kw">in</span> paths <span class="cf">if</span> x.exists()),<span class="va">None</span>)<span class="op">;</span>bench<span class="op">=</span>pd.read_csv(p) <span class="cf">if</span> p <span class="cf">else</span> pd.DataFrame()<span class="op">;</span><span class="bu">print</span>(p,<span class="bu">len</span>(bench))<span class="op">;</span>display(bench)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>nums<span class="op">=</span>[c <span class="cf">for</span> c <span class="kw">in</span> bench <span class="cf">if</span> pd.api.types.is_numeric_dtype(bench[c])]<span class="op">;</span>ident<span class="op">=</span><span class="bu">next</span>((c <span class="cf">for</span> c <span class="kw">in</span> (<span class="st">'model_id'</span>,<span class="st">'id'</span>,<span class="st">'cell_id'</span>) <span class="cf">if</span> c <span class="kw">in</span> bench),bench.columns[<span class="dv">0</span>])<span class="op">;</span>grp<span class="op">=</span><span class="bu">tuple</span>(c <span class="cf">for</span> c <span class="kw">in</span> (<span class="st">'family'</span>,<span class="st">'architecture'</span>) <span class="cf">if</span> c <span class="kw">in</span> bench)<span class="op">;</span>display(best(bench,nums,grp[:<span class="dv">1</span>],<span class="dv">3</span>,ident))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/factorial_v4/main_48_cell_table.csv 48</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">id</th>
+<th data-quarto-table-cell-role="th">family</th>
+<th data-quarto-table-cell-role="th">mask</th>
+<th data-quarto-table-cell-role="th">inference_status</th>
+<th data-quarto-table-cell-role="th">mse</th>
+<th data-quarto-table-cell-role="th">r2</th>
+<th data-quarto-table-cell-role="th">pearson</th>
+<th data-quarto-table-cell-role="th">qrs_correlation</th>
+<th data-quarto-table-cell-role="th">st_correlation</th>
+<th data-quarto-table-cell-role="th">ecgfounder_auroc</th>
+<th data-quarto-table-cell-role="th">morphology_coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>unet__e0c0m0d0__s42</td>
+<td>unet</td>
+<td>0</td>
+<td>valid</td>
+<td>0.369317</td>
+<td>-22.557070</td>
+<td>-0.029749</td>
+<td>-0.034350</td>
+<td>0.039898</td>
+<td>0.704987</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>unet__e0c0m0d1__s42</td>
+<td>unet</td>
+<td>1</td>
+<td>valid</td>
+<td>0.141909</td>
+<td>-7.608752</td>
+<td>0.261041</td>
+<td>0.342109</td>
+<td>0.133890</td>
+<td>0.751499</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>unet__e0c0m1d0__s42</td>
+<td>unet</td>
+<td>10</td>
+<td>valid</td>
+<td>0.037078</td>
+<td>-0.121485</td>
+<td>0.658647</td>
+<td>0.675807</td>
+<td>0.562348</td>
+<td>0.828058</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>unet__e0c0m1d1__s42</td>
+<td>unet</td>
+<td>11</td>
+<td>valid</td>
+<td>0.039758</td>
+<td>-0.185537</td>
+<td>0.618398</td>
+<td>0.638683</td>
+<td>0.510660</td>
+<td>0.817419</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>unet__e0c1m0d0__s42</td>
+<td>unet</td>
+<td>100</td>
+<td>valid</td>
+<td>0.098561</td>
+<td>-4.667466</td>
+<td>0.899690</td>
+<td>0.917147</td>
+<td>0.806461</td>
+<td>0.865755</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>unet__e0c1m0d1__s42</td>
+<td>unet</td>
+<td>101</td>
+<td>valid</td>
+<td>0.098305</td>
+<td>-4.677870</td>
+<td>0.912277</td>
+<td>0.930422</td>
+<td>0.814123</td>
+<td>0.865184</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>unet__e0c1m1d0__s42</td>
+<td>unet</td>
+<td>110</td>
+<td>valid</td>
+<td>0.030577</td>
+<td>0.110626</td>
+<td>0.911763</td>
+<td>0.930747</td>
+<td>0.812221</td>
+<td>0.866598</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>unet__e0c1m1d1__s42</td>
+<td>unet</td>
+<td>111</td>
+<td>valid</td>
+<td>0.030507</td>
+<td>0.116311</td>
+<td>0.911792</td>
+<td>0.930400</td>
+<td>0.814103</td>
+<td>0.863805</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>unet__e1c0m0d0__s42</td>
+<td>unet</td>
+<td>1000</td>
+<td>valid</td>
+<td>0.021339</td>
+<td>0.699667</td>
+<td>0.870965</td>
+<td>0.892111</td>
+<td>0.749540</td>
+<td>0.864849</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>unet__e1c0m0d1__s42</td>
+<td>unet</td>
+<td>1001</td>
+<td>valid</td>
+<td>0.021512</td>
+<td>0.696436</td>
+<td>0.868556</td>
+<td>0.890600</td>
+<td>0.752656</td>
+<td>0.862368</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">10</th>
+<td>unet__e1c0m1d0__s42</td>
+<td>unet</td>
+<td>1010</td>
+<td>valid</td>
+<td>0.021338</td>
+<td>0.693785</td>
+<td>0.870341</td>
+<td>0.891212</td>
+<td>0.756861</td>
+<td>0.866739</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">11</th>
+<td>unet__e1c0m1d1__s42</td>
+<td>unet</td>
+<td>1011</td>
+<td>valid</td>
+<td>0.021427</td>
+<td>0.687502</td>
+<td>0.867663</td>
+<td>0.888739</td>
+<td>0.754012</td>
+<td>0.861458</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">12</th>
+<td>unet__e1c1m0d0__s42</td>
+<td>unet</td>
+<td>1100</td>
+<td>valid</td>
+<td>0.021514</td>
+<td>0.666050</td>
+<td>0.907823</td>
+<td>0.927692</td>
+<td>0.796951</td>
+<td>0.867417</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">13</th>
+<td>unet__e1c1m0d1__s42</td>
+<td>unet</td>
+<td>1101</td>
+<td>valid</td>
+<td>0.021405</td>
+<td>0.675942</td>
+<td>0.908680</td>
+<td>0.928693</td>
+<td>0.798173</td>
+<td>0.868735</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">14</th>
+<td>unet__e1c1m1d0__s42</td>
+<td>unet</td>
+<td>1110</td>
+<td>valid</td>
+<td>0.021391</td>
+<td>0.662408</td>
+<td>0.908498</td>
+<td>0.928626</td>
+<td>0.794633</td>
+<td>0.868170</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">15</th>
+<td>unet__e1c1m1d1__s42</td>
+<td>unet</td>
+<td>1111</td>
+<td>valid</td>
+<td>0.021354</td>
+<td>0.660384</td>
+<td>0.908807</td>
+<td>0.928580</td>
+<td>0.798075</td>
+<td>0.868770</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">16</th>
+<td>msvae__e0c0m0d0__s42</td>
+<td>msvae</td>
+<td>0</td>
+<td>invalid_msvae_mse_toggle_quarantined</td>
+<td>0.018343</td>
+<td>0.800201</td>
+<td>0.912290</td>
+<td>0.931392</td>
+<td>0.805083</td>
+<td>0.879553</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">17</th>
+<td>msvae__e0c0m0d1__s42</td>
+<td>msvae</td>
+<td>1</td>
+<td>invalid_msvae_mse_toggle_quarantined</td>
+<td>0.018381</td>
+<td>0.799836</td>
+<td>0.912099</td>
+<td>0.931313</td>
+<td>0.804543</td>
+<td>0.879573</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">18</th>
+<td>msvae__e0c0m1d0__s42</td>
+<td>msvae</td>
+<td>10</td>
+<td>invalid_msvae_mse_toggle_quarantined</td>
+<td>0.018304</td>
+<td>0.797338</td>
+<td>0.912687</td>
+<td>0.931618</td>
+<td>0.806406</td>
+<td>0.879387</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">19</th>
+<td>msvae__e0c0m1d1__s42</td>
+<td>msvae</td>
+<td>11</td>
+<td>invalid_msvae_mse_toggle_quarantined</td>
+<td>0.018281</td>
+<td>0.798157</td>
+<td>0.912991</td>
+<td>0.931900</td>
+<td>0.807084</td>
+<td>0.879282</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">20</th>
+<td>msvae__e0c1m0d0__s42</td>
+<td>msvae</td>
+<td>100</td>
+<td>invalid_msvae_mse_toggle_quarantined</td>
+<td>0.017921</td>
+<td>0.815522</td>
+<td>0.921924</td>
+<td>0.940194</td>
+<td>0.821666</td>
+<td>0.879999</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">21</th>
+<td>msvae__e0c1m0d1__s42</td>
+<td>msvae</td>
+<td>101</td>
+<td>invalid_msvae_mse_toggle_quarantined</td>
+<td>0.017917</td>
+<td>0.815777</td>
+<td>0.921935</td>
+<td>0.940216</td>
+<td>0.821650</td>
+<td>0.880008</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">22</th>
+<td>msvae__e0c1m1d0__s42</td>
+<td>msvae</td>
+<td>110</td>
+<td>invalid_msvae_mse_toggle_quarantined</td>
+<td>0.017938</td>
+<td>0.810772</td>
+<td>0.921894</td>
+<td>0.940132</td>
+<td>0.821757</td>
+<td>0.879881</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">23</th>
+<td>msvae__e0c1m1d1__s42</td>
+<td>msvae</td>
+<td>111</td>
+<td>invalid_msvae_mse_toggle_quarantined</td>
+<td>0.017950</td>
+<td>0.809888</td>
+<td>0.921877</td>
+<td>0.940118</td>
+<td>0.821688</td>
+<td>0.879758</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">24</th>
+<td>msvae__e1c0m0d0__s42</td>
+<td>msvae</td>
+<td>1000</td>
+<td>valid</td>
+<td>0.018343</td>
+<td>0.800201</td>
+<td>0.912290</td>
+<td>0.931392</td>
+<td>0.805083</td>
+<td>0.879553</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">25</th>
+<td>msvae__e1c0m0d1__s42</td>
+<td>msvae</td>
+<td>1001</td>
+<td>valid</td>
+<td>0.018381</td>
+<td>0.799836</td>
+<td>0.912099</td>
+<td>0.931313</td>
+<td>0.804543</td>
+<td>0.879573</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">26</th>
+<td>msvae__e1c0m1d0__s42</td>
+<td>msvae</td>
+<td>1010</td>
+<td>valid</td>
+<td>0.018304</td>
+<td>0.797338</td>
+<td>0.912687</td>
+<td>0.931618</td>
+<td>0.806406</td>
+<td>0.879387</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">27</th>
+<td>msvae__e1c0m1d1__s42</td>
+<td>msvae</td>
+<td>1011</td>
+<td>valid</td>
+<td>0.018281</td>
+<td>0.798157</td>
+<td>0.912991</td>
+<td>0.931900</td>
+<td>0.807084</td>
+<td>0.879282</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">28</th>
+<td>msvae__e1c1m0d0__s42</td>
+<td>msvae</td>
+<td>1100</td>
+<td>valid</td>
+<td>0.017921</td>
+<td>0.815522</td>
+<td>0.921924</td>
+<td>0.940194</td>
+<td>0.821666</td>
+<td>0.879999</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">29</th>
+<td>msvae__e1c1m0d1__s42</td>
+<td>msvae</td>
+<td>1101</td>
+<td>valid</td>
+<td>0.017917</td>
+<td>0.815777</td>
+<td>0.921935</td>
+<td>0.940216</td>
+<td>0.821650</td>
+<td>0.880008</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">30</th>
+<td>msvae__e1c1m1d0__s42</td>
+<td>msvae</td>
+<td>1110</td>
+<td>valid</td>
+<td>0.017938</td>
+<td>0.810772</td>
+<td>0.921894</td>
+<td>0.940132</td>
+<td>0.821757</td>
+<td>0.879881</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">31</th>
+<td>msvae__e1c1m1d1__s42</td>
+<td>msvae</td>
+<td>1111</td>
+<td>valid</td>
+<td>0.017950</td>
+<td>0.809888</td>
+<td>0.921877</td>
+<td>0.940118</td>
+<td>0.821688</td>
+<td>0.879758</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">32</th>
+<td>ecgaim__e0c0m0d0__s42</td>
+<td>ecgaim</td>
+<td>0</td>
+<td>valid</td>
+<td>0.018842</td>
+<td>0.806558</td>
+<td>0.916269</td>
+<td>0.934762</td>
+<td>0.811106</td>
+<td>0.879472</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">33</th>
+<td>ecgaim__e0c0m0d1__s42</td>
+<td>ecgaim</td>
+<td>1</td>
+<td>valid</td>
+<td>0.018918</td>
+<td>0.805053</td>
+<td>0.915570</td>
+<td>0.933899</td>
+<td>0.811253</td>
+<td>0.878102</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">34</th>
+<td>ecgaim__e0c0m1d0__s42</td>
+<td>ecgaim</td>
+<td>10</td>
+<td>valid</td>
+<td>0.018714</td>
+<td>0.803333</td>
+<td>0.916241</td>
+<td>0.934638</td>
+<td>0.812035</td>
+<td>0.879162</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">35</th>
+<td>ecgaim__e0c0m1d1__s42</td>
+<td>ecgaim</td>
+<td>11</td>
+<td>valid</td>
+<td>0.018802</td>
+<td>0.804620</td>
+<td>0.916273</td>
+<td>0.934684</td>
+<td>0.810748</td>
+<td>0.879577</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">36</th>
+<td>ecgaim__e0c1m0d0__s42</td>
+<td>ecgaim</td>
+<td>100</td>
+<td>valid</td>
+<td>0.018094</td>
+<td>0.821912</td>
+<td>0.924839</td>
+<td>0.942339</td>
+<td>0.832817</td>
+<td>0.878471</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">37</th>
+<td>ecgaim__e0c1m0d1__s42</td>
+<td>ecgaim</td>
+<td>101</td>
+<td>valid</td>
+<td>0.018099</td>
+<td>0.819832</td>
+<td>0.924663</td>
+<td>0.942021</td>
+<td>0.832124</td>
+<td>0.879443</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">38</th>
+<td>ecgaim__e0c1m1d0__s42</td>
+<td>ecgaim</td>
+<td>110</td>
+<td>valid</td>
+<td>0.018036</td>
+<td>0.820248</td>
+<td>0.925008</td>
+<td>0.942405</td>
+<td>0.832511</td>
+<td>0.879730</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">39</th>
+<td>ecgaim__e0c1m1d1__s42</td>
+<td>ecgaim</td>
+<td>111</td>
+<td>valid</td>
+<td>0.018023</td>
+<td>0.821936</td>
+<td>0.925072</td>
+<td>0.942381</td>
+<td>0.832918</td>
+<td>0.879467</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">40</th>
+<td>ecgaim__e1c0m0d0__s42</td>
+<td>ecgaim</td>
+<td>1000</td>
+<td>valid</td>
+<td>0.018787</td>
+<td>0.806887</td>
+<td>0.916403</td>
+<td>0.934614</td>
+<td>0.811519</td>
+<td>0.879385</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">41</th>
+<td>ecgaim__e1c0m0d1__s42</td>
+<td>ecgaim</td>
+<td>1001</td>
+<td>valid</td>
+<td>0.018944</td>
+<td>0.803625</td>
+<td>0.915801</td>
+<td>0.934365</td>
+<td>0.810669</td>
+<td>0.879645</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">42</th>
+<td>ecgaim__e1c0m1d0__s42</td>
+<td>ecgaim</td>
+<td>1010</td>
+<td>valid</td>
+<td>0.018547</td>
+<td>0.810141</td>
+<td>0.917836</td>
+<td>0.936414</td>
+<td>0.812292</td>
+<td>0.879576</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">43</th>
+<td>ecgaim__e1c0m1d1__s42</td>
+<td>ecgaim</td>
+<td>1011</td>
+<td>valid</td>
+<td>0.018666</td>
+<td>0.806830</td>
+<td>0.916392</td>
+<td>0.934817</td>
+<td>0.812234</td>
+<td>0.880159</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">44</th>
+<td>ecgaim__e1c1m0d0__s42</td>
+<td>ecgaim</td>
+<td>1100</td>
+<td>valid</td>
+<td>0.018008</td>
+<td>0.820743</td>
+<td>0.924690</td>
+<td>0.942239</td>
+<td>0.831872</td>
+<td>0.879569</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">45</th>
+<td>ecgaim__e1c1m0d1__s42</td>
+<td>ecgaim</td>
+<td>1101</td>
+<td>valid</td>
+<td>0.018044</td>
+<td>0.821356</td>
+<td>0.924982</td>
+<td>0.942231</td>
+<td>0.833216</td>
+<td>0.879277</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">46</th>
+<td>ecgaim__e1c1m1d0__s42</td>
+<td>ecgaim</td>
+<td>1110</td>
+<td>valid</td>
+<td>0.018047</td>
+<td>0.819568</td>
+<td>0.925127</td>
+<td>0.942574</td>
+<td>0.832467</td>
+<td>0.879183</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">47</th>
+<td>ecgaim__e1c1m1d1__s42</td>
+<td>ecgaim</td>
+<td>1111</td>
+<td>valid</td>
+<td>0.018089</td>
+<td>0.818655</td>
+<td>0.924802</td>
+<td>0.942231</td>
+<td>0.832317</td>
+<td>0.879494</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">metric</th>
+<th data-quarto-table-cell-role="th">direction</th>
+<th data-quarto-table-cell-role="th">rank</th>
+<th data-quarto-table-cell-role="th">value</th>
+<th data-quarto-table-cell-role="th">id</th>
+<th data-quarto-table-cell-role="th">family</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>mse</td>
+<td>min</td>
+<td>1</td>
+<td>0.018008</td>
+<td>ecgaim__e1c1m0d0__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>mse</td>
+<td>min</td>
+<td>2</td>
+<td>0.018023</td>
+<td>ecgaim__e0c1m1d1__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>mse</td>
+<td>min</td>
+<td>3</td>
+<td>0.018036</td>
+<td>ecgaim__e0c1m1d0__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>mse</td>
+<td>min</td>
+<td>1</td>
+<td>0.017917</td>
+<td>msvae__e0c1m0d1__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>mse</td>
+<td>min</td>
+<td>2</td>
+<td>0.017917</td>
+<td>msvae__e1c1m0d1__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>mse</td>
+<td>min</td>
+<td>3</td>
+<td>0.017921</td>
+<td>msvae__e0c1m0d0__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>mse</td>
+<td>min</td>
+<td>1</td>
+<td>0.021338</td>
+<td>unet__e1c0m1d0__s42</td>
+<td>unet</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>mse</td>
+<td>min</td>
+<td>2</td>
+<td>0.021339</td>
+<td>unet__e1c0m0d0__s42</td>
+<td>unet</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>mse</td>
+<td>min</td>
+<td>3</td>
+<td>0.021354</td>
+<td>unet__e1c1m1d1__s42</td>
+<td>unet</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.821936</td>
+<td>ecgaim__e0c1m1d1__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">10</th>
+<td>r2</td>
+<td>max</td>
+<td>2</td>
+<td>0.821912</td>
+<td>ecgaim__e0c1m0d0__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">11</th>
+<td>r2</td>
+<td>max</td>
+<td>3</td>
+<td>0.821356</td>
+<td>ecgaim__e1c1m0d1__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">12</th>
+<td>r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.815777</td>
+<td>msvae__e0c1m0d1__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">13</th>
+<td>r2</td>
+<td>max</td>
+<td>2</td>
+<td>0.815777</td>
+<td>msvae__e1c1m0d1__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">14</th>
+<td>r2</td>
+<td>max</td>
+<td>3</td>
+<td>0.815522</td>
+<td>msvae__e0c1m0d0__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">15</th>
+<td>r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.699667</td>
+<td>unet__e1c0m0d0__s42</td>
+<td>unet</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">16</th>
+<td>r2</td>
+<td>max</td>
+<td>2</td>
+<td>0.696436</td>
+<td>unet__e1c0m0d1__s42</td>
+<td>unet</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">17</th>
+<td>r2</td>
+<td>max</td>
+<td>3</td>
+<td>0.693785</td>
+<td>unet__e1c0m1d0__s42</td>
+<td>unet</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">18</th>
+<td>pearson</td>
+<td>max</td>
+<td>1</td>
+<td>0.925127</td>
+<td>ecgaim__e1c1m1d0__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">19</th>
+<td>pearson</td>
+<td>max</td>
+<td>2</td>
+<td>0.925072</td>
+<td>ecgaim__e0c1m1d1__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">20</th>
+<td>pearson</td>
+<td>max</td>
+<td>3</td>
+<td>0.925008</td>
+<td>ecgaim__e0c1m1d0__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">21</th>
+<td>pearson</td>
+<td>max</td>
+<td>1</td>
+<td>0.921935</td>
+<td>msvae__e0c1m0d1__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">22</th>
+<td>pearson</td>
+<td>max</td>
+<td>2</td>
+<td>0.921935</td>
+<td>msvae__e1c1m0d1__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">23</th>
+<td>pearson</td>
+<td>max</td>
+<td>3</td>
+<td>0.921924</td>
+<td>msvae__e0c1m0d0__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">24</th>
+<td>pearson</td>
+<td>max</td>
+<td>1</td>
+<td>0.912277</td>
+<td>unet__e0c1m0d1__s42</td>
+<td>unet</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">25</th>
+<td>pearson</td>
+<td>max</td>
+<td>2</td>
+<td>0.911792</td>
+<td>unet__e0c1m1d1__s42</td>
+<td>unet</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">26</th>
+<td>pearson</td>
+<td>max</td>
+<td>3</td>
+<td>0.911763</td>
+<td>unet__e0c1m1d0__s42</td>
+<td>unet</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">27</th>
+<td>ecgfounder_auroc</td>
+<td>max</td>
+<td>1</td>
+<td>0.880159</td>
+<td>ecgaim__e1c0m1d1__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">28</th>
+<td>ecgfounder_auroc</td>
+<td>max</td>
+<td>2</td>
+<td>0.879730</td>
+<td>ecgaim__e0c1m1d0__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">29</th>
+<td>ecgfounder_auroc</td>
+<td>max</td>
+<td>3</td>
+<td>0.879645</td>
+<td>ecgaim__e1c0m0d1__s42</td>
+<td>ecgaim</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">30</th>
+<td>ecgfounder_auroc</td>
+<td>max</td>
+<td>1</td>
+<td>0.880008</td>
+<td>msvae__e0c1m0d1__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">31</th>
+<td>ecgfounder_auroc</td>
+<td>max</td>
+<td>2</td>
+<td>0.880008</td>
+<td>msvae__e1c1m0d1__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">32</th>
+<td>ecgfounder_auroc</td>
+<td>max</td>
+<td>3</td>
+<td>0.879999</td>
+<td>msvae__e0c1m0d0__s42</td>
+<td>msvae</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">33</th>
+<td>ecgfounder_auroc</td>
+<td>max</td>
+<td>1</td>
+<td>0.868770</td>
+<td>unet__e1c1m1d1__s42</td>
+<td>unet</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">34</th>
+<td>ecgfounder_auroc</td>
+<td>max</td>
+<td>2</td>
+<td>0.868735</td>
+<td>unet__e1c1m0d1__s42</td>
+<td>unet</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">35</th>
+<td>ecgfounder_auroc</td>
+<td>max</td>
+<td>3</td>
+<td>0.868170</td>
+<td>unet__e1c1m1d0__s42</td>
+<td>unet</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="ecg-aim-novel-model-and-experiment-logic" class="level2">
+<h2 class="anchored" data-anchor-id="ecg-aim-novel-model-and-experiment-logic">ECG-AIM: novel model and experiment logic</h2>
+<p>ECG-AIM maps sparse observed ECG into temporal tokens, models long-range cardiac dependencies with an encoder/decoder transformer, and reconstructs twelve leads jointly. The registered three-lead model uses width 384, eight encoder blocks, four decoder blocks, eight attention heads and 25-sample patches.</p>
+<p>The hypothesis is stronger than lower MSE: ECG-AIM should preserve atrial morphology, ventricular depolarization, repolarization, ST morphology and inter-lead relationships. The factorial program isolates pointwise reconstruction, correlation, distributional/MMD and derivative constraints. Its claim chain is:</p>
+<p><code>PTB-XL reconstruction → clinical biomarkers → LUDB expert morphology → RDB rhythm-diverse morphology → independent blinded delineation</code>.</p>
+</section>
+<section id="clinical-biomarkers-and-canonical-160-model-cohort" class="level2">
+<h2 class="anchored" data-anchor-id="clinical-biomarkers-and-canonical-160-model-cohort">Clinical biomarkers and canonical 160-model cohort</h2>
+<div id="5e11eb7a" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>db<span class="op">=</span>R<span class="op">/</span><span class="st">'results/clinical_biomarkers_multids/clinical_metrics.db'</span><span class="op">;</span>clinical<span class="op">=</span>sql(db,<span class="st">'select * from clinical_metrics'</span>)<span class="op">;</span>paired<span class="op">=</span>sql(db,<span class="st">'select * from paired_inference'</span>)<span class="op">;</span>pre<span class="op">=</span>sql(db,<span class="st">'select * from presacan_model_summary'</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>clinical[<span class="st">'suite'</span>]<span class="op">=</span>np.select([clinical.model_id.<span class="bu">str</span>.startswith(<span class="st">'f_'</span>),clinical.model_id.<span class="bu">str</span>.startswith(<span class="st">'factorial_ecg_aim_'</span>),clinical.model_id.eq(<span class="st">'__original__'</span>)],[<span class="st">'canonical_160'</span>,<span class="st">'threelead_ecgaim_external'</span>,<span class="st">'reference'</span>],<span class="st">'quarantine'</span>)<span class="op">;</span>display(clinical.groupby([<span class="st">'suite'</span>,<span class="st">'dataset'</span>]).model_id.nunique())<span class="op">;</span><span class="cf">assert</span> pre.model_id.nunique()<span class="op">==</span><span class="dv">160</span><span class="op">;</span>display(pre)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>suite          dataset   
+canonical_160  echonext      160
+               ludb            7
+               ptb_xl        160
+               sunnybrook    160
+quarantine     echonext       20
+               isp             1
+               ludb            1
+               ptb_xl         41
+               sunnybrook      1
+               zhejiang        1
+Name: model_id, dtype: int64</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">model_id</th>
+<th data-quarto-table-cell-role="th">dataset</th>
+<th data-quarto-table-cell-role="th">v3_r_presacan_r2</th>
+<th data-quarto-table-cell-role="th">v3_r_presacan_slope</th>
+<th data-quarto-table-cell-role="th">v3_r_var_ret_pct</th>
+<th data-quarto-table-cell-role="th">v3_r_direct_r2</th>
+<th data-quarto-table-cell-role="th">v3_r_direct_slope</th>
+<th data-quarto-table-cell-role="th">v6_r_presacan_r2</th>
+<th data-quarto-table-cell-role="th">v6_r_presacan_slope</th>
+<th data-quarto-table-cell-role="th">v6_r_var_ret_pct</th>
+<th data-quarto-table-cell-role="th">v6_r_direct_r2</th>
+<th data-quarto-table-cell-role="th">v6_r_direct_slope</th>
+<th data-quarto-table-cell-role="th">v3_t_presacan_r2</th>
+<th data-quarto-table-cell-role="th">v3_t_presacan_slope</th>
+<th data-quarto-table-cell-role="th">v3_t_var_ret_pct</th>
+<th data-quarto-table-cell-role="th">interlead_r2_real_I_V3</th>
+<th data-quarto-table-cell-role="th">interlead_r2_recon_I_V3</th>
+<th data-quarto-table-cell-role="th">interlead_r2_real_I_V6</th>
+<th data-quarto-table-cell-role="th">interlead_r2_recon_I_V6</th>
+<th data-quarto-table-cell-role="th">interlead_t_r2_real_I_V3</th>
+<th data-quarto-table-cell-role="th">interlead_t_r2_recon_I_V3</th>
+<th data-quarto-table-cell-role="th">spurious_coupling_ratio_v3</th>
+<th data-quarto-table-cell-role="th">avg_precordial_var_ret_pct</th>
+<th data-quarto-table-cell-role="th">created_at</th>
+<th data-quarto-table-cell-role="th">evaluation_version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>f_1000000_s42</td>
+<td>ptb_xl</td>
+<td>0.899173</td>
+<td>-0.821156</td>
+<td>10.759653</td>
+<td>0.297269</td>
+<td>0.178844</td>
+<td>0.926661</td>
+<td>-0.953334</td>
+<td>7.410708</td>
+<td>0.029385</td>
+<td>0.046666</td>
+<td>0.706319</td>
+<td>-0.642354</td>
+<td>29.947391</td>
+<td>0.020681</td>
+<td>0.000384</td>
+<td>0.030598</td>
+<td>1.668340e-04</td>
+<td>0.140909</td>
+<td>0.190308</td>
+<td>0.018590</td>
+<td>28.194203</td>
+<td>2026-08-16 07:57:33</td>
+<td>missing_leads_v2</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>f_1000004_s42</td>
+<td>ptb_xl</td>
+<td>0.906638</td>
+<td>-0.838491</td>
+<td>9.848427</td>
+<td>0.264866</td>
+<td>0.161509</td>
+<td>0.910335</td>
+<td>-0.952636</td>
+<td>9.163094</td>
+<td>0.024483</td>
+<td>0.047364</td>
+<td>0.705113</td>
+<td>-0.653534</td>
+<td>29.865983</td>
+<td>0.020681</td>
+<td>0.000008</td>
+<td>0.030598</td>
+<td>1.965506e-04</td>
+<td>0.140909</td>
+<td>0.177206</td>
+<td>0.000380</td>
+<td>29.832428</td>
+<td>2026-08-16 07:57:35</td>
+<td>missing_leads_v2</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>f_1000003_s42</td>
+<td>ptb_xl</td>
+<td>0.900067</td>
+<td>-0.828636</td>
+<td>10.560209</td>
+<td>0.278080</td>
+<td>0.171364</td>
+<td>0.920396</td>
+<td>-0.953818</td>
+<td>8.081720</td>
+<td>0.026390</td>
+<td>0.046182</td>
+<td>0.704100</td>
+<td>-0.645433</td>
+<td>30.078795</td>
+<td>0.020681</td>
+<td>0.000128</td>
+<td>0.030598</td>
+<td>1.966406e-08</td>
+<td>0.140909</td>
+<td>0.184901</td>
+<td>0.006181</td>
+<td>28.701388</td>
+<td>2026-08-16 07:57:35</td>
+<td>missing_leads_v2</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>f_1000001_s42</td>
+<td>ptb_xl</td>
+<td>0.929192</td>
+<td>-0.910135</td>
+<td>7.119903</td>
+<td>0.113424</td>
+<td>0.089865</td>
+<td>0.956856</td>
+<td>-0.978586</td>
+<td>4.363758</td>
+<td>0.010508</td>
+<td>0.021414</td>
+<td>0.746948</td>
+<td>-0.706722</td>
+<td>25.521843</td>
+<td>0.020681</td>
+<td>0.000002</td>
+<td>0.030598</td>
+<td>1.218902e-02</td>
+<td>0.140909</td>
+<td>0.126635</td>
+<td>0.000084</td>
+<td>28.307187</td>
+<td>2026-08-16 07:57:35</td>
+<td>missing_leads_v2</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>f_1000012_s42</td>
+<td>ptb_xl</td>
+<td>0.977401</td>
+<td>-0.971703</td>
+<td>2.263189</td>
+<td>0.035380</td>
+<td>0.028297</td>
+<td>0.964205</td>
+<td>-0.974061</td>
+<td>3.589561</td>
+<td>0.018744</td>
+<td>0.025939</td>
+<td>0.879827</td>
+<td>-0.861786</td>
+<td>12.054340</td>
+<td>0.020681</td>
+<td>0.017834</td>
+<td>0.030598</td>
+<td>5.760879e-03</td>
+<td>0.140909</td>
+<td>0.081543</td>
+<td>0.862290</td>
+<td>25.516807</td>
+<td>2026-08-16 08:08:03</td>
+<td>missing_leads_v2</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">155</th>
+<td>f_1111110_s42</td>
+<td>ptb_xl</td>
+<td>0.908021</td>
+<td>-1.038089</td>
+<td>11.061033</td>
+<td>0.013116</td>
+<td>-0.038089</td>
+<td>0.969783</td>
+<td>-0.986582</td>
+<td>3.050814</td>
+<td>0.005902</td>
+<td>0.013418</td>
+<td>0.763706</td>
+<td>-0.885503</td>
+<td>25.571840</td>
+<td>0.020681</td>
+<td>0.004716</td>
+<td>0.030598</td>
+<td>3.742889e-02</td>
+<td>0.140909</td>
+<td>0.028717</td>
+<td>0.228036</td>
+<td>35.678557</td>
+<td>2026-08-16 10:51:09</td>
+<td>missing_leads_v2</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">156</th>
+<td>f_1111111_s42</td>
+<td>ptb_xl</td>
+<td>0.910693</td>
+<td>-1.037057</td>
+<td>10.684114</td>
+<td>0.012853</td>
+<td>-0.037057</td>
+<td>0.969469</td>
+<td>-0.986353</td>
+<td>3.082535</td>
+<td>0.006042</td>
+<td>0.013647</td>
+<td>0.759125</td>
+<td>-0.870302</td>
+<td>25.715790</td>
+<td>0.020681</td>
+<td>0.002497</td>
+<td>0.030598</td>
+<td>3.549361e-02</td>
+<td>0.140909</td>
+<td>0.033807</td>
+<td>0.120746</td>
+<td>36.093675</td>
+<td>2026-08-16 10:51:13</td>
+<td>missing_leads_v2</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">157</th>
+<td>f_1111112_s42</td>
+<td>ptb_xl</td>
+<td>0.910706</td>
+<td>-1.037158</td>
+<td>10.685169</td>
+<td>0.012922</td>
+<td>-0.037158</td>
+<td>0.969902</td>
+<td>-0.986258</td>
+<td>3.037377</td>
+<td>0.006218</td>
+<td>0.013742</td>
+<td>0.764570</td>
+<td>-0.876038</td>
+<td>25.168062</td>
+<td>0.020681</td>
+<td>0.002406</td>
+<td>0.030598</td>
+<td>3.909760e-02</td>
+<td>0.140909</td>
+<td>0.034212</td>
+<td>0.116338</td>
+<td>35.504889</td>
+<td>2026-08-16 10:51:35</td>
+<td>missing_leads_v2</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">158</th>
+<td>f_1111113_s42</td>
+<td>ptb_xl</td>
+<td>0.908050</td>
+<td>-1.038035</td>
+<td>11.055696</td>
+<td>0.013085</td>
+<td>-0.038035</td>
+<td>0.969800</td>
+<td>-0.986592</td>
+<td>3.049042</td>
+<td>0.005896</td>
+<td>0.013408</td>
+<td>0.763771</td>
+<td>-0.885492</td>
+<td>25.562757</td>
+<td>0.020681</td>
+<td>0.004771</td>
+<td>0.030598</td>
+<td>3.748173e-02</td>
+<td>0.140909</td>
+<td>0.028709</td>
+<td>0.230676</td>
+<td>35.675127</td>
+<td>2026-08-16 10:52:44</td>
+<td>missing_leads_v2</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">159</th>
+<td>f_1111114_s42</td>
+<td>ptb_xl</td>
+<td>0.908185</td>
+<td>-1.038214</td>
+<td>11.043245</td>
+<td>0.013224</td>
+<td>-0.038214</td>
+<td>0.969807</td>
+<td>-0.986611</td>
+<td>3.048383</td>
+<td>0.005880</td>
+<td>0.013389</td>
+<td>0.763885</td>
+<td>-0.885369</td>
+<td>25.543559</td>
+<td>0.020681</td>
+<td>0.004686</td>
+<td>0.030598</td>
+<td>3.726141e-02</td>
+<td>0.140909</td>
+<td>0.028802</td>
+<td>0.226584</td>
+<td>35.655277</td>
+<td>2026-08-16 10:53:00</td>
+<td>missing_leads_v2</td>
+</tr>
+</tbody>
+</table>
+
+<p>160 rows × 25 columns</p>
+</div>
+</div>
+</div>
+<div id="badf0321" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cm<span class="op">=</span>[<span class="st">'mae'</span>,<span class="st">'pearson_r'</span>,<span class="st">'r2'</span>,<span class="st">'auroc'</span>,<span class="st">'auprc'</span>,<span class="st">'f1'</span>,<span class="st">'sens'</span>,<span class="st">'spec'</span>,<span class="st">'ppv'</span>,<span class="st">'npv'</span>,<span class="st">'interlead_r2'</span>]<span class="op">;</span>display(best(clinical[clinical.suite<span class="op">==</span><span class="st">'canonical_160'</span>],cm,(<span class="st">'dataset'</span>,<span class="st">'target'</span>),<span class="dv">1</span>))<span class="op">;</span>paired[<span class="st">'ci_excludes_zero'</span>]<span class="op">=</span>(paired.ci_low<span class="op">&gt;</span><span class="dv">0</span>)<span class="op">|</span>(paired.ci_high<span class="op">&lt;</span><span class="dv">0</span>)<span class="op">;</span>display(paired.sort_values([<span class="st">'ci_excludes_zero'</span>,<span class="st">'p_value'</span>],ascending<span class="op">=</span>[<span class="va">False</span>,<span class="va">True</span>]).head(<span class="dv">100</span>))<span class="op">;</span>pm<span class="op">=</span>[c <span class="cf">for</span> c <span class="kw">in</span> pre <span class="cf">if</span> pd.api.types.is_numeric_dtype(pre[c])]<span class="op">;</span>display(best(pre,pm,(<span class="st">'dataset'</span>,),<span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">metric</th>
+<th data-quarto-table-cell-role="th">direction</th>
+<th data-quarto-table-cell-role="th">rank</th>
+<th data-quarto-table-cell-role="th">value</th>
+<th data-quarto-table-cell-role="th">model_id</th>
+<th data-quarto-table-cell-role="th">dataset</th>
+<th data-quarto-table-cell-role="th">target</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>mae</td>
+<td>min</td>
+<td>1</td>
+<td>0.000000</td>
+<td>f_1000000_s42</td>
+<td>echonext</td>
+<td>QRS_Overall</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>mae</td>
+<td>min</td>
+<td>1</td>
+<td>0.000000</td>
+<td>f_1000000_s42</td>
+<td>echonext</td>
+<td>Signal_Lead_I</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>mae</td>
+<td>min</td>
+<td>1</td>
+<td>0.000000</td>
+<td>f_1000000_s42</td>
+<td>echonext</td>
+<td>Signal_Lead_II</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>mae</td>
+<td>min</td>
+<td>1</td>
+<td>0.328594</td>
+<td>f_1100004_s42</td>
+<td>echonext</td>
+<td>Signal_Lead_III</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>mae</td>
+<td>min</td>
+<td>1</td>
+<td>0.320062</td>
+<td>f_1111011_s42</td>
+<td>echonext</td>
+<td>Signal_Lead_V1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">561</th>
+<td>interlead_r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.144610</td>
+<td>f_1001001_s42</td>
+<td>sunnybrook</td>
+<td>Signal_Lead_aVR</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">562</th>
+<td>interlead_r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.144610</td>
+<td>f_1001001_s42</td>
+<td>sunnybrook</td>
+<td>Signal_Missing_Leads_DTW</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">563</th>
+<td>interlead_r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.144610</td>
+<td>f_1001001_s42</td>
+<td>sunnybrook</td>
+<td>Signal_Missing_Leads_MSE</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">564</th>
+<td>interlead_r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.144610</td>
+<td>f_1001001_s42</td>
+<td>sunnybrook</td>
+<td>Signal_Missing_Leads_Pearson</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">565</th>
+<td>interlead_r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.144610</td>
+<td>f_1001001_s42</td>
+<td>sunnybrook</td>
+<td>Signal_Missing_Leads_SNR_dB</td>
+</tr>
+</tbody>
+</table>
+
+<p>566 rows × 7 columns</p>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">dataset</th>
+<th data-quarto-table-cell-role="th">model_id</th>
+<th data-quarto-table-cell-role="th">endpoint</th>
+<th data-quarto-table-cell-role="th">metric</th>
+<th data-quarto-table-cell-role="th">reference_value</th>
+<th data-quarto-table-cell-role="th">reconstruction_value</th>
+<th data-quarto-table-cell-role="th">delta</th>
+<th data-quarto-table-cell-role="th">ci_low</th>
+<th data-quarto-table-cell-role="th">ci_high</th>
+<th data-quarto-table-cell-role="th">p_value</th>
+<th data-quarto-table-cell-role="th">n_records</th>
+<th data-quarto-table-cell-role="th">n_patients</th>
+<th data-quarto-table-cell-role="th">n_bootstraps</th>
+<th data-quarto-table-cell-role="th">cluster_source</th>
+<th data-quarto-table-cell-role="th">evaluation_version</th>
+<th data-quarto-table-cell-role="th">created_at</th>
+<th data-quarto-table-cell-role="th">ci_excludes_zero</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">1397</th>
+<td>ptb_xl</td>
+<td>factorial_msvae_1000112_s42</td>
+<td>QRS_MissingLeads</td>
+<td>bias</td>
+<td>0.0</td>
+<td>-26.855849</td>
+<td>-26.855849</td>
+<td>-27.669988</td>
+<td>-26.027159</td>
+<td>1.919976e-292</td>
+<td>2191</td>
+<td>1900</td>
+<td>500</td>
+<td>ptbxl_database.patient_id</td>
+<td>missing_leads_v2</td>
+<td>2026-08-20 04:20:44</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">53</th>
+<td>ptb_xl</td>
+<td>f_1000011_s42</td>
+<td>QRS_MissingLeads</td>
+<td>bias</td>
+<td>0.0</td>
+<td>-19.179246</td>
+<td>-19.179246</td>
+<td>-19.855996</td>
+<td>-18.531512</td>
+<td>7.578272e-274</td>
+<td>2197</td>
+<td>1903</td>
+<td>500</td>
+<td>ptbxl_database.patient_id</td>
+<td>missing_leads_v2</td>
+<td>2026-08-13 06:49:15</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">463</th>
+<td>ptb_xl</td>
+<td>f_1010112_s42</td>
+<td>LVH_SokolowLyon</td>
+<td>bias</td>
+<td>0.0</td>
+<td>-1.184756</td>
+<td>-1.184756</td>
+<td>-1.222057</td>
+<td>-1.145971</td>
+<td>3.446036e-260</td>
+<td>1859</td>
+<td>1640</td>
+<td>500</td>
+<td>ptbxl_database.patient_id</td>
+<td>missing_leads_v2</td>
+<td>2026-08-15 22:55:23</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">479</th>
+<td>ptb_xl</td>
+<td>f_1010114_s42</td>
+<td>LVH_SokolowLyon</td>
+<td>bias</td>
+<td>0.0</td>
+<td>-1.184012</td>
+<td>-1.184012</td>
+<td>-1.222426</td>
+<td>-1.142514</td>
+<td>4.511825e-260</td>
+<td>1858</td>
+<td>1639</td>
+<td>500</td>
+<td>ptbxl_database.patient_id</td>
+<td>missing_leads_v2</td>
+<td>2026-08-16 00:25:23</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">471</th>
+<td>ptb_xl</td>
+<td>f_1010113_s42</td>
+<td>LVH_SokolowLyon</td>
+<td>bias</td>
+<td>0.0</td>
+<td>-1.184430</td>
+<td>-1.184430</td>
+<td>-1.224751</td>
+<td>-1.145029</td>
+<td>5.282559e-260</td>
+<td>1857</td>
+<td>1638</td>
+<td>500</td>
+<td>ptbxl_database.patient_id</td>
+<td>missing_leads_v2</td>
+<td>2026-08-15 23:40:27</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">327</th>
+<td>ptb_xl</td>
+<td>f_1010000_s42</td>
+<td>LVH_SokolowLyon</td>
+<td>bias</td>
+<td>0.0</td>
+<td>-0.704473</td>
+<td>-0.704473</td>
+<td>-0.740235</td>
+<td>-0.664580</td>
+<td>1.617434e-216</td>
+<td>1852</td>
+<td>1629</td>
+<td>500</td>
+<td>ptbxl_database.patient_id</td>
+<td>missing_leads_v2</td>
+<td>2026-08-15 01:46:29</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1239</th>
+<td>ptb_xl</td>
+<td>f_1111104_s42</td>
+<td>LVH_SokolowLyon</td>
+<td>bias</td>
+<td>0.0</td>
+<td>-0.864849</td>
+<td>-0.864849</td>
+<td>-0.902415</td>
+<td>-0.826555</td>
+<td>1.635853e-216</td>
+<td>1843</td>
+<td>1626</td>
+<td>500</td>
+<td>ptbxl_database.patient_id</td>
+<td>missing_leads_v2</td>
+<td>2026-08-19 01:39:25</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">741</th>
+<td>ptb_xl</td>
+<td>f_1100102_s42</td>
+<td>QRS_MissingLeads</td>
+<td>bias</td>
+<td>0.0</td>
+<td>-14.550259</td>
+<td>-14.550259</td>
+<td>-15.198303</td>
+<td>-13.900306</td>
+<td>3.153162e-216</td>
+<td>2197</td>
+<td>1903</td>
+<td>500</td>
+<td>ptbxl_database.patient_id</td>
+<td>missing_leads_v2</td>
+<td>2026-08-17 02:42:53</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">757</th>
+<td>ptb_xl</td>
+<td>f_1100104_s42</td>
+<td>QRS_MissingLeads</td>
+<td>bias</td>
+<td>0.0</td>
+<td>-14.508324</td>
+<td>-14.508324</td>
+<td>-15.168643</td>
+<td>-13.838441</td>
+<td>6.094368e-216</td>
+<td>2197</td>
+<td>1903</td>
+<td>500</td>
+<td>ptbxl_database.patient_id</td>
+<td>missing_leads_v2</td>
+<td>2026-08-17 04:14:25</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">725</th>
+<td>ptb_xl</td>
+<td>f_1100100_s42</td>
+<td>QRS_MissingLeads</td>
+<td>bias</td>
+<td>0.0</td>
+<td>-14.464777</td>
+<td>-14.464777</td>
+<td>-15.117876</td>
+<td>-13.810115</td>
+<td>1.989666e-215</td>
+<td>2197</td>
+<td>1903</td>
+<td>500</td>
+<td>ptbxl_database.patient_id</td>
+<td>missing_leads_v2</td>
+<td>2026-08-17 01:11:16</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+
+<p>100 rows × 17 columns</p>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">metric</th>
+<th data-quarto-table-cell-role="th">direction</th>
+<th data-quarto-table-cell-role="th">rank</th>
+<th data-quarto-table-cell-role="th">value</th>
+<th data-quarto-table-cell-role="th">model_id</th>
+<th data-quarto-table-cell-role="th">dataset</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>v3_r_presacan_r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.990301</td>
+<td>f_1000010_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>v3_r_presacan_r2</td>
+<td>max</td>
+<td>2</td>
+<td>0.989739</td>
+<td>f_1000013_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>v3_r_presacan_r2</td>
+<td>max</td>
+<td>3</td>
+<td>0.989409</td>
+<td>f_1001010_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>v3_r_direct_r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.297269</td>
+<td>f_1000000_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>v3_r_direct_r2</td>
+<td>max</td>
+<td>2</td>
+<td>0.278080</td>
+<td>f_1000003_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>v3_r_direct_r2</td>
+<td>max</td>
+<td>3</td>
+<td>0.264866</td>
+<td>f_1000004_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>v6_r_presacan_r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.986273</td>
+<td>f_1000102_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>v6_r_presacan_r2</td>
+<td>max</td>
+<td>2</td>
+<td>0.986224</td>
+<td>f_1000104_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>v6_r_presacan_r2</td>
+<td>max</td>
+<td>3</td>
+<td>0.986213</td>
+<td>f_1000103_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>v6_r_direct_r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.035881</td>
+<td>f_1101003_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">10</th>
+<td>v6_r_direct_r2</td>
+<td>max</td>
+<td>2</td>
+<td>0.035778</td>
+<td>f_1101000_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">11</th>
+<td>v6_r_direct_r2</td>
+<td>max</td>
+<td>3</td>
+<td>0.035306</td>
+<td>f_1101004_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">12</th>
+<td>v3_t_presacan_r2</td>
+<td>max</td>
+<td>1</td>
+<td>0.963765</td>
+<td>f_1110010_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">13</th>
+<td>v3_t_presacan_r2</td>
+<td>max</td>
+<td>2</td>
+<td>0.958687</td>
+<td>f_1110013_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">14</th>
+<td>v3_t_presacan_r2</td>
+<td>max</td>
+<td>3</td>
+<td>0.948503</td>
+<td>f_1110014_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">15</th>
+<td>interlead_r2_real_I_V3</td>
+<td>max</td>
+<td>1</td>
+<td>0.020681</td>
+<td>f_1000000_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">16</th>
+<td>interlead_r2_real_I_V3</td>
+<td>max</td>
+<td>2</td>
+<td>0.020681</td>
+<td>f_1000004_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">17</th>
+<td>interlead_r2_real_I_V3</td>
+<td>max</td>
+<td>3</td>
+<td>0.020681</td>
+<td>f_1000003_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">18</th>
+<td>interlead_r2_recon_I_V3</td>
+<td>max</td>
+<td>1</td>
+<td>0.283916</td>
+<td>f_1101011_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">19</th>
+<td>interlead_r2_recon_I_V3</td>
+<td>max</td>
+<td>2</td>
+<td>0.264194</td>
+<td>f_1101012_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">20</th>
+<td>interlead_r2_recon_I_V3</td>
+<td>max</td>
+<td>3</td>
+<td>0.246941</td>
+<td>f_1101014_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">21</th>
+<td>interlead_r2_real_I_V6</td>
+<td>max</td>
+<td>1</td>
+<td>0.030598</td>
+<td>f_1000000_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">22</th>
+<td>interlead_r2_real_I_V6</td>
+<td>max</td>
+<td>2</td>
+<td>0.030598</td>
+<td>f_1000004_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">23</th>
+<td>interlead_r2_real_I_V6</td>
+<td>max</td>
+<td>3</td>
+<td>0.030598</td>
+<td>f_1000003_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">24</th>
+<td>interlead_r2_recon_I_V6</td>
+<td>max</td>
+<td>1</td>
+<td>0.056334</td>
+<td>f_1011112_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">25</th>
+<td>interlead_r2_recon_I_V6</td>
+<td>max</td>
+<td>2</td>
+<td>0.054386</td>
+<td>f_1011113_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">26</th>
+<td>interlead_r2_recon_I_V6</td>
+<td>max</td>
+<td>3</td>
+<td>0.054303</td>
+<td>f_1011114_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">27</th>
+<td>interlead_t_r2_real_I_V3</td>
+<td>max</td>
+<td>1</td>
+<td>0.140909</td>
+<td>f_1000000_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">28</th>
+<td>interlead_t_r2_real_I_V3</td>
+<td>max</td>
+<td>2</td>
+<td>0.140909</td>
+<td>f_1000004_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">29</th>
+<td>interlead_t_r2_real_I_V3</td>
+<td>max</td>
+<td>3</td>
+<td>0.140909</td>
+<td>f_1000003_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">30</th>
+<td>interlead_t_r2_recon_I_V3</td>
+<td>max</td>
+<td>1</td>
+<td>0.190308</td>
+<td>f_1000000_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">31</th>
+<td>interlead_t_r2_recon_I_V3</td>
+<td>max</td>
+<td>2</td>
+<td>0.184901</td>
+<td>f_1000003_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">32</th>
+<td>interlead_t_r2_recon_I_V3</td>
+<td>max</td>
+<td>3</td>
+<td>0.177206</td>
+<td>f_1000004_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">33</th>
+<td>spurious_coupling_ratio_v3</td>
+<td>max</td>
+<td>1</td>
+<td>13.727486</td>
+<td>f_1101011_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">34</th>
+<td>spurious_coupling_ratio_v3</td>
+<td>max</td>
+<td>2</td>
+<td>12.773940</td>
+<td>f_1101012_s42</td>
+<td>ptb_xl</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">35</th>
+<td>spurious_coupling_ratio_v3</td>
+<td>max</td>
+<td>3</td>
+<td>11.939737</td>
+<td>f_1101014_s42</td>
+<td>ptb_xl</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="ludbrdb-blinded-delineation-three-lead-ecg-aim" class="level2">
+<h2 class="anchored" data-anchor-id="ludbrdb-blinded-delineation-three-lead-ecg-aim">LUDB/RDB blinded delineation — three-lead ECG-AIM</h2>
+<div id="e5dea1b2" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>le,lb<span class="op">=</span>blinded(R<span class="op">/</span><span class="st">'results/ecgaim_ludb_semiseg_blinded/compact.sqlite'</span>,<span class="st">'LUDB'</span>)<span class="op">;</span>re,rb<span class="op">=</span>blinded(R<span class="op">/</span><span class="st">'results/ecgaim_rdb_semiseg_blinded/compact.sqlite'</span>,<span class="st">'RDB'</span>)<span class="op">;</span>ev<span class="op">=</span>pd.concat([le,re])<span class="op">;</span>bd<span class="op">=</span>pd.concat([lb,rb])<span class="op">;</span>display(ev.sort_values([<span class="st">'cohort'</span>,<span class="st">'primary_mean_micro_f1_20ms'</span>],ascending<span class="op">=</span>[<span class="va">True</span>,<span class="va">False</span>]))<span class="op">;</span>display(best(ev[ev.status<span class="op">==</span><span class="st">'complete'</span>],[<span class="st">'primary_mean_micro_f1_20ms'</span>,<span class="st">'signal_pearson_p05'</span>,<span class="st">'signal_mse_p95'</span>],(<span class="st">'cohort'</span>,),TOP_K))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">model_id</th>
+<th data-quarto-table-cell-role="th">factorial_mask</th>
+<th data-quarto-table-cell-role="th">checkpoint_sha256</th>
+<th data-quarto-table-cell-role="th">protocol_sha256</th>
+<th data-quarto-table-cell-role="th">dataset_sha256</th>
+<th data-quarto-table-cell-role="th">status</th>
+<th data-quarto-table-cell-role="th">attempts</th>
+<th data-quarto-table-cell-role="th">started_at</th>
+<th data-quarto-table-cell-role="th">completed_at</th>
+<th data-quarto-table-cell-role="th">duration_seconds</th>
+<th data-quarto-table-cell-role="th">error</th>
+<th data-quarto-table-cell-role="th">signal_pearson_p05</th>
+<th data-quarto-table-cell-role="th">signal_mse_p95</th>
+<th data-quarto-table-cell-role="th">primary_mean_micro_f1_20ms</th>
+<th data-quarto-table-cell-role="th">db_bytes_after</th>
+<th data-quarto-table-cell-role="th">cohort</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>__original__</td>
+<td>original</td>
+<td>original_ludb</td>
+<td>0cf5557b8442b90b2f028f2db1c58521b58661968533aa...</td>
+<td>2d57ec9ea7cbd0b242db04b3e218061cd93a3a6c30c6bb...</td>
+<td>complete</td>
+<td>1</td>
+<td>2026-08-22T23:50:09.162158+00:00</td>
+<td>2026-08-22T23:50:09.162173+00:00</td>
+<td>4.329357</td>
+<td>None</td>
+<td>1.000000</td>
+<td>0.000000</td>
+<td>0.693803</td>
+<td>4096.0</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">108</th>
+<td>factorial_ecg_aim_1110004_s42</td>
+<td>1110004</td>
+<td>0e1bf669489993b553ba99983f8e98aaacd447f081e342...</td>
+<td>0cf5557b8442b90b2f028f2db1c58521b58661968533aa...</td>
+<td>2d57ec9ea7cbd0b242db04b3e218061cd93a3a6c30c6bb...</td>
+<td>complete</td>
+<td>1</td>
+<td>2026-08-23T01:00:42.954632+00:00</td>
+<td>2026-08-23T01:01:26.420078+00:00</td>
+<td>43.461543</td>
+<td>None</td>
+<td>0.709125</td>
+<td>0.012663</td>
+<td>0.630157</td>
+<td>131072.0</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">107</th>
+<td>factorial_ecg_aim_1110003_s42</td>
+<td>1110003</td>
+<td>257dd9d3cabf681c182e3f2eb84c4bf7f548f5ce7f479b...</td>
+<td>0cf5557b8442b90b2f028f2db1c58521b58661968533aa...</td>
+<td>2d57ec9ea7cbd0b242db04b3e218061cd93a3a6c30c6bb...</td>
+<td>complete</td>
+<td>1</td>
+<td>2026-08-23T01:00:05.285878+00:00</td>
+<td>2026-08-23T01:00:42.410818+00:00</td>
+<td>37.119991</td>
+<td>None</td>
+<td>0.708401</td>
+<td>0.011793</td>
+<td>0.629955</td>
+<td>126976.0</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">104</th>
+<td>factorial_ecg_aim_1110000_s42</td>
+<td>1110000</td>
+<td>19719f3fd44c49ab7958611eaf3657e3964bda0e99299e...</td>
+<td>0cf5557b8442b90b2f028f2db1c58521b58661968533aa...</td>
+<td>2d57ec9ea7cbd0b242db04b3e218061cd93a3a6c30c6bb...</td>
+<td>complete</td>
+<td>1</td>
+<td>2026-08-23T00:58:13.478234+00:00</td>
+<td>2026-08-23T00:58:50.007642+00:00</td>
+<td>36.522499</td>
+<td>None</td>
+<td>0.711432</td>
+<td>0.010553</td>
+<td>0.629628</td>
+<td>126976.0</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">117</th>
+<td>factorial_ecg_aim_1111003_s42</td>
+<td>1111003</td>
+<td>97cc10e7c7b2e9d4151254afa1956e8369611eebfbc715...</td>
+<td>0cf5557b8442b90b2f028f2db1c58521b58661968533aa...</td>
+<td>2d57ec9ea7cbd0b242db04b3e218061cd93a3a6c30c6bb...</td>
+<td>complete</td>
+<td>1</td>
+<td>2026-08-23T01:06:35.732950+00:00</td>
+<td>2026-08-23T01:07:11.863482+00:00</td>
+<td>36.127598</td>
+<td>None</td>
+<td>0.730915</td>
+<td>0.011060</td>
+<td>0.626260</td>
+<td>139264.0</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>factorial_ecg_aim_1011002_s42</td>
+<td>1011002</td>
+<td>b938c65350c469f4a0ae615982fd9ce650c699ee25093b...</td>
+<td>f5ffd6b079a3b40a6ac189f62563bb34aac8c925226016...</td>
+<td>81d69552522ae2b86116e33f578cbdf5965214f284c509...</td>
+<td>complete</td>
+<td>1</td>
+<td>2026-08-24T03:03:07.288266+00:00</td>
+<td>2026-08-24T03:03:07.288287+00:00</td>
+<td>2389.220826</td>
+<td>None</td>
+<td>0.613651</td>
+<td>0.150059</td>
+<td>0.728737</td>
+<td>40960.0</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>factorial_ecg_aim_1000013_s42</td>
+<td>1000013</td>
+<td>992355f4c5d4c8f0bed8e61e1aec8585fbe4042706054c...</td>
+<td>f5ffd6b079a3b40a6ac189f62563bb34aac8c925226016...</td>
+<td>81d69552522ae2b86116e33f578cbdf5965214f284c509...</td>
+<td>complete</td>
+<td>1</td>
+<td>2026-08-23T22:18:07.176786+00:00</td>
+<td>2026-08-23T22:18:07.176821+00:00</td>
+<td>2430.624711</td>
+<td>None</td>
+<td>0.603211</td>
+<td>0.155948</td>
+<td>0.727807</td>
+<td>20480.0</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">3</th>
+<td>factorial_ecg_aim_1001014_s42</td>
+<td>1001014</td>
+<td>e78193d3ef493c5cc62ff8798707c26e0befbc2ea22b9b...</td>
+<td>f5ffd6b079a3b40a6ac189f62563bb34aac8c925226016...</td>
+<td>81d69552522ae2b86116e33f578cbdf5965214f284c509...</td>
+<td>complete</td>
+<td>1</td>
+<td>2026-08-23T23:44:15.721772+00:00</td>
+<td>2026-08-23T23:44:15.721793+00:00</td>
+<td>2520.670043</td>
+<td>None</td>
+<td>0.607164</td>
+<td>0.156768</td>
+<td>0.727722</td>
+<td>28672.0</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>factorial_ecg_aim_1010014_s42</td>
+<td>1010014</td>
+<td>86bc3ced16ed3e3af8174f674e59a4e4c167e0f8888520...</td>
+<td>f5ffd6b079a3b40a6ac189f62563bb34aac8c925226016...</td>
+<td>81d69552522ae2b86116e33f578cbdf5965214f284c509...</td>
+<td>complete</td>
+<td>1</td>
+<td>2026-08-24T02:23:17.243320+00:00</td>
+<td>2026-08-24T02:23:17.243351+00:00</td>
+<td>2406.500967</td>
+<td>None</td>
+<td>0.611299</td>
+<td>0.153793</td>
+<td>0.719331</td>
+<td>36864.0</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">9</th>
+<td>factorial_ecg_aim_1011003_s42</td>
+<td>1011003</td>
+<td>52c12a7c587aebee6dc99c30e786e62664c58b813d924d...</td>
+<td>f5ffd6b079a3b40a6ac189f62563bb34aac8c925226016...</td>
+<td>81d69552522ae2b86116e33f578cbdf5965214f284c509...</td>
+<td>running</td>
+<td>1</td>
+<td>2026-08-24T03:03:08.079200+00:00</td>
+<td>None</td>
+<td>NaN</td>
+<td>None</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>RDB</td>
+</tr>
+</tbody>
+</table>
+
+<p>134 rows × 16 columns</p>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">metric</th>
+<th data-quarto-table-cell-role="th">direction</th>
+<th data-quarto-table-cell-role="th">rank</th>
+<th data-quarto-table-cell-role="th">value</th>
+<th data-quarto-table-cell-role="th">model_id</th>
+<th data-quarto-table-cell-role="th">cohort</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>1</td>
+<td>0.693803</td>
+<td>__original__</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>2</td>
+<td>0.630157</td>
+<td>factorial_ecg_aim_1110004_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>3</td>
+<td>0.629955</td>
+<td>factorial_ecg_aim_1110003_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>4</td>
+<td>0.629628</td>
+<td>factorial_ecg_aim_1110000_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>5</td>
+<td>0.626260</td>
+<td>factorial_ecg_aim_1111003_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>6</td>
+<td>0.624969</td>
+<td>factorial_ecg_aim_1111002_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>7</td>
+<td>0.624131</td>
+<td>factorial_ecg_aim_1110002_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>8</td>
+<td>0.621501</td>
+<td>factorial_ecg_aim_1101000_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>9</td>
+<td>0.621043</td>
+<td>factorial_ecg_aim_1101001_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>10</td>
+<td>0.620952</td>
+<td>factorial_ecg_aim_1010010_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">10</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>1</td>
+<td>0.743021</td>
+<td>__original__</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">11</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>2</td>
+<td>0.733737</td>
+<td>factorial_ecg_aim_1010013_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">12</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>3</td>
+<td>0.732996</td>
+<td>factorial_ecg_aim_1010010_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">13</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>4</td>
+<td>0.729437</td>
+<td>factorial_ecg_aim_1010003_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">14</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>5</td>
+<td>0.729195</td>
+<td>factorial_ecg_aim_1001004_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">15</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>6</td>
+<td>0.728737</td>
+<td>factorial_ecg_aim_1011002_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">16</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>7</td>
+<td>0.727807</td>
+<td>factorial_ecg_aim_1000013_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">17</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>8</td>
+<td>0.727722</td>
+<td>factorial_ecg_aim_1001014_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">18</th>
+<td>primary_mean_micro_f1_20ms</td>
+<td>max</td>
+<td>9</td>
+<td>0.719331</td>
+<td>factorial_ecg_aim_1010014_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">19</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>1</td>
+<td>1.000000</td>
+<td>__original__</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">20</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>2</td>
+<td>0.733046</td>
+<td>factorial_ecg_aim_1100010_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">21</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>3</td>
+<td>0.730915</td>
+<td>factorial_ecg_aim_1111003_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">22</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>4</td>
+<td>0.718626</td>
+<td>factorial_ecg_aim_1001111_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">23</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>5</td>
+<td>0.716178</td>
+<td>factorial_ecg_aim_1000013_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">24</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>6</td>
+<td>0.711432</td>
+<td>factorial_ecg_aim_1110000_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">25</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>7</td>
+<td>0.709125</td>
+<td>factorial_ecg_aim_1110004_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">26</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>8</td>
+<td>0.708401</td>
+<td>factorial_ecg_aim_1110003_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">27</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>9</td>
+<td>0.705159</td>
+<td>factorial_ecg_aim_1010013_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">28</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>10</td>
+<td>0.703838</td>
+<td>factorial_ecg_aim_1101003_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">29</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>1</td>
+<td>1.000000</td>
+<td>__original__</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">30</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>2</td>
+<td>0.620403</td>
+<td>factorial_ecg_aim_1010013_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">31</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>3</td>
+<td>0.619438</td>
+<td>factorial_ecg_aim_1010003_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">32</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>4</td>
+<td>0.618768</td>
+<td>factorial_ecg_aim_1010010_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">33</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>5</td>
+<td>0.613651</td>
+<td>factorial_ecg_aim_1011002_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">34</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>6</td>
+<td>0.611299</td>
+<td>factorial_ecg_aim_1010014_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">35</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>7</td>
+<td>0.607164</td>
+<td>factorial_ecg_aim_1001014_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">36</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>8</td>
+<td>0.603211</td>
+<td>factorial_ecg_aim_1000013_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">37</th>
+<td>signal_pearson_p05</td>
+<td>max</td>
+<td>9</td>
+<td>0.595420</td>
+<td>factorial_ecg_aim_1001004_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">38</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>1</td>
+<td>0.000000</td>
+<td>__original__</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">39</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>2</td>
+<td>0.009707</td>
+<td>factorial_ecg_aim_1101000_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">40</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>3</td>
+<td>0.009740</td>
+<td>factorial_ecg_aim_1011110_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">41</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>4</td>
+<td>0.009817</td>
+<td>factorial_ecg_aim_1100010_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">42</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>5</td>
+<td>0.009897</td>
+<td>factorial_ecg_aim_1001113_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">43</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>6</td>
+<td>0.010502</td>
+<td>factorial_ecg_aim_1011114_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">44</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>7</td>
+<td>0.010553</td>
+<td>factorial_ecg_aim_1110000_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">45</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>8</td>
+<td>0.010566</td>
+<td>factorial_ecg_aim_1010003_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">46</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>9</td>
+<td>0.010586</td>
+<td>factorial_ecg_aim_1000010_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">47</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>10</td>
+<td>0.010660</td>
+<td>factorial_ecg_aim_1001100_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">48</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>1</td>
+<td>0.000000</td>
+<td>__original__</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">49</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>2</td>
+<td>0.148002</td>
+<td>factorial_ecg_aim_1010003_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">50</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>3</td>
+<td>0.150059</td>
+<td>factorial_ecg_aim_1011002_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">51</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>4</td>
+<td>0.151593</td>
+<td>factorial_ecg_aim_1010013_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">52</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>5</td>
+<td>0.153793</td>
+<td>factorial_ecg_aim_1010014_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">53</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>6</td>
+<td>0.154888</td>
+<td>factorial_ecg_aim_1010010_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">54</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>7</td>
+<td>0.155948</td>
+<td>factorial_ecg_aim_1000013_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">55</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>8</td>
+<td>0.156768</td>
+<td>factorial_ecg_aim_1001014_s42</td>
+<td>RDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">56</th>
+<td>signal_mse_p95</td>
+<td>min</td>
+<td>9</td>
+<td>0.158108</td>
+<td>factorial_ecg_aim_1001004_s42</td>
+<td>RDB</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="41f8fdf8" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cohort,x <span class="kw">in</span> bd.groupby(<span class="st">'cohort'</span>):</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a> <span class="cf">if</span> <span class="st">'lead_group'</span> <span class="kw">in</span> x <span class="kw">and</span> (x.lead_group<span class="op">==</span><span class="st">'primary_missing_precordial'</span>).<span class="bu">any</span>():x<span class="op">=</span>x[x.lead_group<span class="op">==</span><span class="st">'primary_missing_precordial'</span>]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a> pivot<span class="op">=</span>x.pivot(index<span class="op">=</span><span class="st">'model_id'</span>,columns<span class="op">=</span><span class="st">'boundary'</span>,values<span class="op">=</span><span class="st">'micro_f1_20ms'</span>)<span class="op">;</span>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="bu">max</span>(<span class="dv">4</span>,<span class="fl">.3</span><span class="op">*</span><span class="bu">len</span>(pivot))))<span class="op">;</span>sns.heatmap(pivot,cmap<span class="op">=</span><span class="st">'viridis'</span>,vmin<span class="op">=</span><span class="dv">0</span>,vmax<span class="op">=</span><span class="dv">1</span>)<span class="op">;</span>plt.title(<span class="ss">f'</span><span class="sc">{</span>cohort<span class="sc">}</span><span class="ss"> blinded boundary F1'</span>)<span class="op">;</span>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="three_lead_ecgaim_benchmark_files/figure-html/cell-8-output-1.png" width="1068" height="2837" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="three_lead_ecgaim_benchmark_files/figure-html/cell-8-output-2.png" width="971" height="383" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ludbrdb-oracle-morphology-three-lead-ecg-aim" class="level2">
+<h2 class="anchored" data-anchor-id="ludbrdb-oracle-morphology-three-lead-ecg-aim">LUDB/RDB oracle morphology — three-lead ECG-AIM</h2>
+<div id="6145bacd" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ro<span class="op">=</span>oracle(R<span class="op">/</span><span class="st">'results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite'</span>,<span class="st">'RDB'</span>)<span class="op">;</span>lo<span class="op">=</span>oracle(zstd_db(R<span class="op">/</span><span class="st">'results/ecgaim_ludb_oracle/ecgaim_ludb_oracle.sqlite.zst'</span>),<span class="st">'LUDB'</span>)<span class="op">;</span>o<span class="op">=</span>pd.concat([ro,lo])<span class="op">;</span>om<span class="op">=</span>[c <span class="cf">for</span> c <span class="kw">in</span> o <span class="cf">if</span> c.startswith(<span class="st">'metric.'</span>) <span class="kw">and</span> pd.api.types.is_numeric_dtype(o[c])]<span class="op">;</span>display(o[[<span class="st">'cohort'</span>,<span class="st">'model_id'</span>,<span class="st">'factorial_mask'</span>,<span class="st">'status'</span>,<span class="op">*</span>om]])<span class="op">;</span>display(best(o[o.status<span class="op">==</span><span class="st">'complete'</span>],om,(<span class="st">'cohort'</span>,),<span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">cohort</th>
+<th data-quarto-table-cell-role="th">model_id</th>
+<th data-quarto-table-cell-role="th">factorial_mask</th>
+<th data-quarto-table-cell-role="th">status</th>
+<th data-quarto-table-cell-role="th">metric.records</th>
+<th data-quarto-table-cell-role="th">metric.signal_pearson_p05</th>
+<th data-quarto-table-cell-role="th">metric.signal_mse_p95</th>
+<th data-quarto-table-cell-role="th">metric.boundary_voltage_abs_error_record_p95_mv</th>
+<th data-quarto-table-cell-role="th">metric.qrs_window_rmse_record_p95_mv</th>
+<th data-quarto-table-cell-role="th">metric.qrs_absolute_area_error_record_p95_mv_ms</th>
+<th data-quarto-table-cell-role="th">metric.t_window_rmse_record_p95_mv</th>
+<th data-quarto-table-cell-role="th">metric.t_absolute_area_error_record_p95_mv_ms</th>
+<th data-quarto-table-cell-role="th">metric.st_j_abs_error_record_p95_mv</th>
+<th data-quarto-table-cell-role="th">metric.event_abs_error_record_p95_mv</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>RDB</td>
+<td>factorial_ecg_aim_1000013_s42</td>
+<td>1000013</td>
+<td>complete</td>
+<td>2398</td>
+<td>0.603211</td>
+<td>0.155948</td>
+<td>0.587510</td>
+<td>1.128915</td>
+<td>59.378798</td>
+<td>0.636557</td>
+<td>41.781464</td>
+<td>0.569078</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>RDB</td>
+<td>factorial_ecg_aim_1001004_s42</td>
+<td>1001004</td>
+<td>complete</td>
+<td>2398</td>
+<td>0.595420</td>
+<td>0.158108</td>
+<td>0.582316</td>
+<td>1.212971</td>
+<td>62.980103</td>
+<td>0.625421</td>
+<td>44.425636</td>
+<td>0.579577</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>RDB</td>
+<td>factorial_ecg_aim_1001014_s42</td>
+<td>1001014</td>
+<td>complete</td>
+<td>2398</td>
+<td>0.607164</td>
+<td>0.156768</td>
+<td>0.584725</td>
+<td>1.190135</td>
+<td>61.852471</td>
+<td>0.629897</td>
+<td>45.226168</td>
+<td>0.579796</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>RDB</td>
+<td>factorial_ecg_aim_1010003_s42</td>
+<td>1010003</td>
+<td>complete</td>
+<td>2398</td>
+<td>0.619438</td>
+<td>0.148002</td>
+<td>0.579968</td>
+<td>1.108101</td>
+<td>58.040763</td>
+<td>0.625038</td>
+<td>41.953106</td>
+<td>0.556002</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>RDB</td>
+<td>factorial_ecg_aim_1010010_s42</td>
+<td>1010010</td>
+<td>complete</td>
+<td>2398</td>
+<td>0.618768</td>
+<td>0.154888</td>
+<td>0.575686</td>
+<td>1.131789</td>
+<td>61.381210</td>
+<td>0.629568</td>
+<td>43.553189</td>
+<td>0.562808</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">118</th>
+<td>LUDB</td>
+<td>factorial_ecg_aim_1111100_s42</td>
+<td>1111100</td>
+<td>complete</td>
+<td>200</td>
+<td>0.366459</td>
+<td>0.022101</td>
+<td>NaN</td>
+<td>0.275928</td>
+<td>12.393366</td>
+<td>0.127230</td>
+<td>14.890584</td>
+<td>0.085036</td>
+<td>0.459182</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">119</th>
+<td>LUDB</td>
+<td>factorial_ecg_aim_1111101_s42</td>
+<td>1111101</td>
+<td>complete</td>
+<td>200</td>
+<td>0.395603</td>
+<td>0.019046</td>
+<td>NaN</td>
+<td>0.279333</td>
+<td>13.016238</td>
+<td>0.108934</td>
+<td>13.512588</td>
+<td>0.082220</td>
+<td>0.430082</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">120</th>
+<td>LUDB</td>
+<td>factorial_ecg_aim_1111102_s42</td>
+<td>1111102</td>
+<td>complete</td>
+<td>200</td>
+<td>0.440200</td>
+<td>0.021424</td>
+<td>NaN</td>
+<td>0.289953</td>
+<td>14.359002</td>
+<td>0.130046</td>
+<td>16.429544</td>
+<td>0.083306</td>
+<td>0.474395</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">121</th>
+<td>LUDB</td>
+<td>factorial_ecg_aim_1111103_s42</td>
+<td>1111103</td>
+<td>complete</td>
+<td>200</td>
+<td>0.360260</td>
+<td>0.019906</td>
+<td>NaN</td>
+<td>0.284663</td>
+<td>14.497716</td>
+<td>0.124658</td>
+<td>16.111849</td>
+<td>0.092037</td>
+<td>0.471559</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">122</th>
+<td>LUDB</td>
+<td>factorial_ecg_aim_1111104_s42</td>
+<td>1111104</td>
+<td>complete</td>
+<td>200</td>
+<td>0.379312</td>
+<td>0.021391</td>
+<td>NaN</td>
+<td>0.310512</td>
+<td>15.473127</td>
+<td>0.139886</td>
+<td>15.573032</td>
+<td>0.107284</td>
+<td>0.417089</td>
+</tr>
+</tbody>
+</table>
+
+<p>154 rows × 14 columns</p>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">metric</th>
+<th data-quarto-table-cell-role="th">direction</th>
+<th data-quarto-table-cell-role="th">rank</th>
+<th data-quarto-table-cell-role="th">value</th>
+<th data-quarto-table-cell-role="th">model_id</th>
+<th data-quarto-table-cell-role="th">cohort</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>metric.signal_pearson_p05</td>
+<td>max</td>
+<td>1</td>
+<td>0.603035</td>
+<td>factorial_ecg_aim_1100012_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>metric.signal_pearson_p05</td>
+<td>max</td>
+<td>2</td>
+<td>0.588914</td>
+<td>factorial_ecg_aim_1100003_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>metric.signal_pearson_p05</td>
+<td>max</td>
+<td>3</td>
+<td>0.586658</td>
+<td>factorial_ecg_aim_1111003_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>metric.signal_pearson_p05</td>
+<td>max</td>
+<td>4</td>
+<td>0.584772</td>
+<td>factorial_ecg_aim_1100002_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>metric.signal_pearson_p05</td>
+<td>max</td>
+<td>5</td>
+<td>0.584532</td>
+<td>factorial_ecg_aim_1111002_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">75</th>
+<td>metric.event_abs_error_record_p95_mv</td>
+<td>min</td>
+<td>1</td>
+<td>0.322144</td>
+<td>factorial_ecg_aim_1101000_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">76</th>
+<td>metric.event_abs_error_record_p95_mv</td>
+<td>min</td>
+<td>2</td>
+<td>0.323747</td>
+<td>factorial_ecg_aim_1001000_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">77</th>
+<td>metric.event_abs_error_record_p95_mv</td>
+<td>min</td>
+<td>3</td>
+<td>0.329927</td>
+<td>factorial_ecg_aim_1000003_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">78</th>
+<td>metric.event_abs_error_record_p95_mv</td>
+<td>min</td>
+<td>4</td>
+<td>0.331429</td>
+<td>factorial_ecg_aim_1001013_s42</td>
+<td>LUDB</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">79</th>
+<td>metric.event_abs_error_record_p95_mv</td>
+<td>min</td>
+<td>5</td>
+<td>0.336200</td>
+<td>factorial_ecg_aim_1111000_s42</td>
+<td>LUDB</td>
+</tr>
+</tbody>
+</table>
+
+<p>80 rows × 6 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="cross-endpoint-consistency" class="level2">
+<h2 class="anchored" data-anchor-id="cross-endpoint-consistency">Cross-endpoint consistency</h2>
+<div id="ea5a7a99" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>x<span class="op">=</span>re[re.status<span class="op">==</span><span class="st">'complete'</span>].merge(ro,on<span class="op">=</span><span class="st">'model_id'</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">len</span>(x):</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))<span class="op">;</span>sns.scatterplot(data<span class="op">=</span>x,x<span class="op">=</span><span class="st">'metric.signal_pearson_p05'</span>,y<span class="op">=</span><span class="st">'primary_mean_micro_f1_20ms'</span>,s<span class="op">=</span><span class="dv">70</span>)<span class="op">;</span>plt.title(<span class="st">'RDB oracle signal tail vs blinded boundary preservation'</span>)<span class="op">;</span>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="three_lead_ecgaim_benchmark_files/figure-html/cell-10-output-1.png" width="690" height="531" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="configurable-rdb-waveform" class="level2">
+<h2 class="anchored" data-anchor-id="configurable-rdb-waveform">Configurable RDB waveform</h2>
+<div id="ccdd1f7b" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>L<span class="op">=</span>[<span class="st">'I'</span>,<span class="st">'II'</span>,<span class="st">'III'</span>,<span class="st">'aVR'</span>,<span class="st">'aVL'</span>,<span class="st">'aVF'</span>,<span class="st">'V1'</span>,<span class="st">'V2'</span>,<span class="st">'V3'</span>,<span class="st">'V4'</span>,<span class="st">'V5'</span>,<span class="st">'V6'</span>]<span class="op">;</span>e<span class="op">=</span>torch.load(R<span class="op">/</span><span class="ss">f'data/rdb_wavelet_delineation_cache/</span><span class="sc">{</span>RDB_SPLIT<span class="sc">}</span><span class="ss">/rdb_</span><span class="sc">{</span>RECORD_ID<span class="sc">}</span><span class="ss">.pt'</span>,map_location<span class="op">=</span><span class="st">'cpu'</span>,weights_only<span class="op">=</span><span class="va">False</span>)<span class="op">;</span>real<span class="op">=</span>e[<span class="st">'waveform'</span>].numpy()<span class="op">;</span>recon<span class="op">=</span><span class="va">None</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> RECONSTRUCTION_NPZ:</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a> z<span class="op">=</span>np.load(RECONSTRUCTION_NPZ,allow_pickle<span class="op">=</span><span class="va">False</span>)<span class="op">;</span>ids<span class="op">=</span>z[<span class="st">'record_id'</span>].astype(<span class="bu">str</span>)<span class="op">;</span>i<span class="op">=</span>np.flatnonzero((ids<span class="op">==</span>e[<span class="st">'record_id'</span>])<span class="op">|</span>(ids<span class="op">==</span><span class="st">'rdb_'</span><span class="op">+</span>e[<span class="st">'record_id'</span>]))[<span class="dv">0</span>]<span class="op">;</span>recon<span class="op">=</span>z[<span class="st">'recon'</span>][i]<span class="op">;</span>recon<span class="op">=</span>recon.T <span class="cf">if</span> recon.shape<span class="op">==</span>(<span class="dv">5000</span>,<span class="dv">12</span>) <span class="cf">else</span> recon</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>a,b<span class="op">=</span>[<span class="bu">int</span>(v<span class="op">*</span><span class="dv">500</span>) <span class="cf">for</span> v <span class="kw">in</span> WINDOW]<span class="op">;</span>t<span class="op">=</span>np.arange(a,b)<span class="op">/</span><span class="dv">500</span><span class="op">;</span>fig,axs<span class="op">=</span>plt.subplots(<span class="bu">len</span>(VIEW_LEADS),<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">14</span>,<span class="fl">2.1</span><span class="op">*</span><span class="bu">len</span>(VIEW_LEADS)),sharex<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax,lead <span class="kw">in</span> <span class="bu">zip</span>(np.atleast_1d(axs),VIEW_LEADS):</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a> j<span class="op">=</span>L.index(lead)<span class="op">;</span>ax.plot(t,real[j,a:b],c<span class="op">=</span><span class="st">'black'</span>,lw<span class="op">=</span><span class="fl">.9</span>,label<span class="op">=</span><span class="st">'real'</span>)<span class="op">;</span>ax.set_ylabel(lead)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a> <span class="cf">if</span> recon <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:ax.plot(t,recon[j,a:b],c<span class="op">=</span><span class="st">'crimson'</span>,lw<span class="op">=</span><span class="fl">.8</span>,label<span class="op">=</span><span class="st">'recon'</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].legend()<span class="op">;</span>axs[<span class="op">-</span><span class="dv">1</span>].set_xlabel(<span class="st">'seconds'</span>)<span class="op">;</span>plt.suptitle(<span class="ss">f"</span><span class="sc">{</span>e[<span class="st">'record_id'</span>]<span class="sc">}</span><span class="ss"> · </span><span class="sc">{</span>e[<span class="st">'canonical_rhythm'</span>]<span class="sc">}</span><span class="ss">"</span>)<span class="op">;</span>plt.tight_layout()<span class="op">;</span>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="three_lead_ecgaim_benchmark_files/figure-html/cell-11-output-1.png" width="1329" height="1187" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interpretation-template" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-template">Interpretation template</h2>
+<p>For each claim report: <strong>observation with raw numbers → interpretation → narrow implication → matched falsification experiment</strong>. Single-seed screens and unmatched protocols are never treated as confirmation.</p>
+<!-- -->
+
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Three-Lead Benchmark and ECG-AIM Deep Dive"</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Observed I + II + V2 → twelve-lead reconstruction"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">  html: {toc: true, toc-depth: 3, code-fold: true, code-tools: true, df-print: paged, theme: cosmo}</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> {warning: false, error: false, cache: false}</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Edit these controls and rerun.</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>TOP_K<span class="op">=</span><span class="dv">10</span><span class="op">;</span> RECORD_ID<span class="op">=</span><span class="st">'AF0293'</span><span class="op">;</span> RDB_SPLIT<span class="op">=</span><span class="st">'test'</span><span class="op">;</span> VIEW_LEADS<span class="op">=</span>[<span class="st">'I'</span>,<span class="st">'II'</span>,<span class="st">'V2'</span>,<span class="st">'V1'</span>,<span class="st">'V3'</span>,<span class="st">'V6'</span>]<span class="op">;</span> WINDOW<span class="op">=</span>(<span class="dv">0</span>,<span class="dv">10</span>)<span class="op">;</span> RECONSTRUCTION_NPZ<span class="op">=</span><span class="va">None</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys,json,numpy <span class="im">as</span> np,pandas <span class="im">as</span> pd,matplotlib.pyplot <span class="im">as</span> plt,seaborn <span class="im">as</span> sns</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>R<span class="op">=</span>Path.cwd().resolve()</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="kw">not</span> (R<span class="op">/</span><span class="st">'results'</span>).exists():R<span class="op">=</span>R.parent</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>sys.path.insert(<span class="dv">0</span>,<span class="bu">str</span>(R<span class="op">/</span><span class="st">'notebooks'</span>))<span class="op">;</span><span class="im">from</span> experiment_dashboard_helpers <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">'whitegrid'</span>)<span class="op">;</span>pd.set_option(<span class="st">'display.max_columns'</span>,<span class="dv">100</span>)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## Contract and architecture comparison</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>Every model receives leads **I, II and V2**. Primary reconstruction metrics must use the nine missing leads so observed-lead passthrough cannot inflate performance.</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**MCMA-U-Net:** convolutional reconstruction control.</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**cNVAE:** conditional variational ECG-FM bridge.</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**MSVAE:** multiscale variational reconstruction.</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**ECG-AIM:** our novel tokenized transformer reconstructor.</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>paths<span class="op">=</span>[R<span class="op">/</span><span class="st">'results/factorial_v4/main_48_cell_table.csv'</span>,R<span class="op">/</span><span class="st">'results/factorial_v2/main_48_cell_table.csv'</span>,R<span class="op">/</span><span class="st">'results/factorial_v2/all_48_models_benchmark.csv'</span>]<span class="op">;</span>p<span class="op">=</span><span class="bu">next</span>((x <span class="cf">for</span> x <span class="kw">in</span> paths <span class="cf">if</span> x.exists()),<span class="va">None</span>)<span class="op">;</span>bench<span class="op">=</span>pd.read_csv(p) <span class="cf">if</span> p <span class="cf">else</span> pd.DataFrame()<span class="op">;</span><span class="bu">print</span>(p,<span class="bu">len</span>(bench))<span class="op">;</span>display(bench)</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>nums<span class="op">=</span>[c <span class="cf">for</span> c <span class="kw">in</span> bench <span class="cf">if</span> pd.api.types.is_numeric_dtype(bench[c])]<span class="op">;</span>ident<span class="op">=</span><span class="bu">next</span>((c <span class="cf">for</span> c <span class="kw">in</span> (<span class="st">'model_id'</span>,<span class="st">'id'</span>,<span class="st">'cell_id'</span>) <span class="cf">if</span> c <span class="kw">in</span> bench),bench.columns[<span class="dv">0</span>])<span class="op">;</span>grp<span class="op">=</span><span class="bu">tuple</span>(c <span class="cf">for</span> c <span class="kw">in</span> (<span class="st">'family'</span>,<span class="st">'architecture'</span>) <span class="cf">if</span> c <span class="kw">in</span> bench)<span class="op">;</span>display(best(bench,nums,grp[:<span class="dv">1</span>],<span class="dv">3</span>,ident))</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## ECG-AIM: novel model and experiment logic</span></span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>ECG-AIM maps sparse observed ECG into temporal tokens, models long-range cardiac dependencies with an encoder/decoder transformer, and reconstructs twelve leads jointly. The registered three-lead model uses width 384, eight encoder blocks, four decoder blocks, eight attention heads and 25-sample patches.</span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>The hypothesis is stronger than lower MSE: ECG-AIM should preserve atrial morphology, ventricular depolarization, repolarization, ST morphology and inter-lead relationships. The factorial program isolates pointwise reconstruction, correlation, distributional/MMD and derivative constraints. Its claim chain is:</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a><span class="in">`PTB-XL reconstruction → clinical biomarkers → LUDB expert morphology → RDB rhythm-diverse morphology → independent blinded delineation`</span>.</span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clinical biomarkers and canonical 160-model cohort</span></span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>db<span class="op">=</span>R<span class="op">/</span><span class="st">'results/clinical_biomarkers_multids/clinical_metrics.db'</span><span class="op">;</span>clinical<span class="op">=</span>sql(db,<span class="st">'select * from clinical_metrics'</span>)<span class="op">;</span>paired<span class="op">=</span>sql(db,<span class="st">'select * from paired_inference'</span>)<span class="op">;</span>pre<span class="op">=</span>sql(db,<span class="st">'select * from presacan_model_summary'</span>)</span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>clinical[<span class="st">'suite'</span>]<span class="op">=</span>np.select([clinical.model_id.<span class="bu">str</span>.startswith(<span class="st">'f_'</span>),clinical.model_id.<span class="bu">str</span>.startswith(<span class="st">'factorial_ecg_aim_'</span>),clinical.model_id.eq(<span class="st">'__original__'</span>)],[<span class="st">'canonical_160'</span>,<span class="st">'threelead_ecgaim_external'</span>,<span class="st">'reference'</span>],<span class="st">'quarantine'</span>)<span class="op">;</span>display(clinical.groupby([<span class="st">'suite'</span>,<span class="st">'dataset'</span>]).model_id.nunique())<span class="op">;</span><span class="cf">assert</span> pre.model_id.nunique()<span class="op">==</span><span class="dv">160</span><span class="op">;</span>display(pre)</span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>cm<span class="op">=</span>[<span class="st">'mae'</span>,<span class="st">'pearson_r'</span>,<span class="st">'r2'</span>,<span class="st">'auroc'</span>,<span class="st">'auprc'</span>,<span class="st">'f1'</span>,<span class="st">'sens'</span>,<span class="st">'spec'</span>,<span class="st">'ppv'</span>,<span class="st">'npv'</span>,<span class="st">'interlead_r2'</span>]<span class="op">;</span>display(best(clinical[clinical.suite<span class="op">==</span><span class="st">'canonical_160'</span>],cm,(<span class="st">'dataset'</span>,<span class="st">'target'</span>),<span class="dv">1</span>))<span class="op">;</span>paired[<span class="st">'ci_excludes_zero'</span>]<span class="op">=</span>(paired.ci_low<span class="op">&gt;</span><span class="dv">0</span>)<span class="op">|</span>(paired.ci_high<span class="op">&lt;</span><span class="dv">0</span>)<span class="op">;</span>display(paired.sort_values([<span class="st">'ci_excludes_zero'</span>,<span class="st">'p_value'</span>],ascending<span class="op">=</span>[<span class="va">False</span>,<span class="va">True</span>]).head(<span class="dv">100</span>))<span class="op">;</span>pm<span class="op">=</span>[c <span class="cf">for</span> c <span class="kw">in</span> pre <span class="cf">if</span> pd.api.types.is_numeric_dtype(pre[c])]<span class="op">;</span>display(best(pre,pm,(<span class="st">'dataset'</span>,),<span class="dv">3</span>))</span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a><span class="fu">## LUDB/RDB blinded delineation — three-lead ECG-AIM</span></span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a>le,lb<span class="op">=</span>blinded(R<span class="op">/</span><span class="st">'results/ecgaim_ludb_semiseg_blinded/compact.sqlite'</span>,<span class="st">'LUDB'</span>)<span class="op">;</span>re,rb<span class="op">=</span>blinded(R<span class="op">/</span><span class="st">'results/ecgaim_rdb_semiseg_blinded/compact.sqlite'</span>,<span class="st">'RDB'</span>)<span class="op">;</span>ev<span class="op">=</span>pd.concat([le,re])<span class="op">;</span>bd<span class="op">=</span>pd.concat([lb,rb])<span class="op">;</span>display(ev.sort_values([<span class="st">'cohort'</span>,<span class="st">'primary_mean_micro_f1_20ms'</span>],ascending<span class="op">=</span>[<span class="va">True</span>,<span class="va">False</span>]))<span class="op">;</span>display(best(ev[ev.status<span class="op">==</span><span class="st">'complete'</span>],[<span class="st">'primary_mean_micro_f1_20ms'</span>,<span class="st">'signal_pearson_p05'</span>,<span class="st">'signal_mse_p95'</span>],(<span class="st">'cohort'</span>,),TOP_K))</span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cohort,x <span class="kw">in</span> bd.groupby(<span class="st">'cohort'</span>):</span>
+<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a> <span class="cf">if</span> <span class="st">'lead_group'</span> <span class="kw">in</span> x <span class="kw">and</span> (x.lead_group<span class="op">==</span><span class="st">'primary_missing_precordial'</span>).<span class="bu">any</span>():x<span class="op">=</span>x[x.lead_group<span class="op">==</span><span class="st">'primary_missing_precordial'</span>]</span>
+<span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a> pivot<span class="op">=</span>x.pivot(index<span class="op">=</span><span class="st">'model_id'</span>,columns<span class="op">=</span><span class="st">'boundary'</span>,values<span class="op">=</span><span class="st">'micro_f1_20ms'</span>)<span class="op">;</span>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="bu">max</span>(<span class="dv">4</span>,<span class="fl">.3</span><span class="op">*</span><span class="bu">len</span>(pivot))))<span class="op">;</span>sns.heatmap(pivot,cmap<span class="op">=</span><span class="st">'viridis'</span>,vmin<span class="op">=</span><span class="dv">0</span>,vmax<span class="op">=</span><span class="dv">1</span>)<span class="op">;</span>plt.title(<span class="ss">f'</span><span class="sc">{</span>cohort<span class="sc">}</span><span class="ss"> blinded boundary F1'</span>)<span class="op">;</span>plt.show()</span>
+<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a><span class="fu">## LUDB/RDB oracle morphology — three-lead ECG-AIM</span></span>
+<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a>ro<span class="op">=</span>oracle(R<span class="op">/</span><span class="st">'results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite'</span>,<span class="st">'RDB'</span>)<span class="op">;</span>lo<span class="op">=</span>oracle(zstd_db(R<span class="op">/</span><span class="st">'results/ecgaim_ludb_oracle/ecgaim_ludb_oracle.sqlite.zst'</span>),<span class="st">'LUDB'</span>)<span class="op">;</span>o<span class="op">=</span>pd.concat([ro,lo])<span class="op">;</span>om<span class="op">=</span>[c <span class="cf">for</span> c <span class="kw">in</span> o <span class="cf">if</span> c.startswith(<span class="st">'metric.'</span>) <span class="kw">and</span> pd.api.types.is_numeric_dtype(o[c])]<span class="op">;</span>display(o[[<span class="st">'cohort'</span>,<span class="st">'model_id'</span>,<span class="st">'factorial_mask'</span>,<span class="st">'status'</span>,<span class="op">*</span>om]])<span class="op">;</span>display(best(o[o.status<span class="op">==</span><span class="st">'complete'</span>],om,(<span class="st">'cohort'</span>,),<span class="dv">5</span>))</span>
+<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-90"><a href="#cb13-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cross-endpoint consistency</span></span>
+<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a>x<span class="op">=</span>re[re.status<span class="op">==</span><span class="st">'complete'</span>].merge(ro,on<span class="op">=</span><span class="st">'model_id'</span>)</span>
+<span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">len</span>(x):</span>
+<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))<span class="op">;</span>sns.scatterplot(data<span class="op">=</span>x,x<span class="op">=</span><span class="st">'metric.signal_pearson_p05'</span>,y<span class="op">=</span><span class="st">'primary_mean_micro_f1_20ms'</span>,s<span class="op">=</span><span class="dv">70</span>)<span class="op">;</span>plt.title(<span class="st">'RDB oracle signal tail vs blinded boundary preservation'</span>)<span class="op">;</span>plt.show()</span>
+<span id="cb13-99"><a href="#cb13-99" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-101"><a href="#cb13-101" aria-hidden="true" tabindex="-1"></a><span class="fu">## Configurable RDB waveform</span></span>
+<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-105"><a href="#cb13-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a>L<span class="op">=</span>[<span class="st">'I'</span>,<span class="st">'II'</span>,<span class="st">'III'</span>,<span class="st">'aVR'</span>,<span class="st">'aVL'</span>,<span class="st">'aVF'</span>,<span class="st">'V1'</span>,<span class="st">'V2'</span>,<span class="st">'V3'</span>,<span class="st">'V4'</span>,<span class="st">'V5'</span>,<span class="st">'V6'</span>]<span class="op">;</span>e<span class="op">=</span>torch.load(R<span class="op">/</span><span class="ss">f'data/rdb_wavelet_delineation_cache/</span><span class="sc">{</span>RDB_SPLIT<span class="sc">}</span><span class="ss">/rdb_</span><span class="sc">{</span>RECORD_ID<span class="sc">}</span><span class="ss">.pt'</span>,map_location<span class="op">=</span><span class="st">'cpu'</span>,weights_only<span class="op">=</span><span class="va">False</span>)<span class="op">;</span>real<span class="op">=</span>e[<span class="st">'waveform'</span>].numpy()<span class="op">;</span>recon<span class="op">=</span><span class="va">None</span></span>
+<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> RECONSTRUCTION_NPZ:</span>
+<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a> z<span class="op">=</span>np.load(RECONSTRUCTION_NPZ,allow_pickle<span class="op">=</span><span class="va">False</span>)<span class="op">;</span>ids<span class="op">=</span>z[<span class="st">'record_id'</span>].astype(<span class="bu">str</span>)<span class="op">;</span>i<span class="op">=</span>np.flatnonzero((ids<span class="op">==</span>e[<span class="st">'record_id'</span>])<span class="op">|</span>(ids<span class="op">==</span><span class="st">'rdb_'</span><span class="op">+</span>e[<span class="st">'record_id'</span>]))[<span class="dv">0</span>]<span class="op">;</span>recon<span class="op">=</span>z[<span class="st">'recon'</span>][i]<span class="op">;</span>recon<span class="op">=</span>recon.T <span class="cf">if</span> recon.shape<span class="op">==</span>(<span class="dv">5000</span>,<span class="dv">12</span>) <span class="cf">else</span> recon</span>
+<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a>a,b<span class="op">=</span>[<span class="bu">int</span>(v<span class="op">*</span><span class="dv">500</span>) <span class="cf">for</span> v <span class="kw">in</span> WINDOW]<span class="op">;</span>t<span class="op">=</span>np.arange(a,b)<span class="op">/</span><span class="dv">500</span><span class="op">;</span>fig,axs<span class="op">=</span>plt.subplots(<span class="bu">len</span>(VIEW_LEADS),<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">14</span>,<span class="fl">2.1</span><span class="op">*</span><span class="bu">len</span>(VIEW_LEADS)),sharex<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax,lead <span class="kw">in</span> <span class="bu">zip</span>(np.atleast_1d(axs),VIEW_LEADS):</span>
+<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a> j<span class="op">=</span>L.index(lead)<span class="op">;</span>ax.plot(t,real[j,a:b],c<span class="op">=</span><span class="st">'black'</span>,lw<span class="op">=</span><span class="fl">.9</span>,label<span class="op">=</span><span class="st">'real'</span>)<span class="op">;</span>ax.set_ylabel(lead)</span>
+<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a> <span class="cf">if</span> recon <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:ax.plot(t,recon[j,a:b],c<span class="op">=</span><span class="st">'crimson'</span>,lw<span class="op">=</span><span class="fl">.8</span>,label<span class="op">=</span><span class="st">'recon'</span>)</span>
+<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].legend()<span class="op">;</span>axs[<span class="op">-</span><span class="dv">1</span>].set_xlabel(<span class="st">'seconds'</span>)<span class="op">;</span>plt.suptitle(<span class="ss">f"</span><span class="sc">{</span>e[<span class="st">'record_id'</span>]<span class="sc">}</span><span class="ss"> · </span><span class="sc">{</span>e[<span class="st">'canonical_rhythm'</span>]<span class="sc">}</span><span class="ss">"</span>)<span class="op">;</span>plt.tight_layout()<span class="op">;</span>plt.show()</span>
+<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretation template</span></span>
+<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a>For each claim report: **observation with raw numbers → interpretation → narrow implication → matched falsification experiment**. Single-seed screens and unmatched protocols are never treated as confirmation.</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

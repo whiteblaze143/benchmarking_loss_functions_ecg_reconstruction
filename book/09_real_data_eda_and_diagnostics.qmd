@@ -549,13 +549,19 @@ The EchoNext classifier evaluates 12 echo-derived structural-heart-disease endpo
 ```{python}
 #| label: echonext-label-support
 #| tbl-cap: "EchoNext test-set endpoint support from the locked label audit."
-label_audit = json.loads(
-    (ROOT / "results/comprehensive_latest_48_models/raw/factorial_v4_2x4/"
-            "echonext_shd_label_audit.json").read_text()
-)
-support = pd.DataFrame(label_audit["label_summary"]).T
-support["prevalence_percent"] = 100 * support["positive"] / support["nonmissing"]
-support.sort_values("prevalence_percent")
+label_audit_path = (ROOT / "results/comprehensive_latest_48_models/raw/factorial_v4_2x4/"
+                    "echonext_shd_label_audit.json")
+if label_audit_path.exists():
+    label_audit = json.loads(label_audit_path.read_text())
+    support = pd.DataFrame(label_audit["label_summary"]).T
+    support["prevalence_percent"] = 100 * support["positive"] / support["nonmissing"]
+    display(support.sort_values("prevalence_percent"))
+else:
+    display(pd.DataFrame([{
+        "evidence_status": "unavailable",
+        "required_artifact": str(label_audit_path),
+        "interpretation": "No endpoint-support result is claimed until the locked audit is restored."
+    }]))
 ```
 
 ### Endpoint burden and co-occurrence

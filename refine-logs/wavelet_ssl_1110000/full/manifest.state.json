@@ -1,8 +1,8 @@
 {
   "cells": 60,
   "counts": {
-    "completed": 5,
-    "pending": 114,
+    "completed": 9,
+    "pending": 110,
     "running": 1
   },
   "jobs": [
@@ -643,7 +643,6 @@
         "wavelet_fusion": "cross_attn",
         "wavelet_heads": 6
       },
-      "child_pid": 273583,
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -726,13 +725,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-24T03:00:04Z",
       "id": "E1_wave_noSSL_cross_attn_1110000_s42_l0",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/005_E1_wave_noSSL_cross_attn_1110000_s42_l0.log",
+      "returncode": 0,
       "started_at": "2026-08-24T02:30:04Z",
-      "status": "running"
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -845,11 +846,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-24T03:26:06Z",
       "id": "P1_A0_morlet_mag_phase_noSSL_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/006_P1_A0_morlet_mag_phase_noSSL_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-24T03:00:06Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -962,11 +967,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-24T04:00:59Z",
       "id": "R0_morlet_mag_morlet_phase_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/007_R0_morlet_mag_morlet_phase_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-24T03:26:09Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -1088,11 +1097,15 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
+      "completed_at": "2026-08-24T04:35:51Z",
       "id": "R1_morlet_mag_ueg_phase_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/008_R1_morlet_mag_ueg_phase_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-24T04:01:01Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -1123,6 +1136,7 @@
         "wavelet_fusion": "gated_add",
         "wavelet_heads": 6
       },
+      "child_pid": 354717,
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -1206,7 +1220,9 @@
         "--no-fiducial-head"
       ],
       "id": "C1_E1_morlet_mag_morlet_phase_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/009_C1_E1_morlet_mag_morlet_phase_1110000_s42_l0.log",
+      "started_at": "2026-08-24T04:35:54Z",
+      "status": "running"
     },
     {
       "attempts": 0,
@@ -14250,6 +14266,6 @@
   ],
   "manifest_sha256": "008a7d9b49a8d912cc9bdd132a93c493128f17a9dcb944d2984e40112466aec6",
   "queue_status": "running",
-  "updated_at": "2026-08-24T02:30:04Z",
+  "updated_at": "2026-08-24T04:35:54Z",
   "version": 2
 }

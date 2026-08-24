@@ -1,0 +1,92 @@
+---
+title: "Live Experiment Observatory"
+subtitle: "A rerunnable, database-backed view of the study"
+execute:
+  cache: false
+  freeze: false
+---
+
+This section is the operational front door to the results. Every render opens
+the authoritative SQLite files in **read-only mode**, recomputes tables and
+figures, and records each source's modification time. It does not export large
+CSVs, duplicate per-record rows, or mutate an evaluator database.
+
+```{python}
+#| label: observatory-setup
+from pathlib import Path
+import pandas as pd
+from live_results import *
+
+SOURCES = {
+    "Clinical biomarkers": ROOT / "results/clinical_biomarkers_multids/clinical_metrics.db",
+    "Three-lead checkpoint catalog": ROOT / "results/checkpoint_store/catalog.sqlite",
+    "LUDB blinded": ROOT / "results/ecgaim_ludb_semiseg_blinded/compact.sqlite",
+    "RDB blinded": ROOT / "results/ecgaim_rdb_semiseg_blinded/compact.sqlite",
+    "RDB oracle": ROOT / "results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite",
+    "One-lead queue": ROOT / "refine-logs/wavelet_ssl_1110000/full/queue.sqlite",
+    "One-lead checkpoints": ROOT / "results/onelead_checkpoint_store/catalog.sqlite",
+    "Checkpoint representation study": ROOT / "results/checkpoint_embeddings/compact.sqlite",
+}
+inventory = source_inventory(SOURCES)
+display(inventory)
+```
+
+## What is live now?
+
+```{python}
+#| label: observatory-status
+from IPython.display import Markdown, display
+
+q = load_onelead_queue(SOURCES["One-lead queue"])
+le, _ = load_blinded(SOURCES["LUDB blinded"], "LUDB")
+re, _ = load_blinded(SOURCES["RDB blinded"], "RDB")
+ro = load_oracle(SOURCES["RDB oracle"], "RDB")
+
+def statuses(frame):
+    return frame.status.value_counts().to_dict() if not frame.empty and "status" in frame else {}
+
+summary = pd.DataFrame([
+    {"stream": "one-lead wavelet/SSL queue", **statuses(q)},
+    {"stream": "LUDB blinded three-lead", **statuses(le)},
+    {"stream": "RDB blinded three-lead", **statuses(re)},
+    {"stream": "RDB oracle three-lead", **statuses(ro)},
+]).fillna(0)
+display(summary)
+```
+
+The counts above are a render-time snapshot—not a monitoring daemon. Rerender
+this chapter or the full book to incorporate newly committed DB rows.
+
+## Two evidence tracks that must not be mixed
+
+| Track | Input contract | Main question | External morphology evidence |
+|---|---|---|---|
+| Three-lead benchmark | observed I + II + V2 | Which architecture/objective best reconstructs nine missing leads? | LUDB and RDB oracle/blinded analyses |
+| One-lead development | observed I **or** II | Do spatial structure, wavelets, and SSL improve reconstruction/delineation? | RDB six-boundary supervision during development; no inherited three-lead leaderboard |
+
+Use the next two chapters for interactive leaderboards, matched deltas,
+boundary heatmaps, metric-space UMAPs, and provenance tables.
+
+## Rerun controls
+
+From the repository root:
+
+```{bash}
+#| eval: false
+QUARTO_PYTHON=/home/mithunmanivannan/.venv/bin/python3 \
+  .tools/quarto-1.10.18/bin/quarto render book
+```
+
+For a faster update, render only one live chapter. The top code cell of each
+chapter contains the small set of controls intended for editing.
+
+## Visualization contract
+
+The live chapters deliberately distinguish three objects:
+
+1. **Raw metric views** show observed values and remain the source of rankings.
+2. **Matched deltas** compare a configuration against its registered baseline
+   only when seed and observed lead agree.
+3. **Performance UMAP** embeds standardized outcome vectors. Proximity means
+   similar measured performance profiles; it does **not** establish similar
+   encoder representations, physiology, or causal mechanisms.

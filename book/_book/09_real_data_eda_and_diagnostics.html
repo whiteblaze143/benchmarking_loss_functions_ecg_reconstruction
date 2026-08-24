@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>1&nbsp; Real-Cohort EDA, Integrity Checks, and Deep Diagnostics – Benchmarking Loss Functions for Electrocardiogram Reconstruction</title>
+<title>4&nbsp; Real-Cohort EDA, Integrity Checks, and Deep Diagnostics – Benchmarking Loss Functions for Electrocardiogram Reconstruction</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./11_dataset_atlas_ludb_isp_sunnybrook.html" rel="next">
-<link href="./index.html" rel="prev">
+<link href="./17_one_lead_wavelet_ssl_live.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -322,7 +322,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -358,58 +358,64 @@ window.Quarto = {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">I. Data, Cohorts, and Measurement</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Live Experiment Observatory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./09_real_data_eda_and_diagnostics.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></a>
+  <a href="./15_live_results_observatory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Live Experiment Observatory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span></a>
+  <a href="./16_three_lead_ecgaim_live.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Three-Lead ECG-AIM: Live Results</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05_zhejiang_delineation_tutorial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Zhejiang Cohort: Data Audit and Delineation Protocol</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./01_dataset_and_preprocessing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">PTB-XL Tensor, Lead, and Preprocessing Contract</span></span></a>
+  <a href="./17_one_lead_wavelet_ssl_live.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL: Live Results</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
- <span class="menu-text">II. Reconstruction Models and Objectives</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">I. Data, Cohorts, and Measurement</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02_network_architectures.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Implemented Reconstruction Architectures</span></span></a>
+  <a href="./09_real_data_eda_and_diagnostics.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03_loss_function_formulations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Implemented Loss Functions and Mixed-Level Design</span></span></a>
+  <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_zhejiang_delineation_tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Zhejiang Cohort: Data Audit and Delineation Protocol</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_dataset_and_preprocessing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">PTB-XL Tensor, Lead, and Preprocessing Contract</span></span></a>
   </div>
 </li>
       </ul>
@@ -417,7 +423,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
- <span class="menu-text">III. Clinical and Statistical Evaluation</span></a>
+ <span class="menu-text">II. Reconstruction Models and Objectives</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -425,20 +431,14 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05_clinical_metrics_and_delineation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Diagnostic Integrity &amp; Clinical Delineation</span></span></a>
+  <a href="./02_network_architectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Implemented Reconstruction Architectures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04_regression_to_mean.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Rigorous Agreement &amp; The Mathematics of Regression to the Mean</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./06_fairness_robustness_sqi.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Fairness, Noise Robustness, and Signal Quality Index (SQI)</span></span></a>
+  <a href="./03_loss_function_formulations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Implemented Loss Functions and Mixed-Level Design</span></span></a>
   </div>
 </li>
       </ul>
@@ -446,7 +446,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
- <span class="menu-text">IV. Benchmark and External Validation</span></a>
+ <span class="menu-text">III. Clinical and Statistical Evaluation</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -454,26 +454,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./08_factorial_loss_matrix_benchmarks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interim 48-Cell Results and Running Seven-Position Loss Benchmark</span></span></a>
+  <a href="./05_clinical_metrics_and_delineation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Diagnostic Integrity &amp; Clinical Delineation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07_smartwatch_reconstruction_case_study.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Four-Device Smartwatch Transfer Case Study</span></span></a>
+  <a href="./04_regression_to_mean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Rigorous Agreement &amp; The Mathematics of Regression to the Mean</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./10_echonext_classifier_external_validation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">EchoNext Classifier and External Diagnostic Validation</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./12_exhaustive_model_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Generation-Bound Exhaustive Model Analysis</span></span></a>
+  <a href="./06_fairness_robustness_sqi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Fairness, Noise Robustness, and Signal Quality Index (SQI)</span></span></a>
   </div>
 </li>
       </ul>
@@ -481,7 +475,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
- <span class="menu-text">V. Visual and Clinical Atlases</span></a>
+ <span class="menu-text">IV. Benchmark and External Validation</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -489,14 +483,49 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./08_factorial_loss_matrix_benchmarks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Interim 48-Cell Results and Running Seven-Position Loss Benchmark</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07_smartwatch_reconstruction_case_study.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Four-Device Smartwatch Transfer Case Study</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_echonext_classifier_external_validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EchoNext Classifier and External Diagnostic Validation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_exhaustive_model_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Generation-Bound Exhaustive Model Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">V. Visual and Clinical Atlases</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./13_engineering_ml_visual_atlas.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Engineering, Storage, and Inference Diagnostics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Engineering, Storage, and Inference Diagnostics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./14_cath_lab_clinical_trust_atlas.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Clinical Trust, Cath-Lab Safety, and Validation Requirements</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Clinical Trust, Cath-Lab Safety, and Validation Requirements</span></span></a>
   </div>
 </li>
       </ul>
@@ -511,39 +540,39 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#evidence-map" id="toc-evidence-map" class="nav-link active" data-scroll-target="#evidence-map"><span class="header-section-number">1.1</span> Evidence map</a>
+  <li><a href="#evidence-map" id="toc-evidence-map" class="nav-link active" data-scroll-target="#evidence-map"><span class="header-section-number">4.1</span> Evidence map</a>
   <ul class="collapse">
-  <li><a href="#repository-data-entry-boundary" id="toc-repository-data-entry-boundary" class="nav-link" data-scroll-target="#repository-data-entry-boundary"><span class="header-section-number">1.1.1</span> Repository data-entry boundary</a></li>
+  <li><a href="#repository-data-entry-boundary" id="toc-repository-data-entry-boundary" class="nav-link" data-scroll-target="#repository-data-entry-boundary"><span class="header-section-number">4.1.1</span> Repository data-entry boundary</a></li>
   </ul></li>
-  <li><a href="#ptb-xl-observed-cohort-and-split-contract" id="toc-ptb-xl-observed-cohort-and-split-contract" class="nav-link" data-scroll-target="#ptb-xl-observed-cohort-and-split-contract"><span class="header-section-number">1.2</span> PTB-XL: observed cohort and split contract</a>
+  <li><a href="#ptb-xl-observed-cohort-and-split-contract" id="toc-ptb-xl-observed-cohort-and-split-contract" class="nav-link" data-scroll-target="#ptb-xl-observed-cohort-and-split-contract"><span class="header-section-number">4.2</span> PTB-XL: observed cohort and split contract</a>
   <ul class="collapse">
-  <li><a href="#leakage-checks-that-must-precede-modeling" id="toc-leakage-checks-that-must-precede-modeling" class="nav-link" data-scroll-target="#leakage-checks-that-must-precede-modeling"><span class="header-section-number">1.2.1</span> Leakage checks that must precede modeling</a></li>
-  <li><a href="#ptb-xl-demographic-and-diagnostic-composition" id="toc-ptb-xl-demographic-and-diagnostic-composition" class="nav-link" data-scroll-target="#ptb-xl-demographic-and-diagnostic-composition"><span class="header-section-number">1.2.2</span> PTB-XL demographic and diagnostic composition</a></li>
-  <li><a href="#executed-ptb-xl-waveform-audit" id="toc-executed-ptb-xl-waveform-audit" class="nav-link" data-scroll-target="#executed-ptb-xl-waveform-audit"><span class="header-section-number">1.2.3</span> Executed PTB-XL waveform audit</a></li>
-  <li><a href="#the-actual-model-input-tensor-boundary" id="toc-the-actual-model-input-tensor-boundary" class="nav-link" data-scroll-target="#the-actual-model-input-tensor-boundary"><span class="header-section-number">1.2.4</span> The actual model-input tensor boundary</a></li>
-  <li><a href="#byte-level-training-corpus-identity" id="toc-byte-level-training-corpus-identity" class="nav-link" data-scroll-target="#byte-level-training-corpus-identity"><span class="header-section-number">1.2.5</span> Byte-level training corpus identity</a></li>
+  <li><a href="#leakage-checks-that-must-precede-modeling" id="toc-leakage-checks-that-must-precede-modeling" class="nav-link" data-scroll-target="#leakage-checks-that-must-precede-modeling"><span class="header-section-number">4.2.1</span> Leakage checks that must precede modeling</a></li>
+  <li><a href="#ptb-xl-demographic-and-diagnostic-composition" id="toc-ptb-xl-demographic-and-diagnostic-composition" class="nav-link" data-scroll-target="#ptb-xl-demographic-and-diagnostic-composition"><span class="header-section-number">4.2.2</span> PTB-XL demographic and diagnostic composition</a></li>
+  <li><a href="#executed-ptb-xl-waveform-audit" id="toc-executed-ptb-xl-waveform-audit" class="nav-link" data-scroll-target="#executed-ptb-xl-waveform-audit"><span class="header-section-number">4.2.3</span> Executed PTB-XL waveform audit</a></li>
+  <li><a href="#the-actual-model-input-tensor-boundary" id="toc-the-actual-model-input-tensor-boundary" class="nav-link" data-scroll-target="#the-actual-model-input-tensor-boundary"><span class="header-section-number">4.2.4</span> The actual model-input tensor boundary</a></li>
+  <li><a href="#byte-level-training-corpus-identity" id="toc-byte-level-training-corpus-identity" class="nav-link" data-scroll-target="#byte-level-training-corpus-identity"><span class="header-section-number">4.2.5</span> Byte-level training corpus identity</a></li>
   </ul></li>
-  <li><a href="#echonext-population-waveform-and-endpoint-audit" id="toc-echonext-population-waveform-and-endpoint-audit" class="nav-link" data-scroll-target="#echonext-population-waveform-and-endpoint-audit"><span class="header-section-number">1.3</span> EchoNext: population, waveform, and endpoint audit</a>
+  <li><a href="#echonext-population-waveform-and-endpoint-audit" id="toc-echonext-population-waveform-and-endpoint-audit" class="nav-link" data-scroll-target="#echonext-population-waveform-and-endpoint-audit"><span class="header-section-number">4.3</span> EchoNext: population, waveform, and endpoint audit</a>
   <ul class="collapse">
-  <li><a href="#echonext-patient-overlap-audit" id="toc-echonext-patient-overlap-audit" class="nav-link" data-scroll-target="#echonext-patient-overlap-audit"><span class="header-section-number">1.3.1</span> EchoNext patient-overlap audit</a></li>
-  <li><a href="#echonext-demographics-setting-and-time" id="toc-echonext-demographics-setting-and-time" class="nav-link" data-scroll-target="#echonext-demographics-setting-and-time"><span class="header-section-number">1.3.2</span> EchoNext demographics, setting, and time</a></li>
-  <li><a href="#metadata-missingness-is-structured-not-random-noise" id="toc-metadata-missingness-is-structured-not-random-noise" class="nav-link" data-scroll-target="#metadata-missingness-is-structured-not-random-noise"><span class="header-section-number">1.3.3</span> Metadata missingness is structured, not random noise</a></li>
+  <li><a href="#echonext-patient-overlap-audit" id="toc-echonext-patient-overlap-audit" class="nav-link" data-scroll-target="#echonext-patient-overlap-audit"><span class="header-section-number">4.3.1</span> EchoNext patient-overlap audit</a></li>
+  <li><a href="#echonext-demographics-setting-and-time" id="toc-echonext-demographics-setting-and-time" class="nav-link" data-scroll-target="#echonext-demographics-setting-and-time"><span class="header-section-number">4.3.2</span> EchoNext demographics, setting, and time</a></li>
+  <li><a href="#metadata-missingness-is-structured-not-random-noise" id="toc-metadata-missingness-is-structured-not-random-noise" class="nav-link" data-scroll-target="#metadata-missingness-is-structured-not-random-noise"><span class="header-section-number">4.3.3</span> Metadata missingness is structured, not random noise</a></li>
   </ul></li>
-  <li><a href="#endpoint-prevalence-and-effective-difficulty" id="toc-endpoint-prevalence-and-effective-difficulty" class="nav-link" data-scroll-target="#endpoint-prevalence-and-effective-difficulty"><span class="header-section-number">1.4</span> Endpoint prevalence and effective difficulty</a>
+  <li><a href="#endpoint-prevalence-and-effective-difficulty" id="toc-endpoint-prevalence-and-effective-difficulty" class="nav-link" data-scroll-target="#endpoint-prevalence-and-effective-difficulty"><span class="header-section-number">4.4</span> Endpoint prevalence and effective difficulty</a>
   <ul class="collapse">
-  <li><a href="#endpoint-burden-and-co-occurrence" id="toc-endpoint-burden-and-co-occurrence" class="nav-link" data-scroll-target="#endpoint-burden-and-co-occurrence"><span class="header-section-number">1.4.1</span> Endpoint burden and co-occurrence</a></li>
+  <li><a href="#endpoint-burden-and-co-occurrence" id="toc-endpoint-burden-and-co-occurrence" class="nav-link" data-scroll-target="#endpoint-burden-and-co-occurrence"><span class="header-section-number">4.4.1</span> Endpoint burden and co-occurrence</a></li>
   </ul></li>
-  <li><a href="#signal-level-eda-what-to-measure" id="toc-signal-level-eda-what-to-measure" class="nav-link" data-scroll-target="#signal-level-eda-what-to-measure"><span class="header-section-number">1.5</span> Signal-level EDA: what to measure</a>
+  <li><a href="#signal-level-eda-what-to-measure" id="toc-signal-level-eda-what-to-measure" class="nav-link" data-scroll-target="#signal-level-eda-what-to-measure"><span class="header-section-number">4.5</span> Signal-level EDA: what to measure</a>
   <ul class="collapse">
-  <li><a href="#units-and-inverse-normalization" id="toc-units-and-inverse-normalization" class="nav-link" data-scroll-target="#units-and-inverse-normalization"><span class="header-section-number">1.5.1</span> 1. Units and inverse normalization</a></li>
-  <li><a href="#clipping-occupancy" id="toc-clipping-occupancy" class="nav-link" data-scroll-target="#clipping-occupancy"><span class="header-section-number">1.5.2</span> 2. Clipping occupancy</a></li>
-  <li><a href="#lead-law-residuals" id="toc-lead-law-residuals" class="nav-link" data-scroll-target="#lead-law-residuals"><span class="header-section-number">1.5.3</span> 3. Lead-law residuals</a></li>
-  <li><a href="#spectral-and-morphology-distributions" id="toc-spectral-and-morphology-distributions" class="nav-link" data-scroll-target="#spectral-and-morphology-distributions"><span class="header-section-number">1.5.4</span> 4. Spectral and morphology distributions</a></li>
-  <li><a href="#cross-lead-dependence" id="toc-cross-lead-dependence" class="nav-link" data-scroll-target="#cross-lead-dependence"><span class="header-section-number">1.5.5</span> 5. Cross-lead dependence</a></li>
+  <li><a href="#units-and-inverse-normalization" id="toc-units-and-inverse-normalization" class="nav-link" data-scroll-target="#units-and-inverse-normalization"><span class="header-section-number">4.5.1</span> 1. Units and inverse normalization</a></li>
+  <li><a href="#clipping-occupancy" id="toc-clipping-occupancy" class="nav-link" data-scroll-target="#clipping-occupancy"><span class="header-section-number">4.5.2</span> 2. Clipping occupancy</a></li>
+  <li><a href="#lead-law-residuals" id="toc-lead-law-residuals" class="nav-link" data-scroll-target="#lead-law-residuals"><span class="header-section-number">4.5.3</span> 3. Lead-law residuals</a></li>
+  <li><a href="#spectral-and-morphology-distributions" id="toc-spectral-and-morphology-distributions" class="nav-link" data-scroll-target="#spectral-and-morphology-distributions"><span class="header-section-number">4.5.4</span> 4. Spectral and morphology distributions</a></li>
+  <li><a href="#cross-lead-dependence" id="toc-cross-lead-dependence" class="nav-link" data-scroll-target="#cross-lead-dependence"><span class="header-section-number">4.5.5</span> 5. Cross-lead dependence</a></li>
   </ul></li>
-  <li><a href="#deep-reconstruction-diagnostics" id="toc-deep-reconstruction-diagnostics" class="nav-link" data-scroll-target="#deep-reconstruction-diagnostics"><span class="header-section-number">1.6</span> Deep reconstruction diagnostics</a></li>
-  <li><a href="#statistical-design-for-the-factorial-benchmark" id="toc-statistical-design-for-the-factorial-benchmark" class="nav-link" data-scroll-target="#statistical-design-for-the-factorial-benchmark"><span class="header-section-number">1.7</span> Statistical design for the factorial benchmark</a></li>
-  <li><a href="#reproducible-audit-checklist" id="toc-reproducible-audit-checklist" class="nav-link" data-scroll-target="#reproducible-audit-checklist"><span class="header-section-number">1.8</span> Reproducible audit checklist</a></li>
+  <li><a href="#deep-reconstruction-diagnostics" id="toc-deep-reconstruction-diagnostics" class="nav-link" data-scroll-target="#deep-reconstruction-diagnostics"><span class="header-section-number">4.6</span> Deep reconstruction diagnostics</a></li>
+  <li><a href="#statistical-design-for-the-factorial-benchmark" id="toc-statistical-design-for-the-factorial-benchmark" class="nav-link" data-scroll-target="#statistical-design-for-the-factorial-benchmark"><span class="header-section-number">4.7</span> Statistical design for the factorial benchmark</a></li>
+  <li><a href="#reproducible-audit-checklist" id="toc-reproducible-audit-checklist" class="nav-link" data-scroll-target="#reproducible-audit-checklist"><span class="header-section-number">4.8</span> Reproducible audit checklist</a></li>
   </ul>
 </nav>
     </div>
@@ -551,9 +580,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html">I. Data, Cohorts, and Measurement</a></li><li class="breadcrumb-item"><a href="./09_real_data_eda_and_diagnostics.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span id="sec-real-data" class="quarto-section-identifier"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-real-data" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -571,8 +600,8 @@ window.Quarto = {
 
 
 <p>This is the first numbered chapter because every later result inherits its data contract. It replaces “representative synthetic ECG” reasoning with an auditable description of the data actually present in this repository. The analysis has three levels: <strong>metadata integrity</strong>, <strong>signal integrity</strong>, and <strong>task integrity</strong>. A reconstruction benchmark is only interpretable when all three hold.</p>
-<section id="evidence-map" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="evidence-map"><span class="header-section-number">1.1</span> Evidence map</h2>
+<section id="evidence-map" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="evidence-map"><span class="header-section-number">4.1</span> Evidence map</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -621,8 +650,8 @@ window.Quarto = {
 </table>
 <p>Every executable audit below resolves its input beneath <code>../data/</code> and prints the resolved path. No waveform statistic in this chapter is generated from the later synthetic tutorials.</p>
 <p>These artifacts do <strong>not</strong> support the same inference. PTB-XL is the reconstruction development cohort. EchoNext is an external transfer cohort with echocardiography-derived labels. Performance on EchoNext tests transport under a different sampling and normalization pipeline; it does not retroactively enlarge the PTB-XL training set.</p>
-<section id="repository-data-entry-boundary" class="level3" data-number="1.1.1">
-<h3 data-number="1.1.1" class="anchored" data-anchor-id="repository-data-entry-boundary"><span class="header-section-number">1.1.1</span> Repository data-entry boundary</h3>
+<section id="repository-data-entry-boundary" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="repository-data-entry-boundary"><span class="header-section-number">4.1.1</span> Repository data-entry boundary</h3>
 <p>The book opens every dataset through the checkout’s <code>data/</code> entry. In this workspace that entry is intentionally a symbolic link to the larger local data volume, so the checkout-relative path and the resolved physical path are both reported below. This is one dataset, not a fallback search path or a second hidden copy. The distinction matters when reproducing file hashes, moving the checkout, or interpreting an absolute path printed by an inference audit.</p>
 <div class="cell" data-tbl-cap="Checkout-relative and resolved identities of the data tree used by this render." data-execution_count="1">
 <details open="" class="code-fold">
@@ -672,8 +701,8 @@ window.Quarto = {
 </div>
 </section>
 </section>
-<section id="ptb-xl-observed-cohort-and-split-contract" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="ptb-xl-observed-cohort-and-split-contract"><span class="header-section-number">1.2</span> PTB-XL: observed cohort and split contract</h2>
+<section id="ptb-xl-observed-cohort-and-split-contract" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="ptb-xl-observed-cohort-and-split-contract"><span class="header-section-number">4.2</span> PTB-XL: observed cohort and split contract</h2>
 <p>The local metadata contain <strong>21,799 ECG records</strong> and <strong>28 columns</strong>. The ten official stratification folds are nearly balanced (2,173–2,198 records each). The locked model registry maps folds 1–8 to training (<strong>17,418</strong> records), fold 9 to validation (<strong>2,183</strong>), and fold 10 to test (<strong>2,198</strong>). The registry also reports <strong>1,904 unique patients</strong> in the test set, so patient-clustered uncertainty is necessary: record-level resampling would treat repeated ECGs from the same person as independent.</p>
 <p>The raw age field deserves an explicit validity audit. Its observed maximum is 300, which is not physiologically plausible as years and should not silently enter subgroup analysis. Age-based EDA must therefore report invalid-value counts and either use a documented correction supplied by the dataset or mark those values missing. It must not “fix” them by clipping without a sensitivity analysis.</p>
 <div class="cell" data-tbl-cap="PTB-XL metadata audit computed from the local cohort file." data-execution_count="2">
@@ -761,8 +790,8 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<section id="leakage-checks-that-must-precede-modeling" class="level3" data-number="1.2.1">
-<h3 data-number="1.2.1" class="anchored" data-anchor-id="leakage-checks-that-must-precede-modeling"><span class="header-section-number">1.2.1</span> Leakage checks that must precede modeling</h3>
+<section id="leakage-checks-that-must-precede-modeling" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="leakage-checks-that-must-precede-modeling"><span class="header-section-number">4.2.1</span> Leakage checks that must precede modeling</h3>
 <ol type="1">
 <li><strong>Patient separation:</strong> intersect patient IDs across train, validation, and test. Every intersection must be empty.</li>
 <li><strong>File inventory:</strong> confirm every metadata row resolves to exactly one waveform tensor in its assigned split.</li>
@@ -818,8 +847,8 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="ptb-xl-demographic-and-diagnostic-composition" class="level3" data-number="1.2.2">
-<h3 data-number="1.2.2" class="anchored" data-anchor-id="ptb-xl-demographic-and-diagnostic-composition"><span class="header-section-number">1.2.2</span> PTB-XL demographic and diagnostic composition</h3>
+<section id="ptb-xl-demographic-and-diagnostic-composition" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="ptb-xl-demographic-and-diagnostic-composition"><span class="header-section-number">4.2.2</span> PTB-XL demographic and diagnostic composition</h3>
 <p>The next audit separates record counts from patient counts, treats ages outside 0–120 as missing, and derives diagnostic superclasses from the local <code>scp_statements.csv</code> mapping. Superclass counts are multilabel record counts, so their sum can exceed the number of ECGs.</p>
 <div id="ptbxl-demographic-diagnostic-eda" class="cell" data-execution_count="4">
 <details open="" class="code-fold">
@@ -1054,8 +1083,8 @@ Split-level demographics</code></pre>
 </div>
 </div>
 </section>
-<section id="executed-ptb-xl-waveform-audit" class="level3" data-number="1.2.3">
-<h3 data-number="1.2.3" class="anchored" data-anchor-id="executed-ptb-xl-waveform-audit"><span class="header-section-number">1.2.3</span> Executed PTB-XL waveform audit</h3>
+<section id="executed-ptb-xl-waveform-audit" class="level3" data-number="4.2.3">
+<h3 data-number="4.2.3" class="anchored" data-anchor-id="executed-ptb-xl-waveform-audit"><span class="header-section-number">4.2.3</span> Executed PTB-XL waveform audit</h3>
 <p>The following block reads the actual paired WFDB records named by <code>filename_hr</code> and <code>filename_lr</code> in <code>data/ptb_xl/ptbxl_database.csv</code>. To keep HTML rendering reproducible and bounded, it uses a fixed, fold-stratified audit sample of 25 records from each official fold (250 records total); this is an EDA sample, not an inferential subsample. Primary signal summaries use the stored 500 Hz physical waveforms. The paired 100 Hz releases are upsampled to quantify what a 100→500 Hz adapter can and cannot recover.</p>
 <div class="cell" data-tbl-cap="Lead-wise audit of real PTB-XL WFDB waveforms (fixed 250-record stratified sample)." data-execution_count="5">
 <details open="" class="code-fold">
@@ -1450,8 +1479,8 @@ Split-level demographics</code></pre>
 </div>
 <p>Because 100 Hz data have a 50 Hz Nyquist limit, upsampling cannot restore true 40–150 Hz content present in the 500 Hz release. The paired error above measures the complete adapter discrepancy; final morphology analysis should additionally compare QRS-band power and fiducials before and after any model-specific resampling.</p>
 </section>
-<section id="the-actual-model-input-tensor-boundary" class="level3" data-number="1.2.4">
-<h3 data-number="1.2.4" class="anchored" data-anchor-id="the-actual-model-input-tensor-boundary"><span class="header-section-number">1.2.4</span> The actual model-input tensor boundary</h3>
+<section id="the-actual-model-input-tensor-boundary" class="level3" data-number="4.2.4">
+<h3 data-number="4.2.4" class="anchored" data-anchor-id="the-actual-model-input-tensor-boundary"><span class="header-section-number">4.2.4</span> The actual model-input tensor boundary</h3>
 <p>Raw WFDB EDA is necessary but not sufficient: the reconstruction code does not read WFDB files during training. <code>scripts/train_mcma_3lead.py::PTBXLDataset</code> loads <code>.pt</code> files, expects shape <code>12 × 5000</code>, appends 120 zeros to reach a pooling-compatible length of 5,120, and selects lead indices <code>[0, 1, 7]</code>—I, II, and V2—as the model input. Targets contain all 12 padded leads. The training loader applies no per-record standardization, filtering, or amplitude clipping.</p>
 <p>The following audit is computed over <strong>every tensor</strong>, not the 250-record raw-waveform sample. To keep routine book renders tractable, <code>scripts/audit_ptbxl_tensors_for_book.py</code> performs the 5 GB sequential scan with the project venv and writes a record-level Parquet plus a JSON summary. Each tensor is loaded through <code>torch.load(..., weights_only=True)</code> and checked for metadata/split alignment, shape, dtype, nonfinite values, flat leads, amplitude, RMS, and SHA-256 of canonical float32 signal bytes.</p>
 <div class="cell" data-tbl-cap="Full inventory of the canonical PTB-XL tensors consumed by the model loaders." data-execution_count="8">
@@ -1579,8 +1608,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 <p>The executed gate finds all <strong>21,799 of 21,799</strong> expected tensors in the correct split, all with shape <code>12 × 5000</code>, dtype <code>float32</code>, finite values, and unique canonical signal hashes. It also finds one concrete quality exception: training ECG <strong>12722</strong> has an exactly zero V5 lead. That record should be retained in the cohort ledger and handled by an explicit quality policy, not silently disappear inside a data loader.</p>
 <p>The gate distinguishes three failure classes. A missing tensor is a cohort-definition error; a malformed/nonfinite tensor is a preprocessing error; a duplicate canonical hash is a potential leakage or export error requiring record-level adjudication. A perfectly matched inventory does not by itself prove the correct physical units, so the next two checks inspect the distribution and pair tensors back to the raw 500 Hz waveforms.</p>
 </section>
-<section id="byte-level-training-corpus-identity" class="level3" data-number="1.2.5">
-<h3 data-number="1.2.5" class="anchored" data-anchor-id="byte-level-training-corpus-identity"><span class="header-section-number">1.2.5</span> Byte-level training corpus identity</h3>
+<section id="byte-level-training-corpus-identity" class="level3" data-number="4.2.5">
+<h3 data-number="4.2.5" class="anchored" data-anchor-id="byte-level-training-corpus-identity"><span class="header-section-number">4.2.5</span> Byte-level training corpus identity</h3>
 <p>Shape, dtype, and record counts do not detect a same-size content replacement. The training contract therefore includes a second manifest that hashes the exact bytes of every <code>.pt</code> file and forms each split root as <code>SHA256(record_id:size:file_sha256\n...)</code>.</p>
 <div class="cell" data-tbl-cap="Byte-level identity roots for all PTB-XL tensors used by training." data-execution_count="9">
 <details open="" class="code-fold">
@@ -1822,8 +1851,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 <p>All 250 paired arrays match exactly at float32 precision: maximum absolute difference and RMSE are zero, and the minimum flattened Pearson correlation is 1.0 in every split. This establishes that the saved tensors reproduce the physical 500 Hz WFDB values for the fixed sample. It does not validate the subsequent 120-sample zero padding as physiologic signal. Any metric spanning the padded tail must either mask those samples or document that identical target/reconstruction padding cannot inflate performance.</p>
 </section>
 </section>
-<section id="echonext-population-waveform-and-endpoint-audit" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="echonext-population-waveform-and-endpoint-audit"><span class="header-section-number">1.3</span> EchoNext: population, waveform, and endpoint audit</h2>
+<section id="echonext-population-waveform-and-endpoint-audit" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="echonext-population-waveform-and-endpoint-audit"><span class="header-section-number">4.3</span> EchoNext: population, waveform, and endpoint audit</h2>
 <p>The local EchoNext metadata table contains <strong>100,000 records and 39 fields</strong>. The frozen external test array contains <strong>5,442 × 1 × 2,500 × 12</strong> values. At the declared 250 Hz, each trace spans 10 seconds. The singleton axis is a storage/channel wrapper, not an ECG lead. Lead order is explicitly:</p>
 <p><span class="math display">\[[I,II,III,aVR,aVL,aVF,V_1,V_2,V_3,V_4,V_5,V_6].\]</span></p>
 <p>The waveforms are stored as <code>float64</code> after official per-lead clipping and train-set z-scoring. Evaluation inverts that affine transform back to clipped microvolts before reconstruction inference. This is a critical domain-transfer detail because PTB-XL models expect 500 Hz, 5,000-sample, physical-mV inputs with no per-record normalization. Resampling, unit conversion, axis ordering, and inverse normalization must all be validated independently.</p>
@@ -1889,12 +1918,12 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 <tr class="even">
 <th data-quarto-table-cell-role="th">5</th>
 <td>sampling rate (Hz)</td>
-<td>500</td>
+<td>250</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">6</th>
 <td>duration (s)</td>
-<td>5.0</td>
+<td>10.0</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">7</th>
@@ -1907,8 +1936,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </div>
-<section id="echonext-patient-overlap-audit" class="level3" data-number="1.3.1">
-<h3 data-number="1.3.1" class="anchored" data-anchor-id="echonext-patient-overlap-audit"><span class="header-section-number">1.3.1</span> EchoNext patient-overlap audit</h3>
+<section id="echonext-patient-overlap-audit" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="echonext-patient-overlap-audit"><span class="header-section-number">4.3.1</span> EchoNext patient-overlap audit</h3>
 <p>The released test and validation partitions are patient-disjoint from training and from one another. The <code>no_split</code> rows are different: locally they overlap identified patients in the formal partitions and therefore cannot be treated as an extra development set. This table is computed from the actual metadata and makes that exclusion auditable.</p>
 <div id="cell-echonext-patient-overlap" class="cell" data-execution_count="13">
 <details open="" class="code-fold">
@@ -2007,8 +2036,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </section>
-<section id="echonext-demographics-setting-and-time" class="level3" data-number="1.3.2">
-<h3 data-number="1.3.2" class="anchored" data-anchor-id="echonext-demographics-setting-and-time"><span class="header-section-number">1.3.2</span> EchoNext demographics, setting, and time</h3>
+<section id="echonext-demographics-setting-and-time" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="echonext-demographics-setting-and-time"><span class="header-section-number">4.3.2</span> EchoNext demographics, setting, and time</h3>
 <p>Patient-level and record-level denominators differ because training and <code>no_split</code> can contain repeated ECGs. The table below keeps both visible and describes age only after verifying its declared 18–90 range.</p>
 <div id="echonext-demographic-eda" class="cell" data-execution_count="14">
 <details open="" class="code-fold">
@@ -2477,8 +2506,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </section>
-<section id="metadata-missingness-is-structured-not-random-noise" class="level3" data-number="1.3.3">
-<h3 data-number="1.3.3" class="anchored" data-anchor-id="metadata-missingness-is-structured-not-random-noise"><span class="header-section-number">1.3.3</span> Metadata missingness is structured, not random noise</h3>
+<section id="metadata-missingness-is-structured-not-random-noise" class="level3" data-number="4.3.3">
+<h3 data-number="4.3.3" class="anchored" data-anchor-id="metadata-missingness-is-structured-not-random-noise"><span class="header-section-number">4.3.3</span> Metadata missingness is structured, not random noise</h3>
 <p>Clinical measurements have sharply different availability. In the local table, tricuspid-regurgitation maximum velocity is missing in <strong>54.996%</strong> of rows and pulmonary artery systolic pressure in <strong>43.424%</strong>. Several echo interpretation/measurement fields are missing in roughly 9–12%. By contrast, age, sex, acquisition year, location, race/ethnicity, and split are complete.</p>
 <p>This pattern matters because a missing measurement can mean “not measured,” “not clinically indicated,” “not obtainable,” or “not transferred”—not “normal.” Binary endpoint flags must come from the released endpoint definition, never from naïvely converting a missing continuous measurement to zero.</p>
 <div class="cell" data-tbl-cap="Highest EchoNext metadata missingness rates." data-execution_count="15">
@@ -2584,8 +2613,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </section>
 </section>
-<section id="endpoint-prevalence-and-effective-difficulty" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="endpoint-prevalence-and-effective-difficulty"><span class="header-section-number">1.4</span> Endpoint prevalence and effective difficulty</h2>
+<section id="endpoint-prevalence-and-effective-difficulty" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="endpoint-prevalence-and-effective-difficulty"><span class="header-section-number">4.4</span> Endpoint prevalence and effective difficulty</h2>
 <p>The EchoNext classifier evaluates 12 echo-derived structural-heart-disease endpoints on the same 5,442 test records. Prevalence ranges from <strong>0.37%</strong> (20 pulmonary-regurgitation positives) to <strong>42.59%</strong> (2,318 composite SHD positives). Consequently:</p>
 <ul>
 <li>accuracy is misleading for rare endpoints;</li>
@@ -2597,15 +2626,21 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 <div class="cell" data-tbl-cap="EchoNext test-set endpoint support from the locked label audit." data-execution_count="16">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>label_audit <span class="op">=</span> json.loads(</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    (ROOT <span class="op">/</span> <span class="st">"results/comprehensive_latest_48_models/raw/factorial_v4_2x4/"</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>            <span class="st">"echonext_shd_label_audit.json"</span>).read_text()</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>support <span class="op">=</span> pd.DataFrame(label_audit[<span class="st">"label_summary"</span>]).T</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>support[<span class="st">"prevalence_percent"</span>] <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> support[<span class="st">"positive"</span>] <span class="op">/</span> support[<span class="st">"nonmissing"</span>]</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>support.sort_values(<span class="st">"prevalence_percent"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>label_audit_path <span class="op">=</span> (ROOT <span class="op">/</span> <span class="st">"results/comprehensive_latest_48_models/raw/factorial_v4_2x4/"</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"echonext_shd_label_audit.json"</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> label_audit_path.exists():</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    label_audit <span class="op">=</span> json.loads(label_audit_path.read_text())</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    support <span class="op">=</span> pd.DataFrame(label_audit[<span class="st">"label_summary"</span>]).T</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    support[<span class="st">"prevalence_percent"</span>] <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> support[<span class="st">"positive"</span>] <span class="op">/</span> support[<span class="st">"nonmissing"</span>]</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    display(support.sort_values(<span class="st">"prevalence_percent"</span>))</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    display(pd.DataFrame([{</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"evidence_status"</span>: <span class="st">"unavailable"</span>,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"required_artifact"</span>: <span class="bu">str</span>(label_audit_path),</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"interpretation"</span>: <span class="st">"No endpoint-support result is claimed until the locked audit is restored."</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    }]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div id="echonext-label-support" class="cell-output cell-output-display" data-execution_count="16">
+<div id="echonext-label-support" class="cell-output cell-output-display">
 <div>
 
 
@@ -2614,96 +2649,17 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">nonmissing</th>
-<th data-quarto-table-cell-role="th">positive</th>
-<th data-quarto-table-cell-role="th">negative</th>
-<th data-quarto-table-cell-role="th">prevalence_percent</th>
+<th data-quarto-table-cell-role="th">evidence_status</th>
+<th data-quarto-table-cell-role="th">required_artifact</th>
+<th data-quarto-table-cell-role="th">interpretation</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">pulmonary_regurgitation_moderate_or_greater_flag</th>
-<td>5442</td>
-<td>20</td>
-<td>5422</td>
-<td>0.367512</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">aortic_regurgitation_moderate_or_greater_flag</th>
-<td>5442</td>
-<td>66</td>
-<td>5376</td>
-<td>1.212789</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">pericardial_effusion_moderate_large_flag</th>
-<td>5442</td>
-<td>69</td>
-<td>5373</td>
-<td>1.267916</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">aortic_stenosis_moderate_or_greater_flag</th>
-<td>5442</td>
-<td>286</td>
-<td>5156</td>
-<td>5.255421</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">mitral_regurgitation_moderate_or_greater_flag</th>
-<td>5442</td>
-<td>337</td>
-<td>5105</td>
-<td>6.192576</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">tricuspid_regurgitation_moderate_or_greater_flag</th>
-<td>5442</td>
-<td>353</td>
-<td>5089</td>
-<td>6.486586</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">tr_max_gte_32_flag</th>
-<td>5442</td>
-<td>375</td>
-<td>5067</td>
-<td>6.890849</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">rv_systolic_dysfunction_moderate_or_greater_flag</th>
-<td>5442</td>
-<td>419</td>
-<td>5023</td>
-<td>7.699375</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">pasp_gte_45_flag</th>
-<td>5442</td>
-<td>699</td>
-<td>4743</td>
-<td>12.844542</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">lvef_lte_45_flag</th>
-<td>5442</td>
-<td>962</td>
-<td>4480</td>
-<td>17.677325</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">lvwt_gte_13_flag</th>
-<td>5442</td>
-<td>1061</td>
-<td>4381</td>
-<td>19.496509</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">shd_moderate_or_greater_flag</th>
-<td>5442</td>
-<td>2318</td>
-<td>3124</td>
-<td>42.594634</td>
+<th data-quarto-table-cell-role="th">0</th>
+<td>unavailable</td>
+<td>../results/comprehensive_latest_48_models/raw/...</td>
+<td>No endpoint-support result is claimed until th...</td>
 </tr>
 </tbody>
 </table>
@@ -2711,8 +2667,8 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </div>
 </div>
 </div>
-<section id="endpoint-burden-and-co-occurrence" class="level3" data-number="1.4.1">
-<h3 data-number="1.4.1" class="anchored" data-anchor-id="endpoint-burden-and-co-occurrence"><span class="header-section-number">1.4.1</span> Endpoint burden and co-occurrence</h3>
+<section id="endpoint-burden-and-co-occurrence" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="endpoint-burden-and-co-occurrence"><span class="header-section-number">4.4.1</span> Endpoint burden and co-occurrence</h3>
 <p>Structural-heart-disease endpoints overlap by construction: the composite label is positive when one or more component thresholds are met. Co-occurrence matters for macro metrics and error analysis because one ECG can contribute to multiple tasks. This block computes the test-set label-burden distribution and pairwise Jaccard overlap directly from the metadata.</p>
 <div id="echonext-endpoint-cooccurrence" class="cell" data-tbl-cap="Strongest pairwise EchoNext test-label overlaps (Jaccard index)." data-execution_count="17">
 <details open="" class="code-fold">
@@ -2982,18 +2938,18 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 <p>The audit reports a single SHA-256 label hash shared by the official reference and all 48 reconstructed-signal tables. This is a valuable identity check: differences among reconstruction cells cannot be explained by accidentally changing label order. It does not verify clinical adjudication or eliminate spectrum bias; those are separate questions.</p>
 </section>
 </section>
-<section id="signal-level-eda-what-to-measure" class="level2" data-number="1.5">
-<h2 data-number="1.5" class="anchored" data-anchor-id="signal-level-eda-what-to-measure"><span class="header-section-number">1.5</span> Signal-level EDA: what to measure</h2>
-<section id="units-and-inverse-normalization" class="level3" data-number="1.5.1">
-<h3 data-number="1.5.1" class="anchored" data-anchor-id="units-and-inverse-normalization"><span class="header-section-number">1.5.1</span> 1. Units and inverse normalization</h3>
+<section id="signal-level-eda-what-to-measure" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="signal-level-eda-what-to-measure"><span class="header-section-number">4.5</span> Signal-level EDA: what to measure</h2>
+<section id="units-and-inverse-normalization" class="level3" data-number="4.5.1">
+<h3 data-number="4.5.1" class="anchored" data-anchor-id="units-and-inverse-normalization"><span class="header-section-number">4.5.1</span> 1. Units and inverse normalization</h3>
 <p>For each lead <span class="math inline">\(\ell\)</span>, recover clipped microvolts using</p>
 <p><span class="math display">\[x_{\mu V,\ell}=z_\ell\sigma_\ell+\mu_\ell.\]</span></p>
 <p>Then convert once to millivolts if the reconstruction model expects mV:</p>
 <p><span class="math display">\[x_{mV,\ell}=10^{-3}x_{\mu V,\ell}.\]</span></p>
 <p>A thousand-fold unit error can produce finite tensors and plausible-looking normalized plots while destroying inference. Unit tests should assert known percentile ranges before and after conversion.</p>
 </section>
-<section id="clipping-occupancy" class="level3" data-number="1.5.2">
-<h3 data-number="1.5.2" class="anchored" data-anchor-id="clipping-occupancy"><span class="header-section-number">1.5.2</span> 2. Clipping occupancy</h3>
+<section id="clipping-occupancy" class="level3" data-number="4.5.2">
+<h3 data-number="4.5.2" class="anchored" data-anchor-id="clipping-occupancy"><span class="header-section-number">4.5.2</span> 2. Clipping occupancy</h3>
 <p>Compute the fraction of values equal, or numerically close, to each provenance bound by lead. High occupancy indicates censored amplitude tails. Report this because peak-amplitude and ST-deviation errors are then conditional on the released clipping policy.</p>
 <p>In the released test tensor, approximately 0.120–0.144% of samples per lead lie at either documented clipping bound. The inverse-normalized microvolt percentiles show clinically meaningful lead heterogeneity: for example, the 0.1st/99.9th percentiles are −102/287 µV in lead I, −369/173 µV in V1, −527/299 µV in V3, and −246/426 µV in V5. A single global clipping range or scale would therefore distort the precordial leads differently.</p>
 <p>The rendered audit below independently reads a fixed 256-record sample from the 1.3 GB memory-mapped array, reverses the released affine normalization using <code>PROVENANCE.json</code>, and recomputes signal-validity and lead-law summaries. The full-array values in the table that follows come from the locked audit; the executable sample serves as a regression test that the live local artifact still has the same axes, scaling, and physiologic lead relations.</p>
@@ -3060,32 +3016,32 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 <tr class="even">
 <th data-quarto-table-cell-role="th">3</th>
 <td>global 0.1st percentile (µV)</td>
-<td>-8.071569</td>
+<td>-342.0</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">4</th>
 <td>global 99.9th percentile (µV)</td>
-<td>7.573924</td>
+<td>288.0</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">5</th>
 <td>median record RMSE III-(II-I) (µV)</td>
-<td>0.082745</td>
+<td>2.275649</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">6</th>
 <td>median record RMSE aVR+(I+II)/2 (µV)</td>
-<td>0.104173</td>
+<td>0.833575</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">7</th>
 <td>median record RMSE aVL-(I-II/2) (µV)</td>
-<td>0.128023</td>
+<td>1.49382</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">8</th>
 <td>median record RMSE aVF-(II-I/2) (µV)</td>
-<td>0.125875</td>
+<td>1.406066</td>
 </tr>
 </tbody>
 </table>
@@ -3198,25 +3154,25 @@ Audit implementation: /home/mithunmanivannan/projects/benchmarking_loss_function
 </tbody>
 </table>
 </section>
-<section id="lead-law-residuals" class="level3" data-number="1.5.3">
-<h3 data-number="1.5.3" class="anchored" data-anchor-id="lead-law-residuals"><span class="header-section-number">1.5.3</span> 3. Lead-law residuals</h3>
+<section id="lead-law-residuals" class="level3" data-number="4.5.3">
+<h3 data-number="4.5.3" class="anchored" data-anchor-id="lead-law-residuals"><span class="header-section-number">4.5.3</span> 3. Lead-law residuals</h3>
 <p>The limb leads obey approximate linear relations:</p>
 <p><span class="math display">\[III \approx II-I,\quad aVR \approx-\frac{I+II}{2},\quad
 aVL \approx I-\frac{II}{2},\quad aVF \approx II-\frac{I}{2}.\]</span></p>
 <p>Residual distributions detect lead permutations, polarity errors, scaling inconsistencies, and corrupted records. These are pipeline diagnostics, not targets to “repair” after looking at test performance.</p>
 <p>The actual EchoNext test tensor passes a strong version of this check after inverse normalization. Median record-level residual RMSE is 2.34 µV for <span class="math inline">\(III-(II-I)\)</span>, 0.86 µV for <span class="math inline">\(aVR+(I+II)/2\)</span>, 1.53 µV for <span class="math inline">\(aVL-(I-II/2)\)</span>, and 1.41 µV for <span class="math inline">\(aVF-(II-I/2)\)</span>. Corresponding 99th percentiles are 16.57, 7.44, 11.88, and 9.87 µV. These nonzero residuals reflect quantization/clipping and acquisition representation; they also provide empirical tolerances for future pipeline tests. A residual orders of magnitude larger than these references is a red flag for lead or unit corruption.</p>
 </section>
-<section id="spectral-and-morphology-distributions" class="level3" data-number="1.5.4">
-<h3 data-number="1.5.4" class="anchored" data-anchor-id="spectral-and-morphology-distributions"><span class="header-section-number">1.5.4</span> 4. Spectral and morphology distributions</h3>
+<section id="spectral-and-morphology-distributions" class="level3" data-number="4.5.4">
+<h3 data-number="4.5.4" class="anchored" data-anchor-id="spectral-and-morphology-distributions"><span class="header-section-number">4.5.4</span> 4. Spectral and morphology distributions</h3>
 <p>Report per-lead power in prespecified bands (baseline, P/T, QRS, high-frequency), R-peak count, RR variability, QRS width, QT/QTc, peak amplitude, and flatline fraction. Compare distributions before and after resampling. A global Pearson score can conceal loss of high-frequency QRS energy or systematic ST smoothing.</p>
 </section>
-<section id="cross-lead-dependence" class="level3" data-number="1.5.5">
-<h3 data-number="1.5.5" class="anchored" data-anchor-id="cross-lead-dependence"><span class="header-section-number">1.5.5</span> 5. Cross-lead dependence</h3>
+<section id="cross-lead-dependence" class="level3" data-number="4.5.5">
+<h3 data-number="4.5.5" class="anchored" data-anchor-id="cross-lead-dependence"><span class="header-section-number">4.5.5</span> 5. Cross-lead dependence</h3>
 <p>Plot the <span class="math inline">\(12\times12\)</span> lead correlation matrix and the distribution of record-level condition numbers. Reconstruction difficulty depends on how much missing-lead information is identifiable from observed leads <span class="math inline">\(I\)</span>, <span class="math inline">\(II\)</span>, and <span class="math inline">\(V_2\)</span> (indices 0, 1, 7 in the locked registry). Strong average correlation does not imply that diagnostically important residual variation is recoverable.</p>
 </section>
 </section>
-<section id="deep-reconstruction-diagnostics" class="level2" data-number="1.6">
-<h2 data-number="1.6" class="anchored" data-anchor-id="deep-reconstruction-diagnostics"><span class="header-section-number">1.6</span> Deep reconstruction diagnostics</h2>
+<section id="deep-reconstruction-diagnostics" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="deep-reconstruction-diagnostics"><span class="header-section-number">4.6</span> Deep reconstruction diagnostics</h2>
 <p>A useful diagnostic stack separates four questions.</p>
 <table class="caption-top table">
 <colgroup>
@@ -3263,15 +3219,15 @@ aVL \approx I-\frac{II}{2},\quad aVF \approx II-\frac{I}{2}.\]</span></p>
 <li>good mean performance + subgroup tail failure: deployment inequity.</li>
 </ul>
 </section>
-<section id="statistical-design-for-the-factorial-benchmark" class="level2" data-number="1.7">
-<h2 data-number="1.7" class="anchored" data-anchor-id="statistical-design-for-the-factorial-benchmark"><span class="header-section-number">1.7</span> Statistical design for the factorial benchmark</h2>
+<section id="statistical-design-for-the-factorial-benchmark" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="statistical-design-for-the-factorial-benchmark"><span class="header-section-number">4.7</span> Statistical design for the factorial benchmark</h2>
 <p>The locked experiment is a <span class="math inline">\(3\times2^4\)</span> design: three architectures crossed with toggles for MSE (E), correlation (C), MMD (M), and derivative loss (D). The 48 cells permit main-effect and interaction estimates; comparing only “MSE” with “full” wastes most of the design.</p>
 <p>Use paired patient-cluster BCa intervals because all cells predict the same test patients and some patients contribute multiple records. For each family and endpoint, estimate</p>
 <p><span class="math display">\[\Delta_k=\mathbb{E}[Y\mid k=1]-\mathbb{E}[Y\mid k=0]\]</span></p>
 <p>and prespecified two-way interactions. Family-wise morphology tests use the repository’s corrected threshold; exploratory downstream endpoints must be labeled exploratory. The existing results show significant QRS and ST improvements for full-versus-base in all three architecture families, while ECGFounder AUROC changes are not significant. That supports improved morphology without detected diagnostic-utility loss; it is <strong>not</strong> proof of clinical equivalence.</p>
 </section>
-<section id="reproducible-audit-checklist" class="level2" data-number="1.8">
-<h2 data-number="1.8" class="anchored" data-anchor-id="reproducible-audit-checklist"><span class="header-section-number">1.8</span> Reproducible audit checklist</h2>
+<section id="reproducible-audit-checklist" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="reproducible-audit-checklist"><span class="header-section-number">4.8</span> Reproducible audit checklist</h2>
 <ul>
 <li>Record exact file hashes and waveform shapes.</li>
 <li>Assert patient-disjoint splits and stable record order.</li>
@@ -3757,13 +3713,13 @@ aVL \approx I-\frac{II}{2},\quad aVF \approx II-\frac{I}{2}.\]</span></p>
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link" aria-label="Preface &amp; Executive Summary">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Preface &amp; Executive Summary</span>
+      <a href="./17_one_lead_wavelet_ssl_live.html" class="pagination-link" aria-label="One-Lead Wavelet and SSL: Live Results">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL: Live Results</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html" class="pagination-link" aria-label="Dataset Atlas: LUDB, ISP, and Sunnybrook">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
@@ -4318,188 +4274,194 @@ aVL \approx I-\frac{II}{2},\quad aVF \approx II-\frac{I}{2}.\]</span></p>
 <span id="cb28-581"><a href="#cb28-581" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb28-582"><a href="#cb28-582" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: echonext-label-support</span></span>
 <span id="cb28-583"><a href="#cb28-583" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "EchoNext test-set endpoint support from the locked label audit."</span></span>
-<span id="cb28-584"><a href="#cb28-584" aria-hidden="true" tabindex="-1"></a>label_audit <span class="op">=</span> json.loads(</span>
-<span id="cb28-585"><a href="#cb28-585" aria-hidden="true" tabindex="-1"></a>    (ROOT <span class="op">/</span> <span class="st">"results/comprehensive_latest_48_models/raw/factorial_v4_2x4/"</span></span>
-<span id="cb28-586"><a href="#cb28-586" aria-hidden="true" tabindex="-1"></a>            <span class="st">"echonext_shd_label_audit.json"</span>).read_text()</span>
-<span id="cb28-587"><a href="#cb28-587" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb28-588"><a href="#cb28-588" aria-hidden="true" tabindex="-1"></a>support <span class="op">=</span> pd.DataFrame(label_audit[<span class="st">"label_summary"</span>]).T</span>
-<span id="cb28-589"><a href="#cb28-589" aria-hidden="true" tabindex="-1"></a>support[<span class="st">"prevalence_percent"</span>] <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> support[<span class="st">"positive"</span>] <span class="op">/</span> support[<span class="st">"nonmissing"</span>]</span>
-<span id="cb28-590"><a href="#cb28-590" aria-hidden="true" tabindex="-1"></a>support.sort_values(<span class="st">"prevalence_percent"</span>)</span>
-<span id="cb28-591"><a href="#cb28-591" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-592"><a href="#cb28-592" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-593"><a href="#cb28-593" aria-hidden="true" tabindex="-1"></a><span class="fu">### Endpoint burden and co-occurrence</span></span>
-<span id="cb28-594"><a href="#cb28-594" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-595"><a href="#cb28-595" aria-hidden="true" tabindex="-1"></a>Structural-heart-disease endpoints overlap by construction: the composite label is positive when one or more component thresholds are met. Co-occurrence matters for macro metrics and error analysis because one ECG can contribute to multiple tasks. This block computes the test-set label-burden distribution and pairwise Jaccard overlap directly from the metadata.</span>
-<span id="cb28-596"><a href="#cb28-596" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-599"><a href="#cb28-599" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb28-600"><a href="#cb28-600" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: echonext-endpoint-cooccurrence</span></span>
-<span id="cb28-601"><a href="#cb28-601" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Strongest pairwise EchoNext test-label overlaps (Jaccard index)."</span></span>
-<span id="cb28-602"><a href="#cb28-602" aria-hidden="true" tabindex="-1"></a>endpoint_columns <span class="op">=</span> [</span>
-<span id="cb28-603"><a href="#cb28-603" aria-hidden="true" tabindex="-1"></a>    column <span class="cf">for</span> column <span class="kw">in</span> echo.columns</span>
-<span id="cb28-604"><a href="#cb28-604" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> column.endswith(<span class="st">"_flag"</span>)</span>
-<span id="cb28-605"><a href="#cb28-605" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb28-606"><a href="#cb28-606" aria-hidden="true" tabindex="-1"></a>component_columns <span class="op">=</span> [</span>
-<span id="cb28-607"><a href="#cb28-607" aria-hidden="true" tabindex="-1"></a>    column <span class="cf">for</span> column <span class="kw">in</span> endpoint_columns</span>
-<span id="cb28-608"><a href="#cb28-608" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> column <span class="op">!=</span> <span class="st">"shd_moderate_or_greater_flag"</span></span>
-<span id="cb28-609"><a href="#cb28-609" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb28-610"><a href="#cb28-610" aria-hidden="true" tabindex="-1"></a>echo_test <span class="op">=</span> echo.loc[echo.split <span class="op">==</span> <span class="st">"test"</span>].copy()</span>
-<span id="cb28-611"><a href="#cb28-611" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> echo_test[component_columns].fillna(<span class="dv">0</span>).astype(<span class="bu">bool</span>)</span>
-<span id="cb28-612"><a href="#cb28-612" aria-hidden="true" tabindex="-1"></a>burden <span class="op">=</span> labels.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb28-613"><a href="#cb28-613" aria-hidden="true" tabindex="-1"></a>burden_table <span class="op">=</span> (</span>
-<span id="cb28-614"><a href="#cb28-614" aria-hidden="true" tabindex="-1"></a>    burden.value_counts().sort_index()</span>
-<span id="cb28-615"><a href="#cb28-615" aria-hidden="true" tabindex="-1"></a>          .rename_axis(<span class="st">"positive_component_labels"</span>)</span>
-<span id="cb28-616"><a href="#cb28-616" aria-hidden="true" tabindex="-1"></a>          .reset_index(name<span class="op">=</span><span class="st">"records"</span>)</span>
-<span id="cb28-617"><a href="#cb28-617" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb28-618"><a href="#cb28-618" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-619"><a href="#cb28-619" aria-hidden="true" tabindex="-1"></a>cooccurrence <span class="op">=</span> []</span>
-<span id="cb28-620"><a href="#cb28-620" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, left <span class="kw">in</span> <span class="bu">enumerate</span>(component_columns):</span>
-<span id="cb28-621"><a href="#cb28-621" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> right <span class="kw">in</span> component_columns[i <span class="op">+</span> <span class="dv">1</span>:]:</span>
-<span id="cb28-622"><a href="#cb28-622" aria-hidden="true" tabindex="-1"></a>        intersection <span class="op">=</span> <span class="bu">int</span>((labels[left] <span class="op">&amp;</span> labels[right]).<span class="bu">sum</span>())</span>
-<span id="cb28-623"><a href="#cb28-623" aria-hidden="true" tabindex="-1"></a>        union <span class="op">=</span> <span class="bu">int</span>((labels[left] <span class="op">|</span> labels[right]).<span class="bu">sum</span>())</span>
-<span id="cb28-624"><a href="#cb28-624" aria-hidden="true" tabindex="-1"></a>        cooccurrence.append({</span>
-<span id="cb28-625"><a href="#cb28-625" aria-hidden="true" tabindex="-1"></a>            <span class="st">"endpoint_a"</span>: left.removesuffix(<span class="st">"_flag"</span>),</span>
-<span id="cb28-626"><a href="#cb28-626" aria-hidden="true" tabindex="-1"></a>            <span class="st">"endpoint_b"</span>: right.removesuffix(<span class="st">"_flag"</span>),</span>
-<span id="cb28-627"><a href="#cb28-627" aria-hidden="true" tabindex="-1"></a>            <span class="st">"both_positive"</span>: intersection,</span>
-<span id="cb28-628"><a href="#cb28-628" aria-hidden="true" tabindex="-1"></a>            <span class="st">"jaccard"</span>: intersection <span class="op">/</span> union <span class="cf">if</span> union <span class="cf">else</span> np.nan,</span>
-<span id="cb28-629"><a href="#cb28-629" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb28-630"><a href="#cb28-630" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Number of positive component endpoints per test ECG"</span>)</span>
-<span id="cb28-631"><a href="#cb28-631" aria-hidden="true" tabindex="-1"></a>display(burden_table)</span>
-<span id="cb28-632"><a href="#cb28-632" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(cooccurrence).sort_values(</span>
-<span id="cb28-633"><a href="#cb28-633" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"jaccard"</span>, <span class="st">"both_positive"</span>], ascending<span class="op">=</span><span class="va">False</span></span>
-<span id="cb28-634"><a href="#cb28-634" aria-hidden="true" tabindex="-1"></a>).head(<span class="dv">20</span>)</span>
-<span id="cb28-635"><a href="#cb28-635" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-636"><a href="#cb28-636" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-637"><a href="#cb28-637" aria-hidden="true" tabindex="-1"></a>The audit reports a single SHA-256 label hash shared by the official reference and all 48 reconstructed-signal tables. This is a valuable identity check: differences among reconstruction cells cannot be explained by accidentally changing label order. It does not verify clinical adjudication or eliminate spectrum bias; those are separate questions.</span>
-<span id="cb28-638"><a href="#cb28-638" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-639"><a href="#cb28-639" aria-hidden="true" tabindex="-1"></a><span class="fu">## Signal-level EDA: what to measure</span></span>
-<span id="cb28-640"><a href="#cb28-640" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-641"><a href="#cb28-641" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Units and inverse normalization</span></span>
+<span id="cb28-584"><a href="#cb28-584" aria-hidden="true" tabindex="-1"></a>label_audit_path <span class="op">=</span> (ROOT <span class="op">/</span> <span class="st">"results/comprehensive_latest_48_models/raw/factorial_v4_2x4/"</span></span>
+<span id="cb28-585"><a href="#cb28-585" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"echonext_shd_label_audit.json"</span>)</span>
+<span id="cb28-586"><a href="#cb28-586" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> label_audit_path.exists():</span>
+<span id="cb28-587"><a href="#cb28-587" aria-hidden="true" tabindex="-1"></a>    label_audit <span class="op">=</span> json.loads(label_audit_path.read_text())</span>
+<span id="cb28-588"><a href="#cb28-588" aria-hidden="true" tabindex="-1"></a>    support <span class="op">=</span> pd.DataFrame(label_audit[<span class="st">"label_summary"</span>]).T</span>
+<span id="cb28-589"><a href="#cb28-589" aria-hidden="true" tabindex="-1"></a>    support[<span class="st">"prevalence_percent"</span>] <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> support[<span class="st">"positive"</span>] <span class="op">/</span> support[<span class="st">"nonmissing"</span>]</span>
+<span id="cb28-590"><a href="#cb28-590" aria-hidden="true" tabindex="-1"></a>    display(support.sort_values(<span class="st">"prevalence_percent"</span>))</span>
+<span id="cb28-591"><a href="#cb28-591" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb28-592"><a href="#cb28-592" aria-hidden="true" tabindex="-1"></a>    display(pd.DataFrame([{</span>
+<span id="cb28-593"><a href="#cb28-593" aria-hidden="true" tabindex="-1"></a>        <span class="st">"evidence_status"</span>: <span class="st">"unavailable"</span>,</span>
+<span id="cb28-594"><a href="#cb28-594" aria-hidden="true" tabindex="-1"></a>        <span class="st">"required_artifact"</span>: <span class="bu">str</span>(label_audit_path),</span>
+<span id="cb28-595"><a href="#cb28-595" aria-hidden="true" tabindex="-1"></a>        <span class="st">"interpretation"</span>: <span class="st">"No endpoint-support result is claimed until the locked audit is restored."</span></span>
+<span id="cb28-596"><a href="#cb28-596" aria-hidden="true" tabindex="-1"></a>    }]))</span>
+<span id="cb28-597"><a href="#cb28-597" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-598"><a href="#cb28-598" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-599"><a href="#cb28-599" aria-hidden="true" tabindex="-1"></a><span class="fu">### Endpoint burden and co-occurrence</span></span>
+<span id="cb28-600"><a href="#cb28-600" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-601"><a href="#cb28-601" aria-hidden="true" tabindex="-1"></a>Structural-heart-disease endpoints overlap by construction: the composite label is positive when one or more component thresholds are met. Co-occurrence matters for macro metrics and error analysis because one ECG can contribute to multiple tasks. This block computes the test-set label-burden distribution and pairwise Jaccard overlap directly from the metadata.</span>
+<span id="cb28-602"><a href="#cb28-602" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-605"><a href="#cb28-605" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-606"><a href="#cb28-606" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: echonext-endpoint-cooccurrence</span></span>
+<span id="cb28-607"><a href="#cb28-607" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Strongest pairwise EchoNext test-label overlaps (Jaccard index)."</span></span>
+<span id="cb28-608"><a href="#cb28-608" aria-hidden="true" tabindex="-1"></a>endpoint_columns <span class="op">=</span> [</span>
+<span id="cb28-609"><a href="#cb28-609" aria-hidden="true" tabindex="-1"></a>    column <span class="cf">for</span> column <span class="kw">in</span> echo.columns</span>
+<span id="cb28-610"><a href="#cb28-610" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> column.endswith(<span class="st">"_flag"</span>)</span>
+<span id="cb28-611"><a href="#cb28-611" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb28-612"><a href="#cb28-612" aria-hidden="true" tabindex="-1"></a>component_columns <span class="op">=</span> [</span>
+<span id="cb28-613"><a href="#cb28-613" aria-hidden="true" tabindex="-1"></a>    column <span class="cf">for</span> column <span class="kw">in</span> endpoint_columns</span>
+<span id="cb28-614"><a href="#cb28-614" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> column <span class="op">!=</span> <span class="st">"shd_moderate_or_greater_flag"</span></span>
+<span id="cb28-615"><a href="#cb28-615" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb28-616"><a href="#cb28-616" aria-hidden="true" tabindex="-1"></a>echo_test <span class="op">=</span> echo.loc[echo.split <span class="op">==</span> <span class="st">"test"</span>].copy()</span>
+<span id="cb28-617"><a href="#cb28-617" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> echo_test[component_columns].fillna(<span class="dv">0</span>).astype(<span class="bu">bool</span>)</span>
+<span id="cb28-618"><a href="#cb28-618" aria-hidden="true" tabindex="-1"></a>burden <span class="op">=</span> labels.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb28-619"><a href="#cb28-619" aria-hidden="true" tabindex="-1"></a>burden_table <span class="op">=</span> (</span>
+<span id="cb28-620"><a href="#cb28-620" aria-hidden="true" tabindex="-1"></a>    burden.value_counts().sort_index()</span>
+<span id="cb28-621"><a href="#cb28-621" aria-hidden="true" tabindex="-1"></a>          .rename_axis(<span class="st">"positive_component_labels"</span>)</span>
+<span id="cb28-622"><a href="#cb28-622" aria-hidden="true" tabindex="-1"></a>          .reset_index(name<span class="op">=</span><span class="st">"records"</span>)</span>
+<span id="cb28-623"><a href="#cb28-623" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-624"><a href="#cb28-624" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-625"><a href="#cb28-625" aria-hidden="true" tabindex="-1"></a>cooccurrence <span class="op">=</span> []</span>
+<span id="cb28-626"><a href="#cb28-626" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, left <span class="kw">in</span> <span class="bu">enumerate</span>(component_columns):</span>
+<span id="cb28-627"><a href="#cb28-627" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> right <span class="kw">in</span> component_columns[i <span class="op">+</span> <span class="dv">1</span>:]:</span>
+<span id="cb28-628"><a href="#cb28-628" aria-hidden="true" tabindex="-1"></a>        intersection <span class="op">=</span> <span class="bu">int</span>((labels[left] <span class="op">&amp;</span> labels[right]).<span class="bu">sum</span>())</span>
+<span id="cb28-629"><a href="#cb28-629" aria-hidden="true" tabindex="-1"></a>        union <span class="op">=</span> <span class="bu">int</span>((labels[left] <span class="op">|</span> labels[right]).<span class="bu">sum</span>())</span>
+<span id="cb28-630"><a href="#cb28-630" aria-hidden="true" tabindex="-1"></a>        cooccurrence.append({</span>
+<span id="cb28-631"><a href="#cb28-631" aria-hidden="true" tabindex="-1"></a>            <span class="st">"endpoint_a"</span>: left.removesuffix(<span class="st">"_flag"</span>),</span>
+<span id="cb28-632"><a href="#cb28-632" aria-hidden="true" tabindex="-1"></a>            <span class="st">"endpoint_b"</span>: right.removesuffix(<span class="st">"_flag"</span>),</span>
+<span id="cb28-633"><a href="#cb28-633" aria-hidden="true" tabindex="-1"></a>            <span class="st">"both_positive"</span>: intersection,</span>
+<span id="cb28-634"><a href="#cb28-634" aria-hidden="true" tabindex="-1"></a>            <span class="st">"jaccard"</span>: intersection <span class="op">/</span> union <span class="cf">if</span> union <span class="cf">else</span> np.nan,</span>
+<span id="cb28-635"><a href="#cb28-635" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb28-636"><a href="#cb28-636" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Number of positive component endpoints per test ECG"</span>)</span>
+<span id="cb28-637"><a href="#cb28-637" aria-hidden="true" tabindex="-1"></a>display(burden_table)</span>
+<span id="cb28-638"><a href="#cb28-638" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(cooccurrence).sort_values(</span>
+<span id="cb28-639"><a href="#cb28-639" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"jaccard"</span>, <span class="st">"both_positive"</span>], ascending<span class="op">=</span><span class="va">False</span></span>
+<span id="cb28-640"><a href="#cb28-640" aria-hidden="true" tabindex="-1"></a>).head(<span class="dv">20</span>)</span>
+<span id="cb28-641"><a href="#cb28-641" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-642"><a href="#cb28-642" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-643"><a href="#cb28-643" aria-hidden="true" tabindex="-1"></a>For each lead $\ell$, recover clipped microvolts using</span>
+<span id="cb28-643"><a href="#cb28-643" aria-hidden="true" tabindex="-1"></a>The audit reports a single SHA-256 label hash shared by the official reference and all 48 reconstructed-signal tables. This is a valuable identity check: differences among reconstruction cells cannot be explained by accidentally changing label order. It does not verify clinical adjudication or eliminate spectrum bias; those are separate questions.</span>
 <span id="cb28-644"><a href="#cb28-644" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-645"><a href="#cb28-645" aria-hidden="true" tabindex="-1"></a>$$x_{\mu V,\ell}=z_\ell\sigma_\ell+\mu_\ell.$$</span>
+<span id="cb28-645"><a href="#cb28-645" aria-hidden="true" tabindex="-1"></a><span class="fu">## Signal-level EDA: what to measure</span></span>
 <span id="cb28-646"><a href="#cb28-646" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-647"><a href="#cb28-647" aria-hidden="true" tabindex="-1"></a>Then convert once to millivolts if the reconstruction model expects mV:</span>
+<span id="cb28-647"><a href="#cb28-647" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Units and inverse normalization</span></span>
 <span id="cb28-648"><a href="#cb28-648" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-649"><a href="#cb28-649" aria-hidden="true" tabindex="-1"></a>$$x_{mV,\ell}=10^{-3}x_{\mu V,\ell}.$$</span>
+<span id="cb28-649"><a href="#cb28-649" aria-hidden="true" tabindex="-1"></a>For each lead $\ell$, recover clipped microvolts using</span>
 <span id="cb28-650"><a href="#cb28-650" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-651"><a href="#cb28-651" aria-hidden="true" tabindex="-1"></a>A thousand-fold unit error can produce finite tensors and plausible-looking normalized plots while destroying inference. Unit tests should assert known percentile ranges before and after conversion.</span>
+<span id="cb28-651"><a href="#cb28-651" aria-hidden="true" tabindex="-1"></a>$$x_{\mu V,\ell}=z_\ell\sigma_\ell+\mu_\ell.$$</span>
 <span id="cb28-652"><a href="#cb28-652" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-653"><a href="#cb28-653" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Clipping occupancy</span></span>
+<span id="cb28-653"><a href="#cb28-653" aria-hidden="true" tabindex="-1"></a>Then convert once to millivolts if the reconstruction model expects mV:</span>
 <span id="cb28-654"><a href="#cb28-654" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-655"><a href="#cb28-655" aria-hidden="true" tabindex="-1"></a>Compute the fraction of values equal, or numerically close, to each provenance bound by lead. High occupancy indicates censored amplitude tails. Report this because peak-amplitude and ST-deviation errors are then conditional on the released clipping policy.</span>
+<span id="cb28-655"><a href="#cb28-655" aria-hidden="true" tabindex="-1"></a>$$x_{mV,\ell}=10^{-3}x_{\mu V,\ell}.$$</span>
 <span id="cb28-656"><a href="#cb28-656" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-657"><a href="#cb28-657" aria-hidden="true" tabindex="-1"></a>In the released test tensor, approximately 0.120–0.144% of samples per lead lie at either documented clipping bound. The inverse-normalized microvolt percentiles show clinically meaningful lead heterogeneity: for example, the 0.1st/99.9th percentiles are −102/287 µV in lead I, −369/173 µV in V1, −527/299 µV in V3, and −246/426 µV in V5. A single global clipping range or scale would therefore distort the precordial leads differently.</span>
+<span id="cb28-657"><a href="#cb28-657" aria-hidden="true" tabindex="-1"></a>A thousand-fold unit error can produce finite tensors and plausible-looking normalized plots while destroying inference. Unit tests should assert known percentile ranges before and after conversion.</span>
 <span id="cb28-658"><a href="#cb28-658" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-659"><a href="#cb28-659" aria-hidden="true" tabindex="-1"></a>The rendered audit below independently reads a fixed 256-record sample from the 1.3 GB memory-mapped array, reverses the released affine normalization using <span class="in">`PROVENANCE.json`</span>, and recomputes signal-validity and lead-law summaries. The full-array values in the table that follows come from the locked audit; the executable sample serves as a regression test that the live local artifact still has the same axes, scaling, and physiologic lead relations.</span>
+<span id="cb28-659"><a href="#cb28-659" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Clipping occupancy</span></span>
 <span id="cb28-660"><a href="#cb28-660" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-663"><a href="#cb28-663" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb28-664"><a href="#cb28-664" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: echonext-live-waveform-audit</span></span>
-<span id="cb28-665"><a href="#cb28-665" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">20260731</span>)</span>
-<span id="cb28-666"><a href="#cb28-666" aria-hidden="true" tabindex="-1"></a>echo_idx <span class="op">=</span> np.sort(rng.choice(wave.shape[<span class="dv">0</span>], size<span class="op">=</span><span class="dv">256</span>, replace<span class="op">=</span><span class="va">False</span>))</span>
-<span id="cb28-667"><a href="#cb28-667" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> np.asarray(wave[echo_idx, <span class="dv">0</span>, :, :], dtype<span class="op">=</span>np.float64)</span>
-<span id="cb28-668"><a href="#cb28-668" aria-hidden="true" tabindex="-1"></a>means <span class="op">=</span> np.asarray(provenance[<span class="st">"normalization"</span>][<span class="st">"mean"</span>], dtype<span class="op">=</span><span class="bu">float</span>)</span>
-<span id="cb28-669"><a href="#cb28-669" aria-hidden="true" tabindex="-1"></a>stds <span class="op">=</span> np.asarray(provenance[<span class="st">"normalization"</span>][<span class="st">"std"</span>], dtype<span class="op">=</span><span class="bu">float</span>)</span>
-<span id="cb28-670"><a href="#cb28-670" aria-hidden="true" tabindex="-1"></a>echo_uv <span class="op">=</span> z <span class="op">*</span> stds <span class="op">+</span> means</span>
-<span id="cb28-671"><a href="#cb28-671" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-672"><a href="#cb28-672" aria-hidden="true" tabindex="-1"></a>echo_laws <span class="op">=</span> {</span>
-<span id="cb28-673"><a href="#cb28-673" aria-hidden="true" tabindex="-1"></a>    <span class="st">"III-(II-I)"</span>: echo_uv[:, :, <span class="dv">2</span>] <span class="op">-</span> (echo_uv[:, :, <span class="dv">1</span>] <span class="op">-</span> echo_uv[:, :, <span class="dv">0</span>]),</span>
-<span id="cb28-674"><a href="#cb28-674" aria-hidden="true" tabindex="-1"></a>    <span class="st">"aVR+(I+II)/2"</span>: echo_uv[:, :, <span class="dv">3</span>] <span class="op">+</span> (echo_uv[:, :, <span class="dv">0</span>] <span class="op">+</span> echo_uv[:, :, <span class="dv">1</span>]) <span class="op">/</span> <span class="dv">2</span>,</span>
-<span id="cb28-675"><a href="#cb28-675" aria-hidden="true" tabindex="-1"></a>    <span class="st">"aVL-(I-II/2)"</span>: echo_uv[:, :, <span class="dv">4</span>] <span class="op">-</span> (echo_uv[:, :, <span class="dv">0</span>] <span class="op">-</span> echo_uv[:, :, <span class="dv">1</span>] <span class="op">/</span> <span class="dv">2</span>),</span>
-<span id="cb28-676"><a href="#cb28-676" aria-hidden="true" tabindex="-1"></a>    <span class="st">"aVF-(II-I/2)"</span>: echo_uv[:, :, <span class="dv">5</span>] <span class="op">-</span> (echo_uv[:, :, <span class="dv">1</span>] <span class="op">-</span> echo_uv[:, :, <span class="dv">0</span>] <span class="op">/</span> <span class="dv">2</span>),</span>
-<span id="cb28-677"><a href="#cb28-677" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb28-678"><a href="#cb28-678" aria-hidden="true" tabindex="-1"></a>echo_live_audit <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb28-679"><a href="#cb28-679" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quantity"</span>: [</span>
-<span id="cb28-680"><a href="#cb28-680" aria-hidden="true" tabindex="-1"></a>        <span class="st">"resolved waveform path"</span>, <span class="st">"sampled records"</span>, <span class="st">"finite values (%)"</span>,</span>
-<span id="cb28-681"><a href="#cb28-681" aria-hidden="true" tabindex="-1"></a>        <span class="st">"global 0.1st percentile (µV)"</span>, <span class="st">"global 99.9th percentile (µV)"</span>,</span>
-<span id="cb28-682"><a href="#cb28-682" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>[<span class="ss">f"median record RMSE </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss"> (µV)"</span> <span class="cf">for</span> name <span class="kw">in</span> echo_laws],</span>
-<span id="cb28-683"><a href="#cb28-683" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb28-684"><a href="#cb28-684" aria-hidden="true" tabindex="-1"></a>    <span class="st">"value"</span>: [</span>
-<span id="cb28-685"><a href="#cb28-685" aria-hidden="true" tabindex="-1"></a>        <span class="bu">str</span>((ROOT <span class="op">/</span> <span class="st">"data/echonext/EchoNext_test_waveforms.npy"</span>).resolve()),</span>
-<span id="cb28-686"><a href="#cb28-686" aria-hidden="true" tabindex="-1"></a>        <span class="bu">len</span>(echo_idx), <span class="dv">100</span> <span class="op">*</span> np.isfinite(echo_uv).mean(),</span>
-<span id="cb28-687"><a href="#cb28-687" aria-hidden="true" tabindex="-1"></a>        np.quantile(echo_uv, <span class="fl">0.001</span>), np.quantile(echo_uv, <span class="fl">0.999</span>),</span>
-<span id="cb28-688"><a href="#cb28-688" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>[np.median(np.sqrt(np.mean(residual <span class="op">**</span> <span class="dv">2</span>, axis<span class="op">=</span><span class="dv">1</span>)))</span>
-<span id="cb28-689"><a href="#cb28-689" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> residual <span class="kw">in</span> echo_laws.values()],</span>
-<span id="cb28-690"><a href="#cb28-690" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb28-691"><a href="#cb28-691" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb28-692"><a href="#cb28-692" aria-hidden="true" tabindex="-1"></a>echo_live_audit</span>
-<span id="cb28-693"><a href="#cb28-693" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-694"><a href="#cb28-694" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-695"><a href="#cb28-695" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Lead <span class="pp">|</span> 0.1st percentile (µV) <span class="pp">|</span> Median <span class="pp">|</span> 99.9th percentile (µV) <span class="pp">|</span> Bound occupancy <span class="pp">|</span></span>
-<span id="cb28-696"><a href="#cb28-696" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---:|---:|---:|---:|</span></span>
-<span id="cb28-697"><a href="#cb28-697" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> I <span class="pp">|</span> −102 <span class="pp">|</span> 0 <span class="pp">|</span> 287 <span class="pp">|</span> 0.132% <span class="pp">|</span></span>
-<span id="cb28-698"><a href="#cb28-698" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> II <span class="pp">|</span> −168 <span class="pp">|</span> 0 <span class="pp">|</span> 283 <span class="pp">|</span> 0.133% <span class="pp">|</span></span>
-<span id="cb28-699"><a href="#cb28-699" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> III <span class="pp">|</span> −295 <span class="pp">|</span> 0 <span class="pp">|</span> 191 <span class="pp">|</span> 0.122% <span class="pp">|</span></span>
-<span id="cb28-700"><a href="#cb28-700" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> aVR <span class="pp">|</span> −247 <span class="pp">|</span> 0 <span class="pp">|</span> 90 <span class="pp">|</span> 0.134% <span class="pp">|</span></span>
-<span id="cb28-701"><a href="#cb28-701" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> aVL <span class="pp">|</span> −114 <span class="pp">|</span> 0 <span class="pp">|</span> 259 <span class="pp">|</span> 0.120% <span class="pp">|</span></span>
-<span id="cb28-702"><a href="#cb28-702" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> aVF <span class="pp">|</span> −216.5 <span class="pp">|</span> 0 <span class="pp">|</span> 219.5 <span class="pp">|</span> 0.129% <span class="pp">|</span></span>
-<span id="cb28-703"><a href="#cb28-703" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V1 <span class="pp">|</span> −369 <span class="pp">|</span> 0 <span class="pp">|</span> 173 <span class="pp">|</span> 0.144% <span class="pp">|</span></span>
-<span id="cb28-704"><a href="#cb28-704" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V2 <span class="pp">|</span> −502 <span class="pp">|</span> 0 <span class="pp">|</span> 254 <span class="pp">|</span> 0.142% <span class="pp">|</span></span>
-<span id="cb28-705"><a href="#cb28-705" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V3 <span class="pp">|</span> −527 <span class="pp">|</span> 0 <span class="pp">|</span> 299 <span class="pp">|</span> 0.126% <span class="pp">|</span></span>
-<span id="cb28-706"><a href="#cb28-706" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V4 <span class="pp">|</span> −372 <span class="pp">|</span> 0 <span class="pp">|</span> 406 <span class="pp">|</span> 0.135% <span class="pp">|</span></span>
-<span id="cb28-707"><a href="#cb28-707" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V5 <span class="pp">|</span> −246 <span class="pp">|</span> 0 <span class="pp">|</span> 426 <span class="pp">|</span> 0.139% <span class="pp">|</span></span>
-<span id="cb28-708"><a href="#cb28-708" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V6 <span class="pp">|</span> −167 <span class="pp">|</span> 0 <span class="pp">|</span> 376 <span class="pp">|</span> 0.132% <span class="pp">|</span></span>
-<span id="cb28-709"><a href="#cb28-709" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-710"><a href="#cb28-710" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Lead-law residuals</span></span>
-<span id="cb28-711"><a href="#cb28-711" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-712"><a href="#cb28-712" aria-hidden="true" tabindex="-1"></a>The limb leads obey approximate linear relations:</span>
-<span id="cb28-713"><a href="#cb28-713" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-714"><a href="#cb28-714" aria-hidden="true" tabindex="-1"></a>$$III \approx II-I,\quad aVR \approx-\frac{I+II}{2},\quad</span>
-<span id="cb28-715"><a href="#cb28-715" aria-hidden="true" tabindex="-1"></a>aVL \approx I-\frac{II}{2},\quad aVF \approx II-\frac{I}{2}.$$</span>
-<span id="cb28-716"><a href="#cb28-716" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-717"><a href="#cb28-717" aria-hidden="true" tabindex="-1"></a>Residual distributions detect lead permutations, polarity errors, scaling inconsistencies, and corrupted records. These are pipeline diagnostics, not targets to “repair” after looking at test performance.</span>
-<span id="cb28-718"><a href="#cb28-718" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-719"><a href="#cb28-719" aria-hidden="true" tabindex="-1"></a>The actual EchoNext test tensor passes a strong version of this check after inverse normalization. Median record-level residual RMSE is 2.34 µV for $III-(II-I)$, 0.86 µV for $aVR+(I+II)/2$, 1.53 µV for $aVL-(I-II/2)$, and 1.41 µV for $aVF-(II-I/2)$. Corresponding 99th percentiles are 16.57, 7.44, 11.88, and 9.87 µV. These nonzero residuals reflect quantization/clipping and acquisition representation; they also provide empirical tolerances for future pipeline tests. A residual orders of magnitude larger than these references is a red flag for lead or unit corruption.</span>
-<span id="cb28-720"><a href="#cb28-720" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-721"><a href="#cb28-721" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. Spectral and morphology distributions</span></span>
+<span id="cb28-661"><a href="#cb28-661" aria-hidden="true" tabindex="-1"></a>Compute the fraction of values equal, or numerically close, to each provenance bound by lead. High occupancy indicates censored amplitude tails. Report this because peak-amplitude and ST-deviation errors are then conditional on the released clipping policy.</span>
+<span id="cb28-662"><a href="#cb28-662" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-663"><a href="#cb28-663" aria-hidden="true" tabindex="-1"></a>In the released test tensor, approximately 0.120–0.144% of samples per lead lie at either documented clipping bound. The inverse-normalized microvolt percentiles show clinically meaningful lead heterogeneity: for example, the 0.1st/99.9th percentiles are −102/287 µV in lead I, −369/173 µV in V1, −527/299 µV in V3, and −246/426 µV in V5. A single global clipping range or scale would therefore distort the precordial leads differently.</span>
+<span id="cb28-664"><a href="#cb28-664" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-665"><a href="#cb28-665" aria-hidden="true" tabindex="-1"></a>The rendered audit below independently reads a fixed 256-record sample from the 1.3 GB memory-mapped array, reverses the released affine normalization using <span class="in">`PROVENANCE.json`</span>, and recomputes signal-validity and lead-law summaries. The full-array values in the table that follows come from the locked audit; the executable sample serves as a regression test that the live local artifact still has the same axes, scaling, and physiologic lead relations.</span>
+<span id="cb28-666"><a href="#cb28-666" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-669"><a href="#cb28-669" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-670"><a href="#cb28-670" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: echonext-live-waveform-audit</span></span>
+<span id="cb28-671"><a href="#cb28-671" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">20260731</span>)</span>
+<span id="cb28-672"><a href="#cb28-672" aria-hidden="true" tabindex="-1"></a>echo_idx <span class="op">=</span> np.sort(rng.choice(wave.shape[<span class="dv">0</span>], size<span class="op">=</span><span class="dv">256</span>, replace<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb28-673"><a href="#cb28-673" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> np.asarray(wave[echo_idx, <span class="dv">0</span>, :, :], dtype<span class="op">=</span>np.float64)</span>
+<span id="cb28-674"><a href="#cb28-674" aria-hidden="true" tabindex="-1"></a>means <span class="op">=</span> np.asarray(provenance[<span class="st">"normalization"</span>][<span class="st">"mean"</span>], dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb28-675"><a href="#cb28-675" aria-hidden="true" tabindex="-1"></a>stds <span class="op">=</span> np.asarray(provenance[<span class="st">"normalization"</span>][<span class="st">"std"</span>], dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb28-676"><a href="#cb28-676" aria-hidden="true" tabindex="-1"></a>echo_uv <span class="op">=</span> z <span class="op">*</span> stds <span class="op">+</span> means</span>
+<span id="cb28-677"><a href="#cb28-677" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-678"><a href="#cb28-678" aria-hidden="true" tabindex="-1"></a>echo_laws <span class="op">=</span> {</span>
+<span id="cb28-679"><a href="#cb28-679" aria-hidden="true" tabindex="-1"></a>    <span class="st">"III-(II-I)"</span>: echo_uv[:, :, <span class="dv">2</span>] <span class="op">-</span> (echo_uv[:, :, <span class="dv">1</span>] <span class="op">-</span> echo_uv[:, :, <span class="dv">0</span>]),</span>
+<span id="cb28-680"><a href="#cb28-680" aria-hidden="true" tabindex="-1"></a>    <span class="st">"aVR+(I+II)/2"</span>: echo_uv[:, :, <span class="dv">3</span>] <span class="op">+</span> (echo_uv[:, :, <span class="dv">0</span>] <span class="op">+</span> echo_uv[:, :, <span class="dv">1</span>]) <span class="op">/</span> <span class="dv">2</span>,</span>
+<span id="cb28-681"><a href="#cb28-681" aria-hidden="true" tabindex="-1"></a>    <span class="st">"aVL-(I-II/2)"</span>: echo_uv[:, :, <span class="dv">4</span>] <span class="op">-</span> (echo_uv[:, :, <span class="dv">0</span>] <span class="op">-</span> echo_uv[:, :, <span class="dv">1</span>] <span class="op">/</span> <span class="dv">2</span>),</span>
+<span id="cb28-682"><a href="#cb28-682" aria-hidden="true" tabindex="-1"></a>    <span class="st">"aVF-(II-I/2)"</span>: echo_uv[:, :, <span class="dv">5</span>] <span class="op">-</span> (echo_uv[:, :, <span class="dv">1</span>] <span class="op">-</span> echo_uv[:, :, <span class="dv">0</span>] <span class="op">/</span> <span class="dv">2</span>),</span>
+<span id="cb28-683"><a href="#cb28-683" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-684"><a href="#cb28-684" aria-hidden="true" tabindex="-1"></a>echo_live_audit <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb28-685"><a href="#cb28-685" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quantity"</span>: [</span>
+<span id="cb28-686"><a href="#cb28-686" aria-hidden="true" tabindex="-1"></a>        <span class="st">"resolved waveform path"</span>, <span class="st">"sampled records"</span>, <span class="st">"finite values (%)"</span>,</span>
+<span id="cb28-687"><a href="#cb28-687" aria-hidden="true" tabindex="-1"></a>        <span class="st">"global 0.1st percentile (µV)"</span>, <span class="st">"global 99.9th percentile (µV)"</span>,</span>
+<span id="cb28-688"><a href="#cb28-688" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>[<span class="ss">f"median record RMSE </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss"> (µV)"</span> <span class="cf">for</span> name <span class="kw">in</span> echo_laws],</span>
+<span id="cb28-689"><a href="#cb28-689" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb28-690"><a href="#cb28-690" aria-hidden="true" tabindex="-1"></a>    <span class="st">"value"</span>: [</span>
+<span id="cb28-691"><a href="#cb28-691" aria-hidden="true" tabindex="-1"></a>        <span class="bu">str</span>((ROOT <span class="op">/</span> <span class="st">"data/echonext/EchoNext_test_waveforms.npy"</span>).resolve()),</span>
+<span id="cb28-692"><a href="#cb28-692" aria-hidden="true" tabindex="-1"></a>        <span class="bu">len</span>(echo_idx), <span class="dv">100</span> <span class="op">*</span> np.isfinite(echo_uv).mean(),</span>
+<span id="cb28-693"><a href="#cb28-693" aria-hidden="true" tabindex="-1"></a>        np.quantile(echo_uv, <span class="fl">0.001</span>), np.quantile(echo_uv, <span class="fl">0.999</span>),</span>
+<span id="cb28-694"><a href="#cb28-694" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>[np.median(np.sqrt(np.mean(residual <span class="op">**</span> <span class="dv">2</span>, axis<span class="op">=</span><span class="dv">1</span>)))</span>
+<span id="cb28-695"><a href="#cb28-695" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> residual <span class="kw">in</span> echo_laws.values()],</span>
+<span id="cb28-696"><a href="#cb28-696" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb28-697"><a href="#cb28-697" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb28-698"><a href="#cb28-698" aria-hidden="true" tabindex="-1"></a>echo_live_audit</span>
+<span id="cb28-699"><a href="#cb28-699" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-700"><a href="#cb28-700" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-701"><a href="#cb28-701" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Lead <span class="pp">|</span> 0.1st percentile (µV) <span class="pp">|</span> Median <span class="pp">|</span> 99.9th percentile (µV) <span class="pp">|</span> Bound occupancy <span class="pp">|</span></span>
+<span id="cb28-702"><a href="#cb28-702" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---:|---:|---:|---:|</span></span>
+<span id="cb28-703"><a href="#cb28-703" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> I <span class="pp">|</span> −102 <span class="pp">|</span> 0 <span class="pp">|</span> 287 <span class="pp">|</span> 0.132% <span class="pp">|</span></span>
+<span id="cb28-704"><a href="#cb28-704" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> II <span class="pp">|</span> −168 <span class="pp">|</span> 0 <span class="pp">|</span> 283 <span class="pp">|</span> 0.133% <span class="pp">|</span></span>
+<span id="cb28-705"><a href="#cb28-705" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> III <span class="pp">|</span> −295 <span class="pp">|</span> 0 <span class="pp">|</span> 191 <span class="pp">|</span> 0.122% <span class="pp">|</span></span>
+<span id="cb28-706"><a href="#cb28-706" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> aVR <span class="pp">|</span> −247 <span class="pp">|</span> 0 <span class="pp">|</span> 90 <span class="pp">|</span> 0.134% <span class="pp">|</span></span>
+<span id="cb28-707"><a href="#cb28-707" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> aVL <span class="pp">|</span> −114 <span class="pp">|</span> 0 <span class="pp">|</span> 259 <span class="pp">|</span> 0.120% <span class="pp">|</span></span>
+<span id="cb28-708"><a href="#cb28-708" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> aVF <span class="pp">|</span> −216.5 <span class="pp">|</span> 0 <span class="pp">|</span> 219.5 <span class="pp">|</span> 0.129% <span class="pp">|</span></span>
+<span id="cb28-709"><a href="#cb28-709" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V1 <span class="pp">|</span> −369 <span class="pp">|</span> 0 <span class="pp">|</span> 173 <span class="pp">|</span> 0.144% <span class="pp">|</span></span>
+<span id="cb28-710"><a href="#cb28-710" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V2 <span class="pp">|</span> −502 <span class="pp">|</span> 0 <span class="pp">|</span> 254 <span class="pp">|</span> 0.142% <span class="pp">|</span></span>
+<span id="cb28-711"><a href="#cb28-711" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V3 <span class="pp">|</span> −527 <span class="pp">|</span> 0 <span class="pp">|</span> 299 <span class="pp">|</span> 0.126% <span class="pp">|</span></span>
+<span id="cb28-712"><a href="#cb28-712" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V4 <span class="pp">|</span> −372 <span class="pp">|</span> 0 <span class="pp">|</span> 406 <span class="pp">|</span> 0.135% <span class="pp">|</span></span>
+<span id="cb28-713"><a href="#cb28-713" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V5 <span class="pp">|</span> −246 <span class="pp">|</span> 0 <span class="pp">|</span> 426 <span class="pp">|</span> 0.139% <span class="pp">|</span></span>
+<span id="cb28-714"><a href="#cb28-714" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V6 <span class="pp">|</span> −167 <span class="pp">|</span> 0 <span class="pp">|</span> 376 <span class="pp">|</span> 0.132% <span class="pp">|</span></span>
+<span id="cb28-715"><a href="#cb28-715" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-716"><a href="#cb28-716" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Lead-law residuals</span></span>
+<span id="cb28-717"><a href="#cb28-717" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-718"><a href="#cb28-718" aria-hidden="true" tabindex="-1"></a>The limb leads obey approximate linear relations:</span>
+<span id="cb28-719"><a href="#cb28-719" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-720"><a href="#cb28-720" aria-hidden="true" tabindex="-1"></a>$$III \approx II-I,\quad aVR \approx-\frac{I+II}{2},\quad</span>
+<span id="cb28-721"><a href="#cb28-721" aria-hidden="true" tabindex="-1"></a>aVL \approx I-\frac{II}{2},\quad aVF \approx II-\frac{I}{2}.$$</span>
 <span id="cb28-722"><a href="#cb28-722" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-723"><a href="#cb28-723" aria-hidden="true" tabindex="-1"></a>Report per-lead power in prespecified bands (baseline, P/T, QRS, high-frequency), R-peak count, RR variability, QRS width, QT/QTc, peak amplitude, and flatline fraction. Compare distributions before and after resampling. A global Pearson score can conceal loss of high-frequency QRS energy or systematic ST smoothing.</span>
+<span id="cb28-723"><a href="#cb28-723" aria-hidden="true" tabindex="-1"></a>Residual distributions detect lead permutations, polarity errors, scaling inconsistencies, and corrupted records. These are pipeline diagnostics, not targets to “repair” after looking at test performance.</span>
 <span id="cb28-724"><a href="#cb28-724" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-725"><a href="#cb28-725" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5. Cross-lead dependence</span></span>
+<span id="cb28-725"><a href="#cb28-725" aria-hidden="true" tabindex="-1"></a>The actual EchoNext test tensor passes a strong version of this check after inverse normalization. Median record-level residual RMSE is 2.34 µV for $III-(II-I)$, 0.86 µV for $aVR+(I+II)/2$, 1.53 µV for $aVL-(I-II/2)$, and 1.41 µV for $aVF-(II-I/2)$. Corresponding 99th percentiles are 16.57, 7.44, 11.88, and 9.87 µV. These nonzero residuals reflect quantization/clipping and acquisition representation; they also provide empirical tolerances for future pipeline tests. A residual orders of magnitude larger than these references is a red flag for lead or unit corruption.</span>
 <span id="cb28-726"><a href="#cb28-726" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-727"><a href="#cb28-727" aria-hidden="true" tabindex="-1"></a>Plot the $12\times12$ lead correlation matrix and the distribution of record-level condition numbers. Reconstruction difficulty depends on how much missing-lead information is identifiable from observed leads $I$, $II$, and $V_2$ (indices 0, 1, 7 in the locked registry). Strong average correlation does not imply that diagnostically important residual variation is recoverable.</span>
+<span id="cb28-727"><a href="#cb28-727" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. Spectral and morphology distributions</span></span>
 <span id="cb28-728"><a href="#cb28-728" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-729"><a href="#cb28-729" aria-hidden="true" tabindex="-1"></a><span class="fu">## Deep reconstruction diagnostics</span></span>
+<span id="cb28-729"><a href="#cb28-729" aria-hidden="true" tabindex="-1"></a>Report per-lead power in prespecified bands (baseline, P/T, QRS, high-frequency), R-peak count, RR variability, QRS width, QT/QTc, peak amplitude, and flatline fraction. Compare distributions before and after resampling. A global Pearson score can conceal loss of high-frequency QRS energy or systematic ST smoothing.</span>
 <span id="cb28-730"><a href="#cb28-730" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-731"><a href="#cb28-731" aria-hidden="true" tabindex="-1"></a>A useful diagnostic stack separates four questions.</span>
+<span id="cb28-731"><a href="#cb28-731" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5. Cross-lead dependence</span></span>
 <span id="cb28-732"><a href="#cb28-732" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-733"><a href="#cb28-733" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Layer <span class="pp">|</span> Question <span class="pp">|</span> Minimum outputs <span class="pp">|</span></span>
-<span id="cb28-734"><a href="#cb28-734" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
-<span id="cb28-735"><a href="#cb28-735" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sample fidelity <span class="pp">|</span> Are point amplitudes close? <span class="pp">|</span> MAE/MSE, bias, Bland–Altman, peak error <span class="pp">|</span></span>
-<span id="cb28-736"><a href="#cb28-736" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Shape fidelity <span class="pp">|</span> Are morphology and timing preserved? <span class="pp">|</span> Pearson, derivative error, DTW, delineation deltas <span class="pp">|</span></span>
-<span id="cb28-737"><a href="#cb28-737" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Physiologic consistency <span class="pp">|</span> Do leads form a coherent ECG? <span class="pp">|</span> Einthoven residuals, VCG trajectory error, interval consistency <span class="pp">|</span></span>
-<span id="cb28-738"><a href="#cb28-738" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Diagnostic utility <span class="pp">|</span> Does a frozen model retain predictions? <span class="pp">|</span> per-task AUROC/AP/F1, calibration, paired probability drift <span class="pp">|</span></span>
-<span id="cb28-739"><a href="#cb28-739" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-740"><a href="#cb28-740" aria-hidden="true" tabindex="-1"></a>Failure analysis should be **record based**, not figure based. Rank records separately by MSE, missing-lead Pearson, QRS error, ST error, classifier probability drift, and signal-quality score. The intersection and disagreement among those lists reveal different failure modes:</span>
-<span id="cb28-741"><a href="#cb28-741" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-742"><a href="#cb28-742" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>low MSE + poor classifier fidelity: small but task-aligned feature loss;</span>
-<span id="cb28-743"><a href="#cb28-743" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>high MSE + stable classifier output: nuisance amplitude or baseline mismatch;</span>
-<span id="cb28-744"><a href="#cb28-744" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>strong global Pearson + poor QRS correlation: localized depolarization failure;</span>
-<span id="cb28-745"><a href="#cb28-745" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>good morphology + lead-law violation: cross-lead incoherence;</span>
-<span id="cb28-746"><a href="#cb28-746" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>good mean performance + subgroup tail failure: deployment inequity.</span>
+<span id="cb28-733"><a href="#cb28-733" aria-hidden="true" tabindex="-1"></a>Plot the $12\times12$ lead correlation matrix and the distribution of record-level condition numbers. Reconstruction difficulty depends on how much missing-lead information is identifiable from observed leads $I$, $II$, and $V_2$ (indices 0, 1, 7 in the locked registry). Strong average correlation does not imply that diagnostically important residual variation is recoverable.</span>
+<span id="cb28-734"><a href="#cb28-734" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-735"><a href="#cb28-735" aria-hidden="true" tabindex="-1"></a><span class="fu">## Deep reconstruction diagnostics</span></span>
+<span id="cb28-736"><a href="#cb28-736" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-737"><a href="#cb28-737" aria-hidden="true" tabindex="-1"></a>A useful diagnostic stack separates four questions.</span>
+<span id="cb28-738"><a href="#cb28-738" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-739"><a href="#cb28-739" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Layer <span class="pp">|</span> Question <span class="pp">|</span> Minimum outputs <span class="pp">|</span></span>
+<span id="cb28-740"><a href="#cb28-740" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
+<span id="cb28-741"><a href="#cb28-741" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sample fidelity <span class="pp">|</span> Are point amplitudes close? <span class="pp">|</span> MAE/MSE, bias, Bland–Altman, peak error <span class="pp">|</span></span>
+<span id="cb28-742"><a href="#cb28-742" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Shape fidelity <span class="pp">|</span> Are morphology and timing preserved? <span class="pp">|</span> Pearson, derivative error, DTW, delineation deltas <span class="pp">|</span></span>
+<span id="cb28-743"><a href="#cb28-743" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Physiologic consistency <span class="pp">|</span> Do leads form a coherent ECG? <span class="pp">|</span> Einthoven residuals, VCG trajectory error, interval consistency <span class="pp">|</span></span>
+<span id="cb28-744"><a href="#cb28-744" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Diagnostic utility <span class="pp">|</span> Does a frozen model retain predictions? <span class="pp">|</span> per-task AUROC/AP/F1, calibration, paired probability drift <span class="pp">|</span></span>
+<span id="cb28-745"><a href="#cb28-745" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-746"><a href="#cb28-746" aria-hidden="true" tabindex="-1"></a>Failure analysis should be **record based**, not figure based. Rank records separately by MSE, missing-lead Pearson, QRS error, ST error, classifier probability drift, and signal-quality score. The intersection and disagreement among those lists reveal different failure modes:</span>
 <span id="cb28-747"><a href="#cb28-747" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-748"><a href="#cb28-748" aria-hidden="true" tabindex="-1"></a><span class="fu">## Statistical design for the factorial benchmark</span></span>
-<span id="cb28-749"><a href="#cb28-749" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-750"><a href="#cb28-750" aria-hidden="true" tabindex="-1"></a>The locked experiment is a $3\times2^4$ design: three architectures crossed with toggles for MSE (E), correlation (C), MMD (M), and derivative loss (D). The 48 cells permit main-effect and interaction estimates; comparing only “MSE” with “full” wastes most of the design.</span>
-<span id="cb28-751"><a href="#cb28-751" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-752"><a href="#cb28-752" aria-hidden="true" tabindex="-1"></a>Use paired patient-cluster BCa intervals because all cells predict the same test patients and some patients contribute multiple records. For each family and endpoint, estimate</span>
+<span id="cb28-748"><a href="#cb28-748" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>low MSE + poor classifier fidelity: small but task-aligned feature loss;</span>
+<span id="cb28-749"><a href="#cb28-749" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>high MSE + stable classifier output: nuisance amplitude or baseline mismatch;</span>
+<span id="cb28-750"><a href="#cb28-750" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>strong global Pearson + poor QRS correlation: localized depolarization failure;</span>
+<span id="cb28-751"><a href="#cb28-751" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>good morphology + lead-law violation: cross-lead incoherence;</span>
+<span id="cb28-752"><a href="#cb28-752" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>good mean performance + subgroup tail failure: deployment inequity.</span>
 <span id="cb28-753"><a href="#cb28-753" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-754"><a href="#cb28-754" aria-hidden="true" tabindex="-1"></a>$$\Delta_k=\mathbb{E}<span class="co">[</span><span class="ot">Y\mid k=1</span><span class="co">]</span>-\mathbb{E}<span class="co">[</span><span class="ot">Y\mid k=0</span><span class="co">]</span>$$</span>
+<span id="cb28-754"><a href="#cb28-754" aria-hidden="true" tabindex="-1"></a><span class="fu">## Statistical design for the factorial benchmark</span></span>
 <span id="cb28-755"><a href="#cb28-755" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-756"><a href="#cb28-756" aria-hidden="true" tabindex="-1"></a>and prespecified two-way interactions. Family-wise morphology tests use the repository's corrected threshold; exploratory downstream endpoints must be labeled exploratory. The existing results show significant QRS and ST improvements for full-versus-base in all three architecture families, while ECGFounder AUROC changes are not significant. That supports improved morphology without detected diagnostic-utility loss; it is **not** proof of clinical equivalence.</span>
+<span id="cb28-756"><a href="#cb28-756" aria-hidden="true" tabindex="-1"></a>The locked experiment is a $3\times2^4$ design: three architectures crossed with toggles for MSE (E), correlation (C), MMD (M), and derivative loss (D). The 48 cells permit main-effect and interaction estimates; comparing only “MSE” with “full” wastes most of the design.</span>
 <span id="cb28-757"><a href="#cb28-757" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-758"><a href="#cb28-758" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproducible audit checklist</span></span>
+<span id="cb28-758"><a href="#cb28-758" aria-hidden="true" tabindex="-1"></a>Use paired patient-cluster BCa intervals because all cells predict the same test patients and some patients contribute multiple records. For each family and endpoint, estimate</span>
 <span id="cb28-759"><a href="#cb28-759" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-760"><a href="#cb28-760" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Record exact file hashes and waveform shapes.</span>
-<span id="cb28-761"><a href="#cb28-761" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Assert patient-disjoint splits and stable record order.</span>
-<span id="cb28-762"><a href="#cb28-762" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Validate axis order, lead order, sampling rate, unit, and duration.</span>
-<span id="cb28-763"><a href="#cb28-763" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Quantify invalid demographics and structured missingness.</span>
-<span id="cb28-764"><a href="#cb28-764" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Report endpoint support before any classifier metric.</span>
-<span id="cb28-765"><a href="#cb28-765" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Preserve rare-task uncertainty; do not hide it in macro averages.</span>
-<span id="cb28-766"><a href="#cb28-766" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Compare pre/post-resampling spectra and intervals.</span>
-<span id="cb28-767"><a href="#cb28-767" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Inspect clipping occupancy and lead-law residuals.</span>
-<span id="cb28-768"><a href="#cb28-768" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use patient-clustered paired inference.</span>
-<span id="cb28-769"><a href="#cb28-769" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Publish per-record outputs so tail failures remain inspectable.</span>
+<span id="cb28-760"><a href="#cb28-760" aria-hidden="true" tabindex="-1"></a>$$\Delta_k=\mathbb{E}<span class="co">[</span><span class="ot">Y\mid k=1</span><span class="co">]</span>-\mathbb{E}<span class="co">[</span><span class="ot">Y\mid k=0</span><span class="co">]</span>$$</span>
+<span id="cb28-761"><a href="#cb28-761" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-762"><a href="#cb28-762" aria-hidden="true" tabindex="-1"></a>and prespecified two-way interactions. Family-wise morphology tests use the repository's corrected threshold; exploratory downstream endpoints must be labeled exploratory. The existing results show significant QRS and ST improvements for full-versus-base in all three architecture families, while ECGFounder AUROC changes are not significant. That supports improved morphology without detected diagnostic-utility loss; it is **not** proof of clinical equivalence.</span>
+<span id="cb28-763"><a href="#cb28-763" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-764"><a href="#cb28-764" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproducible audit checklist</span></span>
+<span id="cb28-765"><a href="#cb28-765" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-766"><a href="#cb28-766" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Record exact file hashes and waveform shapes.</span>
+<span id="cb28-767"><a href="#cb28-767" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Assert patient-disjoint splits and stable record order.</span>
+<span id="cb28-768"><a href="#cb28-768" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Validate axis order, lead order, sampling rate, unit, and duration.</span>
+<span id="cb28-769"><a href="#cb28-769" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Quantify invalid demographics and structured missingness.</span>
+<span id="cb28-770"><a href="#cb28-770" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Report endpoint support before any classifier metric.</span>
+<span id="cb28-771"><a href="#cb28-771" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Preserve rare-task uncertainty; do not hide it in macro averages.</span>
+<span id="cb28-772"><a href="#cb28-772" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Compare pre/post-resampling spectra and intervals.</span>
+<span id="cb28-773"><a href="#cb28-773" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Inspect clipping occupancy and lead-law residuals.</span>
+<span id="cb28-774"><a href="#cb28-774" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use patient-clustered paired inference.</span>
+<span id="cb28-775"><a href="#cb28-775" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Publish per-record outputs so tail failures remain inspectable.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

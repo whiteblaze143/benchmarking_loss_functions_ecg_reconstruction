@@ -1,0 +1,82 @@
+---
+title: "One-Lead ECG-AIM Wavelet/SSL Dashboard"
+subtitle: "Source I or II → eleven missing leads"
+format:
+  html: {toc: true, toc-depth: 3, code-fold: true, code-tools: true, df-print: paged, theme: cosmo}
+jupyter: python3
+execute: {warning: false, error: false, cache: false}
+---
+
+This is the one-lead development track. Existing LUDB/RDB oracle and blinded leaderboards are three-lead results and are intentionally excluded.
+
+```{python}
+from pathlib import Path
+import sys,json,numpy as np,pandas as pd,matplotlib.pyplot as plt,seaborn as sns
+R=Path.cwd().resolve()
+while not (R/'results').exists():R=R.parent
+sys.path.insert(0,str(R/'notebooks'));from experiment_dashboard_helpers import *
+sns.set_theme(style='whitegrid');TOP_K=10;BASELINE='A0_raw'
+```
+
+## Live 120-run queue
+
+```{python}
+q=queue(R/'refine-logs/wavelet_ssl_1110000/full/queue.sqlite');display(q.status.value_counts().rename_axis('status').reset_index(name='jobs'));display(q[q.status!='pending'][['ordinal','id','cell_name','observed_lead','status','started_at','completed_at','error']])
+```
+
+## Raw results, matched A0 deltas and leaders
+
+```{python}
+d=q[q.status=='completed'].copy();metrics=[c for c in d if c.startswith('metric.') and pd.api.types.is_numeric_dtype(d[c])];base=d[d.cell_name==BASELINE][['seed','observed_lead',*metrics]].rename(columns={m:'base.'+m for m in metrics});d=d.merge(base,on=['seed','observed_lead'],how='left')
+for m in metrics:
+ if 'base.'+m in d:d['delta.'+m]=d[m]-d['base.'+m]
+display(d[['id','cell_name','seed','observed_lead',*metrics]].sort_values('metric.miou_wave',ascending=False));display(best(d,metrics,('observed_lead',),3,'id'));display(best(d,metrics,('cell_name','observed_lead'),1,'id'))
+```
+
+## Principal claim hierarchy
+
+`A0 → A0+wavelet → A0+wavelet+SSL`. E1 is reserved for complementarity, not presented as an improved base.
+
+```{python}
+if len(d):
+ order=d.sort_values('metric.miou_wave',ascending=False).id;fig,axs=plt.subplots(1,3,figsize=(18,max(4,.38*len(d))))
+ for ax,m,title in zip(axs,['metric.miou_wave','metric.boundary_f1_smoke','metric.val_missing_pearson'],['Wave mIoU','Boundary F1','Missing Pearson']):
+  if m in d:sns.barplot(data=d,y='id',x=m,hue='observed_lead',order=order,dodge=False,ax=ax);ax.set_title(title)
+ plt.tight_layout();plt.show()
+```
+
+## Replication and mechanism audit
+
+```{python}
+display(d.groupby(['cell_name','observed_lead'])[metrics].agg(['count','mean','std']));display(d.groupby(['cell_name','observed_lead']).seed.nunique().reset_index(name='n_seeds').query('n_seeds < 2'));cols=['id','cell_name','observed_lead']+[c for c in ('cell.wavelet_bank','cell.view_a','cell.view_b','cell.ssl_mode','cell.wavelet_fusion','metric.P_iou','metric.QRS_iou','metric.T_iou') if c in d];display(d[cols])
+```
+
+The key mechanistic contrast is matched Morlet magnitude+phase versus magnitude+UEG-repolarization phase. Concentrated T-onset/T-offset gains would support physiological-view complementarity.
+
+## Six-boundary RDB supervision
+
+RDB supplies P-onset, P-offset, QRS-onset, QRS-offset, T-onset and T-offset. No peak label is invented, and test is excluded from training.
+
+```{python}
+for s in ('train','val','test'):print(s,len(list((R/f'data/rdb_wavelet_delineation_cache/{s}').glob('*.pt'))))
+```
+
+## Checkpoint provenance and AF readiness
+
+```{python}
+cp=sql(R/'results/onelead_checkpoint_store/catalog.sqlite','select * from checkpoints');display(cp.groupby(['architecture','status'],dropna=False).agg(models=('model_id','size'),bytes=('size_bytes','sum')).reset_index());display(cp)
+p=R/'AF_PRESERVATION_PROTOCOL.json';print(json.dumps(json.loads(p.read_text()),indent=2) if p.exists() else 'AF protocol missing')
+```
+
+## Configurable waveform, segmentation and boundaries
+
+```{python}
+import torch
+RECORD_ID='AF0293';SPLIT='test';VIEW=['I','II','V1','V3','V6'];WINDOW=(0,10);L=['I','II','III','aVR','aVL','aVF','V1','V2','V3','V4','V5','V6'];e=torch.load(R/f'data/rdb_wavelet_delineation_cache/{SPLIT}/rdb_{RECORD_ID}.pt',map_location='cpu',weights_only=False);x=e['waveform'].numpy();seg=e['segmentation'].numpy();a,b=[int(v*500) for v in WINDOW];t=np.arange(a,b)/500;fig,axs=plt.subplots(len(VIEW),1,figsize=(14,2.2*len(VIEW)),sharex=True)
+for ax,lead in zip(np.atleast_1d(axs),VIEW):
+ j=L.index(lead);ax.plot(t,x[j,a:b],c='black',lw=.9);ax.set_ylabel(lead)
+ for cls,color in {1:'#5dade2',2:'#f5b041',3:'#58d68d'}.items():
+  z=seg[j,a:b]==cls;edges=np.diff(np.pad(z.astype(int),(1,1)))
+  for l,r in zip(np.flatnonzero(edges==1),np.flatnonzero(edges==-1)):ax.axvspan((a+l)/500,(a+r)/500,color=color,alpha=.1)
+axs[-1].set_xlabel('seconds');plt.suptitle(f"{e['record_id']} · {e['canonical_rhythm']} · six-boundary supervision");plt.tight_layout();plt.show()
+```

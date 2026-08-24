@@ -1,6 +1,8 @@
 project:
   type: book
   output-dir: _book
+  resources:
+    - .nojekyll
 
 book:
   title: "Benchmarking Loss Functions for Electrocardiogram Reconstruction"
@@ -14,6 +16,11 @@ book:
     collapse-level: 1
   chapters:
     - index.qmd
+    - part: "Live Experiment Observatory"
+      chapters:
+        - 15_live_results_observatory.qmd
+        - 16_three_lead_ecgaim_live.qmd
+        - 17_one_lead_wavelet_ssl_live.qmd
     - part: "I. Data, Cohorts, and Measurement"
       chapters:
         - 09_real_data_eda_and_diagnostics.qmd

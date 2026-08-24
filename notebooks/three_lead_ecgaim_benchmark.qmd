@@ -1,0 +1,99 @@
+---
+title: "Three-Lead Benchmark and ECG-AIM Deep Dive"
+subtitle: "Observed I + II + V2 → twelve-lead reconstruction"
+format:
+  html: {toc: true, toc-depth: 3, code-fold: true, code-tools: true, df-print: paged, theme: cosmo}
+jupyter: python3
+execute: {warning: false, error: false, cache: false}
+---
+
+```{python}
+# Edit these controls and rerun.
+TOP_K=10; RECORD_ID='AF0293'; RDB_SPLIT='test'; VIEW_LEADS=['I','II','V2','V1','V3','V6']; WINDOW=(0,10); RECONSTRUCTION_NPZ=None
+```
+
+```{python}
+from pathlib import Path
+import sys,json,numpy as np,pandas as pd,matplotlib.pyplot as plt,seaborn as sns
+R=Path.cwd().resolve()
+while not (R/'results').exists():R=R.parent
+sys.path.insert(0,str(R/'notebooks'));from experiment_dashboard_helpers import *
+sns.set_theme(style='whitegrid');pd.set_option('display.max_columns',100)
+```
+
+## Contract and architecture comparison
+
+Every model receives leads **I, II and V2**. Primary reconstruction metrics must use the nine missing leads so observed-lead passthrough cannot inflate performance.
+
+-   **MCMA-U-Net:** convolutional reconstruction control.
+-   **cNVAE:** conditional variational ECG-FM bridge.
+-   **MSVAE:** multiscale variational reconstruction.
+-   **ECG-AIM:** our novel tokenized transformer reconstructor.
+
+```{python}
+paths=[R/'results/factorial_v4/main_48_cell_table.csv',R/'results/factorial_v2/main_48_cell_table.csv',R/'results/factorial_v2/all_48_models_benchmark.csv'];p=next((x for x in paths if x.exists()),None);bench=pd.read_csv(p) if p else pd.DataFrame();print(p,len(bench));display(bench)
+nums=[c for c in bench if pd.api.types.is_numeric_dtype(bench[c])];ident=next((c for c in ('model_id','id','cell_id') if c in bench),bench.columns[0]);grp=tuple(c for c in ('family','architecture') if c in bench);display(best(bench,nums,grp[:1],3,ident))
+```
+
+## ECG-AIM: novel model and experiment logic
+
+ECG-AIM maps sparse observed ECG into temporal tokens, models long-range cardiac dependencies with an encoder/decoder transformer, and reconstructs twelve leads jointly. The registered three-lead model uses width 384, eight encoder blocks, four decoder blocks, eight attention heads and 25-sample patches.
+
+The hypothesis is stronger than lower MSE: ECG-AIM should preserve atrial morphology, ventricular depolarization, repolarization, ST morphology and inter-lead relationships. The factorial program isolates pointwise reconstruction, correlation, distributional/MMD and derivative constraints. Its claim chain is:
+
+`PTB-XL reconstruction → clinical biomarkers → LUDB expert morphology → RDB rhythm-diverse morphology → independent blinded delineation`.
+
+## Clinical biomarkers and canonical 160-model cohort
+
+```{python}
+db=R/'results/clinical_biomarkers_multids/clinical_metrics.db';clinical=sql(db,'select * from clinical_metrics');paired=sql(db,'select * from paired_inference');pre=sql(db,'select * from presacan_model_summary')
+clinical['suite']=np.select([clinical.model_id.str.startswith('f_'),clinical.model_id.str.startswith('factorial_ecg_aim_'),clinical.model_id.eq('__original__')],['canonical_160','threelead_ecgaim_external','reference'],'quarantine');display(clinical.groupby(['suite','dataset']).model_id.nunique());assert pre.model_id.nunique()==160;display(pre)
+```
+
+```{python}
+cm=['mae','pearson_r','r2','auroc','auprc','f1','sens','spec','ppv','npv','interlead_r2'];display(best(clinical[clinical.suite=='canonical_160'],cm,('dataset','target'),1));paired['ci_excludes_zero']=(paired.ci_low>0)|(paired.ci_high<0);display(paired.sort_values(['ci_excludes_zero','p_value'],ascending=[False,True]).head(100));pm=[c for c in pre if pd.api.types.is_numeric_dtype(pre[c])];display(best(pre,pm,('dataset',),3))
+```
+
+## LUDB/RDB blinded delineation — three-lead ECG-AIM
+
+```{python}
+le,lb=blinded(R/'results/ecgaim_ludb_semiseg_blinded/compact.sqlite','LUDB');re,rb=blinded(R/'results/ecgaim_rdb_semiseg_blinded/compact.sqlite','RDB');ev=pd.concat([le,re]);bd=pd.concat([lb,rb]);display(ev.sort_values(['cohort','primary_mean_micro_f1_20ms'],ascending=[True,False]));display(best(ev[ev.status=='complete'],['primary_mean_micro_f1_20ms','signal_pearson_p05','signal_mse_p95'],('cohort',),TOP_K))
+```
+
+```{python}
+for cohort,x in bd.groupby('cohort'):
+ if 'lead_group' in x and (x.lead_group=='primary_missing_precordial').any():x=x[x.lead_group=='primary_missing_precordial']
+ pivot=x.pivot(index='model_id',columns='boundary',values='micro_f1_20ms');plt.figure(figsize=(10,max(4,.3*len(pivot))));sns.heatmap(pivot,cmap='viridis',vmin=0,vmax=1);plt.title(f'{cohort} blinded boundary F1');plt.show()
+```
+
+## LUDB/RDB oracle morphology — three-lead ECG-AIM
+
+```{python}
+ro=oracle(R/'results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite','RDB');lo=oracle(zstd_db(R/'results/ecgaim_ludb_oracle/ecgaim_ludb_oracle.sqlite.zst'),'LUDB');o=pd.concat([ro,lo]);om=[c for c in o if c.startswith('metric.') and pd.api.types.is_numeric_dtype(o[c])];display(o[['cohort','model_id','factorial_mask','status',*om]]);display(best(o[o.status=='complete'],om,('cohort',),5))
+```
+
+## Cross-endpoint consistency
+
+```{python}
+x=re[re.status=='complete'].merge(ro,on='model_id')
+if len(x):
+ plt.figure(figsize=(8,6));sns.scatterplot(data=x,x='metric.signal_pearson_p05',y='primary_mean_micro_f1_20ms',s=70);plt.title('RDB oracle signal tail vs blinded boundary preservation');plt.show()
+```
+
+## Configurable RDB waveform
+
+```{python}
+import torch
+L=['I','II','III','aVR','aVL','aVF','V1','V2','V3','V4','V5','V6'];e=torch.load(R/f'data/rdb_wavelet_delineation_cache/{RDB_SPLIT}/rdb_{RECORD_ID}.pt',map_location='cpu',weights_only=False);real=e['waveform'].numpy();recon=None
+if RECONSTRUCTION_NPZ:
+ z=np.load(RECONSTRUCTION_NPZ,allow_pickle=False);ids=z['record_id'].astype(str);i=np.flatnonzero((ids==e['record_id'])|(ids=='rdb_'+e['record_id']))[0];recon=z['recon'][i];recon=recon.T if recon.shape==(5000,12) else recon
+a,b=[int(v*500) for v in WINDOW];t=np.arange(a,b)/500;fig,axs=plt.subplots(len(VIEW_LEADS),1,figsize=(14,2.1*len(VIEW_LEADS)),sharex=True)
+for ax,lead in zip(np.atleast_1d(axs),VIEW_LEADS):
+ j=L.index(lead);ax.plot(t,real[j,a:b],c='black',lw=.9,label='real');ax.set_ylabel(lead)
+ if recon is not None:ax.plot(t,recon[j,a:b],c='crimson',lw=.8,label='recon')
+axs[0].legend();axs[-1].set_xlabel('seconds');plt.suptitle(f"{e['record_id']} · {e['canonical_rhythm']}");plt.tight_layout();plt.show()
+```
+
+## Interpretation template
+
+For each claim report: **observation with raw numbers → interpretation → narrow implication → matched falsification experiment**. Single-seed screens and unmatched protocols are never treated as confirmation.

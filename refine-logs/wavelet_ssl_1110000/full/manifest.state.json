@@ -1,11 +1,12 @@
 {
   "cells": 60,
   "counts": {
-    "completed": 47,
+    "completed": 77,
     "failed_oom": 1,
     "failed_transient": 1,
-    "pending": 70,
-    "running": 1
+    "pending": 39,
+    "running": 1,
+    "stuck": 1
   },
   "jobs": [
     {
@@ -6061,7 +6062,6 @@
         "wavelet_fusion": "gated_add",
         "wavelet_heads": 6
       },
-      "child_pid": 765119,
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -6144,13 +6144,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T03:14:51Z",
       "id": "del_boundary_1110000_s42_l0",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/049_del_boundary_1110000_s42_l0.log",
+      "returncode": 0,
       "started_at": "2026-08-25T02:52:31Z",
-      "status": "running"
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -6263,11 +6265,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T03:49:54Z",
       "id": "del_wave_ce_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/050_del_wave_ce_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T03:14:54Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.1,
         "delineation_hidden": 96,
@@ -6380,11 +6386,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T04:24:56Z",
       "id": "del_wave_boundary_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/051_del_wave_boundary_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T03:49:56Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 64,
@@ -6497,11 +6507,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T04:45:59Z",
       "id": "del_head64k9_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/052_del_head64k9_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T04:24:59Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 128,
@@ -6614,11 +6628,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T05:10:31Z",
       "id": "del_head128k25_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/053_del_head128k25_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T04:46:01Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -6730,11 +6748,15 @@
         "--mask-type-mode",
         "legacy"
       ],
+      "completed_at": "2026-08-25T05:46:24Z",
       "id": "del_fid_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/054_del_fid_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T05:10:34Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 2,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -6847,11 +6869,16 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T06:00:35Z",
+      "error": "queue interrupted during child; rolling resume retained",
       "id": "E1_ssl_local_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/055_E1_ssl_local_1110000_s42_l0.log",
+      "returncode": -15,
+      "started_at": "2026-08-25T05:49:55Z",
+      "status": "stuck"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -6964,11 +6991,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T06:39:15Z",
       "id": "E1_ssl_both_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/056_E1_ssl_both_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T06:00:45Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -7081,11 +7112,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T07:17:58Z",
       "id": "E1_ssl_cross_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/057_E1_ssl_cross_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T06:39:18Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -7198,11 +7233,15 @@
         "all_masked",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T07:40:02Z",
       "id": "mask_fixed_raw_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/058_mask_fixed_raw_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T07:18:02Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -7315,11 +7354,15 @@
         "all_masked",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T08:14:55Z",
       "id": "mask_fixed_wave_1110000_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/059_mask_fixed_wave_1110000_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T07:40:05Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -7432,11 +7475,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T08:37:07Z",
       "id": "A0_raw_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/060_A0_raw_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T08:14:57Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -7549,11 +7596,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T09:03:10Z",
       "id": "E1_raw_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/061_E1_raw_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T08:37:10Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -7666,11 +7717,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T09:28:52Z",
       "id": "A0_wave_noSSL_gated_add_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/062_A0_wave_noSSL_gated_add_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T09:03:12Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -7783,11 +7838,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T09:54:47Z",
       "id": "A0_wave_noSSL_cross_attn_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/063_A0_wave_noSSL_cross_attn_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T09:28:57Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -7900,11 +7959,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T10:24:30Z",
       "id": "E1_wave_noSSL_gated_add_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/064_E1_wave_noSSL_gated_add_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T09:54:49Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -8017,11 +8080,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T10:54:12Z",
       "id": "E1_wave_noSSL_cross_attn_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/065_E1_wave_noSSL_cross_attn_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T10:24:32Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -8134,11 +8201,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T11:20:07Z",
       "id": "P1_A0_morlet_mag_phase_noSSL_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/066_P1_A0_morlet_mag_phase_noSSL_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T10:54:16Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -8251,11 +8322,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T11:54:59Z",
       "id": "R0_morlet_mag_morlet_phase_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/067_R0_morlet_mag_morlet_phase_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T11:20:09Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -8377,11 +8452,15 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
+      "completed_at": "2026-08-25T12:29:52Z",
       "id": "R1_morlet_mag_ueg_phase_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/068_R1_morlet_mag_ueg_phase_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T11:55:01Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -8494,11 +8573,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T13:08:34Z",
       "id": "C1_E1_morlet_mag_morlet_phase_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/069_C1_E1_morlet_mag_morlet_phase_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T12:29:54Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -8620,11 +8703,15 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
+      "completed_at": "2026-08-25T13:43:37Z",
       "id": "R2_morlet_mag_ueg_phase_sin_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/070_R2_morlet_mag_ueg_phase_sin_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T13:08:36Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -8746,11 +8833,15 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
+      "completed_at": "2026-08-25T14:18:39Z",
       "id": "R3_morlet_logmag_ueg_phase_sin_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/071_R3_morlet_logmag_ueg_phase_sin_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T13:43:39Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -8872,11 +8963,15 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
+      "completed_at": "2026-08-25T14:53:32Z",
       "id": "R7_morlet_mag_ueg_real_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/072_R7_morlet_mag_ueg_real_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T14:18:41Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -8998,11 +9093,15 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
+      "completed_at": "2026-08-25T15:28:36Z",
       "id": "R8_morlet_mag_ueg_mag_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/073_R8_morlet_mag_ueg_mag_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T14:53:36Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -9127,11 +9226,15 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
+      "completed_at": "2026-08-25T16:03:29Z",
       "id": "R9_ueg_mag_ueg_phase_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/074_R9_ueg_mag_ueg_phase_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T15:28:39Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -9253,11 +9356,15 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_wyatt_010.pt"
       ],
+      "completed_at": "2026-08-25T16:38:31Z",
       "id": "R4_morlet_mag_ueg_phase_wyatt_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/075_R4_morlet_mag_ueg_phase_wyatt_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T16:03:31Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -9379,11 +9486,15 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_wyatt_025.pt"
       ],
+      "completed_at": "2026-08-25T17:13:34Z",
       "id": "R5_morlet_mag_ueg_phase_wyatt_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/076_R5_morlet_mag_ueg_phase_wyatt_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T16:38:34Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -9505,11 +9616,15 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_wyatt_050.pt"
       ],
+      "completed_at": "2026-08-25T17:48:36Z",
       "id": "R6_morlet_mag_ueg_phase_wyatt_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/077_R6_morlet_mag_ueg_phase_wyatt_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T17:13:36Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -9622,11 +9737,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T18:23:29Z",
       "id": "ssl_magnitude_phase_local_gated_add_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/078_ssl_magnitude_phase_local_gated_add_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T17:48:39Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -9739,11 +9858,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-25T18:58:32Z",
       "id": "ssl_magnitude_phase_local_cross_attn_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/079_ssl_magnitude_phase_local_cross_attn_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-25T18:23:31Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -9774,6 +9897,7 @@
         "wavelet_fusion": "gated_add",
         "wavelet_heads": 6
       },
+      "child_pid": 991266,
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -9857,7 +9981,9 @@
         "--no-fiducial-head"
       ],
       "id": "ssl_magnitude_phase_both_gated_add_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/080_ssl_magnitude_phase_both_gated_add_1110000_s42_l1.log",
+      "started_at": "2026-08-25T18:58:34Z",
+      "status": "running"
     },
     {
       "attempts": 0,
@@ -14430,6 +14556,6 @@
   ],
   "manifest_sha256": "008a7d9b49a8d912cc9bdd132a93c493128f17a9dcb944d2984e40112466aec6",
   "queue_status": "running",
-  "updated_at": "2026-08-25T02:52:31Z",
+  "updated_at": "2026-08-25T18:58:34Z",
   "version": 2
 }

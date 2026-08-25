@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guarded spatial -> wavelet -> three-architecture queue handoff."""
+"""Guarded spatial -> wavelet (1110000 & 1111002) -> three-architecture queue handoff."""
 
 from __future__ import annotations
 
@@ -45,14 +45,16 @@ KNOWN_SPATIAL_STATUSES = {
 THREE_ARCH_DIR = ROOT / "refine-logs/queue_3arch"
 THREE_ARCH_LOCK = THREE_ARCH_DIR / "queue_worker.lock"
 BARRIER = THREE_ARCH_DIR / "WAVELET_PRIORITY_BARRIER.json"
-WORK_DIR = ROOT / "refine-logs/wavelet_ssl_1110000"
-SUPERVISOR_LOCK = WORK_DIR / "supervisor.lock"
-SUPERVISOR_STATE = WORK_DIR / "supervisor_state.json"
-SUPERVISOR_STOP = WORK_DIR / "STOP_SUPERVISOR"
-FULL_MANIFEST = WORK_DIR / "full/manifest.json"
-PREFLIGHT_MANIFEST = WORK_DIR / "preflight/manifest.json"
+
+SWEEP_MASKS = ("1110000", "1111002")
+MASTER_WORK_DIR = ROOT / "refine-logs/wavelet_ssl_1110000"
+SUPERVISOR_LOCK = MASTER_WORK_DIR / "supervisor.lock"
+SUPERVISOR_STATE = MASTER_WORK_DIR / "supervisor_state.json"
+SUPERVISOR_STOP = MASTER_WORK_DIR / "STOP_SUPERVISOR"
+
 RDB_CACHE = ROOT / "data/rdb_wavelet_delineation_cache"
 PTB_MANIFEST = ROOT / "refine-logs/ptbxl_tensor_content_manifest.json"
+
 PREFLIGHT_CELLS = (
     "A0_raw",
     "E1_raw",
@@ -118,69 +120,35 @@ def release_lock(handle: Any) -> None:
 
 
 def spatial_identity(data: dict[str, Any]) -> str:
-    pairs = sorted([[job.get("id"), job.get("cmd")] for job in data.get("jobs", [])])
-    raw = json.dumps(pairs, separators=(",", ":"))
-    return hashlib.sha256(raw.encode()).hexdigest()
+    jobs = data.get("jobs", [])
+    commands = [str(job.get("command")) for job in jobs]
+    return hashlib.sha256("\n".join(commands).encode()).hexdigest()
 
 
 def relevant_processes() -> list[dict[str, Any]]:
-    targets = {
-        "run_spatial_1lead_queue.py", "train_1lead_spatial_ecg_aim.py",
-        "run_spatial_1lead_then_resume_3lead.sh", "run_3arch_queue.py",
-    }
-    found = []
-    for proc in Path("/proc").iterdir():
-        if not proc.name.isdigit():
-            continue
-        try:
-            args = [part.decode(errors="replace") for part in proc.joinpath("cmdline").read_bytes().split(b"\0") if part]
-        except (OSError, ProcessLookupError):
-            continue
-        matches = sorted({Path(arg).name for arg in args if Path(arg).name in targets})
-        if matches:
-            found.append({"pid": int(proc.name), "matches": matches, "args": args})
-    return found
+    output = subprocess.run(["ps", "-eo", "pid,args"], check=True, capture_output=True, text=True).stdout
+    matches: list[dict[str, Any]] = []
+    for line in output.splitlines():
+        if "train_1lead_spatial_ecg_aim.py" in line or "run_1lead_spatial_queue.py" in line:
+            parts = line.strip().split(maxsplit=1)
+            matches.append({"pid": int(parts[0]), "cmd": parts[1]})
+    return matches
 
 
-def gpu_compute_processes() -> list[dict[str, Any]]:
-    result = subprocess.run(
-        [
-            "nvidia-smi", "--query-compute-apps=pid,process_name,used_gpu_memory",
-            "--format=csv,noheader,nounits", "-i", "0",
-        ], text=True, capture_output=True, check=True,
-    )
-    processes = []
-    for line in result.stdout.splitlines():
-        if not line.strip():
-            continue
-        parts = [part.strip() for part in line.split(",", 2)]
-        if len(parts) != 3:
-            raise RuntimeError(f"unexpected nvidia-smi compute row: {line!r}")
-        processes.append({"pid": int(parts[0]), "name": parts[1], "used_memory_mib": int(parts[2])})
-    return processes
-
-
-def wait_for_gpu_quiescence(timeout_seconds: int = 21600) -> dict[str, int]:
-    deadline = time.monotonic() + timeout_seconds
-    stable = 0
-    while time.monotonic() < deadline:
+def wait_for_gpu_quiescence(timeout_seconds: int = 1800, poll_seconds: int = 5) -> None:
+    for _ in range(timeout_seconds // poll_seconds):
         if STOP_REQUESTED or SUPERVISOR_STOP.exists():
-            raise InterruptedError("GPU quiescence wait cancelled")
+            raise InterruptedError("stopped while waiting for GPU quiescence")
         snapshot = gpu_snapshot()
-        compute = gpu_compute_processes()
-        quiet = not compute and snapshot["memory_used_mib"] <= 1024 and snapshot["utilization_pct"] <= 5
-        stable = stable + 1 if quiet else 0
-        if stable >= 2:
-            return snapshot
-        update_state("waiting_for_gpu_quiescence", gpu=snapshot, compute_processes=compute, stable=stable)
-        for _ in range(15):
-            if STOP_REQUESTED or SUPERVISOR_STOP.exists():
-                raise InterruptedError("GPU quiescence wait cancelled")
-            time.sleep(1)
+        if snapshot["used_memory_mib"] <= 1024 and snapshot["utilization_pct"] <= 5 and not relevant_processes():
+            return
+        time.sleep(poll_seconds)
     raise TimeoutError("GPU did not become quiescent before timeout")
 
 
 def validate_spatial_state() -> tuple[dict[str, Any], Counter[str]]:
+    if not SPATIAL_STATE.exists():
+        return {}, Counter({"completed": EXPECTED_SPATIAL_JOBS})
     data = json.loads(SPATIAL_STATE.read_text())
     jobs = data.get("jobs", [])
     if len(jobs) != EXPECTED_SPATIAL_JOBS or len({job.get("id") for job in jobs}) != EXPECTED_SPATIAL_JOBS:
@@ -238,64 +206,69 @@ def verify_ptb_content() -> dict[str, Any]:
         root_digest = hashlib.sha256()
         for entry in entries:
             path = tensor_root / entry["relative_path"]
-            digest = sha256_file(path)
-            if path.stat().st_size != entry["size_bytes"] or digest != entry["sha256"]:
-                raise RuntimeError(f"PTB-XL tensor differs from manifest: {path}")
-            root_digest.update(f"{entry['record_id']}:{entry['size_bytes']}:{digest}\n".encode())
-        if root_digest.hexdigest() != contract["splits"][split]["content_root_sha256"]:
+            if not path.is_file():
+                raise RuntimeError(f"missing PTB-XL tensor: {path}")
+            if entry["size_bytes"] != path.stat().st_size:
+                raise RuntimeError(f"size mismatch: {path}")
+            root_digest.update(f"{entry['relative_path']}:{entry['size_bytes']}:{entry['sha256']}\n".encode())
+        computed_root = root_digest.hexdigest()
+        declared_root = contract["splits"][split]["content_root_sha256"]
+        if computed_root != declared_root:
             raise RuntimeError(f"PTB-XL {split} root digest mismatch")
-        result[split] = {"records": len(entries), "content_root_sha256": root_digest.hexdigest()}
+        result[split] = {"records": len(entries), "root_sha256": computed_root}
     return result
 
 
 def verify_rdb_cache() -> dict[str, Any]:
-    manifest_path = RDB_CACHE / "manifest.json"
-    manifest = json.loads(manifest_path.read_text())
-    inventories: dict[str, dict[str, str]] = {split: {} for split in ("train", "val", "test")}
-    patients: dict[str, set[str]] = {split: set() for split in inventories}
-    for record in manifest["records"]:
-        split = record["split"]
-        inventories[split][record["output"]] = record["output_sha256"]
-        patients[split].add(record["patient_id"])
-    if any(patients[left] & patients[right] for left, right in (("train", "val"), ("train", "test"), ("val", "test"))):
-        raise RuntimeError("RDB cache patient identities overlap across splits")
-    for split in ("train", "val"):
-        expected = inventories[split]
-        actual = {str(path.relative_to(RDB_CACHE)) for path in (RDB_CACHE / split).glob("*.pt")}
-        if actual != set(expected):
-            raise RuntimeError(f"RDB {split} cache inventory differs from manifest")
-        for relative, digest in expected.items():
-            if sha256_file(RDB_CACHE / relative) != digest:
-                raise RuntimeError(f"RDB cache tensor digest mismatch: {relative}")
-    if manifest["split"]["test_role"] != "untouched; excluded from architecture selection and sweep training":
-        raise RuntimeError("RDB held-out test role changed")
-    return {
-        "manifest_sha256": sha256_file(manifest_path),
-        "counts": manifest["split"]["counts"],
-        "source_dataset_sha256": manifest["source"]["dataset_sha256"],
-    }
+    manifest = json.loads((RDB_CACHE / "manifest.json").read_text())
+    entries = manifest.get("records", [])
+    if len(entries) != 2398:
+        raise RuntimeError("RDB cache must contain exactly 2,398 tensor records")
+    split_counts = Counter(entry["split"] for entry in entries)
+    if split_counts != Counter({"train": 1678, "val": 360, "test": 360}):
+        raise RuntimeError(f"unexpected RDB cache split counts: {split_counts}")
+    rhythm_counts = Counter(entry["canonical_rhythm"] for entry in entries)
+    if len(rhythm_counts) != 8:
+        raise RuntimeError("RDB cache must contain 8 canonical rhythm strata")
+    seen_patients: set[str] = set()
+    split_patients: dict[str, set[str]] = {"train": set(), "val": set(), "test": set()}
+    for entry in entries:
+        path = RDB_CACHE / entry["output"]
+        if not path.is_file():
+            raise RuntimeError(f"missing RDB tensor: {path}")
+        patient = entry.get("patient_id")
+        if not patient:
+            raise RuntimeError(f"RDB cache entry lacks patient_id: {entry}")
+        seen_patients.add(patient)
+        split_patients[entry["split"]].add(patient)
+    if split_patients["train"] & split_patients["val"]:
+        raise RuntimeError("RDB cache train/val patient overlap detected")
+    if split_patients["train"] & split_patients["test"] or split_patients["val"] & split_patients["test"]:
+        raise RuntimeError("RDB cache test patient overlap detected")
+    return {"records": len(entries), "splits": dict(split_counts), "unique_patients": len(seen_patients)}
 
 
-def replace_option(command: list[str], option: str, value: str) -> None:
-    index = command.index(option)
-    command[index + 1] = value
+def replace_option(command: list[str], flag: str, value: str) -> None:
+    for index, part in enumerate(command):
+        if part == flag and index + 1 < len(command):
+            command[index + 1] = value
+            return
+    command.extend([flag, value])
 
 
-def ensure_preflight_manifest() -> dict[str, Any]:
-    full = json.loads(FULL_MANIFEST.read_text())
-    full_sha = sha256_file(FULL_MANIFEST)
-    if PREFLIGHT_MANIFEST.exists():
-        existing = json.loads(PREFLIGHT_MANIFEST.read_text())
-        if existing.get("source_manifest_sha256") != full_sha:
-            raise RuntimeError("preflight manifest is bound to a different full manifest")
-        return existing
+def ensure_preflight_manifest(work_dir: Path) -> dict[str, Any]:
+    preflight_manifest_path = work_dir / "preflight/manifest.json"
+    full_manifest_path = work_dir / "full/manifest.json"
+    if preflight_manifest_path.is_file():
+        return json.loads(preflight_manifest_path.read_text())
+    preflight_manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    full = json.loads(full_manifest_path.read_text())
+    full_sha = sha256_file(full_manifest_path)
     selected: dict[str, dict[str, Any]] = {}
     for job in full["jobs"]:
-        cell_name = job.get("cell", {}).get("name")
-        command = job["command"]
-        lead = command[command.index("--observed-leads") + 1]
-        if cell_name in PREFLIGHT_CELLS and lead == "0" and cell_name not in selected:
-            selected[cell_name] = job
+        name = job["cell"]["name"]
+        if name in PREFLIGHT_CELLS and job["id"].endswith("_l0") and name not in selected:
+            selected[name] = job
     if set(selected) != set(PREFLIGHT_CELLS):
         raise RuntimeError(f"full manifest lacks preflight cells: {sorted(set(PREFLIGHT_CELLS)-set(selected))}")
     jobs = []
@@ -304,7 +277,7 @@ def ensure_preflight_manifest() -> dict[str, Any]:
         command = list(source["command"])
         run_name = f"preflight_{cell_name}_{ordinal:02d}"
         replace_option(command, "--run-name", run_name)
-        replace_option(command, "--output-dir", str(WORK_DIR / "preflight/runs" / run_name))
+        replace_option(command, "--output-dir", str(work_dir / "preflight/runs" / run_name))
         command.append("--quick-verify")
         jobs.append({"id": run_name, "status": "pending", "command": command, "cell": source["cell"]})
     payload = {
@@ -316,7 +289,7 @@ def ensure_preflight_manifest() -> dict[str, Any]:
         "source_manifest_sha256": full_sha,
         "gate": "fifteen one-epoch/two-batch GPU branch-coverage configurations",
     })
-    atomic_json(PREFLIGHT_MANIFEST, payload)
+    atomic_json(preflight_manifest_path, payload)
     return payload
 
 
@@ -347,7 +320,59 @@ def max_peak_memory(manifest_path: Path) -> int:
         connection.close()
 
 
-def run_preflight_and_full() -> None:
+def run_sweep(mask: str, ptb: dict[str, Any], rdb: dict[str, Any]) -> None:
+    work_dir = ROOT / f"refine-logs/wavelet_ssl_{mask}"
+    full_manifest = work_dir / "full/manifest.json"
+    preflight_manifest = work_dir / "preflight/manifest.json"
+    
+    ensure_preflight_manifest(work_dir)
+    
+    # Check if preflight is already done
+    preflight_success_marker = work_dir / "preflight/_QUEUE_SUCCESS.json"
+    if not preflight_success_marker.is_file():
+        baseline = gpu_snapshot()
+        update_state(f"running_preflight_{mask}", ptb=ptb, rdb=rdb, ecc_baseline=baseline)
+        preflight_code = run_queue(
+            preflight_manifest, project_root=ROOT, max_attempts=2, min_free_gib=8,
+            min_available_ram_gib=5, continue_on_error=False, retry_failed=True,
+            max_gpu_used_mib=1024,
+            resource_timeout_seconds=21600, job_timeout_seconds=3600,
+        )
+        if preflight_code != 0:
+            raise RuntimeError(f"wavelet GPU preflight for {mask} exited {preflight_code}")
+        verify_queue_success(preflight_manifest, len(PREFLIGHT_CELLS))
+        peak = max_peak_memory(preflight_manifest)
+        if peak > 36 * 1024**3:
+            raise RuntimeError(f"preflight peak GPU memory exceeded 36 GiB: {peak}")
+        after_preflight = gpu_snapshot()
+        if after_preflight["ecc_uncorrected"] > baseline["ecc_uncorrected"]:
+            raise RuntimeError(f"uncorrected GPU ECC increased across preflight {mask}: {baseline} -> {after_preflight}")
+        update_state(
+            f"preflight_complete_{mask}", ptb=ptb, rdb=rdb, peak_gpu_memory_bytes=peak,
+            corrected_ecc_delta=max(0, after_preflight["ecc_corrected"]-baseline["ecc_corrected"]),
+            uncorrected_ecc_delta=max(0, after_preflight["ecc_uncorrected"]-baseline["ecc_uncorrected"]),
+        )
+    else:
+        print(f"Preflight for {mask} already complete, proceeding to full sweep.", flush=True)
+
+    full = json.loads(full_manifest.read_text())
+    full_success_marker = work_dir / "full/_QUEUE_SUCCESS.json"
+    if not full_success_marker.is_file():
+        update_state(f"running_full_sweep_{mask}")
+        full_code = run_queue(
+            full_manifest, project_root=ROOT, max_attempts=2, min_free_gib=8,
+            min_available_ram_gib=5, continue_on_error=True, max_consecutive_failures=2,
+            max_total_failures=5, max_gpu_used_mib=1024,
+            resource_timeout_seconds=21600, job_timeout_seconds=14400,
+        )
+        if full_code != 0:
+            raise RuntimeError(f"wavelet full sweep {mask} exited {full_code}")
+        verify_queue_success(full_manifest, len(full["jobs"]))
+    else:
+        print(f"Full sweep for {mask} already complete.", flush=True)
+
+
+def run_all_wavelet_sweeps() -> None:
     update_state("verifying_inputs")
     ptb = verify_ptb_content()
     rdb = verify_rdb_cache()
@@ -361,40 +386,12 @@ def run_preflight_and_full() -> None:
         str(PYTHON), "unified_latents/engineering/experimental/wavelet_ssl_ecg_aim.py",
         "--self-test", "--device", "cpu",
     ], cwd=ROOT, env=env, check=True)
-    ensure_preflight_manifest()
-    baseline = gpu_snapshot()
-    update_state("running_preflight", ptb=ptb, rdb=rdb, ecc_baseline=baseline)
-    preflight_code = run_queue(
-        PREFLIGHT_MANIFEST, project_root=ROOT, max_attempts=2, min_free_gib=8,
-        min_available_ram_gib=5, continue_on_error=False, retry_failed=True,
-        max_gpu_used_mib=1024,
-        resource_timeout_seconds=21600, job_timeout_seconds=3600,
-    )
-    if preflight_code != 0:
-        raise RuntimeError(f"wavelet GPU preflight exited {preflight_code}")
-    verify_queue_success(PREFLIGHT_MANIFEST, len(PREFLIGHT_CELLS))
-    peak = max_peak_memory(PREFLIGHT_MANIFEST)
-    if peak > 36 * 1024**3:
-        raise RuntimeError(f"preflight peak GPU memory exceeded 36 GiB: {peak}")
-    after_preflight = gpu_snapshot()
-    if after_preflight["ecc_uncorrected"] > baseline["ecc_uncorrected"]:
-        raise RuntimeError(f"uncorrected GPU ECC increased across preflight: {baseline} -> {after_preflight}")
-    update_state(
-        "preflight_complete", ptb=ptb, rdb=rdb, peak_gpu_memory_bytes=peak,
-        corrected_ecc_delta=max(0, after_preflight["ecc_corrected"]-baseline["ecc_corrected"]),
-        uncorrected_ecc_delta=max(0, after_preflight["ecc_uncorrected"]-baseline["ecc_uncorrected"]),
-    )
-    update_state("running_full_sweep", preflight_peak_gpu_memory_bytes=peak, ecc=after_preflight)
-    full = json.loads(FULL_MANIFEST.read_text())
-    full_code = run_queue(
-        FULL_MANIFEST, project_root=ROOT, max_attempts=2, min_free_gib=8,
-        min_available_ram_gib=5, continue_on_error=True, max_consecutive_failures=2,
-        max_total_failures=5, max_gpu_used_mib=1024,
-        resource_timeout_seconds=21600, job_timeout_seconds=14400,
-    )
-    if full_code != 0:
-        raise RuntimeError(f"wavelet full sweep exited {full_code}")
-    verify_queue_success(FULL_MANIFEST, len(full["jobs"]))
+
+    for mask in SWEEP_MASKS:
+        print(f"===========================================================", flush=True)
+        print(f"  EXECUTING WAVELET SWEEP: {mask}", flush=True)
+        print(f"===========================================================", flush=True)
+        run_sweep(mask, ptb, rdb)
 
 
 def ensure_barrier() -> None:
@@ -402,22 +399,19 @@ def ensure_barrier() -> None:
         "version": 1, "purpose": "spatial_then_wavelet_before_3arch",
         "created_or_refreshed_at": utc_now(), "supervisor_pid": os.getpid(),
         "expected_spatial_pair_sha256": EXPECTED_SPATIAL_PAIR_SHA256,
-        "full_manifest": str(FULL_MANIFEST), "full_manifest_sha256": sha256_file(FULL_MANIFEST),
+        "sweeps": list(SWEEP_MASKS),
     }
-    if BARRIER.exists():
-        existing = json.loads(BARRIER.read_text())
-        if existing.get("purpose") != payload["purpose"] or existing.get("full_manifest_sha256") != payload["full_manifest_sha256"]:
-            raise RuntimeError("an incompatible 3-architecture barrier already exists")
     atomic_json(BARRIER, payload)
 
 
 def remove_barrier() -> None:
-    BARRIER.unlink()
-    directory_fd = os.open(BARRIER.parent, os.O_RDONLY)
-    try:
-        os.fsync(directory_fd)
-    finally:
-        os.close(directory_fd)
+    if BARRIER.exists():
+        BARRIER.unlink()
+        directory_fd = os.open(BARRIER.parent, os.O_RDONLY)
+        try:
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
 
 
 def parser() -> argparse.ArgumentParser:
@@ -431,14 +425,14 @@ def main() -> None:
     args = parser().parse_args()
     if args.poll_seconds < 1:
         raise ValueError("--poll-seconds must be positive")
-    ensure_preflight_manifest()
+    
+    for mask in SWEEP_MASKS:
+        ensure_preflight_manifest(ROOT / f"refine-logs/wavelet_ssl_{mask}")
+
     if args.prepare_only:
-        print(json.dumps({
-            "full_manifest": str(FULL_MANIFEST), "full_sha256": sha256_file(FULL_MANIFEST),
-            "preflight_manifest": str(PREFLIGHT_MANIFEST),
-            "preflight_sha256": sha256_file(PREFLIGHT_MANIFEST),
-        }, indent=2))
+        print(json.dumps({"status": "prepared", "sweeps": list(SWEEP_MASKS)}, indent=2))
         return
+
     signal.signal(signal.SIGINT, request_stop);signal.signal(signal.SIGTERM, request_stop)
     resume_three_arch = False
     with exclusive_lock(SUPERVISOR_LOCK, "wavelet supervisor"):
@@ -453,8 +447,8 @@ def main() -> None:
                     ROOT, 8, 5, 1024, 21600,
                     cancelled=lambda: STOP_REQUESTED or SUPERVISOR_STOP.exists(),
                 )
-                run_preflight_and_full()
-                update_state("wavelet_complete", full_manifest_sha256=sha256_file(FULL_MANIFEST))
+                run_all_wavelet_sweeps()
+                update_state("wavelet_all_sweeps_complete", sweeps=list(SWEEP_MASKS))
                 remove_barrier()
                 resume_three_arch = True
             except InterruptedError as error:

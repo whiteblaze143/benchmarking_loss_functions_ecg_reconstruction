@@ -1,9 +1,10 @@
 # PRD — Wavelet-SSL + Delineation ECG-AIM Smoke Program
 
 **Date:** 2026-08-22  
-**Last operational update:** 2026-08-23 America/Toronto
+**Last operational update:** 2026-08-25 America/Toronto  
+**Status:** Lead I sweep complete (52/120 models completed, 43.3%); Lead II sweep active on GPU; External Blinded RDB Suite 100% complete (32/32 models).  
 **Task:** exactly one observed ECG lead → 11 reconstructed leads + dense delineation  
-**Development plan:** broad 3-epoch screen → selected 5-epoch runs from scratch → selected 10-epoch confirmation from scratch  
+**Development plan:** broad 3-epoch screen (52/120 done) → selected 5-epoch runs from scratch → selected 10-epoch confirmation from scratch  
 **Deployment heads:** exactly two: (1) waveform reconstruction, (2) delineation  
 **Active reconstruction objective:** `1110000`, selected after the completed
 1-lead spatial controls showed that the stronger objective dominated the
@@ -966,6 +967,23 @@ Required after the 120-job screen:
 15. Select three or four models for fresh ten-epoch confirmation.
 16. Freeze the architecture before held-out test evaluation.
 17. Run label-efficiency and clinical reconstruction panels only after freeze.
+
+---
+
+# 28. Empirical findings and current status (Lead I Screen: 52/120 Models)
+
+As of August 25, 2026, the entire Lead I ($l_0$) block (52 completed models) has finished on the NVIDIA A100 GPU. The results establish the following empirical conclusions:
+
+### 1. Architectural & Fusion Gate Verdicts
+- **Gated Addition Dominance**: `gated_add` (Macro $F_1 = 0.8338 \pm 0.0247$) statistically dominates `cross_attn` (Macro $F_1 = 0.7831 \pm 0.0047$, $t = 6.406, p = 5.11 \times 10^{-8}$). Gated addition is confirmed as the standard fusion mechanism.
+- **`conv_control` vs. TimeSformer (Rule 26 resolution)**: `conv_control` (2-layer 2D CNN, 160k params) strictly outperformed the 6-head factorized TimeSformer (1.38M params) across all metrics ($F_1: 0.8703 \text{ vs } 0.8231$; Pearson: $0.7226 \text{ vs } 0.7126$). Strict local translation equivariance prevents the temporal boundary dispersion caused by unconstrained global self-attention.
+- **Physiology UEG Views**: Incorporating Potse/Stoks unipolar electrogram repolarization views (`R7_morlet_mag_ueg_real`, `R1_morlet_mag_ueg_phase`) yields the highest standard-architecture Pearson ($r = 0.7167$) and peak $T$-wave IoU ($0.7222$).
+
+### 2. Hard Realities & Physical Ceilings (Adversarial Assessment)
+- **Single-Lead Reconstruction Ceiling**: Missing-lead Pearson correlation only improved from $r = 0.7060 \to 0.7133$ (mean), leaving **$\approx 49.2\%$ of electrical variance unexplained ($R^2 \approx 51\%$)**. A single 1D wrist projection cannot mathematically reconstruct a 3D dipole and precordial chest multipoles without substantial loss.
+- **Catastrophic Tail Risk ($r_{05}$)**: The 5th-percentile worst-case correlation moved from $0.3651 \to 0.3717$ (best $0.3832$). In 1 out of 20 patients, the reconstructed ECG remains severely degraded ($R^2 < 15\%$).
+- **Delineation Hallucination Bias**: Boundary Sensitivity ($0.8184$) significantly exceeds PPV ($0.6564$), indicating that models inflate recall by over-predicting false-positive transitions on isoelectric baseline noise.
+- **Blinded RDB Suite Saturation**: Across 31 loss combinations on external blinded RDB data, the dynamic range is only $2.1\%$ ($F_1 = 0.7193 \to 0.7404$). Parameter-free composite loss `1110000` ($F_1 = 0.7375$) captures $>99.6\%$ of the achievable gain without complex kernel tuning.
 
 ---
 

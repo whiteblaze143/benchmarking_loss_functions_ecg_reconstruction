@@ -1,6 +1,8 @@
 name: Deploy rendered Quarto book
 
 on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs automatically at 00:00 UTC (end of each day)
   push:
     branches: [main]
     paths:

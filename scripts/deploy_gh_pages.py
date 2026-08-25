@@ -21,7 +21,13 @@ def main():
     # 2. Render Quarto book if needed
     if "--skip-render" not in sys.argv:
         print("Rendering Quarto book...")
-        res = subprocess.run(["quarto", "render", "book/"], cwd=PROJECT_ROOT)
+        env = os.environ.copy()
+        python = Path(os.path.abspath(sys.executable))
+        env["QUARTO_PYTHON"] = str(python)
+        env["PATH"] = str(python.parent) + os.pathsep + env.get("PATH", "")
+        quarto_bin = PROJECT_ROOT / ".tools/quarto-1.10.18/bin/quarto"
+        quarto_cmd = str(quarto_bin) if quarto_bin.is_file() else "quarto"
+        res = subprocess.run([quarto_cmd, "render", "book/"], cwd=PROJECT_ROOT, env=env)
         if res.returncode != 0:
             print("Error: Quarto render failed.")
             sys.exit(1)
@@ -55,10 +61,11 @@ def main():
 
     if "--push" in sys.argv:
         print("Committing and pushing to gh-pages...")
-        subprocess.run(["git", "add", "."], cwd=SITE_WORKTREE)
-        subprocess.run(["git", "commit", "-m", "chore: update GitHub Pages site build"], cwd=SITE_WORKTREE)
-        subprocess.run(["git", "push", "origin", "gh-pages"], cwd=SITE_WORKTREE)
-        print("Deployment complete!")
+        subprocess.run(["git", "checkout", "-B", "gh-pages", "origin/gh-pages"], cwd=SITE_WORKTREE, check=False)
+        subprocess.run(["git", "add", "."], cwd=SITE_WORKTREE, check=True)
+        subprocess.run(["git", "commit", "-m", "chore: update GitHub Pages site build with latest results"], cwd=SITE_WORKTREE, check=False)
+        subprocess.run(["git", "push", "origin", "gh-pages"], cwd=SITE_WORKTREE, check=True)
+        print("Deployment complete! Live on GitHub Pages.")
     else:
         print("\nSync complete! To commit and push, run:")
         print("python3 scripts/deploy_gh_pages.py --push")

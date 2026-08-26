@@ -1,0 +1,8 @@
+Total completed models evaluated: 1
+
+Top 5 models by mean precordial Delta F1:
+    model_id   status  primary_mean_delta_f1
+__original__ complete                    0.0
+
+--- Example Lead-Specific Boundary Results for Best Model ---
+No models evaluated yet.

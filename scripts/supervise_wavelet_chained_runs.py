@@ -122,25 +122,22 @@ def main() -> None:
         print("\n--- PHASE 1: Wavelet SSL 1110000 (120 Models) ---", flush=True)
         run_sweep_phase("1110000", WORK_1110000, expected_preflight=15, expected_full=120)
 
-        # Phase 2: 1111002 Sweep (120 models)
-        print("\n--- PHASE 2: Wavelet SSL 1111002 (120 Models) ---", flush=True)
+        # Strategic Pivot: Freeze 1111002 and Spatial Arch V1 until temporal convergence is confirmed
+        print("\n" + "="*70, flush=True)
+        print("  PHASE 1 COMPLETE: DIVERTING TO 10-EPOCH CONVERGENCE PANEL PIPELINE", flush=True)
+        print("  (Freezing 1111002 and Spatial Arch queues per strategic protocol)", flush=True)
+        print("="*70, flush=True)
+        
+        update_state("launching_convergence_10e_pipeline")
         wait_for_quiescence()
-        run_sweep_phase("1111002", WORK_1111002, expected_preflight=15, expected_full=120)
-
-        # Phase 3: Spatial Architecture Search V1 (48 models)
-        print("\n--- PHASE 3: Patient Spatial Architecture Search V1 (48 Models) ---", flush=True)
-        wait_for_quiescence()
-        run_sweep_phase("spatial_arch_1lead_v1", WORK_SPATIAL_V1, expected_preflight=8, expected_full=48)
-
-        # Phase 4: Handoff to 3-Architecture Queue
-        print("\n--- PHASE 4: Removing Barrier & Launching 3-Arch Queue ---", flush=True)
-        update_state("all_programs_complete")
-        if BARRIER.exists():
-            BARRIER.unlink()
-            
-        print("Handoff to run_3arch_queue.py on GPU...", flush=True)
-        update_state("handoff_to_3arch")
-        os.execv(str(PYTHON), [str(PYTHON), str(ROOT / "scripts/run_3arch_queue.py")])
+        
+        # Invoke convergence pipeline
+        conv_script = ROOT / "scripts/pipeline_convergence_10e.py"
+        if conv_script.is_file():
+            print(f"[{utc_now()}] Executing 10-Epoch Convergence Pipeline: {conv_script}", flush=True)
+            subprocess.run([str(PYTHON), str(conv_script), "--auto-launch"], check=True)
+        else:
+            print(f"[{utc_now()}] Convergence script {conv_script} not yet generated. Waiting for definition.", flush=True)
 
     except InterruptedError as e:
         update_state("paused", error=str(e))

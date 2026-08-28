@@ -1,0 +1,12 @@
+{
+  "counts": {
+    "completed": 115,
+    "failed_oom": 2,
+    "failed_transient": 2,
+    "stuck": 1
+  },
+  "manifest_sha256": "008a7d9b49a8d912cc9bdd132a93c493128f17a9dcb944d2984e40112466aec6",
+  "status": "incomplete",
+  "stopped_at": "2026-08-26T16:36:32Z",
+  "version": 1
+}

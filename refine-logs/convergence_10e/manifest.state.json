@@ -2185,20 +2185,16 @@
       "seed": 42
     }
   ],
-  "created_at": "2026-08-27T01:48:19Z",
-  "custom_wavelet_assets": {
-    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-assets/repolarization_ueg_wavelets_v1.pt": "97912dfcf0f4ed53fc3344304a6fda1ac947274972e76d11c4805c4f8ece493f",
-    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-assets/repolarization_ueg_wavelets_wyatt_010.pt": "0964337f5be3472d63d32ef57706a1f07f46e0ff0f2a75dc92ac8ffc4486d0ae",
-    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-assets/repolarization_ueg_wavelets_wyatt_025.pt": "a982ce8a8d9d92955fca5ef74e6d5f1f49b52f00bd83cab06655812e08a91887",
-    "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-assets/repolarization_ueg_wavelets_wyatt_050.pt": "76cde89ba2a2e4f87a12ea38a74ac8f79b323902bf890d431242bd556cce28e3"
+  "counts": {
+    "completed": 13,
+    "failed_transient": 1,
+    "pending": 9,
+    "running": 1
   },
-  "data_manifest_sha256": "87adfbc339de7faf1fdff96b0728b3ad3a4d484808b8fa123d92c8b6114f0541",
-  "delineation_manifest_sha256": "f37f48fb68f0210233c9c4f4efef4305e9930e8102f803799d71afffea1e594f",
-  "description": "10-Epoch Convergence Study for Frozen 12-Model Panel across Lead I & Lead II",
-  "experiment_name": "convergence_10epoch_panel",
   "jobs": [
     {
-      "architecture": "conv_control",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -2281,14 +2277,17 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T02:15:02Z",
+      "error": "child exited with status 1",
       "id": "conv10e_conv_control_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_conv_control_s42_l0",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/000_conv10e_conv_control_s42_l0.log",
+      "returncode": 1,
+      "started_at": "2026-08-27T01:48:22Z",
+      "status": "failed_transient"
     },
     {
-      "architecture": "conv_control",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -2371,14 +2370,16 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T03:36:44Z",
       "id": "conv10e_conv_control_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_conv_control_s42_l1",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/001_conv10e_conv_control_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T02:15:04Z",
+      "status": "completed"
     },
     {
-      "architecture": "R7_morlet_mag_ueg_real",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -2467,14 +2468,16 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T05:33:08Z",
       "id": "conv10e_R7_morlet_mag_ueg_real_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_R7_morlet_mag_ueg_real_s42_l0",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/002_conv10e_R7_morlet_mag_ueg_real_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T03:36:48Z",
+      "status": "completed"
     },
     {
-      "architecture": "R7_morlet_mag_ueg_real",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -2563,14 +2566,16 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T07:30:51Z",
       "id": "conv10e_R7_morlet_mag_ueg_real_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_R7_morlet_mag_ueg_real_s42_l1",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/003_conv10e_R7_morlet_mag_ueg_real_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T05:33:11Z",
+      "status": "completed"
     },
     {
-      "architecture": "R5_morlet_mag_ueg_phase_wyatt",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -2659,14 +2664,16 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_wyatt_025.pt"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T09:29:15Z",
       "id": "conv10e_R5_morlet_mag_ueg_phase_wyatt_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_R5_morlet_mag_ueg_phase_wyatt_s42_l0",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/004_conv10e_R5_morlet_mag_ueg_phase_wyatt_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T07:30:54Z",
+      "status": "completed"
     },
     {
-      "architecture": "R5_morlet_mag_ueg_phase_wyatt",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -2755,14 +2762,16 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_wyatt_025.pt"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T11:27:59Z",
       "id": "conv10e_R5_morlet_mag_ueg_phase_wyatt_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_R5_morlet_mag_ueg_phase_wyatt_s42_l1",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/005_conv10e_R5_morlet_mag_ueg_phase_wyatt_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T09:29:18Z",
+      "status": "completed"
     },
     {
-      "architecture": "ssl_log_magnitude_phase_sin_local_gated_add",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -2845,14 +2854,16 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T13:26:32Z",
       "id": "conv10e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/006_conv10e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T11:28:02Z",
+      "status": "completed"
     },
     {
-      "architecture": "ssl_log_magnitude_phase_sin_local_gated_add",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -2935,14 +2946,16 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T15:24:45Z",
       "id": "conv10e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l1",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/007_conv10e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T13:26:35Z",
+      "status": "completed"
     },
     {
-      "architecture": "ssl_log_magnitude_real_both_gated_add",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3025,14 +3038,16 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T17:22:09Z",
       "id": "conv10e_ssl_log_magnitude_real_both_gated_add_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_ssl_log_magnitude_real_both_gated_add_s42_l0",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/008_conv10e_ssl_log_magnitude_real_both_gated_add_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T15:24:48Z",
+      "status": "completed"
     },
     {
-      "architecture": "ssl_log_magnitude_real_both_gated_add",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3115,14 +3130,16 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T19:19:52Z",
       "id": "conv10e_ssl_log_magnitude_real_both_gated_add_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_ssl_log_magnitude_real_both_gated_add_s42_l1",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/009_conv10e_ssl_log_magnitude_real_both_gated_add_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T17:22:11Z",
+      "status": "completed"
     },
     {
-      "architecture": "tf_sc16_cy4",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3205,14 +3222,16 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T21:01:25Z",
       "id": "conv10e_tf_sc16_cy4_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_tf_sc16_cy4_s42_l0",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/010_conv10e_tf_sc16_cy4_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T19:19:55Z",
+      "status": "completed"
     },
     {
-      "architecture": "tf_sc16_cy4",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3295,14 +3314,16 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-27T22:42:48Z",
       "id": "conv10e_tf_sc16_cy4_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_tf_sc16_cy4_s42_l1",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/011_conv10e_tf_sc16_cy4_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T21:01:28Z",
+      "status": "completed"
     },
     {
-      "architecture": "tf_sc16_cy8",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3385,14 +3406,16 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-28T00:24:21Z",
       "id": "conv10e_tf_sc16_cy8_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_tf_sc16_cy8_s42_l0",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/012_conv10e_tf_sc16_cy8_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-27T22:42:51Z",
+      "status": "completed"
     },
     {
-      "architecture": "tf_sc16_cy8",
+      "attempts": 1,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3475,14 +3498,17 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
+      "completed_at": "2026-08-28T02:05:24Z",
       "id": "conv10e_tf_sc16_cy8_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_tf_sc16_cy8_s42_l1",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/013_conv10e_tf_sc16_cy8_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-28T00:24:24Z",
+      "status": "completed"
     },
     {
-      "architecture": "del_wave_ce",
+      "attempts": 1,
+      "cell": {},
+      "child_pid": 1356638,
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3565,14 +3591,14 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
       "id": "conv10e_del_wave_ce_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_del_wave_ce_s42_l0",
-      "seed": 42
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/014_conv10e_del_wave_ce_s42_l0.log",
+      "started_at": "2026-08-28T02:05:27Z",
+      "status": "running"
     },
     {
-      "architecture": "del_wave_ce",
+      "attempts": 0,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3655,14 +3681,12 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
       "id": "conv10e_del_wave_ce_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_del_wave_ce_s42_l1",
-      "seed": 42
+      "status": "pending"
     },
     {
-      "architecture": "C1_E1_morlet_mag_morlet_phase",
+      "attempts": 0,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3745,14 +3769,12 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
       "id": "conv10e_C1_E1_morlet_mag_morlet_phase_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_C1_E1_morlet_mag_morlet_phase_s42_l0",
-      "seed": 42
+      "status": "pending"
     },
     {
-      "architecture": "C1_E1_morlet_mag_morlet_phase",
+      "attempts": 0,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3835,14 +3857,12 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
       "id": "conv10e_C1_E1_morlet_mag_morlet_phase_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_C1_E1_morlet_mag_morlet_phase_s42_l1",
-      "seed": 42
+      "status": "pending"
     },
     {
-      "architecture": "A0_raw",
+      "attempts": 0,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3925,14 +3945,12 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
       "id": "conv10e_A0_raw_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_A0_raw_s42_l0",
-      "seed": 42
+      "status": "pending"
     },
     {
-      "architecture": "A0_raw",
+      "attempts": 0,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -4015,14 +4033,12 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
       "id": "conv10e_A0_raw_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_A0_raw_s42_l1",
-      "seed": 42
+      "status": "pending"
     },
     {
-      "architecture": "A0_wave_noSSL_gated_add",
+      "attempts": 0,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -4105,14 +4121,12 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
       "id": "conv10e_A0_wave_noSSL_gated_add_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_A0_wave_noSSL_gated_add_s42_l0",
-      "seed": 42
+      "status": "pending"
     },
     {
-      "architecture": "A0_wave_noSSL_gated_add",
+      "attempts": 0,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -4195,14 +4209,12 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
       "id": "conv10e_A0_wave_noSSL_gated_add_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_A0_wave_noSSL_gated_add_s42_l1",
-      "seed": 42
+      "status": "pending"
     },
     {
-      "architecture": "ssl_magnitude_phase_both_cross_attn",
+      "attempts": 0,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -4285,14 +4297,12 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
       "id": "conv10e_ssl_magnitude_phase_both_cross_attn_s42_l0",
-      "lead": 0,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_ssl_magnitude_phase_both_cross_attn_s42_l0",
-      "seed": 42
+      "status": "pending"
     },
     {
-      "architecture": "ssl_magnitude_phase_both_cross_attn",
+      "attempts": 0,
+      "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -4375,30 +4385,12 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "epochs": 10,
       "id": "conv10e_ssl_magnitude_phase_both_cross_attn_s42_l1",
-      "lead": 1,
-      "output_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/runs/conv10e_ssl_magnitude_phase_both_cross_attn_s42_l1",
-      "seed": 42
+      "status": "pending"
     }
   ],
-  "model_sha256": "8df118fb2bd004d4ae37ee51aa921a8f97d6dc949eae481b2c13d6d0fc5f034e",
-  "panel_architectures": [
-    "conv_control",
-    "R7_morlet_mag_ueg_real",
-    "R5_morlet_mag_ueg_phase_wyatt",
-    "ssl_log_magnitude_phase_sin_local_gated_add",
-    "ssl_log_magnitude_real_both_gated_add",
-    "tf_sc16_cy4",
-    "tf_sc16_cy8",
-    "del_wave_ce",
-    "C1_E1_morlet_mag_morlet_phase",
-    "A0_raw",
-    "A0_wave_noSSL_gated_add",
-    "ssl_magnitude_phase_both_cross_attn"
-  ],
-  "total_epochs": 240,
-  "total_jobs": 24,
-  "trainer_sha256": "6a2221fd2a3487d8cbc5181150e25e41e56b3b8e7ee779a4a7b799bb8d4ac7b0",
+  "manifest_sha256": "e6236ff997da79acbbe489cf0681b0c6b2ed8b7ee79dbc9b6817ed6e3ed29363",
+  "queue_status": "running",
+  "updated_at": "2026-08-28T02:05:27Z",
   "version": 2
 }

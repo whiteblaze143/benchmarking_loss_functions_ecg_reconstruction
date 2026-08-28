@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Pipeline 10-Epoch Convergence Panel, Conditional 15E Extension & Finalist Selector (Protocol of Record v3.2):
+"""Pipeline 10-Epoch Convergence Panel, Conditional 15E Extension & Finalist Selector (Protocol of Record v3.3):
 1. Ingests Lead-I & Lead-II 3E screening results from refine-logs/wavelet_ssl_1110000/full/queue.sqlite.
-2. Executes pre-specified immutable 12-model panel (24 runs, 240 epochs total, saving every epoch).
+2. Executes pre-specified immutable 12-model panel (24 runs, 240 epochs total, logging metrics every epoch).
 3. Evaluates terminal learning dynamics: M_max, e_max, M_10, and terminal regression slope beta_{7:10}.
 4. Triggers conditional 15-epoch extension with noise floor: e_max in {9, 10} AND (delta_10:8 > 0.0010 OR beta_{7:10} > 0.0005).
 5. Predefines single checkpoint rule: e_m* = argmax_e r_val(e) to extract all metrics synchronously.
@@ -25,6 +25,7 @@ if str(ROOT) not in sys.path:
 from scripts.wavelet_ssl_queue import atomic_json, run_queue
 
 SCREENING_DB = ROOT / "refine-logs/wavelet_ssl_1110000/full/queue.sqlite"
+SCREENING_MANIFEST = ROOT / "refine-logs/wavelet_ssl_1110000/full/manifest.json"
 CONVERGENCE_DIR = ROOT / "refine-logs/convergence_10e"
 MANIFEST_PATH = CONVERGENCE_DIR / "manifest.json"
 QUEUE_DB_PATH = CONVERGENCE_DIR / "queue.sqlite"
@@ -88,8 +89,17 @@ def load_screening_results(db_path: Path) -> tuple[dict[str, dict[str, Any]], di
 
 def build_convergence_manifest(panel_archs: list[str], l0: dict[str, Any], l1: dict[str, Any], target_epochs: int = 10, prefix: str = "conv10e") -> dict[str, Any]:
     CONVERGENCE_DIR.mkdir(parents=True, exist_ok=True)
-    cells = []
+    
+    # Load base metadata verification hashes from screening manifest
+    base_metadata = {}
+    if SCREENING_MANIFEST.is_file():
+        with open(SCREENING_MANIFEST) as f:
+            sm = json.load(f)
+        for k in ["data_manifest_sha256", "delineation_manifest_sha256", "model_sha256", "trainer_sha256", "custom_wavelet_assets", "version"]:
+            if k in sm:
+                base_metadata[k] = sm[k]
 
+    cells = []
     for arch in panel_archs:
         for lead_idx, lead_dict, lead_tag in [(0, l0, "l0"), (1, l1, "l1")]:
             orig = lead_dict.get(arch)
@@ -134,13 +144,13 @@ def build_convergence_manifest(panel_archs: list[str], l0: dict[str, Any], l1: d
                     modified_cmd.extend(["--output-dir", str(run_dir)])
                     skip_next = True
                 elif token == "--checkpoint-policy":
-                    modified_cmd.extend(["--checkpoint-policy", "every_epoch"])
+                    modified_cmd.extend(["--checkpoint-policy", "best"])
                     skip_next = True
                 else:
                     modified_cmd.append(token)
 
             if "--checkpoint-policy" not in modified_cmd:
-                modified_cmd.extend(["--checkpoint-policy", "every_epoch"])
+                modified_cmd.extend(["--checkpoint-policy", "best"])
 
             cells.append({
                 "id": run_id,
@@ -153,51 +163,23 @@ def build_convergence_manifest(panel_archs: list[str], l0: dict[str, Any], l1: d
             })
 
     manifest = {
-        "version": 1,
+        "version": base_metadata.get("version", 2),
+        "data_manifest_sha256": base_metadata.get("data_manifest_sha256"),
+        "delineation_manifest_sha256": base_metadata.get("delineation_manifest_sha256"),
+        "model_sha256": base_metadata.get("model_sha256"),
+        "trainer_sha256": base_metadata.get("trainer_sha256"),
+        "custom_wavelet_assets": base_metadata.get("custom_wavelet_assets", {}),
         "experiment_name": f"convergence_{target_epochs}epoch_panel",
         "description": f"{target_epochs}-Epoch Convergence Study for Frozen 12-Model Panel across Lead I & Lead II",
         "total_jobs": len(cells),
         "total_epochs": len(cells) * target_epochs,
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "panel_architectures": panel_archs,
+        "jobs": cells,
         "cells": cells,
     }
     atomic_json(MANIFEST_PATH, manifest)
     return manifest
-
-def init_sqlite_queue(manifest: dict[str, Any]) -> None:
-    QUEUE_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(QUEUE_DB_PATH)
-    with conn:
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS jobs (
-                id TEXT PRIMARY KEY,
-                ordinal INTEGER,
-                command_json TEXT,
-                command_sha256 TEXT,
-                cell_json TEXT,
-                status TEXT,
-                attempts INTEGER DEFAULT 0,
-                child_pid INTEGER,
-                started_at TEXT,
-                completed_at TEXT,
-                returncode INTEGER,
-                error TEXT,
-                log_path TEXT,
-                output_dir TEXT,
-                summary_json TEXT,
-                updated_at TEXT
-            )
-        """)
-        for idx, cell in enumerate(manifest["cells"]):
-            cmd_json = json.dumps(cell["command"])
-            cell_json = json.dumps(cell)
-            conn.execute("""
-                INSERT INTO jobs (id, ordinal, command_json, cell_json, status, output_dir, updated_at)
-                VALUES (?, ?, ?, ?, 'pending', ?, ?)
-                ON CONFLICT(id) DO UPDATE SET command_json=excluded.command_json, cell_json=excluded.cell_json
-            """, (cell["id"], idx, cmd_json, cell_json, cell["output_dir"], time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())))
-    conn.close()
 
 def compute_terminal_slope(series: list[float], epochs: list[int] = None) -> float:
     """Computes least-squares linear regression slope beta over terminal window (e.g. epochs 7..10)."""
@@ -433,7 +415,7 @@ def compute_finalist_selection(convergence_results: list[dict[str, Any]]) -> lis
     return [f[1] for f in finalists]
 
 def main():
-    parser = argparse.ArgumentParser(description="10-Epoch Convergence Pipeline & Finalist Selector (v3.2)")
+    parser = argparse.ArgumentParser(description="10-Epoch Convergence Pipeline & Finalist Selector (v3.3)")
     parser.add_argument("--auto-launch", action="store_true", help="Launch the queue immediately after generation")
     parser.add_argument("--analyze-only", action="store_true", help="Analyze existing 10E convergence curves")
     args = parser.parse_args()
@@ -445,7 +427,7 @@ def main():
         return
 
     print("="*88)
-    print("  LAUNCHING PRE-SPECIFIED 12-MODEL IMMUTABLE CONVERGENCE PANEL (v3.2)")
+    print("  LAUNCHING PRE-SPECIFIED 12-MODEL IMMUTABLE CONVERGENCE PANEL (v3.3)")
     print("="*88)
 
     l0, l1 = load_screening_results(SCREENING_DB)
@@ -455,9 +437,10 @@ def main():
         print(f"  [{idx+1:02d}/12] Pre-specified panel member: {arch}")
 
     manifest = build_convergence_manifest(FROZEN_CONVERGENCE_PANEL, l0, l1, target_epochs=10, prefix="conv10e")
-    init_sqlite_queue(manifest)
-    print(f"\nManifest written to: {MANIFEST_PATH}")
-    print(f"SQLite Queue initialized: {QUEUE_DB_PATH} ({manifest['total_jobs']} jobs, {manifest['total_epochs']} total epochs)")
+    print(f"\nManifest written to: {MANIFEST_PATH} ({manifest['total_jobs']} jobs, {manifest['total_epochs']} total epochs)")
+
+    if QUEUE_DB_PATH.exists():
+        QUEUE_DB_PATH.unlink()
 
     if args.auto_launch:
         print("\nExecuting 10-Epoch Convergence Panel on GPU...")
@@ -474,7 +457,8 @@ def main():
         if extend_archs:
             print(f"\nExtending {len(extend_archs)} models to 15 epochs...")
             ext_manifest = build_convergence_manifest(extend_archs, l0, l1, target_epochs=15, prefix="conv15e")
-            init_sqlite_queue(ext_manifest)
+            ext_q_path = CONVERGENCE_DIR / "queue.sqlite"
+            if ext_q_path.exists(): ext_q_path.unlink()
             run_queue(
                 MANIFEST_PATH, project_root=ROOT, max_attempts=2, min_free_gib=8,
                 min_available_ram_gib=5, continue_on_error=True, max_consecutive_failures=2,

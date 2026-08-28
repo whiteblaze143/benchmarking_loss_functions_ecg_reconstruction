@@ -1,11 +1,9 @@
 {
   "cells": 60,
   "counts": {
-    "completed": 88,
-    "failed_oom": 1,
-    "failed_transient": 1,
-    "pending": 28,
-    "running": 1,
+    "completed": 115,
+    "failed_oom": 2,
+    "failed_transient": 2,
     "stuck": 1
   },
   "jobs": [
@@ -11228,7 +11226,6 @@
         "wavelet_fusion": "cross_attn",
         "wavelet_heads": 6
       },
-      "child_pid": 1150246,
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -11311,13 +11308,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T02:00:46Z",
       "id": "ssl_log_magnitude_real_local_cross_attn_1110000_s42_l1",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/091_ssl_log_magnitude_real_local_cross_attn_1110000_s42_l1.log",
+      "returncode": 0,
       "started_at": "2026-08-26T01:25:02Z",
-      "status": "running"
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -11430,11 +11429,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T02:36:08Z",
       "id": "ssl_log_magnitude_real_both_gated_add_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/092_ssl_log_magnitude_real_both_gated_add_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T02:00:48Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -11547,11 +11550,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T03:11:31Z",
       "id": "ssl_log_magnitude_real_both_cross_attn_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/093_ssl_log_magnitude_real_both_cross_attn_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T02:36:11Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -11664,11 +11671,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T03:46:44Z",
       "id": "ssl_global_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/094_ssl_global_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T03:11:33Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -11781,11 +11792,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T04:21:56Z",
       "id": "ssl_both_infer_b_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/095_ssl_both_infer_b_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T03:46:46Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -11898,11 +11913,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T05:00:29Z",
       "id": "ssl_both_infer_mean_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/096_ssl_both_infer_mean_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T04:21:58Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -12015,11 +12034,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T05:30:51Z",
       "id": "tf_sc16_cy4_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/097_tf_sc16_cy4_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T05:00:31Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -12132,11 +12155,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T06:01:24Z",
       "id": "tf_sc16_cy8_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/098_tf_sc16_cy8_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T05:30:53Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -12249,11 +12276,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T06:36:36Z",
       "id": "tf_sc32_cy4_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/099_tf_sc32_cy4_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T06:01:26Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -12366,11 +12397,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T07:16:39Z",
       "id": "tf_sc48_cy6_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/100_tf_sc48_cy6_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T06:36:39Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -12483,11 +12518,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T07:47:32Z",
       "id": "tf_small96_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/101_tf_small96_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T07:16:41Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -12600,11 +12639,16 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T07:47:56Z",
+      "error": "child exited with status 1",
       "id": "tf_deep4_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/102_tf_deep4_1110000_s42_l1.log",
+      "returncode": 1,
+      "started_at": "2026-08-26T07:47:36Z",
+      "status": "failed_oom"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -12717,11 +12761,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T08:12:58Z",
       "id": "conv_control_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/103_conv_control_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T07:47:58Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -12834,11 +12882,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T08:48:11Z",
       "id": "ssl_w0.01_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/104_ssl_w0.01_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T08:13:01Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -12951,11 +13003,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T09:23:24Z",
       "id": "ssl_w0.1_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/105_ssl_w0.1_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T08:48:13Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "byol_tau": 0.99,
@@ -13071,11 +13127,15 @@
         "--byol-tau",
         "0.99"
       ],
+      "completed_at": "2026-08-26T09:58:36Z",
       "id": "tau0.99_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/106_tau0.99_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T09:23:26Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "byol_tau": 0.999,
@@ -13191,11 +13251,15 @@
         "--byol-tau",
         "0.999"
       ],
+      "completed_at": "2026-08-26T10:33:49Z",
       "id": "tau0.999_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/107_tau0.999_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T09:58:38Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -13308,11 +13372,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T10:56:11Z",
       "id": "del_ce_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/108_del_ce_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T10:33:51Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.1,
         "delineation_hidden": 96,
@@ -13425,11 +13493,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T11:18:54Z",
       "id": "del_boundary_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/109_del_boundary_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T10:56:14Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -13542,11 +13614,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T11:54:06Z",
       "id": "del_wave_ce_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/110_del_wave_ce_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T11:18:56Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.1,
         "delineation_hidden": 96,
@@ -13659,11 +13735,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T12:29:19Z",
       "id": "del_wave_boundary_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/111_del_wave_boundary_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T11:54:09Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 64,
@@ -13776,11 +13856,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T12:50:32Z",
       "id": "del_head64k9_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/112_del_head64k9_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T12:29:21Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 128,
@@ -13893,11 +13977,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T13:15:34Z",
       "id": "del_head128k25_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/113_del_head128k25_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T12:50:34Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -14009,11 +14097,15 @@
         "--mask-type-mode",
         "legacy"
       ],
+      "completed_at": "2026-08-26T13:51:07Z",
       "id": "del_fid_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/114_del_fid_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T13:15:36Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -14126,11 +14218,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T14:29:49Z",
       "id": "E1_ssl_local_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/115_E1_ssl_local_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T13:51:09Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -14243,11 +14339,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T15:08:42Z",
       "id": "E1_ssl_both_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/116_E1_ssl_both_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T14:29:52Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -14360,11 +14460,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T15:47:57Z",
       "id": "E1_ssl_cross_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/117_E1_ssl_cross_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T15:08:46Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -14477,11 +14581,15 @@
         "all_masked",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T16:10:19Z",
       "id": "mask_fixed_raw_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/118_mask_fixed_raw_1110000_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-26T15:47:59Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -14594,12 +14702,17 @@
         "all_masked",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-26T16:36:32Z",
+      "error": "child exited with status 1",
       "id": "mask_fixed_wave_1110000_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/119_mask_fixed_wave_1110000_s42_l1.log",
+      "returncode": 1,
+      "started_at": "2026-08-26T16:10:21Z",
+      "status": "failed_transient"
     }
   ],
   "manifest_sha256": "008a7d9b49a8d912cc9bdd132a93c493128f17a9dcb944d2984e40112466aec6",
-  "queue_status": "running",
-  "updated_at": "2026-08-26T01:25:02Z",
+  "queue_status": "failed",
+  "updated_at": "2026-08-26T16:36:32Z",
   "version": 2
 }

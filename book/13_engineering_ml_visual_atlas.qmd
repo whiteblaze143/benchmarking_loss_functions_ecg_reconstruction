@@ -23,10 +23,18 @@ stores = {
     "clinical factorial results": ROOT / "results/factorial_v4_clinical",
     "clinical biomarker DB": ROOT / "results/clinical_biomarkers_multids/clinical_metrics.db",
     "checkpoint catalog": ROOT / "results/checkpoint_store/catalog.sqlite",
-    "one-lead results DB": ROOT / "results/onelead_results.sqlite",
+    "one-lead screen queue": ROOT / "refine-logs/wavelet_ssl_1110000/full/queue.sqlite",
+    "one-lead convergence queue": ROOT / "refine-logs/convergence_10e/queue.sqlite",
+    "one-lead checkpoint catalog": ROOT / "results/onelead_checkpoint_store/catalog.sqlite",
+    "one-lead RDB screened": ROOT / "results/onelead_rdb_semiseg_screened_v1/compact.sqlite",
+    "three-lead LUDB blinded": ROOT / "results/ecgaim_ludb_semiseg_blinded/compact.sqlite",
+    "three-lead RDB blinded": ROOT / "results/ecgaim_rdb_semiseg_blinded/compact.sqlite",
+    "three-lead RDB oracle": ROOT / "results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite",
     "checkpoint embeddings DB": ROOT / "results/checkpoint_embeddings/compact.sqlite",
-    "mixed-level manifest": ROOT / "experiment_queue/factorial_mixed_level/manifest.json",
-    "mixed-level queue state": ROOT / "experiment_queue/factorial_mixed_level/queue_state.json",
+    "mixed-level manifest": ROOT / "refine-logs/factorial_manifest.json",
+    "mixed-level queue state": ROOT / "refine-logs/queue/queue_state.json",
+    "three-architecture queue state": ROOT / "refine-logs/queue_3arch/queue_state.json",
+    "one-lead spatial queue state": ROOT / "refine-logs/queue_spatial_1lead/queue_state.json",
 }
 
 def path_bytes(path):

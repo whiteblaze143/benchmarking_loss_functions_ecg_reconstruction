@@ -58,11 +58,20 @@ architecture claim only after replication across seeds and both observed leads.
 Permutation controls are essential because a learned positional pathway can
 help through capacity even when its geometry is physiologically wrong.
 
-## Missing evidence
+## Completed evidence now separated from this design chapter
 
-- A normalized, per-run metric table for every registered one-lead checkpoint.
-- Seed replication for promoted spatial comparisons.
-- Common clinical evaluation under a one-lead-specific protocol.
-- External delineation for promoted models, separate from development-time RDB
-  supervision.
+The legacy spatial study has 60 completed runs (ten variants × three masks ×
+two observed leads). Its recoverable validation loss and missing-lead Pearson
+metrics are parsed from the terminal training logs in **Completed One-Lead
+ECG-AIM Spatial Study**. The corresponding screened RDB database contains the
+full-stage waveform, six-boundary timing, and P/QRS/T region summaries and is
+analyzed in **One-Lead ECG-AIM External RDB Evaluation**.
 
+Those results do not eliminate the remaining evidence gaps:
+
+- seed replication for promoted spatial comparisons;
+- a common held-out per-record reconstruction ledger rather than log-only
+  validation summaries;
+- prospective clinical validation under a one-lead-specific intended use;
+- blinded evaluation of newly promoted convergence models without reusing RDB
+  for both development and final model selection.

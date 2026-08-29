@@ -34,7 +34,7 @@ from scripts.onelead_checkpoint_store import (
 )
 from scripts.evaluate_ecgaim_ludb_blinded_daemon import BOUNDARIES, monotonic_match_indices
 
-DEFAULT_DB = ROOT / "results/onelead_rdb_semiseg_blinded/compact.sqlite"
+DEFAULT_DB = ROOT / "results/onelead_rdb_semiseg_relative_v2/compact.sqlite"
 DEFAULT_CACHE_ROOT = ROOT / "data/rdb_wavelet_delineation_cache"
 TARGET_FS = 500
 TARGET_SAMPLES = 5000

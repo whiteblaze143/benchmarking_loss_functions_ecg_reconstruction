@@ -1,0 +1,245 @@
+---
+title: "One-Lead ECG-AIM External RDB Evaluation"
+subtitle: "Screening decisions, six-boundary timing, regions, and reconstructed-signal fidelity"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: onelead-rdb-controls
+TOP_K = 10
+STAGE = "full"
+LEAD_GROUP = "all"
+```
+
+```{python}
+#| label: onelead-rdb-setup
+import pandas as pd
+import plotly.express as px
+from live_results import *
+
+RDB = source_path("results/onelead_rdb_semiseg_screened_v1/compact.sqlite")
+tables_rdb = load_onelead_rdb(RDB)
+evaluations = tables_rdb["evaluations"]
+boundaries = tables_rdb["boundary_summaries"]
+regions = tables_rdb["region_summaries"]
+signals = tables_rdb["signal_summaries"]
+thresholds = tables_rdb["thresholds"]
+decisions = tables_rdb["screening_decisions"]
+spatial_training = load_spatial_training_logs("refine-logs/queue_spatial_1lead/jobs")
+
+model_evaluations = evaluations.query("architecture != 'original'").copy()
+full_evaluations = model_evaluations.query("stage == @STAGE").copy()
+full_evaluations["variant"] = full_evaluations.model_id.str.extract(
+    r"spatial_1lead_(.+)_\d{7}_s\d+_l[01]$")[0]
+```
+
+## Protocol boundary
+
+This is the external RDB evaluation for one-lead ECG-AIM checkpoints. It is not
+the three-lead RDB oracle or blinded evaluator. RDB supplies six genuine
+boundaries—P/QRS/T onset and offset. It does not supply peak annotations, so no
+P-, QRS-, or T-peak timing result is invented. Screening thresholds and
+upper-confidence-bound decisions are reported separately from raw performance.
+
+## Database provenance and evaluation ledger
+
+```{python}
+#| label: onelead-rdb-ledger
+display(source_inventory({"one-lead screened RDB": RDB}))
+display(evaluations.groupby(["stage", "input_lead", "status"], dropna=False)
+        .size().rename("evaluations").reset_index())
+display(evaluations.sort_values(["stage", "input_lead", "model_id"]))
+display(thresholds)
+display(decisions.sort_values(["input_lead", "decision", "model_id"]))
+```
+
+The ledger exposes attempts, checkpoint digests, durations, record counts, raw
+screening endpoints, and errors. A model is not called externally validated
+merely because it passed an internal screen.
+
+## Six-boundary timing results
+
+```{python}
+#| label: onelead-rdb-boundaries
+display(boundaries.sort_values(["stage", "model_id", "lead_group", "boundary"]))
+usable_b = boundaries.query("stage == @STAGE") if not boundaries.empty else boundaries
+if not usable_b.empty:
+    fig = px.scatter(usable_b, x="mae_ms", y="micro_f1_20ms", color="boundary",
+                     symbol="lead_group", hover_name="model_id",
+                     hover_data=["bias_ms", "p95_abs_ms", "sensitivity_20ms", "ppv_20ms"],
+                     title="RDB boundary timing: tolerance F1 versus matched-event MAE")
+    fig.show()
+```
+
+`micro_f1_20ms` measures event detection within a strict 20-ms tolerance;
+`mae_ms`, `bias_ms`, and `p95_abs_ms` are conditional on matched events under
+the evaluator's wider matching rule. These quantities answer different
+questions and must not be collapsed into one unvalidated score.
+
+## Region overlap
+
+```{python}
+#| label: onelead-rdb-regions
+display(regions.sort_values(["stage", "model_id", "lead_group", "wave"]))
+usable_r = regions.query("stage == @STAGE") if not regions.empty else regions
+if not usable_r.empty:
+    fig = px.scatter(usable_r, x="iou", y="dice", color="wave", symbol="lead_group",
+                     hover_name="model_id", hover_data=["sensitivity", "specificity", "ppv"],
+                     title="RDB P/QRS/T region overlap")
+    fig.show()
+```
+
+## Reconstructed-signal fidelity
+
+```{python}
+#| label: onelead-rdb-signals
+display(signals.sort_values(["stage", "model_id", "lead_group"]))
+usable_s = signals.query("stage == @STAGE") if not signals.empty else signals
+if not usable_s.empty:
+    fig = px.scatter(usable_s, x="record_mse_mean", y="record_pearson_mean",
+                     color="lead_group", hover_name="model_id",
+                     hover_data=["record_pearson_p05", "record_mse_p95", "bias_mv",
+                                 "loa_lower_mv", "loa_upper_mv"],
+                     title="RDB waveform fidelity and worst-tail behavior")
+    fig.show()
+```
+
+## Metric-specific external leaders
+
+```{python}
+#| label: onelead-rdb-leaders
+for name, frame, groups in [
+    ("evaluation", evaluations, ("stage", "input_lead")),
+    ("boundary", boundaries, ("stage", "lead_group", "boundary")),
+    ("region", regions, ("stage", "lead_group", "wave")),
+    ("signal", signals, ("stage", "lead_group")),
+]:
+    metrics = numeric_metrics(frame)
+    display(pd.DataFrame([{"table": name, "rows": len(frame),
+                           "models": frame.model_id.nunique() if "model_id" in frame else 0,
+                           "numeric_endpoints": ", ".join(metrics)}]))
+    display(leaderboard(frame, metrics, id_col="model_id", group_cols=groups, k=TOP_K))
+```
+
+External ranking remains endpoint-specific. A high boundary F1 does not imply
+accurate amplitudes; a high mean correlation does not protect the lower tail;
+and excellent region IoU can coexist with clinically meaningful onset/offset
+bias.
+
+## Did the pilot preserve the full-test ordering?
+
+```{python}
+#| label: onelead-rdb-pilot-full
+primary_metrics = ["primary_mean_micro_f1_20ms", "primary_record_f1_u99",
+                   "primary_signal_pearson_p05", "primary_signal_pearson_p05_u99"]
+pilot_full = model_evaluations.pivot_table(
+    index="model_id", columns="stage", values=primary_metrics)
+pilot_full_correlations = []
+for metric in primary_metrics:
+    pair = pilot_full[metric].dropna()
+    pilot_full_correlations.append({
+        "metric": metric, "models": len(pair),
+        "Pearson": pair.pilot.corr(pair.full),
+        "Spearman": pair.pilot.corr(pair.full, method="spearman")})
+display(pd.DataFrame(pilot_full_correlations))
+```
+
+The 48-record pilot preserves boundary ranking reasonably well: full-versus-
+pilot Spearman correlation is 0.869 for mean micro-F1 and 0.822 for the
+record-level lower-tail statistic. It is much less reliable for raw signal
+Pearson p05 (Spearman 0.450). Thus the pilot is defensible as a boundary screen,
+but weak as a fine-grained selector for difficult-record waveform fidelity.
+
+All 60 models were promoted, so this run does not estimate how many genuinely
+poor candidates the thresholds would have rejected. Promotion should not be
+described as independent confirmation; it is a selection stage followed by a
+larger evaluation on the same cohort family.
+
+## Did internal validation predict external RDB performance?
+
+```{python}
+#| label: onelead-rdb-internal-external
+internal = spatial_training[["run_name", "best_val_missing_pearson"]].copy()
+transport = full_evaluations.merge(internal, left_on="model_id", right_on="run_name")
+transport_correlations = []
+for metric in primary_metrics:
+    transport_correlations.append({
+        "external_metric": metric,
+        "models": int(transport[["best_val_missing_pearson", metric]].dropna().shape[0]),
+        "Pearson": transport.best_val_missing_pearson.corr(transport[metric]),
+        "Spearman": transport.best_val_missing_pearson.corr(transport[metric], method="spearman")})
+display(pd.DataFrame(transport_correlations))
+fig = px.scatter(transport, x="best_val_missing_pearson",
+                 y="primary_mean_micro_f1_20ms", color="factorial_mask",
+                 symbol="input_lead", hover_name="model_id", trendline="ols",
+                 title="Internal reconstruction validation versus external RDB boundary F1")
+fig.show()
+```
+
+Internal missing-lead Pearson is only a moderate external selector. Spearman
+correlations range from 0.549 for mean boundary F1 to 0.688 for record-level
+boundary F1 U99; Pearson correlations range from 0.578 to 0.716 across the four
+primary endpoints. Internal reconstruction quality contains useful signal, but
+does not determine external delineation rank. This justifies retaining both
+reconstruction and boundary endpoints rather than selecting on one surrogate.
+
+## Do the spatial controls transport?
+
+```{python}
+#| label: onelead-rdb-spatial-transport
+external_matrix = full_evaluations.pivot_table(
+    index=["factorial_mask", "input_lead"], columns="variant",
+    values=["primary_mean_micro_f1_20ms", "primary_signal_pearson_p05"])
+external_contrasts = []
+for metric in ["primary_mean_micro_f1_20ms", "primary_signal_pearson_p05"]:
+    for label, candidate, reference in [
+        ("E1 − A0", "e1_panorama_film", "a0"),
+        ("E1 − permuted", "e1_panorama_film", "pg1_permuted_geometry"),
+        ("E1 − capacity", "e1_panorama_film", "cm1_capacity_matched"),
+        ("B1 − A0", "b1_panorama", "a0")]:
+        delta = external_matrix[(metric, candidate)] - external_matrix[(metric, reference)]
+        for (mask, lead), value in delta.items():
+            external_contrasts.append({"metric": metric, "contrast": label,
+                                       "factorial_mask": mask, "input_lead": lead,
+                                       "difference": value})
+external_contrasts = pd.DataFrame(external_contrasts)
+display(external_contrasts)
+fig = px.bar(external_contrasts, x="contrast", y="difference", color="input_lead",
+             facet_row="metric", facet_col="factorial_mask", barmode="group",
+             title="External matched spatial-control differences")
+fig.add_hline(y=0, line_dash="dash")
+fig.show()
+```
+
+The internally consistent geometry effect does not transport uniformly. For
+external boundary F1, E1 minus permuted geometry ranges from −0.015 to +0.031
+and E1 minus capacity control ranges from −0.007 to +0.028. For signal Pearson
+p05, E1 is usually favourable on lead I but loses by 0.015–0.040 on lead II in
+the `1110000` setting. The sign reversals mean that the external data weaken a
+general physiology-specific advantage claim.
+
+Simple B1 panorama is the external boundary leader for mask `1010010` on both
+observed leads (0.6585 lead I; 0.6742 lead II), but it is below A0 for several
+other mask/lead cells. This is selection heterogeneity, not a universal ranking.
+
+## External evidence ledger
+
+| Claim | Verdict | Evidence |
+|---|---|---|
+| The 48-record pilot is adequate for boundary screening | Reasonable, not definitive | Boundary rank correlations exceed 0.82; no rejected-model operating characteristic was observed. |
+| The pilot precisely selects waveform lower-tail performance | Not supported | Signal-p05 pilot/full Spearman is 0.45. |
+| Internal reconstruction ranking transfers to RDB | Partially | Moderate correlations, with substantial residual rank changes. |
+| E1 geometry has a robust external advantage | Not supported | Matched control effects reverse sign across masks, leads, and endpoints. |
+| B1 is the universal best architecture | Not supported | It leads boundary F1 for `1010010` but loses in other cells and on other endpoints. |
+| The best model depends on intended use | Supported | Boundary timing, region overlap, mean signal fidelity, and lower-tail fidelity select different checkpoints. |
+
+## Remaining inferential limits
+
+These are single-checkpoint, single-seed model comparisons. The database stores
+aggregate endpoint summaries rather than paired per-record bootstrap contrasts
+between every model, so small differences are descriptive. Screening and full
+evaluation share the RDB cohort family, and no second external dataset validates
+the same one-lead model ranking. Clinical selection requires repeated seeds,
+patient-level paired uncertainty, and a predeclared endpoint hierarchy.

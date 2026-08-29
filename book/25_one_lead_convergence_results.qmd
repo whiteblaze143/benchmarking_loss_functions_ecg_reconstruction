@@ -1,0 +1,179 @@
+---
+title: "One-Lead ECG-AIM Convergence Extensions"
+subtitle: "Ten- and fifteen-epoch results, checkpoint selection, and learning-budget effects"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: convergence-controls
+TOP_K = 10
+PRIMARY_METRIC = "miou_wave"
+```
+
+```{python}
+#| label: convergence-setup
+import numpy as np
+import pandas as pd
+import plotly.express as px
+from live_results import *
+
+RUN_ROOT = source_path("refine-logs/convergence_10e/runs")
+QUEUE_DB = source_path("refine-logs/convergence_10e/queue.sqlite")
+runs = load_summary_tree("refine-logs/convergence_10e/runs")
+completed = runs.query("run_state == 'completed'").copy()
+partial = runs.query("run_state != 'completed'").copy()
+metric_cols = numeric_metrics(completed)
+queue = read_sql(QUEUE_DB, "select id, ordinal, status, attempts, completed_at, error from jobs order by ordinal")
+```
+
+## Why this is separate from screening
+
+The original factorial queue used short screening runs. This chapter contains
+only the promoted longer-budget extensions. A 3-, 10-, and 15-epoch result for
+the same named architecture are different estimands because training budget and
+checkpoint selection changed. The longest result supersedes the shorter result
+for final ranking, but the shorter trajectory remains useful for diagnosing
+whether screening preserved the ordering.
+
+## Source and completion evidence
+
+```{python}
+#| label: convergence-provenance
+display(source_inventory({"convergence queue": QUEUE_DB}))
+display(queue.status.value_counts(dropna=False).rename_axis("queue_status").reset_index(name="jobs"))
+display(runs.groupby(["run_state", "expected_epochs", "observed_lead"], dropna=False)
+        .size().rename("runs").reset_index())
+display(partial[[c for c in ["run_name", "expected_epochs", "epochs_completed",
+                              "observed_lead", "summary_updated"] if c in partial]])
+```
+
+A summary file is marked completed only when its `_SUCCESS.json` exists or its
+recorded completed epoch reaches the epoch count encoded in the run name.
+Partial summaries are displayed for monitoring but excluded from leaderboards.
+
+::: {.callout-warning}
+The queue ledger is stale: it still labels 12 entries pending, whereas the run
+tree contains 33 completed summaries (23 at 10 epochs and 10 at 15 epochs).
+Completion and metrics here therefore come from terminal summaries and
+`_SUCCESS.json`; the queue database is retained only as provenance.
+:::
+
+## Complete validation, delineation, training, and resource metrics
+
+```{python}
+#| label: convergence-all-metrics
+identity = [c for c in ["run_name", "observed_lead", "expected_epochs",
+                         "best_epoch", "epochs_completed", "summary_updated"] if c in completed]
+display(completed[identity + metric_cols]
+        .sort_values(["expected_epochs", "observed_lead", "run_name"]))
+display(pd.DataFrame({"metric": metric_cols,
+                      "direction": [metric_direction(x) or "context only" for x in metric_cols],
+                      "nonmissing_rows": [int(completed[x].notna().sum()) for x in metric_cols]}))
+```
+
+## Metric-specific leaders and Pareto view
+
+```{python}
+#| label: convergence-leaders
+display(leaderboard(completed, metric_cols, id_col="run_name",
+                    group_cols=("expected_epochs", "observed_lead"), k=TOP_K))
+if {"val_recon_loss", "miou_wave", "peak_gpu_memory_bytes"}.issubset(completed):
+    fig = px.scatter(completed, x="val_recon_loss", y="miou_wave",
+                     color="observed_lead", symbol="expected_epochs",
+                     size="peak_gpu_memory_bytes", hover_name="run_name",
+                     hover_data=[c for c in ["val_missing_pearson",
+                                             "val_missing_pearson_p05",
+                                             "boundary_f1_smoke"] if c in completed],
+                     title="Reconstruction–delineation–memory trade-off")
+    fig.show()
+```
+
+The composite checkpoint score is
+`mIoU + 0.25 × boundary F1 + 0.1 × Pearson`. Consequently, a retained
+checkpoint can differ from the epoch with the best reconstruction correlation.
+Any paper table must report that selection rule rather than implying that each
+individual endpoint was independently optimized.
+
+## Horizon-matched learning-budget effects
+
+```{python}
+#| label: convergence-horizon-matched
+completed["configuration"] = (completed.run_name
+    .str.replace(r"^conv(?:10|15)e_", "", regex=True)
+    .str.replace(r"_s\d+_l[01]$", "", regex=True))
+horizon_metrics = [c for c in ["val_missing_pearson", "val_missing_pearson_p05",
+                                "val_recon_loss", "miou_wave", "boundary_f1_smoke",
+                                "P_iou", "QRS_iou", "T_iou"] if c in completed]
+wide = completed.pivot_table(index=["configuration", "observed_lead"],
+                             columns="expected_epochs", values=horizon_metrics)
+matched_horizons = wide.dropna().copy()
+for metric in horizon_metrics:
+    if (metric, 10) in matched_horizons and (metric, 15) in matched_horizons:
+        matched_horizons[(metric, "15−10 improvement")] = (
+            (matched_horizons[(metric, 15)] - matched_horizons[(metric, 10)]) *
+            (-1 if metric_direction(metric) == "min" else 1))
+display(matched_horizons.reset_index())
+```
+
+Across the five configurations completed at both horizons and both leads, the
+extra five epochs consistently improve mean Pearson, reconstruction loss, wave
+mIoU, and boundary F1. The gain is not a uniform shift: QRS IoU is already near
+saturation and typically increases by only 0.0025–0.0075, whereas P/T IoU and
+boundary F1 improve much more. Short screening therefore underestimates
+slow-learning atrial and repolarization morphology.
+
+The largest boundary-F1 gains occur for raw A0 (+0.089 lead I, +0.097 lead II),
+showing that an apparently weaker short-run baseline can recover substantially
+with budget. Three- or ten-epoch rankings cannot be presented as pure
+architecture effects.
+
+## Matched 15-epoch contrasts
+
+```{python}
+#| label: convergence-15e-contrasts
+fifteen = completed.query("expected_epochs == 15").copy()
+baseline = fifteen.query("run_name.str.contains('A0_raw')", engine="python")
+keys = ["observed_lead"]
+compare_metrics = [c for c in ["best_score", "val_missing_pearson",
+                                "val_missing_pearson_p05", "val_recon_loss",
+                                "P_iou", "QRS_iou", "T_iou", "macro_f1_wave",
+                                "miou_wave", "boundary_f1_smoke",
+                                "boundary_ppv_smoke", "boundary_sensitivity_smoke",
+                                "peak_gpu_memory_bytes"] if c in fifteen]
+base = baseline[keys + compare_metrics].rename(columns={m: f"base.{m}" for m in compare_metrics})
+joined = fifteen.merge(base, on=keys, how="left")
+for metric in compare_metrics:
+    sign = -1 if metric_direction(metric) == "min" else 1
+    joined[f"improvement.{metric}"] = sign * (joined[metric] - joined[f"base.{metric}"])
+display(joined[["run_name", "observed_lead", *compare_metrics,
+                *[f"improvement.{m}" for m in compare_metrics]]])
+```
+
+At 15 epochs, no configuration dominates every endpoint. On lead I,
+`A0_wave_noSSL` has the highest mean Pearson (0.7474) and best reconstruction
+loss (0.8377), while `R7` has the best boundary F1 (0.8784) and T/QRS overlap.
+On lead II, physiology-informed `R5` leads mean Pearson (0.7607), lower-tail
+Pearson (0.4304), mIoU (0.8627), macro F1 (0.9261), and boundary F1 (0.8886),
+but `A0_wave_noSSL` retains the best reconstruction loss (0.7625).
+
+This is encouraging for R5 on lead II but is not a clean SSL win. The principal
+contrast `A0 raw → A0+wavelet → A0+wavelet+SSL` is incomplete because a matched
+15-epoch A0+wavelet+SSL cell is absent. R5 changes the second view and training
+objective, so it cannot identify whether wavelets, SSL, or UEG phase caused the
+result. `C1_E1` remains a complementarity control; it does not support treating
+E1 as an improved base architecture.
+
+Until multiple seeds and external evaluation land, differences on the order of
+one or two thousandths are treated as ties rather than mechanistic proof.
+
+## Evidence ledger
+
+| Question | Current answer | Why |
+|---|---|---|
+| Does longer training matter? | Yes, descriptively | All ten matched lead/configuration cells improve on major reconstruction and delineation endpoints from 10 to 15 epochs. |
+| Is R5 the best completed model? | Endpoint- and lead-dependent | Strongest broad lead-II profile; not best lead-I reconstruction and not universally best loss. |
+| Does UEG phase beat Morlet phase? | Suggestive on lead II, unresolved | R5 exceeds C1_E1 on several metrics, but the comparison also crosses A0/E1 architecture and lacks repeated seeds. |
+| Does SSL add value beyond a wavelet branch? | Not yet identified | The matched 15-epoch A0+wavelet+SSL cell is missing. |
+| Can validation select a clinical model? | No | Single seed, composite checkpoint selection, internal validation, and no paired per-record uncertainty. |

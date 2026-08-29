@@ -24,7 +24,7 @@ E1 is reserved for the matched complementarity contrast
 `A0+wavelet+SSL` versus `E1+wavelet+SSL`. This prevents architectural changes
 from being credited to wavelets or SSL.
 
-## Live queue and metric availability
+## Terminal screening generation and metric availability
 
 ```{python}
 #| label: wavelet-queue-status
@@ -49,6 +49,11 @@ if not completed.empty and {"metric.val_missing_pearson", "metric.miou_wave"}.is
 
 These are short screening runs unless replicated. The plot shows trade-offs; it
 does not provide multiplicity-corrected evidence for the top point.
+
+The exhaustive 115-row metric ledger and five terminal failures are reported in
+**Completed One-Lead ECG-AIM Screening Results**. This chapter retains only the
+mechanism-focused view; longer-budget outcomes belong to the convergence
+chapter and are not pooled into this plot.
 
 ## Highest-value physiological contrast
 

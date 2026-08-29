@@ -1,705 +1,119 @@
 ---
-title: "Three-Lead ECG-AIM: Live Results"
-subtitle: "Architecture, clinical preservation, LUDB, and RDB"
+title: "Three-Lead Active and Partial Experiment Monitor"
+subtitle: "Seven-mask coverage, queue state, compatibility, and clinical gaps"
 execute:
   cache: false
   freeze: false
 ---
 
 ```{python}
-#| label: three-lead-controls
-# Edit these values, then rerun this chapter.
-TOP_K = 8
-COLOR_BY = "suite"
-EMBED_SEED = 42
-RDB_LEAD_GROUP = "primary_missing_precordial"
-# True checkpoint-latent UMAP is opt-in because it may materialize a remote
-# checkpoint and run inference. Select a registered model and rerun.
-RUN_CHECKPOINT_UMAP = False
-CHECKPOINT_MODEL_ID = "factorial_ecg_aim_1011003_s42"
-CHECKPOINT_LAYER = "encoder"
-CHECKPOINT_RECORDS = 240
-CHECKPOINT_DEVICE = "cpu"  # change to "cuda" only when the training GPU is free
-```
-
-```{python}
-#| label: three-lead-setup
+#| label: threelead-monitor-setup
 import json
 import numpy as np
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 from live_results import *
+from expanded_results import checkpoint_completeness, clinical_coverage
 
-def read_sql_optional(path, query):
-    """Return an empty frame while an asynchronously-created table is pending."""
-    try:
-        return read_sql(path, query)
-    except Exception as exc:
-        if "no such table" in str(exc):
-            return pd.DataFrame()
-        raise
-
-CLINICAL_DB = source_path("results/clinical_biomarkers_multids/clinical_metrics.db")
-LUDB_BLIND = source_path("results/ecgaim_ludb_semiseg_blinded/compact.sqlite")
-RDB_BLIND = source_path("results/ecgaim_rdb_semiseg_blinded/compact.sqlite")
-RDB_ORACLE = source_path("results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite")
+QUEUE_STATE = source_path("refine-logs/queue_3arch/queue_state.json")
+CATALOG = source_path("results/checkpoint_store/catalog.sqlite")
+COMPATIBILITY = source_path("results/checkpoint_store/compatibility_audit.json")
+CLINICAL = source_path("results/clinical_biomarkers_multids/clinical_metrics.db")
+queue = load_json_queue(QUEUE_STATE)
 ```
 
-## ECG-AIM and the registered claim chain
+## Input and evidence contract
 
-ECG-AIM is the project's novel tokenized transformer reconstructor. The locked
-three-lead contract observes **I, II, and V2**, reconstructs all twelve leads,
-and evaluates reconstruction metrics on the nine missing leads so passthrough
-cannot inflate the score. Its evidence chain is:
+This monitor covers the three-lead I+II+V2 reconstruction program. It does not
+pool one-lead ECG-AIM runs. Queue completion, checkpoint registration, storage
+verification, evaluation compatibility, waveform metrics, and clinical metrics
+are distinct states; success at one stage does not imply success at another.
 
-`PTB-XL reconstruction → clinical biomarkers → LUDB expert morphology → RDB rhythm-diverse morphology → blinded delineation`.
-
-MCMA-U-Net, cNVAE, and MSVAE are architecture controls; ECG-AIM is not declared
-superior merely because it is novel. Architecture, objective, mask, and seed
-remain separate factors in all comparisons.
-
-## Live source provenance
+## Current source and queue status
 
 ```{python}
-#| label: three-lead-provenance
-display(source_inventory({
-    "clinical": CLINICAL_DB, "LUDB blinded": LUDB_BLIND,
-    "RDB blinded": RDB_BLIND, "RDB oracle": RDB_ORACLE,
-}))
+#| label: threelead-monitor-status
+display(source_inventory({"three-architecture queue": QUEUE_STATE,
+                          "checkpoint catalog": CATALOG,
+                          "compatibility audit": COMPATIBILITY,
+                          "clinical metrics": CLINICAL}))
+if not queue.empty:
+    queue["architecture"] = np.select(
+        [queue.id.str.startswith("msvae_"), queue.id.str.startswith("ecg_aim_")],
+        ["msvae", "ecg_aim"], default="other")
+    queue["seed"] = pd.to_numeric(queue.id.str.extract(r"_s(\d+)$")[0], errors="coerce")
+    current = queue.query("seed == 42 and architecture in ['msvae', 'ecg_aim']").copy()
+    display(current.groupby(["architecture", "status"], dropna=False)
+            .size().rename("jobs").reset_index())
+    visible = [c for c in ["id", "architecture", "status", "attempts", "started",
+                            "completed", "error"] if c in current]
+    display(current.query("status != 'completed'")[visible].sort_values(["architecture", "status", "id"]))
 ```
 
-## Canonical clinical cohort and raw leaders
+The JSON state is a queue ledger, not a heartbeat. A row marked running is only
+confirmed live by an operating-system process and growing log during active
+monitoring; the book does not infer liveness from a stale lock file.
+
+## Checkpoint and clinical coverage
 
 ```{python}
-#| label: clinical-load
-clinical = read_sql(CLINICAL_DB, "select * from clinical_metrics")
-paired = read_sql(CLINICAL_DB, "select * from paired_inference")
-presacan = read_sql(CLINICAL_DB, "select * from presacan_model_summary")
-clinical_registry = json.loads((ROOT / "results/clinical_biomarkers_model_registry.json").read_text())
-registered_ids = {row["id"] for row in clinical_registry["models"]}
-clinical["suite"] = np.select(
-    [clinical.model_id.isin(registered_ids) & clinical.evaluation_version.eq("missing_leads_v2"),
-     clinical.model_id.str.startswith("factorial_ecg_aim_"),
-     clinical.model_id.eq("__original__")],
-    ["canonical_160", "threelead_ecgaim_external", "reference"],
-    default="quarantine",
-)
-display(clinical.groupby(["suite", "dataset", "evaluation_version"], dropna=False).agg(
-    models=("model_id", "nunique"), endpoints=("target", "nunique"), rows=("model_id", "size")
-).reset_index())
-
-clinical_metrics = [c for c in ["mae", "pearson_r", "r2", "auroc", "auprc", "f1", "sens", "spec", "ppv", "npv", "interlead_r2"] if c in clinical]
-display(leaderboard(clinical.query("suite == 'canonical_160'"), clinical_metrics,
-                    id_col="model_id", group_cols=("dataset", "target"), k=TOP_K))
+#| label: threelead-monitor-coverage
+checkpoints = checkpoint_completeness(seed=42)
+clinical = clinical_coverage("missing_leads_v2")
+display(checkpoints)
+display(clinical)
+coverage = checkpoints.merge(
+    clinical[["architecture", "clinical_models"]], on="architecture", how="left")
+long = coverage.melt(id_vars=["architecture", "expected"],
+                     value_vars=["registered", "clinical_models"],
+                     var_name="stage", value_name="models")
+fig = px.bar(long, x="architecture", y="models", color="stage", barmode="group",
+             text="models", title="Training/storage coverage is not clinical coverage")
+fig.add_hline(y=160, line_dash="dash", annotation_text="complete seed-42 grid")
+fig.show()
 ```
 
-## Modular clinical comparison
+At the audited snapshot the catalog contains 160 U-Nets, 155 MSVAEs, and 123
+ECG-AIM checkpoints for seed 42. `missing_leads_v2` clinical coverage is
+160/37/0. Missing ECG-AIM clinical rows are absent evidence, not zero
+performance.
 
-This chart is intentionally long-form: change `x`, `color`, `facet_row`, or the
-query in one line to compare a different endpoint, dataset, or family.
-
-```{python}
-#| label: clinical-modular-scatter
-view = clinical.query("suite == 'canonical_160' and target != ''").copy()
-if not view.empty and {"mae", "pearson_r"}.issubset(view):
-    fig = px.scatter(view, x="mae", y="pearson_r", color="dataset",
-                     symbol="target", hover_name="model_id", hover_data=["target", "r2"],
-                     title="Clinical endpoint trade-offs (lower MAE, higher correlation)")
-    fig.update_traces(marker={"size": 7, "opacity": .65})
-    fig.show()
-```
-
-## Model-performance UMAP
-
-The embedding below uses the 160-row PreSACan model summaries. It is a compact
-map of multimetric behavior, useful for finding clusters, near-duplicates, and
-outliers. It is not an embedding of ECG waveforms or ECG-AIM tokens.
+## Compatibility gate
 
 ```{python}
-#| label: clinical-performance-umap
-pm_metrics = numeric_metrics(presacan)
-pm_matrix = model_metric_matrix(presacan, "model_id", pm_metrics)
-embedding, embedding_method = performance_embedding(pm_matrix, EMBED_SEED)
-if not embedding.empty:
-    labels = presacan[["model_id", "dataset"]].drop_duplicates("model_id") if "dataset" in presacan else presacan[["model_id"]]
-    embedding = embedding.merge(labels, on="model_id", how="left")
-    embedding["family"] = embedding.model_id.str.extract(r"^([^_]+)")[0]
-    fig = px.scatter(embedding, x="axis_1", y="axis_2", color="family",
-                     hover_name="model_id", hover_data=[c for c in ("dataset",) if c in embedding],
-                     title=f"{embedding_method} of standardized clinical-performance vectors")
-    fig.update_traces(marker={"size": 9, "opacity": .8})
-    fig.show()
-```
-
-## True checkpoint-activation UMAP
-
-Unlike the preceding performance map, this optional block runs ECG records
-through the checkpoint selected from `results/checkpoint_store/catalog.sqlite`,
-captures an internal encoder activation, pools it per record, and embeds those
-vectors. The storage layer verifies the materialized checkpoint against the
-catalog SHA-256 before inference. Nothing is written to the results databases.
-
-### 1. Choose a registered checkpoint
-
-The table below is read without materializing any checkpoint. `local_available`
-distinguishes a file that is already on disk from a remotely verified artifact
-that will be downloaded only when the opt-in block runs.
-
-```{python}
-#| label: checkpoint-catalog-browser
-from pathlib import Path
-catalog = read_sql(source_path("results/checkpoint_store/catalog.sqlite"), """
-    select model_id, factorial_mask, seed, local_path, size_bytes, sha256,
-           status, asset_state, round_trip_verified_at, metadata_json
-    from checkpoints order by model_id
-""")
-if not catalog.empty:
-    catalog["architecture"] = catalog.metadata_json.map(
-        lambda raw: json.loads(raw or "{}").get("family", "unknown")
-    )
-    catalog["local_available"] = catalog.local_path.fillna("").map(
-        lambda value: bool(value) and Path(value).is_file()
-    )
-    catalog["size_mb"] = (catalog.size_bytes / 2**20).round(1)
-    display(catalog[["model_id", "architecture", "factorial_mask", "seed",
-                     "status", "local_available", "size_mb",
-                     "round_trip_verified_at", "sha256"]])
-```
-
-### 2. Choose the representation level
-
-The hook layer changes the scientific question. Earlier layers emphasize local
-wave shape, the encoder output combines long-range information, and decoder
-layers increasingly reflect the reconstruction objective.
-
-| Architecture | Recommended starting layer | Expected tensor semantics | Suggested use |
-|---|---|---|---|
-| ECG-AIM | `encoder` | temporal transformer tokens × model width | primary learned-representation analysis |
-| MCMA-U-Net | `down5` | deepest convolutional feature map | architecture-control comparison |
-| MSVAE | `encoder` | variational encoder representation | stochastic/variational comparison |
-
-For ECG-AIM, `encoder.layers.3` and `encoder.layers.7` provide useful middle and
-final-depth contrasts. Do not compare raw UMAP axes from two independently fit
-embeddings: UMAP can rotate, reflect, and deform its coordinates. Use identical
-records and parameters, then compare neighborhood membership, rhythm mixing,
-or fit a joint/aligned analysis.
-
-### 3. Extract, pool, and embed
-
-For a tensor with a feature channel and a token/time dimension, the extractor
-concatenates each feature's mean, standard deviation, and maximum. This retains
-more information than global averaging while producing a fixed-length vector.
-The standardized vectors are embedded with cosine UMAP. The default CPU device
-protects concurrent training; GPU use must be explicitly enabled.
-
-```{python}
-#| label: checkpoint-activation-umap
-if RUN_CHECKPOINT_UMAP:
-    from checkpoint_embeddings import checkpoint_umap
-    latent_umap, latent_provenance = checkpoint_umap(
-        CHECKPOINT_MODEL_ID,
-        ROOT / "data/rdb_wavelet_delineation_cache/test",
-        layer=CHECKPOINT_LAYER,
-        max_records=CHECKPOINT_RECORDS,
-        batch_size=8,
-        device=CHECKPOINT_DEVICE,
-        seed=EMBED_SEED,
-    )
-    display(pd.DataFrame([latent_provenance]))
-    display(latent_umap.label.value_counts().rename_axis("rhythm").reset_index(name="records"))
-    fig = px.scatter(latent_umap, x="umap_1", y="umap_2", color="label", title=(
-                         f"Checkpoint activation UMAP · {CHECKPOINT_MODEL_ID} · {CHECKPOINT_LAYER}"
-                     ))
-    fig.update_traces(marker={"size": 8, "opacity": .75})
-    fig.show()
-    centroids = latent_umap.groupby("label")[["umap_1", "umap_2"]].agg(["mean", "std", "count"])
-    display(centroids)
-    display(latent_umap[["label", "nearest_label", "nearest_cosine_distance"]]
-            .sort_values("nearest_cosine_distance").head(40).reset_index(drop=True))
+#| label: threelead-monitor-compatibility
+if COMPATIBILITY.exists() and COMPATIBILITY.stat().st_size:
+    payload = json.loads(COMPATIBILITY.read_text())
+    rows = pd.DataFrame(payload.get("models", []))
+    if not rows.empty:
+        rows["architecture"] = np.select(
+            [rows.model_id.str.startswith("f_"),
+             rows.model_id.str.startswith("factorial_msvae_"),
+             rows.model_id.str.startswith("factorial_ecg_aim_")],
+            ["unet", "msvae", "ecg_aim"], default="other")
+        display(rows.groupby(["architecture", "compatible"], dropna=False)
+                .size().rename("checkpoints").reset_index())
+        failure_cols = [c for c in ["model_id", "architecture", "compatible", "reasons"] if c in rows]
+        display(rows.query("compatible == False")[failure_cols])
 else:
-    display(pd.DataFrame([{
-        "status": "opt-in",
-        "how_to_run": "Set RUN_CHECKPOINT_UMAP=True in the controls cell and rerender this chapter",
-        "model_id": CHECKPOINT_MODEL_ID,
-        "layer": CHECKPOINT_LAYER,
-    }]))
+    display(pd.DataFrame([{"status": "compatibility audit unavailable"}]))
 ```
 
-### 4. Diagnose before interpreting
+Remote verification proves that an artifact can be recovered and matches its
+stored digest. It does not prove that the checkpoint shares the current source,
+state schema, tensor content, or evaluation contract. Cross-architecture claims
+remain closed while those compatibility gates disagree.
 
-When enabled, the provenance table reports:
+## Completed evidence destinations
 
-- **Trustworthiness:** whether local high-dimensional neighbors remain local in
-  the 2-D map. It evaluates projection fidelity, not biological correctness.
-- **Rhythm silhouette:** separation of released rhythm groups in the original
-  standardized activation space. Positive values indicate greater between-group
-  than within-group separation; class imbalance and dataset confounding remain.
-- **Nearest-neighbor label agreement:** a descriptive local-purity measure.
-  It is not a held-out classifier score.
+- Seven-mask design and U-Net validation results: Chapters 18–19.
+- `missing_leads_v2` biomarker coverage and endpoints: Chapter 20.
+- LUDB blinded, RDB blinded, and RDB oracle: **Completed Three-Lead ECG-AIM
+  External Morphology Evaluation**.
+- Eleven-checkpoint activation/probe study: **Completed ECG-AIM Representation
+  Study**.
+- LUDB semi-supervised delineator evaluation: **Completed LUDB
+  Semi-Supervised Delineation Results**.
 
-Inspect the nearest-neighbor table for same-patient leakage, duplicated signals,
-outliers, or separation driven entirely by one rhythm. A visually clean cluster
-is hypothesis-generating until confirmed by patient-level resampling and a
-prespecified probe evaluated on held-out patients.
+This page intentionally contains no completed-model leaderboard.
 
-### 5. Recommended checkpoint comparisons
-
-For an architecture comparison, keep the RDB record inventory, preprocessing,
-pooling, UMAP seed, and layer depth as comparable as the architectures permit.
-For a loss or wavelet ablation, keep architecture and hook layer exactly fixed.
-Report at minimum:
-
-1. checkpoint ID and SHA-256;
-2. factorial mask, seed, observed leads, and architecture;
-3. record and patient counts by rhythm;
-4. activation shape and pooling rule;
-5. UMAP parameters and trustworthiness;
-6. nearest-neighbor agreement with patient-level uncertainty;
-7. sensitivity to at least three UMAP seeds and reasonable neighborhood sizes.
-
-## Overnight checkpoint-representation study
-
-The interactive single-checkpoint block above is useful for exploration. The
-production analysis is a separate resumable runner so a browser render cannot
-accidentally download checkpoints, consume the training GPU, or leave a partial
-wide table. Its authoritative protocol is frozen at
-`refine-logs/EXPERIMENT_PLAN.md`; the clinically relevant claim map, endpoints,
-predictor ladder, uncertainty, multiplicity, and stopping rules are reproduced
-in this deployed chapter so the published analysis has no out-of-tree resource
-dependency.
-
-The production design is motivated by the spatial-reconstruction/QT multitask
-logic of [Ansari et al.'s 3DRECON-QT study](https://doi.org/10.1161/CIRCULATIONAHA.125.077494)
-and the discrimination, calibration, validation, and clinician-confirmation
-principles in the [2023 ACC/AHA/ACCP/HRS AF guideline](https://doi.org/10.1161/CIR.0000000000001193).
-It uses one CPU core and compact SQLite storage. A0 and the
-enhanced ECG-AIM checkpoint use all 2,398 RDB train/validation/test records; a
-frozen nine-checkpoint panel uses the identical 360-record test inventory. Each
-feature row is bound to checkpoint SHA-256, record-manifest SHA-256, layer, and
-pooling version. UMAP is descriptive; probes and ORs use the original pooled
-encoder activations.
-
-```{python}
-#| label: checkpoint-study-live-status
-STUDY_DB = source_path("results/checkpoint_embeddings/compact.sqlite")
-display(source_inventory({"checkpoint representation study": STUDY_DB}))
-study_jobs = read_sql(STUDY_DB, "select * from jobs order by started_at, model_id")
-if study_jobs.empty:
-    display(pd.DataFrame([{"status": "initialized or waiting for first checkpoint",
-                           "monitor": "tmux capture-pane -p -t checkpoint_embedding_rdb"}]))
-else:
-    study_jobs["progress_percent"] = 100 * study_jobs.completed_records / study_jobs.expected_records
-    display(study_jobs[["model_id", "checkpoint_sha256", "split_scope", "layer",
-                        "status", "completed_records", "expected_records",
-                        "progress_percent", "started_at", "completed_at", "error"]])
-    fig = px.bar(study_jobs, x="progress_percent", y="model_id", color="status",
-                 orientation="h", range_x=[0,100], hover_data=["completed_records","expected_records"],
-                 title="Resumable checkpoint activation extraction")
-    fig.show()
-```
-
-### Held-out probe and association results
-
-These tables populate only after a checkpoint passes its exact record-count and
-feature-shape gate. ORs are per-standard-deviation cross-sectional score
-associations with code-level outcomes—not causal effects, incidence estimates,
-risk ratios, or treatment recommendations.
-
-```{python}
-#| label: checkpoint-study-probes
-probe = read_sql(STUDY_DB, "select * from probe_results")
-odds = read_sql(STUDY_DB, "select * from odds_ratios")
-if probe.empty:
-    display(pd.DataFrame([{"status": "pending complete extraction and analysis"}]))
-else:
-    display(probe.sort_values(["outcome","predictor_set","metric"]))
-if not odds.empty:
-    display(odds.sort_values(["outcome","predictor_set","term"]))
-    finite_or = odds.replace([np.inf,-np.inf],np.nan).dropna(subset=["odds_ratio","ci_low","ci_high"])
-    if not finite_or.empty:
-        fig = px.scatter(finite_or, x="odds_ratio", y="predictor_set", color="outcome",
-                         error_x=finite_or.ci_high-finite_or.odds_ratio,
-                         error_x_minus=finite_or.odds_ratio-finite_or.ci_low,
-                         log_x=True, title="Exploratory score association ORs (95% CI)")
-        fig.add_vline(x=1, line_dash="dash", line_color="black")
-        fig.show()
-```
-
-### Prespecified estimands and model ladder
-
-The primary endpoint is **AF/AFIB-coded membership**, not adjudicated clinical
-AF. Every predictor follows the same Occam-constrained ladder: intercept-only,
-three waveform summaries, one latent principal component, validation-selected
-latent PCs from `{1, 2, 4, 8}`, and waveform summaries plus the selected PCs.
-Imputation, scaling, PCA, penalties, and probability calibration are learned
-without the test split. The final 360-record test split is evaluated once.
-
-The table below combines discrimination, calibration, and absolute-risk
-separation. A useful embedding should improve paired AUROC/AUPRC while reducing
-Brier score and log loss; a high AUROC paired with a poor calibration slope is
-not sufficient. Intervals use 2,000 stratified cached-record bootstraps and
-quantify record-level sampling variation only. Because the cache has one row
-per cached patient/record ID but no independently verified person mapping,
-these are **descriptive record-bootstrap intervals**, not patient-level
-inferential confidence intervals. Confirmatory inference requires a verified
-person key and person-clustered resampling.
-
-```{python}
-#| label: rigorous-heldout-results
-extended = read_sql_optional(STUDY_DB, "select * from extended_results")
-if extended.empty:
-    display(pd.DataFrame([{"status":"pending rigorous post-analysis",
-                           "stage":"runs automatically after extraction"}]))
-else:
-    model_key = read_sql(STUDY_DB, "select job_id,model_id from jobs")
-    extended = extended.merge(model_key, on="job_id", how="left")
-    display(extended.sort_values(["outcome","model_id","predictor_set","metric"]))
-    focus = extended.query("outcome == 'AF_AFIB_code_membership' and metric in ['auroc','auprc','brier','log_loss']")
-    if not focus.empty:
-        fig = px.bar(focus, x="value", y="model_id", color="predictor_set",
-                     facet_col="metric", barmode="group", orientation="h",
-                     error_x=focus.ci_high-focus.value,
-                     error_x_minus=focus.value-focus.ci_low,
-                     title="Held-out metrics with 95% descriptive record-bootstrap intervals")
-        fig.update_xaxes(matches=None)
-        fig.show()
-```
-
-### Held-out ROC, precision–recall, and calibration curves
-
-Curves are reconstructed from persisted test probabilities, not from UMAP
-coordinates or resubstitution predictions. The intercept-only rung exposes
-prevalence, the waveform rung is the parsimonious comparator, and latent gains
-are interpreted only when paired uncertainty agrees across discrimination and
-proper scoring rules.
-
-```{python}
-#| label: binary-curves
-binary_pred = read_sql_optional(STUDY_DB,"select * from binary_predictions")
-if binary_pred.empty:
-    display(pd.DataFrame([{"status":"pending held-out binary probabilities"}]))
-else:
-    from sklearn.metrics import roc_curve,precision_recall_curve
-    from sklearn.calibration import calibration_curve
-    model_key=read_sql(STUDY_DB,"select job_id,model_id from jobs")
-    binary_pred=binary_pred.merge(model_key,on="job_id",how="left")
-    roc_rows=[];pr_rows=[];cal_rows=[]
-    for (model,predictor),g in binary_pred.groupby(["model_id","predictor_set"]):
-        fpr,tpr,_=roc_curve(g.truth,g.probability)
-        precision,recall,_=precision_recall_curve(g.truth,g.probability)
-        obs,forecast=calibration_curve(g.truth,g.probability,n_bins=10,strategy="quantile")
-        key=f"{model} · {predictor}"
-        roc_rows.extend({"curve":key,"fpr":a,"tpr":b} for a,b in zip(fpr,tpr))
-        pr_rows.extend({"curve":key,"recall":a,"precision":b} for a,b in zip(recall,precision))
-        cal_rows.extend({"curve":key,"predicted":a,"observed":b} for a,b in zip(forecast,obs))
-    fig=go.Figure()
-    for key,g in pd.DataFrame(roc_rows).groupby("curve"):fig.add_trace(go.Scatter(x=g.fpr,y=g.tpr,name=key,mode="lines"))
-    fig.add_trace(go.Scatter(x=[0,1],y=[0,1],name="chance",line={"dash":"dash","color":"black"}))
-    fig.update_layout(title="Held-out AF/AFIB-code ROC",xaxis_title="False-positive rate",yaxis_title="True-positive rate");fig.show()
-    fig=px.line(pd.DataFrame(pr_rows),x="recall",y="precision",color="curve",title="Held-out AF/AFIB-code precision–recall");fig.show()
-    cal=pd.DataFrame(cal_rows);fig=px.line(cal,x="predicted",y="observed",color="curve",markers=True,title="Held-out probability calibration")
-    fig.add_trace(go.Scatter(x=[0,1],y=[0,1],name="ideal",line={"dash":"dash","color":"black"}));fig.show()
-
-predictor_delta=read_sql_optional(STUDY_DB,"select * from predictor_comparisons")
-if not predictor_delta.empty:
-    model_key=read_sql(STUDY_DB,"select job_id,model_id from jobs")
-    predictor_delta=predictor_delta.merge(model_key,on="job_id",how="left")
-    display(predictor_delta.sort_values(["outcome","model_id","reference_set","candidate_set","metric"]))
-```
-
-### Matched checkpoint effects and multiplicity
-
-Checkpoint comparisons are paired by exact RDB record ID. `delta_b_minus_a`
-therefore estimates the enhanced-minus-A0 change under the same inventory,
-pooling, probe class, validation selection, and bootstrap draw. Positive is
-better for AUROC/AUPRC; negative is better for Brier/log loss. Raw and
-Holm-adjusted values are both retained so multiplicity is visible rather than
-silently hidden.
-
-```{python}
-#| label: rigorous-paired-checkpoints
-checkpoint_delta = read_sql_optional(STUDY_DB, "select * from paired_comparisons")
-multiplicity = read_sql_optional(STUDY_DB, "select * from multiplicity_results")
-if checkpoint_delta.empty:
-    display(pd.DataFrame([{"status":"pending both complete full-cohort checkpoints"}]))
-else:
-    display(checkpoint_delta.sort_values(["outcome","metric"]))
-    display(multiplicity.sort_values(["family","adjusted_p"]))
-    fig = px.scatter(checkpoint_delta, x="delta_b_minus_a", y="metric", color="outcome",
-                     error_x=checkpoint_delta.ci_high-checkpoint_delta.delta_b_minus_a,
-                     error_x_minus=checkpoint_delta.delta_b_minus_a-checkpoint_delta.ci_low,
-                     title="Enhanced minus A0: paired held-out effects")
-    fig.add_vline(x=0,line_dash="dash",line_color="black")
-    fig.show()
-```
-
-### Repolarization-content agreement
-
-The repolarization endpoint is the annotation-derived interval from QRS onset
-to the subsequent T offset. It is reported in milliseconds but is **not** a
-clinical QT or QTc measurement. The probe ladder is compared against a
-mean-only predictor and the same three-summary waveform baseline. Alongside
-MAE/RMSE and correlation, the analysis reports Lin concordance, calibration,
-and Bland–Altman bias and limits of agreement. These detect scale or offset
-errors that correlation alone can conceal.
-
-```{python}
-#| label: repolarization-agreement
-if not extended.empty:
-    rep = extended.query("outcome == 'annotation_QRSon_Toff_ms'")
-    if not rep.empty:
-        display(rep.sort_values(["model_id","predictor_set","metric"]))
-
-rep_pred = read_sql_optional(STUDY_DB, "select * from regression_predictions")
-if rep_pred.empty:
-    display(pd.DataFrame([{"status":"pending annotation-derived duration probes"}]))
-else:
-    model_key = read_sql(STUDY_DB, "select job_id,model_id from jobs")
-    rep_pred = rep_pred.merge(model_key,on="job_id",how="left")
-    shown = rep_pred.query("predictor_set == 'latent'").copy()
-    shown["pair_mean_ms"] = (shown.truth + shown.prediction)/2
-    shown["prediction_minus_truth_ms"] = shown.prediction-shown.truth
-    fig = px.scatter(shown,x="pair_mean_ms",y="prediction_minus_truth_ms",color="model_id",
-                     hover_name="record_id",marginal_y="histogram",
-                     title="Annotation-derived QRSon–Toff Bland–Altman view")
-    fig.add_hline(y=0,line_dash="dash",line_color="black")
-    fig.show()
-```
-
-### Eight-code rhythm sensitivity analysis
-
-This is secondary and code-level. The multinomial penalty and latent dimension
-are selected by validation log loss, then frozen for test. Macro metrics prevent
-the 60-record groups from completely dominating AT (18), ST (21), and SVT (21),
-but those rare-code rows remain descriptive rather than independent clinical
-claims. Row-normalized confusion matrices show *which* rhythm codes exchange
-errors instead of compressing behavior into one accuracy number.
-
-```{python}
-#| label: rhythm-code-analysis
-multi = read_sql_optional(STUDY_DB,"select * from multiclass_results")
-conf = read_sql_optional(STUDY_DB,"select * from confusion_matrix")
-if multi.empty:
-    display(pd.DataFrame([{"status":"pending complete full-cohort checkpoint"}]))
-elif conf.empty:
-    display(pd.DataFrame([{"status":"multiclass summary present; confusion matrix pending"}]))
-else:
-    model_key=read_sql(STUDY_DB,"select job_id,model_id from jobs")
-    multi=multi.merge(model_key,on="job_id",how="left")
-    display(multi.sort_values(["model_id","class_label","metric"]))
-    cm=conf.merge(model_key,on="job_id",how="left")
-    selected=CHECKPOINT_MODEL_ID
-    if selected not in set(cm.model_id):
-        display(pd.DataFrame([{"status":f"registered display model unavailable: {selected}"}]))
-    else:
-        mat=cm[cm.model_id.eq(selected)].pivot(index="true_label",columns="predicted_label",values="row_fraction")
-        fig=px.imshow(mat,text_auto=".2f",aspect="auto",zmin=0,zmax=1,
-                      title=f"Row-normalized test confusion matrix · {selected}")
-        fig.show()
-```
-
-### Reconstruction quality-control odds ratio
-
-For a checkpoint with an exact SHA match in the RDB oracle, failure is frozen
-from validation data as missing-precordial Pearson below its 10th percentile or
-MSE above its 90th percentile. The predictor is a train-fitted eight-PC
-Ledoit–Wolf Mahalanobis outlier score. The reported OR is the cross-sectional
-odds of measured reconstruction failure per one training-standard-deviation
-increase in that score. It is a model quality-control association—not patient
-prognosis, AF incidence, or treatment benefit.
-
-```{python}
-#| label: reconstruction-failure-or
-qc_or = odds.query("outcome == 'reconstruction_failure'").copy() if not odds.empty else pd.DataFrame()
-qc_risk = extended.query("outcome == 'reconstruction_failure'").copy() if not extended.empty else pd.DataFrame()
-if qc_or.empty:
-    display(pd.DataFrame([{"status":"pending SHA-matched enhanced-checkpoint embeddings"}]))
-else:
-    display(qc_or)
-    display(qc_risk)
-    fig=px.scatter(qc_or,x="odds_ratio",y="predictor_set",error_x=qc_or.ci_high-qc_or.odds_ratio,
-                   error_x_minus=qc_or.odds_ratio-qc_or.ci_low,log_x=True,
-                   title="Reconstruction-failure OR per SD latent outlier score")
-    fig.add_vline(x=1,line_dash="dash",line_color="black")
-    fig.show()
-```
-
-### Projection stability and live UMAP
-
-The production grid fixes five seeds and neighborhood sizes 10, 30, and 60.
-Trustworthiness, high-dimensional rhythm-code silhouette, and nearest-code
-agreement are displayed together so cluster appearance is never the sole result.
-
-```{python}
-#| label: checkpoint-study-stability
-diag = read_sql(STUDY_DB, "select * from diagnostics")
-if not diag.empty:
-    display(diag.sort_values(["job_id","split","seed","neighbors","metric"]))
-    stable = diag.query("analysis == 'umap' and split == 'test'")
-    if not stable.empty:
-        stable = stable.assign(job_seed=stable.job_id.astype(str)+" · seed="+stable.seed.astype(str))
-        fig = px.line(stable, x="neighbors", y="value", color="metric",
-                      line_group="job_seed", facet_col="metric", markers=True,
-                      title="Test projection diagnostics across fixed UMAP seeds")
-        fig.update_yaxes(matches=None)
-        fig.show()
-
-projection = read_sql(STUDY_DB, """
-    select p.x,p.y,r.canonical_rhythm,j.model_id
-    from projections p join records r using(record_id) join jobs j using(job_id)
-    where p.seed=42 and p.neighbors=30 and r.split='test'
-""")
-if not projection.empty:
-    chosen_model = CHECKPOINT_MODEL_ID
-    shown = projection[projection.model_id == chosen_model]
-    if not shown.empty:
-        fig = px.scatter(shown, x="x", y="y", color="canonical_rhythm",
-                         title=f"Train-fit/test-transform encoder UMAP · {chosen_model}")
-        fig.update_traces(marker={"size":8,"opacity":.75}, hovertemplate="rhythm=%{fullData.name}<extra></extra>")
-        fig.show()
-```
-
-### Cross-checkpoint representation agreement
-
-Raw UMAP axes cannot be compared between checkpoints. Instead, the post-analysis
-uses the identical 360 test records and reports linear centered-kernel alignment
-(CKA), Spearman correlation of pairwise cosine distances (RSA), and 10-neighbor
-Jaccard overlap in the original standardized features. These answer distinct
-questions: shared linear geometry, shared global ordering, and shared local
-neighborhoods. Agreement alone does not tell us which representation is better;
-it localizes whether a performance difference reflects a genuinely changed
-latent geometry.
-
-```{python}
-#| label: checkpoint-geometry
-similarity = read_sql_optional(STUDY_DB, "select * from checkpoint_similarity")
-if similarity.empty:
-    display(pd.DataFrame([{"status":"pending two or more completed checkpoints"}]))
-else:
-    model_key = read_sql(STUDY_DB, "select job_id,model_id from jobs")
-    names = dict(zip(model_key.job_id,model_key.model_id))
-    similarity["checkpoint_a"] = similarity.job_a.map(names)
-    similarity["checkpoint_b"] = similarity.job_b.map(names)
-    similarity["contrast"] = similarity.checkpoint_a + " ↔ " + similarity.checkpoint_b
-    display(similarity.sort_values(["metric","value"],ascending=[True,False]))
-    fig = px.imshow(similarity.pivot(index="contrast",columns="metric",values="value"),
-                    aspect="auto",color_continuous_scale="Viridis",
-                    title="Matched test-set representation agreement")
-    fig.show()
-
-umap_pair_stability = read_sql_optional(STUDY_DB, "select * from umap_stability")
-if not umap_pair_stability.empty:
-    display(umap_pair_stability.groupby(["job_id","split","metric"]).value
-            .agg(["mean","std","min","max","count"]).reset_index())
-```
-
-### Reproducible nearest-neighbor inspection
-
-The compact database intentionally stores no waveform CSV. To inspect a point,
-choose a checkpoint and record from the UMAP, retrieve its nearest neighbors by
-cosine distance from the compressed feature blobs, and then load the original
-cached `.pt` records for waveform display. This preserves one source of truth
-while keeping the analysis modular: change the checkpoint, rhythm filter,
-neighbor count, seed, or UMAP neighborhood in the controls and rerender.
-
-Operationally, the study is safe to interrupt by creating
-`results/checkpoint_embeddings/STOP`. Each record is committed transactionally;
-removing the sentinel and rerunning the recorded command resumes missing rows.
-The production worker pauses below 3 GiB available RAM or 8 GiB free disk and
-never uses the training GPU.
-
-### Clinical interpretation boundary
-
-RDB cannot support the outcome model in Ansari et al. because it contains no
-drug exposure or longitudinal ventricular-arrhythmia outcome. It also cannot
-support AHA-guideline stroke-risk or anticoagulation decisions because age,
-sex, comorbidity, AF burden, and outcomes are absent. This analysis can show
-that a representation retains code-associated rhythm/repolarization morphology
-and may support reconstruction quality control. Confirmatory clinical utility
-requires an external patient-level cohort with adjudicated outcomes.
-
-## Paired inference: uncertainty before rank
-
-```{python}
-#| label: clinical-paired-inference
-if not paired.empty:
-    # Exploratory screen only: Benjamini-Hochberg adjustment across the displayed
-    # database snapshot. Confirmatory families require prespecification.
-    ordered = paired.p_value.fillna(1).sort_values()
-    m = len(ordered)
-    adjusted = (ordered * m / np.arange(1, m + 1))[::-1].cummin()[::-1].clip(upper=1)
-    paired["p_value_bh_exploratory"] = adjusted.reindex(paired.index)
-    paired["ci_excludes_zero"] = (paired.ci_low > 0) | (paired.ci_high < 0)
-    cols = [c for c in ["dataset", "model_id", "endpoint", "metric", "delta", "ci_low", "ci_high", "p_value", "p_value_bh_exploratory", "n_records", "n_patients", "ci_excludes_zero"] if c in paired]
-    display(paired.sort_values(["p_value_bh_exploratory", "p_value"])[cols].head(100))
-```
-
-## LUDB and RDB blinded delineation
-
-```{python}
-#| label: blinded-load
-le, lb = load_blinded(LUDB_BLIND, "LUDB")
-re, rb = load_blinded(RDB_BLIND, "RDB")
-blinded_eval = pd.concat([le, re], ignore_index=True)
-boundaries = pd.concat([lb, rb], ignore_index=True)
-display(blinded_eval.sort_values(["cohort", "primary_mean_micro_f1_20ms"], ascending=[True, False]))
-```
-
-```{python}
-#| label: blinded-boundary-heatmap
-for cohort, frame in boundaries.groupby("cohort"):
-    if "lead_group" in frame and (frame.lead_group == RDB_LEAD_GROUP).any():
-        frame = frame[frame.lead_group == RDB_LEAD_GROUP]
-    pivot = frame.pivot_table(index="model_id", columns="boundary", values="micro_f1_20ms")
-    if not pivot.empty:
-        fig = px.imshow(pivot, zmin=0, zmax=1, color_continuous_scale="Viridis",
-                        aspect="auto", title=f"{cohort}: blinded boundary F1 within 20 ms")
-        fig.update_layout(height=max(450, 18 * len(pivot)))
-        fig.show()
-```
-
-RDB has six genuine supervised boundary channels: P-on, P-off, QRS-on,
-QRS-off, T-on, and T-off. Peak channels are not fabricated. Consequently,
-onset/offset findings are valid targets; a T-peak claim is not.
-
-## RDB oracle and cross-protocol agreement
-
-```{python}
-#| label: rdb-oracle
-oracle = load_oracle(RDB_ORACLE, "RDB")
-oracle_metrics = numeric_metrics(oracle, "metric.")
-display(leaderboard(oracle.query("status == 'complete'"), oracle_metrics,
-                    id_col="model_id", group_cols=("cohort",), k=TOP_K))
-```
-
-```{python}
-#| label: protocol-consistency
-blind_complete = re.query("status == 'complete'").copy()
-oracle_complete = oracle.query("status == 'complete'").copy()
-binding = [c for c in ["model_id", "checkpoint_sha256", "dataset_sha256"]
-           if c in blind_complete and c in oracle_complete]
-if set(binding) != {"model_id", "checkpoint_sha256", "dataset_sha256"}:
-    cross = pd.DataFrame()
-    display(pd.DataFrame([{"status": "cross-protocol comparison blocked",
-                           "reason": "model/checkpoint/dataset identity columns unavailable"}]))
-else:
-    cross = blind_complete.merge(oracle_complete, on=binding,
-                                 suffixes=("_blind", "_oracle"), validate="one_to_one")
-    display(pd.DataFrame([{"identity_binding": "+".join(binding),
-                           "matched_generations": len(cross),
-                           "unmatched_protocol_rows": len(blind_complete) + len(oracle_complete) - 2 * len(cross)}]))
-oracle_x = next((c for c in ["metric.signal_pearson_p05", "metric.missing_signal_pearson_p05"] if c in cross), None)
-if not cross.empty and oracle_x:
-    fig = px.scatter(cross, x=oracle_x, y="primary_mean_micro_f1_20ms",
-                     hover_name="model_id", color="factorial_mask_blind",
-                     title="RDB oracle signal tail versus blinded boundary preservation")
-    fig.show()
-```
-
-## Interpretation discipline
-
-For every apparent winner report: **observation with raw numbers → uncertainty
-or replication status → narrow interpretation → falsification experiment**.
-Agreement across reconstruction, clinical endpoints, oracle morphology, and
-blinded delineation is stronger than winning any one leaderboard.

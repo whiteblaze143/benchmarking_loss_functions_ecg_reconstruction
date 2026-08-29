@@ -1,0 +1,184 @@
+---
+title: "Completed LUDB Semi-Supervised Delineation Results"
+subtitle: "Student/EMA, padding, split, stream, and six-boundary evaluation"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: ludb-semiseg-setup
+import pandas as pd
+from live_results import *
+
+EVAL_DB = source_path("results/semiseg_ludb/semiseg_ludb.sqlite")
+TRAIN_DB = source_path("results/semiseg_ludb_training/semiseg_ludb_mt_evaluation.sqlite")
+
+def semiseg_tables(path, source):
+    runs = read_sql(path, "select * from runs")
+    if not runs.empty:
+        runs = pd.concat([runs.drop(columns="summary_json"),
+                          json_normalize(runs.summary_json, "metric.")], axis=1)
+        runs["source"] = source
+    streams = read_sql(path, "select * from stream_metrics")
+    boundaries = read_sql(path, "select * from boundary_metrics")
+    if not streams.empty: streams["source"] = source
+    if not boundaries.empty: boundaries["source"] = source
+    return runs, streams, boundaries
+
+er, es, eb = semiseg_tables(EVAL_DB, "evaluation package")
+tr, ts, tb = semiseg_tables(TRAIN_DB, "mean-teacher package")
+runs = pd.concat([er, tr], ignore_index=True)
+streams = pd.concat([es, ts], ignore_index=True)
+boundaries = pd.concat([eb, tb], ignore_index=True)
+```
+
+## Provenance and completed runs
+
+```{python}
+#| label: ludb-semiseg-runs
+display(source_inventory({"LUDB semiseg": EVAL_DB, "LUDB mean-teacher": TRAIN_DB}))
+display(runs.sort_values(["source", "run_id"]))
+display(runs.groupby(["source", "status", "split", "state_name", "padding"], dropna=False)
+        .size().rename("runs").reset_index())
+```
+
+The two databases contain nine and seven completed run rows respectively.
+Student and EMA states, padding choices, and dataset splits remain explicit;
+they are not averaged into a single headline number.
+
+## Stream-level region and interval metrics
+
+```{python}
+#| label: ludb-semiseg-streams
+summary = (streams.groupby(["source", "run_id"])
+           .agg(streams=("record_id", "size"), miou_mean=("miou", "mean"),
+                miou_p05=("miou", lambda x: x.quantile(.05)),
+                p_iou=("p_iou", "mean"), qrs_iou=("qrs_iou", "mean"),
+                t_iou=("t_iou", "mean"), pr_error_ms=("notebook_pr_error_ms", "mean"),
+                qrs_error_ms=("notebook_qrs_error_ms", "mean"),
+                qt_error_ms=("notebook_qt_error_ms", "mean"))
+           .reset_index())
+summary = summary.merge(runs[["source", "run_id", "split", "state_name", "padding",
+                              "checkpoint_sha256", "evaluator_sha256",
+                              "metric.protocol", "metric.tolerance_ms",
+                              "metric.evaluation_window"]],
+                        on=["source", "run_id"], how="left")
+display(summary)
+
+# Boundary tolerance changes event matching but not region/interval predictions.
+# Collapse exact performance duplicates before ranking those endpoints.
+performance_columns = ["miou_mean", "miou_p05", "p_iou", "qrs_iou", "t_iou",
+                       "pr_error_ms", "qrs_error_ms", "qt_error_ms"]
+canonical_streams = summary.drop_duplicates(
+    subset=["source", "checkpoint_sha256", "evaluator_sha256", "split",
+            "state_name", "padding", *performance_columns]).copy()
+display(leaderboard(canonical_streams, numeric_metrics(canonical_streams), id_col="run_id",
+                    group_cols=("source",), k=10))
+```
+
+Two pairs of test rows have identical region and interval metrics because only
+the event-matching tolerance changed. They remain in the provenance ledger but
+are collapsed for region/interval ranking. Otherwise the same prediction set
+would be counted twice as independent evidence.
+
+## Boundary event accounting
+
+```{python}
+#| label: ludb-semiseg-boundaries
+event = (boundaries.groupby(["source", "run_id", "boundary"])
+         .agg(reference_events=("reference_events", "sum"),
+              predicted_events=("predicted_events", "sum"),
+              true_positive=("true_positive", "sum"),
+              false_positive=("false_positive", "sum"),
+              false_negative=("false_negative", "sum"))
+         .reset_index())
+event["sensitivity"] = event.true_positive / (event.true_positive + event.false_negative)
+event["ppv"] = event.true_positive / (event.true_positive + event.false_positive)
+event["f1"] = 2 * event.ppv * event.sensitivity / (event.ppv + event.sensitivity)
+display(event)
+```
+
+These delineator results evaluate the LUDB semi-supervised component itself.
+They are not reconstruction-model results and must not be used to rank ECG-AIM
+checkpoints without the corresponding reconstruction inference protocol.
+
+## Student-versus-EMA contrasts
+
+```{python}
+#| label: ludb-semiseg-ema-contrasts
+ema_pairs = canonical_streams.pivot_table(
+    index=["source", "checkpoint_sha256", "evaluator_sha256", "split", "padding"],
+    columns="state_name", values=performance_columns).dropna().copy()
+ema_delta = pd.DataFrame(index=ema_pairs.index)
+for metric in performance_columns:
+    if (metric, "model") in ema_pairs and (metric, "model_ema") in ema_pairs:
+        direction = metric_direction(metric)
+        sign = -1 if direction == "min" or metric.endswith("error_ms") else 1
+        ema_delta[metric] = sign * (ema_pairs[(metric, "model_ema")] -
+                                    ema_pairs[(metric, "model")])
+display(ema_delta.reset_index())
+```
+
+EMA effects are small and mixed relative to evaluator effects. On the v1 valid
+split, EMA raises foreground mIoU by 0.0021; on the v2 mean-teacher validation
+checkpoints, changes are generally around one to three thousandths. Interval
+errors do not improve uniformly—PR error can worsen while QRS/QT improve.
+Therefore, “EMA is the better delineator” is not established as a universal
+claim; state selection should remain split- and endpoint-specific.
+
+## Padding and evaluation-window sensitivity
+
+```{python}
+#| label: ludb-semiseg-padding
+padding_pairs = canonical_streams.pivot_table(
+    index=["source", "checkpoint_sha256", "evaluator_sha256", "split", "state_name"],
+    columns="padding", values=performance_columns).dropna().copy()
+padding_delta = pd.DataFrame(index=padding_pairs.index)
+for metric in performance_columns:
+    if (metric, "none") in padding_pairs and (metric, "notebook") in padding_pairs:
+        sign = -1 if metric.endswith("error_ms") else 1
+        padding_delta[metric] = sign * (padding_pairs[(metric, "notebook")] -
+                                        padding_pairs[(metric, "none")])
+display(padding_delta.reset_index())
+```
+
+For the v1 test checkpoint, notebook padding changes foreground mIoU from
+0.594 to 0.840 and reduces QT interval error from 30.45 to 11.34 ms—far larger
+than the EMA effect. This is not evidence that padding makes the learned model
+intrinsically better. It shows that temporal alignment and the evaluation
+window are part of the estimand. The v2 `annotated` window was introduced to
+make this contract explicit.
+
+In the mean-teacher test package, notebook padding produces a smaller change
+(foreground mIoU 0.775 to 0.783), with the largest benefit in P-wave overlap and
+interval errors. Results from `none`, `notebook`, legacy v1, and annotated v2
+must not be pooled into a single model leaderboard.
+
+## Wave-specific failure structure
+
+Across the v2 mean-teacher test runs, QRS IoU is approximately 0.84, whereas
+P-wave IoU is about 0.67–0.71 and T-wave IoU about 0.80. QRS timing errors are
+roughly 8–9 ms, while PR and QT errors remain larger. The principal residual
+weakness is therefore atrial morphology and interval construction rather than
+QRS localization. A headline mIoU obscures that imbalance.
+
+## Semi-supervised claim ledger
+
+| Claim | Verdict | Evidence |
+|---|---|---|
+| EMA universally improves delineation | Not supported | Effects are small, split-dependent, and mixed across interval endpoints. |
+| Notebook padding is a model improvement | Incorrect interpretation | It changes alignment/evaluation support and can dominate apparent model effects. |
+| Tolerance-20 and tolerance-150 rows are independent region results | No | They reuse identical predictions; only boundary matching changes. |
+| QRS is the main failure mode | Contradicted | QRS overlap/timing are strongest; P-wave and interval endpoints are weaker. |
+| These results rank ECG-AIM reconstructions | No | They evaluate the delineator component on native LUDB streams. |
+| A canonical result can be reported | Yes, with contract | Checkpoint, state, split, padding, evaluator hash, window, and tolerance must all be named. |
+
+## Remaining inferential limits
+
+The databases contain a small number of checkpoint/state evaluations rather
+than replicated training seeds. Stream observations are clustered within 40
+subjects, but the summary tables do not provide subject-bootstrap confidence
+intervals for student-versus-EMA or padding contrasts. Differences here are
+descriptive engineering evidence until repeated training and subject-level
+paired inference are added.

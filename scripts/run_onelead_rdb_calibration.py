@@ -14,6 +14,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_RESULTS_DB = ROOT / "results/onelead_rdb_semiseg_screened_v1/compact.sqlite"
 
 
 def available_memory_gib() -> float:
@@ -31,13 +32,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--max-load-1m", type=float, default=3.0)
     parser.add_argument("--min-available-memory-gib", type=float, default=7.0)
-    parser.add_argument("--min-free-disk-gib", type=float, default=8.0)
+    parser.add_argument("--min-free-disk-gib", type=float, default=5.5)
     parser.add_argument("--poll-seconds", type=int, default=30)
     parser.add_argument("--torch-threads", type=int, default=6)
-    parser.add_argument("--degraded-max-load-1m", type=float, default=8.0)
-    parser.add_argument("--degraded-min-available-memory-gib", type=float, default=4.75)
+    parser.add_argument("--degraded-max-load-1m", type=float, default=12.0)
+    parser.add_argument("--degraded-min-available-memory-gib", type=float, default=3.5)
     parser.add_argument("--degraded-torch-threads", type=int, default=1)
-    parser.add_argument("--results-db", type=Path, default=ROOT / "results/onelead_rdb_semiseg_blinded/compact.sqlite")
+    parser.add_argument("--results-db", type=Path, default=DEFAULT_RESULTS_DB)
     args = parser.parse_args()
     while True:
         load = os.getloadavg()[0]
@@ -64,13 +65,8 @@ def main() -> None:
     subprocess.run(command, check=True)
     event("calibration_complete_starting_screened_population")
     command[command.index("calibration")] = "screened-all"
-    screened = subprocess.run(command)
-    if screened.returncode == 0:
-        event("screened_population_complete")
-        return
-    event("screening_gate_unavailable_falling_back_to_full_population", returncode=screened.returncode)
-    command[command.index("screened-all")] = "full-all"
-    os.execv(command[0], command)
+    subprocess.run(command, check=True)
+    event("screened_population_complete")
 
 
 if __name__ == "__main__":

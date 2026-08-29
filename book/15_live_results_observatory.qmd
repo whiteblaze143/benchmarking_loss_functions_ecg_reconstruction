@@ -26,6 +26,12 @@ SOURCES = {
     "One-lead queue": source_path("refine-logs/wavelet_ssl_1110000/full/queue.sqlite"),
     "One-lead checkpoints": source_path("results/onelead_checkpoint_store/catalog.sqlite"),
     "Checkpoint representation study": source_path("results/checkpoint_embeddings/compact.sqlite"),
+    "One-lead convergence": source_path("refine-logs/convergence_10e/queue.sqlite"),
+    "One-lead repaired-mask 1111002": source_path("refine-logs/wavelet_ssl_1111002/full/queue.sqlite"),
+    "One-lead spatial v1": source_path("refine-logs/spatial_arch_1lead_v1/full/queue.sqlite"),
+    "One-lead RDB screened": source_path("results/onelead_rdb_semiseg_screened_v1/compact.sqlite"),
+    "LUDB semiseg evaluation": source_path("results/semiseg_ludb/semiseg_ludb.sqlite"),
+    "LUDB semiseg training": source_path("results/semiseg_ludb_training/semiseg_ludb_mt_evaluation.sqlite"),
 }
 inventory = source_inventory(SOURCES)
 display(inventory)
@@ -55,6 +61,10 @@ else:
 from IPython.display import Markdown, display
 
 q = load_onelead_queue(SOURCES["One-lead queue"])
+cq = load_onelead_queue(SOURCES["One-lead convergence"])
+convergence_artifacts = load_summary_tree("refine-logs/convergence_10e/runs")
+rq = load_onelead_queue(SOURCES["One-lead repaired-mask 1111002"])
+sq = load_onelead_queue(SOURCES["One-lead spatial v1"])
 le, _ = load_blinded(SOURCES["LUDB blinded"], "LUDB")
 re, _ = load_blinded(SOURCES["RDB blinded"], "RDB")
 ro = load_oracle(SOURCES["RDB oracle"], "RDB")
@@ -67,12 +77,24 @@ summary = pd.DataFrame([
     {"stream": "LUDB blinded three-lead", **statuses(le)},
     {"stream": "RDB blinded three-lead", **statuses(re)},
     {"stream": "RDB oracle three-lead", **statuses(ro)},
+    {"stream": "one-lead convergence queue ledger (stale)", **statuses(cq)},
+    {"stream": "one-lead convergence terminal artifacts",
+     **convergence_artifacts.run_state.value_counts().to_dict()},
+    {"stream": "one-lead repaired-mask 1111002", **statuses(rq)},
+    {"stream": "one-lead spatial architecture v1", **statuses(sq)},
 ]).fillna(0)
 display(summary)
 ```
 
 The counts above are a render-time snapshot—not a monitoring daemon. Rerender
-this chapter or the full book to incorporate newly committed DB rows.
+this chapter or the full book to incorporate newly committed DB rows. Completed
+LUDB/RDB evaluators and the terminal `1110000` screen remain visible for source
+reconciliation, but their scientific results live in completed-evidence
+chapters rather than being interpreted here.
+
+The convergence row deliberately shows both sources. Terminal summaries and
+`_SUCCESS.json` files establish 33 completed runs; `queue.sqlite` still labels
+12 entries pending and is not used as completion authority.
 
 ## Two evidence tracks that must not be mixed
 

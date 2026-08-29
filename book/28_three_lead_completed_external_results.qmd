@@ -1,0 +1,222 @@
+---
+title: "Completed Three-Lead ECG-AIM External Morphology Evaluation"
+subtitle: "LUDB blinded, RDB blinded, and RDB oracle evidence"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: threelead-external-controls
+TOP_K = 10
+```
+
+```{python}
+#| label: threelead-external-setup
+import pandas as pd
+import plotly.express as px
+from live_results import *
+
+LUDB = source_path("results/ecgaim_ludb_semiseg_blinded/compact.sqlite")
+RDB_BLIND = source_path("results/ecgaim_rdb_semiseg_blinded/compact.sqlite")
+RDB_ORACLE = source_path("results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite")
+le, lb = load_blinded(LUDB, "LUDB")
+re, rb = load_blinded(RDB_BLIND, "RDB")
+oracle = load_oracle(RDB_ORACLE, "RDB oracle")
+```
+
+## Completion, selection, and protocol boundaries
+
+```{python}
+#| label: threelead-external-provenance
+display(source_inventory({"LUDB blinded": LUDB, "RDB blinded": RDB_BLIND,
+                          "RDB oracle": RDB_ORACLE}))
+display(pd.DataFrame([
+    {"study": "LUDB blinded", "rows": len(le), "models": le.model_id.nunique(),
+     "complete": int(le.status.eq("complete").sum())},
+    {"study": "RDB blinded", "rows": len(re), "models": re.model_id.nunique(),
+     "complete": int(re.status.eq("complete").sum())},
+    {"study": "RDB oracle", "rows": len(oracle), "models": oracle.model_id.nunique(),
+     "complete": int(oracle.status.eq("complete").sum())},
+]))
+```
+
+LUDB covers 123 ECG-AIM masks plus the measured-signal baseline. RDB blinded
+covers 31 promoted checkpoints plus the baseline; RDB oracle covers the same 31
+trained models over 2,398 records. These denominators differ by design and must
+not be presented as equally exhaustive architecture sweeps. The live LUDB
+oracle SQLite path is zero bytes; no symmetric queryable LUDB-oracle result is
+claimed.
+
+## Blinded top-level metrics
+
+```{python}
+#| label: threelead-blinded-results
+blinded = pd.concat([le, re], ignore_index=True)
+display(blinded.sort_values(["cohort", "model_id"]))
+metrics = [c for c in ["signal_pearson_p05", "signal_mse_p95",
+                        "primary_mean_micro_f1_20ms", "duration_seconds"] if c in blinded]
+display(leaderboard(blinded, metrics, id_col="model_id", group_cols=("cohort",), k=TOP_K))
+if {"signal_pearson_p05", "primary_mean_micro_f1_20ms"}.issubset(blinded):
+    fig = px.scatter(blinded, x="signal_pearson_p05", y="primary_mean_micro_f1_20ms",
+                     color="cohort", hover_name="model_id", hover_data=["signal_mse_p95"],
+                     title="Blinded waveform-tail versus six-boundary performance")
+    fig.show()
+```
+
+## All six blinded boundaries
+
+```{python}
+#| label: threelead-boundaries
+display(lb.sort_values(["model_id", "boundary"]))
+display(rb.sort_values(["model_id", "lead_group", "boundary"]))
+for cohort, frame, groups in [
+    ("LUDB", lb, ("boundary",)),
+    ("RDB", rb, ("lead_group", "boundary")),
+]:
+    display(leaderboard(frame, numeric_metrics(frame), id_col="model_id",
+                        group_cols=groups, k=TOP_K))
+```
+
+Both protocols report onset/offset events. RDB additionally stratifies lead
+groups. F1 at 20 ms, event counts, 150-ms matching, timing bias, MAE, and p95
+answer different questions; conditional timing errors are not substitutes for
+missed-event sensitivity.
+
+## RDB oracle metric inventory and raw model summaries
+
+```{python}
+#| label: rdb-oracle-results
+display(oracle.sort_values("model_id"))
+display(pd.DataFrame([
+    {"table": name, "rows": tables(RDB_ORACLE).get(name, 0)}
+    for name in ["record_role_signal_metrics", "record_role_wave_metrics",
+                 "record_role_st_metrics", "lead_wave_summaries"]
+]))
+oracle_metrics = numeric_metrics(oracle, "metric.")
+display(leaderboard(oracle, oracle_metrics, id_col="model_id", k=TOP_K))
+```
+
+Oracle summaries include signal Pearson/MSE/MAE/derivative error, wave-window
+correlation and amplitude error, onset/offset error, signed and absolute area,
+and J/J60/ST metrics stratified by rhythm, lead role, lead, and wave. Oracle
+access is diagnostic evidence; it does not replace the blinded selection
+protocol.
+
+## Cross-cohort transport among the 31 shared models
+
+```{python}
+#| label: threelead-cross-cohort
+shared = (le.query("model_id != '__original__'")
+          .merge(re.query("model_id != '__original__'"), on="model_id",
+                 suffixes=("_ludb", "_rdb")))
+shared_metrics = ["signal_pearson_p05", "signal_mse_p95",
+                  "primary_mean_micro_f1_20ms"]
+transport_rows = []
+for metric in shared_metrics:
+    pair = shared[[f"{metric}_ludb", f"{metric}_rdb"]].dropna()
+    transport_rows.append({
+        "metric": metric, "shared_models": len(pair),
+        "Pearson": pair.iloc[:, 0].corr(pair.iloc[:, 1]),
+        "Spearman": pair.iloc[:, 0].corr(pair.iloc[:, 1], method="spearman")})
+display(pd.DataFrame(transport_rows))
+
+fig = px.scatter(shared, x="primary_mean_micro_f1_20ms_ludb",
+                 y="primary_mean_micro_f1_20ms_rdb", hover_name="model_id",
+                 color="factorial_mask_ludb", trendline="ols",
+                 title="Boundary-F1 transport across LUDB and RDB")
+fig.show()
+```
+
+Boundary ranking transports moderately well: Spearman correlation is 0.736
+across the 31 shared trained models. Waveform-tail ranking transports much less
+well: Pearson-p05 Spearman is 0.300 and MSE-p95 Spearman is −0.026. Dataset
+differences reorder models far more strongly for waveform fidelity than for
+downstream delineation retention.
+
+This comparison is conditional on promotion. The 31 RDB models are a selected
+subset of the 123 LUDB candidates, so the correlation does not estimate
+transport for the full architecture space and may be range-restricted.
+
+## Retention relative to the measured-signal reference
+
+```{python}
+#| label: threelead-reference-gaps
+reference_rows = []
+for cohort, frame in [("LUDB", le), ("RDB", re)]:
+    reference = frame.query("model_id == '__original__'").iloc[0]
+    trained = frame.query("model_id != '__original__'")
+    for metric in shared_metrics:
+        direction = metric_direction(metric)
+        best = trained.sort_values(metric, ascending=(direction == "min")).iloc[0]
+        favorable_gap = ((reference[metric] - best[metric]) if direction == "min"
+                         else (best[metric] - reference[metric]))
+        reference_rows.append({"cohort": cohort, "metric": metric,
+                               "reference": reference[metric],
+                               "best_model": best.model_id,
+                               "best_reconstruction": best[metric],
+                               "favorable_gap_vs_reference": favorable_gap})
+display(pd.DataFrame(reference_rows))
+```
+
+On RDB, the best reconstructed boundary result is 0.7404 versus 0.7430 on the
+measured signal, a gap of 0.0026. On LUDB, the best reconstruction is 0.6302
+versus 0.6938, a gap of 0.0636. The smaller RDB gap is encouraging for retaining
+the downstream delineator's events, but does not mean the true waveform was
+recovered: RDB signal Pearson p05 remains at most 0.638.
+
+The measured-signal row is a protocol reference, not a trainable competitor.
+Its Pearson of 1 and MSE of 0 are identities, while its boundary F1 is below 1
+because the fixed delineator itself is imperfect. Boundary retention can
+approach the reference even when waveform fidelity remains limited.
+
+## Oracle endpoint disagreement and Pareto selection
+
+```{python}
+#| label: threelead-oracle-pareto
+oracle_focus = [c for c in [
+    "metric.signal_pearson_p05", "metric.signal_mse_p95",
+    "metric.boundary_voltage_abs_error_record_p95_mv",
+    "metric.qrs_window_rmse_record_p95_mv",
+    "metric.qrs_absolute_area_error_record_p95_mv_ms",
+    "metric.t_window_rmse_record_p95_mv",
+    "metric.t_absolute_area_error_record_p95_mv_ms",
+    "metric.st_j_abs_error_record_p95_mv"] if c in oracle]
+oracle_leaders = []
+for metric in oracle_focus:
+    best = oracle.sort_values(metric, ascending=(metric_direction(metric) != "max")).iloc[0]
+    oracle_leaders.append({"metric": metric, "leader": best.model_id,
+                           "value": best[metric]})
+display(pd.DataFrame(oracle_leaders))
+
+ranks = pd.DataFrame({"model_id": oracle.model_id})
+for metric in oracle_focus:
+    ranks[metric] = oracle[metric].rank(
+        ascending=(metric_direction(metric) != "max"), method="min")
+ranks["mean_endpoint_rank"] = ranks[oracle_focus].mean(axis=1)
+display(ranks.sort_values("mean_endpoint_rank"))
+```
+
+Different checkpoints lead signal correlation, boundary-voltage error, QRS
+window error, QRS area, T-window error, T area, and ST/J error. No checkpoint is
+the oracle winner on every endpoint. Mean rank is a diagnostic summary, not a
+validated clinical utility function or substitute for a predeclared hierarchy.
+
+## External claim ledger
+
+| Claim | Verdict | Evidence |
+|---|---|---|
+| Model ranking transports from LUDB to RDB | Partially | Boundary-F1 rank correlation is 0.736; waveform-tail correlations are weak. |
+| A reconstruction matches the measured waveform | Contradicted | Signal Pearson remains below 1 and MSE above 0 in both cohorts. |
+| RDB delineation is nearly retained | Supported for the fixed delineator | Best F1 is 0.7404 versus reference 0.7430; this is event retention, not waveform identity. |
+| One model is globally best | Not supported | Leaders differ across cohorts, boundaries, waveform tails, QRS/T morphology, and ST/J endpoints. |
+| Oracle access validates blinded selection | No | Oracle results diagnose failure modes but cannot retroactively serve as blinded selection evidence. |
+| The RDB subset represents all 123 LUDB models | No | It is a promoted 31-model subset subject to selection and range restriction. |
+
+## Remaining limits
+
+Principal checkpoints use seed 42. Cohorts have different annotations and
+distributions, and the RDB subset was selected rather than exhaustive.
+Aggregate summaries do not provide paired uncertainty for every model contrast.
+These results support external morphology-retention and failure-analysis claims,
+not clinical equivalence or waveform identifiability.

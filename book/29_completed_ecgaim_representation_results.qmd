@@ -1,0 +1,359 @@
+---
+title: "Completed ECG-AIM Representation Study"
+subtitle: "Linear probes, matched objective contrasts, calibration, failure prediction, and representation geometry"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: representation-setup
+import pandas as pd
+import plotly.express as px
+from live_results import *
+
+DB = source_path("results/checkpoint_embeddings/compact.sqlite")
+jobs = read_sql(DB, "select * from jobs order by job_id")
+diagnostics = read_sql(DB, "select * from diagnostics")
+extended = read_sql(DB, "select * from extended_results")
+paired = read_sql(DB, "select * from paired_comparisons")
+predictor = read_sql(DB, "select * from predictor_comparisons")
+odds = read_sql(DB, "select * from odds_ratios")
+multiclass = read_sql(DB, "select * from multiclass_results")
+confusion = read_sql(DB, "select * from confusion_matrix")
+records = read_sql(DB, "select * from records")
+similarity = read_sql(DB, "select * from checkpoint_similarity")
+stability = read_sql(DB, "select * from umap_stability")
+multiplicity = read_sql(DB, "select * from multiplicity_results")
+
+job_labels = jobs.set_index("job_id")["model_id"].to_dict()
+for frame in (extended, predictor, odds, multiclass, diagnostics):
+    frame["model_id"] = frame["job_id"].map(job_labels)
+for frame in (paired, similarity):
+    frame["model_a"] = frame["job_a"].map(job_labels)
+    frame["model_b"] = frame["job_b"].map(job_labels)
+
+ANCHORS = ["factorial_ecg_aim_1000000_s42", "factorial_ecg_aim_1011011_s42"]
+confusion["model_id"] = confusion["job_id"].map(job_labels)
+
+def compact_ci(frame, digits=3):
+    out = frame.copy()
+    out["estimate (95% CI)"] = out.apply(
+        lambda r: f"{r.value:.{digits}f} [{r.ci_low:.{digits}f}, {r.ci_high:.{digits}f}]"
+        if pd.notna(r.ci_low) and pd.notna(r.ci_high) else f"{r.value:.{digits}f}", axis=1)
+    return out
+```
+
+## What question this study can answer
+
+This is a **frozen-representation audit**, not another reconstruction
+leaderboard. It asks whether a frozen ECG-AIM encoder contains linearly
+accessible rhythm-code or annotation-timing information; whether that
+information adds to deliberately small waveform controls; whether `1011011`
+improves on the raw `1000000` anchor on the same records; and whether latent
+outliers are associated with reconstruction failure.
+
+The rhythm endpoint is released cross-sectional code membership. The timing
+endpoint is the annotation interval from QRS onset to T offset; it is explicitly
+**not clinical QT or QTc**. Neither endpoint establishes diagnosis, prospective
+AF prediction, causal physiology, or identifiability of a missing 12-lead ECG.
+
+::: {.callout-important}
+## Bottom line
+
+The latents contain useful rhythm-code information, but the current experiment
+does not show that `1011011` is a better AF representation than `1000000`.
+`1011011` improves several measures of annotation-interval encoding, while
+direct waveform summaries remain substantially better for absolute timing.
+Rhythm codes are locally enriched in latent space but not globally separated.
+:::
+
+## Completion, split scope, and leakage boundary
+
+```{python}
+#| label: representation-jobs
+display(source_inventory({"checkpoint representation DB": DB}))
+display(jobs[["model_id", "split_scope", "expected_records", "completed_records",
+              "feature_dim", "status", "checkpoint_sha256"]])
+display(jobs.groupby(["split_scope", "status"])
+        .agg(jobs=("job_id", "nunique"), records=("completed_records", "sum"),
+             dimensions=("feature_dim", "unique")).reset_index())
+```
+
+All 11 extraction jobs are complete. Only the two anchors have train,
+validation, and test activations. Their probes were selected on validation data
+and evaluated once on shared test records. The other nine checkpoints are
+test-only and contribute geometry, similarity, and visualization—not fitted
+probes. Fitting probes on them would leak the evaluation split.
+
+The pipeline standardizes and fits PCA on training data, restricts probes to at
+most eight PCA components, applies a validation one-standard-error selection
+rule favouring simpler candidates, and refits on train plus validation. Test
+intervals use paired record-level bootstrap resamples. These safeguards do not
+remove single-split or single-seed uncertainty.
+
+## Binary AF/AFIB code-membership probe
+
+The waveform comparator contains heart rate, signal RMS, and spectral entropy.
+It is interpretable but intentionally small; it is **not** a strong native-ECG
+classifier. Beating it demonstrates incremental information relative to three
+summaries, not clinical superiority.
+
+```{python}
+#| label: af-probe-table
+af = extended[(extended.outcome == "AF_AFIB_code_membership") &
+              (extended.metric.isin(["auroc", "auprc", "brier", "log_loss"])) &
+              (extended.model_id.isin(ANCHORS))].copy()
+af = compact_ci(af)
+display(af[["model_id", "predictor_set", "metric", "estimate (95% CI)", "n"]]
+        .sort_values(["model_id", "predictor_set", "metric"]))
+
+af_plot = af[af.metric.isin(["auroc", "auprc"])].copy()
+fig = px.bar(af_plot, x="predictor_set", y="value", color="model_id",
+             facet_col="metric", barmode="group",
+             error_y=af_plot.ci_high-af_plot.value,
+             error_y_minus=af_plot.value-af_plot.ci_low,
+             labels={"value": "held-out estimate", "predictor_set": "predictor"})
+fig.update_layout(title="Held-out AF/AFIB code discrimination")
+fig.show()
+```
+
+For `1000000`, latent AUROC is 0.760 (95% CI 0.710–0.812), compared with
+0.713 (0.654–0.766) for waveform summaries; the combined model reaches 0.788
+(0.737–0.836). For `1011011`, latent AUROC is 0.787 (0.740–0.836), and the
+combined model reaches 0.794 (0.746–0.841). Both anchors therefore encode
+rhythm-associated information. Whether the enhanced objective caused an
+improvement requires the paired anchor contrast below.
+
+### Probe selection, prevalence, and calibration
+
+```{python}
+#| label: af-probe-specification
+selection_source = extended[
+    (extended.outcome == "AF_AFIB_code_membership") &
+    (extended.metric == "auroc") &
+    (extended.model_id.isin(ANCHORS))
+].copy()
+selection_details = json_normalize(selection_source.details_json, prefix="")
+selection_table = pd.concat([
+    selection_source[["model_id", "predictor_set", "n"]].reset_index(drop=True),
+    selection_details[["dims", "C", "validation_loss", "validation_loss_se",
+                       "validation_calibration_intercept",
+                       "validation_calibration_slope", "selection"]]
+], axis=1)
+display(selection_table)
+
+calibration = extended[
+    (extended.outcome == "AF_AFIB_code_membership") &
+    (extended.metric.isin(["calibration_intercept", "calibration_slope",
+                           "predicted_risk_IQR_contrast"])) &
+    (extended.model_id.isin(ANCHORS))
+]
+display(calibration[["model_id", "predictor_set", "metric", "value", "n"]]
+        .sort_values(["model_id", "predictor_set", "metric"]))
+display(records.query("split == 'test'").canonical_rhythm.value_counts()
+        .rename_axis("released canonical code").reset_index(name="records"))
+```
+
+The held-out set contains 120 AF/AFIB-coded and 240 other records. AUROC is not
+prevalence-dependent, but AUPRC must be interpreted against the 0.333 no-skill
+prevalence. The calibrated probes all select `C=0.01`; waveform uses three
+features and latent/combined probes use eight PCA dimensions. Strong shrinkage
+and low dimension make this closer to a linear-accessibility test than a large
+downstream classifier.
+
+Test calibration slopes are 1.17–1.24 for latent-only and 1.10–1.15 for the
+combined probes, with intercepts near zero. This is reasonable internal
+calibration after validation adjustment, not external calibration. The
+`1011011` latent produces a larger interquartile predicted-risk contrast
+(0.302) than waveform summaries (0.186), but risk spread is not clinical net
+benefit.
+
+The older `probe_results` table stores a superseded uncalibrated analysis with
+different selected regularization. This chapter consistently uses
+`extended_results` and its paired tables; mixing generations would change the
+estimand silently.
+
+### Incremental information relative to waveform controls
+
+```{python}
+#| label: af-predictor-contrasts
+af_predictor = predictor[predictor.outcome == "AF_AFIB_code_membership"].copy()
+af_predictor["contrast"] = af_predictor.reference_set + " → " + af_predictor.candidate_set
+display(af_predictor[["model_id", "contrast", "metric",
+                      "delta_candidate_minus_reference", "ci_low", "ci_high", "p_value"]]
+        .sort_values(["model_id", "contrast", "metric"]))
+display(odds[odds.outcome == "AF_AFIB_code_membership"]
+        [["model_id", "predictor_set", "odds_ratio", "ci_low", "ci_high",
+          "p_value", "events", "total"]])
+```
+
+For `1011011`, latent versus waveform improves AUROC by 0.0738
+(95% CI 0.0157–0.1345; Holm-adjusted *p*=0.011) and reduces Brier score by
+0.0231 (Holm-adjusted *p*=0.002). Adding latent features to waveform summaries
+improves AUROC by 0.0801 and AUPRC by 0.0788. Once the latent is present, adding
+the waveform summaries changes AUROC by only 0.0063 (CI crosses zero).
+
+For `1000000`, latent-versus-waveform AUROC and AUPRC intervals cross zero,
+although Brier score and log loss improve. Its combined model is consistently
+better than waveform alone. The defensible claim is **incremental rhythm-code
+information, with stronger evidence for probability quality than for a large
+discrimination gain**. Per-SD probe-score odds ratios near 3 are associations,
+not causal risks or prospective recurrence effects.
+
+## Does `1011011` beat the raw anchor?
+
+```{python}
+#| label: paired-anchor-comparison
+paired_show = paired.copy()
+paired_show["contrast"] = paired_show.model_a + " → " + paired_show.model_b
+display(paired_show[["contrast", "outcome", "metric", "delta_b_minus_a",
+                     "ci_low", "ci_high", "p_value"]]
+        .sort_values(["outcome", "metric"]))
+```
+
+For AF/AFIB code membership, `1011011 − 1000000` gives AUROC +0.0270
+(95% CI −0.0227 to +0.0760; *p*=0.329), AUPRC −0.0283 (*p*=0.610), Brier
+−0.0034 (*p*=0.682), and log loss −0.0055 (*p*=0.804). Every interval includes
+no difference. The data permit a small loss or moderate gain; calling
+`1011011` an improved AF base architecture would overstate the evidence.
+
+## Annotation-defined QRS-onset–to–T-offset timing
+
+```{python}
+#| label: timing-probe-table
+timing = extended[(extended.outcome == "annotation_QRSon_Toff_ms") &
+                  (extended.metric.isin(["mae_ms", "rmse_ms", "r2", "pearson",
+                                         "spearman", "lin_ccc"])) &
+                  (extended.model_id.isin(ANCHORS))].copy()
+timing = compact_ci(timing)
+display(timing[["model_id", "predictor_set", "metric", "estimate (95% CI)", "n"]]
+        .sort_values(["model_id", "predictor_set", "metric"]))
+
+timing_delta = predictor[predictor.outcome == "annotation_QRSon_Toff_ms"].copy()
+timing_delta["contrast"] = timing_delta.reference_set + " → " + timing_delta.candidate_set
+display(timing_delta[["model_id", "contrast", "metric",
+                      "delta_candidate_minus_reference", "ci_low", "ci_high", "p_value"]]
+        .sort_values(["model_id", "contrast", "metric"]))
+```
+
+The mean-only MAE is 44.76 ms. Waveform summaries reduce it to 22.53 ms. The
+latent-only MAE is 38.21 ms for `1000000` and 35.79 ms for `1011011`; both are
+substantially worse than waveform features. Adding either latent to waveform
+changes MAE by less than 0.24 ms, with intervals crossing zero. The latent does
+not add convincing absolute-timing utility beyond the waveform summaries.
+
+The matched anchor contrast is more favourable: `1011011` reduces latent-only
+RMSE by 4.02 ms (95% CI 1.39–6.60; *p*=0.005), increases Spearman correlation
+by 0.109 (*p*=0.012), and increases Lin's concordance by 0.108 (*p*=0.003).
+Its 2.42-ms MAE improvement narrowly includes zero (*p*=0.051). This supports
+better encoding of the annotation interval—not replacement of waveform timing
+and not a QT/QTc claim.
+
+## Multiclass rhythm probe: broad signal, weak resolution
+
+```{python}
+#| label: multiclass-probe
+macro = compact_ci(multiclass[(multiclass.model_id.isin(ANCHORS)) &
+                              (multiclass.class_label == "__macro__")])
+display(macro[["model_id", "metric", "estimate (95% CI)", "n"]]
+        .sort_values(["model_id", "metric"]))
+
+per_class = multiclass[(multiclass.model_id.isin(ANCHORS)) &
+                       (~multiclass.class_label.str.startswith("__")) &
+                       (multiclass.metric.isin(["sensitivity", "specificity",
+                                                "ovr_auroc", "ovr_auprc"]))]
+display(per_class.pivot_table(index=["model_id", "class_label"],
+                              columns="metric", values="value").reset_index())
+
+for model_id in ANCHORS:
+    cm = confusion[confusion.model_id == model_id].pivot(
+        index="true_label", columns="predicted_label", values="row_fraction").fillna(0)
+    fig = px.imshow(cm, text_auto=".2f", zmin=0, zmax=1,
+                    color_continuous_scale="Blues",
+                    labels={"x": "predicted code", "y": "true code",
+                            "color": "row fraction"},
+                    title=f"Held-out multiclass confusion: {model_id}")
+    fig.show()
+```
+
+The enhanced anchor descriptively improves macro AUROC from 0.687 to 0.743 and
+macro F1 from 0.239 to 0.284, but balanced accuracy remains only 0.302. This is
+not an eight-class rhythm solution. Rare-code results are exploratory at 360
+test records and must be shown class by class rather than summarized by the
+more flattering macro AUROC.
+
+The test composition is deliberately uneven: AF, AFIB, SA, SB, and SR each
+have 60 records, while AT has 18 and ST/SVT have 21 each. The row-normalized
+confusion matrices show whether macro changes arise from common or rare codes.
+Specificity can remain high for a rare one-versus-rest class despite poor
+sensitivity, so neither specificity nor macro AUROC is sufficient alone.
+
+## Reconstruction-failure probe
+
+```{python}
+#| label: failure-probe
+display(odds[odds.outcome == "reconstruction_failure"]
+        [["model_id", "predictor_set", "odds_ratio", "ci_low", "ci_high",
+          "p_value", "events", "total", "details_json"]])
+```
+
+For the checkpoint-matched enhanced anchor, a one-SD increase in latent outlier
+score is associated with 2.15-fold higher odds of the stored reconstruction
+failure definition (95% CI 1.40–3.30; Holm-adjusted *p*=0.0013; 24 failures
+among 360 records). The threshold was fixed on validation data and tested once,
+making this stronger than a post-hoc UMAP observation. The event count remains
+small and the endpoint is model QC, not patient prognosis. Its plausible use is
+abstention or review prioritisation after external calibration.
+
+## High-dimensional geometry versus UMAP appearance
+
+```{python}
+#| label: representation-geometry
+high_dim = diagnostics[(diagnostics.analysis == "rigorous_high_dim") &
+                       (diagnostics.split == "test")]
+display(high_dim[["model_id", "metric", "value", "details_json"]]
+        .sort_values(["metric", "model_id"]))
+display(multiplicity[multiplicity.family == "representation_label_nulls"]
+        [["hypothesis", "raw_p", "adjusted_p", "method"]]
+        .sort_values("adjusted_p"))
+display(similarity[["model_a", "model_b", "split", "metric", "value"]]
+        .sort_values(["split", "metric", "model_a", "model_b"]))
+display(stability.groupby(["job_id", "metric"])["value"]
+        .agg(["count", "mean", "std", "min", "max"]).reset_index()
+        .merge(jobs[["job_id", "model_id"]], on="job_id", how="left"))
+```
+
+All 11 checkpoints show significant 10-nearest-neighbour rhythm-code agreement
+after Benjamini–Hochberg correction, with agreement around 0.18–0.24. In
+contrast, every high-dimensional rhythm silhouette is negative and its
+permutation test is non-significant. These are compatible: codes are locally
+enriched without forming clean global clusters. A visually separated UMAP is
+therefore not proof of discrete rhythm manifolds.
+
+## Multiplicity and claim ledger
+
+```{python}
+#| label: multiplicity-ledger
+display(multiplicity.sort_values(["family", "adjusted_p"]))
+```
+
+| Proposed statement | Verdict | Reason |
+|---|---|---|
+| Frozen ECG-AIM latents encode AF/AFIB-associated information | Supported within this split | Held-out probes discriminate code membership and improve probability scores over three waveform summaries. |
+| The enhanced objective is superior for AF representation | Not supported | All paired AF anchor-comparison intervals include zero. |
+| `1011011` better encodes QRS-onset–to–T-offset annotation timing | Partially supported | RMSE, rank correlation, and concordance improve; MAE is borderline. |
+| Latents outperform direct waveform timing | Contradicted | Latent MAE is 13–16 ms worse; combined gains are negligible. |
+| ECG-AIM creates globally separated rhythm clusters | Contradicted | Silhouettes are negative and permutation tests are non-significant. |
+| Local latent neighbourhoods contain rhythm structure | Supported, exploratory | All kNN agreement tests survive BH correction. |
+| Latent outlier score flags reconstruction failure | Supported internally | Held-out OR 2.15 per SD, but only 24 events and no external calibration. |
+| These probes establish clinical utility | Not supported | Cross-sectional codes, one split, weak comparator, and no prospective endpoint. |
+
+## What would change the conclusion
+
+The highest-value follow-ups are repeated patient-level splits or external
+cohorts; a strong native-waveform classifier comparator; predeclared probe
+dimensionality; calibration and decision-curve analysis; external validation of
+the failure score; and matched one-lead wavelet representations once
+train/validation/test embeddings exist. Until then, this supports a
+representation-mechanism and quality-control claim, not deployment.

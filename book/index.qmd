@@ -31,10 +31,16 @@ Potential failure modes include P/T delineation error, ST-segment attenuation, a
 ## How to read this handbook
 
 For current experiment status, start with the [Live Experiment Observatory](15_live_results_observatory.qmd),
-then open either the [three-lead ECG-AIM analysis](16_three_lead_ecgaim_live.qmd)
-or the [one-lead wavelet/SSL analysis](17_one_lead_wavelet_ssl_live.qmd). Those
-pages query the live databases on every render and keep the two experimental
-contracts separate.
+then open either the [three-lead queue and source monitor](16_three_lead_ecgaim_live.qmd)
+or the [one-lead active/pending monitor](17_one_lead_wavelet_ssl_live.qmd).
+Completed one-lead screening, spatial, convergence, and external RDB results now
+have separate chapters, as do completed three-lead LUDB/RDB morphology,
+representation, and LUDB semi-supervised delineation studies.
+For a visual cross-experiment view, use the
+[Deep ECG-AIM Evidence Dashboard](31_deep_evidence_visual_dashboard.qmd), which
+shows matched mechanism effects, learning trajectories, external transport,
+boundary-specific failures, and paired linear-probe intervals without merging
+incompatible endpoints.
 
 The book begins with evidence, not demonstrations. The [opening real-data EDA](09_real_data_eda_and_diagnostics.qmd) audits PTB-XL and EchoNext in depth and now provides separate, stability-audited waveform UMAPs for every locally supported clinical cohort: PTB-XL, EchoNext, LUDB, ISP, Sunnybrook, Zhejiang, and RDB. The [multi-dataset atlas](11_dataset_atlas_ludb_isp_sunnybrook.qmd) establishes what the smaller morphology cohorts contribute, followed by a separate [Zhejiang file-level audit](05_zhejiang_delineation_tutorial.qmd). Only after those measurement contracts are visible does the [PTB-XL preprocessing contract](01_dataset_and_preprocessing.qmd) explain the content-pinned tensors and lead mapping.
 
@@ -43,7 +49,9 @@ The remaining parts follow the causal order of the study:
 1.  **Data, cohorts, and measurement** — what was observed, how records were partitioned, and which claims each dataset can support.
 2.  **Reconstruction models and objectives** — the architectures and loss terms applied to those inputs.
 3.  **Clinical and statistical evaluation** — paired morphology, delineation, agreement, fairness, robustness, and uncertainty.
-4.  **Benchmark and external validation** — the locked 48-cell evidence, the still-training mixed-level factorial study, device transfer, and EchoNext classifier preservation.
+4.  **Benchmark and external validation** — the locked 48-cell evidence,
+    coverage-limited seven-mask generations, completed external morphology,
+    device transfer, and EchoNext classifier preservation.
 
 This order is deliberate. A model ranking is uninterpretable until the reader knows the units, split boundary, repeated-patient structure, endpoint prevalence, and downstream measurement contract. Synthetic examples remain in the book as executable tutorials, but they are labeled as demonstrations and never substitute for cohort evidence.
 
@@ -60,7 +68,11 @@ Open this rendered `index.html`, then use the persistent sidebar or the Previous
 | Local dataset inventories and EDA | Executed from `data/` | Describes the actual repository cohorts and files |
 | Generation-bound 48-cell reconstruction benchmark | Computation complete; final package gate 9/10 | Supports generation-bound descriptive and prespecified paired analyses; independent fresh review remains unavailable |
 | EchoNext frozen-classifier outputs | Reviewed figures and label audit retained; record-level recomputation inputs absent on compact disk | Supports integrity-checked evidence display, not an independent rerun of probability/calibration analyses |
-| Mixed-level seven-position factorial checkpoints | Training in progress | Remains a visibly watermarked scaffold until its completion gate passes |
-| Generation-bound temporal morphology | Running under a digest/coverage gate | Partial accepted models diagnose measurement behavior; no factorial claim until the complete grid passes |
+| Three-lead seven-position checkpoints | U-Net 160/160; MSVAE 155/160; ECG-AIM 123/160 registered at the audited snapshot | Cross-architecture inference remains blocked by missing cells and current-contract incompatibility for archived MSVAE/ECG-AIM generations |
+| One-lead `1110000` screen | Terminal: 115/120 completed, five named failures | Completed short-budget screening evidence; not a live queue or replicated confirmation |
+| One-lead convergence | 33 terminal run artifacts: 23 ten-epoch and 10 fifteen-epoch; queue ledger remains stale | Artifact-backed generations are complete; queue labels are retained only for reconciliation |
+| One-lead external RDB | Full-stage evaluation complete for 60 spatial checkpoints plus two sentinels | Reports waveform, six-boundary, and region endpoints; not prospective validation |
+| Three-lead external morphology | LUDB blinded 124/124; RDB blinded 32/32; RDB oracle 31/31 | Completed generation-specific external evidence with unequal selection denominators |
+| ECG-AIM representation study | 11/11 checkpoint jobs complete | Quantitative probes and stability analyses; UMAP appearance alone is descriptive |
 
 The distinction between **observed**, **derived**, **planned**, and **synthetic** evidence is maintained throughout the book.

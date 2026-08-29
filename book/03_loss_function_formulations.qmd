@@ -4,11 +4,11 @@ title: "Implemented Loss Functions and Mixed-Level Design"
 
 ## Start with the executable contract
 
-The running study does not contain seven binary loss switches. Its mask is
+The seven-character design does not contain seven binary loss switches. Its mask is
 
 $$m=m_{\mathrm{MSE}}m_{\mathrm{corr}}m_{\Delta}m_{\mathrm{VCG}}m_{\mathrm{ED}}m_{\mathrm{lead}}k_{\mathrm{MMD}},$$
 
-where the first six positions are Boolean in the implementation and the last position is categorical: `0=none`, `1=global adaptive RBF`, `2=anatomical Laplacian`, `3=anatomical multiscale IMQ`, and `4=temporal K-means multiscale IMQ`. The active 480-job manifest fixes MSE on, crosses the other five Boolean terms with the five MMD levels, and repeats the resulting $2^5\times5=160$ cells at three seeds.
+where the first six positions are Boolean in the implementation and the last position is categorical: `0=none`, `1=global adaptive RBF`, `2=anatomical Laplacian`, `3=anatomical multiscale IMQ`, and `4=temporal K-means multiscale IMQ`. The historical 480-job manifest fixes MSE on, crosses the other five Boolean terms with the five MMD levels, and repeats the resulting $2^5\times5=160$ cells at three seeds. Current seed-42 architecture catalogs are reported separately and must not be mistaken for completion of that three-seed manifest.
 
 This chapter describes `scripts/common_loss.py` exactly. It replaces a prior pedagogical loss class whose derivative norm, VCG transform, energy term, weights, and kernel choices did not match training.
 

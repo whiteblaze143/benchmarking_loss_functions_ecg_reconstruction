@@ -60,6 +60,13 @@ ECG-AIM is missing 37. Consequently, a full three-architecture factorial
 comparison is not yet estimable. Partial ECG-AIM rows are operational evidence,
 not a substitute for the missing cells.
 
+Storage verification is not evaluation compatibility. The current compatibility
+audit accepts the 310 U-Net catalog rows but rejects the 155 MSVAE and 123
+ECG-AIM archived rows under the present content-pinned source/state-schema/data
+contract. Those checkpoints remain recoverable and remotely verified, but a
+cross-architecture effect estimate is blocked until a generation-matched subset
+is established or the incompatible families are retrained.
+
 ## Provenance gates
 
 Every admissible comparison must match observed leads (I, II, V2), PTB-XL
@@ -75,4 +82,3 @@ kept in separate chapters.
 - No claims about test performance from checkpoint counts.
 - No architecture-wide clinical claims until clinical evaluation coverage is
   reconciled separately.
-

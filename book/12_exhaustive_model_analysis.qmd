@@ -8,7 +8,7 @@ An exhaustive model chapter is useful only when every row names the exact model 
 The registered design remains incomplete. Queue JSON is an observation, not a heartbeat: this chapter verifies file freshness and recorded-process liveness before using the word “active.” Model rankings and factorial effects remain closed until the generation-bound release gate is complete.
 :::
 
-## Live generation inventory
+## Historical 480-job generation inventory
 
 ```{python}
 #| label: exhaustive-live-inventory

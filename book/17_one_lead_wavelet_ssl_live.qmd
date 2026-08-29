@@ -1,183 +1,91 @@
 ---
-title: "One-Lead Wavelet and SSL: Live Results"
-subtitle: "Matched A0 comparisons, mechanism tests, and queue health"
+title: "One-Lead Active and Pending Experiment Monitor"
+subtitle: "Convergence, repaired-mask replication, and spatial architecture queues"
 execute:
   cache: false
   freeze: false
 ---
 
 ```{python}
-#| label: one-lead-controls
-# Edit and rerun.
-BASELINE = "A0_raw"
-TOP_K = 8
-EMBED_SEED = 42
-PRIMARY_METRIC = "metric.miou_wave"
-```
-
-```{python}
-#| label: one-lead-setup
-import numpy as np
+#| label: onelead-live-setup
 import pandas as pd
-import plotly.express as px
 from live_results import *
 
-QUEUE_DB = source_path("refine-logs/wavelet_ssl_1110000/full/queue.sqlite")
-CHECKPOINT_DB = source_path("results/onelead_checkpoint_store/catalog.sqlite")
-q = load_onelead_queue(QUEUE_DB)
+SOURCES = {
+    "terminal 1110000 screen": source_path("refine-logs/wavelet_ssl_1110000/full/queue.sqlite"),
+    "15-epoch convergence queue": source_path("refine-logs/convergence_10e/queue.sqlite"),
+    "repaired-mask 1111002 queue": source_path("refine-logs/wavelet_ssl_1111002/full/queue.sqlite"),
+    "new spatial architecture queue": source_path("refine-logs/spatial_arch_1lead_v1/full/queue.sqlite"),
+}
+queues = {name: load_onelead_queue(path) for name, path in SOURCES.items()}
+convergence_artifacts = load_summary_tree("refine-logs/convergence_10e/runs")
 ```
 
-## Live 120-run queue
+## Render-time status
 
 ```{python}
-#| label: one-lead-status
-display(source_inventory({"queue": QUEUE_DB, "checkpoint catalog": CHECKPOINT_DB}))
-display(q.status.value_counts(dropna=False).rename_axis("status").reset_index(name="jobs"))
-visible = [c for c in ["ordinal", "id", "cell_name", "observed_lead", "seed", "status", "started_at", "completed_at", "error"] if c in q]
-display(q.query("status != 'pending'")[visible])
+#| label: onelead-live-status
+display(source_inventory(SOURCES))
+rows = []
+for stream, frame in queues.items():
+    counts = frame.status.value_counts(dropna=False).to_dict() if not frame.empty else {}
+    rows.append({"stream": stream, "jobs": len(frame), **counts})
+display(pd.DataFrame(rows).fillna(0))
+display(convergence_artifacts.groupby(["run_state", "expected_epochs", "observed_lead"])
+        .size().rename("artifact_runs").reset_index())
 ```
 
-## Registered comparison hierarchy
+The source modification time and database state are authoritative for this
+page. A lock file is not accepted as evidence that a process is alive. The
+`1110000` screen is terminal and appears here only as a reconciliation check;
+its 115 completed rows and five failures are analyzed in the completed-results
+chapter.
 
-The principal comparison is:
+The convergence queue ledger is stale. The run tree is authoritative for this
+stream and contains 33 terminal artifacts: 23 at 10 epochs and 10 at 15 epochs.
+Its old 12 `pending` labels are reconciliation defects, not live jobs.
 
-`A0 → A0 + wavelet → A0 + wavelet + SSL`.
-
-E1 is reserved for complementarity:
-
-`A0 + wavelet + SSL` versus `E1 + wavelet + SSL`.
-
-Current `1110000` evidence does not authorize calling E1 an improved base
-architecture. The highest-value mechanism contrast is matched **Morlet
-magnitude + Morlet phase** versus **Morlet magnitude + UEG-repolarization
-phase**. A replicated gain concentrated on T-on/T-off would be consistent with
-the physiological second-view hypothesis, but detector artifacts, leakage, and
-generic regularization remain alternative explanations requiring controls.
-
-## Raw completed runs and matched improvements
+## Running, pending, and failed jobs only
 
 ```{python}
-#| label: one-lead-deltas
-completed = q.query("status == 'completed'").copy()
-results = matched_deltas(completed, BASELINE)
-metrics = numeric_metrics(results, "metric.")
-raw_cols = [c for c in ["id", "cell_name", "seed", "observed_lead", *metrics] if c in results]
-display(results[raw_cols].sort_values(PRIMARY_METRIC, ascending=False) if PRIMARY_METRIC in results else results[raw_cols])
-display(leaderboard(results, metrics, id_col="id", group_cols=("observed_lead",), k=TOP_K))
+#| label: onelead-live-nonterminal
+for stream, frame in queues.items():
+    if frame.empty:
+        display(pd.DataFrame([{"stream": stream, "status": "source unavailable"}]))
+        continue
+    if stream == "15-epoch convergence queue":
+        display(pd.DataFrame([{
+            "stream": stream,
+            "noncompleted_jobs": 0,
+            "status": "stale ledger; 33 terminal run artifacts supersede pending labels"
+        }]))
+        continue
+    active = frame.query("status != 'completed'").copy()
+    columns = [c for c in ["ordinal", "id", "cell_name", "status", "attempts",
+                              "started_at", "updated_at", "error", "log_path"] if c in active]
+    display(pd.DataFrame([{"stream": stream, "noncompleted_jobs": len(active)}]))
+    display(active[columns].sort_values([c for c in ["status", "ordinal"] if c in active]))
 ```
 
-```{python}
-#| label: one-lead-registered-contrasts
-#| tbl-cap: "Exact registered incremental and mechanism contrasts. Positive values mean the right-hand configuration improved. Missing rows are not yet estimable."
-registered_pairs = [
-    ("wavelet increment", "A0_raw", "A0_wave_noSSL_gated_add"),
-    ("SSL increment", "A0_wave_noSSL_gated_add", "ssl_magnitude_phase_local_gated_add"),
-    ("physiology view", "R0_morlet_mag_morlet_phase", "R1_morlet_mag_ueg_phase"),
-    ("E1 complementarity", "ssl_magnitude_phase_local_gated_add", "E1_ssl_local"),
-]
-contrast_rows=[]
-keys=["seed","observed_lead"]
-for label,left_name,right_name in registered_pairs:
-    left=completed.loc[completed.cell_name.eq(left_name),keys+metrics]
-    right=completed.loc[completed.cell_name.eq(right_name),keys+metrics]
-    pair=left.merge(right,on=keys,suffixes=("_left","_right"))
-    for _,row in pair.iterrows():
-        base={"contrast":label,"left":left_name,"right":right_name,
-              "seed":row["seed"],"observed_lead":row["observed_lead"]}
-        for metric in metrics:
-            sign=-1 if metric_direction(metric)=="min" else 1
-            base[f"improvement.{metric}"]=sign*(row[metric+"_right"]-row[metric+"_left"])
-        contrast_rows.append(base)
-contrast_table=pd.DataFrame(contrast_rows)
-display(contrast_table if not contrast_table.empty else pd.DataFrame([{"status":"no registered contrast currently estimable"}]))
-```
+## Registered evidence tiers
 
-```{python}
-#| label: one-lead-modular-comparison
-plot_metrics = [m for m in ["metric.miou_wave", "metric.boundary_f1_smoke", "metric.val_missing_pearson", "metric.val_missing_mse"] if m in results]
-long = results.melt(id_vars=[c for c in ["id", "cell_name", "observed_lead", "seed"] if c in results],
-                    value_vars=plot_metrics, var_name="metric", value_name="value")
-if not long.empty:
-    fig = px.scatter(long, x="cell_name", y="value", color="observed_lead",
-                     symbol="seed", facet_row="metric", hover_name="id",
-                     title="Completed configurations; switch metrics by editing plot_metrics")
-    fig.update_xaxes(tickangle=45)
-    fig.update_layout(height=max(650, 230 * len(plot_metrics)))
-    fig.show()
-```
+| Stream | Scientific role | Result handling |
+|---|---|---|
+| `1110000` | three-epoch seed-42 screen | terminal; never call it live |
+| convergence | promoted 10/15-epoch extensions | 33 artifact-backed completions; stale queue labels are not treated as active |
+| `1111002` | repaired-mask/six-boundary replication | protocol only until jobs complete |
+| `spatial_arch_1lead_v1` | expanded spatial architecture design | protocol only until jobs complete |
 
-## Improvement heatmap relative to matched A0
+Preflights, archived failed generations, and partial summaries are engineering
+evidence. They are not pooled with scientific results.
 
-Positive values always mean improvement; error metrics are sign-flipped after
-subtraction. Missing cells mean that a seed/lead-matched A0 is not yet available.
+## Where completed evidence lives
 
-```{python}
-#| label: one-lead-improvement-heatmap
-improvements = [c for c in results if c.startswith("improvement.metric.")]
-if improvements:
-    imp = results.groupby(["cell_name", "observed_lead"])[improvements].mean().reset_index()
-    imp["configuration"] = imp.cell_name + " · Lead " + imp.observed_lead
-    pivot = imp.set_index("configuration")[improvements]
-    replicated = results.groupby(["cell_name","observed_lead"]).seed.nunique().min() >= 2
-    label = "Mean matched improvement" if replicated else "Single-run matched improvement (screening)"
-    fig = px.imshow(pivot, color_continuous_scale="RdBu", color_continuous_midpoint=0,
-                    aspect="auto", title=f"{label} over {BASELINE}")
-    fig.update_layout(height=max(450, 24 * len(pivot)))
-    fig.show()
-```
-
-## Replication and stability audit
-
-```{python}
-#| label: one-lead-replication
-if not results.empty:
-    replication = results.groupby(["cell_name", "observed_lead"])[metrics].agg(["count", "mean", "std"])
-    display(replication)
-    display(results.groupby(["cell_name", "observed_lead"]).seed.nunique().reset_index(name="n_seeds").query("n_seeds < 2"))
-```
-
-## Performance-profile UMAP
-
-This embedding groups completed runs by standardized outcome vectors. It helps
-spot configurations that trade reconstruction for delineation and repeated
-runs that unexpectedly separate. It is not a neural latent-space UMAP.
-
-```{python}
-#| label: one-lead-performance-umap
-matrix = model_metric_matrix(results, "id", metrics)
-embedding, method = performance_embedding(matrix, EMBED_SEED)
-if not embedding.empty:
-    meta = results[["id", "cell_name", "observed_lead", "seed"]].drop_duplicates("id")
-    embedding = embedding.merge(meta, left_on="id", right_on="id", how="left")
-    fig = px.scatter(embedding, x="axis_1", y="axis_2", color="cell_name",
-                     symbol="observed_lead", hover_name="id", hover_data=["seed"],
-                     title=f"{method} of one-lead performance profiles")
-    fig.update_traces(marker={"size": 10, "opacity": .85})
-    fig.show()
-```
-
-## RDB supervision and checkpoint footprint
-
-RDB supervision uses six observed boundaries—P/QRS/T onset and offset—and does
-not invent peaks. The split counts below are read from the live cache.
-
-```{python}
-#| label: one-lead-rdb-checkpoints
-split_counts = pd.DataFrame({"split": s, "records": len(list((ROOT / f"data/rdb_wavelet_delineation_cache/{s}").glob("*.pt")))} for s in ("train", "val", "test"))
-display(split_counts)
-checkpoints = read_sql(CHECKPOINT_DB, "select * from checkpoints")
-if not checkpoints.empty:
-    display(checkpoints.groupby(["architecture", "status"], dropna=False).agg(
-        models=("model_id", "size"), bytes=("size_bytes", "sum")
-    ).reset_index())
-```
-
-## What to inspect next
-
-1. Require seed replication before elevating a screen result to a claim.
-2. Compare Morlet-phase and UEG-phase views at matched architecture, SSL,
-   optimizer, seed, lead, and compute.
-3. Inspect whether any gain is localized to T-on/T-off rather than a generic
-   lift across all boundary channels.
-4. Promote a configuration to external evaluation only after reconstruction,
-   delineation, storage, and resume gates all pass.
+- The exhaustive `1110000` screening table is in **Completed One-Lead ECG-AIM
+  Screening Results**.
+- Completed 10/15-epoch extensions are in **One-Lead ECG-AIM Convergence
+  Extensions**.
+- The legacy 60-run spatial study is in **Completed One-Lead ECG-AIM Spatial
+  Study**.
+- Its full-stage external morphology results are in **One-Lead ECG-AIM External
+  RDB Evaluation**.

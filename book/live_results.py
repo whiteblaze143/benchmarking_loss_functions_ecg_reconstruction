@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 import sqlite3
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -47,11 +48,16 @@ def tables(path: str | Path) -> dict[str, int]:
     path = Path(path)
     if not path.exists() or path.stat().st_size == 0:
         return {}
-    with sqlite3.connect(f"file:{path.resolve()}?mode=ro", uri=True, timeout=30) as con:
-        names = [r[0] for r in con.execute(
-            "select name from sqlite_master where type='table' and name not like 'sqlite_%'"
-        )]
-        return {name: con.execute(f'SELECT count(*) FROM "{name}"').fetchone()[0] for name in names}
+    try:
+        with sqlite3.connect(f"file:{path.resolve()}?mode=ro", uri=True, timeout=30) as con:
+            names = [r[0] for r in con.execute(
+                "select name from sqlite_master where type='table' and name not like 'sqlite_%'"
+            )]
+            return {name: con.execute(f'SELECT count(*) FROM "{name}"').fetchone()[0] for name in names}
+    except sqlite3.DatabaseError:
+        # JSON queue states and other provenance files still belong in the
+        # source inventory, but they do not have relational table counts.
+        return {}
 
 
 def source_inventory(paths: dict[str, str | Path]) -> pd.DataFrame:
@@ -181,6 +187,106 @@ def load_onelead_queue(path: str | Path) -> pd.DataFrame:
     q["seed"] = pd.to_numeric(q.id.str.extract(r"_s(\d+)_")[0], errors="coerce")
     q["observed_lead"] = q.id.str.extract(r"_l([01])$")[0].map({"0": "I", "1": "II"})
     return q
+
+
+def load_json_queue(path: str | Path) -> pd.DataFrame:
+    """Load a legacy JSON queue without treating a lock file as proof of life."""
+    path = Path(path)
+    if not path.exists() or path.stat().st_size == 0:
+        return pd.DataFrame()
+    payload = json.loads(path.read_text())
+    jobs = payload.get("jobs", []) if isinstance(payload, dict) else payload
+    frame = pd.json_normalize(jobs)
+    if frame.empty:
+        return frame
+    frame["source_updated"] = datetime.fromtimestamp(path.stat().st_mtime).astimezone().isoformat(timespec="seconds")
+    return frame
+
+
+def load_summary_tree(relative: str | Path) -> pd.DataFrame:
+    """Read one summary.json per run and expose completion evidence explicitly."""
+    root = source_path(relative)
+    rows = []
+    if not root.exists():
+        return pd.DataFrame()
+    for summary_path in sorted(root.glob("*/summary.json")):
+        try:
+            summary = json.loads(summary_path.read_text())
+        except (OSError, json.JSONDecodeError):
+            continue
+        run_dir = summary_path.parent
+        run_name = summary.get("run_name", run_dir.name)
+        expected = re.search(r"conv(\d+)e_", run_name)
+        expected_epochs = int(expected.group(1)) if expected else None
+        completed_epochs = summary.get("epochs_completed", summary.get("epoch"))
+        success_file = run_dir / "_SUCCESS.json"
+        row = {
+            "run_name": run_name,
+            "summary_path": str(summary_path.relative_to(ROOT)),
+            "summary_updated": datetime.fromtimestamp(summary_path.stat().st_mtime).astimezone().isoformat(timespec="seconds"),
+            "expected_epochs": expected_epochs,
+            "success_marker": success_file.exists(),
+            "run_state": "completed" if success_file.exists() or (
+                expected_epochs is not None and completed_epochs is not None and completed_epochs >= expected_epochs
+            ) else "partial",
+            "observed_lead": {"0": "I", "1": "II"}.get(
+                (re.search(r"_l([01])$", run_name) or [None, None])[1]
+            ),
+        }
+        row.update(summary)
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def load_onelead_rdb(path: str | Path) -> dict[str, pd.DataFrame]:
+    """Load every normalized table from the compact one-lead RDB evaluator."""
+    return {
+        name: read_sql(path, f'SELECT * FROM "{name}"')
+        for name in (
+            "evaluations", "boundary_summaries", "region_summaries",
+            "signal_summaries", "thresholds", "screening_decisions",
+        )
+    }
+
+
+def load_spatial_training_logs(relative: str | Path) -> pd.DataFrame:
+    """Recover the completed legacy spatial study's validation metrics."""
+    root = source_path(relative)
+    rows = []
+    if not root.exists():
+        return pd.DataFrame()
+    pattern = re.compile(
+        r"spatial_1lead_(?P<variant>.+)_(?P<mask>\d{7})_s(?P<seed>\d+)_l(?P<lead>[01])\.log$"
+    )
+    epoch_pattern = re.compile(
+        r"Epoch\s+(?P<epoch>\d+)\s+\|\s+Val Loss:\s+(?P<loss>[-+0-9.eE]+)\s+\|\s+Val Missing Pearson:\s+(?P<pearson>[-+0-9.eE]+)"
+    )
+    best_pattern = re.compile(r"Best Val Missing Pearson:\s*([-+0-9.eE]+)")
+    for log_path in sorted(root.glob("*.log")):
+        match = pattern.match(log_path.name)
+        if not match:
+            continue
+        text = log_path.read_text(errors="replace")
+        epochs = list(epoch_pattern.finditer(text))
+        completed = "Training Complete for" in text
+        last = epochs[-1] if epochs else None
+        best = best_pattern.findall(text)
+        rows.append({
+            "run_name": log_path.stem,
+            "variant": match.group("variant"),
+            "factorial_mask": match.group("mask"),
+            "seed": int(match.group("seed")),
+            "observed_lead": {"0": "I", "1": "II"}[match.group("lead")],
+            "status": "completed" if completed else "incomplete",
+            "epochs_logged": len(epochs),
+            "final_epoch": int(last.group("epoch")) if last else np.nan,
+            "final_val_loss": float(last.group("loss")) if last else np.nan,
+            "final_val_missing_pearson": float(last.group("pearson")) if last else np.nan,
+            "best_val_missing_pearson": float(best[-1]) if best else np.nan,
+            "log_path": str(log_path.relative_to(ROOT)),
+            "log_updated": datetime.fromtimestamp(log_path.stat().st_mtime).astimezone().isoformat(timespec="seconds"),
+        })
+    return pd.DataFrame(rows)
 
 
 def matched_deltas(df: pd.DataFrame, baseline="A0_raw") -> pd.DataFrame:

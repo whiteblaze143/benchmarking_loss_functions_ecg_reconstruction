@@ -1,0 +1,168 @@
+---
+title: "Completed One-Lead ECG-AIM Spatial Study"
+subtitle: "Sixty matched runs across geometry, masks, and observed leads"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: spatial-completed-controls
+PRIMARY_METRIC = "best_val_missing_pearson"
+BASELINE_VARIANT = "a0"
+```
+
+```{python}
+#| label: spatial-completed-setup
+import pandas as pd
+import plotly.express as px
+from live_results import *
+
+STATE = source_path("refine-logs/queue_spatial_1lead/queue_state.json")
+LOGS = source_path("refine-logs/queue_spatial_1lead/jobs")
+CATALOG = source_path("results/onelead_checkpoint_store/catalog.sqlite")
+state = load_json_queue(STATE)
+runs = load_spatial_training_logs("refine-logs/queue_spatial_1lead/jobs")
+completed = runs.query("status == 'completed'").copy()
+```
+
+## Experiment identity
+
+This completed legacy study is distinct from the newer 48-cell
+`spatial_arch_1lead_v1` queue. It crossed ten spatial/conditioning variants,
+three factorial masks (`1000000`, `1010010`, and `1110000`), and two observed
+leads, yielding 60 completed training runs. Twenty-four cancelled queue entries
+are retained in the queue ledger but are not model results.
+
+## Reconciled completion evidence
+
+```{python}
+#| label: spatial-completed-accounting
+display(source_inventory({"spatial queue state": STATE,
+                          "one-lead checkpoint catalog": CATALOG}))
+display(state.status.value_counts(dropna=False).rename_axis("status").reset_index(name="jobs"))
+display(completed.groupby(["variant", "factorial_mask", "observed_lead"])
+        .size().rename("runs").reset_index())
+display(runs.query("status != 'completed'"))
+```
+
+Completion is verified from the training logs' terminal marker, not inferred
+from the stale lock file. The checkpoint catalog independently records the
+recoverable artifacts.
+
+## Every completed result recoverable from the logs
+
+```{python}
+#| label: spatial-completed-all-results
+display(completed.sort_values(["factorial_mask", "observed_lead", "variant"]))
+```
+
+These historical logs expose final validation loss, final missing-lead Pearson,
+and best missing-lead Pearson. They do not contain the later wavelet
+delineation metric schema. Absent IoU or boundary fields are therefore marked
+unmeasured, not zero.
+
+## Matched architecture comparisons
+
+```{python}
+#| label: spatial-completed-matched
+keys = ["factorial_mask", "seed", "observed_lead"]
+baseline = (completed.query("variant == @BASELINE_VARIANT")[keys + [PRIMARY_METRIC]]
+            .rename(columns={PRIMARY_METRIC: "baseline_value"}))
+matched = completed.merge(baseline, on=keys, how="left")
+matched["pearson_improvement_over_a0"] = matched[PRIMARY_METRIC] - matched.baseline_value
+display(matched.sort_values(["factorial_mask", "observed_lead",
+                             "pearson_improvement_over_a0"], ascending=[True, True, False]))
+fig = px.bar(matched, x="variant", y="pearson_improvement_over_a0",
+             color="observed_lead", facet_row="factorial_mask", barmode="group",
+             hover_name="run_name",
+             title="Matched improvement in best validation Pearson over A0")
+fig.add_hline(y=0, line_dash="dash")
+fig.show()
+```
+
+The key reviewer controls are capacity matching and permuted geometry. A spatial
+variant is physiologically credible only if it improves over A0 and the
+capacity-matched control while true geometry outperforms its permutation under
+the same mask, lead, seed, and training budget.
+
+## Geometry-versus-capacity falsification tests
+
+```{python}
+#| label: spatial-falsification-controls
+matrix = completed.pivot_table(
+    index=["factorial_mask", "observed_lead"],
+    columns="variant", values=PRIMARY_METRIC)
+contrasts = pd.DataFrame(index=matrix.index)
+for label, candidate, reference in [
+    ("E1 − A0", "e1_panorama_film", "a0"),
+    ("E1 − permuted geometry", "e1_panorama_film", "pg1_permuted_geometry"),
+    ("E1 − capacity matched", "e1_panorama_film", "cm1_capacity_matched"),
+    ("B1 panorama − A0", "b1_panorama", "a0"),
+    ("PA1 author fusion − A0", "pa1_panorama_author", "a0"),
+]:
+    contrasts[label] = matrix[candidate] - matrix[reference]
+display(matrix.reset_index())
+display(contrasts.reset_index())
+
+long_contrasts = contrasts.reset_index().melt(
+    id_vars=["factorial_mask", "observed_lead"],
+    var_name="contrast", value_name="Pearson difference")
+fig = px.bar(long_contrasts, x="contrast", y="Pearson difference",
+             color="observed_lead", facet_row="factorial_mask", barmode="group",
+             title="Matched spatial-control contrasts")
+fig.add_hline(y=0, line_dash="dash")
+fig.show()
+```
+
+True E1 geometry beats permuted geometry in all six mask×lead cells by
+0.0030–0.0120 Pearson and beats the capacity-matched control by 0.0024–0.0096.
+The consistency of direction is evidence that the model uses the geometry
+labels rather than benefiting only from parameter count.
+
+That result does **not** establish E1 as a generally improved base. Relative to
+A0, E1 gains 0.0214 only for mask `1000000`, lead I; the other five differences
+range from −0.0019 to +0.0033 and are practical ties at this precision. Likewise,
+simple panorama and author-fusion effects change sign across masks and leads.
+The supported mechanism claim is therefore narrower: correct spatial metadata
+can matter conditional on the architecture, but its average advantage over A0
+is small and configuration dependent.
+
+## Mask and observed-lead effects
+
+```{python}
+#| label: spatial-mask-lead-effects
+mask_summary = completed.groupby(["factorial_mask", "observed_lead"])[PRIMARY_METRIC].agg(
+    count="count", mean="mean", median="median", minimum="min", maximum="max").reset_index()
+display(mask_summary)
+lead_pairs = completed.pivot_table(index=["factorial_mask", "variant"],
+                                   columns="observed_lead", values=PRIMARY_METRIC).reset_index()
+lead_pairs["II_minus_I"] = lead_pairs["II"] - lead_pairs["I"]
+display(lead_pairs.sort_values(["factorial_mask", "II_minus_I"], ascending=[True, False]))
+```
+
+Lead II is usually easier than lead I in this internal validation study, but
+that difference combines information content, preprocessing, and the set of
+missing targets. It is not proof that lead II is intrinsically superior for
+every downstream task. Increasing the mask from `1000000` to `1110000` also
+raises absolute Pearson for most variants, so spatial comparisons must remain
+within mask rather than attributing cross-mask gains to architecture.
+
+## Claim ledger
+
+| Claim | Verdict | Evidence |
+|---|---|---|
+| Correct geometry is used by E1 | Supported descriptively | E1 exceeds permuted geometry in all six matched cells. |
+| Gains are only extra capacity | Disfavoured | E1 exceeds the capacity-matched control in all six cells. |
+| E1 is the improved base architecture | Not supported | Five of six E1−A0 differences are ties near zero; one lead/mask cell drives the visible gain. |
+| Lead II is universally the best input | Not established | Internal averages favour II, but endpoint and external-cohort transport remain separate questions. |
+| Spatial conditioning improves clinical delineation | Requires external evidence | These logs contain reconstruction validation metrics only. |
+
+## Interpretation limits
+
+- All cells use seed 42; there is no between-seed uncertainty estimate.
+- Metrics are validation screening metrics extracted from logs, not a common
+  held-out per-record ledger.
+- Lead I and lead II effects may differ and remain separately reported.
+- External RDB results for these checkpoints are analyzed in the following
+  chapter, where waveform, boundary, and region metrics are available.

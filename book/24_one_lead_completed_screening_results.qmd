@@ -1,0 +1,210 @@
+---
+title: "Completed One-Lead ECG-AIM Screening Results"
+subtitle: "All 1110000 cells, all stored metrics, failures, and matched comparisons"
+execute:
+  cache: false
+  freeze: false
+---
+
+```{python}
+#| label: completed-onelead-controls
+TOP_K = 10
+BASELINE = "A0_raw"
+PRIMARY_METRIC = "metric.miou_wave"
+```
+
+```{python}
+#| label: completed-onelead-setup
+import pandas as pd
+import plotly.express as px
+from live_results import *
+
+QUEUE_DB = source_path("refine-logs/wavelet_ssl_1110000/full/queue.sqlite")
+queue = load_onelead_queue(QUEUE_DB)
+completed = queue.query("status == 'completed'").copy()
+failed = queue.query("status != 'completed'").copy()
+metrics = numeric_metrics(completed, "metric.")
+```
+
+## Evidence contract
+
+This chapter freezes the interpretation of the completed three-epoch
+`1110000`, seed-42 screening experiment. It is separate from the live queue,
+longer convergence extensions, spatial experiments, and external RDB
+evaluation. A completed screening row is not a replicated confirmatory result.
+
+The primary registered chain is `A0 raw → A0 + wavelet → A0 + wavelet +
+SSL`. E1 is a complementarity test, not an improved baseline. Lead I and lead
+II are separate input contracts and are never averaged before showing their
+individual results.
+
+## Completion and failure accounting
+
+```{python}
+#| label: completed-onelead-accounting
+display(source_inventory({"1110000 queue": QUEUE_DB}))
+display(queue.groupby(["observed_lead", "status"], dropna=False).size()
+        .rename("runs").reset_index())
+failure_cols = [c for c in ["ordinal", "id", "cell_name", "observed_lead",
+                            "status", "attempts", "error"] if c in failed]
+display(failed[failure_cols].sort_values("ordinal"))
+```
+
+The denominator remains 120. Failed, interrupted, and out-of-memory cells stay
+visible; they are not converted to missing-at-random observations and are not
+silently removed from coverage statements.
+
+## Every completed model and every stored numeric metric
+
+```{python}
+#| label: completed-onelead-all-metrics
+identity = [c for c in ["ordinal", "id", "cell_name", "observed_lead", "seed",
+                         "completed_at"] if c in completed]
+all_results = completed[identity + metrics].sort_values(["observed_lead", "ordinal"])
+display(all_results)
+display(pd.DataFrame({
+    "metric": metrics,
+    "direction": [metric_direction(metric) or "context only" for metric in metrics],
+    "nonmissing_rows": [int(completed[metric].notna().sum()) for metric in metrics],
+}))
+```
+
+The exhaustive table is deliberately database-backed rather than copied to a
+CSV. Training-component losses and peak memory are included for diagnosis but
+are not interchangeable with held-out endpoints. The boundary metrics carrying
+the `_smoke` suffix come from the internal smoke subset, not blinded external
+LUDB/RDB evaluation.
+
+## Metric-specific leaders
+
+```{python}
+#| label: completed-onelead-leaders
+display(leaderboard(completed, metrics, id_col="id",
+                    group_cols=("observed_lead",), k=TOP_K))
+```
+
+No single configuration is declared best across reconstruction, delineation,
+tail robustness, and resource use. Rankings are metric-specific and retain the
+lead stratum.
+
+## Matched changes from A0
+
+```{python}
+#| label: completed-onelead-matched-a0
+matched = matched_deltas(completed, BASELINE)
+delta_cols = [c for c in matched if c.startswith("improvement.metric.")]
+visible = [c for c in ["id", "cell_name", "observed_lead", "seed", *delta_cols]
+           if c in matched]
+display(matched[visible].sort_values(["observed_lead", "cell_name"]))
+if delta_cols:
+    heat = matched.groupby(["cell_name", "observed_lead"])[delta_cols].mean().reset_index()
+    heat["configuration"] = heat.cell_name + " · Lead " + heat.observed_lead
+    fig = px.imshow(heat.set_index("configuration")[delta_cols], aspect="auto",
+                    color_continuous_scale="RdBu", color_continuous_midpoint=0,
+                    title="Single-seed matched improvement over A0; positive is favorable")
+    fig.update_layout(height=max(550, 23 * len(heat)))
+    fig.show()
+```
+
+## Registered mechanism contrasts
+
+```{python}
+#| label: completed-onelead-registered-contrasts
+pairs = [
+    ("wavelet increment", "A0_raw", "A0_wave_noSSL_gated_add"),
+    ("SSL increment", "A0_wave_noSSL_gated_add", "ssl_magnitude_phase_local_gated_add"),
+    ("physiological view", "R0_morlet_mag_morlet_phase", "R1_morlet_mag_ueg_phase"),
+    ("E1 complementarity", "ssl_magnitude_phase_local_gated_add", "E1_ssl_local"),
+]
+rows = []
+keys = ["seed", "observed_lead"]
+for label, left_name, right_name in pairs:
+    left = completed.loc[completed.cell_name.eq(left_name), keys + metrics]
+    right = completed.loc[completed.cell_name.eq(right_name), keys + metrics]
+    for _, row in left.merge(right, on=keys, suffixes=("_left", "_right")).iterrows():
+        out = {"contrast": label, "left": left_name, "right": right_name,
+               "seed": row.seed, "observed_lead": row.observed_lead}
+        for metric in metrics:
+            sign = -1 if metric_direction(metric) == "min" else 1
+            out[f"improvement.{metric}"] = sign * (row[f"{metric}_right"] - row[f"{metric}_left"])
+        rows.append(out)
+display(pd.DataFrame(rows) if rows else pd.DataFrame([{"status": "contrast unavailable"}]))
+```
+
+These contrasts isolate reviewer-relevant questions, but the experiment has one
+seed. They nominate configurations for convergence testing; they do not supply
+uncertainty estimates or multiplicity-controlled confirmation.
+
+## What the registered contrasts actually show
+
+The wavelet increment is the clearest short-screen effect. Relative to A0 raw,
+the wavelet branch without SSL increases wave mIoU by 0.079 on lead I and 0.043
+on lead II, boundary F1 by 0.060 and 0.016, and P-wave IoU by 0.171 and 0.083.
+QRS IoU changes by only 0.001–0.003. This concentration on P/T rather than QRS
+is mechanistically plausible, but it is still an internal three-epoch result.
+The branch costs approximately 4.16 GB additional peak GPU memory.
+
+The SSL increment is heterogeneous. On lead I it changes mean Pearson by
+−0.0005, lower-tail Pearson by −0.0041, and boundary F1 by −0.0011. On lead II
+it changes those endpoints by +0.0030, +0.0040, and +0.0358. It also adds about
+8.45 GB beyond the wavelet-only model. The correct screen-level conclusion is
+therefore **possible lead-II delineation complementarity**, not a general SSL
+improvement.
+
+Replacing Morlet phase with UEG phase changes mean Pearson by less than 0.0002
+on either lead. Boundary F1 increases by 0.0030 on lead I and 0.0105 on lead II,
+but the lower-tail Pearson direction reverses between leads. This is too small
+and inconsistent for a physiology claim without longer matched training.
+
+Only the lead-II E1 complementarity cell completed. It is essentially tied with
+A0+wavelet+SSL while using approximately 5.94 GB more memory. Because lead I is
+missing, this contrast is both single-seed and asymmetrically censored.
+
+## Endpoint coupling and search multiplicity
+
+```{python}
+#| label: completed-onelead-endpoint-coupling
+focus_metrics = [c for c in ["metric.val_missing_pearson",
+                              "metric.val_missing_pearson_p05",
+                              "metric.val_recon_loss", "metric.miou_wave",
+                              "metric.boundary_f1_smoke", "metric.P_iou",
+                              "metric.QRS_iou", "metric.T_iou"] if c in completed]
+correlations = completed[focus_metrics].corr(method="spearman")
+display(correlations)
+fig = px.imshow(correlations, text_auto=".2f", zmin=-1, zmax=1,
+                color_continuous_scale="RdBu", color_continuous_midpoint=0,
+                title="Spearman coupling among screening endpoints")
+fig.show()
+
+ranked = []
+for lead, group in completed.groupby("observed_lead"):
+    for metric in focus_metrics:
+        ascending = metric_direction(metric) == "min"
+        top = group.sort_values(metric, ascending=ascending).iloc[0]
+        ranked.append({"observed_lead": lead, "metric": metric,
+                       "leader": top.id, "value": top[metric]})
+display(pd.DataFrame(ranked))
+```
+
+Mean Pearson and reconstruction loss are almost redundant in rank
+(absolute Spearman approximately 0.99), while boundary F1 correlates only about
+0.11 with mean Pearson. Wave mIoU is moderately coupled to both. This explains
+why a reconstruction leader need not be a boundary leader and why a single
+composite score embeds a scientific value judgement.
+
+With 115 completed rows and many endpoints, the metric-wise maximum is strongly
+subject to winner's curse. A configuration appearing once at the top is a
+candidate, not a confirmed effect. The registered contrasts above are more
+interpretable than post-hoc leaderboard mining, even though they still lack
+replication.
+
+## Screening claim ledger
+
+| Claim | Verdict | Evidence |
+|---|---|---|
+| A wavelet branch improves short-run delineation | Supported descriptively | Large matched P/T, mIoU, and boundary gains on both leads. |
+| The gain is uniform across waves | Contradicted | QRS is nearly unchanged; P and T drive the improvement. |
+| SSL generally improves the wavelet model | Not supported | Lead I is tied/slightly worse; lead II improves. |
+| UEG phase is superior to Morlet phase | Unresolved | Small effects with lead-dependent directions. |
+| E1 is an improved base | Not supported | Only lead II completed and is effectively tied at substantially higher memory. |
+| The screen identifies the final best model | Not established | Single seed, three epochs, many comparisons, composite checkpoint selection, and internal smoke delineation. |

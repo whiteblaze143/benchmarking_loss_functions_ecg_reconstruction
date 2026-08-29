@@ -23,7 +23,7 @@ The matrix is intentionally asymmetric. Complete U-Net clinical coverage does
 not repair incomplete MSVAE or absent ECG-AIM clinical coverage. Likewise,
 one-lead wavelet/delineation evidence does not fill three-lead factorial cells.
 
-## Two claims, five blocks
+## Two claims, seven evidence blocks
 
 **Primary claim:** within a fixed architecture and input contract, composite
 loss terms have endpoint-dependent effects rather than a universal winner.
@@ -37,20 +37,145 @@ by matched deletion and physiological-view controls.
 | B1 | complete seven-mask waveform grid | U-Net complete; MSVAE/ECG-AIM incomplete | Ch. 18–19 |
 | B2 | loss-component and kernel isolation | U-Net screening available; paired test factorial pending | Ch. 19 |
 | B3 | `missing_leads_v2` clinical preservation | 160 U-Net, 37 MSVAE, 0 ECG-AIM | Ch. 20 |
-| B4 | one-lead spatial mechanism | checkpoint-rich, metric normalization/replication incomplete | Ch. 21 |
-| B5 | wavelet/SSL and UEG-phase mechanism | live 120-run queue; exploratory until replicated | Ch. 22 |
+| B4 | one-lead spatial mechanism | 60-run validation screen and full-stage RDB summaries complete; replication absent | completed spatial and RDB chapters |
+| B5 | wavelet/SSL and UEG-phase mechanism | 115/120 terminal screen; 33 terminal convergence artifacts | completed screening/convergence chapters |
+| B6 | one-lead external RDB morphology | 60 spatial models with pilot and full results; six genuine boundaries | completed RDB chapter |
+| B7 | ECG-AIM representation content | two all-split anchors, nine test-only checkpoints, paired probes and geometry diagnostics | representation chapter |
+
+## Integrated findings by scientific question
+
+### 1. What is currently the strongest one-lead result?
+
+There is no endpoint-independent winner. At 15 epochs, R5
+(`Morlet magnitude + UEG Wyatt phase`) has the strongest broad lead-II profile:
+Pearson 0.7607, Pearson p05 0.4304, wave mIoU 0.8627, macro wave F1 0.9261,
+and boundary F1 0.8886. On lead I, the simpler A0 wavelet/no-SSL model retains
+the best mean Pearson and reconstruction loss, while R7 leads several boundary
+and T-wave endpoints. These are internal validation estimates, not external
+RDB rankings.
+
+Externally, B1 panorama at mask `1010010` gives the best one-lead RDB boundary
+F1 on both observed leads (0.6585 lead I; 0.6742 lead II). Other spatial models
+lead waveform lower-tail metrics. Selecting “the best” therefore requires an
+intended endpoint: waveform similarity, difficult-record protection, event
+timing, or region overlap.
+
+### 2. What do wavelets add?
+
+The clean three-epoch A0 contrast shows that a wavelet branch primarily improves
+P/T delineation: P-wave IoU rises by 0.171 on lead I and 0.083 on lead II,
+whereas QRS IoU changes by only 0.001–0.003. This is consistent with the longer
+convergence data, where QRS is near saturation and additional epochs mostly
+improve P/T and boundaries. The cost is approximately 4.16 GB additional peak
+GPU memory at screening scale.
+
+This supports a morphology-specific wavelet mechanism, but not yet a general
+clinical benefit. The wavelet checkpoints have not undergone the same external
+RDB protocol as the completed legacy spatial models.
+
+### 3. What does SSL add?
+
+At three epochs, adding SSL to the wavelet branch is neutral/slightly adverse
+on lead I and favourable for lead-II delineation, while adding about 8.45 GB
+peak memory. The 15-epoch generation lacks a matched A0+wavelet+SSL cell, so the
+registered `A0 raw → A0+wavelet → A0+wavelet+SSL` chain is not complete at the
+confirmatory horizon. R5 cannot isolate SSL because it changes the physiological
+view simultaneously. The honest conclusion is **possible lead-specific
+complementarity**, not an identified SSL main effect.
+
+### 4. Does physiological geometry help?
+
+Internally, true E1 geometry beats both permuted geometry and a capacity-matched
+control in all six mask×lead cells. However, E1 is nearly tied with A0 in five
+of those six cells. On external RDB, E1-control differences reverse sign across
+masks, leads, and endpoints. Correct geometry is used by the network, but the
+data do not support E1 as a generally improved base architecture or a robust
+external advantage.
+
+### 5. What do the linear probes establish?
+
+Frozen ECG-AIM latents contain AF/AFIB-code information beyond heart rate, RMS,
+and spectral entropy. The enhanced anchor's latent AUROC is 0.787 versus 0.713
+for waveform summaries, with calibrated-probability improvements surviving the
+prespecified correction. Yet `1011011` does not significantly beat `1000000`
+in direct paired AF metrics: the AUROC difference is +0.027 with a 95% interval
+from −0.023 to +0.076.
+
+For annotation QRS-onset–to–T-offset duration, `1011011` improves latent-only
+RMSE and concordance relative to `1000000`, but both latents are much worse than
+direct waveform summaries for absolute MAE. This is representation-content
+evidence, not diagnostic superiority or a clinical QT/QTc result.
+
+High-dimensional tests find significant local rhythm-code neighbour enrichment
+but negative, non-significant silhouettes. UMAPs can illustrate local structure
+but cannot be described as globally separated rhythm manifolds.
+
+### 6. How well do results transport?
+
+Among the 31 shared three-lead models, LUDB-to-RDB boundary-F1 rank correlation
+is 0.736. Waveform-tail rank correlations are weak (0.300 for Pearson p05 and
+approximately zero for MSE p95). Boundary retention is therefore more stable
+than waveform-fidelity ranking.
+
+For the 60 one-lead spatial models, internal validation correlates only
+moderately with full RDB endpoints. The 48-record RDB pilot predicts boundary
+ranking well enough for screening (Spearman 0.82–0.87) but predicts signal-p05
+ranking poorly (0.45). Model promotion based on one surrogate will miss
+endpoint-specific external leaders.
+
+### 7. Which apparent gains are evaluator effects?
+
+LUDB semi-supervised results show that padding and evaluation-window choice can
+change foreground mIoU by roughly 0.25—orders of magnitude larger than the
+student-versus-EMA differences. Two tolerance rows also reuse identical region
+predictions. The checkpoint, state, split, padding, window, evaluator hash, and
+tolerance jointly define the estimand; rows differing only in event tolerance
+must not be counted as independent region evidence.
+
+## Result-to-claim table
+
+| Candidate claim | Current status | Strongest evidence | Missing evidence |
+|---|---|---|---|
+| Wavelets improve slow-wave delineation | Supported internally | Matched P/T improvements at screen and horizon-dependent convergence | repeated seeds and external wavelet evaluation |
+| SSL adds information beyond wavelets | Unresolved | lead-II screen gain | matched 15-epoch SSL cell, seeds, external data |
+| UEG phase matters more than generic phase | Suggestive only | small lead-II boundary advantage | architecture-matched, compute-matched repeated contrast |
+| E1 is the improved base architecture | Rejected by current evidence | internal ties and external sign reversals | no further broad E1 promotion justified without new hypothesis |
+| ECG-AIM latents encode rhythm information | Supported internally | held-out calibrated linear probes and local-neighbour tests | strong native-ECG comparator and external replication |
+| Enhanced objective improves AF representation | Not supported | paired interval crosses zero for every AF metric | repeated/external paired embeddings |
+| Latent outliers identify reconstruction failures | Supported internally | OR 2.15 per SD on held-out test | external calibration and decision threshold utility |
+| Reconstructed ECG is clinically equivalent to measured ECG | Not supported | waveform tails remain imperfect; fixed-delineator retention is narrower | prospective task-specific noninferiority design |
 
 ## Next execution order
 
-1. Complete or formally freeze the missing five MSVAE and 37 ECG-AIM cells.
+1. Complete or formally freeze the missing MSVAE and ECG-AIM clinical cells.
 2. Extend `missing_leads_v2` first to the remaining MSVAE checkpoints, then to
    ECG-AIM using the same evaluation code and PTB-XL record order.
 3. Create a common per-record seven-mask inference ledger keyed by checkpoint
    digest, architecture, mask, and seed.
-4. Replicate only the one-lead A0→wavelet→SSL and Morlet-phase→UEG-phase
-   contrasts that survive screening.
-5. Run blinded LUDB/RDB external delineation only for preregistered promoted
-   models, preserving six-boundary RDB validity.
+4. Add the missing matched 15-epoch A0+wavelet+SSL cells, then replicate the
+   A0→wavelet→SSL and Morlet-phase→UEG-phase contrasts with multiple seeds.
+5. Keep the pending `1111002` and 48-cell spatial-v1 protocols separate from
+   completed results until they produce terminal summaries.
+6. Run blinded LUDB/RDB external delineation only for preregistered promoted
+   models, preserving six-boundary RDB validity and avoiding development/test
+   reuse.
+7. Extract all-split embeddings for preregistered one-lead wavelet checkpoints,
+   then repeat the same frozen linear-probe protocol without fitting on test-only
+   checkpoints.
+8. Compare the latent probes with a strong native-waveform classifier and
+   report calibration, decision curves, and external validation before making
+   any clinical-assistance claim.
+
+## Observation → interpretation → implication → next test
+
+| Observation | Interpretation | Implication | Decisive next test |
+|---|---|---|---|
+| P/T improve much more than QRS with wavelets | added time-frequency capacity targets slower, lower-amplitude morphology | prioritize repolarization endpoints, not a universal reconstruction score | repeated A0 versus A0+wavelet external six-boundary evaluation |
+| SSL helps lead II more than lead I | view agreement may depend on observed-lead information and optimization | do not average lead effects | lead-stratified seeds with matched compute and stopping |
+| E1 beats permutation internally but not consistently externally | geometry is used but may overfit dataset-specific lead relations | mechanism presence does not imply transport | predeclared external E1/permutation paired comparison |
+| AF probe improves over three summaries but not across anchors | rhythm content exists, objective superiority does not | avoid “improved AF representation” language | native-ECG comparator plus external frozen probe |
+| latent timing improves across anchors but trails waveform | objective shapes timing content without making latent the best timing estimator | use latents as complementary representations, not surrogate fiducials | incremental test against richer waveform features |
+| RDB boundary retention approaches measured-signal reference | fixed delineator is robust to some reconstruction error | possible task preservation, not waveform recovery | paired task-level noninferiority with clinically chosen margin |
 
 ## Stop rules
 
@@ -60,4 +185,3 @@ by matched deletion and physiological-view controls.
 - Do not pool validation and test metrics or four-mask and seven-mask studies.
 - Do not promote a one-seed maximum from a 160- or 120-cell screen.
 - Do not compress incompatible clinical endpoints into an unvalidated score.
-

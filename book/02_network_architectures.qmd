@@ -4,7 +4,15 @@ title: "Implemented Reconstruction Architectures"
 
 ## Two studies, two architecture scopes
 
-This repository contains two related but distinct experiments. The locked 48-cell benchmark crosses **three architecture families**—MCMA-U-Net, WearECG MultiScale-VAE, and ECG-AIM—with 16 four-bit objective masks at seed 42. The running 480-model study holds the architecture fixed to **MCMA-U-Net** and crosses a mixed-level seven-character loss mask with three seeds. ResNet and Conformer are not cells in either study and are therefore not presented as evaluated architectures.
+This repository contains several generation-separated experiments. The locked
+48-cell benchmark crosses **three architecture families**—MCMA-U-Net, WearECG
+MultiScale-VAE, and ECG-AIM—with 16 four-bit objective masks at seed 42. A
+historical 480-model plan holds MCMA-U-Net fixed across 160 seven-character
+masks and three seeds. The current seed-42 three-architecture seven-mask catalog
+instead contains 160 U-Nets, 155 MSVAEs, and 123 ECG-AIM checkpoints at the
+audited snapshot. One-lead ECG-AIM spatial and wavelet/SSL generations use a
+different input contract and are analyzed separately. ResNet and Conformer are
+not evaluated cells in these studies.
 
 All families solve the same imputation task: observed leads I, II, and V2 (indices 0, 1, and 7 in the canonical order) condition reconstruction of a 12-lead, 5,000-sample array. Evaluation restores the three acquired leads exactly before computing all-lead endpoints; primary reconstruction endpoints are calculated on the nine missing leads so copied inputs cannot inflate performance.
 
@@ -90,7 +98,7 @@ This projection is important for deployment semantics—the device already measu
 
 The registry declares 500 Hz, 5,000 samples, mV, no normalization, and fixed train/validation/test inventories. Those fields are evaluation contracts, not defaults to infer for an external dataset. EchoNext, smartwatch, LUDB, ISP, Sunnybrook, and Zhejiang evaluations each require their own provenance and transformation audit.
 
-## MCMA-U-Net: the running study backbone
+## MCMA-U-Net: the historical 480-job study backbone
 
 The implemented `MCMAModel` is an encoder-decoder with six channel widths
 
@@ -159,12 +167,12 @@ The cleanest loss-function estimand is **within-family**: compare objective mask
 
 For every reported model, the minimum identity is:
 
-1. registry ID and architecture family;
-2. objective mask and seed;
-3. observed-lead order and pass-through policy;
-4. checkpoint digest and source-bundle digest;
-5. preprocessing and split content roots;
-6. adapter/evaluation-code digest;
-7. state schema and precision.
+1.  registry ID and architecture family;
+2.  objective mask and seed;
+3.  observed-lead order and pass-through policy;
+4.  checkpoint digest and source-bundle digest;
+5.  preprocessing and split content roots;
+6.  adapter/evaluation-code digest;
+7.  state schema and precision.
 
 The 480-model study satisfies this identity through its checkpoint sidecars and SQLite/remote-blob catalog. The 48-cell study satisfies it through its locked registry and referenced-artifact bundle. Neither justifies substituting a similarly named architecture from another script or checkpoint generation.

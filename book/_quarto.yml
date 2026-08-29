@@ -8,7 +8,7 @@ book:
   title: "Benchmarking Loss Functions for Electrocardiogram Reconstruction"
   subtitle: "A Clinical & Methodological Handbook"
   author: "Antigravity Research Team"
-  date: "July 31, 2026"
+  date: "August 29, 2026"
   page-navigation: true
   search: true
   sidebar:
@@ -21,7 +21,19 @@ book:
         - 15_live_results_observatory.qmd
         - 16_three_lead_ecgaim_live.qmd
         - 17_one_lead_wavelet_ssl_live.qmd
-    - part: "Expanded Seven-Mask and One-Lead Evidence"
+    - part: "Completed One-Lead ECG-AIM Evidence"
+      chapters:
+        - 24_one_lead_completed_screening_results.qmd
+        - 27_one_lead_completed_spatial_results.qmd
+        - 25_one_lead_convergence_results.qmd
+        - 26_one_lead_rdb_external_results.qmd
+    - part: "Completed Three-Lead and Delineation Evidence"
+      chapters:
+        - 28_three_lead_completed_external_results.qmd
+        - 29_completed_ecgaim_representation_results.qmd
+        - 30_completed_ludb_semiseg_results.qmd
+        - 31_deep_evidence_visual_dashboard.qmd
+    - part: "Expanded and Partial Evidence"
       chapters:
         - 18_seven_mask_design_and_coverage.qmd
         - 19_seven_mask_reconstruction_results.qmd

@@ -58,7 +58,7 @@ LEADS = ("I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V
 WAVES = ((1, "P"), (2, "QRS"), (3, "T"))
 DEFAULT_QUEUE = ROOT / "refine-logs/queue_spatial_1lead/queue_state.json"
 DEFAULT_TEST_CACHE = ROOT / "data/rdb_wavelet_delineation_cache"
-DEFAULT_DB = ROOT / "results/onelead_rdb_semiseg_blinded/compact.sqlite"
+DEFAULT_DB = ROOT / "results/onelead_rdb_semiseg_screened_v1/compact.sqlite"
 STOP_REQUESTED = False
 
 CALIBRATION_STEMS = (
@@ -766,7 +766,9 @@ def main() -> None:
                 run_model(connection, identity, "full", full_records, delineator, preprocessor, args)
     finally:
         connection.close()
-    print(json.dumps({"event": "stopped", "phase": args.phase}), flush=True)
+    print(json.dumps({"event": "stopped", "phase": args.phase, "interrupted": STOP_REQUESTED}), flush=True)
+    if STOP_REQUESTED:
+        raise SystemExit(75)
 
 
 if __name__ == "__main__":

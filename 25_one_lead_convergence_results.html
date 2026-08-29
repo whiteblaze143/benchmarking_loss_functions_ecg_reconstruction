@@ -1,0 +1,3172 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; One-Lead ECG-AIM Convergence Extensions – Benchmarking Loss Functions for Electrocardiogram Reconstruction</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./26_one_lead_rdb_external_results.html" rel="next">
+<link href="./27_one_lead_completed_spatial_results.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-58b16e5bbcaf6fe162629cd441a17d0d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-baa5153929e6df0f7b5bdd98bde6b2d2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-58b16e5bbcaf6fe162629cd441a17d0d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script type="text/javascript">
+window.PlotlyConfig = {MathJaxConfig: 'local'};
+if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+</script>
+<script type="module">import "https://cdn.plot.ly/plotly-3.3.1.min"</script>
+
+
+
+</head>
+
+<body class="nav-sidebar docked quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./24_one_lead_completed_screening_results.html">Completed One-Lead ECG-AIM Evidence</a></li><li class="breadcrumb-item"><a href="./25_one_lead_convergence_results.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">One-Lead ECG-AIM Convergence Extensions</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Benchmarking Loss Functions for Electrocardiogram Reconstruction</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface &amp; Executive Summary</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Live Experiment Observatory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15_live_results_observatory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Live Experiment Observatory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16_three_lead_ecgaim_live.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Three-Lead Active and Partial Experiment Monitor</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./17_one_lead_wavelet_ssl_live.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-Lead Active and Pending Experiment Monitor</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Completed One-Lead ECG-AIM Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./24_one_lead_completed_screening_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Completed One-Lead ECG-AIM Screening Results</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./27_one_lead_completed_spatial_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Completed One-Lead ECG-AIM Spatial Study</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./25_one_lead_convergence_results.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">One-Lead ECG-AIM Convergence Extensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./26_one_lead_rdb_external_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">One-Lead ECG-AIM External RDB Evaluation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Completed Three-Lead and Delineation Evidence</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./28_three_lead_completed_external_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Completed Three-Lead ECG-AIM External Morphology Evaluation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./29_completed_ecgaim_representation_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Completed ECG-AIM Representation Study</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30_completed_ludb_semiseg_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Completed LUDB Semi-Supervised Delineation Results</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./31_deep_evidence_visual_dashboard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Deep ECG-AIM Evidence Dashboard</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Expanded and Partial Evidence</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./18_seven_mask_design_and_coverage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Seven-Character Factorial Study: Design and Coverage</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./19_seven_mask_reconstruction_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Seven-Character Factorial Reconstruction Results</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20_missing_leads_v2_clinical_biomarkers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Clinical Biomarker Preservation under missing_leads_v2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./21_one_lead_architecture_and_spatial_results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">One-Lead Reconstruction: Architecture and Spatial Conditioning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./22_one_lead_wavelet_ssl_mechanisms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">One-Lead Wavelet and SSL Mechanism Study</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./23_evidence_synthesis_and_run_gaps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Evidence Synthesis and Run Gaps</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">I. Data, Cohorts, and Measurement</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09_real_data_eda_and_diagnostics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Real-Cohort EDA, Integrity Checks, and Deep Diagnostics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11_dataset_atlas_ludb_isp_sunnybrook.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Dataset Atlas: LUDB, ISP, and Sunnybrook</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_zhejiang_delineation_tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Zhejiang Cohort: Data Audit and Delineation Protocol</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_dataset_and_preprocessing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">PTB-XL Tensor, Lead, and Preprocessing Contract</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">II. Reconstruction Models and Objectives</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_network_architectures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Implemented Reconstruction Architectures</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_loss_function_formulations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Implemented Loss Functions and Mixed-Level Design</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">III. Clinical and Statistical Evaluation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_clinical_metrics_and_delineation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Diagnostic Integrity &amp; Clinical Delineation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_regression_to_mean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Rigorous Agreement &amp; The Mathematics of Regression to the Mean</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06_fairness_robustness_sqi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Fairness, Noise Robustness, and Signal Quality Index (SQI)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">IV. Benchmark and External Validation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08_factorial_loss_matrix_benchmarks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Generation-Bound 48-Cell Factorial Benchmark</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07_smartwatch_reconstruction_case_study.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Smartwatch Simulator Transfer and Frozen-Classifier Fidelity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_echonext_classifier_external_validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">EchoNext External Validation: Available Evidence and Reproduction Boundary</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_exhaustive_model_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Generation-Bound Exhaustive Model Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">V. Visual and Clinical Atlases</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13_engineering_ml_visual_atlas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Engineering Integrity, Storage, and Reproducibility Atlas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14_cath_lab_clinical_trust_atlas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Clinical Trust, Cath-Lab Safety, and Validation Requirements</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#why-this-is-separate-from-screening" id="toc-why-this-is-separate-from-screening" class="nav-link active" data-scroll-target="#why-this-is-separate-from-screening"><span class="header-section-number">6.1</span> Why this is separate from screening</a></li>
+  <li><a href="#source-and-completion-evidence" id="toc-source-and-completion-evidence" class="nav-link" data-scroll-target="#source-and-completion-evidence"><span class="header-section-number">6.2</span> Source and completion evidence</a></li>
+  <li><a href="#complete-validation-delineation-training-and-resource-metrics" id="toc-complete-validation-delineation-training-and-resource-metrics" class="nav-link" data-scroll-target="#complete-validation-delineation-training-and-resource-metrics"><span class="header-section-number">6.3</span> Complete validation, delineation, training, and resource metrics</a></li>
+  <li><a href="#metric-specific-leaders-and-pareto-view" id="toc-metric-specific-leaders-and-pareto-view" class="nav-link" data-scroll-target="#metric-specific-leaders-and-pareto-view"><span class="header-section-number">6.4</span> Metric-specific leaders and Pareto view</a></li>
+  <li><a href="#horizon-matched-learning-budget-effects" id="toc-horizon-matched-learning-budget-effects" class="nav-link" data-scroll-target="#horizon-matched-learning-budget-effects"><span class="header-section-number">6.5</span> Horizon-matched learning-budget effects</a></li>
+  <li><a href="#matched-15-epoch-contrasts" id="toc-matched-15-epoch-contrasts" class="nav-link" data-scroll-target="#matched-15-epoch-contrasts"><span class="header-section-number">6.6</span> Matched 15-epoch contrasts</a></li>
+  <li><a href="#evidence-ledger" id="toc-evidence-ledger" class="nav-link" data-scroll-target="#evidence-ledger"><span class="header-section-number">6.7</span> Evidence ledger</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./24_one_lead_completed_screening_results.html">Completed One-Lead ECG-AIM Evidence</a></li><li class="breadcrumb-item"><a href="./25_one_lead_convergence_results.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">One-Lead ECG-AIM Convergence Extensions</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">One-Lead ECG-AIM Convergence Extensions</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<p class="subtitle lead">Ten- and fifteen-epoch results, checkpoint selection, and learning-budget effects</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="convergence-controls" class="cell" data-execution_count="1">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>TOP_K <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>PRIMARY_METRIC <span class="op">=</span> <span class="st">"miou_wave"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="convergence-setup" class="cell" data-execution_count="2">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> live_results <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>RUN_ROOT <span class="op">=</span> source_path(<span class="st">"refine-logs/convergence_10e/runs"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>QUEUE_DB <span class="op">=</span> source_path(<span class="st">"refine-logs/convergence_10e/queue.sqlite"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>runs <span class="op">=</span> load_summary_tree(<span class="st">"refine-logs/convergence_10e/runs"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>completed <span class="op">=</span> runs.query(<span class="st">"run_state == 'completed'"</span>).copy()</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>partial <span class="op">=</span> runs.query(<span class="st">"run_state != 'completed'"</span>).copy()</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>metric_cols <span class="op">=</span> numeric_metrics(completed)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>queue <span class="op">=</span> read_sql(QUEUE_DB, <span class="st">"select id, ordinal, status, attempts, completed_at, error from jobs order by ordinal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="why-this-is-separate-from-screening" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="why-this-is-separate-from-screening"><span class="header-section-number">6.1</span> Why this is separate from screening</h2>
+<p>The original factorial queue used short screening runs. This chapter contains only the promoted longer-budget extensions. A 3-, 10-, and 15-epoch result for the same named architecture are different estimands because training budget and checkpoint selection changed. The longest result supersedes the shorter result for final ranking, but the shorter trajectory remains useful for diagnosing whether screening preserved the ordering.</p>
+</section>
+<section id="source-and-completion-evidence" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="source-and-completion-evidence"><span class="header-section-number">6.2</span> Source and completion evidence</h2>
+<div id="convergence-provenance" class="cell" data-execution_count="3">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>display(source_inventory({<span class="st">"convergence queue"</span>: QUEUE_DB}))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>display(queue.status.value_counts(dropna<span class="op">=</span><span class="va">False</span>).rename_axis(<span class="st">"queue_status"</span>).reset_index(name<span class="op">=</span><span class="st">"jobs"</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>display(runs.groupby([<span class="st">"run_state"</span>, <span class="st">"expected_epochs"</span>, <span class="st">"observed_lead"</span>], dropna<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        .size().rename(<span class="st">"runs"</span>).reset_index())</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>display(partial[[c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"run_name"</span>, <span class="st">"expected_epochs"</span>, <span class="st">"epochs_completed"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"observed_lead"</span>, <span class="st">"summary_updated"</span>] <span class="cf">if</span> c <span class="kw">in</span> partial]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="convergence-provenance-1" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">source</th>
+<th data-quarto-table-cell-role="th">path</th>
+<th data-quarto-table-cell-role="th">exists</th>
+<th data-quarto-table-cell-role="th">size_mb</th>
+<th data-quarto-table-cell-role="th">updated</th>
+<th data-quarto-table-cell-role="th">rows</th>
+<th data-quarto-table-cell-role="th">tables</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>convergence queue</td>
+<td>refine-logs/convergence_10e/queue.sqlite</td>
+<td>True</td>
+<td>0.0</td>
+<td>2026-08-28T15:28:58-04:00</td>
+<td>34</td>
+<td>metadata:2, jobs:22, attempts:10</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div id="convergence-provenance-2" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">queue_status</th>
+<th data-quarto-table-cell-role="th">jobs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>pending</td>
+<td>12</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>completed</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div id="convergence-provenance-3" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">run_state</th>
+<th data-quarto-table-cell-role="th">expected_epochs</th>
+<th data-quarto-table-cell-role="th">observed_lead</th>
+<th data-quarto-table-cell-role="th">runs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>completed</td>
+<td>10</td>
+<td>I</td>
+<td>11</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>completed</td>
+<td>10</td>
+<td>II</td>
+<td>12</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>completed</td>
+<td>15</td>
+<td>I</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>completed</td>
+<td>15</td>
+<td>II</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div id="convergence-provenance-4" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">run_name</th>
+<th data-quarto-table-cell-role="th">expected_epochs</th>
+<th data-quarto-table-cell-role="th">epochs_completed</th>
+<th data-quarto-table-cell-role="th">observed_lead</th>
+<th data-quarto-table-cell-role="th">summary_updated</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>A summary file is marked completed only when its <code>_SUCCESS.json</code> exists or its recorded completed epoch reaches the epoch count encoded in the run name. Partial summaries are displayed for monitoring but excluded from leaderboards.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The queue ledger is stale: it still labels 12 entries pending, whereas the run tree contains 33 completed summaries (23 at 10 epochs and 10 at 15 epochs). Completion and metrics here therefore come from terminal summaries and <code>_SUCCESS.json</code>; the queue database is retained only as provenance.</p>
+</div>
+</div>
+</section>
+<section id="complete-validation-delineation-training-and-resource-metrics" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="complete-validation-delineation-training-and-resource-metrics"><span class="header-section-number">6.3</span> Complete validation, delineation, training, and resource metrics</h2>
+<div id="convergence-all-metrics" class="cell" data-execution_count="4">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>identity <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"run_name"</span>, <span class="st">"observed_lead"</span>, <span class="st">"expected_epochs"</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"best_epoch"</span>, <span class="st">"epochs_completed"</span>, <span class="st">"summary_updated"</span>] <span class="cf">if</span> c <span class="kw">in</span> completed]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>display(completed[identity <span class="op">+</span> metric_cols]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        .sort_values([<span class="st">"expected_epochs"</span>, <span class="st">"observed_lead"</span>, <span class="st">"run_name"</span>]))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>display(pd.DataFrame({<span class="st">"metric"</span>: metric_cols,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"direction"</span>: [metric_direction(x) <span class="kw">or</span> <span class="st">"context only"</span> <span class="cf">for</span> x <span class="kw">in</span> metric_cols],</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"nonmissing_rows"</span>: [<span class="bu">int</span>(completed[x].notna().<span class="bu">sum</span>()) <span class="cf">for</span> x <span class="kw">in</span> metric_cols]}))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="convergence-all-metrics-1" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">run_name</th>
+<th data-quarto-table-cell-role="th">observed_lead</th>
+<th data-quarto-table-cell-role="th">expected_epochs</th>
+<th data-quarto-table-cell-role="th">best_epoch</th>
+<th data-quarto-table-cell-role="th">epochs_completed</th>
+<th data-quarto-table-cell-role="th">summary_updated</th>
+<th data-quarto-table-cell-role="th">P_iou</th>
+<th data-quarto-table-cell-role="th">QRS_iou</th>
+<th data-quarto-table-cell-role="th">T_iou</th>
+<th data-quarto-table-cell-role="th">boundary_f1_smoke</th>
+<th data-quarto-table-cell-role="th">boundary_ppv_smoke</th>
+<th data-quarto-table-cell-role="th">boundary_sensitivity_smoke</th>
+<th data-quarto-table-cell-role="th">macro_f1_wave</th>
+<th data-quarto-table-cell-role="th">miou_wave</th>
+<th data-quarto-table-cell-role="th">val_missing_pearson</th>
+<th data-quarto-table-cell-role="th">val_missing_pearson_p05</th>
+<th data-quarto-table-cell-role="th">val_recon_loss</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>conv10e_A0_raw_s42_l0</td>
+<td>I</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-28T07:29:35-04:00</td>
+<td>0.710257</td>
+<td>0.877127</td>
+<td>0.754509</td>
+<td>0.783164</td>
+<td>0.718809</td>
+<td>0.860175</td>
+<td>0.875069</td>
+<td>0.780631</td>
+<td>0.731540</td>
+<td>0.393294</td>
+<td>0.878788</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2</th>
+<td>conv10e_A0_wave_noSSL_gated_add_s42_l0</td>
+<td>I</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-28T10:08:49-04:00</td>
+<td>0.751448</td>
+<td>0.879031</td>
+<td>0.807875</td>
+<td>0.831112</td>
+<td>0.790262</td>
+<td>0.876415</td>
+<td>0.895813</td>
+<td>0.812785</td>
+<td>0.739231</td>
+<td>0.398680</td>
+<td>0.861300</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>conv10e_C1_E1_morlet_mag_morlet_phase_s42_l0</td>
+<td>I</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-28T04:07:44-04:00</td>
+<td>0.739166</td>
+<td>0.877187</td>
+<td>0.802374</td>
+<td>0.824128</td>
+<td>0.779839</td>
+<td>0.873752</td>
+<td>0.891651</td>
+<td>0.806242</td>
+<td>0.739642</td>
+<td>0.397712</td>
+<td>0.855778</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">6</th>
+<td>conv10e_R5_morlet_mag_ueg_phase_wyatt_s42_l0</td>
+<td>I</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T05:29:02-04:00</td>
+<td>0.754357</td>
+<td>0.879251</td>
+<td>0.807868</td>
+<td>0.835477</td>
+<td>0.796992</td>
+<td>0.877869</td>
+<td>0.896484</td>
+<td>0.813825</td>
+<td>0.738261</td>
+<td>0.397752</td>
+<td>0.861900</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>conv10e_R7_morlet_mag_ueg_real_s42_l0</td>
+<td>I</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T01:32:53-04:00</td>
+<td>0.750316</td>
+<td>0.878572</td>
+<td>0.792040</td>
+<td>0.821747</td>
+<td>0.778548</td>
+<td>0.870021</td>
+<td>0.892221</td>
+<td>0.806976</td>
+<td>0.735873</td>
+<td>0.393971</td>
+<td>0.867164</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">11</th>
+<td>conv10e_del_wave_ce_s42_l0</td>
+<td>I</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-28T00:02:08-04:00</td>
+<td>0.729435</td>
+<td>0.876190</td>
+<td>0.794053</td>
+<td>0.821873</td>
+<td>0.783162</td>
+<td>0.864610</td>
+<td>0.887589</td>
+<td>0.799893</td>
+<td>0.737468</td>
+<td>0.392847</td>
+<td>0.862802</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">13</th>
+<td>conv10e_ssl_log_magnitude_phase_sin_local_gate...</td>
+<td>I</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T09:26:24-04:00</td>
+<td>0.764151</td>
+<td>0.879450</td>
+<td>0.804022</td>
+<td>0.836693</td>
+<td>0.798890</td>
+<td>0.878251</td>
+<td>0.897845</td>
+<td>0.815874</td>
+<td>0.737934</td>
+<td>0.397332</td>
+<td>0.860556</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">15</th>
+<td>conv10e_ssl_log_magnitude_real_both_gated_add_...</td>
+<td>I</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T13:22:02-04:00</td>
+<td>0.763917</td>
+<td>0.877005</td>
+<td>0.810162</td>
+<td>0.838501</td>
+<td>0.800339</td>
+<td>0.880486</td>
+<td>0.898586</td>
+<td>0.817028</td>
+<td>0.737609</td>
+<td>0.390349</td>
+<td>0.864373</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">17</th>
+<td>conv10e_ssl_magnitude_phase_both_cross_attn_s4...</td>
+<td>I</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-28T13:31:41-04:00</td>
+<td>0.752271</td>
+<td>0.879813</td>
+<td>0.818789</td>
+<td>0.842226</td>
+<td>0.808145</td>
+<td>0.879308</td>
+<td>0.898352</td>
+<td>0.816958</td>
+<td>0.738708</td>
+<td>0.392746</td>
+<td>0.860865</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">19</th>
+<td>conv10e_tf_sc16_cy4_s42_l0</td>
+<td>I</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T17:01:16-04:00</td>
+<td>0.757267</td>
+<td>0.878056</td>
+<td>0.807449</td>
+<td>0.835047</td>
+<td>0.796460</td>
+<td>0.877564</td>
+<td>0.896802</td>
+<td>0.814257</td>
+<td>0.738671</td>
+<td>0.395781</td>
+<td>0.862266</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">21</th>
+<td>conv10e_tf_sc16_cy8_s42_l0</td>
+<td>I</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T20:24:07-04:00</td>
+<td>0.754488</td>
+<td>0.877956</td>
+<td>0.798189</td>
+<td>0.824559</td>
+<td>0.780319</td>
+<td>0.874116</td>
+<td>0.894283</td>
+<td>0.810211</td>
+<td>0.736599</td>
+<td>0.390852</td>
+<td>0.863886</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>conv10e_A0_raw_s42_l1</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-28T08:42:44-04:00</td>
+<td>0.714562</td>
+<td>0.888870</td>
+<td>0.665485</td>
+<td>0.733506</td>
+<td>0.646053</td>
+<td>0.848342</td>
+<td>0.857945</td>
+<td>0.756306</td>
+<td>0.743493</td>
+<td>0.406574</td>
+<td>0.806229</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">3</th>
+<td>conv10e_A0_wave_noSSL_gated_add_s42_l1</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-28T11:34:54-04:00</td>
+<td>0.820885</td>
+<td>0.893217</td>
+<td>0.821273</td>
+<td>0.858384</td>
+<td>0.825109</td>
+<td>0.894456</td>
+<td>0.915699</td>
+<td>0.845125</td>
+<td>0.755099</td>
+<td>0.419015</td>
+<td>0.782827</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>conv10e_C1_E1_morlet_mag_morlet_phase_s42_l1</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-28T06:16:33-04:00</td>
+<td>0.795770</td>
+<td>0.893847</td>
+<td>0.759002</td>
+<td>0.805744</td>
+<td>0.746364</td>
+<td>0.875388</td>
+<td>0.897737</td>
+<td>0.816207</td>
+<td>0.752355</td>
+<td>0.409850</td>
+<td>0.784593</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">7</th>
+<td>conv10e_R5_morlet_mag_ueg_phase_wyatt_s42_l1</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T07:27:43-04:00</td>
+<td>0.806464</td>
+<td>0.892912</td>
+<td>0.802875</td>
+<td>0.840672</td>
+<td>0.804967</td>
+<td>0.879692</td>
+<td>0.908984</td>
+<td>0.834083</td>
+<td>0.752662</td>
+<td>0.413507</td>
+<td>0.788078</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>conv10e_R7_morlet_mag_ueg_real_s42_l1</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T03:30:41-04:00</td>
+<td>0.801279</td>
+<td>0.892821</td>
+<td>0.766285</td>
+<td>0.815115</td>
+<td>0.761780</td>
+<td>0.876481</td>
+<td>0.900245</td>
+<td>0.820128</td>
+<td>0.752170</td>
+<td>0.413972</td>
+<td>0.790422</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">10</th>
+<td>conv10e_conv_control_s42_l1</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-26T23:36:33-04:00</td>
+<td>0.820270</td>
+<td>0.895325</td>
+<td>0.809752</td>
+<td>0.857344</td>
+<td>0.826624</td>
+<td>0.890435</td>
+<td>0.913637</td>
+<td>0.841782</td>
+<td>0.756469</td>
+<td>0.420156</td>
+<td>0.776119</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">12</th>
+<td>conv10e_del_wave_ce_s42_l1</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-28T01:58:32-04:00</td>
+<td>0.809530</td>
+<td>0.890630</td>
+<td>0.809368</td>
+<td>0.848605</td>
+<td>0.817063</td>
+<td>0.882680</td>
+<td>0.910511</td>
+<td>0.836509</td>
+<td>0.753784</td>
+<td>0.415782</td>
+<td>0.783684</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">14</th>
+<td>conv10e_ssl_log_magnitude_phase_sin_local_gate...</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T11:24:34-04:00</td>
+<td>0.831730</td>
+<td>0.892757</td>
+<td>0.828705</td>
+<td>0.866397</td>
+<td>0.840883</td>
+<td>0.893509</td>
+<td>0.919269</td>
+<td>0.851064</td>
+<td>0.755089</td>
+<td>0.416282</td>
+<td>0.782551</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">16</th>
+<td>conv10e_ssl_log_magnitude_real_both_gated_add_...</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T15:19:40-04:00</td>
+<td>0.815582</td>
+<td>0.892894</td>
+<td>0.810070</td>
+<td>0.846702</td>
+<td>0.815137</td>
+<td>0.880809</td>
+<td>0.912304</td>
+<td>0.839515</td>
+<td>0.753481</td>
+<td>0.414211</td>
+<td>0.785884</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">18</th>
+<td>conv10e_ssl_magnitude_phase_both_cross_attn_s4...</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-28T15:28:53-04:00</td>
+<td>0.695554</td>
+<td>0.888684</td>
+<td>0.663429</td>
+<td>0.729498</td>
+<td>0.638115</td>
+<td>0.851429</td>
+<td>0.853057</td>
+<td>0.749222</td>
+<td>0.743777</td>
+<td>0.406437</td>
+<td>0.806755</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">20</th>
+<td>conv10e_tf_sc16_cy4_s42_l1</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T18:42:41-04:00</td>
+<td>0.784137</td>
+<td>0.891626</td>
+<td>0.751549</td>
+<td>0.794928</td>
+<td>0.729917</td>
+<td>0.872651</td>
+<td>0.893291</td>
+<td>0.809104</td>
+<td>0.751005</td>
+<td>0.412140</td>
+<td>0.789940</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">22</th>
+<td>conv10e_tf_sc16_cy8_s42_l1</td>
+<td>II</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>2026-08-27T22:05:16-04:00</td>
+<td>0.803992</td>
+<td>0.892774</td>
+<td>0.775772</td>
+<td>0.814114</td>
+<td>0.759829</td>
+<td>0.876753</td>
+<td>0.902809</td>
+<td>0.824179</td>
+<td>0.750916</td>
+<td>0.411478</td>
+<td>0.792096</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">23</th>
+<td>conv15e_A0_raw_s42_l0</td>
+<td>I</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+<td>2026-08-28T17:19:30-04:00</td>
+<td>0.788125</td>
+<td>0.883576</td>
+<td>0.834842</td>
+<td>0.872468</td>
+<td>0.853174</td>
+<td>0.892655</td>
+<td>0.909896</td>
+<td>0.835514</td>
+<td>0.745561</td>
+<td>0.404702</td>
+<td>0.839204</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">25</th>
+<td>conv15e_A0_wave_noSSL_gated_add_s42_l0</td>
+<td>I</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+<td>2026-08-28T21:20:06-04:00</td>
+<td>0.791479</td>
+<td>0.884174</td>
+<td>0.837630</td>
+<td>0.873684</td>
+<td>0.855981</td>
+<td>0.892135</td>
+<td>0.911257</td>
+<td>0.837761</td>
+<td>0.747384</td>
+<td>0.408047</td>
+<td>0.837697</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">27</th>
+<td>conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0</td>
+<td>I</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+<td>2026-08-29T02:43:29-04:00</td>
+<td>0.767359</td>
+<td>0.879687</td>
+<td>0.822863</td>
+<td>0.852041</td>
+<td>0.823235</td>
+<td>0.882936</td>
+<td>0.902395</td>
+<td>0.823303</td>
+<td>0.744809</td>
+<td>0.397211</td>
+<td>0.846183</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">29</th>
+<td>conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0</td>
+<td>I</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+<td>2026-08-29T08:51:09-04:00</td>
+<td>0.788205</td>
+<td>0.884330</td>
+<td>0.837432</td>
+<td>0.874515</td>
+<td>0.856750</td>
+<td>0.893033</td>
+<td>0.910566</td>
+<td>0.836656</td>
+<td>0.747222</td>
+<td>0.402540</td>
+<td>0.839071</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">31</th>
+<td>conv15e_R7_morlet_mag_ueg_real_s42_l0</td>
+<td>I</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+<td>2026-08-29T14:40:24-04:00</td>
+<td>0.786426</td>
+<td>0.885457</td>
+<td>0.837924</td>
+<td>0.878409</td>
+<td>0.862011</td>
+<td>0.895442</td>
+<td>0.910504</td>
+<td>0.836602</td>
+<td>0.746803</td>
+<td>0.408753</td>
+<td>0.838067</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">24</th>
+<td>conv15e_A0_raw_s42_l1</td>
+<td>II</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+<td>2026-08-28T19:10:14-04:00</td>
+<td>0.811979</td>
+<td>0.891889</td>
+<td>0.799252</td>
+<td>0.830068</td>
+<td>0.783935</td>
+<td>0.881969</td>
+<td>0.909172</td>
+<td>0.834373</td>
+<td>0.754713</td>
+<td>0.409501</td>
+<td>0.781365</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">26</th>
+<td>conv15e_A0_wave_noSSL_gated_add_s42_l1</td>
+<td>II</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+<td>2026-08-28T23:29:51-04:00</td>
+<td>0.848042</td>
+<td>0.898659</td>
+<td>0.840855</td>
+<td>0.884156</td>
+<td>0.864471</td>
+<td>0.904758</td>
+<td>0.925982</td>
+<td>0.862518</td>
+<td>0.760102</td>
+<td>0.423298</td>
+<td>0.762549</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">28</th>
+<td>conv15e_C1_E1_morlet_mag_morlet_phase_s42_l1</td>
+<td>II</td>
+<td>15</td>
+<td>14</td>
+<td>15</td>
+<td>2026-08-29T05:56:55-04:00</td>
+<td>0.826279</td>
+<td>0.897333</td>
+<td>0.828210</td>
+<td>0.871773</td>
+<td>0.849503</td>
+<td>0.895241</td>
+<td>0.918933</td>
+<td>0.850607</td>
+<td>0.759223</td>
+<td>0.424861</td>
+<td>0.769981</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">30</th>
+<td>conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l1</td>
+<td>II</td>
+<td>15</td>
+<td>14</td>
+<td>15</td>
+<td>2026-08-29T11:46:13-04:00</td>
+<td>0.845666</td>
+<td>0.900384</td>
+<td>0.842061</td>
+<td>0.888647</td>
+<td>0.872866</td>
+<td>0.905009</td>
+<td>0.926074</td>
+<td>0.862704</td>
+<td>0.760720</td>
+<td>0.430449</td>
+<td>0.765058</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">32</th>
+<td>conv15e_R7_morlet_mag_ueg_real_s42_l1</td>
+<td>II</td>
+<td>15</td>
+<td>14</td>
+<td>15</td>
+<td>2026-08-29T17:34:43-04:00</td>
+<td>0.848595</td>
+<td>0.897647</td>
+<td>0.839984</td>
+<td>0.884673</td>
+<td>0.866043</td>
+<td>0.904121</td>
+<td>0.925731</td>
+<td>0.862075</td>
+<td>0.760051</td>
+<td>0.419479</td>
+<td>0.764358</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div id="convergence-all-metrics-2" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">metric</th>
+<th data-quarto-table-cell-role="th">direction</th>
+<th data-quarto-table-cell-role="th">nonmissing_rows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>P_iou</td>
+<td>max</td>
+<td>33</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>QRS_iou</td>
+<td>max</td>
+<td>33</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>T_iou</td>
+<td>max</td>
+<td>33</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>boundary_f1_smoke</td>
+<td>max</td>
+<td>33</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>boundary_ppv_smoke</td>
+<td>max</td>
+<td>33</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>boundary_sensitivity_smoke</td>
+<td>max</td>
+<td>33</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>macro_f1_wave</td>
+<td>max</td>
+<td>33</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>miou_wave</td>
+<td>max</td>
+<td>33</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>val_missing_pearson</td>
+<td>max</td>
+<td>33</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>val_missing_pearson_p05</td>
+<td>max</td>
+<td>33</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">10</th>
+<td>val_recon_loss</td>
+<td>min</td>
+<td>33</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="metric-specific-leaders-and-pareto-view" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="metric-specific-leaders-and-pareto-view"><span class="header-section-number">6.4</span> Metric-specific leaders and Pareto view</h2>
+<div id="convergence-leaders" class="cell" data-execution_count="5">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>display(leaderboard(completed, metric_cols, id_col<span class="op">=</span><span class="st">"run_name"</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                    group_cols<span class="op">=</span>(<span class="st">"expected_epochs"</span>, <span class="st">"observed_lead"</span>), k<span class="op">=</span>TOP_K))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> {<span class="st">"val_recon_loss"</span>, <span class="st">"miou_wave"</span>, <span class="st">"peak_gpu_memory_bytes"</span>}.issubset(completed):</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> px.scatter(completed, x<span class="op">=</span><span class="st">"val_recon_loss"</span>, y<span class="op">=</span><span class="st">"miou_wave"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                     color<span class="op">=</span><span class="st">"observed_lead"</span>, symbol<span class="op">=</span><span class="st">"expected_epochs"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                     size<span class="op">=</span><span class="st">"peak_gpu_memory_bytes"</span>, hover_name<span class="op">=</span><span class="st">"run_name"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                     hover_data<span class="op">=</span>[c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"val_missing_pearson"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                                             <span class="st">"val_missing_pearson_p05"</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                                             <span class="st">"boundary_f1_smoke"</span>] <span class="cf">if</span> c <span class="kw">in</span> completed],</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                     title<span class="op">=</span><span class="st">"Reconstruction–delineation–memory trade-off"</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="convergence-leaders-1" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">metric</th>
+<th data-quarto-table-cell-role="th">direction</th>
+<th data-quarto-table-cell-role="th">rank</th>
+<th data-quarto-table-cell-role="th">model_id</th>
+<th data-quarto-table-cell-role="th">value</th>
+<th data-quarto-table-cell-role="th">expected_epochs</th>
+<th data-quarto-table-cell-role="th">observed_lead</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>P_iou</td>
+<td>max</td>
+<td>1</td>
+<td>conv10e_ssl_log_magnitude_phase_sin_local_gate...</td>
+<td>0.764151</td>
+<td>10</td>
+<td>I</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>P_iou</td>
+<td>max</td>
+<td>2</td>
+<td>conv10e_ssl_log_magnitude_real_both_gated_add_...</td>
+<td>0.763917</td>
+<td>10</td>
+<td>I</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>P_iou</td>
+<td>max</td>
+<td>3</td>
+<td>conv10e_tf_sc16_cy4_s42_l0</td>
+<td>0.757267</td>
+<td>10</td>
+<td>I</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>P_iou</td>
+<td>max</td>
+<td>4</td>
+<td>conv10e_tf_sc16_cy8_s42_l0</td>
+<td>0.754488</td>
+<td>10</td>
+<td>I</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>P_iou</td>
+<td>max</td>
+<td>5</td>
+<td>conv10e_R5_morlet_mag_ueg_phase_wyatt_s42_l0</td>
+<td>0.754357</td>
+<td>10</td>
+<td>I</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">325</th>
+<td>val_recon_loss</td>
+<td>min</td>
+<td>1</td>
+<td>conv15e_A0_wave_noSSL_gated_add_s42_l1</td>
+<td>0.762549</td>
+<td>15</td>
+<td>II</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">326</th>
+<td>val_recon_loss</td>
+<td>min</td>
+<td>2</td>
+<td>conv15e_R7_morlet_mag_ueg_real_s42_l1</td>
+<td>0.764358</td>
+<td>15</td>
+<td>II</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">327</th>
+<td>val_recon_loss</td>
+<td>min</td>
+<td>3</td>
+<td>conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l1</td>
+<td>0.765058</td>
+<td>15</td>
+<td>II</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">328</th>
+<td>val_recon_loss</td>
+<td>min</td>
+<td>4</td>
+<td>conv15e_C1_E1_morlet_mag_morlet_phase_s42_l1</td>
+<td>0.769981</td>
+<td>15</td>
+<td>II</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">329</th>
+<td>val_recon_loss</td>
+<td>min</td>
+<td>5</td>
+<td>conv15e_A0_raw_s42_l1</td>
+<td>0.781365</td>
+<td>15</td>
+<td>II</td>
+</tr>
+</tbody>
+</table>
+
+<p>330 rows × 7 columns</p>
+</div>
+</div>
+<div id="convergence-leaders-2" class="cell-output cell-output-display">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="b03c9703-4027-4be2-a228-acfefaa8d1f5" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("b03c9703-4027-4be2-a228-acfefaa8d1f5")) {                    Plotly.newPlot(                        "b03c9703-4027-4be2-a228-acfefaa8d1f5",                        [{"customdata":{"dtype":"f8","bdata":"JJ0cdMdo5z8zMzNDuyvZPy+CWDOtD+k\u002fF+Qhucin5z8zMzMz+4PZP7RfV0R4mOo\u002f89iKxCSr5z\u002fNzMy8G3TZP0xMXahCX+o\u002fDSd1+9Wf5z8zMzPTxnTZP40mtvY6vOo\u002f1UY8pkSM5z8AAACQ0TbZPz0aaxDAS+o\u002fHHCcQlaZ5z+amZn5aCTZP+GJC1HITOo\u002f75Qm5yad5z9mZmYG5W3ZP4ZQps0vxuo\u002fev7Kj36a5z8AAABQefvYP3AVa+gA1eo\u002fNeTqd36j5z\u002fNzMwswCLZP7vEETyE8+o\u002fiWv93TCj5z8zMzMDelTZP\u002fMVlDe1uOo\u002f4m2xyDiS5z\u002fNzMzMuQPZP69MmePIYuo\u002f","shape":"11, 3"},"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003eobserved_lead=I\u003cbr\u003eexpected_epochs=10\u003cbr\u003eval_recon_loss=%{x}\u003cbr\u003emiou_wave=%{y}\u003cbr\u003epeak_gpu_memory_bytes=%{marker.size}\u003cbr\u003eval_missing_pearson=%{customdata[0]}\u003cbr\u003eval_missing_pearson_p05=%{customdata[1]}\u003cbr\u003eboundary_f1_smoke=%{customdata[2]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["conv10e_A0_raw_s42_l0","conv10e_A0_wave_noSSL_gated_add_s42_l0","conv10e_C1_E1_morlet_mag_morlet_phase_s42_l0","conv10e_R5_morlet_mag_ueg_phase_wyatt_s42_l0","conv10e_R7_morlet_mag_ueg_real_s42_l0","conv10e_del_wave_ce_s42_l0","conv10e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0","conv10e_ssl_log_magnitude_real_both_gated_add_s42_l0","conv10e_ssl_magnitude_phase_both_cross_attn_s42_l0","conv10e_tf_sc16_cy4_s42_l0","conv10e_tf_sc16_cy8_s42_l0"],"legendgroup":"I, 10","marker":{"color":"#636efa","size":[17575028224,21731862016,36116686336,30178530816,30178530816,30193775616,30177623040,30178415616,30528336896,23984276480,23984276480],"sizemode":"area","sizeref":90291715.84,"symbol":"circle"},"mode":"markers","name":"I, 10","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"c+3AvAgf7D87MNdOxY\u002frP73pTU+JYus\u002fetOb3q+U6z\u002fIQhbyzb\u002frP5GFLIQTnOs\u002fzLUD86uJ6z8emGsH8qjrP8FcO9AzjOs\u002fc+3A3K2X6z\u002f1pjdd9KTrPw=="},"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAAO766D8AAAAAVQLqPwAAAOC8zOk\u002fAAAAoNsK6j8AAABgv9LpPwAAAGC4mOk\u002fAAAAoKMb6j8AAAAgGCXqPwAAAICEJOo\u002fAAAAoGUO6j8AAACgP+3pPw=="},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"Yi3bSaPb5z80MzOToubZPwecaq1B6+s\u002fp+xyyJLq5z8AAABAcR3aPzQ5+WU49es\u002ft6G7PnnV5z8AAAAA5mvZPzsZyOfrQ+s\u002fCk8yXT3p5z8BAADQNsPZP8tTzqUH\u002fOs\u002fsKkf0M\u002fl5z\u002fNzMy8ACnaP6+kXErsG+w\u002f","shape":"5, 3"},"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003eobserved_lead=I\u003cbr\u003eexpected_epochs=15\u003cbr\u003eval_recon_loss=%{x}\u003cbr\u003emiou_wave=%{y}\u003cbr\u003epeak_gpu_memory_bytes=%{marker.size}\u003cbr\u003eval_missing_pearson=%{customdata[0]}\u003cbr\u003eval_missing_pearson_p05=%{customdata[1]}\u003cbr\u003eboundary_f1_smoke=%{customdata[2]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["conv15e_A0_raw_s42_l0","conv15e_A0_wave_noSSL_gated_add_s42_l0","conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0","conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0","conv15e_R7_morlet_mag_ueg_real_s42_l0"],"legendgroup":"I, 15","marker":{"color":"#636efa","size":[17575028224,21731862016,36116686336,30178530816,30178530816],"sizemode":"area","sizeref":90291715.84,"symbol":"diamond"},"mode":"markers","name":"I, 15","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"aJT4GcPa6j+CuXZgas7qPwAAAEDvE+s\u002foFHiR6vZ6j8\u002fo8RvctHqPw=="},"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAoIi86j8AAACg787qPwAAACCAWOo\u002fAAAAAOLF6j8AAAAgcsXqPw=="},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"0xFYr7HK5z+amZlZUAXaP6QCEergeOc\u002fVXTgSMYp6D8AAACAI9HaPyWXasLid+s\u002fmP4TOUoT6D\u002fNzMwM+jraP+58BlSnyOk\u002fJfhkss0V6D9nZma25XbaP77X1+\u002fI5uo\u002fd8s\u002fHsYR6D+amZl5g37aPz1tubVsFeo\u002f\u002f0lvs\u002f006D+amZmZ1OPaPxBSGilcb+s\u002fQOkt8v8e6D8AAAAgLZzaP\u002fKLEkbGJ+s\u002f14z5XbEp6D9mZmamXKTaP2TQ4DaHues\u002fWbjE3YQc6D+amZmJb4LaP1morx8uGOs\u002f+EB6cwXN5z8AAAAAEAPaP94bdc0LWOc\u002fZqh8\u002fzoI6D+amZkpgWDaP7XH3uYLcOk\u002ffxzLwoAH6D8AAADgp1XaP+aT2yQ5Deo\u002f","shape":"12, 3"},"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003eobserved_lead=II\u003cbr\u003eexpected_epochs=10\u003cbr\u003eval_recon_loss=%{x}\u003cbr\u003emiou_wave=%{y}\u003cbr\u003epeak_gpu_memory_bytes=%{marker.size}\u003cbr\u003eval_missing_pearson=%{customdata[0]}\u003cbr\u003eval_missing_pearson_p05=%{customdata[1]}\u003cbr\u003eboundary_f1_smoke=%{customdata[2]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["conv10e_A0_raw_s42_l1","conv10e_A0_wave_noSSL_gated_add_s42_l1","conv10e_C1_E1_morlet_mag_morlet_phase_s42_l1","conv10e_R5_morlet_mag_ueg_phase_wyatt_s42_l1","conv10e_R7_morlet_mag_ueg_real_s42_l1","conv10e_conv_control_s42_l1","conv10e_del_wave_ce_s42_l1","conv10e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l1","conv10e_ssl_log_magnitude_real_both_gated_add_s42_l1","conv10e_ssl_magnitude_phase_both_cross_attn_s42_l1","conv10e_tf_sc16_cy4_s42_l1","conv10e_tf_sc16_cy8_s42_l1"],"legendgroup":"II, 10","marker":{"color":"#EF553B","size":[17575028224,21731862016,36116686336,30178530816,30178530816,18185313280,30193775616,30177623040,30178415616,30528336896,23984276480,23984276480],"sizemode":"area","sizeref":90291715.84,"symbol":"circle"},"mode":"markers","name":"II, 10","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"24G5NqDM6T\u002fxM0r86wzpPwAAAIBjG+k\u002f9aY3HfA36T+96U0PIkvpP73pTY\u002f31eg\u002fpze9CfAT6T\u002fiZ5T4pwrpP8FcO\u002fD1Jek\u002fEz+jxPDQ6T+2A3MtMEfpPw\u002fMtePYWOk\u002f"},"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAAKgz6D8AAAAgQwvrPwAAAGBdHuo\u002fAAAA4M+w6j8AAACgfT7qPwAAAKDh7+o\u002fAAAAgK\u002fE6j8AAABg6jvrPwAAAGBP3eo\u002fAAAAYKD55z8AAACALuTpPwAAACCtX+o\u002f"},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"4MpSApwm6D\u002fNzMwcQjXaP4m4jTPqj+o\u002fpxB+YsJS6D+amZlZUBfbPxaliEkBS+w\u002ffWiTYY5L6D\u002fNzMws7jDbPzdUtbGP5es\u002f6mP0WNJX6D+amZkpe4zbPxdAksfLb+w\u002fG809u1VS6D9nZmbGv9jaP87cShQ9T+w\u002f","shape":"5, 3"},"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003eobserved_lead=II\u003cbr\u003eexpected_epochs=15\u003cbr\u003eval_recon_loss=%{x}\u003cbr\u003emiou_wave=%{y}\u003cbr\u003epeak_gpu_memory_bytes=%{marker.size}\u003cbr\u003eval_missing_pearson=%{customdata[0]}\u003cbr\u003eval_missing_pearson_p05=%{customdata[1]}\u003cbr\u003eboundary_f1_smoke=%{customdata[2]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["conv15e_A0_raw_s42_l1","conv15e_A0_wave_noSSL_gated_add_s42_l1","conv15e_C1_E1_morlet_mag_morlet_phase_s42_l1","conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l1","conv15e_R7_morlet_mag_ueg_real_s42_l1"],"legendgroup":"II, 15","marker":{"color":"#EF553B","size":[17575028224,21731862016,36116686336,30178530816,30178530816],"sizemode":"area","sizeref":90291715.84,"symbol":"diamond"},"mode":"markers","name":"II, 15","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"9aY3XfAA6T\u002fxM0rczGboPx6Yawewo+g\u002fJX5GCVt76D9z7cBcn3XoPw=="},"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAoC+z6j8AAABgwJnrPwAAACAtOOs\u002fAAAAAEWb6z8AAAAgH5brPw=="},"yaxis":"y","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"val_recon_loss"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"miou_wave"}},"legend":{"title":{"text":"observed_lead, expected_epochs"},"tracegroupgap":0,"itemsizing":"constant"},"title":{"text":"Reconstruction–delineation–memory trade-off"}},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('b03c9703-4027-4be2-a228-acfefaa8d1f5');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+</div>
+<p>The composite checkpoint score is <code>mIoU + 0.25 × boundary F1 + 0.1 × Pearson</code>. Consequently, a retained checkpoint can differ from the epoch with the best reconstruction correlation. Any paper table must report that selection rule rather than implying that each individual endpoint was independently optimized.</p>
+</section>
+<section id="horizon-matched-learning-budget-effects" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="horizon-matched-learning-budget-effects"><span class="header-section-number">6.5</span> Horizon-matched learning-budget effects</h2>
+<div id="cell-convergence-horizon-matched" class="cell" data-execution_count="6">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>completed[<span class="st">"configuration"</span>] <span class="op">=</span> (completed.run_name</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">str</span>.replace(<span class="vs">r"</span><span class="dv">^</span><span class="vs">conv</span>(?:<span class="vs">10</span><span class="cf">|</span><span class="vs">15</span>)<span class="vs">e_"</span>, <span class="st">""</span>, regex<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">str</span>.replace(<span class="vs">r"_s</span><span class="dv">\d</span><span class="op">+</span><span class="vs">_l</span><span class="pp">[01]</span><span class="dv">$</span><span class="vs">"</span>, <span class="st">""</span>, regex<span class="op">=</span><span class="va">True</span>))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>horizon_metrics <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"val_missing_pearson"</span>, <span class="st">"val_missing_pearson_p05"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"val_recon_loss"</span>, <span class="st">"miou_wave"</span>, <span class="st">"boundary_f1_smoke"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"P_iou"</span>, <span class="st">"QRS_iou"</span>, <span class="st">"T_iou"</span>] <span class="cf">if</span> c <span class="kw">in</span> completed]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>wide <span class="op">=</span> completed.pivot_table(index<span class="op">=</span>[<span class="st">"configuration"</span>, <span class="st">"observed_lead"</span>],</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                             columns<span class="op">=</span><span class="st">"expected_epochs"</span>, values<span class="op">=</span>horizon_metrics)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>matched_horizons <span class="op">=</span> wide.dropna().copy()</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metric <span class="kw">in</span> horizon_metrics:</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (metric, <span class="dv">10</span>) <span class="kw">in</span> matched_horizons <span class="kw">and</span> (metric, <span class="dv">15</span>) <span class="kw">in</span> matched_horizons:</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        matched_horizons[(metric, <span class="st">"15−10 improvement"</span>)] <span class="op">=</span> (</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>            (matched_horizons[(metric, <span class="dv">15</span>)] <span class="op">-</span> matched_horizons[(metric, <span class="dv">10</span>)]) <span class="op">*</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>            (<span class="op">-</span><span class="dv">1</span> <span class="cf">if</span> metric_direction(metric) <span class="op">==</span> <span class="st">"min"</span> <span class="cf">else</span> <span class="dv">1</span>))</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>display(matched_horizons.reset_index())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="convergence-horizon-matched" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">configuration</th>
+<th data-quarto-table-cell-role="th">observed_lead</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">P_iou</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">QRS_iou</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">T_iou</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">boundary_f1_smoke</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">val_recon_loss</th>
+<th data-quarto-table-cell-role="th">val_missing_pearson</th>
+<th data-quarto-table-cell-role="th">val_missing_pearson_p05</th>
+<th data-quarto-table-cell-role="th">val_recon_loss</th>
+<th data-quarto-table-cell-role="th">miou_wave</th>
+<th data-quarto-table-cell-role="th">boundary_f1_smoke</th>
+<th data-quarto-table-cell-role="th">P_iou</th>
+<th data-quarto-table-cell-role="th">QRS_iou</th>
+<th data-quarto-table-cell-role="th">T_iou</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">expected_epochs</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">10</th>
+<th data-quarto-table-cell-role="th">15</th>
+<th data-quarto-table-cell-role="th">10</th>
+<th data-quarto-table-cell-role="th">15</th>
+<th data-quarto-table-cell-role="th">10</th>
+<th data-quarto-table-cell-role="th">15</th>
+<th data-quarto-table-cell-role="th">10</th>
+<th data-quarto-table-cell-role="th">15</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">10</th>
+<th data-quarto-table-cell-role="th">15</th>
+<th data-quarto-table-cell-role="th">15−10 improvement</th>
+<th data-quarto-table-cell-role="th">15−10 improvement</th>
+<th data-quarto-table-cell-role="th">15−10 improvement</th>
+<th data-quarto-table-cell-role="th">15−10 improvement</th>
+<th data-quarto-table-cell-role="th">15−10 improvement</th>
+<th data-quarto-table-cell-role="th">15−10 improvement</th>
+<th data-quarto-table-cell-role="th">15−10 improvement</th>
+<th data-quarto-table-cell-role="th">15−10 improvement</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>A0_raw</td>
+<td>I</td>
+<td>0.710257</td>
+<td>0.788125</td>
+<td>0.877127</td>
+<td>0.883576</td>
+<td>0.754509</td>
+<td>0.834842</td>
+<td>0.783164</td>
+<td>0.872468</td>
+<td>...</td>
+<td>0.878788</td>
+<td>0.839204</td>
+<td>0.014021</td>
+<td>0.011408</td>
+<td>0.039584</td>
+<td>0.054883</td>
+<td>0.089304</td>
+<td>0.077868</td>
+<td>0.006449</td>
+<td>0.080333</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>A0_raw</td>
+<td>II</td>
+<td>0.714562</td>
+<td>0.811979</td>
+<td>0.888870</td>
+<td>0.891889</td>
+<td>0.665485</td>
+<td>0.799252</td>
+<td>0.733506</td>
+<td>0.830068</td>
+<td>...</td>
+<td>0.806229</td>
+<td>0.781365</td>
+<td>0.011220</td>
+<td>0.002926</td>
+<td>0.024864</td>
+<td>0.078068</td>
+<td>0.096562</td>
+<td>0.097416</td>
+<td>0.003019</td>
+<td>0.133767</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>A0_wave_noSSL_gated_add</td>
+<td>I</td>
+<td>0.751448</td>
+<td>0.791479</td>
+<td>0.879031</td>
+<td>0.884174</td>
+<td>0.807875</td>
+<td>0.837630</td>
+<td>0.831112</td>
+<td>0.873684</td>
+<td>...</td>
+<td>0.861300</td>
+<td>0.837697</td>
+<td>0.008153</td>
+<td>0.009367</td>
+<td>0.023603</td>
+<td>0.024976</td>
+<td>0.042572</td>
+<td>0.040031</td>
+<td>0.005142</td>
+<td>0.029755</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>A0_wave_noSSL_gated_add</td>
+<td>II</td>
+<td>0.820885</td>
+<td>0.848042</td>
+<td>0.893217</td>
+<td>0.898659</td>
+<td>0.821273</td>
+<td>0.840855</td>
+<td>0.858384</td>
+<td>0.884156</td>
+<td>...</td>
+<td>0.782827</td>
+<td>0.762549</td>
+<td>0.005003</td>
+<td>0.004283</td>
+<td>0.020279</td>
+<td>0.017394</td>
+<td>0.025771</td>
+<td>0.027157</td>
+<td>0.005442</td>
+<td>0.019582</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>C1_E1_morlet_mag_morlet_phase</td>
+<td>I</td>
+<td>0.739166</td>
+<td>0.767359</td>
+<td>0.877187</td>
+<td>0.879687</td>
+<td>0.802374</td>
+<td>0.822863</td>
+<td>0.824128</td>
+<td>0.852041</td>
+<td>...</td>
+<td>0.855778</td>
+<td>0.846183</td>
+<td>0.005167</td>
+<td>-0.000501</td>
+<td>0.009595</td>
+<td>0.017061</td>
+<td>0.027913</td>
+<td>0.028194</td>
+<td>0.002500</td>
+<td>0.020489</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>C1_E1_morlet_mag_morlet_phase</td>
+<td>II</td>
+<td>0.795770</td>
+<td>0.826279</td>
+<td>0.893847</td>
+<td>0.897333</td>
+<td>0.759002</td>
+<td>0.828210</td>
+<td>0.805744</td>
+<td>0.871773</td>
+<td>...</td>
+<td>0.784593</td>
+<td>0.769981</td>
+<td>0.006868</td>
+<td>0.015012</td>
+<td>0.014612</td>
+<td>0.034401</td>
+<td>0.066029</td>
+<td>0.030509</td>
+<td>0.003486</td>
+<td>0.069208</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>R5_morlet_mag_ueg_phase_wyatt</td>
+<td>I</td>
+<td>0.754357</td>
+<td>0.788205</td>
+<td>0.879251</td>
+<td>0.884330</td>
+<td>0.807868</td>
+<td>0.837432</td>
+<td>0.835477</td>
+<td>0.874515</td>
+<td>...</td>
+<td>0.861900</td>
+<td>0.839071</td>
+<td>0.008960</td>
+<td>0.004787</td>
+<td>0.022829</td>
+<td>0.022830</td>
+<td>0.039038</td>
+<td>0.033848</td>
+<td>0.005079</td>
+<td>0.029564</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>R5_morlet_mag_ueg_phase_wyatt</td>
+<td>II</td>
+<td>0.806464</td>
+<td>0.845666</td>
+<td>0.892912</td>
+<td>0.900384</td>
+<td>0.802875</td>
+<td>0.842061</td>
+<td>0.840672</td>
+<td>0.888647</td>
+<td>...</td>
+<td>0.788078</td>
+<td>0.765058</td>
+<td>0.008059</td>
+<td>0.016942</td>
+<td>0.023020</td>
+<td>0.028620</td>
+<td>0.047975</td>
+<td>0.039202</td>
+<td>0.007473</td>
+<td>0.039186</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>R7_morlet_mag_ueg_real</td>
+<td>I</td>
+<td>0.750316</td>
+<td>0.786426</td>
+<td>0.878572</td>
+<td>0.885457</td>
+<td>0.792040</td>
+<td>0.837924</td>
+<td>0.821747</td>
+<td>0.878409</td>
+<td>...</td>
+<td>0.867164</td>
+<td>0.838067</td>
+<td>0.010931</td>
+<td>0.014782</td>
+<td>0.029096</td>
+<td>0.029626</td>
+<td>0.056662</td>
+<td>0.036110</td>
+<td>0.006885</td>
+<td>0.045884</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>R7_morlet_mag_ueg_real</td>
+<td>II</td>
+<td>0.801279</td>
+<td>0.848595</td>
+<td>0.892821</td>
+<td>0.897647</td>
+<td>0.766285</td>
+<td>0.839984</td>
+<td>0.815115</td>
+<td>0.884673</td>
+<td>...</td>
+<td>0.790422</td>
+<td>0.764358</td>
+<td>0.007881</td>
+<td>0.005508</td>
+<td>0.026063</td>
+<td>0.041947</td>
+<td>0.069557</td>
+<td>0.047316</td>
+<td>0.004826</td>
+<td>0.073699</td>
+</tr>
+</tbody>
+</table>
+
+<p>10 rows × 26 columns</p>
+</div>
+</div>
+</div>
+<p>Across the five configurations completed at both horizons and both leads, the extra five epochs consistently improve mean Pearson, reconstruction loss, wave mIoU, and boundary F1. The gain is not a uniform shift: QRS IoU is already near saturation and typically increases by only 0.0025–0.0075, whereas P/T IoU and boundary F1 improve much more. Short screening therefore underestimates slow-learning atrial and repolarization morphology.</p>
+<p>The largest boundary-F1 gains occur for raw A0 (+0.089 lead I, +0.097 lead II), showing that an apparently weaker short-run baseline can recover substantially with budget. Three- or ten-epoch rankings cannot be presented as pure architecture effects.</p>
+</section>
+<section id="matched-15-epoch-contrasts" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="matched-15-epoch-contrasts"><span class="header-section-number">6.6</span> Matched 15-epoch contrasts</h2>
+<div id="cell-convergence-15e-contrasts" class="cell" data-execution_count="7">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fifteen <span class="op">=</span> completed.query(<span class="st">"expected_epochs == 15"</span>).copy()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>baseline <span class="op">=</span> fifteen.query(<span class="st">"run_name.str.contains('A0_raw')"</span>, engine<span class="op">=</span><span class="st">"python"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>keys <span class="op">=</span> [<span class="st">"observed_lead"</span>]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>compare_metrics <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"best_score"</span>, <span class="st">"val_missing_pearson"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"val_missing_pearson_p05"</span>, <span class="st">"val_recon_loss"</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"P_iou"</span>, <span class="st">"QRS_iou"</span>, <span class="st">"T_iou"</span>, <span class="st">"macro_f1_wave"</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"miou_wave"</span>, <span class="st">"boundary_f1_smoke"</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"boundary_ppv_smoke"</span>, <span class="st">"boundary_sensitivity_smoke"</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"peak_gpu_memory_bytes"</span>] <span class="cf">if</span> c <span class="kw">in</span> fifteen]</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> baseline[keys <span class="op">+</span> compare_metrics].rename(columns<span class="op">=</span>{m: <span class="ss">f"base.</span><span class="sc">{</span>m<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> m <span class="kw">in</span> compare_metrics})</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>joined <span class="op">=</span> fifteen.merge(base, on<span class="op">=</span>keys, how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metric <span class="kw">in</span> compare_metrics:</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    sign <span class="op">=</span> <span class="op">-</span><span class="dv">1</span> <span class="cf">if</span> metric_direction(metric) <span class="op">==</span> <span class="st">"min"</span> <span class="cf">else</span> <span class="dv">1</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    joined[<span class="ss">f"improvement.</span><span class="sc">{</span>metric<span class="sc">}</span><span class="ss">"</span>] <span class="op">=</span> sign <span class="op">*</span> (joined[metric] <span class="op">-</span> joined[<span class="ss">f"base.</span><span class="sc">{</span>metric<span class="sc">}</span><span class="ss">"</span>])</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>display(joined[[<span class="st">"run_name"</span>, <span class="st">"observed_lead"</span>, <span class="op">*</span>compare_metrics,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>                <span class="op">*</span>[<span class="ss">f"improvement.</span><span class="sc">{</span>m<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> m <span class="kw">in</span> compare_metrics]]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="convergence-15e-contrasts" class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">run_name</th>
+<th data-quarto-table-cell-role="th">observed_lead</th>
+<th data-quarto-table-cell-role="th">best_score</th>
+<th data-quarto-table-cell-role="th">val_missing_pearson</th>
+<th data-quarto-table-cell-role="th">val_missing_pearson_p05</th>
+<th data-quarto-table-cell-role="th">val_recon_loss</th>
+<th data-quarto-table-cell-role="th">P_iou</th>
+<th data-quarto-table-cell-role="th">QRS_iou</th>
+<th data-quarto-table-cell-role="th">T_iou</th>
+<th data-quarto-table-cell-role="th">macro_f1_wave</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">improvement.val_recon_loss</th>
+<th data-quarto-table-cell-role="th">improvement.P_iou</th>
+<th data-quarto-table-cell-role="th">improvement.QRS_iou</th>
+<th data-quarto-table-cell-role="th">improvement.T_iou</th>
+<th data-quarto-table-cell-role="th">improvement.macro_f1_wave</th>
+<th data-quarto-table-cell-role="th">improvement.miou_wave</th>
+<th data-quarto-table-cell-role="th">improvement.boundary_f1_smoke</th>
+<th data-quarto-table-cell-role="th">improvement.boundary_ppv_smoke</th>
+<th data-quarto-table-cell-role="th">improvement.boundary_sensitivity_smoke</th>
+<th data-quarto-table-cell-role="th">improvement.peak_gpu_memory_bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>conv15e_A0_raw_s42_l0</td>
+<td>I</td>
+<td>1.128187</td>
+<td>0.745561</td>
+<td>0.404702</td>
+<td>0.839204</td>
+<td>0.788125</td>
+<td>0.883576</td>
+<td>0.834842</td>
+<td>0.909896</td>
+<td>...</td>
+<td>-0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>conv15e_A0_raw_s42_l1</td>
+<td>II</td>
+<td>1.117362</td>
+<td>0.754713</td>
+<td>0.409501</td>
+<td>0.781365</td>
+<td>0.811979</td>
+<td>0.891889</td>
+<td>0.799252</td>
+<td>0.909172</td>
+<td>...</td>
+<td>-0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>conv15e_A0_wave_noSSL_gated_add_s42_l0</td>
+<td>I</td>
+<td>1.130920</td>
+<td>0.747384</td>
+<td>0.408047</td>
+<td>0.837697</td>
+<td>0.791479</td>
+<td>0.884174</td>
+<td>0.837630</td>
+<td>0.911257</td>
+<td>...</td>
+<td>0.001507</td>
+<td>0.003354</td>
+<td>0.000597</td>
+<td>0.002788</td>
+<td>0.001361</td>
+<td>0.002246</td>
+<td>0.001216</td>
+<td>0.002807</td>
+<td>-0.000520</td>
+<td>4156833792</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>conv15e_A0_wave_noSSL_gated_add_s42_l1</td>
+<td>II</td>
+<td>1.159568</td>
+<td>0.760102</td>
+<td>0.423298</td>
+<td>0.762549</td>
+<td>0.848042</td>
+<td>0.898659</td>
+<td>0.840855</td>
+<td>0.925982</td>
+<td>...</td>
+<td>0.018816</td>
+<td>0.036063</td>
+<td>0.006770</td>
+<td>0.041602</td>
+<td>0.016810</td>
+<td>0.028145</td>
+<td>0.054088</td>
+<td>0.080536</td>
+<td>0.022789</td>
+<td>4156833792</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0</td>
+<td>I</td>
+<td>1.110794</td>
+<td>0.744809</td>
+<td>0.397211</td>
+<td>0.846183</td>
+<td>0.767359</td>
+<td>0.879687</td>
+<td>0.822863</td>
+<td>0.902395</td>
+<td>...</td>
+<td>-0.006979</td>
+<td>-0.020766</td>
+<td>-0.003889</td>
+<td>-0.011978</td>
+<td>-0.007500</td>
+<td>-0.012211</td>
+<td>-0.020427</td>
+<td>-0.029939</td>
+<td>-0.009718</td>
+<td>18541658112</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>conv15e_C1_E1_morlet_mag_morlet_phase_s42_l1</td>
+<td>II</td>
+<td>1.144473</td>
+<td>0.759223</td>
+<td>0.424861</td>
+<td>0.769981</td>
+<td>0.826279</td>
+<td>0.897333</td>
+<td>0.828210</td>
+<td>0.918933</td>
+<td>...</td>
+<td>0.011383</td>
+<td>0.014300</td>
+<td>0.005444</td>
+<td>0.028958</td>
+<td>0.009761</td>
+<td>0.016234</td>
+<td>0.041705</td>
+<td>0.065568</td>
+<td>0.013272</td>
+<td>18541658112</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0</td>
+<td>I</td>
+<td>1.130007</td>
+<td>0.747222</td>
+<td>0.402540</td>
+<td>0.839071</td>
+<td>0.788205</td>
+<td>0.884330</td>
+<td>0.837432</td>
+<td>0.910566</td>
+<td>...</td>
+<td>0.000133</td>
+<td>0.000080</td>
+<td>0.000754</td>
+<td>0.002590</td>
+<td>0.000670</td>
+<td>0.001141</td>
+<td>0.002048</td>
+<td>0.003576</td>
+<td>0.000378</td>
+<td>12603502592</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l1</td>
+<td>II</td>
+<td>1.160938</td>
+<td>0.760720</td>
+<td>0.430449</td>
+<td>0.765058</td>
+<td>0.845666</td>
+<td>0.900384</td>
+<td>0.842061</td>
+<td>0.926074</td>
+<td>...</td>
+<td>0.016307</td>
+<td>0.033687</td>
+<td>0.008495</td>
+<td>0.042809</td>
+<td>0.016901</td>
+<td>0.028331</td>
+<td>0.058579</td>
+<td>0.088931</td>
+<td>0.023040</td>
+<td>12603502592</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>conv15e_R7_morlet_mag_ueg_real_s42_l0</td>
+<td>I</td>
+<td>1.130885</td>
+<td>0.746803</td>
+<td>0.408753</td>
+<td>0.838067</td>
+<td>0.786426</td>
+<td>0.885457</td>
+<td>0.837924</td>
+<td>0.910504</td>
+<td>...</td>
+<td>0.001137</td>
+<td>-0.001700</td>
+<td>0.001881</td>
+<td>0.003083</td>
+<td>0.000608</td>
+<td>0.001088</td>
+<td>0.005941</td>
+<td>0.008838</td>
+<td>0.002787</td>
+<td>12603502592</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>conv15e_R7_morlet_mag_ueg_real_s42_l1</td>
+<td>II</td>
+<td>1.159249</td>
+<td>0.760051</td>
+<td>0.419479</td>
+<td>0.764358</td>
+<td>0.848595</td>
+<td>0.897647</td>
+<td>0.839984</td>
+<td>0.925731</td>
+<td>...</td>
+<td>0.017006</td>
+<td>0.036617</td>
+<td>0.005758</td>
+<td>0.040731</td>
+<td>0.016559</td>
+<td>0.027702</td>
+<td>0.054605</td>
+<td>0.082108</td>
+<td>0.022152</td>
+<td>12603502592</td>
+</tr>
+</tbody>
+</table>
+
+<p>10 rows × 28 columns</p>
+</div>
+</div>
+</div>
+<p>At 15 epochs, no configuration dominates every endpoint. On lead I, <code>A0_wave_noSSL</code> has the highest mean Pearson (0.7474) and best reconstruction loss (0.8377), while <code>R7</code> has the best boundary F1 (0.8784) and T/QRS overlap. On lead II, physiology-informed <code>R5</code> leads mean Pearson (0.7607), lower-tail Pearson (0.4304), mIoU (0.8627), macro F1 (0.9261), and boundary F1 (0.8886), but <code>A0_wave_noSSL</code> retains the best reconstruction loss (0.7625).</p>
+<p>This is encouraging for R5 on lead II but is not a clean SSL win. The principal contrast <code>A0 raw → A0+wavelet → A0+wavelet+SSL</code> is incomplete because a matched 15-epoch A0+wavelet+SSL cell is absent. R5 changes the second view and training objective, so it cannot identify whether wavelets, SSL, or UEG phase caused the result. <code>C1_E1</code> remains a complementarity control; it does not support treating E1 as an improved base architecture.</p>
+<p>Until multiple seeds and external evaluation land, differences on the order of one or two thousandths are treated as ties rather than mechanistic proof.</p>
+</section>
+<section id="evidence-ledger" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="evidence-ledger"><span class="header-section-number">6.7</span> Evidence ledger</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Question</th>
+<th>Current answer</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Does longer training matter?</td>
+<td>Yes, descriptively</td>
+<td>All ten matched lead/configuration cells improve on major reconstruction and delineation endpoints from 10 to 15 epochs.</td>
+</tr>
+<tr class="even">
+<td>Is R5 the best completed model?</td>
+<td>Endpoint- and lead-dependent</td>
+<td>Strongest broad lead-II profile; not best lead-I reconstruction and not universally best loss.</td>
+</tr>
+<tr class="odd">
+<td>Does UEG phase beat Morlet phase?</td>
+<td>Suggestive on lead II, unresolved</td>
+<td>R5 exceeds C1_E1 on several metrics, but the comparison also crosses A0/E1 architecture and lacks repeated seeds.</td>
+</tr>
+<tr class="even">
+<td>Does SSL add value beyond a wavelet branch?</td>
+<td>Not yet identified</td>
+<td>The matched 15-epoch A0+wavelet+SSL cell is missing.</td>
+</tr>
+<tr class="odd">
+<td>Can validation select a clinical model?</td>
+<td>No</td>
+<td>Single seed, composite checkpoint selection, internal validation, and no paired per-record uncertainty.</td>
+</tr>
+</tbody>
+</table>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./27_one_lead_completed_spatial_results.html" class="pagination-link" aria-label="Completed One-Lead ECG-AIM Spatial Study">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Completed One-Lead ECG-AIM Spatial Study</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./26_one_lead_rdb_external_results.html" class="pagination-link" aria-label="One-Lead ECG-AIM External RDB Evaluation">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">One-Lead ECG-AIM External RDB Evaluation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "One-Lead ECG-AIM Convergence Extensions"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Ten- and fifteen-epoch results, checkpoint selection, and learning-budget effects"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">  cache: false</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">  freeze: false</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: convergence-controls</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>TOP_K <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>PRIMARY_METRIC <span class="op">=</span> <span class="st">"miou_wave"</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: convergence-setup</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> live_results <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>RUN_ROOT <span class="op">=</span> source_path(<span class="st">"refine-logs/convergence_10e/runs"</span>)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>QUEUE_DB <span class="op">=</span> source_path(<span class="st">"refine-logs/convergence_10e/queue.sqlite"</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>runs <span class="op">=</span> load_summary_tree(<span class="st">"refine-logs/convergence_10e/runs"</span>)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>completed <span class="op">=</span> runs.query(<span class="st">"run_state == 'completed'"</span>).copy()</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>partial <span class="op">=</span> runs.query(<span class="st">"run_state != 'completed'"</span>).copy()</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>metric_cols <span class="op">=</span> numeric_metrics(completed)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>queue <span class="op">=</span> read_sql(QUEUE_DB, <span class="st">"select id, ordinal, status, attempts, completed_at, error from jobs order by ordinal"</span>)</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why this is separate from screening</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>The original factorial queue used short screening runs. This chapter contains</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>only the promoted longer-budget extensions. A 3-, 10-, and 15-epoch result for</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>the same named architecture are different estimands because training budget and</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>checkpoint selection changed. The longest result supersedes the shorter result</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>for final ranking, but the shorter trajectory remains useful for diagnosing</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>whether screening preserved the ordering.</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Source and completion evidence</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: convergence-provenance</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>display(source_inventory({<span class="st">"convergence queue"</span>: QUEUE_DB}))</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>display(queue.status.value_counts(dropna<span class="op">=</span><span class="va">False</span>).rename_axis(<span class="st">"queue_status"</span>).reset_index(name<span class="op">=</span><span class="st">"jobs"</span>))</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>display(runs.groupby([<span class="st">"run_state"</span>, <span class="st">"expected_epochs"</span>, <span class="st">"observed_lead"</span>], dropna<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>        .size().rename(<span class="st">"runs"</span>).reset_index())</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>display(partial[[c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"run_name"</span>, <span class="st">"expected_epochs"</span>, <span class="st">"epochs_completed"</span>,</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"observed_lead"</span>, <span class="st">"summary_updated"</span>] <span class="cf">if</span> c <span class="kw">in</span> partial]])</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>A summary file is marked completed only when its <span class="in">`_SUCCESS.json`</span> exists or its</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>recorded completed epoch reaches the epoch count encoded in the run name.</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>Partial summaries are displayed for monitoring but excluded from leaderboards.</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>The queue ledger is stale: it still labels 12 entries pending, whereas the run</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>tree contains 33 completed summaries (23 at 10 epochs and 10 at 15 epochs).</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>Completion and metrics here therefore come from terminal summaries and</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a><span class="in">`_SUCCESS.json`</span>; the queue database is retained only as provenance.</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a><span class="fu">## Complete validation, delineation, training, and resource metrics</span></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: convergence-all-metrics</span></span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>identity <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"run_name"</span>, <span class="st">"observed_lead"</span>, <span class="st">"expected_epochs"</span>,</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"best_epoch"</span>, <span class="st">"epochs_completed"</span>, <span class="st">"summary_updated"</span>] <span class="cf">if</span> c <span class="kw">in</span> completed]</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>display(completed[identity <span class="op">+</span> metric_cols]</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>        .sort_values([<span class="st">"expected_epochs"</span>, <span class="st">"observed_lead"</span>, <span class="st">"run_name"</span>]))</span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>display(pd.DataFrame({<span class="st">"metric"</span>: metric_cols,</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"direction"</span>: [metric_direction(x) <span class="kw">or</span> <span class="st">"context only"</span> <span class="cf">for</span> x <span class="kw">in</span> metric_cols],</span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"nonmissing_rows"</span>: [<span class="bu">int</span>(completed[x].notna().<span class="bu">sum</span>()) <span class="cf">for</span> x <span class="kw">in</span> metric_cols]}))</span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a><span class="fu">## Metric-specific leaders and Pareto view</span></span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: convergence-leaders</span></span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>display(leaderboard(completed, metric_cols, id_col<span class="op">=</span><span class="st">"run_name"</span>,</span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>                    group_cols<span class="op">=</span>(<span class="st">"expected_epochs"</span>, <span class="st">"observed_lead"</span>), k<span class="op">=</span>TOP_K))</span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> {<span class="st">"val_recon_loss"</span>, <span class="st">"miou_wave"</span>, <span class="st">"peak_gpu_memory_bytes"</span>}.issubset(completed):</span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> px.scatter(completed, x<span class="op">=</span><span class="st">"val_recon_loss"</span>, y<span class="op">=</span><span class="st">"miou_wave"</span>,</span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>                     color<span class="op">=</span><span class="st">"observed_lead"</span>, symbol<span class="op">=</span><span class="st">"expected_epochs"</span>,</span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>                     size<span class="op">=</span><span class="st">"peak_gpu_memory_bytes"</span>, hover_name<span class="op">=</span><span class="st">"run_name"</span>,</span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>                     hover_data<span class="op">=</span>[c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"val_missing_pearson"</span>,</span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>                                             <span class="st">"val_missing_pearson_p05"</span>,</span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>                                             <span class="st">"boundary_f1_smoke"</span>] <span class="cf">if</span> c <span class="kw">in</span> completed],</span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>                     title<span class="op">=</span><span class="st">"Reconstruction–delineation–memory trade-off"</span>)</span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>    fig.show()</span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>The composite checkpoint score is</span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a><span class="in">`mIoU + 0.25 × boundary F1 + 0.1 × Pearson`</span>. Consequently, a retained</span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>checkpoint can differ from the epoch with the best reconstruction correlation.</span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>Any paper table must report that selection rule rather than implying that each</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>individual endpoint was independently optimized.</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a><span class="fu">## Horizon-matched learning-budget effects</span></span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: convergence-horizon-matched</span></span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>completed[<span class="st">"configuration"</span>] <span class="op">=</span> (completed.run_name</span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">str</span>.replace(<span class="vs">r"</span><span class="dv">^</span><span class="vs">conv</span>(?:<span class="vs">10</span><span class="cf">|</span><span class="vs">15</span>)<span class="vs">e_"</span>, <span class="st">""</span>, regex<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">str</span>.replace(<span class="vs">r"_s</span><span class="dv">\d</span><span class="op">+</span><span class="vs">_l</span><span class="pp">[01]</span><span class="dv">$</span><span class="vs">"</span>, <span class="st">""</span>, regex<span class="op">=</span><span class="va">True</span>))</span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>horizon_metrics <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"val_missing_pearson"</span>, <span class="st">"val_missing_pearson_p05"</span>,</span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"val_recon_loss"</span>, <span class="st">"miou_wave"</span>, <span class="st">"boundary_f1_smoke"</span>,</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"P_iou"</span>, <span class="st">"QRS_iou"</span>, <span class="st">"T_iou"</span>] <span class="cf">if</span> c <span class="kw">in</span> completed]</span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>wide <span class="op">=</span> completed.pivot_table(index<span class="op">=</span>[<span class="st">"configuration"</span>, <span class="st">"observed_lead"</span>],</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>                             columns<span class="op">=</span><span class="st">"expected_epochs"</span>, values<span class="op">=</span>horizon_metrics)</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>matched_horizons <span class="op">=</span> wide.dropna().copy()</span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metric <span class="kw">in</span> horizon_metrics:</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (metric, <span class="dv">10</span>) <span class="kw">in</span> matched_horizons <span class="kw">and</span> (metric, <span class="dv">15</span>) <span class="kw">in</span> matched_horizons:</span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>        matched_horizons[(metric, <span class="st">"15−10 improvement"</span>)] <span class="op">=</span> (</span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>            (matched_horizons[(metric, <span class="dv">15</span>)] <span class="op">-</span> matched_horizons[(metric, <span class="dv">10</span>)]) <span class="op">*</span></span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>            (<span class="op">-</span><span class="dv">1</span> <span class="cf">if</span> metric_direction(metric) <span class="op">==</span> <span class="st">"min"</span> <span class="cf">else</span> <span class="dv">1</span>))</span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>display(matched_horizons.reset_index())</span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>Across the five configurations completed at both horizons and both leads, the</span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>extra five epochs consistently improve mean Pearson, reconstruction loss, wave</span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>mIoU, and boundary F1. The gain is not a uniform shift: QRS IoU is already near</span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>saturation and typically increases by only 0.0025–0.0075, whereas P/T IoU and</span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>boundary F1 improve much more. Short screening therefore underestimates</span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>slow-learning atrial and repolarization morphology.</span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>The largest boundary-F1 gains occur for raw A0 (+0.089 lead I, +0.097 lead II),</span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>showing that an apparently weaker short-run baseline can recover substantially</span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>with budget. Three- or ten-epoch rankings cannot be presented as pure</span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>architecture effects.</span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a><span class="fu">## Matched 15-epoch contrasts</span></span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: convergence-15e-contrasts</span></span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>fifteen <span class="op">=</span> completed.query(<span class="st">"expected_epochs == 15"</span>).copy()</span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>baseline <span class="op">=</span> fifteen.query(<span class="st">"run_name.str.contains('A0_raw')"</span>, engine<span class="op">=</span><span class="st">"python"</span>)</span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>keys <span class="op">=</span> [<span class="st">"observed_lead"</span>]</span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>compare_metrics <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">"best_score"</span>, <span class="st">"val_missing_pearson"</span>,</span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"val_missing_pearson_p05"</span>, <span class="st">"val_recon_loss"</span>,</span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"P_iou"</span>, <span class="st">"QRS_iou"</span>, <span class="st">"T_iou"</span>, <span class="st">"macro_f1_wave"</span>,</span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"miou_wave"</span>, <span class="st">"boundary_f1_smoke"</span>,</span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"boundary_ppv_smoke"</span>, <span class="st">"boundary_sensitivity_smoke"</span>,</span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"peak_gpu_memory_bytes"</span>] <span class="cf">if</span> c <span class="kw">in</span> fifteen]</span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> baseline[keys <span class="op">+</span> compare_metrics].rename(columns<span class="op">=</span>{m: <span class="ss">f"base.</span><span class="sc">{</span>m<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> m <span class="kw">in</span> compare_metrics})</span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a>joined <span class="op">=</span> fifteen.merge(base, on<span class="op">=</span>keys, how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metric <span class="kw">in</span> compare_metrics:</span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>    sign <span class="op">=</span> <span class="op">-</span><span class="dv">1</span> <span class="cf">if</span> metric_direction(metric) <span class="op">==</span> <span class="st">"min"</span> <span class="cf">else</span> <span class="dv">1</span></span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>    joined[<span class="ss">f"improvement.</span><span class="sc">{</span>metric<span class="sc">}</span><span class="ss">"</span>] <span class="op">=</span> sign <span class="op">*</span> (joined[metric] <span class="op">-</span> joined[<span class="ss">f"base.</span><span class="sc">{</span>metric<span class="sc">}</span><span class="ss">"</span>])</span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>display(joined[[<span class="st">"run_name"</span>, <span class="st">"observed_lead"</span>, <span class="op">*</span>compare_metrics,</span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>                <span class="op">*</span>[<span class="ss">f"improvement.</span><span class="sc">{</span>m<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> m <span class="kw">in</span> compare_metrics]]])</span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>At 15 epochs, no configuration dominates every endpoint. On lead I,</span>
+<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a><span class="in">`A0_wave_noSSL`</span> has the highest mean Pearson (0.7474) and best reconstruction</span>
+<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a>loss (0.8377), while <span class="in">`R7`</span> has the best boundary F1 (0.8784) and T/QRS overlap.</span>
+<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a>On lead II, physiology-informed <span class="in">`R5`</span> leads mean Pearson (0.7607), lower-tail</span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>Pearson (0.4304), mIoU (0.8627), macro F1 (0.9261), and boundary F1 (0.8886),</span>
+<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>but <span class="in">`A0_wave_noSSL`</span> retains the best reconstruction loss (0.7625).</span>
+<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a>This is encouraging for R5 on lead II but is not a clean SSL win. The principal</span>
+<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a>contrast <span class="in">`A0 raw → A0+wavelet → A0+wavelet+SSL`</span> is incomplete because a matched</span>
+<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a>15-epoch A0+wavelet+SSL cell is absent. R5 changes the second view and training</span>
+<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a>objective, so it cannot identify whether wavelets, SSL, or UEG phase caused the</span>
+<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a>result. <span class="in">`C1_E1`</span> remains a complementarity control; it does not support treating</span>
+<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a>E1 as an improved base architecture.</span>
+<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a>Until multiple seeds and external evaluation land, differences on the order of</span>
+<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a>one or two thousandths are treated as ties rather than mechanistic proof.</span>
+<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a><span class="fu">## Evidence ledger</span></span>
+<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Question <span class="pp">|</span> Current answer <span class="pp">|</span> Why <span class="pp">|</span></span>
+<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
+<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Does longer training matter? <span class="pp">|</span> Yes, descriptively <span class="pp">|</span> All ten matched lead/configuration cells improve on major reconstruction and delineation endpoints from 10 to 15 epochs. <span class="pp">|</span></span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Is R5 the best completed model? <span class="pp">|</span> Endpoint- and lead-dependent <span class="pp">|</span> Strongest broad lead-II profile; not best lead-I reconstruction and not universally best loss. <span class="pp">|</span></span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Does UEG phase beat Morlet phase? <span class="pp">|</span> Suggestive on lead II, unresolved <span class="pp">|</span> R5 exceeds C1_E1 on several metrics, but the comparison also crosses A0/E1 architecture and lacks repeated seeds. <span class="pp">|</span></span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Does SSL add value beyond a wavelet branch? <span class="pp">|</span> Not yet identified <span class="pp">|</span> The matched 15-epoch A0+wavelet+SSL cell is missing. <span class="pp">|</span></span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Can validation select a clinical model? <span class="pp">|</span> No <span class="pp">|</span> Single seed, composite checkpoint selection, internal validation, and no paired per-record uncertainty. <span class="pp">|</span></span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

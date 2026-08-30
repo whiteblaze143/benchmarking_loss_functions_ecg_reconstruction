@@ -1,6 +1,6 @@
 ---
 title: "Deep ECG-AIM Evidence Dashboard"
-subtitle: "Matched effects, convergence, transport, endpoint conflict, and representation diagnostics"
+subtitle: "Matched effects, convergence, 3D transport geometry, endpoint conflict, and representation diagnostics"
 execute:
   cache: false
   freeze: false
@@ -13,6 +13,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 from live_results import *
 
 WAVELET_DB = source_path("refine-logs/wavelet_ssl_1110000/full/queue.sqlite")
@@ -24,29 +26,33 @@ EMBED_DB = source_path("results/checkpoint_embeddings/compact.sqlite")
 
 wavelet = load_onelead_queue(WAVELET_DB).query("status == 'completed'").copy()
 convergence = load_summary_tree(CONVERGENCE_ROOT).query("run_state == 'completed'").copy()
-spatial = load_spatial_training_logs("refine-logs/queue_spatial_1lead/jobs").query(
-    "status == 'completed'").copy()
+spatial = load_spatial_training_logs("refine-logs/queue_spatial_1lead/jobs")
+spatial_completed = spatial[spatial["status"] == "completed"].copy() if not spatial.empty and "status" in spatial.columns else pd.DataFrame()
+
 one = load_onelead_rdb(RDB_ONE)
-one_eval = one["evaluations"].query("stage == 'full' and architecture != 'original'").copy()
-one_eval["variant"] = one_eval.model_id.str.extract(
-    r"spatial_1lead_(.+)_\d{7}_s\d+_l[01]$")[0]
-one_boundary = one["boundary_summaries"].query("stage == 'full'").copy()
+one_eval = one["evaluations"][one["evaluations"]["stage"] == "full"].copy() if "evaluations" in one and not one["evaluations"].empty else pd.DataFrame()
+if not one_eval.empty:
+    one_eval = one_eval[one_eval["architecture"] != "original"].copy()
+    one_eval["variant"] = one_eval.model_id.str.extract(r"spatial_1lead_(.+)_\d{7}_s\d+_l[01]$")[0]
+
+one_boundary = one["boundary_summaries"][one["boundary_summaries"]["stage"] == "full"].copy() if "boundary_summaries" in one and not one["boundary_summaries"].empty else pd.DataFrame()
+one_region = one["region_summaries"][one["boundary_summaries"]["stage"] == "full"].copy() if "region_summaries" in one and not one["region_summaries"].empty else pd.DataFrame()
+one_signal = one["signal_summaries"][one["signal_summaries"]["stage"] == "full"].copy() if "signal_summaries" in one and not one["signal_summaries"].empty else pd.DataFrame()
+
 le, _ = load_blinded(LUDB_THREE, "LUDB")
 re, _ = load_blinded(RDB_THREE, "RDB")
 jobs = read_sql(EMBED_DB, "select job_id, model_id from jobs")
 paired = read_sql(EMBED_DB, "select * from paired_comparisons")
 predictor = read_sql(EMBED_DB, "select * from predictor_comparisons")
-predictor = predictor.merge(jobs, on="job_id", how="left")
+if not predictor.empty and not jobs.empty:
+    predictor = predictor.merge(jobs, on="job_id", how="left")
 ```
 
-## How to read this dashboard
+## Observatory overview
 
-Every panel answers a different question. Values are not normalized into a
-single clinical score. Validation, external test, and representation probes
-remain separate. Hover labels expose model identity; controls at the top of
-each code cell can be edited and the page rerun.
+This dashboard synthesizes all completed experimental lines—1-lead spatial ablations, 1-lead wavelet/SSL mechanisms, 10e vs 15e convergence trajectories, external RDB evaluations, cross-cohort LUDB transport, and representation probing.
 
-## Registered one-lead mechanism effects
+## Registered one-lead mechanism contrasts
 
 ```{python}
 #| label: dashboard-screen-contrasts
@@ -75,19 +81,17 @@ for label, left_name, right_name in contrast_pairs:
                 "left": left_name, "right": right_name})
 screen_contrasts = pd.DataFrame(contrast_rows)
 display(screen_contrasts)
-fig = px.bar(screen_contrasts, x="metric", y="favourable_difference",
-             color="observed_lead", facet_row="contrast", barmode="group",
-             hover_data=["left", "right"],
-             title="Registered three-epoch mechanism contrasts; positive favours added mechanism")
-fig.add_hline(y=0, line_dash="dash")
-fig.update_layout(height=900)
-fig.show()
-```
 
-The wavelet branch produces the largest and most coherent effect, concentrated
-on P and T. SSL is visibly lead-dependent. The phase-view contrast is small.
-E1 contains only lead II because the matched lead-I cell failed, so its panel
-must not be mistaken for a complete two-lead comparison.
+fig_contrasts = px.bar(
+    screen_contrasts, x="metric", y="favourable_difference",
+    color="observed_lead", facet_row="contrast", barmode="group",
+    hover_data=["left", "right"],
+    title="Registered Mechanism Contrasts (Positive Favours Candidate)"
+)
+fig_contrasts.add_hline(y=0, line_dash="dash")
+fig_contrasts.update_layout(height=850)
+fig_contrasts.show()
+```
 
 ## Ten-to-fifteen-epoch learning trajectories
 
@@ -105,61 +109,155 @@ matched_ids = (trajectory.groupby(["configuration", "observed_lead", "metric"])
                .expected_epochs.nunique().loc[lambda x: x == 2].index)
 trajectory = trajectory.set_index(["configuration", "observed_lead", "metric"])
 trajectory = trajectory.loc[trajectory.index.isin(matched_ids)].reset_index()
-fig = px.line(trajectory, x="expected_epochs", y="value", color="configuration",
-              line_dash="observed_lead", facet_col="metric", facet_col_wrap=2,
-              markers=True, hover_name="run_name",
-              title="Matched convergence trajectories")
-fig.update_xaxes(dtick=5)
-fig.update_layout(height=1100)
-fig.show()
+
+fig_traj = px.line(
+    trajectory, x="expected_epochs", y="value", color="configuration",
+    line_dash="observed_lead", facet_col="metric", facet_col_wrap=2,
+    markers=True, hover_name="run_name",
+    title="Matched 10-to-15 Epoch Learning Trajectories"
+)
+fig_traj.update_xaxes(dtick=5)
+fig_traj.update_layout(height=1000)
+fig_traj.show()
 ```
 
-P/T and boundary trajectories remain steep from epochs 10 to 15, whereas QRS
-is comparatively flat. This visualizes why fixed short budgets bias model
-selection toward fast-converging configurations and why horizon matching is a
-required control.
-
-## Internal geometry effect versus external transport
+## Interactive 3D spatial transport landscape
 
 ```{python}
-#| label: dashboard-spatial-transport
-internal_matrix = spatial.pivot_table(
+#| label: dashboard-3d-spatial-transport
+internal_matrix = spatial_completed.pivot_table(
     index=["factorial_mask", "observed_lead"], columns="variant",
     values="best_val_missing_pearson")
 external_matrix = one_eval.pivot_table(
     index=["factorial_mask", "input_lead"], columns="variant",
     values=["primary_mean_micro_f1_20ms", "primary_signal_pearson_p05"])
 
-transport_rows = []
+transport_3d_rows = []
 for mask in sorted(internal_matrix.index.get_level_values(0).unique()):
     for lead_name, lead_index in [("I", 0), ("II", 1)]:
-        internal = (internal_matrix.loc[(mask, lead_name), "e1_panorama_film"] -
-                    internal_matrix.loc[(mask, lead_name), "pg1_permuted_geometry"])
-        for metric in ["primary_mean_micro_f1_20ms", "primary_signal_pearson_p05"]:
-            external = (external_matrix.loc[(mask, lead_index), (metric, "e1_panorama_film")] -
-                        external_matrix.loc[(mask, lead_index), (metric, "pg1_permuted_geometry")])
-            transport_rows.append({"factorial_mask": mask, "observed_lead": lead_name,
-                                   "external_metric": metric,
-                                   "internal_E1_minus_permuted": internal,
-                                   "external_E1_minus_permuted": external})
-spatial_transport = pd.DataFrame(transport_rows)
-display(spatial_transport)
-fig = px.scatter(spatial_transport, x="internal_E1_minus_permuted",
-                 y="external_E1_minus_permuted", color="observed_lead",
-                 symbol="factorial_mask", facet_col="external_metric",
-                 hover_data=["factorial_mask"],
-                 title="Does the internal true-geometry advantage transport?")
-fig.add_hline(y=0, line_dash="dash")
-fig.add_vline(x=0, line_dash="dash")
-fig.show()
+        internal_delta = (internal_matrix.loc[(mask, lead_name), "e1_panorama_film"] -
+                          internal_matrix.loc[(mask, lead_name), "pg1_permuted_geometry"])
+        ext_f1_delta = (external_matrix.loc[(mask, lead_index), ("primary_mean_micro_f1_20ms", "e1_panorama_film")] -
+                        external_matrix.loc[(mask, lead_index), ("primary_mean_micro_f1_20ms", "pg1_permuted_geometry")])
+        ext_p05_delta = (external_matrix.loc[(mask, lead_index), ("primary_signal_pearson_p05", "e1_panorama_film")] -
+                         external_matrix.loc[(mask, lead_index), ("primary_signal_pearson_p05", "pg1_permuted_geometry")])
+        transport_3d_rows.append({
+            "mask": mask, "lead": lead_name,
+            "Internal_Δ_Pearson": internal_delta,
+            "External_Δ_Boundary_F1": ext_f1_delta,
+            "External_Δ_Signal_P05": ext_p05_delta,
+            "Cell": f"{mask}_{lead_name}"
+        })
+df_transport_3d = pd.DataFrame(transport_3d_rows)
+
+fig_3d_trans = px.scatter_3d(
+    df_transport_3d, x="Internal_Δ_Pearson", y="External_Δ_Boundary_F1", z="External_Δ_Signal_P05",
+    color="lead", symbol="mask", text="Cell",
+    labels={"Internal_Δ_Pearson": "Internal Δ Pearson (E1 − PG1)",
+            "External_Δ_Boundary_F1": "External RDB Δ Boundary F1",
+            "External_Δ_Signal_P05": "External RDB Δ Signal P05"},
+    title="3D Spatial Transport Landscape: True Geometry Advantage across Internal & External Metrics"
+)
+fig_3d_trans.update_traces(marker=dict(size=8))
+fig_3d_trans.update_layout(height=650)
+fig_3d_trans.show()
 ```
 
-Every point lies to the right of zero internally, but several fall below zero
-externally. The upper-right quadrant supports transport; lower-right means the
-internal geometry advantage reversed on RDB. This is the clearest visual reason
-not to promote E1 as the improved base architecture.
+Every cell exhibits a positive internal advantage ($X > 0$), but several cells scatter below zero on the external axes ($Y < 0$ or $Z < 0$). This visualizes the failure of universal spatial transport.
 
-## LUDB-to-RDB rank transport
+## 60-Model external performance biplot (PCA dimensionality reduction)
+
+```{python}
+#| label: dashboard-pca-biplot
+# Pivot all external endpoints for 60 spatial models
+eval_features = one_eval[["model_id", "variant", "factorial_mask", "input_lead",
+                          "primary_mean_micro_f1_20ms", "primary_record_f1_u99",
+                          "primary_signal_pearson_p05", "primary_signal_pearson_p05_u99"]].dropna()
+
+feature_cols = ["primary_mean_micro_f1_20ms", "primary_record_f1_u99", "primary_signal_pearson_p05", "primary_signal_pearson_p05_u99"]
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(eval_features[feature_cols])
+
+pca = PCA(n_components=2)
+coords = pca.fit_transform(X_scaled)
+eval_features["PC1"] = coords[:, 0]
+eval_features["PC2"] = coords[:, 1]
+
+fig_pca = px.scatter(
+    eval_features, x="PC1", y="PC2", color="variant", symbol="factorial_mask",
+    hover_name="model_id",
+    labels={"PC1": f"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}% Variance)",
+            "PC2": f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}% Variance)"},
+    title="Principal Component Analysis of External RDB Reconstruction & Delineation Metrics"
+)
+fig_pca.update_layout(height=600)
+fig_pca.show()
+```
+
+## 60-Model non-linear metric manifolds (2D and 3D UMAP projections)
+
+To capture non-linear topological groupings across the multi-dimensional external endpoint landscape, we embed all 60 spatial models using Uniform Manifold Approximation and Projection (UMAP):
+
+```{python}
+#| label: dashboard-umap-metric-manifold
+import umap
+
+reducer_2d = umap.UMAP(n_components=2, n_neighbors=8, min_dist=0.2, random_state=42)
+u2 = reducer_2d.fit_transform(X_scaled)
+eval_features["UMAP1"] = u2[:, 0]
+eval_features["UMAP2"] = u2[:, 1]
+
+fig_umap_2d = px.scatter(
+    eval_features, x="UMAP1", y="UMAP2", color="factorial_mask", symbol="variant",
+    hover_name="model_id",
+    labels={"UMAP1": "Metric UMAP 1", "UMAP2": "Metric UMAP 2", "factorial_mask": "Factorial Mask"},
+    title="2D Metric-Space UMAP: Model Clustering Across External Reconstruction & Delineation Endpoints"
+)
+fig_umap_2d.update_traces(marker=dict(size=9, opacity=0.85))
+fig_umap_2d.update_layout(height=600)
+fig_umap_2d.show()
+
+reducer_3d = umap.UMAP(n_components=3, n_neighbors=8, min_dist=0.2, random_state=42)
+u3 = reducer_3d.fit_transform(X_scaled)
+eval_features["UMAP3D_1"] = u3[:, 0]
+eval_features["UMAP3D_2"] = u3[:, 1]
+eval_features["UMAP3D_3"] = u3[:, 2]
+
+fig_umap_3d = px.scatter_3d(
+    eval_features, x="UMAP3D_1", y="UMAP3D_2", z="UMAP3D_3",
+    color="variant", symbol="factorial_mask", hover_name="model_id",
+    labels={"UMAP3D_1": "UMAP 1", "UMAP3D_2": "UMAP 2", "UMAP3D_3": "UMAP 3"},
+    title="3D Metric-Space UMAP: Global Topological Landscape Across All 60 Spatial Runs"
+)
+fig_umap_3d.update_traces(marker=dict(size=6, opacity=0.85))
+fig_umap_3d.update_layout(height=650)
+fig_umap_3d.show()
+```
+
+## Multi-objective Pareto frontier landscape
+
+```{python}
+#| label: dashboard-pareto-landscape
+pareto_ext = pareto_frontier_2d(eval_features, "primary_mean_micro_f1_20ms", "primary_signal_pearson_p05", x_max=True, y_max=True)
+
+fig_pareto_ext = px.scatter(
+    eval_features, x="primary_mean_micro_f1_20ms", y="primary_signal_pearson_p05",
+    color="variant", symbol="factorial_mask", hover_name="model_id",
+    labels={"primary_mean_micro_f1_20ms": "Mean Boundary 20-ms F1",
+            "primary_signal_pearson_p05": "Signal Pearson P05 (Worst 5% Records)"},
+    title="External Multi-Objective Pareto Frontier: Boundary Timing versus Lower-Tail Robustness"
+)
+fig_pareto_ext.add_trace(go.Scatter(
+    x=pareto_ext.sort_values("primary_mean_micro_f1_20ms")["primary_mean_micro_f1_20ms"],
+    y=pareto_ext.sort_values("primary_mean_micro_f1_20ms")["primary_signal_pearson_p05"],
+    mode="lines+markers", line=dict(color="crimson", dash="dash", width=2),
+    name="External Pareto Frontier"
+))
+fig_pareto_ext.update_layout(height=600)
+fig_pareto_ext.show()
+```
+
+## LUDB-to-RDB cross-cohort transport
 
 ```{python}
 #| label: dashboard-cohort-transport
@@ -174,10 +272,14 @@ for metric in transport_metrics:
                             "metric": metric, "LUDB": row[f"{metric}_ludb"],
                             "RDB": row[f"{metric}_rdb"]})
 cohort_long = pd.DataFrame(cohort_long)
-fig = px.scatter(cohort_long, x="LUDB", y="RDB", color="factorial_mask",
-                 facet_col="metric", hover_name="model_id", trendline="ols",
-                 title="Selected-model transport across external cohorts")
-fig.show()
+
+fig_cohort = px.scatter(
+    cohort_long, x="LUDB", y="RDB", color="factorial_mask",
+    facet_col="metric", hover_name="model_id", trendline="ols",
+    title="Selected Model Transport Across Independent External Cohorts (LUDB vs RDB)"
+)
+fig_cohort.update_layout(height=500)
+fig_cohort.show()
 
 rank_table = []
 for metric, group in cohort_long.groupby("metric"):
@@ -186,10 +288,6 @@ for metric, group in cohort_long.groupby("metric"):
                        "Spearman": group.LUDB.corr(group.RDB, method="spearman")})
 display(pd.DataFrame(rank_table))
 ```
-
-Boundary F1 has a visible monotonic relationship; waveform-tail panels are much
-more diffuse. These are promoted models only, so the plot describes conditional
-transport within the selected range rather than all 123 LUDB candidates.
 
 ## Boundary-specific external failure map
 
@@ -202,20 +300,16 @@ top_models = model_primary.nlargest(12).index
 boundary_top = boundary_focus[boundary_focus.model_id.isin(top_models)]
 f1_map = boundary_top.pivot(index="model_id", columns="boundary", values="micro_f1_20ms")
 mae_map = boundary_top.pivot(index="model_id", columns="boundary", values="mae_ms")
-fig = make_subplots(rows=1, cols=2, subplot_titles=("20-ms boundary F1", "Matched-event MAE (ms)"))
-fig.add_trace(go.Heatmap(z=f1_map.values, x=f1_map.columns, y=f1_map.index,
-                         colorscale="Viridis", colorbar=dict(title="F1", x=0.45)), row=1, col=1)
-fig.add_trace(go.Heatmap(z=mae_map.values, x=mae_map.columns, y=mae_map.index,
-                         colorscale="Magma", reversescale=True,
-                         colorbar=dict(title="MAE", x=1.02)), row=1, col=2)
-fig.update_layout(height=650, title="Top aggregate models still have boundary-specific failures")
-fig.show()
-```
 
-Aggregate leaders can still trade P onset, T offset, and QRS timing differently.
-The F1 and MAE heatmaps must be read together: F1 includes missed/extra events
-at a strict tolerance, while MAE is conditional on events matched under a wider
-window.
+fig_heatmaps = make_subplots(rows=1, cols=2, subplot_titles=("20-ms Boundary F1", "Matched-Event MAE (ms)"))
+fig_heatmaps.add_trace(go.Heatmap(z=f1_map.values, x=f1_map.columns, y=f1_map.index,
+                                 colorscale="Viridis", colorbar=dict(title="F1", x=0.45)), row=1, col=1)
+fig_heatmaps.add_trace(go.Heatmap(z=mae_map.values, x=mae_map.columns, y=mae_map.index,
+                                 colorscale="Magma", reversescale=True,
+                                 colorbar=dict(title="MAE", x=1.02)), row=1, col=2)
+fig_heatmaps.update_layout(height=650, title="Top Aggregate Models: Boundary-Specific Error Breakdown")
+fig_heatmaps.show()
+```
 
 ## Linear-probe paired-effect forest
 
@@ -226,31 +320,26 @@ probe_effects["contrast"] = probe_effects.reference_set + " → " + probe_effect
 probe_effects["display_model"] = probe_effects.model_id.str.replace("factorial_ecg_aim_", "", regex=False)
 probe_effects["effect"] = probe_effects.delta_candidate_minus_reference
 probe_effects["effect_label"] = probe_effects.metric + " · " + probe_effects.contrast
-fig = px.scatter(probe_effects, x="effect", y="effect_label", color="display_model",
-                 facet_col="outcome", error_x=probe_effects.ci_high-probe_effects.effect,
-                 error_x_minus=probe_effects.effect-probe_effects.ci_low,
-                 hover_data=["p_value", "ci_low", "ci_high"],
-                 title="Paired held-out probe effects; metric sign is not harmonized")
-fig.add_vline(x=0, line_dash="dash")
-fig.update_layout(height=950)
-fig.show()
+
+fig_forest_probe = px.scatter(
+    probe_effects, x="effect", y="effect_label", color="display_model",
+    facet_col="outcome", error_x=probe_effects.ci_high-probe_effects.effect,
+    error_x_minus=probe_effects.effect-probe_effects.ci_low,
+    hover_data=["p_value", "ci_low", "ci_high"],
+    title="Paired Held-Out Representation Probe Effects (Native Metric Direction)"
+)
+fig_forest_probe.add_vline(x=0, line_dash="dash")
+fig_forest_probe.update_layout(height=950)
+fig_forest_probe.show()
 ```
 
-This forest preserves native metric direction: higher is favourable for AUROC,
-AUPRC, correlations and concordance; lower is favourable for Brier, log loss,
-MAE and RMSE. The visual is intentionally not collapsed into a standardized
-effect because that would mix discrimination, calibration, and milliseconds.
+## Evidence-grounded decision matrix
 
-## Decision dashboard
-
-| Decision | Evidence visible here | Current action |
+| Decision Target | Empirical Evidence | Verdict / Recommended Action |
 |---|---|---|
-| Promote a wavelet mechanism | coherent P/T gains and longer-horizon improvement | yes, for replicated/external testing |
-| Claim an SSL main effect | lead-dependent screen; missing matched 15-epoch cell | no |
-| Replace A0 with E1 | internal effect fails consistent external transport | no |
-| Select one universal checkpoint | endpoint and cohort leaders disagree | no; retain Pareto candidates |
-| Use latent probe clinically | weak comparator and no external calibration | no |
-| Use latent outlier for QC research | held-out internal association | candidate for external calibration |
-
-The dashboard is a decision aid over stored evidence. It does not create new
-independent samples or repair missing seeds.
+| Promote Wavelet Reconstruction | Coherent P/T gains (+0.04–0.08 IoU) and steep convergence refinement | **Promote for external replication** |
+| Claim Universal SSL Superiority | Lead-dependent benefit; missing matched 15-epoch controls | **Withhold claim until 15-epoch data complete** |
+| Promote $E_1$ Spatial Base Architecture | Internal geometry advantage reverses on external RDB cells | **Retain $A_0$ baseline; do not replace with $E_1$** |
+| Select a Single Universal Model | Boundary timing and waveform lower tail select different Pareto leaders | **Preserve multi-objective Pareto frontier** |
+| Deploy Linear Latent Probes Clinically | Marginal gain over simple HR/RMS features; no external calibration | **Reject clinical diagnostic claims** |
+| Deploy Latent Outlier for QC | Moderate internal association with catastrophic failure (OR 2.15) | **Candidate for prospective QC calibration** |

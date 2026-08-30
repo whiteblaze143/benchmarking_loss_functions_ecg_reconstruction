@@ -1,0 +1,351 @@
+{
+  "started_at": "2026-08-29T23:03:25.851482+00:00",
+  "status": "complete",
+  "chapters": {
+    "index.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:03:28.425295+00:00",
+      "source": "book/index.qmd",
+      "input_sha256": "9c607ed9e14914e5cbaa3ae8314a296706b3060bb2c1242ae62921897e8b0f97",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:03:32.493244+00:00",
+      "duration_seconds": 4.068,
+      "log": "refine-logs/round_full_render/index.log"
+    },
+    "15_live_results_observatory.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:03:32.494928+00:00",
+      "source": "book/15_live_results_observatory.qmd",
+      "input_sha256": "ba11be6c0374a3878cbef2bee73eacad765a29d101a7ae043f7ce944884c3f82",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:03:45.012081+00:00",
+      "duration_seconds": 12.517,
+      "log": "refine-logs/round_full_render/15_live_results_observatory.log"
+    },
+    "16_three_lead_ecgaim_live.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:03:45.014557+00:00",
+      "source": "book/16_three_lead_ecgaim_live.qmd",
+      "input_sha256": "85248136ff026236cc7b51a18b2a8f737f47672747292b6ecde8d5b655a368f4",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:03:58.640869+00:00",
+      "duration_seconds": 13.626,
+      "log": "refine-logs/round_full_render/16_three_lead_ecgaim_live.log"
+    },
+    "17_one_lead_wavelet_ssl_live.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:03:58.643423+00:00",
+      "source": "book/17_one_lead_wavelet_ssl_live.qmd",
+      "input_sha256": "43a85869888043f0a1d34d6ae636e6016f6e05251330c339243a71eb1d353ef3",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:04:11.119385+00:00",
+      "duration_seconds": 12.476,
+      "log": "refine-logs/round_full_render/17_one_lead_wavelet_ssl_live.log"
+    },
+    "24_one_lead_completed_screening_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:04:11.120822+00:00",
+      "source": "book/24_one_lead_completed_screening_results.qmd",
+      "input_sha256": "92cf7aca616065c57f219c440e2deffa182200fb3831b8b45603357dc88652dc",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:04:25.245028+00:00",
+      "duration_seconds": 14.125,
+      "log": "refine-logs/round_full_render/24_one_lead_completed_screening_results.log"
+    },
+    "27_one_lead_completed_spatial_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:04:25.248315+00:00",
+      "source": "book/27_one_lead_completed_spatial_results.qmd",
+      "input_sha256": "76312adcd191952e8648c47bc7a972a033025cb55eb2d2aa2ffdff74248fda04",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:04:43.232157+00:00",
+      "duration_seconds": 17.984,
+      "log": "refine-logs/round_full_render/27_one_lead_completed_spatial_results.log"
+    },
+    "25_one_lead_convergence_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:04:43.233314+00:00",
+      "source": "book/25_one_lead_convergence_results.qmd",
+      "input_sha256": "78e50b7d05ad5b89402618687cd21d3b754752275fb5ef1b53a5d75688cfa40b",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:04:57.085545+00:00",
+      "duration_seconds": 13.852,
+      "log": "refine-logs/round_full_render/25_one_lead_convergence_results.log"
+    },
+    "26_one_lead_rdb_external_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:04:57.086473+00:00",
+      "source": "book/26_one_lead_rdb_external_results.qmd",
+      "input_sha256": "7c359ab7fdeac1bbc25feb3e88a21a0ad1e6065e9ff41619284756dff0624c3a",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:05:13.753915+00:00",
+      "duration_seconds": 16.667,
+      "log": "refine-logs/round_full_render/26_one_lead_rdb_external_results.log"
+    },
+    "28_three_lead_completed_external_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:05:13.754969+00:00",
+      "source": "book/28_three_lead_completed_external_results.qmd",
+      "input_sha256": "0dcb56546f0789bd8c3f0c0ef1fc595933aa57f6e381cfd704533ec486e1c50f",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:05:30.302926+00:00",
+      "duration_seconds": 16.548,
+      "log": "refine-logs/round_full_render/28_three_lead_completed_external_results.log"
+    },
+    "29_completed_ecgaim_representation_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:05:30.303892+00:00",
+      "source": "book/29_completed_ecgaim_representation_results.qmd",
+      "input_sha256": "6a90bf54c12ab577a6b3d6ebaf78dd4d144ac4c5dbecdfa007eb0972bfc105b4",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:05:46.139937+00:00",
+      "duration_seconds": 15.836,
+      "log": "refine-logs/round_full_render/29_completed_ecgaim_representation_results.log"
+    },
+    "30_completed_ludb_semiseg_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:05:46.142317+00:00",
+      "source": "book/30_completed_ludb_semiseg_results.qmd",
+      "input_sha256": "30b87bfb95062fb49c82d3cc5d102f6ea9f464d1b493cf0cd4533716d98ff739",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:05:59.734337+00:00",
+      "duration_seconds": 13.592,
+      "log": "refine-logs/round_full_render/30_completed_ludb_semiseg_results.log"
+    },
+    "31_deep_evidence_visual_dashboard.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:05:59.735399+00:00",
+      "source": "book/31_deep_evidence_visual_dashboard.qmd",
+      "input_sha256": "993b31cbe0657f838e1d39a2b4c6ee4a046933cb17855f5bfc7e01ef741646b4",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:06:15.495407+00:00",
+      "duration_seconds": 15.76,
+      "log": "refine-logs/round_full_render/31_deep_evidence_visual_dashboard.log"
+    },
+    "18_seven_mask_design_and_coverage.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:06:15.499137+00:00",
+      "source": "book/18_seven_mask_design_and_coverage.qmd",
+      "input_sha256": "04334184de6819e6e0c4f52a5d6f82eddd0b86ad894b414f7a5a55b45194968d",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:06:28.126948+00:00",
+      "duration_seconds": 12.628,
+      "log": "refine-logs/round_full_render/18_seven_mask_design_and_coverage.log"
+    },
+    "19_seven_mask_reconstruction_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:06:28.127873+00:00",
+      "source": "book/19_seven_mask_reconstruction_results.qmd",
+      "input_sha256": "dbe2c824a6894d079a0ef4e8c586fac01e479697a618f2d76811dd25cb350808",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:06:40.791345+00:00",
+      "duration_seconds": 12.663,
+      "log": "refine-logs/round_full_render/19_seven_mask_reconstruction_results.log"
+    },
+    "20_missing_leads_v2_clinical_biomarkers.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:06:40.792911+00:00",
+      "source": "book/20_missing_leads_v2_clinical_biomarkers.qmd",
+      "input_sha256": "11496b8a7c05f14f3b6ff24822f70ae1c58021a99ada5df5904688f4172c9aa6",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:06:54.219644+00:00",
+      "duration_seconds": 13.427,
+      "log": "refine-logs/round_full_render/20_missing_leads_v2_clinical_biomarkers.log"
+    },
+    "21_one_lead_architecture_and_spatial_results.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:06:54.220703+00:00",
+      "source": "book/21_one_lead_architecture_and_spatial_results.qmd",
+      "input_sha256": "1c15f2317577d9b6ac7ce6d1a424a5b9dad83d6d73f8875462008c0089f5160d",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:07:06.966164+00:00",
+      "duration_seconds": 12.745,
+      "log": "refine-logs/round_full_render/21_one_lead_architecture_and_spatial_results.log"
+    },
+    "22_one_lead_wavelet_ssl_mechanisms.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:07:06.967225+00:00",
+      "source": "book/22_one_lead_wavelet_ssl_mechanisms.qmd",
+      "input_sha256": "d8e866fb54a2ab6b13f12590306c973390826b918870b51510218bac7fd695a0",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:07:18.829928+00:00",
+      "duration_seconds": 11.863,
+      "log": "refine-logs/round_full_render/22_one_lead_wavelet_ssl_mechanisms.log"
+    },
+    "23_evidence_synthesis_and_run_gaps.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:07:18.831654+00:00",
+      "source": "book/23_evidence_synthesis_and_run_gaps.qmd",
+      "input_sha256": "87a454d2172718c4caa9757a828ecca225ef1eeb47362ee88fd2c3bc542e8693",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:07:30.972901+00:00",
+      "duration_seconds": 12.141,
+      "log": "refine-logs/round_full_render/23_evidence_synthesis_and_run_gaps.log"
+    },
+    "09_real_data_eda_and_diagnostics.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:07:30.974440+00:00",
+      "source": "book/09_real_data_eda_and_diagnostics.qmd",
+      "input_sha256": "459ba4947588c416e4f6674c8529d327c056a8f448ecfbbfd8a8ec3a82053b8d",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:09:04.487604+00:00",
+      "duration_seconds": 93.513,
+      "log": "refine-logs/round_full_render/09_real_data_eda_and_diagnostics.log"
+    },
+    "11_dataset_atlas_ludb_isp_sunnybrook.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:09:04.488650+00:00",
+      "source": "book/11_dataset_atlas_ludb_isp_sunnybrook.qmd",
+      "input_sha256": "bf12fe03ba1019aada7bd2ab146d3a1c08b60ab73e1ab1066363d91668f2d769",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:09:48.965489+00:00",
+      "duration_seconds": 44.477,
+      "log": "refine-logs/round_full_render/11_dataset_atlas_ludb_isp_sunnybrook.log"
+    },
+    "05_zhejiang_delineation_tutorial.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:09:48.966734+00:00",
+      "source": "book/05_zhejiang_delineation_tutorial.qmd",
+      "input_sha256": "f0c5d3d3bdc4459247e23edce071c343490fa25178b72f2a89513c703935afe3",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:10:05.147181+00:00",
+      "duration_seconds": 16.18,
+      "log": "refine-logs/round_full_render/05_zhejiang_delineation_tutorial.log"
+    },
+    "01_dataset_and_preprocessing.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:10:05.148739+00:00",
+      "source": "book/01_dataset_and_preprocessing.qmd",
+      "input_sha256": "3bbe04694cbd8d1e50881df673e4ecf92ac363622bf83198578f576a1a65f5b9",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:10:26.345266+00:00",
+      "duration_seconds": 21.197,
+      "log": "refine-logs/round_full_render/01_dataset_and_preprocessing.log"
+    },
+    "02_network_architectures.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:10:26.346186+00:00",
+      "source": "book/02_network_architectures.qmd",
+      "input_sha256": "a93e5b31e76cdfc1557434fd83840fbc0a7c04e95dd24793b4b6029392a77c43",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:10:48.462153+00:00",
+      "duration_seconds": 22.116,
+      "log": "refine-logs/round_full_render/02_network_architectures.log"
+    },
+    "03_loss_function_formulations.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:10:48.463058+00:00",
+      "source": "book/03_loss_function_formulations.qmd",
+      "input_sha256": "0ad214889423928c517a20d707117cdc714874f7ced1e9c99b3fb28991a7ee93",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:11:09.635605+00:00",
+      "duration_seconds": 21.173,
+      "log": "refine-logs/round_full_render/03_loss_function_formulations.log"
+    },
+    "05_clinical_metrics_and_delineation.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:11:09.636542+00:00",
+      "source": "book/05_clinical_metrics_and_delineation.qmd",
+      "input_sha256": "a86fd25b082e8a1091f959b27b6868888d28e7fc601f8a8caea9032493bbe094",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:11:28.915555+00:00",
+      "duration_seconds": 19.279,
+      "log": "refine-logs/round_full_render/05_clinical_metrics_and_delineation.log"
+    },
+    "04_regression_to_mean.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:11:28.921133+00:00",
+      "source": "book/04_regression_to_mean.qmd",
+      "input_sha256": "48652c27f6715c4c4a427980908b4ea3c3e5bd33a5b7614ea3090326f31f37fc",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:11:47.807903+00:00",
+      "duration_seconds": 18.887,
+      "log": "refine-logs/round_full_render/04_regression_to_mean.log"
+    },
+    "06_fairness_robustness_sqi.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:11:47.811791+00:00",
+      "source": "book/06_fairness_robustness_sqi.qmd",
+      "input_sha256": "c2731c4b6a6affceea574b30fc7428ad420e06674513cb2683ed8c34db79c00b",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:12:07.011633+00:00",
+      "duration_seconds": 19.2,
+      "log": "refine-logs/round_full_render/06_fairness_robustness_sqi.log"
+    },
+    "08_factorial_loss_matrix_benchmarks.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:12:07.016619+00:00",
+      "source": "book/08_factorial_loss_matrix_benchmarks.qmd",
+      "input_sha256": "1ed0918a2237273fdb4060e01613b8552e6d2edfd9bf89fbf889bae126a24f07",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:12:26.893622+00:00",
+      "duration_seconds": 19.877,
+      "log": "refine-logs/round_full_render/08_factorial_loss_matrix_benchmarks.log"
+    },
+    "07_smartwatch_reconstruction_case_study.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:12:26.897089+00:00",
+      "source": "book/07_smartwatch_reconstruction_case_study.qmd",
+      "input_sha256": "99c6bc4c83175b1ecbe5a4f94b91a55644fb192b84d859916843039f6829dc01",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:12:46.251949+00:00",
+      "duration_seconds": 19.355,
+      "log": "refine-logs/round_full_render/07_smartwatch_reconstruction_case_study.log"
+    },
+    "10_echonext_classifier_external_validation.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:12:46.256058+00:00",
+      "source": "book/10_echonext_classifier_external_validation.qmd",
+      "input_sha256": "4cbdd964cdf71c01d73e55407358cceab8da175761510f77f88e12e418e03e3f",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:13:04.967134+00:00",
+      "duration_seconds": 18.711,
+      "log": "refine-logs/round_full_render/10_echonext_classifier_external_validation.log"
+    },
+    "12_exhaustive_model_analysis.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:13:04.971116+00:00",
+      "source": "book/12_exhaustive_model_analysis.qmd",
+      "input_sha256": "74e197cffc8aab922b4a0cd09e9957e9d66d103c574bfc02ee93ca788d58ac57",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:13:17.224287+00:00",
+      "duration_seconds": 12.253,
+      "log": "refine-logs/round_full_render/12_exhaustive_model_analysis.log"
+    },
+    "13_engineering_ml_visual_atlas.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:13:17.225285+00:00",
+      "source": "book/13_engineering_ml_visual_atlas.qmd",
+      "input_sha256": "307a6824856576c816d4e35e50872e68c8acb1415ae331eedfc2dcbda95aa656",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:13:38.891316+00:00",
+      "duration_seconds": 21.666,
+      "log": "refine-logs/round_full_render/13_engineering_ml_visual_atlas.log"
+    },
+    "14_cath_lab_clinical_trust_atlas.qmd": {
+      "status": "complete",
+      "started_at": "2026-08-29T23:13:38.892294+00:00",
+      "source": "book/14_cath_lab_clinical_trust_atlas.qmd",
+      "input_sha256": "0ed6a310e3dcad378f5107885858ead0c42955e739e59001da1cffcf2e30ab22",
+      "returncode": 0,
+      "completed_at": "2026-08-29T23:13:43.776918+00:00",
+      "duration_seconds": 4.885,
+      "log": "refine-logs/round_full_render/14_cath_lab_clinical_trust_atlas.log"
+    }
+  },
+  "render_contract": {
+    "quarto_binary": ".tools/quarto-1.10.18/bin/quarto",
+    "quarto_version": "1.10.18",
+    "python": "/home/mithunmanivannan/.venv/bin/python3",
+    "python_version": "3.12.3",
+    "sequential": true
+  },
+  "input_snapshot_manifest": "refine-logs/round_full_render/input-snapshot/SNAPSHOT_MANIFEST.json",
+  "input_snapshot_sha256": "42889f559e914b54bab8ea8b54c27b3e3aeccadaba2076162b4c46c43d640f89",
+  "completed_at": "2026-08-29T23:13:43.777915+00:00",
+  "counts": {
+    "complete": 33,
+    "error": 0,
+    "running": 0
+  }
+}

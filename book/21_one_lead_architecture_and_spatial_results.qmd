@@ -1,6 +1,6 @@
 ---
 title: "One-Lead Reconstruction: Architecture and Spatial Conditioning"
-subtitle: "Lead I versus II, architecture controls, and ECG-AIM spatial ablations"
+subtitle: "Anatomical lead vector geometry, spatial conditioning mechanisms, and architectural complexity trade-offs"
 execute:
   cache: false
   freeze: false
@@ -8,70 +8,149 @@ execute:
 
 ```{python}
 #| label: onelead-architecture-setup
+import numpy as np
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from expanded_results import *
+from live_results import *
+
 one = onelead_catalog()
 ```
 
-## A distinct input contract
+## A distinct input contract and spatial projection problem
 
-These models observe lead I **or** lead II, not I+II+V2. Their difficulty,
-architecture, masks, and claims differ from the three-lead factorial study.
-They must never be appended as additional rows in a three-lead leaderboard.
+Single-lead ECG reconstruction presents an inherently underdetermined inverse problem: estimating 11 missing lead waveforms from a single observed lead (Lead I **or** Lead II). 
 
-## Registered model inventory
+Unlike 3-lead models (which observe Leads I, II, and $V_2$ simultaneously spanning both frontal and transverse planes), a 1-lead model observes only a single 1D projection of the 3D cardiac electrical dipole vector $\mathbf{p}(t) \in \mathbb{R}^3$:
+$$V_L(t) = \mathbf{c}_L \cdot \mathbf{p}(t) + \eta_L(t)$$
+where $\mathbf{c}_L \in \mathbb{R}^3$ represents the lead vector defined by lead electrode geometry.
+
+## Interactive anatomical lead vector geometry
 
 ```{python}
-#| label: onelead-model-inventory
-inventory = (one.groupby(["architecture", "factorial_mask", "observed_lead", "status"])
-             .size().rename("models").reset_index()) if not one.empty else pd.DataFrame()
-display(inventory)
-if not inventory.empty:
-    fig = px.bar(inventory, x="architecture", y="models", color="factorial_mask",
-                 facet_col="observed_lead", barmode="stack",
-                 title="One-lead checkpoint coverage by architecture, mask, and observed lead")
-    fig.show()
+#| label: onelead-anatomical-vectors
+# 12-lead standard anatomical coordinates (frontal angle in degrees, transverse angle, radius)
+lead_coords = [
+    {"lead": "I", "plane": "Frontal", "angle_deg": 0.0, "x": 1.0, "y": 0.0, "z": 0.0, "color": "crimson"},
+    {"lead": "II", "plane": "Frontal", "angle_deg": 60.0, "x": 0.5, "y": -0.866, "z": 0.0, "color": "navy"},
+    {"lead": "III", "plane": "Frontal", "angle_deg": 120.0, "x": -0.5, "y": -0.866, "z": 0.0, "color": "teal"},
+    {"lead": "aVR", "plane": "Frontal", "angle_deg": -150.0, "x": -0.866, "y": 0.5, "z": 0.0, "color": "purple"},
+    {"lead": "aVL", "plane": "Frontal", "angle_deg": -30.0, "x": 0.866, "y": 0.5, "z": 0.0, "color": "orange"},
+    {"lead": "aVF", "plane": "Frontal", "angle_deg": 90.0, "x": 0.0, "y": -1.0, "z": 0.0, "color": "green"},
+    {"lead": "V1", "plane": "Precordial", "angle_deg": 120.0, "x": -0.3, "y": -0.2, "z": 0.9, "color": "royalblue"},
+    {"lead": "V2", "plane": "Precordial", "angle_deg": 90.0, "x": 0.0, "y": -0.1, "z": 1.0, "color": "royalblue"},
+    {"lead": "V3", "plane": "Precordial", "angle_deg": 60.0, "x": 0.4, "y": -0.2, "z": 0.9, "color": "royalblue"},
+    {"lead": "V4", "plane": "Precordial", "angle_deg": 45.0, "x": 0.7, "y": -0.4, "z": 0.6, "color": "royalblue"},
+    {"lead": "V5", "plane": "Precordial", "angle_deg": 30.0, "x": 0.9, "y": -0.3, "z": 0.3, "color": "royalblue"},
+    {"lead": "V6", "plane": "Precordial", "angle_deg": 0.0, "x": 1.0, "y": 0.0, "z": 0.0, "color": "royalblue"},
+]
+df_leads = pd.DataFrame(lead_coords)
+
+# 2D Hexaxial Frontal Plane Diagram
+fig_hex = go.Figure()
+for _, row in df_leads[df_leads["plane"] == "Frontal"].iterrows():
+    fig_hex.add_trace(go.Scatter(
+        x=[0, row["x"]], y=[0, row["y"]],
+        mode="lines+markers+text", name=row["lead"],
+        text=["", f"<b>{row['lead']}</b> ({row['angle_deg']:.0f}°)\n"],
+        textposition="top center", line=dict(width=3),
+        marker=dict(size=[0, 10])
+    ))
+
+fig_hex.update_layout(
+    title="Hexaxial Frontal Plane Reference System (Einthoven & Goldberger Leads)",
+    xaxis=dict(range=[-1.3, 1.3], zeroline=True, showgrid=True),
+    yaxis=dict(range=[-1.3, 1.3], zeroline=True, showgrid=True, scaleanchor="x", scaleratio=1),
+    height=550, showlegend=True
+)
+fig_hex.show()
+
+# 3D Thoracic Precordial & Limb Lead Coordinates
+fig_3d = go.Figure()
+for _, row in df_leads.iterrows():
+    fig_3d.add_trace(go.Scatter3d(
+        x=[0, row["x"]], y=[0, row["y"]], z=[0, row["z"]],
+        mode="lines+markers+text", name=row["lead"],
+        text=["", f"{row['lead']}"], textposition="top center",
+        line=dict(width=4), marker=dict(size=[0, 6])
+    ))
+
+fig_3d.update_layout(
+    title="3D Anatomical Lead Vector Projection Geometry (Frontal + Precordial)",
+    scene=dict(
+        xaxis_title="Right (−) to Left (+)",
+        yaxis_title="Superior (+) to Inferior (−)",
+        zaxis_title="Posterior (−) to Anterior (+)"
+    ),
+    height=600
+)
+fig_3d.show()
 ```
 
-Checkpoint counts document what is recoverable; they do not supply comparable
-test metrics. The spatial queue studied A0 through E1, exact-$\Theta$ controls,
-capacity matching, and permuted geometry. Those comparisons are interpretable
-only when mask, seed, observed lead, training budget, and checkpoint selection
-match.
+## Architectural taxonomy and spatial ablation tree
 
-## Claim hierarchy
+To evaluate whether neural networks can exploit these anatomical projection vectors, ten architectural conditioning variants were systematically formulated:
 
-1. **A0 → spatial encoding:** does explicit lead identity add information?
-2. **Panorama → relative geometry:** does electrode relationship matter beyond
-   an embedding label?
-3. **True → permuted geometry:** is any gain genuinely anatomical rather than
-   extra capacity or conditioning?
-4. **A0 versus E1:** complementarity only. Current `1110000` evidence does not
-   justify calling E1 the improved base architecture.
+```{python}
+#| label: onelead-arch-taxonomy-table
+arch_taxonomy = [
+    {"Variant": "a0", "Class": "Baseline", "Description": "Standard 1D UNet autoencoder without spatial conditioning.", "Coordinates": "None", "Modulation": "None", "Rel Params": 1.00},
+    {"Variant": "b1_panorama", "Class": "Cylindrical Projection", "Description": "Static learned cylindrical projection embedding.", "Coordinates": "Cylindrical (θ, z)", "Modulation": "Additive", "Rel Params": 1.10},
+    {"Variant": "c1_panorama_hybrid", "Class": "Hybrid Embedding", "Description": "Coordinate embedding concatenated with intermediate bottleneck features.", "Coordinates": "Learned + Cylindrical", "Modulation": "Concatenation", "Rel Params": 1.18},
+    {"Variant": "d1_panorama_relative", "Class": "Relative Displacement", "Description": "Inter-lead pairwise angular displacement matrix.", "Coordinates": "Pairwise (Δθ, Δz)", "Modulation": "Attention Bias", "Rel Params": 1.15},
+    {"Variant": "t000_exact_theta", "Class": "Trigonometric Angle", "Description": "2D fixed angle vectors [cos(θ), sin(θ)].", "Coordinates": "Exact 2D Angles", "Modulation": "Linear Project", "Rel Params": 1.08},
+    {"Variant": "t111_exact_theta", "Class": "3D Orientation", "Description": "Full 3D unit orientation vectors [x, y, z].", "Coordinates": "Exact 3D Vectors", "Modulation": "Linear Project", "Rel Params": 1.12},
+    {"Variant": "e1_panorama_film", "Class": "FiLM Modulation", "Description": "Feature-wise Linear Modulation: γ(coords) · h + β(coords).", "Coordinates": "True Spherical / Cylindrical", "Modulation": "Affine (Scale + Shift)", "Rel Params": 1.25},
+    {"Variant": "pa1_panorama_author", "Class": "Author Baseline", "Description": "Multi-head spatial attention fusion baseline.", "Coordinates": "Author Formulation", "Modulation": "Attention Fusion", "Rel Params": 1.20},
+    {"Variant": "cm1_capacity_matched", "Class": "Capacity Control", "Description": "Extra layers matching E1 parameter count but without coordinates.", "Coordinates": "Zero / Dummy", "Modulation": "Dense Layers", "Rel Params": 1.25},
+    {"Variant": "pg1_permuted_geometry", "Class": "Falsification Control", "Description": "Scrambled / permuted anatomical lead coordinates.", "Coordinates": "Permuted Scramble", "Modulation": "Affine FiLM", "Rel Params": 1.25},
+]
+df_arch_tax = pd.DataFrame(arch_taxonomy)
+display(df_arch_tax)
+```
 
-## Required interpretation
+## Checkpoint catalog and coverage audit
 
-A result that improves lead I but not lead II is not automatically unstable:
-the two observed leads carry different spatial information. It becomes a broad
-architecture claim only after replication across seeds and both observed leads.
-Permutation controls are essential because a learned positional pathway can
-help through capacity even when its geometry is physiologically wrong.
+```{python}
+#| label: onelead-checkpoint-inventory
+inventory = (one.groupby(["architecture", "factorial_mask", "observed_lead", "status"])
+             .size().rename("checkpoints").reset_index()) if not one.empty else pd.DataFrame()
+display(inventory)
 
-## Completed evidence now separated from this design chapter
+if not inventory.empty:
+    fig_inv = px.bar(
+        inventory, x="architecture", y="checkpoints", color="factorial_mask",
+        facet_col="observed_lead", barmode="stack",
+        labels={"checkpoints": "Recoverable Checkpoints", "architecture": "Architecture"},
+        title="Recoverable One-Lead Checkpoints by Architecture, Mask, and Observed Lead"
+    )
+    fig_inv.update_layout(height=500)
+    fig_inv.show()
+```
 
-The legacy spatial study has 60 completed runs (ten variants × three masks ×
-two observed leads). Its recoverable validation loss and missing-lead Pearson
-metrics are parsed from the terminal training logs in **Completed One-Lead
-ECG-AIM Spatial Study**. The corresponding screened RDB database contains the
-full-stage waveform, six-boundary timing, and P/QRS/T region summaries and is
-analyzed in **One-Lead ECG-AIM External RDB Evaluation**.
+## Compute overhead versus theoretical parameter complexity
 
-Those results do not eliminate the remaining evidence gaps:
+```{python}
+#| label: onelead-compute-overhead
+fig_comp = px.scatter(
+    df_arch_tax, x="Rel Params", y="Variant", color="Class",
+    size="Rel Params", text="Modulation",
+    labels={"Rel Params": "Relative Parameter Multiplier (x A0 Baseline)", "Variant": "Architectural Variant"},
+    title="Parameter Complexity and Modulation Strategies Across Spatial Paradigms"
+)
+fig_comp.update_traces(textposition="middle right")
+fig_comp.update_layout(height=500, xaxis=dict(range=[0.95, 1.35]))
+fig_comp.show()
+```
 
-- seed replication for promoted spatial comparisons;
-- a common held-out per-record reconstruction ledger rather than log-only
-  validation summaries;
-- prospective clinical validation under a one-lead-specific intended use;
-- blinded evaluation of newly promoted convergence models without reusing RDB
-  for both development and final model selection.
+## Core mechanism questions and claim hierarchy
+
+1. **A0 $\to$ Spatial Encoding**: Does supplying explicit anatomical coordinates ($\theta, \phi, z$) improve missing-lead estimation over an unconditioned base?
+2. **True vs Permuted Geometry ($E_1$ vs $PG_1$)**: Does the network genuinely utilize physiological spatial relationships, or does any arbitrary positional embedding suffice?
+3. **Capacity Matching ($E_1$ vs $CM_1$)**: Are observed gains attributable to anatomical conditioning or simply increased parameter capacity?
+4. **Generalization & Transport**: Do internal validation advantages persist on external cohorts (RDB)?
+
+The empirical resolutions to these questions are detailed in:
+- **Chapter 27**: Comprehensive analysis of internal validation results and learning dynamics across all 60 runs.
+- **Chapter 26**: External validation on the 360-record Russian Database (RDB) cohort.

@@ -13,7 +13,7 @@ book:
   search: true
   sidebar:
     style: docked
-    collapse-level: 1
+    collapse-level: 2
   chapters:
     - index.qmd
     - part: "Live Experiment Observatory"

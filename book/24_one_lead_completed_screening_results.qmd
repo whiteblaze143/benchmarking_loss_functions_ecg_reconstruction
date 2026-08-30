@@ -198,6 +198,56 @@ candidate, not a confirmed effect. The registered contrasts above are more
 interpretable than post-hoc leaderboard mining, even though they still lack
 replication.
 
+## Metric-Space Screening UMAP Manifolds
+
+To map the high-dimensional performance landscape across all 115 completed screening configurations, we compute 2D and 3D non-linear UMAP manifolds over the standardized matrix of all available validation, delineation, loss, and hardware metrics:
+
+```{python}
+#| label: screening-umap-manifold
+import umap
+from sklearn.preprocessing import StandardScaler
+import plotly.graph_objects as go
+
+valid_screen_metrics = [m for m in metrics if completed[m].notna().sum() > 80 and completed[m].std() > 1e-6]
+X_screen = completed[valid_screen_metrics].fillna(completed[valid_screen_metrics].median()).values
+X_screen_scaled = StandardScaler().fit_transform(X_screen)
+
+reducer_screen_2d = umap.UMAP(n_components=2, n_neighbors=10, min_dist=0.2, random_state=42)
+u_screen_2d = reducer_screen_2d.fit_transform(X_screen_scaled)
+completed["UMAP1"] = u_screen_2d[:, 0]
+completed["UMAP2"] = u_screen_2d[:, 1]
+
+fig_screen_umap2d = px.scatter(
+    completed, x="UMAP1", y="UMAP2",
+    color="observed_lead", symbol="cell_name",
+    size="metric.miou_wave", hover_name="id",
+    hover_data=["cell_name", "metric.val_missing_pearson", "metric.boundary_f1_smoke", "metric.P_iou", "metric.T_iou"],
+    labels={"UMAP1": "Screening Metric UMAP 1", "UMAP2": "Screening Metric UMAP 2",
+            "observed_lead": "Observed Lead", "cell_name": "Cell Name"},
+    title="2D Metric-Space UMAP: Global Topological Clustering Across All 115 Screening Models"
+)
+fig_screen_umap2d.update_layout(height=620)
+fig_screen_umap2d.show()
+
+reducer_screen_3d = umap.UMAP(n_components=3, n_neighbors=10, min_dist=0.2, random_state=42)
+u_screen_3d = reducer_screen_3d.fit_transform(X_screen_scaled)
+completed["UMAP3D_1"] = u_screen_3d[:, 0]
+completed["UMAP3D_2"] = u_screen_3d[:, 1]
+completed["UMAP3D_3"] = u_screen_3d[:, 2]
+
+fig_screen_umap3d = px.scatter_3d(
+    completed, x="UMAP3D_1", y="UMAP3D_2", z="UMAP3D_3",
+    color="observed_lead", symbol="cell_name",
+    size="metric.val_missing_pearson", hover_name="id",
+    hover_data=["cell_name", "metric.miou_wave", "metric.boundary_f1_smoke"],
+    labels={"UMAP3D_1": "UMAP 1", "UMAP3D_2": "UMAP 2", "UMAP3D_3": "UMAP 3"},
+    title="3D Metric-Space UMAP: Multi-Dimensional Screen Geometry"
+)
+fig_screen_umap3d.update_traces(marker=dict(opacity=0.85))
+fig_screen_umap3d.update_layout(height=650)
+fig_screen_umap3d.show()
+```
+
 ## Screening claim ledger
 
 | Claim | Verdict | Evidence |

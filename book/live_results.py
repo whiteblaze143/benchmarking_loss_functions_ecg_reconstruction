@@ -30,10 +30,13 @@ ROOT = project_root()
 SNAPSHOT_ROOT = Path(os.environ["BOOK_SNAPSHOT_ROOT"]).resolve() if os.environ.get("BOOK_SNAPSHOT_ROOT") else None
 
 def source_path(relative: str | Path) -> Path:
-    """Resolve a live source through the immutable render snapshot when set."""
-    relative=Path(relative)
-    candidate=(SNAPSHOT_ROOT/relative) if SNAPSHOT_ROOT else (ROOT/relative)
-    return candidate
+    """Resolve a live source through the immutable render snapshot when set, falling back to ROOT."""
+    relative = Path(relative)
+    if SNAPSHOT_ROOT:
+        candidate = SNAPSHOT_ROOT / relative
+        if candidate.exists():
+            return candidate
+    return ROOT / relative
 
 
 def read_sql(path: str | Path, query: str, params=()) -> pd.DataFrame:
@@ -307,3 +310,132 @@ def short_digest(path: str | Path) -> str:
     with p.open("rb") as f:
         for block in iter(lambda: f.read(1024 * 1024), b""): h.update(block)
     return h.hexdigest()[:12]
+
+
+def load_spatial_epoch_curves(relative: str | Path = "refine-logs/queue_spatial_1lead/jobs") -> pd.DataFrame:
+    """Extract epoch-by-epoch validation loss and missing Pearson curves for all spatial runs."""
+    root = source_path(relative)
+    rows = []
+    if not root.exists():
+        return pd.DataFrame()
+    pattern = re.compile(
+        r"spatial_1lead_(?P<variant>.+)_(?P<mask>\d{7})_s(?P<seed>\d+)_l(?P<lead>[01])\.log$"
+    )
+    epoch_pattern = re.compile(
+        r"Epoch\s+(?P<epoch>\d+)\s+\|\s+Val Loss:\s+(?P<loss>[-+0-9.eE]+)\s+\|\s+Val Missing Pearson:\s+(?P<pearson>[-+0-9.eE]+)"
+    )
+    for log_path in sorted(root.glob("*.log")):
+        match = pattern.match(log_path.name)
+        if not match:
+            continue
+        text = log_path.read_text(errors="replace")
+        for ep in epoch_pattern.finditer(text):
+            rows.append({
+                "run_name": log_path.stem,
+                "variant": match.group("variant"),
+                "factorial_mask": match.group("mask"),
+                "seed": int(match.group("seed")),
+                "observed_lead": {"0": "I", "1": "II"}[match.group("lead")],
+                "epoch": int(ep.group("epoch")),
+                "val_loss": float(ep.group("loss")),
+                "val_missing_pearson": float(ep.group("pearson")),
+            })
+    return pd.DataFrame(rows)
+
+
+def paired_hypothesis_tests(df: pd.DataFrame, candidate_variant: str, reference_variant: str,
+                            metric: str = "best_val_missing_pearson",
+                            match_keys: list[str] | None = None) -> dict:
+    """Compute paired contrast statistics between two variants across matched cells."""
+    import scipy.stats as stats
+    match_keys = match_keys or ["factorial_mask", "observed_lead"]
+    cand = df[df.variant == candidate_variant].set_index(match_keys)[metric]
+    ref = df[df.variant == reference_variant].set_index(match_keys)[metric]
+    shared = pd.concat([cand.rename("candidate"), ref.rename("reference")], axis=1).dropna()
+    if len(shared) == 0:
+        return {}
+    diffs = shared["candidate"] - shared["reference"]
+    n = len(diffs)
+    mean_diff = float(diffs.mean())
+    std_diff = float(diffs.std(ddof=1)) if n > 1 else 0.0
+    se = std_diff / np.sqrt(n) if n > 0 else 0.0
+    # Cohen's d for paired differences
+    cohens_d = mean_diff / std_diff if std_diff > 0 else np.nan
+    # Hedges' g bias correction
+    hedges_g = cohens_d * (1 - (3 / (4 * (n - 1) - 1))) if n > 1 and not np.isnan(cohens_d) else cohens_d
+    # Paired t-test
+    if n >= 2 and std_diff > 0:
+        t_stat, p_val = stats.ttest_rel(shared["candidate"], shared["reference"])
+    else:
+        t_stat, p_val = np.nan, np.nan
+    # Wilcoxon signed-rank test
+    if n >= 5 and (diffs != 0).any():
+        try:
+            w_stat, w_pval = stats.wilcoxon(diffs, zero_method="pratt")
+        except Exception:
+            w_stat, w_pval = np.nan, np.nan
+    else:
+        w_stat, w_pval = np.nan, np.nan
+    # Bootstrap 95% CI
+    np.random.seed(42)
+    boot_means = [np.random.choice(diffs, size=n, replace=True).mean() for _ in range(2000)]
+    ci_low, ci_high = np.percentile(boot_means, [2.5, 97.5])
+    return {
+        "candidate": candidate_variant,
+        "reference": reference_variant,
+        "n_pairs": n,
+        "mean_difference": mean_diff,
+        "median_difference": float(diffs.median()),
+        "std_difference": std_diff,
+        "se": se,
+        "ci_95_low": float(ci_low),
+        "ci_95_high": float(ci_high),
+        "cohens_d": float(cohens_d),
+        "hedges_g": float(hedges_g),
+        "t_statistic": float(t_stat),
+        "p_value_t": float(p_val),
+        "wilcoxon_p": float(w_pval),
+        "win_count": int((diffs > 0).sum()),
+        "loss_count": int((diffs < 0).sum()),
+        "tie_count": int((diffs == 0).sum()),
+    }
+
+
+def factorial_anova_3way(df: pd.DataFrame, value_col: str,
+                         factors: list[str] = ("variant", "factorial_mask", "observed_lead")) -> pd.DataFrame:
+    """Compute 3-way ANOVA decomposition with Sum of Squares, F-statistics, and partial eta-squared."""
+    import statsmodels.api as sm
+    from statsmodels.formula.api import ols
+    formula = f"{value_col} ~ C({factors[0]}) + C({factors[1]}) + C({factors[2]}) + C({factors[0]}):C({factors[1]}) + C({factors[0]}):C({factors[2]}) + C({factors[1]}):C({factors[2]})"
+    try:
+        model = ols(formula, data=df).fit()
+        table = sm.stats.anova_lm(model, typ=2)
+        ss_total = table["sum_sq"].sum()
+        table["eta_sq"] = table["sum_sq"] / ss_total
+        table["partial_eta_sq"] = table["sum_sq"] / (table["sum_sq"] + table.loc["Residual", "sum_sq"])
+        return table.reset_index().rename(columns={"index": "source"})
+    except Exception as exc:
+        return pd.DataFrame([{"error": str(exc)}])
+
+
+def pareto_frontier_2d(df: pd.DataFrame, x_col: str, y_col: str, x_max: bool = True, y_max: bool = True) -> pd.DataFrame:
+    """Identify Pareto optimal points in 2D space."""
+    data = df[[x_col, y_col]].copy().dropna()
+    pts = data.values
+    pareto_mask = np.ones(len(pts), dtype=bool)
+    for i, p1 in enumerate(pts):
+        if not pareto_mask[i]:
+            continue
+        for j, p2 in enumerate(pts):
+            if i == j or not pareto_mask[j]:
+                continue
+            x_dom = (p2[0] >= p1[0] if x_max else p2[0] <= p1[0])
+            y_dom = (p2[1] >= p1[1] if y_max else p2[1] <= p1[1])
+            x_strict = (p2[0] > p1[0] if x_max else p2[0] < p1[0])
+            y_strict = (p2[1] > p1[1] if y_max else p2[1] < p1[1])
+            if (x_dom and y_dom) and (x_strict or y_strict):
+                pareto_mask[i] = False
+                break
+    out = df.loc[data.index[pareto_mask]].copy()
+    return out
+

@@ -47,13 +47,95 @@ if not completed.empty and {"metric.val_missing_pearson", "metric.miou_wave"}.is
     fig.show()
 ```
 
-These are short screening runs unless replicated. The plot shows trade-offs; it
-does not provide multiplicity-corrected evidence for the top point.
+## Metric-Space UMAP Manifolds Across 115 Completed Wavelet Models
 
-The exhaustive 115-row metric ledger and five terminal failures are reported in
-**Completed One-Lead ECG-AIM Screening Results**. This chapter retains only the
-mechanism-focused view; longer-budget outcomes belong to the convergence
-chapter and are not pooled into this plot.
+To understand the global structural relationships among all 115 completed 1-lead wavelet and SSL screening configurations, we project the 22-dimensional performance space (spanning reconstruction loss, Pearson correlations, P/QRS/T wave IoUs, boundary F1/PPV/sensitivity, training losses, and peak VRAM footprint) into 2D and 3D non-linear UMAP manifolds:
+
+```{python}
+#| label: wavelet-umap-metric-manifold
+import umap
+from sklearn.preprocessing import StandardScaler
+import plotly.graph_objects as go
+
+# Extract all numeric metric columns with valid coverage
+metric_cols_all = [c for c in completed.columns if c.startswith("metric.") and pd.api.types.is_numeric_dtype(completed[c])]
+valid_umap_metrics = [c for c in metric_cols_all if completed[c].notna().sum() > 80 and completed[c].std() > 1e-6]
+
+X_wave = completed[valid_umap_metrics].fillna(completed[valid_umap_metrics].median()).values
+X_wave_scaled = StandardScaler().fit_transform(X_wave)
+
+reducer_wave_2d = umap.UMAP(n_components=2, n_neighbors=10, min_dist=0.2, random_state=42)
+u_wave_2d = reducer_wave_2d.fit_transform(X_wave_scaled)
+completed["UMAP1"] = u_wave_2d[:, 0]
+completed["UMAP2"] = u_wave_2d[:, 1]
+
+fig_wave_umap2d = px.scatter(
+    completed, x="UMAP1", y="UMAP2",
+    color="cell.wavelet_bank", symbol="cell.ssl_mode",
+    size="metric.miou_wave", hover_name="id",
+    hover_data=["cell.name", "metric.val_missing_pearson", "metric.boundary_f1_smoke", "metric.P_iou", "metric.T_iou"],
+    labels={"UMAP1": "Wavelet Metric UMAP 1", "UMAP2": "Wavelet Metric UMAP 2",
+            "cell.wavelet_bank": "Wavelet Filter Bank", "cell.ssl_mode": "SSL Mode"},
+    title="2D Metric-Space UMAP: Global Clustering of 115 Wavelet & SSL Screening Runs"
+)
+fig_wave_umap2d.update_layout(height=600)
+fig_wave_umap2d.show()
+
+reducer_wave_3d = umap.UMAP(n_components=3, n_neighbors=10, min_dist=0.2, random_state=42)
+u_wave_3d = reducer_wave_3d.fit_transform(X_wave_scaled)
+completed["UMAP3D_1"] = u_wave_3d[:, 0]
+completed["UMAP3D_2"] = u_wave_3d[:, 1]
+completed["UMAP3D_3"] = u_wave_3d[:, 2]
+
+fig_wave_umap3d = px.scatter_3d(
+    completed, x="UMAP3D_1", y="UMAP3D_2", z="UMAP3D_3",
+    color="cell.wavelet_bank", symbol="cell.ssl_mode",
+    size="metric.val_missing_pearson", hover_name="id",
+    hover_data=["cell.name", "metric.miou_wave", "metric.boundary_f1_smoke"],
+    labels={"UMAP3D_1": "UMAP 1", "UMAP3D_2": "UMAP 2", "UMAP3D_3": "UMAP 3"},
+    title="3D Metric-Space UMAP Manifold Across 115 Completed Queue Runs"
+)
+fig_wave_umap3d.update_traces(marker=dict(opacity=0.85))
+fig_wave_umap3d.update_layout(height=650)
+fig_wave_umap3d.show()
+```
+
+## Multi-Metric Collinearity & Correlation Matrix
+
+Analyzing cross-endpoint correlations across all 22 evaluation, delineation, and computational metrics reveals how different diagnostic objectives interact:
+
+```{python}
+#| label: wavelet-metric-correlation-heatmap
+clean_metric_names = [m.replace("metric.", "") for m in valid_umap_metrics]
+df_metrics = completed[valid_umap_metrics].copy()
+df_metrics.columns = clean_metric_names
+corr_metrics = df_metrics.corr()
+
+fig_corr_heat = px.imshow(
+    corr_metrics, text_auto=".2f", aspect="auto",
+    color_continuous_scale="RdBu_r", zmin=-1.0, zmax=1.0,
+    title="Comprehensive Multi-Metric Correlation Matrix Across 115 Wavelet Queue Runs"
+)
+fig_corr_heat.update_layout(height=750)
+fig_corr_heat.show()
+```
+
+## Boundary Sensitivity versus Precision (PPV) Pareto Frontier
+
+```{python}
+#| label: wavelet-boundary-pareto
+fig_pareto_bnd = px.scatter(
+    completed, x="metric.boundary_ppv_smoke", y="metric.boundary_sensitivity_smoke",
+    color="cell.wavelet_bank", symbol="cell.ssl_mode",
+    size="metric.boundary_f1_smoke", hover_name="id",
+    hover_data=["cell.name", "metric.val_missing_pearson", "metric.miou_wave"],
+    labels={"metric.boundary_ppv_smoke": "Boundary Precision (PPV)",
+            "metric.boundary_sensitivity_smoke": "Boundary Sensitivity (Recall)"},
+    title="Boundary Localization Trade-Off: Precision (PPV) versus Sensitivity across Wavelet Mechanisms"
+)
+fig_pareto_bnd.update_layout(height=550)
+fig_pareto_bnd.show()
+```
 
 ## Highest-value physiological contrast
 
@@ -81,3 +163,4 @@ Promote a configuration only after matched incremental improvement, seed and
 lead replication, no reconstruction regression beyond a prespecified margin,
 boundary-localized analysis, checkpoint provenance, and blinded LUDB/RDB
 evaluation. Otherwise label it exploratory.
+

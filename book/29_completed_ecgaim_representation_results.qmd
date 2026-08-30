@@ -9,7 +9,12 @@ execute:
 ```{python}
 #| label: representation-setup
 import pandas as pd
+import numpy as np
+import zlib
 import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+from scipy.stats import spearmanr
 from live_results import *
 
 DB = source_path("results/checkpoint_embeddings/compact.sqlite")
@@ -324,12 +329,605 @@ display(stability.groupby(["job_id", "metric"])["value"]
         .merge(jobs[["job_id", "model_id"]], on="job_id", how="left"))
 ```
 
-All 11 checkpoints show significant 10-nearest-neighbour rhythm-code agreement
-after Benjamini–Hochberg correction, with agreement around 0.18–0.24. In
-contrast, every high-dimensional rhythm silhouette is negative and its
-permutation test is non-significant. These are compatible: codes are locally
-enriched without forming clean global clusters. A visually separated UMAP is
-therefore not proof of discrete rhythm manifolds.
+All 11 checkpoints show significant 10-nearest-neighbour rhythm-code agreement after Benjamini–Hochberg correction, with agreement around 0.18–0.24. In contrast, every high-dimensional rhythm silhouette is negative and its permutation test is non-significant. These are compatible: codes are locally enriched without forming clean global clusters. A visually separated UMAP is therefore not proof of discrete rhythm manifolds.
+
+## Interactive latent rhythm geometry: 2D UMAP manifolds
+
+Below, we visualize the frozen 2D UMAP latent projections for the two anchor models (`1000000` raw MSE vs `1011011` composite loss). Points represent individual patient records, colored by their canonical rhythm classification:
+
+```{python}
+#| label: representation-umap-rhythm
+projections = read_sql(DB, "select * from projections where seed = 42 and neighbors = 30")
+bin_pred = read_sql(DB, "select job_id, record_id, probability from binary_predictions where predictor_set = 'latent'")
+reg_pred = read_sql(DB, "select job_id, record_id, prediction from regression_predictions where predictor_set = 'latent'")
+
+df_umap = projections.merge(records, on="record_id").merge(jobs[["job_id", "model_id"]], on="job_id")
+df_umap = df_umap.merge(bin_pred, on=["job_id", "record_id"], how="left")
+df_umap = df_umap.merge(reg_pred, on=["job_id", "record_id"], how="left")
+
+anchors_umap = df_umap[df_umap.model_id.isin(ANCHORS)].copy()
+anchors_umap["display_model"] = anchors_umap.model_id.str.replace("factorial_ecg_aim_", "", regex=False)
+
+fig_rhythm_umap = px.scatter(
+    anchors_umap, x="x", y="y", color="canonical_rhythm", facet_col="display_model",
+    hover_name="record_id",
+    hover_data=["heart_rate_bpm", "signal_rms", "source_dataset", "split"],
+    labels={"x": "UMAP 1", "y": "UMAP 2", "canonical_rhythm": "Rhythm Code"},
+    title="Held-Out Latent UMAP Embeddings by Canonical Rhythm Code (Seed 42, k=30)"
+)
+fig_rhythm_umap.update_traces(marker=dict(size=5, opacity=0.8))
+fig_rhythm_umap.update_layout(height=550)
+fig_rhythm_umap.show()
+```
+
+## Continuous physiological biomarker overlays in latent space
+
+To investigate what structural axes drive the latent embedding, we project continuous clinical biomarkers and probe-predicted AF probabilities across the 2D manifold:
+
+```{python}
+#| label: representation-umap-continuous
+fig_hr = px.scatter(
+    anchors_umap, x="x", y="y", color="heart_rate_bpm", facet_col="display_model",
+    color_continuous_scale="Viridis", hover_name="record_id",
+    labels={"x": "UMAP 1", "y": "UMAP 2", "heart_rate_bpm": "Heart Rate (bpm)"},
+    title="Latent UMAP Manifold: Heart Rate (BPM) Continuous Gradient"
+)
+fig_hr.update_traces(marker=dict(size=5, opacity=0.85))
+fig_hr.update_layout(height=500)
+fig_hr.show()
+
+fig_prob = px.scatter(
+    anchors_umap[anchors_umap["probability"].notna()], x="x", y="y",
+    color="probability", facet_col="display_model",
+    color_continuous_scale="Inferno", hover_name="record_id",
+    labels={"x": "UMAP 1", "y": "UMAP 2", "probability": "Predicted AF Probability"},
+    title="Latent UMAP Manifold: Linear Probe Predicted AF/AFIB Risk Gradient"
+)
+fig_prob.update_traces(marker=dict(size=6, opacity=0.85))
+fig_prob.update_layout(height=500)
+fig_prob.show()
+```
+
+## 11-Checkpoint Topological Atlas in Latent UMAP Space
+
+Across all 11 evaluated ECG-AIM model configurations, we compare the topological layout of the frozen encoder activations on the shared test records:
+
+```{python}
+#| label: representation-umap-11models
+df_umap["short_name"] = df_umap.model_id.str.replace("factorial_ecg_aim_", "", regex=False)
+
+fig_11models = px.scatter(
+    df_umap, x="x", y="y", color="canonical_rhythm", facet_col="short_name",
+    facet_col_wrap=4, hover_name="record_id",
+    labels={"x": "UMAP 1", "y": "UMAP 2", "canonical_rhythm": "Rhythm"},
+    title="11-Checkpoint Topological Atlas: Latent UMAP Projections Across All Evaluated Architectures"
+)
+fig_11models.update_traces(marker=dict(size=4, opacity=0.75))
+fig_11models.update_layout(height=950)
+fig_11models.show()
+```
+
+## Hyperparameter Stability: Procrustes alignment across random seeds & neighborhood sizes
+
+Because 2D UMAP visualizations can be sensitive to stochastic initialization and hyperparameters, the study evaluated **1,575 pairwise Procrustes shape alignment similarities** across 5 distinct random seeds (17, 42, 73, 101, 211) and 3 neighborhood scales ($k = 10, 30, 60$):
+
+```{python}
+#| label: representation-umap-stability-plot
+stability_plot = stability.merge(jobs[["job_id", "model_id"]], on="job_id", how="left")
+stability_plot["short_name"] = stability_plot.model_id.str.replace("factorial_ecg_aim_", "", regex=False)
+
+fig_stab_box = px.box(
+    stability_plot, x="short_name", y="value", color="metric",
+    labels={"value": "Procrustes Shape Similarity", "short_name": "Model Checkpoint"},
+    title="UMAP Global Topology Stability Across Random Seeds and Neighborhood Scales (k=10, 30, 60)"
+)
+fig_stab_box.update_layout(height=500, yaxis=dict(range=[0.5, 1.0]))
+fig_stab_box.show()
+```
+
+## Spectral Disentanglement, Effective Rank, and Feature Redundancy
+
+Inspired by recent advances in frequency-aware ECG foundation models (such as *ECG-Nest-FM*, Sharma et al., 2025; Balestriero et al., 2023; Garrido et al., 2023), we conduct a rigorous mathematical investigation of the internal structure, spectral entropy, dimensional collapse, and feature redundancy of our frozen encoder representations.
+
+### Mathematical Framework
+
+1. **Average Absolute Cross-Correlation**:
+   $$\text{Cross-Corr}(Z) = \frac{1}{|U|} \sum_{i < j} |R_{ij}|$$
+   where $R \in \mathbb{R}^{D \times D}$ is the Pearson correlation matrix of the $D = 2304$ representation features across evaluated patient records, and $U$ is the set of off-diagonal index pairs. Lower values indicate greater feature decorrelation and lower representation redundancy.
+
+2. **Spectral Entropy & Smooth Effective Rank (SER)**:
+   Given the centered representation matrix $Z \in \mathbb{R}^{N \times D}$ with singular values $\sigma_1 \ge \sigma_2 \ge \dots \ge \sigma_K > 0$, the normalized singular value distribution is:
+   $$p_k = \frac{\sigma_k}{\sum_{i=1}^K \sigma_i}$$
+   The singular value spectral entropy and Smooth Effective Rank are defined as:
+   $$H(p) = -\sum_{k=1}^K p_k \log p_k, \qquad \text{SER} = \exp(H(p))$$
+   SER quantifies the effective dimensionality occupied by the representations. A higher SER indicates that the representations span a diverse, high-rank latent subspace without dimensional collapse (Roy & Vetterli, 2007).
+
+3. **Physiological Frequency Hierarchies**:
+   ECG signals exhibit canonical frequency bands tied to cardiac electrophysiology:
+   - **0–10 Hz (Low Frequency)**: T-wave repolarization, baseline hemodynamics, and heart rate.
+   - **5–30 Hz (Mid Frequency)**: P-wave atrial depolarization and Atrial Fibrillation fibrillatory dynamics (4–9 Hz).
+   - **8–50 Hz (High Frequency)**: QRS complex rapid ventricular depolarization and conduction delays (LBBB, RBBB).
+
+```{python}
+#| label: representation-spectral-entropy-table
+import sqlite3, zlib, numpy as np
+from scipy.linalg import svd
+
+# Connect and extract feature arrays across all 11 models
+svd_data = []
+ser_records = []
+
+for idx, job in jobs.iterrows():
+    job_id = job["job_id"]
+    m_id = job["model_id"].replace("factorial_ecg_aim_", "")
+    rows = read_sql(DB, f"select record_id, dim, dtype, compression, feature_blob from features where job_id = '{job_id}'")
+    if rows.empty:
+        continue
+    
+    feats = [np.frombuffer(zlib.decompress(r["feature_blob"]) if r["compression"] == "zlib" else r["feature_blob"], dtype=r["dtype"]) for _, r in rows.iterrows()]
+    X = np.array(feats, dtype=np.float32)
+    N, D = X.shape
+    
+    # Feature centering and standardization
+    X_cent = X - X.mean(axis=0, keepdims=True)
+    std = X_cent.std(axis=0, keepdims=True)
+    std[std == 0] = 1.0
+    X_norm = X_cent / std
+    
+    # Subsampled pairwise cross-correlation (300 uniform features)
+    idx_feat = np.linspace(0, D - 1, 300, dtype=int)
+    corr = np.corrcoef(X_norm[:, idx_feat].T)
+    off_diag = corr[np.triu_indices(len(idx_feat), k=1)]
+    valid_off_diag = off_diag[~np.isnan(off_diag)]
+    avg_abs_corr = float(np.mean(np.abs(valid_off_diag)))
+    
+    # SVD on centered representations
+    U, s, Vt = svd(X_cent, full_matrices=False)
+    s_norm = s / (np.sum(s) + 1e-12)
+    s_norm_pos = s_norm[s_norm > 1e-12]
+    spectral_entropy = float(-np.sum(s_norm_pos * np.log(s_norm_pos)))
+    ser = float(np.exp(spectral_entropy))
+    
+    ser_records.append({
+        "Model Config": m_id,
+        "Records (N)": N,
+        "Dim (D)": D,
+        "Avg Abs Cross-Corr": round(avg_abs_corr, 4),
+        "Spectral Entropy": round(spectral_entropy, 3),
+        "Smooth Effective Rank (SER)": round(ser, 2)
+    })
+    
+    for k_idx, s_val in enumerate(s_norm[:150]):
+        svd_data.append({
+            "model_id": m_id,
+            "singular_value_index": k_idx + 1,
+            "log10_normalized_singular_value": float(np.log10(s_val + 1e-12)),
+            "normalized_singular_value": float(s_val)
+        })
+
+df_ser_table = pd.DataFrame(ser_records)
+df_svd_all = pd.DataFrame(svd_data)
+display(df_ser_table)
+```
+
+### Log Normalized Singular Value Spectrum
+
+Following the spectral analysis of *ECG-Nest-FM*, we plot the logarithm of normalized singular values across the singular value index ($1 \dots 150$). A flatter, slower decaying spectrum indicates high representation rank and resilience against dimensional collapse:
+
+```{python}
+#| label: representation-singular-value-spectrum
+fig_svd = px.line(
+    df_svd_all, x="singular_value_index", y="log10_normalized_singular_value",
+    color="model_id",
+    labels={
+        "singular_value_index": "Singular Value Index (k)",
+        "log10_normalized_singular_value": "Log10 Normalized Singular Value (log10 pk)",
+        "model_id": "Model Checkpoint"
+    },
+    title="Log Normalized Singular Value Spectrum Across All 11 Evaluated Checkpoints"
+)
+fig_svd.update_layout(
+    height=550,
+    xaxis=dict(title="Singular Value Rank Index (k = 1 ... 150)"),
+    yaxis=dict(title="log10(Normalized Singular Value)")
+)
+fig_svd.show()
+```
+
+### Representation Diversity vs Redundancy Trade-Off
+
+```{python}
+#| label: representation-cross-corr-ser-bar
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+fig_dual = make_subplots(specs=[[{"secondary_y": True}]])
+
+fig_dual.add_trace(
+    go.Bar(
+        x=df_ser_table["Model Config"],
+        y=df_ser_table["Smooth Effective Rank (SER)"],
+        name="Smooth Effective Rank (SER)",
+        marker_color="rgba(55, 128, 191, 0.75)"
+    ),
+    secondary_y=False
+)
+
+fig_dual.add_trace(
+    go.Scatter(
+        x=df_ser_table["Model Config"],
+        y=df_ser_table["Avg Abs Cross-Corr"],
+        name="Avg Abs Cross-Correlation",
+        mode="lines+markers",
+        marker=dict(size=8, color="rgba(219, 64, 82, 0.9)"),
+        line=dict(width=2, dash="dash")
+    ),
+    secondary_y=True
+)
+
+fig_dual.update_layout(
+    title="Representation Capacity (Smooth Effective Rank) vs Redundancy (Cross-Correlation)",
+    height=480,
+    xaxis=dict(title="Model Configuration"),
+    legend=dict(x=0.01, y=0.98)
+)
+fig_dual.update_yaxes(title_text="Smooth Effective Rank (SER)", secondary_y=False)
+fig_dual.update_yaxes(title_text="Avg Absolute Cross-Correlation", secondary_y=True)
+fig_dual.show()
+```
+
+### Nested / Truncated Sub-Dimensionality Probing
+
+To test whether early dimensions capture lower-frequency rhythm dynamics (AF, 4–9 Hz) before higher dimensions capture fine temporal conduction (QRS interval timing, 8–50 Hz), we evaluate linear probe performance as a function of truncated latent dimensions $D \in \{1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024\}$:
+
+```{python}
+#| label: representation-nested-subspace-probing
+from sklearn.linear_model import LogisticRegression, Ridge
+from sklearn.metrics import roc_auc_score, r2_score
+
+nested_probing_results = []
+
+for idx, job in jobs[jobs.model_id.isin(ANCHORS)].iterrows():
+    job_id = job["job_id"]
+    m_id = job["model_id"].replace("factorial_ecg_aim_", "")
+    rows = read_sql(DB, f"select record_id, dim, dtype, compression, feature_blob from features where job_id = '{job_id}'")
+    feats = {r["record_id"]: np.frombuffer(zlib.decompress(r["feature_blob"]) if r["compression"] == "zlib" else r["feature_blob"], dtype=r["dtype"]) for _, r in rows.iterrows()}
+    
+    df_m = records[records.record_id.isin(feats.keys())].copy()
+    X_all = np.array([feats[rid] for rid in df_m.record_id], dtype=np.float32)
+    y_af = (df_m.canonical_rhythm == "AFIB").astype(int).values
+    y_timing = df_m.qrson_toff_ms.values
+    splits = df_m.split.values
+    
+    train_mask = (splits == "train") | (splits == "val")
+    test_mask = (splits == "test")
+    
+    X_train = X_all[train_mask]
+    X_test = X_all[test_mask]
+    y_af_train, y_af_test = y_af[train_mask], y_af[test_mask]
+    
+    # Non-null timing masks
+    t_train_valid = train_mask & (~np.isnan(y_timing))
+    t_test_valid = test_mask & (~np.isnan(y_timing))
+    
+    # Standardization & PCA
+    mean = X_train.mean(axis=0, keepdims=True)
+    std = X_train.std(axis=0, keepdims=True)
+    std[std == 0] = 1.0
+    X_train_norm = (X_train - mean) / std
+    X_test_norm = (X_test - mean) / std
+    
+    U, s, Vt = svd(X_train_norm, full_matrices=False)
+    X_train_pca = np.dot(X_train_norm, Vt.T)
+    X_test_pca = np.dot(X_test_norm, Vt.T)
+    X_all_pca = np.dot((X_all - mean) / std, Vt.T)
+    
+    dims_to_test = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
+    for d in dims_to_test:
+        if d > X_train_pca.shape[1]: continue
+        
+        # Atrial Fibrillation Probe (Logistic Regression)
+        clf = LogisticRegression(C=0.01, max_iter=1000, random_state=42)
+        clf.fit(X_train_pca[:, :d], y_af_train)
+        preds_af = clf.predict_proba(X_test_pca[:, :d])[:, 1]
+        auroc = roc_auc_score(y_af_test, preds_af)
+        
+        # QRS Timing Interval Probe (Ridge Regression)
+        reg = Ridge(alpha=10.0)
+        reg.fit(X_all_pca[t_train_valid, :d], y_timing[t_train_valid])
+        preds_t = reg.predict(X_all_pca[t_test_valid, :d])
+        r2 = r2_score(y_timing[t_test_valid], preds_t)
+        
+        nested_probing_results.append({
+            "model_id": m_id,
+            "dims": d,
+            "AF AUROC": auroc,
+            "QRS Timing R2": r2
+        })
+
+df_nested = pd.DataFrame(nested_probing_results)
+
+fig_nested_af = px.line(
+    df_nested, x="dims", y="AF AUROC", color="model_id", markers=True,
+    labels={"dims": "Truncated Embedding Dimensions (d)", "AF AUROC": "Held-Out AF AUROC"},
+    title="Nested Representation Scaling: AF Discrimination Capacity vs Sub-Embedding Dimension"
+)
+fig_nested_af.update_xaxes(type="log", dtick=1)
+fig_nested_af.update_layout(height=450)
+fig_nested_af.show()
+
+fig_nested_t = px.line(
+    df_nested, x="dims", y="QRS Timing R2", color="model_id", markers=True,
+    labels={"dims": "Truncated Embedding Dimensions (d)", "QRS Timing R2": "Held-Out QRS Interval R2"},
+    title="Nested Representation Scaling: QRS Interval Timing (QRSon-Toff) R2 vs Sub-Embedding Dimension"
+)
+fig_nested_t.update_xaxes(type="log", dtick=1)
+fig_nested_t.update_layout(height=450)
+fig_nested_t.show()
+```
+
+### Top Latent Dimension Correlation Structures
+
+Comparing the pairwise correlation structure of the top 32 principal latent dimensions between `1000000` (raw MSE anchor) and `1011011` (composite loss anchor):
+
+```{python}
+#| label: representation-correlation-heatmaps
+fig_heat_subs = make_subplots(
+    rows=1, cols=2,
+    subplot_titles=("1000000 (Raw MSE Anchor): Top 32 Dims", "1011011 (Enhanced Composite): Top 32 Dims")
+)
+
+for col_idx, m_str in enumerate(["1000000_s42", "1011011_s42"], start=1):
+    job_id = jobs[jobs.model_id == f"factorial_ecg_aim_{m_str}"].iloc[0]["job_id"]
+    rows = read_sql(DB, f"select record_id, dim, dtype, compression, feature_blob from features where job_id = '{job_id}'")
+    feats = [np.frombuffer(zlib.decompress(r["feature_blob"]) if r["compression"] == "zlib" else r["feature_blob"], dtype=r["dtype"]) for _, r in rows.iterrows()]
+    X = np.array(feats, dtype=np.float32)
+    X_cent = (X - X.mean(axis=0)) / (X.std(axis=0) + 1e-8)
+    U, s, Vt = svd(X_cent, full_matrices=False)
+    X_pca32 = np.dot(X_cent, Vt[:32, :].T)
+    c_mat = np.corrcoef(X_pca32.T)
+    
+    fig_heat_subs.add_trace(
+        go.Heatmap(z=c_mat, colorscale="RdBu_r", zmin=-1.0, zmax=1.0, showscale=(col_idx == 2)),
+        row=1, col=col_idx
+    )
+
+fig_heat_subs.update_layout(
+    title="Top 32 Latent Dimension Pairwise Correlation Heatmaps",
+    height=480
+)
+fig_heat_subs.show()
+```
+
+## Clinically-Guided Contrastive Geometry (CLEF-Inspired Analysis)
+
+Following the clinically-guided representation learning paradigm established by CLEF (Shu et al., UCL / Nokia Bell Labs / Tampere University, ICLR 2026 under review, arXiv:2512.02180), we interrogate whether self-supervised ECG foundation representations align their latent geometry with clinical metadata, pathology superclasses, and continuous physiological intervals.
+
+### Theoretical Foundation: Contrastive Geometry & Dissimilarity Alignment
+
+In the CLEF framework, the continuous clinical dissimilarity $\delta_{ik}$ between subjects $i$ and $k$ is mapped into a pairwise adaptive negative weighting:
+$$W_{ik} = D_{ik} \cdot M_{ik} \in [0, 1]$$
+where $D_{ik} = (1-\alpha)\frac{\delta_{ik} - \delta_{\min}}{\delta_{\max} - \delta_{\min}} + \alpha$ and $M_{ik} = \exp\left(-\frac{A - m_i}{A} \times \frac{A - m_k}{A}\right)$ accounts for metadata completeness across $A$ clinical attributes.
+
+The resulting normalized cosine similarity $\hat{S}_{ij} = \frac{1 + f_{\text{sim}}(z_i, z_j)}{2}$ is aligned with clinical dissimilarity via the $L_d$ alignment objective:
+$$\mathcal{L}_d = \frac{1}{B^2} \sum_{i,j} \left( \hat{S}_{ij} - (1 - W_{ij}) \right)^2$$
+
+To evaluate the degree of clinical alignment learned across all 11 factorial model checkpoints, we compute:
+1. **Intra-class vs. Inter-class Cosine Similarity Separation**:
+   $$\Delta S = \mathbb{E}[S_{\text{intra}}] - \mathbb{E}[S_{\text{inter}}], \quad F_{\text{ratio}} = \frac{(\mathbb{E}[S_{\text{intra}}] - \mathbb{E}[S_{\text{inter}}])^2}{\text{Var}(S_{\text{intra}}) + \text{Var}(S_{\text{inter}})}$$
+2. **Physiological Metric Space Alignment ($r_s$)**: Spearman rank correlation between embedding cosine distance $1 - f_{\text{sim}}(z_i, z_j)$ and physiological difference $\Delta \text{Physiology}_{ij}$ across Heart Rate ($\Delta \text{bpm}$), Rhythm Irregularity ($\Delta \text{RR-CV}$), Conduction/Repolarization Duration ($\Delta QRS_{\text{on}}\text{--}T_{\text{off}}$ ms), and Spectral Complexity ($\Delta \text{Entropy}$).
+
+```{python}
+#| label: clef-clinical-alignment-table
+# Extract all model embeddings and compute CLEF geometry metrics
+from scipy.stats import spearmanr
+clef_records = records.set_index("record_id")
+features_all = read_sql(DB, "select job_id, record_id, feature_blob from features")
+
+feats_by_job = {}
+for jid, group in features_all.groupby("job_id"):
+    rids = group["record_id"].tolist()
+    blobs = [np.frombuffer(zlib.decompress(b), dtype=np.float16).astype(np.float32) for b in group["feature_blob"]]
+    feats_by_job[jid] = pd.DataFrame(blobs, index=rids)
+
+clef_table_data = []
+clef_scatter_data = {}
+
+for _, j in jobs.iterrows():
+    jid = j["job_id"]
+    mid = j["model_id"].replace("factorial_ecg_aim_", "")
+    df_f = feats_by_job[jid]
+    common = df_f.index.intersection(clef_records.index)
+    df_f = df_f.loc[common]
+    df_r = clef_records.loc[common]
+    
+    valid_mask = df_r["heart_rate_bpm"].notna() & df_r["rr_cv"].notna() & df_r["qrson_toff_ms"].notna() & df_r["spectral_entropy"].notna()
+    df_f_v = df_f[valid_mask]
+    df_r_v = df_r[valid_mask]
+    
+    # Stratified subset across rhythm classes
+    stratified_ids = df_r_v.groupby("canonical_rhythm", group_keys=False).apply(lambda x: x.sample(min(len(x), 40), random_state=42)).index
+    
+    X_sub = df_f_v.loc[stratified_ids].values
+    r_sub = df_r_v.loc[stratified_ids]
+    
+    norm_X = X_sub / (np.linalg.norm(X_sub, axis=1, keepdims=True) + 1e-8)
+    cos_sim = np.dot(norm_X, norm_X.T)
+    cos_dist = 1.0 - cos_sim
+    n_sample = len(stratified_ids)
+    
+    hr_dist = np.abs(r_sub["heart_rate_bpm"].values[:, None] - r_sub["heart_rate_bpm"].values[None, :])
+    rr_dist = np.abs(r_sub["rr_cv"].values[:, None] - r_sub["rr_cv"].values[None, :])
+    timing_dist = np.abs(r_sub["qrson_toff_ms"].values[:, None] - r_sub["qrson_toff_ms"].values[None, :])
+    entropy_dist = np.abs(r_sub["spectral_entropy"].values[:, None] - r_sub["spectral_entropy"].values[None, :])
+    
+    i_upper = np.triu_indices(n_sample, k=1)
+    hr_corr, _ = spearmanr(cos_dist[i_upper], hr_dist[i_upper])
+    rr_corr, _ = spearmanr(cos_dist[i_upper], rr_dist[i_upper])
+    timing_corr, _ = spearmanr(cos_dist[i_upper], timing_dist[i_upper])
+    entropy_corr, _ = spearmanr(cos_dist[i_upper], entropy_dist[i_upper])
+    
+    rhythms = r_sub["canonical_rhythm"].values
+    intra_sims, inter_sims = [], []
+    for i in range(len(rhythms)):
+        for k in range(i+1, len(rhythms)):
+            if rhythms[i] == rhythms[k]:
+                intra_sims.append(cos_sim[i, k])
+            else:
+                inter_sims.append(cos_sim[i, k])
+    intra_m, intra_s = np.mean(intra_sims), np.std(intra_sims)
+    inter_m, inter_s = np.mean(inter_sims), np.std(inter_sims)
+    margin = intra_m - inter_m
+    fisher = (margin**2) / (intra_s**2 + inter_s**2 + 1e-8)
+    
+    clef_table_data.append({
+        "Model Checkpoint": mid,
+        "Intra-Class Sim": f"{intra_m:.4f} ± {intra_s:.4f}",
+        "Inter-Class Sim": f"{inter_m:.4f} ± {inter_s:.4f}",
+        "Separation Margin (ΔS)": margin,
+        "Fisher Ratio (F)": fisher,
+        "HR Dist rs": hr_corr,
+        "RR-CV Dist rs": rr_corr,
+        "QRS-T Dist rs": timing_corr,
+        "Entropy Dist rs": entropy_corr
+    })
+    
+    if mid in ["1000000_s42", "1011011_s42", "1001014_s42", "1010010_s42"]:
+        clef_scatter_data[mid] = {
+            "cos_dist": cos_dist[i_upper],
+            "hr_dist": hr_dist[i_upper],
+            "timing_dist": timing_dist[i_upper],
+            "intra_sims": intra_sims,
+            "inter_sims": inter_sims
+        }
+
+df_clef_summary = pd.DataFrame(clef_table_data)
+display(df_clef_summary)
+```
+
+### Intra-Class vs. Inter-Class Cosine Similarity Separation
+
+```{python}
+#| label: clef-similarity-distributions
+fig_clef_box = go.Figure()
+
+for m_key, color in [("1000000_s42", "#636EFA"), ("1011011_s42", "#EF553B"), ("1001014_s42", "#00CC96"), ("1010010_s42", "#AB63FA")]:
+    if m_key in clef_scatter_data:
+        dat = clef_scatter_data[m_key]
+        fig_clef_box.add_trace(go.Box(
+            y=dat["intra_sims"], name=f"{m_key} (Intra)",
+            marker_color=color, boxpoints=False
+        ))
+        fig_clef_box.add_trace(go.Box(
+            y=dat["inter_sims"], name=f"{m_key} (Inter)",
+            marker_color=color, fillcolor="rgba(255,255,255,0.2)",
+            line=dict(color=color, width=1.5), boxpoints=False
+        ))
+
+fig_clef_box.update_layout(
+    title="Intra-Class vs. Inter-Class Latent Cosine Similarity Distributions (CLEF Benchmark)",
+    yaxis_title="Pairwise Cosine Similarity",
+    boxmode="group",
+    height=480
+)
+fig_clef_box.show()
+```
+
+### Physiological Metric Space Alignment ($L_d$ Calibration)
+
+Evaluating how closely pairwise cosine distance in the latent embedding space $1 - f_{\text{sim}}(z_i, z_j)$ correlates with continuous physiological differences in Heart Rate ($\Delta \text{bpm}$) and Conduction Duration ($\Delta QRS_{\text{on}}\text{--}T_{\text{off}}$ ms):
+
+```{python}
+#| label: clef-distance-calibration
+fig_clef_cal = make_subplots(
+    rows=1, cols=2,
+    subplot_titles=(
+        "Heart Rate Distance Alignment (Δbpm vs Latent Cosine Distance)",
+        "QRS-T Interval Distance Alignment (Δms vs Latent Cosine Distance)"
+    )
+)
+
+sub_idx = np.random.RandomState(42).choice(len(clef_scatter_data["1000000_s42"]["cos_dist"]), size=800, replace=False)
+
+for m_key, color, name in [("1000000_s42", "#636EFA", "1000000 (Raw MSE Anchor)"), ("1011011_s42", "#EF553B", "1011011 (Enhanced Composite)")]:
+    d = clef_scatter_data[m_key]
+    
+    # HR distance scatter
+    fig_clef_cal.add_trace(
+        go.Scatter(
+            x=d["hr_dist"][sub_idx], y=d["cos_dist"][sub_idx],
+            mode="markers", marker=dict(color=color, size=4, opacity=0.4),
+            name=name, legendgroup=name, showlegend=True
+        ),
+        row=1, col=1
+    )
+    
+    # Timing distance scatter
+    fig_clef_cal.add_trace(
+        go.Scatter(
+            x=d["timing_dist"][sub_idx], y=d["cos_dist"][sub_idx],
+            mode="markers", marker=dict(color=color, size=4, opacity=0.4),
+            name=name, legendgroup=name, showlegend=False
+        ),
+        row=1, col=2
+    )
+
+fig_clef_cal.update_xaxes(title_text="Pairwise |Δ Heart Rate| (bpm)", row=1, col=1)
+fig_clef_cal.update_yaxes(title_text="Embedding Cosine Distance (1 - cos_sim)", row=1, col=1)
+fig_clef_cal.update_xaxes(title_text="Pairwise |Δ QRSon-Toff Duration| (ms)", row=1, col=2)
+fig_clef_cal.update_yaxes(title_text="Embedding Cosine Distance (1 - cos_sim)", row=1, col=2)
+
+fig_clef_cal.update_layout(
+    title="CLEF Physiological Metric Space Calibration: Embedding Cosine Distance vs Clinical Differences",
+    height=480
+)
+fig_clef_cal.show()
+```
+
+### Multi-Domain Clinical Alignment Radar Profile
+
+```{python}
+#| label: clef-alignment-radar
+categories = ["Heart Rate (rs)", "Rhythm Irregularity / RR-CV (rs)", "QRS-T Interval Timing (rs)", "Spectral Entropy (rs)"]
+
+fig_radar = go.Figure()
+
+radar_models = [
+    ("1000000_s42", "#636EFA", "1000000 (Raw MSE Anchor)"),
+    ("1011011_s42", "#EF553B", "1011011 (Composite Anchor)"),
+    ("1001014_s42", "#00CC96", "1001014 (Wavelet-Enhanced)"),
+    ("1010010_s42", "#AB63FA", "1010010 (Spatial-Enhanced)")
+]
+
+for m_key, color, label in radar_models:
+    row = df_clef_summary[df_clef_summary["Model Checkpoint"] == m_key].iloc[0]
+    r_vals = [
+        max(0, row["HR Dist rs"]),
+        max(0, row["RR-CV Dist rs"]),
+        max(0, row["QRS-T Dist rs"]),
+        max(0, row["Entropy Dist rs"])
+    ]
+    r_vals.append(r_vals[0]) # close loop
+    
+    fig_radar.add_trace(go.Scatterpolar(
+        r=r_vals,
+        theta=categories + [categories[0]],
+        fill="toself",
+        name=label,
+        line=dict(color=color)
+    ))
+
+fig_radar.update_layout(
+    polar=dict(
+        radialaxis=dict(visible=True, range=[0, 0.20])
+    ),
+    title="Clinical Metric Space Alignment Across Physiological Domains (CLEF Spearman rs)",
+    height=480
+)
+fig_radar.show()
+```
+
+
 
 ## Multiplicity and claim ledger
 

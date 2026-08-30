@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "20260829T225918Z",
+  "created_at": "2026-08-29T22:59:18.691037+00:00",
+  "databases": [
+    {
+      "path": "results/clinical_biomarkers_multids/clinical_metrics.db",
+      "status": "snapshotted",
+      "bytes": 6320128,
+      "sha256": "cc1640f2f8de5f96ec60649940dd5080c168e9f8fb8fa6ec5bbbe0443f5ee3f8"
+    },
+    {
+      "path": "results/checkpoint_store/catalog.sqlite",
+      "status": "snapshotted",
+      "bytes": 107339776,
+      "sha256": "1362e6390bbd2d95ea00bcaec62f7088f8dd7e951b481f7d3b66854d9262095a"
+    },
+    {
+      "path": "results/ecgaim_ludb_semiseg_blinded/compact.sqlite",
+      "status": "snapshotted",
+      "bytes": 143360,
+      "sha256": "d11d6e6dc34a62a0bc964d722fe2f692aa55cf4d439a85c820871a2bd7862fdc"
+    },
+    {
+      "path": "results/ecgaim_rdb_semiseg_blinded/compact.sqlite",
+      "status": "snapshotted",
+      "bytes": 106496,
+      "sha256": "2fefbb5c3468b7f1862304efb835d8da43f2b2f457fce27ab52fe0882fdb1abe"
+    },
+    {
+      "path": "results/ecgaim_rdb_oracle/ecgaim_rdb_oracle.sqlite",
+      "status": "snapshotted",
+      "bytes": 149602304,
+      "sha256": "4398cac20bbcc4d811be0463c983d255fce25a9e16c02a653396db6331a9d79e"
+    },
+    {
+      "path": "refine-logs/wavelet_ssl_1110000/full/queue.sqlite",
+      "status": "snapshotted",
+      "bytes": 737280,
+      "sha256": "15ec9c1a65483a27339cfda251838fd9f18734e948132e4fb85a408624fc0615"
+    },
+    {
+      "path": "results/onelead_checkpoint_store/catalog.sqlite",
+      "status": "snapshotted",
+      "bytes": 126976,
+      "sha256": "6f2d78ec12b0683bfff8bc8b42f7a2df378e3eae09fff1b4b27acf52a124125e"
+    },
+    {
+      "path": "results/checkpoint_embeddings/compact.sqlite",
+      "status": "snapshotted",
+      "bytes": 58585088,
+      "sha256": "4b62de1de2526bc3bf56d2319d5388304f1ed2e9ab8bbed51d9189e2a75f3ded"
+    }
+  ]
+}

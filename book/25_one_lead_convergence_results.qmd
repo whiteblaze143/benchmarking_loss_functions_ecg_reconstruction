@@ -168,6 +168,71 @@ E1 as an improved base architecture.
 Until multiple seeds and external evaluation land, differences on the order of
 one or two thousandths are treated as ties rather than mechanistic proof.
 
+## Metric-Space Convergence UMAP Manifolds
+
+To visualize how training horizon (10-epoch screening versus 15-epoch extension) reorganizes model performance across the multi-dimensional validation landscape, we compute 2D and 3D UMAP embeddings over all 11 standardized validation and delineation endpoints:
+
+```{python}
+#| label: convergence-umap-manifold
+import umap
+from sklearn.preprocessing import StandardScaler
+import plotly.graph_objects as go
+
+valid_conv_metrics = [c for c in metric_cols if completed[c].notna().sum() > 20 and completed[c].std() > 1e-6]
+X_conv = completed[valid_conv_metrics].fillna(completed[valid_conv_metrics].median()).values
+X_conv_scaled = StandardScaler().fit_transform(X_conv)
+
+reducer_conv_2d = umap.UMAP(n_components=2, n_neighbors=6, min_dist=0.2, random_state=42)
+u_conv_2d = reducer_conv_2d.fit_transform(X_conv_scaled)
+completed["UMAP1"] = u_conv_2d[:, 0]
+completed["UMAP2"] = u_conv_2d[:, 1]
+
+fig_conv_umap2d = px.scatter(
+    completed, x="UMAP1", y="UMAP2",
+    color="expected_epochs", symbol="observed_lead",
+    size="miou_wave", hover_name="run_name",
+    hover_data=["val_missing_pearson", "val_recon_loss", "boundary_f1_smoke", "P_iou", "T_iou"],
+    labels={"UMAP1": "Convergence Metric UMAP 1", "UMAP2": "Convergence Metric UMAP 2",
+            "expected_epochs": "Epoch Budget", "observed_lead": "Observed Lead"},
+    title="2D Metric-Space UMAP: Horizon (10e vs 15e) and Lead Segregation Across All 33 Convergence Runs"
+)
+fig_conv_umap2d.update_layout(height=580)
+fig_conv_umap2d.show()
+
+reducer_conv_3d = umap.UMAP(n_components=3, n_neighbors=6, min_dist=0.2, random_state=42)
+u_conv_3d = reducer_conv_3d.fit_transform(X_conv_scaled)
+completed["UMAP3D_1"] = u_conv_3d[:, 0]
+completed["UMAP3D_2"] = u_conv_3d[:, 1]
+completed["UMAP3D_3"] = u_conv_3d[:, 2]
+
+fig_conv_umap3d = px.scatter_3d(
+    completed, x="UMAP3D_1", y="UMAP3D_2", z="UMAP3D_3",
+    color="expected_epochs", symbol="observed_lead",
+    size="val_missing_pearson", hover_name="run_name",
+    hover_data=["miou_wave", "boundary_f1_smoke", "val_recon_loss"],
+    labels={"UMAP3D_1": "UMAP 1", "UMAP3D_2": "UMAP 2", "UMAP3D_3": "UMAP 3"},
+    title="3D Metric-Space UMAP: Global Convergence Topography Across Extended Budgets"
+)
+fig_conv_umap3d.update_traces(marker=dict(opacity=0.85))
+fig_conv_umap3d.update_layout(height=650)
+fig_conv_umap3d.show()
+```
+
+## Cross-Endpoint Metric Collinearity in Convergence Training
+
+```{python}
+#| label: convergence-metric-correlation-heatmap
+df_conv_corr = completed[valid_conv_metrics].corr()
+
+fig_conv_corr = px.imshow(
+    df_conv_corr, text_auto=".2f", aspect="auto",
+    color_continuous_scale="RdBu_r", zmin=-1.0, zmax=1.0,
+    title="Cross-Endpoint Collinearity Matrix Across Completed Convergence Models"
+)
+fig_conv_corr.update_layout(height=650)
+fig_conv_corr.show()
+```
+
 ## Evidence ledger
 
 | Question | Current answer | Why |

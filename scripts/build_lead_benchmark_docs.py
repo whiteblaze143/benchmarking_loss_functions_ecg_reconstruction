@@ -33,17 +33,14 @@ c10['arch'] = c10.run_name.apply(clean_arch_name)
 
 # Load Convergence RDB Data
 try:
-    c_rdb = load_onelead_rdb(source_path('results/convergence_rdb_semiseg_v1/compact.sqlite'))
-    c_rdb_ev = c_rdb.get('evaluations', pd.DataFrame(columns=['model_id', 'stage', 'primary_mean_micro_f1_20ms']))
+    c_rdb_path = source_path('results/convergence_rdb_semiseg_v1/compact.sqlite')
+    c_rdb_ev = read_sql(c_rdb_path, "SELECT model_id, stage, primary_mean_micro_f1_20ms FROM evaluations WHERE stage='full'")
     if not c_rdb_ev.empty:
-        c_rdb_ev = c_rdb_ev[c_rdb_ev.stage == 'full'].copy()
-except Exception:
-    c_rdb_ev = pd.DataFrame(columns=['model_id', 'primary_mean_micro_f1_20ms'])
-
-if 'primary_mean_micro_f1_20ms' in c_rdb_ev.columns:
-    # Map RDB boundary F1 back into c10
-    c10 = c10.merge(c_rdb_ev[['model_id', 'primary_mean_micro_f1_20ms']], left_on='run_name', right_on='model_id', how='left')
-else:
+        c10 = c10.merge(c_rdb_ev[['model_id', 'primary_mean_micro_f1_20ms']], left_on='run_name', right_on='model_id', how='left')
+    else:
+        c10['primary_mean_micro_f1_20ms'] = np.nan
+except Exception as e:
+    print(f"Warning loading convergence RDB data: {e}")
     c10['primary_mean_micro_f1_20ms'] = np.nan
 
 def build_paired_convergence_table(lead):

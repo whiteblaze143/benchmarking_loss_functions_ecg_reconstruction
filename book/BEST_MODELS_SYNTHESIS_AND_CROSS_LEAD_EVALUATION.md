@@ -1,6 +1,6 @@
 # Best Models Synthesis and Cross-Lead Reconstruction Evaluation
 
-**Last Updated:** `2026-08-31T13:50:51-04:00`  
+**Last Updated:** `2026-09-01T12:59:32-04:00`  
 **Evaluation Scope:** Complete Cross-Lead (Lead I vs. Lead II), Cross-Paradigm (Raw vs. Spatial vs. Wavelet vs. SSL vs. Time-Frequency), and External Generalization Synthesis  
 **Cohorts Covered:** PTB-XL (Internal Benchmarking, $N = 21,630$) & Russian Database (RDB External Verification, $N = 122$)
 
@@ -15,12 +15,12 @@ Each row consolidates identical model architectures across both Lead I and Lead 
 | R5_morlet_mag_ueg_phase_wyatt               | 0.7383 / 0.7472          | 0.7527 / 0.7607           |         0.8457 |           0.9004 |         0.8421 |
 | A0_wave_noSSL_gated_add                     | 0.7392 / 0.7474          | 0.7551 / 0.7601           |         0.848  |           0.8987 |         0.8409 |
 | R7_morlet_mag_ueg_real                      | 0.7359 / 0.7468          | 0.7522 / 0.7601           |         0.8486 |           0.8976 |         0.84   |
+| ssl_log_magnitude_real_both_gated_add       | 0.7376 / 0.7470          | 0.7535 / 0.7600           |         0.8347 |           0.8981 |         0.8394 |
 | del_wave_ce                                 | 0.7375 / 0.7473          | 0.7538 / 0.7598           |         0.8392 |           0.8956 |         0.8363 |
 | conv_control                                | - / 0.7461               | 0.7565 / 0.7597           |         0.831  |           0.8988 |         0.8337 |
 | C1_E1_morlet_mag_morlet_phase               | 0.7396 / 0.7448          | 0.7524 / 0.7592           |         0.8263 |           0.8973 |         0.8282 |
 | ssl_log_magnitude_phase_sin_local_gated_add | 0.7379 / 0.7468          | 0.7551 / 0.7578           |         0.8384 |           0.8968 |         0.838  |
 | A0_raw                                      | 0.7315 / 0.7456          | 0.7435 / 0.7547           |         0.812  |           0.8919 |         0.8348 |
-| ssl_log_magnitude_real_both_gated_add       | 0.7376 / -               | 0.7535 / -                |         0.8156 |           0.8929 |         0.8102 |
 | tf_sc16_cy4                                 | 0.7387 / -               | 0.7510 / -                |         0.7841 |           0.8916 |         0.8074 |
 | tf_sc16_cy8                                 | 0.7366 / -               | 0.7509 / -                |         0.804  |           0.8928 |         0.7982 |
 | ssl_magnitude_phase_both_cross_attn         | 0.7387 / -               | 0.7438 / -                |         0.7523 |           0.8887 |         0.8188 |

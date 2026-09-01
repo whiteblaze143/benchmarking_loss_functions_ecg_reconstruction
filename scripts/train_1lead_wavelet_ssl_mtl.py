@@ -837,7 +837,7 @@ def parser():
     p.add_argument("--max-val-batches",type=int);p.add_argument("--delineation-every",type=int,default=2)
     p.add_argument("--init-checkpoint");add_bool(p,"init_strict",True)
     p.add_argument("--checkpoint-policy",choices=["none","best","last","all"],default="none")
-    add_bool(p,"rolling_resume");p.add_argument("--resume-min-free-gib",type=float,default=6.)
+    add_bool(p,"rolling_resume");p.add_argument("--resume-min-free-gib",type=float,default=3.)
     add_bool(p,"require_cuda")
     p.add_argument("--patch-size",type=int,default=25);p.add_argument("--width",type=int,default=768)
     p.add_argument("--encoder-depth",type=int,default=8);p.add_argument("--decoder-depth",type=int,default=4);p.add_argument("--heads",type=int,default=12)

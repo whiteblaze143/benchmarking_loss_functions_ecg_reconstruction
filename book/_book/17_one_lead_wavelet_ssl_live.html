@@ -712,8 +712,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>terminal 1110000 screen</td>
 <td>refine-logs/wavelet_ssl_1110000/full/queue.sqlite</td>
 <td>True</td>
-<td>0.70</td>
-<td>2026-08-26T12:36:32-04:00</td>
+<td>0.71</td>
+<td>2026-08-30T19:23:03-04:00</td>
 <td>244</td>
 <td>metadata:2, jobs:120, attempts:122, settings:0...</td>
 </tr>
@@ -722,10 +722,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>15-epoch convergence queue</td>
 <td>refine-logs/convergence_10e/queue.sqlite</td>
 <td>True</td>
-<td>0.00</td>
-<td>2026-08-28T15:28:58-04:00</td>
-<td>34</td>
-<td>metadata:2, jobs:22, attempts:10</td>
+<td>0.12</td>
+<td>2026-08-31T12:36:26-04:00</td>
+<td>46</td>
+<td>metadata:2, jobs:22, attempts:22</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2</th>
@@ -763,10 +763,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <th data-quarto-table-cell-role="th">stream</th>
 <th data-quarto-table-cell-role="th">jobs</th>
 <th data-quarto-table-cell-role="th">completed</th>
-<th data-quarto-table-cell-role="th">failed_transient</th>
 <th data-quarto-table-cell-role="th">failed_oom</th>
-<th data-quarto-table-cell-role="th">stuck</th>
+<th data-quarto-table-cell-role="th">failed</th>
 <th data-quarto-table-cell-role="th">pending</th>
+<th data-quarto-table-cell-role="th">running</th>
 </tr>
 </thead>
 <tbody>
@@ -774,21 +774,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <th data-quarto-table-cell-role="th">0</th>
 <td>terminal 1110000 screen</td>
 <td>120</td>
-<td>115.0</td>
-<td>2.0</td>
+<td>117.0</td>
 <td>2.0</td>
 <td>1.0</td>
+<td>0.0</td>
 <td>0.0</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">1</th>
 <td>15-epoch convergence queue</td>
 <td>22</td>
-<td>10.0</td>
+<td>15.0</td>
 <td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>12.0</td>
+<td>1.0</td>
+<td>5.0</td>
+<td>1.0</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2</th>
@@ -797,8 +797,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>0.0</td>
 <td>0.0</td>
 <td>0.0</td>
-<td>0.0</td>
 <td>120.0</td>
+<td>0.0</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">3</th>
@@ -807,8 +807,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>0.0</td>
 <td>0.0</td>
 <td>0.0</td>
-<td>0.0</td>
 <td>48.0</td>
+<td>0.0</td>
 </tr>
 </tbody>
 </table>
@@ -849,14 +849,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>completed</td>
 <td>15</td>
 <td>I</td>
-<td>5</td>
+<td>8</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">3</th>
 <td>completed</td>
 <td>15</td>
 <td>II</td>
-<td>5</td>
+<td>8</td>
 </tr>
 </tbody>
 </table>
@@ -905,7 +905,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <th data-quarto-table-cell-role="th">0</th>
 <td>terminal 1110000 screen</td>
-<td>5</td>
+<td>3</td>
 </tr>
 </tbody>
 </table>
@@ -933,6 +933,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
+<th data-quarto-table-cell-role="th">55</th>
+<td>55</td>
+<td>E1_ssl_local_1110000_s42_l0</td>
+<td>E1_ssl_local</td>
+<td>failed</td>
+<td>1</td>
+<td>2026-08-30T01:36:23Z</td>
+<td>2026-08-30T02:02:03Z</td>
+<td>child exited with status 1</td>
+<td>/home/mithunmanivannan/projects/benchmarking_l...</td>
+</tr>
+<tr class="even">
 <th data-quarto-table-cell-role="th">42</th>
 <td>42</td>
 <td>tf_deep4_1110000_s42_l0</td>
@@ -944,7 +956,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>child exited with status 1</td>
 <td>/home/mithunmanivannan/projects/benchmarking_l...</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <th data-quarto-table-cell-role="th">102</th>
 <td>102</td>
 <td>tf_deep4_1110000_s42_l1</td>
@@ -954,42 +966,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>2026-08-26T07:47:36Z</td>
 <td>2026-08-26T07:47:56Z</td>
 <td>child exited with status 1</td>
-<td>/home/mithunmanivannan/projects/benchmarking_l...</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">14</th>
-<td>14</td>
-<td>R9_ueg_mag_ueg_phase_1110000_s42_l0</td>
-<td>R9_ueg_mag_ueg_phase</td>
-<td>failed_transient</td>
-<td>1</td>
-<td>2026-08-24T07:33:40Z</td>
-<td>2026-08-24T07:52:10Z</td>
-<td>child exited with status 1</td>
-<td>/home/mithunmanivannan/projects/benchmarking_l...</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">119</th>
-<td>119</td>
-<td>mask_fixed_wave_1110000_s42_l1</td>
-<td>mask_fixed_wave</td>
-<td>failed_transient</td>
-<td>1</td>
-<td>2026-08-26T16:10:21Z</td>
-<td>2026-08-26T16:36:32Z</td>
-<td>child exited with status 1</td>
-<td>/home/mithunmanivannan/projects/benchmarking_l...</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">55</th>
-<td>55</td>
-<td>E1_ssl_local_1110000_s42_l0</td>
-<td>E1_ssl_local</td>
-<td>stuck</td>
-<td>2</td>
-<td>2026-08-25T05:49:55Z</td>
-<td>2026-08-25T06:00:35Z</td>
-<td>queue interrupted during child; rolling resume...</td>
 <td>/home/mithunmanivannan/projects/benchmarking_l...</td>
 </tr>
 </tbody>

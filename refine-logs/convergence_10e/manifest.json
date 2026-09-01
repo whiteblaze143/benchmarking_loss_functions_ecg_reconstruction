@@ -4038,6 +4038,6 @@
   ],
   "total_epochs": 330,
   "total_jobs": 22,
-  "trainer_sha256": "6a2221fd2a3487d8cbc5181150e25e41e56b3b8e7ee779a4a7b799bb8d4ac7b0",
+  "trainer_sha256": "eecc2fb31f7b805cc5d6a7d89cd87a94ae90e63b7769de74cc6239bbf8f0b6e9",
   "version": 2
 }

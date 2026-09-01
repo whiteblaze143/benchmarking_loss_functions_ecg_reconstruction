@@ -2006,8 +2006,10 @@
     }
   ],
   "counts": {
-    "completed": 10,
-    "pending": 12
+    "completed": 2,
+    "failed": 16,
+    "failed_transient": 1,
+    "pending": 3
   },
   "jobs": [
     {
@@ -2095,12 +2097,11 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "completed_at": "2026-08-28T21:19:41Z",
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_A0_raw_s42_l0",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/000_conv15e_A0_raw_s42_l0.log",
-      "returncode": 0,
-      "started_at": "2026-08-28T19:29:01Z",
-      "status": "completed"
+      "started_at": "2026-08-31T16:35:34Z",
+      "status": "failed"
     },
     {
       "attempts": 1,
@@ -2187,12 +2188,11 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "completed_at": "2026-08-28T23:10:24Z",
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_A0_raw_s42_l1",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/001_conv15e_A0_raw_s42_l1.log",
-      "returncode": 0,
-      "started_at": "2026-08-28T21:19:44Z",
-      "status": "completed"
+      "started_at": "2026-08-31T16:35:46Z",
+      "status": "failed"
     },
     {
       "attempts": 1,
@@ -2279,12 +2279,11 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "completed_at": "2026-08-29T01:20:17Z",
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_A0_wave_noSSL_gated_add_s42_l0",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/002_conv15e_A0_wave_noSSL_gated_add_s42_l0.log",
-      "returncode": 0,
-      "started_at": "2026-08-28T23:10:27Z",
-      "status": "completed"
+      "started_at": "2026-08-31T16:35:58Z",
+      "status": "failed"
     },
     {
       "attempts": 1,
@@ -2371,12 +2370,13 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "completed_at": "2026-08-29T03:30:00Z",
+      "completed_at": "2026-08-31T16:36:21Z",
+      "error": "child exited with status 1",
       "id": "conv15e_A0_wave_noSSL_gated_add_s42_l1",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/003_conv15e_A0_wave_noSSL_gated_add_s42_l1.log",
-      "returncode": 0,
-      "started_at": "2026-08-29T01:20:20Z",
-      "status": "completed"
+      "returncode": 1,
+      "started_at": "2026-08-31T16:36:11Z",
+      "status": "failed"
     },
     {
       "attempts": 1,
@@ -2463,12 +2463,11 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "completed_at": "2026-08-29T06:43:44Z",
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/004_conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0.log",
-      "returncode": 0,
       "started_at": "2026-08-29T03:30:03Z",
-      "status": "completed"
+      "status": "failed"
     },
     {
       "attempts": 1,
@@ -2555,12 +2554,11 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "completed_at": "2026-08-29T09:57:07Z",
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_C1_E1_morlet_mag_morlet_phase_s42_l1",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/005_conv15e_C1_E1_morlet_mag_morlet_phase_s42_l1.log",
-      "returncode": 0,
       "started_at": "2026-08-29T06:43:47Z",
-      "status": "completed"
+      "status": "failed"
     },
     {
       "attempts": 1,
@@ -2653,12 +2651,11 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_wyatt_025.pt"
       ],
-      "completed_at": "2026-08-29T12:51:21Z",
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/006_conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0.log",
-      "returncode": 0,
       "started_at": "2026-08-29T09:57:10Z",
-      "status": "completed"
+      "status": "failed"
     },
     {
       "attempts": 1,
@@ -2751,12 +2748,11 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_wyatt_025.pt"
       ],
-      "completed_at": "2026-08-29T15:46:24Z",
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l1",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/007_conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l1.log",
-      "returncode": 0,
       "started_at": "2026-08-29T12:51:24Z",
-      "status": "completed"
+      "status": "failed"
     },
     {
       "attempts": 1,
@@ -2849,12 +2845,11 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
-      "completed_at": "2026-08-29T18:40:37Z",
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_R7_morlet_mag_ueg_real_s42_l0",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/008_conv15e_R7_morlet_mag_ueg_real_s42_l0.log",
-      "returncode": 0,
       "started_at": "2026-08-29T15:46:27Z",
-      "status": "completed"
+      "status": "failed"
     },
     {
       "attempts": 1,
@@ -2947,15 +2942,14 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
-      "completed_at": "2026-08-29T21:34:51Z",
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_R7_morlet_mag_ueg_real_s42_l1",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/009_conv15e_R7_morlet_mag_ueg_real_s42_l1.log",
-      "returncode": 0,
       "started_at": "2026-08-29T18:40:40Z",
-      "status": "completed"
+      "status": "failed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
@@ -3039,11 +3033,14 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_conv_control_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/010_conv15e_conv_control_s42_l0.log",
+      "started_at": "2026-08-31T04:23:32Z",
+      "status": "failed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
@@ -3127,11 +3124,14 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_conv_control_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/011_conv15e_conv_control_s42_l1.log",
+      "started_at": "2026-08-30T23:27:15Z",
+      "status": "failed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
@@ -3215,11 +3215,14 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_del_wave_ce_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/012_conv15e_del_wave_ce_s42_l0.log",
+      "started_at": "2026-08-31T01:28:58Z",
+      "status": "failed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
@@ -3303,11 +3306,14 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_del_wave_ce_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/013_conv15e_del_wave_ce_s42_l1.log",
+      "started_at": "2026-08-31T06:25:35Z",
+      "status": "failed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
@@ -3391,11 +3397,14 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/014_conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0.log",
+      "started_at": "2026-08-31T09:20:18Z",
+      "status": "failed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
@@ -3479,11 +3488,14 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "error": "completed artifact invalid: completion artifacts were produced from different code or data manifests",
       "id": "conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/015_conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l1.log",
+      "started_at": "2026-08-31T12:14:11Z",
+      "status": "failed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
@@ -3567,11 +3579,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-31T19:33:10Z",
       "id": "conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/016_conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-08-31T16:36:23Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
@@ -3655,11 +3671,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-31T22:29:32Z",
       "id": "conv15e_ssl_log_magnitude_real_both_gated_add_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/017_conv15e_ssl_log_magnitude_real_both_gated_add_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-08-31T19:33:12Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
@@ -3743,8 +3763,13 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-08-31T23:55:56Z",
+      "error": "child exited with status 1",
       "id": "conv15e_tf_sc16_cy4_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/018_conv15e_tf_sc16_cy4_s42_l0.log",
+      "returncode": 1,
+      "started_at": "2026-08-31T22:29:35Z",
+      "status": "failed_transient"
     },
     {
       "attempts": 0,
@@ -4011,8 +4036,8 @@
       "status": "pending"
     }
   ],
-  "manifest_sha256": "353c95bebef6ad5319ee943b5f429873e022e834641fce2a89c3f73af58b0631",
-  "queue_status": "running",
-  "updated_at": "2026-08-29T21:34:52Z",
+  "manifest_sha256": "72b067c5fa461838f59620db9587f04a85aef1b0370f9ba104dba035da32a2f8",
+  "queue_status": "failed",
+  "updated_at": "2026-08-31T23:55:56Z",
   "version": 2
 }

@@ -1,10 +1,9 @@
 {
   "cells": 60,
   "counts": {
-    "completed": 115,
-    "failed_oom": 2,
-    "failed_transient": 2,
-    "stuck": 1
+    "completed": 117,
+    "failed": 1,
+    "failed_oom": 2
   },
   "jobs": [
     {
@@ -1872,13 +1871,12 @@
         "--view-b-custom-wavelet-asset",
         "refine-assets/repolarization_ueg_wavelets_v1.pt"
       ],
-      "completed_at": "2026-08-24T07:52:10Z",
-      "error": "child exited with status 1",
+      "completed_at": "2026-08-30T01:36:20Z",
       "id": "R9_ueg_mag_ueg_phase_1110000_s42_l0",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/014_R9_ueg_mag_ueg_phase_1110000_s42_l0.log",
-      "returncode": 1,
-      "started_at": "2026-08-24T07:33:40Z",
-      "status": "failed_transient"
+      "returncode": 0,
+      "started_at": "2026-08-30T01:01:20Z",
+      "status": "completed"
     },
     {
       "attempts": 1,
@@ -6754,7 +6752,7 @@
       "status": "completed"
     },
     {
-      "attempts": 2,
+      "attempts": 1,
       "cell": {
         "boundary_weight": 0.0,
         "delineation_hidden": 96,
@@ -6867,13 +6865,13 @@
         "legacy",
         "--no-fiducial-head"
       ],
-      "completed_at": "2026-08-25T06:00:35Z",
-      "error": "queue interrupted during child; rolling resume retained",
+      "completed_at": "2026-08-30T02:02:03Z",
+      "error": "child exited with status 1",
       "id": "E1_ssl_local_1110000_s42_l0",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/055_E1_ssl_local_1110000_s42_l0.log",
-      "returncode": -15,
-      "started_at": "2026-08-25T05:49:55Z",
-      "status": "stuck"
+      "returncode": 1,
+      "started_at": "2026-08-30T01:36:23Z",
+      "status": "failed"
     },
     {
       "attempts": 1,
@@ -14702,17 +14700,16 @@
         "all_masked",
         "--no-fiducial-head"
       ],
-      "completed_at": "2026-08-26T16:36:32Z",
-      "error": "child exited with status 1",
+      "completed_at": "2026-08-30T23:23:03Z",
       "id": "mask_fixed_wave_1110000_s42_l1",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/wavelet_ssl_1110000/full/logs/119_mask_fixed_wave_1110000_s42_l1.log",
-      "returncode": 1,
-      "started_at": "2026-08-26T16:10:21Z",
-      "status": "failed_transient"
+      "returncode": 0,
+      "started_at": "2026-08-30T22:47:43Z",
+      "status": "completed"
     }
   ],
   "manifest_sha256": "008a7d9b49a8d912cc9bdd132a93c493128f17a9dcb944d2984e40112466aec6",
   "queue_status": "failed",
-  "updated_at": "2026-08-26T16:36:32Z",
+  "updated_at": "2026-08-30T23:23:03Z",
   "version": 2
 }

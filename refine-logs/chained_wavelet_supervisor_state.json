@@ -1,6 +1,6 @@
 {
-  "error": "RuntimeError: Full sweep for 1110000 exited with code 1",
-  "phase": "failed",
-  "updated_at": "2026-08-26T16:36:32Z",
-  "version": 1
+  "version": 1,
+  "phase": "running_full_sweep_1110000",
+  "updated_at": "2026-08-29T21:00:00Z",
+  "note": "manually_reset_after_ecc_transient_failures"
 }

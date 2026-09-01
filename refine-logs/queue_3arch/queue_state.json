@@ -3434,31 +3434,43 @@
     {
       "id": "ecg_aim_f_1100111_s42",
       "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1100111 --seed 42 --run_name ecg_aim_f_1100111_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100111_s42.pt",
-      "status": "running",
+      "status": "failed",
       "attempts": 2,
       "free_bytes_at_start": 6339837952,
-      "started": "2026-08-30T09:14:47Z"
+      "started": "2026-08-30T09:14:47Z",
+      "failed_at": "2026-09-01T20:40:58Z",
+      "returncode": 137,
+      "error": "training exited with status 137"
     },
     {
       "id": "ecg_aim_f_1100112_s42",
       "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1100112 --seed 42 --run_name ecg_aim_f_1100112_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100112_s42.pt",
-      "status": "pending",
-      "attempts": 1,
-      "free_bytes_at_start": 13372026880
+      "status": "failed",
+      "attempts": 2,
+      "free_bytes_at_start": 9416331264,
+      "started": "2026-09-01T20:40:58Z",
+      "failed_at": "2026-09-01T21:02:41Z",
+      "returncode": 137,
+      "error": "training exited with status 137"
     },
     {
       "id": "ecg_aim_f_1100113_s42",
       "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1100113 --seed 42 --run_name ecg_aim_f_1100113_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100113_s42.pt",
-      "status": "pending",
-      "attempts": 1,
-      "free_bytes_at_start": 13376704512
+      "status": "failed",
+      "attempts": 2,
+      "free_bytes_at_start": 9418899456,
+      "started": "2026-09-01T21:02:41Z",
+      "failed_at": "2026-09-01T21:13:22Z",
+      "returncode": 137,
+      "error": "training exited with status 137"
     },
     {
       "id": "ecg_aim_f_1100114_s42",
       "cmd": "~/.venv/bin/python3 scripts/train_factorial_multimodel.py --architecture ecg_aim --batch_size 4 --num_workers 0 --factorial_mask 1100114 --seed 42 --run_name ecg_aim_f_1100114_s42 --checkpoint_path checkpoints/factorial_ecg_aim_1100114_s42.pt",
-      "status": "pending",
-      "attempts": 1,
-      "free_bytes_at_start": 13376282624
+      "status": "running",
+      "attempts": 2,
+      "free_bytes_at_start": 9418158080,
+      "started": "2026-09-01T21:13:22Z"
     },
     {
       "id": "ecg_aim_f_1101010_s42",

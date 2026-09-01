@@ -70,8 +70,35 @@ def connect_results(path: Path) -> sqlite3.Connection:
             started_at TEXT, completed_at TEXT,
             primary_mean_micro_f1_20ms REAL,
             primary_signal_pearson_p05 REAL,
+            miou_wave REAL,
+            p_iou REAL,
+            qrs_iou REAL,
+            t_iou REAL,
+            p_dice REAL,
+            qrs_dice REAL,
+            t_dice REAL,
             details_json TEXT,
             PRIMARY KEY (model_id, stage)
+        );
+        CREATE TABLE IF NOT EXISTS boundary_summaries(
+            model_id TEXT, stage TEXT NOT NULL, lead_group TEXT NOT NULL,
+            boundary TEXT NOT NULL, reference_events INTEGER, predicted_events INTEGER,
+            tp_20ms INTEGER, sensitivity_20ms REAL, ppv_20ms REAL,
+            micro_f1_20ms REAL, macro_f1_20ms REAL, matched_150ms INTEGER,
+            bias_ms REAL, mae_ms REAL, p95_abs_ms REAL,
+            PRIMARY KEY (model_id, stage, lead_group, boundary)
+        );
+        CREATE TABLE IF NOT EXISTS region_summaries(
+            model_id TEXT, stage TEXT NOT NULL, lead_group TEXT NOT NULL,
+            wave TEXT NOT NULL, tp_samples INTEGER, fn_samples INTEGER,
+            fp_samples INTEGER, tn_samples INTEGER, sensitivity REAL,
+            specificity REAL, ppv REAL, dice REAL, iou REAL,
+            PRIMARY KEY (model_id, stage, lead_group, wave)
+        );
+        CREATE TABLE IF NOT EXISTS signal_summaries(
+            model_id TEXT, stage TEXT NOT NULL, lead_group TEXT NOT NULL,
+            record_pearson_mean REAL, record_pearson_p05 REAL,
+            PRIMARY KEY (model_id, stage, lead_group)
         );
     """)
     return con
@@ -248,12 +275,57 @@ def run_model(connection: sqlite3.Connection, identity: dict[str, Any], stage: s
         f1_20ms = headline.get("primary_mean_micro_f1_20ms") or 0.0
         pearson_p05 = headline.get("primary_signal_pearson_p05")
         
+        p_iou = next((r["iou"] for r in region_rows if r["lead_group"] == "all_missing" and r["wave"] == "P"), None)
+        qrs_iou = next((r["iou"] for r in region_rows if r["lead_group"] == "all_missing" and r["wave"] == "QRS"), None)
+        t_iou = next((r["iou"] for r in region_rows if r["lead_group"] == "all_missing" and r["wave"] == "T"), None)
+        p_dice = next((r["dice"] for r in region_rows if r["lead_group"] == "all_missing" and r["wave"] == "P"), None)
+        qrs_dice = next((r["dice"] for r in region_rows if r["lead_group"] == "all_missing" and r["wave"] == "QRS"), None)
+        t_dice = next((r["dice"] for r in region_rows if r["lead_group"] == "all_missing" and r["wave"] == "T"), None)
+        
+        valid_ious = [v for v in (p_iou, qrs_iou, t_iou) if v is not None]
+        miou_wave = float(np.mean(valid_ious)) if valid_ious else None
+
         with connection:
             connection.execute(
-                "UPDATE evaluations SET status='complete', completed_at=?, primary_mean_micro_f1_20ms=?, primary_signal_pearson_p05=? WHERE model_id=? AND stage=?",
-                (utc_now(), f1_20ms, pearson_p05, identity["model_id"], stage)
+                """UPDATE evaluations SET 
+                    status='complete', completed_at=?, 
+                    primary_mean_micro_f1_20ms=?, primary_signal_pearson_p05=?,
+                    miou_wave=?, p_iou=?, qrs_iou=?, t_iou=?,
+                    p_dice=?, qrs_dice=?, t_dice=?
+                WHERE model_id=? AND stage=?""",
+                (utc_now(), f1_20ms, pearson_p05, miou_wave, p_iou, qrs_iou, t_iou, p_dice, qrs_dice, t_dice, identity["model_id"], stage)
             )
-        print(f"[{utc_now()}] DONE {identity['model_id']} RDB boundary F1@20ms = {f1_20ms:.4f}, signal p05 = {pearson_p05}", flush=True)
+            for br in boundary_rows:
+                connection.execute("""
+                    INSERT OR REPLACE INTO boundary_summaries (
+                        model_id, stage, lead_group, boundary, reference_events, predicted_events,
+                        tp_20ms, sensitivity_20ms, ppv_20ms, micro_f1_20ms, macro_f1_20ms, matched_150ms,
+                        bias_ms, mae_ms, p95_abs_ms
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    identity["model_id"], stage, br["lead_group"], br["boundary"], br["reference_events"], br["predicted_events"],
+                    br["tp_20ms"], br["sensitivity_20ms"], br["ppv_20ms"], br["micro_f1_20ms"], br["macro_f1_20ms"], br["matched_150ms"],
+                    br["bias_ms"], br["mae_ms"], br["p95_abs_ms"]
+                ))
+            for rr in region_rows:
+                connection.execute("""
+                    INSERT OR REPLACE INTO region_summaries (
+                        model_id, stage, lead_group, wave, tp_samples, fn_samples,
+                        fp_samples, tn_samples, sensitivity, specificity, ppv, dice, iou
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    identity["model_id"], stage, rr["lead_group"], rr["wave"], rr["tp_samples"], rr["fn_samples"],
+                    rr["fp_samples"], rr["tn_samples"], rr["sensitivity"], rr["specificity"], rr["ppv"], rr["dice"], rr["iou"]
+                ))
+            for sr in signal_rows:
+                connection.execute("""
+                    INSERT OR REPLACE INTO signal_summaries (
+                        model_id, stage, lead_group, record_pearson_mean, record_pearson_p05
+                    ) VALUES (?, ?, ?, ?, ?)
+                """, (
+                    identity["model_id"], stage, sr["lead_group"], sr["record_pearson_mean"], sr["record_pearson_p05"]
+                ))
+        print(f"[{utc_now()}] DONE {identity['model_id']} RDB F1={f1_20ms:.4f}, mIoU={miou_wave:.4f} (P={p_iou:.4f}, QRS={qrs_iou:.4f}, T={t_iou:.4f})", flush=True)
             
     except Exception as e:
         import traceback

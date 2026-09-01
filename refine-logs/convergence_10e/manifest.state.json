@@ -3773,7 +3773,7 @@
     {
       "attempts": 1,
       "cell": {},
-      "child_pid": 3204014,
+      "child_pid": 3298919,
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3858,7 +3858,7 @@
       ],
       "id": "conv15e_tf_sc16_cy4_s42_l1",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/019_conv15e_tf_sc16_cy4_s42_l1.log",
-      "started_at": "2026-09-01T18:13:02Z",
+      "started_at": "2026-09-01T21:13:44Z",
       "status": "running"
     },
     {
@@ -4040,6 +4040,6 @@
   ],
   "manifest_sha256": "72b067c5fa461838f59620db9587f04a85aef1b0370f9ba104dba035da32a2f8",
   "queue_status": "running",
-  "updated_at": "2026-09-01T18:13:02Z",
+  "updated_at": "2026-09-01T21:13:44Z",
   "version": 2
 }

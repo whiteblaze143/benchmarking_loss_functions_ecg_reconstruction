@@ -2006,10 +2006,8 @@
     }
   ],
   "counts": {
-    "completed": 3,
-    "failed": 16,
-    "pending": 2,
-    "running": 1
+    "completed": 6,
+    "failed": 16
   },
   "jobs": [
     {
@@ -3771,9 +3769,8 @@
       "status": "completed"
     },
     {
-      "attempts": 1,
+      "attempts": 0,
       "cell": {},
-      "child_pid": 3298919,
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
         "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/scripts/train_1lead_wavelet_ssl_mtl.py",
@@ -3856,13 +3853,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-09-01T21:35:34Z",
       "id": "conv15e_tf_sc16_cy4_s42_l1",
       "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/019_conv15e_tf_sc16_cy4_s42_l1.log",
+      "returncode": 0,
       "started_at": "2026-09-01T21:13:44Z",
-      "status": "running"
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
@@ -3946,11 +3945,15 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-09-02T00:16:36Z",
       "id": "conv15e_tf_sc16_cy8_s42_l0",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/020_conv15e_tf_sc16_cy8_s42_l0.log",
+      "returncode": 0,
+      "started_at": "2026-09-01T21:35:56Z",
+      "status": "completed"
     },
     {
-      "attempts": 0,
+      "attempts": 1,
       "cell": {},
       "command": [
         "/home/mithunmanivannan/.venv/bin/python3",
@@ -4034,12 +4037,16 @@
         "legacy",
         "--no-fiducial-head"
       ],
+      "completed_at": "2026-09-02T19:32:53Z",
       "id": "conv15e_tf_sc16_cy8_s42_l1",
-      "status": "pending"
+      "log_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/convergence_10e/logs/021_conv15e_tf_sc16_cy8_s42_l1.log",
+      "returncode": 0,
+      "started_at": "2026-09-02T19:22:03Z",
+      "status": "completed"
     }
   ],
   "manifest_sha256": "72b067c5fa461838f59620db9587f04a85aef1b0370f9ba104dba035da32a2f8",
-  "queue_status": "running",
-  "updated_at": "2026-09-01T21:13:44Z",
+  "queue_status": "failed",
+  "updated_at": "2026-09-02T19:32:54Z",
   "version": 2
 }

@@ -1,0 +1,16 @@
+{
+  "cell": "D5_permuted_theta_mul_l1",
+  "run_name": "D5_permuted_theta_mul_l1_s42_l0",
+  "best_epoch": 8,
+  "best_val_missing_pearson": 0.7129566945878775,
+  "epochs_completed": 10,
+  "completed_at": "2026-09-02T23:43:35.032628+00:00",
+  "val_missing_pearson": 0.7117885764119989,
+  "val_missing_pearson_p05": 0.35133310556411745,
+  "val_chest_pearson": 0.7168739994640573,
+  "val_precordial_transition_pearson": 0.5844893170001461,
+  "val_l1_recon": 0.08839383293020031,
+  "val_mse_recon": 0.039978374818794724,
+  "epoch": 10,
+  "train_recon_loss": 0.08047332572355612
+}

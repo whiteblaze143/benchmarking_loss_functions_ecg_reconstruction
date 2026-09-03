@@ -1,0 +1,16 @@
+{
+  "cell": "D7_learned12_add_l1",
+  "run_name": "D7_learned12_add_l1_s42_l0",
+  "best_epoch": 9,
+  "best_val_missing_pearson": 0.7084495303755608,
+  "epochs_completed": 10,
+  "completed_at": "2026-09-03T02:03:19.212054+00:00",
+  "val_missing_pearson": 0.7037343511590841,
+  "val_missing_pearson_p05": 0.35523206293582915,
+  "val_chest_pearson": 0.7089275475348245,
+  "val_precordial_transition_pearson": 0.5736588003221376,
+  "val_l1_recon": 0.08936110685485195,
+  "val_mse_recon": 0.04069099923065918,
+  "epoch": 10,
+  "train_recon_loss": 0.08096449937937057
+}

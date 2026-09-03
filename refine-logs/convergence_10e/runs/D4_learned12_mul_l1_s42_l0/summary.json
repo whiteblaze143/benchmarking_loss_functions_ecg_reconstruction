@@ -1,0 +1,16 @@
+{
+  "cell": "D4_learned12_mul_l1",
+  "run_name": "D4_learned12_mul_l1_s42_l0",
+  "best_epoch": 10,
+  "best_val_missing_pearson": 0.7071373025962228,
+  "epochs_completed": 10,
+  "completed_at": "2026-09-03T00:20:11.844967+00:00",
+  "val_missing_pearson": 0.7071373025962228,
+  "val_missing_pearson_p05": 0.3562596797943115,
+  "val_chest_pearson": 0.7125689459979991,
+  "val_precordial_transition_pearson": 0.5808496773865823,
+  "val_l1_recon": 0.08876561350946409,
+  "val_mse_recon": 0.040310855641742666,
+  "epoch": 10,
+  "train_recon_loss": 0.08099238910461104
+}

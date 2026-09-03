@@ -1,0 +1,155 @@
+project_name: 3DRECONQT_REFERENCE
+fidelity_status: architecture_reference
+scientific_purpose: >
+  Determine whether the physical-theta effect that was almost null in our D-series
+  remains null when the spatial-conditioning mechanism is embedded in an architecture
+  substantially closer to 3DRECON-QT.
+
+registry:
+  input_duration_sec:
+    value: 10.0
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026)"
+  input_sampling_rate_hz:
+    value: 500
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026)"
+  bandpass_filter:
+    value: "0.5-40 Hz, 5th-order zero-phase Butterworth"
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026)"
+  paper_development_source:
+    value: "V3 - V2 (subcutaneous ICM vector)"
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026)"
+  encoder_architecture:
+    value: "SE-ResNeXt-1D"
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026)"
+  feature_extraction_split:
+    value: "Conv1D extraction split into Z1 and Z2"
+    status: FIGURE_CONFIRMED
+    source: "Ansari et al. (2026) Figure 2"
+  z2_temporal_attention:
+    value: "Multihead attention on Z2 temporal tokens"
+    status: FIGURE_CONFIRMED
+    source: "Ansari et al. (2026) Figure 2"
+  z2_layernorm:
+    value: "LayerNorm after temporal attention"
+    status: FIGURE_CONFIRMED
+    source: "Ansari et al. (2026) Figure 2"
+  z1_z2_concatenation:
+    value: "Concatenate Z1 and transformed Z2 into shared latent Z"
+    status: FIGURE_CONFIRMED
+    source: "Ansari et al. (2026) Figure 2"
+  angular_encoding_formula:
+    value: "[theta, sum, sub, sin, cos] (12-D)"
+    status: PAPER_CONFIRMED
+    source: "Chen et al. (2021) citation in Ansari et al."
+  exact_theta_encoder_code:
+    value: "torch.stack(out_all, dim=-1).view(b, lead_num, -1)"
+    status: PUBLIC_CODE_EXACT
+    source: "WhatAShot/Electrocardio-Panorama codes/network/utils/theta_encoder.py"
+    sha256: "ef03ca7e099a993e72199003f32665f4bb3e04104db39fc5eedd62bcd5ff0813"
+  standard_lead_coordinate_table:
+    value: "12-lead (theta, phi) coordinates from ptbv2.py"
+    status: PUBLIC_CODE_EXACT
+    source: "WhatAShot/Electrocardio-Panorama codes/dataset/ptbv2.py"
+  query_mlp_activation:
+    value: "Linear -> Mish -> Linear"
+    status: FIGURE_CONFIRMED
+    source: "Ansari et al. (2026) Figure 2"
+  query_latent_fusion:
+    value: "Multiplicative channelwise gating (Z_l = Z * query_l)"
+    status: PUBLIC_CODE_EXACT
+    source: "WhatAShot/Electrocardio-Panorama model_nefnet.py + Ansari Fig 2"
+  ecg_decoder_family:
+    value: "Upsample + DoubleConv1D blocks"
+    status: PUBLIC_CODE_ADAPTED
+    source: "WhatAShot/Electrocardio-Panorama DoubleConv + 5000-sample interpolation"
+  waveform_reconstruction_loss:
+    value: "L1 waveform reconstruction loss"
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026) Figure 2 & supplement"
+  training_query_formulation:
+    value: "Single-query vs simultaneous-12 training: UNCONFIRMED. Public Panorama code samples 1 target query per sample; 3DRECON-QT Fig 2 shows single target query regression."
+    status: UNCONFIRMED
+    source: "WhatAShot/Electrocardio-Panorama dataset random.sample(rest_index, 1) vs Ansari et al. (2026) aggregate metric reporting"
+  qt_branch_backbone:
+    value: "Transformer decoder / temporal self-attention"
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026)"
+  qt_branch_loss:
+    value: "L2 QT regression loss"
+    status: FIGURE_CONFIRMED
+    source: "Ansari et al. (2026) Figure 2"
+  optimizer:
+    value: "SGD"
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026) supplement"
+  learning_rate:
+    value: 0.001
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026) supplement"
+  weight_decay:
+    value: 0.00001
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026) supplement"
+  lr_scheduler:
+    value: "CosineAnnealingWarmRestarts"
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026) supplement"
+  effective_batch_size:
+    value: 128
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026) supplement"
+  max_epochs:
+    value: 100
+    status: PAPER_CONFIRMED
+    source: "Ansari et al. (2026) supplement"
+
+assumptions:
+  seresnext_depth:
+    value: "layers=(3, 4, 6, 3)"
+    status: ASSUMPTION
+    rationale: "Canonical ResNeXt-50 depth, unstated in paper"
+  seresnext_cardinality:
+    value: "groups=32, width_per_group=4 (32x4d)"
+    status: ASSUMPTION
+    rationale: "Canonical ResNeXt cardinality, unstated in paper"
+  seresnext_se_reduction:
+    value: 16
+    status: ASSUMPTION
+    rationale: "Canonical SE reduction ratio"
+  latent_channels:
+    value: 256
+    status: ASSUMPTION
+    rationale: "Matches Panorama NefNet latent channel dimension (128 Z1 + 128 Z2)"
+  theta_mlp_hidden:
+    value: 128
+    status: ASSUMPTION
+    rationale: "Reasonable intermediate projection dimension for 12 -> 256"
+  temporal_attention_heads:
+    value: 8
+    status: ASSUMPTION
+    rationale: "Divides 128 channels cleanly (16 ch/head)"
+  qt_transformer_depth:
+    value: 4
+    status: ASSUMPTION
+    rationale: "Lightweight temporal transformer for sequence pooling"
+  sgd_momentum:
+    value: 0.9
+    status: ASSUMPTION
+    rationale: "Standard PyTorch SGD momentum"
+  scheduler_t0:
+    value: 10
+    status: ASSUMPTION
+    rationale: "First restart period in epochs"
+  scheduler_t_mult:
+    value: 1
+    status: ASSUMPTION
+    rationale: "Constant restart period"
+  early_stopping_patience:
+    value: 15
+    status: ASSUMPTION
+    rationale: "Validation missing Pearson patience"

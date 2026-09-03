@@ -1,0 +1,153 @@
+{
+  "model_family": "3dreconqt_reference",
+  "fidelity_status": "architecture_reference",
+  "cell": "RQ1Q_theta_l1",
+  "run_name": "RQ1Q_theta_l1_s42",
+  "seed": 42,
+  "source_mode": "lead_I",
+  "code_mode": "theta",
+  "target_training": "sampled_query",
+  "normalization": "strict_deployable",
+  "angle_table": [
+    [
+      1.5707963705062866,
+      1.5707963705062866
+    ],
+    [
+      2.6179938316345215,
+      1.5707963705062866
+    ],
+    [
+      2.6179938316345215,
+      -1.5707963705062866
+    ],
+    [
+      1.0471975803375244,
+      -1.5707963705062866
+    ],
+    [
+      1.0471975803375244,
+      1.5707963705062866
+    ],
+    [
+      3.1415927410125732,
+      1.5707963705062866
+    ],
+    [
+      1.5707963705062866,
+      -0.1745329201221466
+    ],
+    [
+      1.5707963705062866,
+      0.1745329201221466
+    ],
+    [
+      1.6580628156661987,
+      0.2617993950843811
+    ],
+    [
+      1.7278759479522705,
+      0.5235987901687622
+    ],
+    [
+      1.675516128540039,
+      1.0471975803375244
+    ],
+    [
+      1.675516128540039,
+      1.5707963705062866
+    ]
+  ],
+  "lead_names": [
+    "I",
+    "II",
+    "III",
+    "aVR",
+    "aVL",
+    "aVF",
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6"
+  ],
+  "theta_permutation": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "filter": {
+    "low_hz": 0.5,
+    "high_hz": 40.0,
+    "order": 5,
+    "zero_phase": true
+  },
+  "encoder": {
+    "family": "SE-ResNeXt-1D",
+    "layers": [
+      3,
+      4,
+      6,
+      3
+    ],
+    "groups": 32,
+    "width_per_group": 4,
+    "paper_confirmed_depth": false
+  },
+  "latent_channels": 256,
+  "theta_hidden": 128,
+  "optimizer": "SGD",
+  "lr": 0.001,
+  "momentum": 0.9,
+  "weight_decay": 1e-05,
+  "effective_batch_size": 128,
+  "physical_batch_size": 32,
+  "accum_steps": 4,
+  "max_epochs": 100,
+  "early_stopping_patience": 15,
+  "selection_policy": "val_missing_pearson",
+  "started_at": "2026-09-03T02:31:28.549109+00:00",
+  "eligible_targets": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "eligible_target_names": [
+    "II",
+    "III",
+    "aVR",
+    "aVL",
+    "aVF",
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6"
+  ],
+  "target_schedule_seed": 42,
+  "target_schedule_shape": [
+    100,
+    17418
+  ],
+  "len_train_dataset": 17418,
+  "len_val_dataset": 2183
+}

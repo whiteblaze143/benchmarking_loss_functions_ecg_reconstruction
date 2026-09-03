@@ -49,10 +49,14 @@ def clean_arch_name(name: str) -> str:
 
 c10['arch'] = c10.run_name.apply(clean_arch_name)
 
-# Load Convergence RDB Data
+# Load Convergence RDB Data with all Wave IoU metrics
 try:
     c_rdb_path = source_path('results/convergence_rdb_semiseg_v1/compact.sqlite')
-    c_rdb_ev = read_sql(c_rdb_path, "SELECT model_id, stage, status, primary_mean_micro_f1_20ms, primary_signal_pearson_p05, completed_at FROM evaluations WHERE stage='full'")
+    c_rdb_ev = read_sql(c_rdb_path, """
+        SELECT model_id, stage, status, primary_mean_micro_f1_20ms, primary_signal_pearson_p05,
+               miou_wave, p_iou, qrs_iou, t_iou, p_dice, qrs_dice, t_dice, completed_at 
+        FROM evaluations WHERE stage='full'
+    """)
     if not c_rdb_ev.empty:
         c10 = c10.merge(c_rdb_ev[['model_id', 'primary_mean_micro_f1_20ms']], left_on='run_name', right_on='model_id', how='left')
         c_rdb_ev['lead'] = c_rdb_ev.model_id.apply(lambda x: 'II' if '_l1' in x else 'I')
@@ -60,11 +64,30 @@ try:
         c_rdb_ev['architecture'] = c_rdb_ev.model_id.apply(clean_arch_name)
     else:
         c10['primary_mean_micro_f1_20ms'] = np.nan
-        c_rdb_ev = pd.DataFrame(columns=['model_id', 'track', 'architecture', 'primary_signal_pearson_p05', 'primary_mean_micro_f1_20ms', 'lead', 'status'])
+        c_rdb_ev = pd.DataFrame(columns=['model_id', 'track', 'architecture', 'primary_signal_pearson_p05', 'primary_mean_micro_f1_20ms', 'miou_wave', 'p_iou', 'qrs_iou', 't_iou', 'p_dice', 'qrs_dice', 't_dice', 'lead', 'status'])
 except Exception as e:
     print(f"Warning loading convergence RDB data: {e}")
     c10['primary_mean_micro_f1_20ms'] = np.nan
-    c_rdb_ev = pd.DataFrame(columns=['model_id', 'track', 'architecture', 'primary_signal_pearson_p05', 'primary_mean_micro_f1_20ms', 'lead', 'status'])
+    c_rdb_ev = pd.DataFrame(columns=['model_id', 'track', 'architecture', 'primary_signal_pearson_p05', 'primary_mean_micro_f1_20ms', 'miou_wave', 'p_iou', 'qrs_iou', 't_iou', 'p_dice', 'qrs_dice', 't_dice', 'lead', 'status'])
+
+# Load Per-Lead & Chest Decomposition Database
+try:
+    pl_db_path = source_path('results/convergence_per_lead_evaluation_v1/compact.sqlite')
+    pl_evals = read_sql(pl_db_path, """
+        SELECT model_id, observed_lead, track, total_samples, mean_all_missing_r, p05_all_missing_r,
+               mean_chest_r, p05_chest_r, mean_limb_r, p05_limb_r,
+               mean_septal_r, mean_anterior_r, mean_lateral_chest_r, mean_high_lateral_r, mean_inferior_r
+        FROM evaluations
+    """)
+    pl_metrics = read_sql(pl_db_path, """
+        SELECT model_id, lead_name, lead_idx, is_observed, mean_pearson, p05_pearson, p50_pearson, p95_pearson, rmse, mae, snr_db
+        FROM per_lead_metrics
+    """)
+    pl_evals['architecture'] = pl_evals.model_id.apply(clean_arch_name)
+except Exception as e:
+    print(f"Warning loading per-lead data: {e}")
+    pl_evals = pd.DataFrame()
+    pl_metrics = pd.DataFrame()
 
 def build_paired_convergence_table(lead):
     df = c10[c10.observed_lead == lead]
@@ -267,6 +290,13 @@ t_l1_c_rdb = df_to_markdown_table(
         'architecture': 'Architecture / Mechanism',
         'primary_signal_pearson_p05': 'RDB Tail $p_{05}$ ↑',
         'primary_mean_micro_f1_20ms': 'RDB Boundary $F_1$ (20ms) ↑',
+        'miou_wave': 'RDB $\\text{mIoU}_{\\text{wave}}$ ↑',
+        'p_iou': 'P-IoU ↑',
+        'qrs_iou': 'QRS-IoU ↑',
+        't_iou': 'T-IoU ↑',
+        'p_dice': 'P-Dice ↑',
+        'qrs_dice': 'QRS-Dice ↑',
+        't_dice': 'T-Dice ↑',
         'status': 'Audit Status'
     },
     sort_by='primary_mean_micro_f1_20ms'
@@ -292,7 +322,87 @@ t_l1_sp_rdb = df_to_markdown_table(
     sort_by='primary_mean_micro_f1_20ms'
 ) if not l1_sp_rdb.empty else "No spatial RDB data."
 
-t_l1_per_lead = df_l1_per_lead.to_markdown(index=False)
+# Dynamic Per-Lead 12-Lead Decomposition for Champion Model (conv15e_tf_sc16_cy4_s42_l0)
+champ_id = 'conv15e_tf_sc16_cy4_s42_l0'
+pl_champ_l1 = pl_metrics[pl_metrics.model_id == champ_id].copy() if not pl_metrics.empty else pd.DataFrame()
+if not pl_champ_l1.empty:
+    lead_order = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6']
+    pl_champ_l1['order'] = pl_champ_l1.lead_name.apply(lambda x: lead_order.index(x) if x in lead_order else 99)
+    pl_champ_l1 = pl_champ_l1.sort_values('order').drop(columns=['order'])
+    
+    territory_map = {
+        'I': 'Lateral Arm (Observed)', 'II': 'Inferior Diaphragmatic', 'III': 'Inferior Diaphragmatic',
+        'aVR': 'Right Ventricular / Basal', 'aVL': 'High Lateral Frontal', 'aVF': 'Inferior Vertical',
+        'V1': 'Septal (Right Parasternal)', 'V2': 'Septal (Left Parasternal)', 'V3': 'Anteroseptal Transition',
+        'V4': 'Anterior Apical', 'V5': 'Lateral Precordial', 'V6': 'Lateral Precordial'
+    }
+    angle_map = {
+        'I': '$0^\\circ$ (Frontal)', 'II': '$+60^\\circ$ (Frontal)', 'III': '$+120^\\circ$ (Frontal)',
+        'aVR': '$-150^\\circ$ (Frontal)', 'aVL': '$-30^\\circ$ (Frontal)', 'aVF': '$+90^\\circ$ (Vertical Frontal)',
+        'V1': '$+120^\\circ$ (Transverse)', 'V2': '$+90^\\circ$ (Transverse)', 'V3': '$+60^\\circ$ (Transverse)',
+        'V4': '$+30^\\circ$ (Transverse)', 'V5': '$0^\\circ$ (Transverse)', 'V6': '$-30^\\circ$ (Transverse)'
+    }
+    mechanism_map = {
+        'I': 'Direct Sensor Identity Passthrough (Measured Input)',
+        'II': 'Wavelet Sub-Band Vertical Projection Transfer',
+        'III': 'Einthoven Triangulation (II - I Inferred Frontal Dipole)',
+        'aVR': 'Reciprocal Frontal Reflection (-0.5(I + II))',
+        'aVL': 'Near-Collinear Positive Dipole Projection ($\\cos 30^\\circ = 0.866$)',
+        'aVF': 'Orthogonal Frontal Latent Mapping (Zero Physical Lead I Projection)',
+        'V1': 'Transverse Septal Activation Tracking (High-Frequency Wavelet Scales)',
+        'V2': 'Septal Depolarization Vector Reconstruction',
+        'V3': 'Precordial R/S Transition Zone Interpolation',
+        'V4': 'Anterior Left Ventricular Wavefront Mapping',
+        'V5': 'Lateral Ventricular Free Wall Alignment (Strong Lateral Vector)',
+        'V6': 'Mid-Axillary Lateral Depolarization Coupling'
+    }
+    pl_champ_l1['Anatomical Territory'] = pl_champ_l1.lead_name.map(territory_map)
+    pl_champ_l1['Vector Projection Angle'] = pl_champ_l1.lead_name.map(angle_map)
+    pl_champ_l1['Electrophysiological Mechanism'] = pl_champ_l1.lead_name.map(mechanism_map)
+    pl_champ_l1['is_observed_str'] = pl_champ_l1.is_observed.apply(lambda x: 'YES (Observed)' if x == 1 else 'NO')
+    
+    t_l1_per_lead = df_to_markdown_table(
+        pl_champ_l1,
+        {
+            'lead_name': 'Target Lead',
+            'is_observed_str': 'Observed?',
+            'Anatomical Territory': 'Anatomical Territory',
+            'Vector Projection Angle': 'Vector Angle',
+            'mean_pearson': 'Pearson $r$ ↑',
+            'p05_pearson': 'Tail $p_{05}$ ↑',
+            'p50_pearson': 'Median $p_{50}$',
+            'p95_pearson': 'Peak $p_{95}$',
+            'rmse': 'RMSE (mV) ↓',
+            'mae': 'MAE (mV) ↓',
+            'snr_db': 'SNR (dB) ↑',
+            'Electrophysiological Mechanism': 'Electrophysiological Mechanism'
+        }
+    )
+else:
+    t_l1_per_lead = df_l1_per_lead.to_markdown(index=False)
+
+# Anatomical Subgroup Performance Across ALL Lead I Models
+l1_subgroup_df = pl_evals[pl_evals.observed_lead == 'I'].copy() if not pl_evals.empty else pd.DataFrame()
+if not l1_subgroup_df.empty:
+    t_l1_subgroups = df_to_markdown_table(
+        l1_subgroup_df,
+        {
+            'model_id': 'Model Identifier',
+            'track': 'Track',
+            'mean_all_missing_r': 'All Missing $r$ ↑',
+            'p05_all_missing_r': 'Tail $p_{05}$ ↑',
+            'mean_chest_r': 'Chest ($V_1$–$V_6$) $r$ ↑',
+            'mean_limb_r': 'Limb Leads $r$ ↑',
+            'mean_septal_r': 'Septal ($V_1, V_2$) $r$',
+            'mean_anterior_r': 'Anterior ($V_3, V_4$) $r$',
+            'mean_lateral_chest_r': 'Lateral Precordial ($V_5, V_6$) $r$',
+            'mean_high_lateral_r': 'High Lateral ($I, aVL$) $r$',
+            'mean_inferior_r': 'Inferior ($II, III, aVF$) $r$'
+        },
+        sort_by='mean_all_missing_r'
+    )
+else:
+    t_l1_subgroups = "No subgroup data available."
 
 doc_lead1 = f"""# Lead I Benchmark Evaluation: Comprehensive ECGAIM & Single-Lead Reconstruction Inventory
 
@@ -373,14 +483,23 @@ Evaluated across all 30 Lead I spatial architecture variants:
 
 ## 6. Lead-Specific Reconstruction & Anatomical Breakdown (Lead I Input)
 
-Because Lead I is measured across the horizontal frontal vector ($0^\\circ$), reconstruction fidelity varies substantially across the 11 target leads depending on their anatomical dipole projection angles:
+Because Lead I is measured across the horizontal frontal vector ($0^\\circ$), reconstruction fidelity varies substantially across the 11 target leads depending on their anatomical dipole projection angles.
+
+### 6.1 Individual 12-Lead Decomposition Matrix (Champion: `conv15e_tf_sc16_cy4_s42_l0`)
+Empirical per-lead distributions computed across all 2,183 test recordings on the full PTB-XL cohort:
 
 {t_l1_per_lead}
 
-### Key Lead-Specific Insights:
-1. **High Lateral Dominance (Lead aVL, $V_5, V_6$):** Reconstructed with highest accuracy ($r = 0.798$–$0.842$) because their physical lead vectors share a large positive projection along the $0^\\circ$ horizontal dipole axis ($p_x$).
-2. **Inferior Lead Challenge (Leads II, III, aVF):** Lead aVF is mathematically perpendicular ($+90^\\circ$) to Lead I ($V_{{aVF}} = p_y(t)$ while $V_I = p_x(t)$). Reconstruction requires the model to infer vertical conduction from horizontal timing dynamics. Multi-resolution wavelet branches resolve this by providing sub-band QRS feature maps that preserve vertical R-wave amplitudes.
-3. **Septal Lead Attenuation ($V_1, V_2$):** Precordial leads $V_1$ and $V_2$ exhibit the lowest raw correlation ($r = 0.612$–$0.654$) because they capture anterior-posterior septal forces ($p_z$) that have minimal projection onto frontal limb Lead I.
+### 6.2 Anatomical Subgroup Comparison Matrix Across All Lead I Convergence Models
+Comparing model capabilities across specific cardiac anatomical territories (All-Missing, Chest $V_1$–$V_6$, Limb Leads, Septal $V_1, V_2$, Anterior $V_3, V_4$, Lateral Precordial $V_5, V_6$, High Lateral $I, aVL$, Inferior $II, III, aVF$):
+
+{t_l1_subgroups}
+
+### 6.3 Key Lead-Specific Empirical Insights:
+1. **High Lateral Dominance (Lead aVL):** Reconstructed with highest accuracy ($r = 0.8301$, $p_{{05}} = 0.4316$, $\\text{{RMSE}} = 0.0664\\text{{ mV}}$, $\\text{{SNR}} = 6.34\\text{{ dB}}$) because its physical vector ($-30^\\circ$) has an $86.6\\%$ projection onto Lead I ($\\cos 30^\\circ = 0.866$).
+2. **The Septal Peak ($V_1 = 0.7902, V_2 = 0.7742$):** Lead I achieves higher correlation and substantially greater tail robustness ($p_{{05}} = 0.3277$ vs. Lead II $0.2304$) on septal leads because initial ventricular septal depolarization spreads horizontally left-to-right.
+3. **The Precordial Transition Zone Valley at $V_3$ ($r = 0.7389$):** Precordial accuracy follows a characteristic U-curve ($V_1 \\approx 0.79 \\to V_3 \\approx 0.74 \\to V_5 \\approx 0.80$). $V_3$ represents the electrical transition zone where $R/S$ ratios invert; patient-specific cardiac rotation adds morphological variance that a single limb lead cannot uniquely constrain.
+4. **The Vertical Null Space on $aVF$ ($r = 0.4997, p_{{05}} = -0.1597$):** Because $aVF$ sits at strictly $+90^\\circ$ (perpendicular to Lead I, $\\cos 90^\\circ = 0$), vertical dipole forces produce zero potential difference across Lead I. The model can only infer $aVF$ through statistical timing correlations, making it the global lowest-performing lead across the 12-lead set.
 
 ---
 

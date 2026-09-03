@@ -1,6 +1,6 @@
 # Synthesis of Best Models & Cross-Lead (Lead I vs. Lead II) Comparative Evaluation
 
-**Last Updated:** `2026-09-01 20:27:01 UTC`  
+**Last Updated:** `2026-09-02 18:19:47 UTC`  
 **Benchmarked Paradigms:** Wavelet Multi-Resolution, Self-Supervised Learning (SSL), Delineation Multi-Task Learning, Spatial Geometry Conditioning, and Long-Horizon Convergence Tracking.  
 **Validation Benchmark:** 2,163 PTB-XL Test Records + 122 Blinded Russian Database (RDB) Records (360 Diagnostic Beats).
 

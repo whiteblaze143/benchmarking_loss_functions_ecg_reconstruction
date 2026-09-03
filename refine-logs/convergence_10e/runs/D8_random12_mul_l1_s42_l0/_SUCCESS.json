@@ -1,0 +1,16 @@
+{
+  "cell": "D8_random12_mul_l1",
+  "run_name": "D8_random12_mul_l1_s42_l0",
+  "best_epoch": 10,
+  "best_val_missing_pearson": 0.7138424733695474,
+  "epochs_completed": 10,
+  "completed_at": "2026-09-03T02:21:54.055030+00:00",
+  "val_missing_pearson": 0.7138424733695474,
+  "val_missing_pearson_p05": 0.3638964295387268,
+  "val_chest_pearson": 0.7180824940452507,
+  "val_precordial_transition_pearson": 0.586995262600374,
+  "val_l1_recon": 0.08754176639133072,
+  "val_mse_recon": 0.03967521202281643,
+  "epoch": 10,
+  "train_recon_loss": 0.08020462826979134
+}

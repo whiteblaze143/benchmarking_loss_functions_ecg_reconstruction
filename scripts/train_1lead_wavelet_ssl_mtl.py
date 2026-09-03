@@ -177,10 +177,16 @@ def model_checkpoint_payload(model,a,protocol_sha,best_metrics=None):
         "training_config_sha256":protocol_sha,"best_metrics":best_metrics or {},
         "provenance":{
             "run_name":a.run_name,"factorial_mask":a.factorial_mask,"seed":a.seed,
-            "preprocessing":{"observed_leads":list(a.observed_leads),"target_len":5000,"sample_rate_hz":500},
+            "preprocessing":{"observed_leads":list(a.observed_leads),"target_len":5000,"sample_rate_hz":500,"zscore_norm":bool(getattr(a,"zscore_norm",False))},
             "inputs":inputs,
         },
     }
+
+def apply_zscore(y, eps=1e-6):
+    """Record-wide z-score normalization across all 12 leads and 5000 samples."""
+    m = y.mean(dim=(-2, -1), keepdim=True)
+    s = y.std(dim=(-2, -1), keepdim=True).clamp_min(eps)
+    return (y - m) / s, m, s
 
 def waveform_from_batch(batch):
     if isinstance(batch,torch.Tensor): return batch
@@ -419,6 +425,8 @@ def validate_recon(model,loader,criterion,a,device):
     for i,b in enumerate(loader):
         if a.max_val_batches is not None and i>=a.max_val_batches:break
         y=waveform_from_batch(b)[...,:5000].to(device)
+        if getattr(a, "zscore_norm", False):
+            y, _, _ = apply_zscore(y)
         with torch.amp.autocast("cuda",enabled=device.type=="cuda",dtype=torch.bfloat16):
             r=forward_model(
                 model,y,a.observed_leads,compute_delineation=False,compute_ssl=False
@@ -439,6 +447,8 @@ def validate_del(model,loader,a,device):
     for i,b in enumerate(loader):
         if a.max_val_batches is not None and i>=a.max_val_batches:break
         y=b["waveform"].to(device); s=b["segmentation"].to(device); v=b["seg_valid"].to(device)
+        if getattr(a, "zscore_norm", False):
+            y, _, _ = apply_zscore(y)
         with torch.amp.autocast("cuda",enabled=device.type=="cuda",dtype=torch.bfloat16):
             r=forward_model(
                 model,y,a.observed_leads,compute_delineation=True,compute_ssl=False
@@ -579,15 +589,21 @@ def train(a):
         if a.train_head_only:
             for i,db in enumerate(tqdm(dt,desc=f"head {ep}")):
                 if a.max_train_batches is not None and i>=a.max_train_batches:break
-                terms.append(update(db["waveform"].to(device),db))
+                wy=db["waveform"].to(device)
+                if getattr(a, "zscore_norm", False): wy, _, _ = apply_zscore(wy)
+                terms.append(update(wy,db))
         else:
             for i,b in enumerate(tqdm(tr,desc=f"epoch {ep}")):
                 if a.max_train_batches is not None and i>=a.max_train_batches:break
-                y=waveform_from_batch(b)[...,:5000].to(device);terms.append(update(y,None))
+                y=waveform_from_batch(b)[...,:5000].to(device)
+                if getattr(a, "zscore_norm", False): y, _, _ = apply_zscore(y)
+                terms.append(update(y,None))
                 if di is not None and (i+1)%max(a.delineation_every,1)==0:
                     try:db=next(di)
                     except StopIteration:di=iter(dt);db=next(di)
-                    terms.append(update(db["waveform"].to(device),db))
+                    wy=db["waveform"].to(device)
+                    if getattr(a, "zscore_norm", False): wy, _, _ = apply_zscore(wy)
+                    terms.append(update(wy,db))
         if not terms:raise RuntimeError("training epoch produced no optimizer steps")
         m={"epoch":ep}
         if terms:
@@ -878,6 +894,7 @@ def parser():
     p.add_argument("--lr",type=float,default=1e-4);p.add_argument("--max-lr",type=float,default=5e-4);p.add_argument("--pct-start",type=float,default=.2)
     p.add_argument("--weight-decay",type=float,default=1e-4);p.add_argument("--grad-clip",type=float,default=1.)
     p.add_argument("--reconstruction-weight",type=float,default=1.);p.add_argument("--train-head-only",action="store_true")
+    add_bool(p,"zscore_norm")
     modes=p.add_mutually_exclusive_group()
     modes.add_argument("--audit-delineation-dir");modes.add_argument("--emit-sweep-manifest")
     modes.add_argument("--run-sweep-manifest");modes.add_argument("--summarize-sweep")

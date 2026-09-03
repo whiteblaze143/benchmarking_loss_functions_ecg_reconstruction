@@ -1,0 +1,16 @@
+{
+  "cell": "D6_theta_add_l1",
+  "run_name": "D6_theta_add_l1_s42_l0",
+  "best_epoch": 8,
+  "best_val_missing_pearson": 0.7135487673627114,
+  "epochs_completed": 10,
+  "completed_at": "2026-09-03T01:44:49.752276+00:00",
+  "val_missing_pearson": 0.7130164162512226,
+  "val_missing_pearson_p05": 0.3557524800300598,
+  "val_chest_pearson": 0.7173689343788214,
+  "val_precordial_transition_pearson": 0.5836402619896653,
+  "val_l1_recon": 0.0879402257181257,
+  "val_mse_recon": 0.039789527955845144,
+  "epoch": 10,
+  "train_recon_loss": 0.08050615517047205
+}

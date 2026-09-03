@@ -1,0 +1,52 @@
+{
+  "total": 30,
+  "completed_ptbxl": 30,
+  "completed_rdb": 30,
+  "pending": 0,
+  "current_model": "spatial_1lead_t000_exact_theta_1000000_s42_l0",
+  "history": [
+    {
+      "model_id": "spatial_1lead_t000_exact_theta_1110000_s42_l0",
+      "benchmark": "ptbxl",
+      "duration_s": 1294.0843904018402,
+      "status": "success",
+      "at": "2026-09-03T09:47:00.531522"
+    },
+    {
+      "model_id": "spatial_1lead_t000_exact_theta_1010010_s42_l0",
+      "benchmark": "ptbxl",
+      "duration_s": 1248.998381137848,
+      "status": "success",
+      "at": "2026-09-03T10:07:54.950574"
+    },
+    {
+      "model_id": "spatial_1lead_t111_exact_theta_1010010_s42_l0",
+      "benchmark": "ptbxl",
+      "duration_s": 1706.631355524063,
+      "status": "success",
+      "at": "2026-09-03T10:36:27.615776"
+    },
+    {
+      "model_id": "spatial_1lead_t111_exact_theta_1110000_s42_l0",
+      "benchmark": "ptbxl",
+      "duration_s": 1727.7079019546509,
+      "status": "success",
+      "at": "2026-09-03T11:05:21.634902"
+    },
+    {
+      "model_id": "spatial_1lead_c1_panorama_hybrid_1000000_s42_l0",
+      "benchmark": "ptbxl",
+      "duration_s": 1298.4096837043762,
+      "status": "success",
+      "at": "2026-09-03T11:27:05.852497"
+    },
+    {
+      "model_id": "spatial_1lead_t000_exact_theta_1000000_s42_l0",
+      "benchmark": "ptbxl",
+      "duration_s": 1314.0791606903076,
+      "status": "success",
+      "at": "2026-09-03T11:49:01.951555"
+    }
+  ],
+  "updated_at": "2026-09-03T11:49:01.982058"
+}

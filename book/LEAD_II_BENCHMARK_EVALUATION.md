@@ -1,6 +1,6 @@
 # Lead II Benchmark Evaluation: Comprehensive ECGAIM & Single-Lead Reconstruction Inventory
 
-**Last Updated:** `2026-09-01 20:27:01 UTC`  
+**Last Updated:** `2026-09-02 18:19:47 UTC`  
 **Input Contract:** Single Observed Lead II ($+60^\circ$ Frontal Vector $\mathbf{c}_{II} = [0.5, -0.866, 0.0]^T$)  
 **Target Output:** 11 Reconstructed Missing Leads (I, III, aVR, aVL, aVF, $V_1$–$V_6$)  
 **Validation Cohorts:** PTB-XL (Internal Test Set, 2,163 recordings) & Russian Database (RDB External Cohort, 122 recordings with blinded clinical fiducial boundaries)
@@ -47,8 +47,8 @@ Each row consolidates identical model architectures, contrasting **10-epoch scre
 | conv_control                                | 0.7565 / 0.7597           | 0.4202 / 0.4228             | 0.7761 / 0.7649          | 0.8418 / 0.8545         | 0.8203 / 0.8310     | 0.8953 / 0.8988       | 0.8098 / 0.8337     | 0.9136 / 0.9212           | 0.7169 / 0.7279                  |
 | C1_E1_morlet_mag_morlet_phase               | 0.7524 / 0.7592           | 0.4098 / 0.4249             | 0.7846 / 0.7700          | 0.8162 / 0.8506         | 0.7958 / 0.8263     | 0.8938 / 0.8973       | 0.7590 / 0.8282     | 0.8977 / 0.9189           | 0.6915 / 0.7251                  |
 | ssl_log_magnitude_phase_sin_local_gated_add | 0.7551 / 0.7578           | 0.4163 / 0.4158             | 0.7826 / 0.7728          | 0.8511 / 0.8577         | 0.8317 / 0.8384     | 0.8928 / 0.8968       | 0.8287 / 0.8380     | 0.9193 / 0.9232           | 0.7224 / 0.7351                  |
+| tf_sc16_cy4                                 | 0.7510 / 0.7576           | 0.4121 / 0.4202             | 0.7899 / 0.7714          | 0.8091 / 0.8548         | 0.7841 / 0.8344     | 0.8916 / 0.8974       | 0.7515 / 0.8325     | 0.8933 / 0.9214           | 0.7087 / 0.5265                  |
 | A0_raw                                      | 0.7435 / 0.7547           | 0.4066 / 0.4095             | 0.8062 / 0.7814          | 0.7563 / 0.8344         | 0.7146 / 0.8120     | 0.8889 / 0.8919       | 0.6655 / 0.7993     | 0.8579 / 0.9092           | 0.6760 / 0.7261                  |
-| tf_sc16_cy4                                 | 0.7510 / -                | 0.4121 / -                  | 0.7899 / -               | 0.8091 / -              | 0.7841 / -          | 0.8916 / -            | 0.7515 / -          | 0.8933 / -                | 0.7087 / -                       |
 | tf_sc16_cy8                                 | 0.7509 / -                | 0.4115 / -                  | 0.7921 / -               | 0.8242 / -              | 0.8040 / -          | 0.8928 / -            | 0.7758 / -          | 0.9028 / -                | 0.6986 / -                       |
 | ssl_magnitude_phase_both_cross_attn         | 0.7438 / -                | 0.4064 / -                  | 0.8068 / -               | 0.7492 / -              | 0.6956 / -          | 0.8887 / -            | 0.6634 / -          | 0.8531 / -                | 0.6701 / -                       |
 
@@ -191,6 +191,7 @@ Evaluated across all 10-epoch and 15-epoch convergence checkpoints on 360 blinde
 | conv10e_C1_E1_morlet_mag_morlet_phase_s42_l1               | 10-Epoch | C1_E1_morlet_mag_morlet_phase               |                0.4207 |                        0.6915 | complete       |
 | conv10e_A0_raw_s42_l1                                      | 10-Epoch | A0_raw                                      |                0.3844 |                        0.676  | complete       |
 | conv10e_ssl_magnitude_phase_both_cross_attn_s42_l1         | 10-Epoch | ssl_magnitude_phase_both_cross_attn         |                0.4057 |                        0.6701 | complete       |
+| conv15e_tf_sc16_cy8_s42_l1                                 | 15-Epoch | tf_sc16_cy8                                 |                0.3133 |                        0.5333 | complete       |
 | conv15e_tf_sc16_cy4_s42_l1                                 | 15-Epoch | tf_sc16_cy4                                 |                0.3082 |                        0.5265 | complete       |
 
 ### 5.2 Spatial Architecture Screening Models (RDB Cohort)

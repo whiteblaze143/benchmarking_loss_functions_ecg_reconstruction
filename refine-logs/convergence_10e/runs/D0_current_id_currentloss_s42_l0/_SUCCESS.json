@@ -1,0 +1,16 @@
+{
+  "cell": "D0_current_id_currentloss",
+  "run_name": "D0_current_id_currentloss_s42_l0",
+  "best_epoch": 8,
+  "best_val_missing_pearson": 0.6957899992965568,
+  "epochs_completed": 10,
+  "completed_at": "2026-09-03T00:56:30.161386+00:00",
+  "val_missing_pearson": 0.6936497642945343,
+  "val_missing_pearson_p05": 0.33879562020301823,
+  "val_chest_pearson": 0.7001722335898195,
+  "val_precordial_transition_pearson": 0.5729352406441971,
+  "val_l1_recon": 0.09162274904573013,
+  "val_mse_recon": 0.042081263309674856,
+  "epoch": 10,
+  "train_recon_loss": 0.03310085535154238
+}

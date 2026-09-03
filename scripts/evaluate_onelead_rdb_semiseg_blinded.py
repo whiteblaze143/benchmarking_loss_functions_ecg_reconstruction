@@ -221,8 +221,11 @@ def load_onelead_adapter(path: Path, identity: dict[str, Any]) -> Reconstruction
         kind = "msvae"
     else:
         from unified_latents.engineering.experimental.aim_1_lead import build_alitok_vae_1d
+        arch = str(payload["alitok_architecture"])
+        if arch == "ecg_aim_exact_theta":
+            arch = "ecg_aim_exact_theta_factorial_v1"
         model = build_alitok_vae_1d(
-            architecture=str(payload["alitok_architecture"]),
+            architecture=arch,
             target_len=int(payload.get("target_len", 5000)),
             patch_size=int(payload.get("alitok_patch_size", 25)),
             encoder_depth=int(payload.get("alitok_encoder_depth", 8)),

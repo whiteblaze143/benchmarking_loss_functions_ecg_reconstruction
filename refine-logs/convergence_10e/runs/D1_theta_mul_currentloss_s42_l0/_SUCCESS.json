@@ -1,0 +1,16 @@
+{
+  "cell": "D1_theta_mul_currentloss",
+  "run_name": "D1_theta_mul_currentloss_s42_l0",
+  "best_epoch": 8,
+  "best_val_missing_pearson": 0.7059107898891082,
+  "epochs_completed": 10,
+  "completed_at": "2026-09-03T00:38:20.295832+00:00",
+  "val_missing_pearson": 0.7055873809872085,
+  "val_missing_pearson_p05": 0.35731267333030703,
+  "val_chest_pearson": 0.7115413751657941,
+  "val_precordial_transition_pearson": 0.5822405821588948,
+  "val_l1_recon": 0.09001277389531281,
+  "val_mse_recon": 0.04034680860868791,
+  "epoch": 10,
+  "train_recon_loss": 0.03208219588458631
+}

@@ -48,6 +48,7 @@ from scripts.train_1lead_wavelet_ssl_mtl import (
     build_model,
     forward_model,
     waveform_from_batch,
+    apply_zscore,
     LEADS,
 )
 
@@ -125,7 +126,8 @@ def evaluate_model_per_lead(
     loader: DataLoader,
     observed_lead: int,
     device: torch.device,
-    max_batches: Optional[int] = None
+    max_batches: Optional[int] = None,
+    zscore_norm: bool = False,
 ) -> Dict[str, Any]:
     model.eval()
     
@@ -143,11 +145,19 @@ def evaluate_model_per_lead(
         y = waveform_from_batch(batch)[..., :5000].to(device) # [B, 12, 5000]
         B = y.shape[0]
 
+        if zscore_norm:
+            y_norm, mean, std = apply_zscore(y)
+            inp = y_norm
+        else:
+            inp = y
+
         with torch.amp.autocast("cuda", enabled=device.type == "cuda", dtype=torch.bfloat16):
             res = forward_model(
-                model, y, [observed_lead], compute_delineation=False, compute_ssl=False
+                model, inp, [observed_lead], compute_delineation=False, compute_ssl=False
             )
             y_pred = res["y_pred"][..., :5000].float() # [B, 12, 5000]
+            if zscore_norm:
+                y_pred = y_pred * std + mean
             y_float = y.float()
 
         # Aggregate missing Pearson across all 11 missing leads concatenated
@@ -279,6 +289,7 @@ def process_single_run(
         if not hasattr(args, "view_b_custom_wavelet_asset"): args.view_b_custom_wavelet_asset = None
         if not hasattr(args, "view_a_bank"): args.view_a_bank = "inherit"
         if not hasattr(args, "view_b_bank"): args.view_b_bank = "inherit"
+        if not hasattr(args, "observed_leads"): args.observed_leads = getattr(args, "observed_lead", 0)
 
         observed_lead = args.observed_leads[0] if isinstance(args.observed_leads, list) else int(args.observed_leads)
         
@@ -292,7 +303,8 @@ def process_single_run(
         loader = DataLoader(ds, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         max_batches = 2 if smoke else None
-        res = evaluate_model_per_lead(model, loader, observed_lead, device, max_batches=max_batches)
+        is_zscore = bool(getattr(args, "zscore_norm", False) or "zscore" in run_name)
+        res = evaluate_model_per_lead(model, loader, observed_lead, device, max_batches=max_batches, zscore_norm=is_zscore)
 
         # Database Insertion
         track = "15-Epoch" if "conv15e" in run_name else ("10-Epoch" if "conv10e" in run_name else "Screening")

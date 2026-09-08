@@ -357,7 +357,8 @@ class AliTokECGAIMWaveletMTL(_PARENT):
         ssl_mode="both", ssl_projector_hidden=512, ssl_projector_dim=256,
         ssl_predictor_hidden=512, byol_tau=0.996, use_delineation_head=True,
         delineation_hidden=96, delineation_kernel=15, predict_fiducials=True,
-        mask_type_mode="legacy"
+        mask_type_mode="legacy", artificial_mask_mode="all",
+        deterministic_limb_derivation=False
     ):
         if ssl_mode not in {"none","global","local","both"}: raise ValueError(ssl_mode)
         if inference_view not in {"a","b","mean"}: raise ValueError(inference_view)
@@ -367,7 +368,9 @@ class AliTokECGAIMWaveletMTL(_PARENT):
             target_len=target_len,patch_size=patch_size,width=width,
             encoder_depth=encoder_depth,decoder_depth=decoder_depth,heads=heads,
             missing_lead_weight=missing_lead_weight,random_mask_ratio=random_mask_ratio,
-            temporal_mask_ratio=temporal_mask_ratio,consistency_weight=consistency_weight
+            temporal_mask_ratio=temporal_mask_ratio,consistency_weight=consistency_weight,
+            artificial_mask_mode=artificial_mask_mode,
+            deterministic_limb_derivation=deterministic_limb_derivation
         )
         if AliTokECGAIMSpatial is not None:
             kw.update(
@@ -568,6 +571,8 @@ class AliTokECGAIMWaveletMTL(_PARENT):
             x/scale,inherited,artificial,fusion_source=fusion_source
         )
         pred=predn*scale
+        if getattr(self, "deterministic_limb_derivation", False):
+            pred = self._apply_deterministic_limb_derivation(pred, x, inherited)
         dec,art=self._masked_loss(pred,target,inherited,artificial)
         consistency=self._limb_consistency(pred)
 
@@ -609,6 +614,8 @@ class AliTokECGAIMWaveletMTL(_PARENT):
             x/scale,inherited,artificial,fusion_source=fusion_source
         )
         pred=predn*scale; seg=fid=None
+        if getattr(self, "deterministic_limb_derivation", False):
+            pred = self._apply_deterministic_limb_derivation(pred, x, inherited)
         if self.delineation_head is not None: seg,fid=self.delineation_head(grid)
         lat=memory.transpose(1,2)
         return {"available":True,"y_pred":pred,"z_latent":lat,"log_var":torch.zeros_like(lat),

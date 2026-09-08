@@ -1,0 +1,411 @@
+{
+  "completed_at": "2026-09-03T16:08:37.107893+00:00",
+  "total_models": 21,
+  "smoke_records": 16,
+  "storage_budget": {
+    "pooled_gb": 3.28,
+    "subset_gb": 36.91,
+    "total_gb": 40.19,
+    "available_gb": 40.19
+  },
+  "smoke_results": {
+    "conv15e_A0_raw_s42_l0": {
+      "total_params": 96860912,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": 0.0917,
+      "std_val": 54.6555,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "conv15e_A0_wave_noSSL_gated_add_s42_l0": {
+      "total_params": 98241393,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": 0.4217,
+      "std_val": 54.2303,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "conv15e_A0_zscore_s42_l0": {
+      "total_params": 96860912,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.0669,
+      "std_val": 94.8822,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0": {
+      "total_params": 118665459,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": 0.1365,
+      "std_val": 93.5683,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0": {
+      "total_params": 100938481,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.5049,
+      "std_val": 62.4713,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "conv15e_R7_morlet_mag_ueg_real_s42_l0": {
+      "total_params": 100938481,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.2987,
+      "std_val": 59.4988,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "conv15e_conv_control_s42_l0": {
+      "total_params": 98497585,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.7284,
+      "std_val": 58.6564,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "conv15e_del_wave_ce_s42_l0": {
+      "total_params": 100938481,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.353,
+      "std_val": 78.8907,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0": {
+      "total_params": 100938481,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.5311,
+      "std_val": 65.0582,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0": {
+      "total_params": 100938481,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.4105,
+      "std_val": 64.2764,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "conv15e_tf_sc16_cy4_s42_l0": {
+      "total_params": 100932337,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.182,
+      "std_val": 58.5341,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "conv15e_tf_sc16_cy8_s42_l0": {
+      "total_params": 100932337,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.4894,
+      "std_val": 55.3152,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "D0_current_id_currentloss_s42_l0": {
+      "total_params": 85850137,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.0179,
+      "std_val": 3.985,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ],
+      "embed_matrix_shape": [
+        12,
+        768
+      ],
+      "embed_matrix_norm": 13.3395
+    },
+    "D1_theta_mul_currentloss_s42_l0": {
+      "total_params": 86441497,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": 0.1679,
+      "std_val": 9.4198,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "D2_current_id_l1_s42_l0": {
+      "total_params": 85850137,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": 0.017,
+      "std_val": 3.0401,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ],
+      "embed_matrix_shape": [
+        12,
+        768
+      ],
+      "embed_matrix_norm": 10.7659
+    },
+    "D3_theta_mul_l1_s42_l0": {
+      "total_params": 86441497,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.0718,
+      "std_val": 4.4535,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ],
+      "theta_match_max_diff": 0.0009677410125732422
+    },
+    "D4_learned12_mul_l1_s42_l0": {
+      "total_params": 86441641,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": 0.0039,
+      "std_val": 4.4381,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ],
+      "learned_codes_shape": [
+        12,
+        12
+      ],
+      "learned_codes_norm": 0.6383
+    },
+    "D5_permuted_theta_mul_l1_s42_l0": {
+      "total_params": 86441497,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.0493,
+      "std_val": 4.2184,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ],
+      "theta_permutation": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "D6_theta_add_l1_s42_l0": {
+      "total_params": 86441497,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": 0.0198,
+      "std_val": 5.2138,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ]
+    },
+    "D7_learned12_add_l1_s42_l0": {
+      "total_params": 86441641,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": -0.0104,
+      "std_val": 3.9912,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ],
+      "learned_codes_shape": [
+        12,
+        12
+      ],
+      "learned_codes_norm": 0.933
+    },
+    "D8_random12_mul_l1_s42_l0": {
+      "total_params": 86441497,
+      "h_cond_shape": [
+        16,
+        12,
+        200,
+        768
+      ],
+      "has_nan": false,
+      "mean_val": 0.0003,
+      "std_val": 4.4183,
+      "sketch_64_shape": [
+        16,
+        12,
+        64
+      ],
+      "random_codes_shape": [
+        12,
+        12
+      ],
+      "random_codes_mean": -0.0,
+      "random_codes_std": 0.9608
+    }
+  }
+}

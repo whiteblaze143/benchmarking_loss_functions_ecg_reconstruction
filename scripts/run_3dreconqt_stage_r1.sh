@@ -3,10 +3,8 @@
 # Stage R1: 3DRECON-QT Sampled-Query Benchmark Runner (Seed 42)
 # Primary Falsification Screen: RQ1Q (true theta) vs RQ2Q (permuted theta)
 # ==============================================================================
-set -euo pipefail
-
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT"
+echo "3DRECON-QT Stage R1 training has been officially ABORTED as a diagnostic run. RQ2Q will not be launched."
+exit 0
 
 PY="/home/mithunmanivannan/.venv/bin/python3"
 OUT_ROOT="refine-logs/3dreconqt_reference/runs"

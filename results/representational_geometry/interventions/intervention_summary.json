@@ -1,0 +1,17 @@
+{
+  "D3_theta_mul_l1_s42_l0": {
+    "r_p4_H4": 0.6729,
+    "r_p4_H6": 0.6412,
+    "delta_recovery": -0.0317
+  },
+  "D5_permuted_theta_mul_l1_s42_l0": {
+    "r_p4_H4": 0.0089,
+    "r_p4_H6": 0.6303,
+    "delta_recovery": 0.6214
+  },
+  "D8_random12_mul_l1_s42_l0": {
+    "r_p4_H4": 0.5451,
+    "r_p4_H6": 0.5837,
+    "delta_recovery": 0.0385
+  }
+}

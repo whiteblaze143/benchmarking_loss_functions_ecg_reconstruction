@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 560" width="1050" height="560" font-family="Arial, Helvetica, sans-serif">
+  <rect width="1050" height="560" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arrow-default" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#555555"/>
+    </marker>
+    <marker id="arrow-c0" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#1E3A8A"/>
+    </marker>
+    <marker id="arrow-c1" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#0284C7"/>
+    </marker>
+    <marker id="arrow-c2" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#16A34A"/>
+    </marker>
+    <marker id="arrow-c3" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#9333EA"/>
+    </marker>
+    <marker id="arrow-c4" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 8 4, 0 8" fill="#EA580C"/>
+    </marker>
+  </defs>
+  <rect x="205.0" y="132.5" width="360.0" height="95.0" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1" rx="8"/>
+  <text x="213.0" y="148.5" font-size="11" fill="#999999" font-weight="bold">Primary Temporal Backbone (Transformer)</text>
+  <rect x="200.0" y="332.5" width="365.0" height="95.0" fill="#F5F3FF" stroke="#DDD6FE" stroke-width="1" rx="8"/>
+  <text x="208.0" y="348.5" font-size="11" fill="#999999" font-weight="bold">Time-Frequency Branch (Admissible Morlet Wavelet)</text>
+  <rect x="760.0" y="77.5" width="280.0" height="405.0" fill="#FFF7ED" stroke="#FED7AA" stroke-width="1" rx="8"/>
+  <text x="768.0" y="93.5" font-size="11" fill="#999999" font-weight="bold">Dual Multi-Task Clinical Supervision</text>
+  <path d="M 166.5,245.0 L 228.2,212.5" stroke="#1E3A8A" stroke-width="2" fill="none" marker-end="url(#arrow-c0)"/>
+  <rect x="160.4" y="210.8" width="74.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="197.4" y="222.8" font-size="10" fill="#777777" text-anchor="middle">Raw Samples</text>
+  <path d="M 166.5,315.0 L 228.2,347.5" stroke="#7C3AED" stroke-width="2" fill="none" marker-end="url(#arrow-default)"/>
+  <rect x="157.4" y="313.2" width="80.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="197.4" y="325.2" font-size="10" fill="#777777" text-anchor="middle">Wavelet Path</text>
+  <path d="M 360.0,180.0 L 390.0,180.0" stroke="#2563EB" stroke-width="2" fill="none" marker-end="url(#arrow-default)"/>
+  <rect x="353.0" y="162.0" width="44.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="375.0" y="174.0" font-size="10" fill="#777777" text-anchor="middle">Tokens</text>
+  <path d="M 365.0,380.0 L 390.0,380.0" stroke="#7C3AED" stroke-width="2" fill="none" marker-end="url(#arrow-default)"/>
+  <rect x="343.5" y="362.0" width="68.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="377.5" y="374.0" font-size="10" fill="#777777" text-anchor="middle">Scalograms</text>
+  <path d="M 535.0,212.5 L 595.0,242.5" stroke="#2563EB" stroke-width="2" fill="none" marker-end="url(#arrow-default)"/>
+  <rect x="543.0" y="209.5" width="44.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="565.0" y="221.5" font-size="10" fill="#777777" text-anchor="middle">Z_time</text>
+  <path d="M 535.0,347.5 L 595.0,317.5" stroke="#7C3AED" stroke-width="2" fill="none" marker-end="url(#arrow-default)"/>
+  <rect x="543.0" y="314.5" width="44.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="565.0" y="326.5" font-size="10" fill="#777777" text-anchor="middle">Z_wave</text>
+  <path d="M 752.5,280.0 L 775.0,280.0" stroke="#15803D" stroke-width="3" fill="none" marker-end="url(#arrow-default)"/>
+  <rect x="738.8" y="262.0" width="50.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="763.8" y="274.0" font-size="10" fill="#777777" text-anchor="middle">Z_fused</text>
+  <path d="M 865.6,242.5 L 912.2,157.5" stroke="#EA580C" stroke-width="2" fill="none" marker-end="url(#arrow-c4)"/>
+  <rect x="848.9" y="182.0" width="80.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="888.9" y="194.0" font-size="10" fill="#777777" text-anchor="middle">Lead Queries</text>
+  <path d="M 865.6,317.5 L 912.2,402.5" stroke="#0284C7" stroke-width="2" fill="none" marker-end="url(#arrow-c1)"/>
+  <rect x="854.9" y="342.0" width="68.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="888.9" y="354.0" font-size="10" fill="#777777" text-anchor="middle">Morphology</text>
+  <path d="M 898.8,157.5 L 581.6,487.5" stroke="#EA580C" stroke-width="1" fill="none" marker-end="url(#arrow-c4)" stroke-dasharray="8,4"/>
+  <rect x="715.2" y="304.5" width="50.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="740.2" y="316.5" font-size="10" fill="#777777" text-anchor="middle">L_recon</text>
+  <path d="M 835.0,454.3 L 671.0,487.5" stroke="#0284C7" stroke-width="1" fill="none" marker-end="url(#arrow-c1)" stroke-dasharray="8,4"/>
+  <rect x="722.0" y="452.9" width="62.0" height="16" fill="#FFFFFF" rx="3" opacity="0.85"/>
+  <text x="753.0" y="464.9" font-size="10" fill="#777777" text-anchor="middle">Dice + CE</text>
+  <rect x="30.0" y="245.0" width="140.0" height="70.0" fill="#1E3A8A" stroke="#0F172A" stroke-width="2" rx="8"/>
+  <text x="100.0" y="270.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Single-Lead Input</text>
+  <text x="100.0" y="284.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Lead I / Wrist ECG</text>
+  <text x="100.0" y="298.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">(1 × 5000 @ 500Hz)</text>
+  <rect x="220.0" y="147.5" width="140.0" height="65.0" fill="#DBEAFE" stroke="#3B82F6" stroke-width="2" rx="8"/>
+  <text x="290.0" y="170.2" font-size="12" fill="#1E3A8A" text-anchor="middle" font-weight="bold">Patch Tokenizer</text>
+  <text x="290.0" y="184.2" font-size="12" fill="#1E3A8A" text-anchor="middle" font-weight="bold">Patch=25 (50ms)</text>
+  <text x="290.0" y="198.2" font-size="12" fill="#1E3A8A" text-anchor="middle" font-weight="bold">d_model = 768</text>
+  <rect x="390.0" y="147.5" width="160.0" height="65.0" fill="#2563EB" stroke="#1D4ED8" stroke-width="2" rx="0"/>
+  <text x="470.0" y="170.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">8-Layer Transformer</text>
+  <text x="470.0" y="184.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Encoder (Heads=12)</text>
+  <text x="470.0" y="198.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Learned Lead Embed</text>
+  <rect x="215.0" y="347.5" width="150.0" height="65.0" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2" rx="8"/>
+  <text x="290.0" y="370.2" font-size="12" fill="#4C1D95" text-anchor="middle" font-weight="bold">Morlet Wavelet Bank</text>
+  <text x="290.0" y="384.2" font-size="12" fill="#4C1D95" text-anchor="middle" font-weight="bold">32 Scales (0.5–45Hz)</text>
+  <text x="290.0" y="398.2" font-size="12" fill="#4C1D95" text-anchor="middle" font-weight="bold">Analytic Scalogram</text>
+  <rect x="390.0" y="347.5" width="160.0" height="65.0" fill="#7C3AED" stroke="#5B21B6" stroke-width="2" rx="0"/>
+  <text x="470.0" y="370.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">TimeSformer + 1D-CNN</text>
+  <text x="470.0" y="384.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">2 Layers (Heads=6)</text>
+  <text x="470.0" y="398.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">d_wavelet = 192</text>
+  <rect x="587.5" y="242.5" width="165.0" height="75.0" fill="#15803D" stroke="#166534" stroke-width="2" rx="8"/>
+  <text x="670.0" y="270.9" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Gated-Add Fusion</text>
+  <text x="670.0" y="283.9" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Gate g = σ(W[Z_t, Z_w])</text>
+  <text x="670.0" y="296.9" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Z_fused = Z_t + g ⊙ Z_w</text>
+  <rect x="775.0" y="242.5" width="140.0" height="75.0" fill="#9333EA" stroke="#6B21A8" stroke-width="2" rx="0"/>
+  <text x="845.0" y="270.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">4-Layer Axial</text>
+  <text x="845.0" y="284.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Transformer Decoder</text>
+  <text x="845.0" y="298.2" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Cross-Attention</text>
+  <rect x="835.0" y="92.5" width="190.0" height="65.0" fill="#EA580C" stroke="#C2410C" stroke-width="2" rx="8"/>
+  <text x="930.0" y="115.8" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold">12-Lead Waveform Output</text>
+  <text x="930.0" y="128.8" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Reconstructed Leads I–V6</text>
+  <text x="930.0" y="141.8" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold">(12 × 5000 continuous mV)</text>
+  <rect x="835.0" y="402.5" width="190.0" height="65.0" fill="#0284C7" stroke="#0369A1" stroke-width="2" rx="8"/>
+  <text x="930.0" y="425.9" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Semi-Supervised Delineation</text>
+  <text x="930.0" y="438.9" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Kernel-15 Multi-Class Conv</text>
+  <text x="930.0" y="451.9" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="bold">P / QRS / T Wave Masks</text>
+  <rect x="330.0" y="487.5" width="460.0" height="45.0" fill="#FEF3C7" stroke="#D97706" stroke-width="2" rx="8"/>
+  <text x="560.0" y="507.2" font-size="12" fill="#92400E" text-anchor="middle" font-weight="bold">Dual Clinical Supervision (noSSL)</text>
+  <text x="560.0" y="521.2" font-size="12" fill="#92400E" text-anchor="middle" font-weight="bold">L_total = L_recon + 1.0·L_CE + 0.5·L_Dice + 0.05·L_consistency</text>
+</svg>

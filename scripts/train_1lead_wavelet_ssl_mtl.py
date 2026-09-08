@@ -37,7 +37,7 @@ from torch.utils.data import Dataset,DataLoader
 from tqdm import tqdm
 
 from scripts.train_mcma_3lead import PTBXLDataset
-from scripts.common_loss import CombinatorialCompositeLoss
+from scripts.common_loss import CombinatorialCompositeLoss, AdaptiveCompositeLoss
 from unified_latents.engineering.utils.common import mask_unobserved_leads
 from unified_latents.engineering.utils.regimes import make_lead_indices
 from unified_latents.engineering.experimental.wavelet_ssl_ecg_aim import build_wavelet_ecg_aim
@@ -375,7 +375,9 @@ def build_model(a):
         ssl_predictor_hidden=a.ssl_predictor_hidden,byol_tau=a.byol_tau,
         use_delineation_head=not a.no_delineation_head,delineation_hidden=a.delineation_hidden,
         delineation_kernel=a.delineation_kernel,predict_fiducials=not a.no_fiducial_head,
-        mask_type_mode=a.mask_type_mode
+        mask_type_mode=a.mask_type_mode,
+        artificial_mask_mode=getattr(a, "artificial_mask_mode", "all"),
+        deterministic_limb_derivation=getattr(a, "deterministic_limb_derivation", False)
     )
 
 def load_init(model,p,strict=True):
@@ -396,7 +398,13 @@ def forward_model(model,y,obs,compute_delineation=True,compute_ssl=True):
 def compose(res,y,criterion,a,db=None):
     recon=res["y_pred"].new_zeros(())
     if a.reconstruction_weight:
-        recon,*_=criterion(res["y_pred"][...,:y.shape[-1]],y)
+        loss_type = getattr(a, "reconstruction_loss_type", "composite")
+        if loss_type == "l1":
+            recon = F.l1_loss(res["y_pred"][...,:y.shape[-1]], y)
+        elif loss_type == "mse":
+            recon = F.mse_loss(res["y_pred"][...,:y.shape[-1]], y)
+        else:
+            recon,*_=criterion(res["y_pred"][...,:y.shape[-1]],y)
     consistency=res.get("limb_consistency_loss")
     if not isinstance(consistency,torch.Tensor):consistency=recon.new_zeros(())
     total=a.reconstruction_weight*recon+a.consistency_weight*consistency
@@ -431,7 +439,13 @@ def validate_recon(model,loader,criterion,a,device):
             r=forward_model(
                 model,y,a.observed_leads,compute_delineation=False,compute_ssl=False
             )
-            loss,*_=criterion(r["y_pred"],y)
+            loss_type = getattr(a, "reconstruction_loss_type", "composite")
+            if loss_type == "l1":
+                loss = F.l1_loss(r["y_pred"], y)
+            elif loss_type == "mse":
+                loss = F.mse_loss(r["y_pred"], y)
+            else:
+                loss,*_=criterion(r["y_pred"],y)
         losses.append(float(loss)); rs+=missing_pearson(r["y_pred"].float(),y.float(),a.observed_leads).cpu().tolist()
     if not losses or not rs:raise RuntimeError("reconstruction validation produced no samples")
     result={"val_recon_loss":float(np.mean(losses)),"val_missing_pearson":float(np.mean(rs)),
@@ -526,8 +540,13 @@ def train(a):
         for p in model.parameters():p.requires_grad=False
         for p in model.delineation_head.parameters():p.requires_grad=True
     params=[p for p in model.parameters() if p.requires_grad]
+    loss_type = getattr(a, "reconstruction_loss_type", "composite")
+    if loss_type == "adaptive_composite":
+        crit = AdaptiveCompositeLoss(a.factorial_mask).to(device)
+        params += [p for p in crit.parameters() if p.requires_grad]
+    else:
+        crit = CombinatorialCompositeLoss(a.factorial_mask).to(device)
     opt=torch.optim.AdamW(params,lr=a.lr,betas=(.9,.95),weight_decay=a.weight_decay)
-    crit=CombinatorialCompositeLoss(a.factorial_mask)
     base_steps=min(len(tr),a.max_train_batches) if a.max_train_batches else len(tr)
     if a.train_head_only: steps=min(len(dt),a.max_train_batches) if a.max_train_batches else len(dt)
     else: steps=base_steps+(base_steps//a.delineation_every if dt else 0)
@@ -894,6 +913,9 @@ def parser():
     p.add_argument("--lr",type=float,default=1e-4);p.add_argument("--max-lr",type=float,default=5e-4);p.add_argument("--pct-start",type=float,default=.2)
     p.add_argument("--weight-decay",type=float,default=1e-4);p.add_argument("--grad-clip",type=float,default=1.)
     p.add_argument("--reconstruction-weight",type=float,default=1.);p.add_argument("--train-head-only",action="store_true")
+    p.add_argument("--artificial-mask-mode",choices=["all","no_lead_dropout","none"],default="all")
+    p.add_argument("--reconstruction-loss-type",choices=["composite","adaptive_composite","l1","mse"],default="composite")
+    add_bool(p,"deterministic_limb_derivation",False)
     add_bool(p,"zscore_norm")
     modes=p.add_mutually_exclusive_group()
     modes.add_argument("--audit-delineation-dir");modes.add_argument("--emit-sweep-manifest")

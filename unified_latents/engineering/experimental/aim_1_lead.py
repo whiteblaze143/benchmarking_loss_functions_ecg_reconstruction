@@ -367,6 +367,8 @@ class AliTokECGAIM(nn.Module):
         random_mask_ratio: float = 0.5,
         temporal_mask_ratio: float = 0.25,
         consistency_weight: float = 0.05,
+        artificial_mask_mode: str = "all",
+        deterministic_limb_derivation: bool = False,
     ) -> None:
         super().__init__()
         if target_len % patch_size:
@@ -385,6 +387,8 @@ class AliTokECGAIM(nn.Module):
         self.random_mask_ratio = float(random_mask_ratio)
         self.temporal_mask_ratio = float(temporal_mask_ratio)
         self.consistency_weight = float(consistency_weight)
+        self.artificial_mask_mode = str(artificial_mask_mode)
+        self.deterministic_limb_derivation = bool(deterministic_limb_derivation)
 
         self.patch_projection = nn.Sequential(
             nn.LayerNorm(self.patch_size),
@@ -443,14 +447,18 @@ class AliTokECGAIM(nn.Module):
 
     def _artificial_mask(self, inherited: torch.Tensor) -> torch.Tensor:
         artificial = torch.zeros_like(inherited)
-        if not self.training:
+        if not self.training or getattr(self, "artificial_mask_mode", "all") == "none":
             return artificial
+        mode = getattr(self, "artificial_mask_mode", "all")
         batch = inherited.shape[0]
         for index in range(batch):
             observed = torch.where(~inherited[index, :, 0])[0]
             if observed.numel() == 0:
                 continue
-            strategy = int(torch.randint(0, 3, (), device=inherited.device))
+            if mode == "no_lead_dropout":
+                strategy = int(torch.randint(0, 2, (), device=inherited.device))
+            else:
+                strategy = int(torch.randint(0, 3, (), device=inherited.device))
             if strategy == 0:
                 draws = torch.rand(
                     observed.numel(), self.num_patches, device=inherited.device
@@ -493,6 +501,37 @@ class AliTokECGAIM(nn.Module):
                 both.unsqueeze(-1), value, baseline[:, lead]
             )
         return baseline
+
+    def _apply_deterministic_limb_derivation(
+        self, pred: torch.Tensor, x: torch.Tensor, inherited: torch.Tensor
+    ) -> torch.Tensor:
+        """Deterministically derives limb leads III, aVR, aVL, aVF from Einthoven's and Goldberger's laws.
+
+        If Lead I (0) is observed:
+            I = x[:, 0], II = pred[:, 1]
+            III = II - I
+            aVR = -0.5 * (I + II)
+            aVL = I - 0.5 * II
+            aVF = II - 0.5 * I
+        If Lead II (1) is observed:
+            I = pred[:, 0], II = x[:, 1]
+            III = II - I
+            aVR = -0.5 * (I + II)
+            aVL = I - 0.5 * II
+            aVF = II - 0.5 * I
+        """
+        out = pred.clone()
+        lead_i_obs = (~inherited[:, 0, 0]).unsqueeze(-1)   # [B, 1]
+        lead_ii_obs = (~inherited[:, 1, 0]).unsqueeze(-1)  # [B, 1]
+
+        lead_i = torch.where(lead_i_obs, x[:, 0], out[:, 0])
+        lead_ii = torch.where(lead_ii_obs, x[:, 1], out[:, 1])
+
+        out[:, 2] = lead_ii - lead_i
+        out[:, 3] = -0.5 * (lead_i + lead_ii)
+        out[:, 4] = lead_i - 0.5 * lead_ii
+        out[:, 5] = lead_ii - 0.5 * lead_i
+        return out
 
     def _lead_condition(self, inherited: torch.Tensor) -> torch.Tensor:
         """Return the shared per-lead condition used by every token path."""
@@ -597,6 +636,8 @@ class AliTokECGAIM(nn.Module):
         scale = self._scale(x, inherited)
         normalized_prediction, memory = self._decode(x / scale, inherited, artificial)
         prediction = normalized_prediction * scale
+        if getattr(self, "deterministic_limb_derivation", False):
+            prediction = self._apply_deterministic_limb_derivation(prediction, x, inherited)
         decoder_loss, artificial_loss = self._masked_loss(
             prediction, target, inherited, artificial
         )
@@ -636,6 +677,8 @@ class AliTokECGAIM(nn.Module):
         scale = self._scale(x, inherited)
         normalized_prediction, memory = self._decode(x / scale, inherited, artificial)
         prediction = normalized_prediction * scale
+        if getattr(self, "deterministic_limb_derivation", False):
+            prediction = self._apply_deterministic_limb_derivation(prediction, x, inherited)
         return {
             "available": True,
             "y_pred": prediction,

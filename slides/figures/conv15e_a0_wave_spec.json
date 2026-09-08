@@ -1,0 +1,245 @@
+{
+  "title": "conv15e_A0_wave_noSSL_gated_add Architecture (Lead I / Wrist)",
+  "canvas": {
+    "width": 1220,
+    "height": 520
+  },
+  "style": {
+    "font_family": "Arial, Helvetica, sans-serif",
+    "font_size": 13,
+    "bg_color": "#FFFFFF",
+    "palette": ["#1E3A8A", "#2563EB", "#059669", "#7C3AED", "#EA580C", "#0284C7"]
+  },
+  "nodes": [
+    {
+      "id": "input_lead",
+      "label": "Single-Lead Wrist Input\nLead I (Wrist-to-Wrist)\n1 × 5000 Samples @ 500 Hz",
+      "x": 105,
+      "y": 260,
+      "width": 150,
+      "height": 75,
+      "shape": "rounded",
+      "fill": "#0F172A",
+      "stroke": "#020617",
+      "text_color": "#FFFFFF",
+      "font_size": 11
+    },
+    {
+      "id": "patch_tok",
+      "label": "Patch Tokenizer\nPatch Size P = 25 (50 ms)\nEmbedding dim = 768",
+      "x": 300,
+      "y": 155,
+      "width": 155,
+      "height": 70,
+      "shape": "rounded",
+      "fill": "#EFF6FF",
+      "stroke": "#3B82F6",
+      "text_color": "#1E3A8A",
+      "font_size": 11
+    },
+    {
+      "id": "time_enc",
+      "label": "8-Layer Transformer Encoder\n12 Attention Heads (d = 768)\nLearned Lead Embedding",
+      "x": 510,
+      "y": 155,
+      "width": 175,
+      "height": 70,
+      "shape": "rect",
+      "fill": "#2563EB",
+      "stroke": "#1D4ED8",
+      "text_color": "#FFFFFF",
+      "font_size": 11
+    },
+    {
+      "id": "morlet_bank",
+      "label": "Morlet Wavelet Filter Bank\n32 Scales (0.5 – 45.0 Hz)\n6 Cycles Analytic Scalogram",
+      "x": 300,
+      "y": 365,
+      "width": 155,
+      "height": 70,
+      "shape": "rounded",
+      "fill": "#F5F3FF",
+      "stroke": "#8B5CF6",
+      "text_color": "#5B21B6",
+      "font_size": 11
+    },
+    {
+      "id": "wave_enc",
+      "label": "TimeSformer + 1D-CNN\n2 Layers (Heads = 6)\nWavelet dim d_w = 192",
+      "x": 510,
+      "y": 365,
+      "width": 175,
+      "height": 70,
+      "shape": "rect",
+      "fill": "#7C3AED",
+      "stroke": "#6D28D9",
+      "text_color": "#FFFFFF",
+      "font_size": 11
+    },
+    {
+      "id": "gated_add",
+      "label": "Gated-Add Fusion Module\ng = σ(W · [Z_t, Proj(Z_w)] + b)\nZ_fused = Z_t + g ⊙ Proj(Z_w)",
+      "x": 725,
+      "y": 260,
+      "width": 175,
+      "height": 80,
+      "shape": "rounded",
+      "fill": "#047857",
+      "stroke": "#065F46",
+      "text_color": "#FFFFFF",
+      "font_size": 11
+    },
+    {
+      "id": "axial_dec",
+      "label": "4-Layer Axial Transformer\nSpatiotemporal Cross-Attention\nTarget 12-Lead Query Matrix",
+      "x": 930,
+      "y": 260,
+      "width": 160,
+      "height": 80,
+      "shape": "rect",
+      "fill": "#4338CA",
+      "stroke": "#3730A3",
+      "text_color": "#FFFFFF",
+      "font_size": 11
+    },
+    {
+      "id": "recon_head",
+      "label": "12-Lead Waveform Output\nLeads I–III, aVR–aVF, V1–V6\nLoss: L_recon + 0.05 L_consistency",
+      "x": 1115,
+      "y": 155,
+      "width": 175,
+      "height": 75,
+      "shape": "rounded",
+      "fill": "#EA580C",
+      "stroke": "#C2410C",
+      "text_color": "#FFFFFF",
+      "font_size": 11
+    },
+    {
+      "id": "delineate_head",
+      "label": "Fiducial Delineation Head\nk = 15 Conv1D (P / QRS / T Masks)\nLoss: 1.0 L_CE + 0.5 L_Dice",
+      "x": 1115,
+      "y": 365,
+      "width": 175,
+      "height": 75,
+      "shape": "rounded",
+      "fill": "#0284C7",
+      "stroke": "#0369A1",
+      "text_color": "#FFFFFF",
+      "font_size": 11
+    },
+    {
+      "id": "meta_banner",
+      "label": "Champion Benchmark Configuration: conv15e_A0_wave_noSSL_gated_add_s42_l0 (noSSL = Pure Supervised Multi-Task, Seed=42, Observed Lead=Lead I)",
+      "x": 610,
+      "y": 480,
+      "width": 860,
+      "height": 34,
+      "shape": "rounded",
+      "fill": "#FEF3C7",
+      "stroke": "#D97706",
+      "text_color": "#92400E",
+      "font_size": 10
+    }
+  ],
+  "edges": [
+    {
+      "from": "input_lead",
+      "to": "patch_tok",
+      "label": "50ms Patches",
+      "style": "solid",
+      "color": "#1E3A8A",
+      "thickness": 2
+    },
+    {
+      "from": "input_lead",
+      "to": "morlet_bank",
+      "label": "Scalogram Path",
+      "style": "solid",
+      "color": "#7C3AED",
+      "thickness": 2
+    },
+    {
+      "from": "patch_tok",
+      "to": "time_enc",
+      "label": "Tokens",
+      "style": "solid",
+      "color": "#2563EB",
+      "thickness": 2
+    },
+    {
+      "from": "morlet_bank",
+      "to": "wave_enc",
+      "label": "32 Scales",
+      "style": "solid",
+      "color": "#7C3AED",
+      "thickness": 2
+    },
+    {
+      "from": "time_enc",
+      "to": "gated_add",
+      "label": "Z_time",
+      "style": "solid",
+      "color": "#2563EB",
+      "thickness": 2
+    },
+    {
+      "from": "wave_enc",
+      "to": "gated_add",
+      "label": "Z_wave",
+      "style": "solid",
+      "color": "#7C3AED",
+      "thickness": 2
+    },
+    {
+      "from": "gated_add",
+      "to": "axial_dec",
+      "label": "Z_fused",
+      "style": "solid",
+      "color": "#047857",
+      "thickness": 3
+    },
+    {
+      "from": "axial_dec",
+      "to": "recon_head",
+      "label": "Spatial Leads",
+      "style": "solid",
+      "color": "#EA580C",
+      "thickness": 2
+    },
+    {
+      "from": "axial_dec",
+      "to": "delineate_head",
+      "label": "Morphology",
+      "style": "solid",
+      "color": "#0284C7",
+      "thickness": 2
+    }
+  ],
+  "groups": [
+    {
+      "id": "grp_time",
+      "label": "Primary Temporal Backbone (Transformer)",
+      "node_ids": ["patch_tok", "time_enc"],
+      "fill": "#F8FAFC",
+      "stroke": "#CBD5E1",
+      "padding": 30
+    },
+    {
+      "id": "grp_wave",
+      "label": "Time-Frequency Branch (Admissible Morlet Wavelet)",
+      "node_ids": ["morlet_bank", "wave_enc"],
+      "fill": "#FAF5FF",
+      "stroke": "#E9D5FF",
+      "padding": 30
+    },
+    {
+      "id": "grp_dec",
+      "label": "Dual Clinical Supervision",
+      "node_ids": ["recon_head", "delineate_head"],
+      "fill": "#FFFBEB",
+      "stroke": "#FDE68A",
+      "padding": 30
+    }
+  ]
+}

@@ -1,0 +1,212 @@
+{
+  "conv15e_A0_raw_s42_l0": {
+    "model_id": "conv15e_A0_raw_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_A0_raw_s42_l0/best.pt",
+    "checkpoint_size_mb": 184.81,
+    "checkpoint_sha256": "fdf6e9977ac77631725ea070b2087ef08024a707dd09dfcbaf792e82827a5acf",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_A0_raw_s42_l0/config.json",
+    "config_sha256": "fdae6bf2c3bdb77c5e0a1a69cb3a439e13994a0f799f7d963ee31b08132acb96",
+    "modified_at": "2026-08-28T21:19:27.311252+00:00"
+  },
+  "conv15e_A0_wave_noSSL_gated_add_s42_l0": {
+    "model_id": "conv15e_A0_wave_noSSL_gated_add_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_A0_wave_noSSL_gated_add_s42_l0/best.pt",
+    "checkpoint_size_mb": 187.46,
+    "checkpoint_sha256": "ac93bec2962f26f10065acdeaa995104fbb35b5f72f488a1bb9a7c968ab7b916",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_A0_wave_noSSL_gated_add_s42_l0/config.json",
+    "config_sha256": "4994865c845cbf4bf04e1994a137b94397fd36224e5159174354214483e19f4d",
+    "modified_at": "2026-08-29T01:20:02.761664+00:00"
+  },
+  "conv15e_A0_zscore_s42_l0": {
+    "model_id": "conv15e_A0_zscore_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_A0_zscore_s42_l0/best.pt",
+    "checkpoint_size_mb": 184.81,
+    "checkpoint_sha256": "cbc03661b8c42319069e84e15294fdc8e0231bb1e119406797dfe78339c79fe0",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_A0_zscore_s42_l0/config.json",
+    "config_sha256": "1303ebabb38fa92ede9b27cea79381b9c3ecb0629f2b03784386a9f3f84e17e2",
+    "modified_at": "2026-09-02T21:51:48.162215+00:00"
+  },
+  "conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0": {
+    "model_id": "conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0/best.pt",
+    "checkpoint_size_mb": 226.44,
+    "checkpoint_sha256": "0df5a3275eda28323a18332965cd36b458752a81f641ae68c98f5e118f14f87a",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0/config.json",
+    "config_sha256": "7c419d1da82c919e26808081a3bf8016b7efbf2dbd602b54bb82d223d183f489",
+    "modified_at": "2026-08-29T06:43:25.640747+00:00"
+  },
+  "conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0": {
+    "model_id": "conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0/best.pt",
+    "checkpoint_size_mb": 192.67,
+    "checkpoint_sha256": "660987b4a6a6187970063de4a2e5319d7ef7ba312097abd763a3d83c182c24e2",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0/config.json",
+    "config_sha256": "5b7612a774b109ba2c579543ead77dd4d35561d083080f8f7fefe2ef9e102f5f",
+    "modified_at": "2026-08-29T12:51:05.551681+00:00"
+  },
+  "conv15e_R7_morlet_mag_ueg_real_s42_l0": {
+    "model_id": "conv15e_R7_morlet_mag_ueg_real_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_R7_morlet_mag_ueg_real_s42_l0/best.pt",
+    "checkpoint_size_mb": 192.67,
+    "checkpoint_sha256": "a2db23646e551b83c811ed01db69115d6d59da9e8c29dedab0162752f0d0ee5d",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_R7_morlet_mag_ueg_real_s42_l0/config.json",
+    "config_sha256": "167577c5e82aa15dac39ecee4802bb36c4bbf339ec9fc1ced8306742f29dcc1b",
+    "modified_at": "2026-08-29T18:40:21.244349+00:00"
+  },
+  "conv15e_conv_control_s42_l0": {
+    "model_id": "conv15e_conv_control_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_conv_control_s42_l0/best.pt",
+    "checkpoint_size_mb": 187.94,
+    "checkpoint_sha256": "48e13a9eae0c30188781e749afdccb6493e03dbfc201ad0442c7f9efbd8ba6b0",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_conv_control_s42_l0/config.json",
+    "config_sha256": "7276197bb9a47532ae8486ff83c842f63c66f936f4b165fd7d941e7a3d141e1c",
+    "modified_at": "2026-08-31T06:25:16.664180+00:00"
+  },
+  "conv15e_del_wave_ce_s42_l0": {
+    "model_id": "conv15e_del_wave_ce_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_del_wave_ce_s42_l0/best.pt",
+    "checkpoint_size_mb": 192.62,
+    "checkpoint_sha256": "8202454090a549b6718be8b6906312254a76303259be0b9d0893f45482a9458f",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_del_wave_ce_s42_l0/config.json",
+    "config_sha256": "ba307d2d291d8c7bc523f62e3f78d999de50a3e3a8b5de92777dc5688cadfd89",
+    "modified_at": "2026-08-31T04:23:18.774490+00:00"
+  },
+  "conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0": {
+    "model_id": "conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0/best.pt",
+    "checkpoint_size_mb": 192.62,
+    "checkpoint_sha256": "b35b1b89ea0a2e6db0f1fd909c75ad97df10bba33e24acc190ebfdfc36e5bd51",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0/config.json",
+    "config_sha256": "f361da8b9c8da70a007738f904cef5f89b7a90c3d28dee6dd33b178d832773c5",
+    "modified_at": "2026-08-31T12:13:52.591207+00:00"
+  },
+  "conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0": {
+    "model_id": "conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0/best.pt",
+    "checkpoint_size_mb": 192.62,
+    "checkpoint_sha256": "d2f60179ff362a7880e1e450d79a3de5bd196cb1be921f3267300655010b4e62",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0/config.json",
+    "config_sha256": "a49c2c6f89f6ff3baa129b71a8cb1cc694b91bb74b8e9134faec090ff5add600",
+    "modified_at": "2026-08-31T19:32:44.828100+00:00"
+  },
+  "conv15e_tf_sc16_cy4_s42_l0": {
+    "model_id": "conv15e_tf_sc16_cy4_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_tf_sc16_cy4_s42_l0/best.pt",
+    "checkpoint_size_mb": 192.61,
+    "checkpoint_sha256": "f3cf3878ddb0e65730f6dbdf11a59f12c9a870335de52e1d8d87d77baa2bd783",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_tf_sc16_cy4_s42_l0/config.json",
+    "config_sha256": "771da2acea94866ee541012ceb3a304f26570223f5fd6d3a8354736ae9571703",
+    "modified_at": "2026-09-01T18:12:46.174332+00:00"
+  },
+  "conv15e_tf_sc16_cy8_s42_l0": {
+    "model_id": "conv15e_tf_sc16_cy8_s42_l0",
+    "family": "Family A (Wavelet/Representation)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/conv15e_tf_sc16_cy8_s42_l0/best.pt",
+    "checkpoint_size_mb": 192.61,
+    "checkpoint_sha256": "2147e27490f720ecc599e00b1a0f8e72eaa6b7ec1aa0eb9b55c1f2db90ec5c55",
+    "config_path": "refine-logs/convergence_10e/runs/conv15e_tf_sc16_cy8_s42_l0/config.json",
+    "config_sha256": "180b2f5c9e0b2675686c902672234a183469dc4c26a019b6e9891514c5ea01ed",
+    "modified_at": "2026-09-02T00:16:23.152198+00:00"
+  },
+  "D0_current_id_currentloss_s42_l0": {
+    "model_id": "D0_current_id_currentloss_s42_l0",
+    "family": "Family B (3D-Theta Factorial)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/D0_current_id_currentloss_s42_l0/best.pt",
+    "checkpoint_size_mb": 163.79,
+    "checkpoint_sha256": "17f5488446f60419ab0c2fe2c29babee8885f19ac942fb7551ba0c0744a23c8a",
+    "config_path": "refine-logs/convergence_10e/runs/D0_current_id_currentloss_s42_l0/config.json",
+    "config_sha256": "8de631e86f90a1ad0972f9d1ddec35af5f3d8e720f0d254394532027f2c03604",
+    "modified_at": "2026-09-03T00:52:52.614216+00:00"
+  },
+  "D1_theta_mul_currentloss_s42_l0": {
+    "model_id": "D1_theta_mul_currentloss_s42_l0",
+    "family": "Family B (3D-Theta Factorial)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/D1_theta_mul_currentloss_s42_l0/best.pt",
+    "checkpoint_size_mb": 164.91,
+    "checkpoint_sha256": "83742798780497d55af592141bbf4921d36f3ac2f4d97af3904558bcfc5fb025",
+    "config_path": "refine-logs/convergence_10e/runs/D1_theta_mul_currentloss_s42_l0/config.json",
+    "config_sha256": "07254891bf11ccede92e6b845f26b12281b4bc78170df0c80ac133836918a7e0",
+    "modified_at": "2026-09-03T00:34:44.651524+00:00"
+  },
+  "D2_current_id_l1_s42_l0": {
+    "model_id": "D2_current_id_l1_s42_l0",
+    "family": "Family B (3D-Theta Factorial)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/D2_current_id_l1_s42_l0/best.pt",
+    "checkpoint_size_mb": 163.79,
+    "checkpoint_sha256": "4ec42504c8461e6a4648c46a1a087af881a6e35f8fed59e4cd0f2e979973d632",
+    "config_path": "refine-logs/convergence_10e/runs/D2_current_id_l1_s42_l0/config.json",
+    "config_sha256": "553f69da4aac45114a512b3f8c86dbc1392b5b048d740e1ceca50b2ec5af88b8",
+    "modified_at": "2026-09-02T23:58:11.171046+00:00"
+  },
+  "D3_theta_mul_l1_s42_l0": {
+    "model_id": "D3_theta_mul_l1_s42_l0",
+    "family": "Family B (3D-Theta Factorial)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/D3_theta_mul_l1_s42_l0/best.pt",
+    "checkpoint_size_mb": 164.91,
+    "checkpoint_sha256": "2612e1f7dd00b6f29e2acd68d77e3f5b1e310b7f692c8d26d1083e3aba6cd577",
+    "config_path": "refine-logs/convergence_10e/runs/D3_theta_mul_l1_s42_l0/config.json",
+    "config_sha256": "113c0bbebfd5018b8a62c6c56b06ab96075e9504e144d3ec9e2923788eabb166",
+    "modified_at": "2026-09-02T23:25:10.644361+00:00"
+  },
+  "D4_learned12_mul_l1_s42_l0": {
+    "model_id": "D4_learned12_mul_l1_s42_l0",
+    "family": "Family B (3D-Theta Factorial)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/D4_learned12_mul_l1_s42_l0/best.pt",
+    "checkpoint_size_mb": 164.92,
+    "checkpoint_sha256": "ea549b9ed3818dcc1adc48b571ac3644afcd5f60902f0277c16a5261556c9865",
+    "config_path": "refine-logs/convergence_10e/runs/D4_learned12_mul_l1_s42_l0/config.json",
+    "config_sha256": "e1b6c890ed1193c98310a012e9da5aa4d0dc98dbb6d6087a179690102f8542e8",
+    "modified_at": "2026-09-03T00:20:11.629568+00:00"
+  },
+  "D5_permuted_theta_mul_l1_s42_l0": {
+    "model_id": "D5_permuted_theta_mul_l1_s42_l0",
+    "family": "Family B (3D-Theta Factorial)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/D5_permuted_theta_mul_l1_s42_l0/best.pt",
+    "checkpoint_size_mb": 164.91,
+    "checkpoint_sha256": "094f7fe87f06cf2474b9d1efcbd28cd860e380589107e7104d7d9c00afea792c",
+    "config_path": "refine-logs/convergence_10e/runs/D5_permuted_theta_mul_l1_s42_l0/config.json",
+    "config_sha256": "afd405a3a74978352ff9d4aa06f03e09dcf39efa02ae6bd80d78b2a5928b400d",
+    "modified_at": "2026-09-02T23:39:55.984459+00:00"
+  },
+  "D6_theta_add_l1_s42_l0": {
+    "model_id": "D6_theta_add_l1_s42_l0",
+    "family": "Family B (3D-Theta Factorial)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/D6_theta_add_l1_s42_l0/best.pt",
+    "checkpoint_size_mb": 164.91,
+    "checkpoint_sha256": "2f5e856d5b3e6cec33891cb6dcf32952476d304e8cf726d9ed5f63e7ec77f53a",
+    "config_path": "refine-logs/convergence_10e/runs/D6_theta_add_l1_s42_l0/config.json",
+    "config_sha256": "9162701720ab2beb5f702f7894f5e417ae71bbe502e9b48ff66781c6d7cd8f93",
+    "modified_at": "2026-09-03T01:41:12.771021+00:00"
+  },
+  "D7_learned12_add_l1_s42_l0": {
+    "model_id": "D7_learned12_add_l1_s42_l0",
+    "family": "Family B (3D-Theta Factorial)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/D7_learned12_add_l1_s42_l0/best.pt",
+    "checkpoint_size_mb": 164.92,
+    "checkpoint_sha256": "2bbe844f952b550517e3b7a2beb2eeb31864d97b3f691bdb5a8c1f4210ea117e",
+    "config_path": "refine-logs/convergence_10e/runs/D7_learned12_add_l1_s42_l0/config.json",
+    "config_sha256": "2da80d41dec256197177423b9c5c23b86d9d11d57fa0757c62590edb9d42a297",
+    "modified_at": "2026-09-03T02:01:30.061223+00:00"
+  },
+  "D8_random12_mul_l1_s42_l0": {
+    "model_id": "D8_random12_mul_l1_s42_l0",
+    "family": "Family B (3D-Theta Factorial)",
+    "checkpoint_path": "refine-logs/convergence_10e/runs/D8_random12_mul_l1_s42_l0/best.pt",
+    "checkpoint_size_mb": 164.92,
+    "checkpoint_sha256": "52e864f0193e1a6c428286396a4d42f95a223d6ff2e26b990d32f93eebfcb343",
+    "config_path": "refine-logs/convergence_10e/runs/D8_random12_mul_l1_s42_l0/config.json",
+    "config_sha256": "3ba56339e84eaf5ac6efd1498e4ac81405df6b80be9756a700161d875ec3372a",
+    "modified_at": "2026-09-03T02:21:53.701309+00:00"
+  }
+}

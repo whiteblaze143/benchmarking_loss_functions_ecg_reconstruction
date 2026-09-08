@@ -1,0 +1,22 @@
+{
+  "phase": 8,
+  "venue": "Sunnybrook Arrhythmia Clinic / Clinical-AI Strategic Alignment",
+  "talk_type": "oral",
+  "slide_count": 19,
+  "status": "completed",
+  "compiler": "pdflatex",
+  "engine": "pdflatex",
+  "aspect_ratio": "16:9",
+  "speaker_notes": true,
+  "pptx_export": true,
+  "protocol_reference": "Evaluation of FitBit Monitoring to Detect Recurrent Atrial Fibrillation (v1.1)",
+  "artifacts": {
+    "beamer_latex": "slides/main.tex",
+    "beamer_pdf": "slides/main.pdf",
+    "powerpoint_pptx": "slides/presentation.pptx",
+    "slide_outline": "slides/SLIDE_OUTLINE.md",
+    "speaker_notes": "slides/speaker_notes.md",
+    "talk_script": "slides/TALK_SCRIPT.md"
+  },
+  "timestamp": "2026-09-04T02:02:30"
+}

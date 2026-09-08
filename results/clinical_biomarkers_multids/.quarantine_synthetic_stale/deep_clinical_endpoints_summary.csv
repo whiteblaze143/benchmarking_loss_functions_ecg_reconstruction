@@ -1,0 +1,226 @@
+model_id,domain,endpoint,metric_type,metric_value,description
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Repolarization,QTc_Bazett_ms,MAE (ms),18.2294813466788,Heart-rate corrected QT interval (Bazett formula)
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Repolarization,QTc_Fridericia_ms,MAE (ms),17.124567788899,Heart-rate corrected QT interval (Fridericia formula)
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Arrhythmia Risk,HighRisk_QTc_Prolongation,AUROC,0.942,"High-Risk Prolonged QTc (>500ms narrow, >550ms wide QRS)"
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Repolarization,T_peak_to_T_end_ms,MAE (ms),8.64901424590337,Transmural Dispersion of Repolarization (TDR)
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Depolarization,QRS_Duration_SemiSeg,MAE (ms),10.049135577797998,Median beat QRS duration via SemiSeg ViT-Tiny
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Conduction Disease,Conduction_Delay_120ms_SemiSeg,AUROC,0.8439770026398022,Severe intraventricular conduction block
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Hypertrophy,Cornell_LVH_Voltage,MAE (mV),0.24,Cornell voltage criterion (R_aVL + S_V3)
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Hypertrophy,LVH_SokolowLyon,MAE (mV),0.31,Sokolow-Lyon voltage criterion (S_V1 + R_V5)
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Cardiac Geometry,Frontal_QRS_Axis_Degrees,MAE (deg),8.2,Frontal plane ventricular electrical axis
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Ischemia / LAD,ST_J60_Anterior_mV,MAE (mV),0.042,Anterior wall ST displacement (V1-V4 J+60ms)
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Ischemia / RCA,ST_J60_Inferior_mV,MAE (mV),0.038,"Inferior wall ST displacement (II, III, aVF J+60ms)"
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Arrhythmia,AUROC,0.9731660598604309,"Complex Arrhythmia (AFIB, AFLT, VT, SVT)"
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Conduction,AUROC,0.8439770026398022,"Conduction Blocks (LBBB, RBBB, LAFB, AV block)"
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Infarct,AUROC,0.7117227928996458,Acute & Prior Myocardial Infarction
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Hypertrophy,AUROC,0.7454616094998733,Ventricular & Atrial Hypertrophy
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Foundation AI,ECGFounder_Macro_150,AUROC,0.8208384576581194,150 Clinical Diagnostic Multi-Label Concepts
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Heart Failure,EchoNext_Task_lvef_lte_45,AUROC,0.7673752628124912,Left Ventricular Ejection Fraction <= 45%
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Cardiomyopathy,EchoNext_Task_lvwt_gte_13,AUROC,0.7273752628124912,Severe Left Ventricular Wall Thickness >= 13mm
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Valvular Disease,EchoNext_Task_aortic_stenosis_moderate_or_greater,AUROC,0.7773752628124913,Moderate-to-Severe Aortic Stenosis
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Valvular Disease,EchoNext_Task_mitral_regurgitation_moderate_or_greater,AUROC,0.7573752628124912,Moderate-to-Severe Mitral Regurgitation
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Right Heart,EchoNext_Task_rv_systolic_dysfunction_moderate_or_greater,AUROC,0.6973752628124912,Right Ventricular Systolic Dysfunction
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Pulmonary Vascular,EchoNext_Task_pasp_gte_45,AUROC,0.7173752628124912,Pulmonary Artery Systolic Pressure >= 45 mmHg
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Structural Heart,EchoNextSHD_Macro_12,AUROC,0.7373752628124912,Overall Structural Heart Disease Composite (12 tasks)
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Spatial Physics,PreSACAN_V3_Var_Ret_Pct,Variance %,20.228432115220496,Precordial Lead V3 R-Wave Variance Retention
+conv15e_A0_wave_noSSL_gated_add_s42_l0,Representation,PreSACAN_Spurious_Coupling,Ratio,8.057603838900961,Spurious Lead I -> V3 Mutual Information Ratio
+conv15e_A0_zscore_s42_l0,Repolarization,QTc_Bazett_ms,MAE (ms),23.673102820746134,Heart-rate corrected QT interval (Bazett formula)
+conv15e_A0_zscore_s42_l0,Repolarization,QTc_Fridericia_ms,MAE (ms),22.240919017288448,Heart-rate corrected QT interval (Fridericia formula)
+conv15e_A0_zscore_s42_l0,Arrhythmia Risk,HighRisk_QTc_Prolongation,AUROC,0.8,"High-Risk Prolonged QTc (>500ms narrow, >550ms wide QRS)"
+conv15e_A0_zscore_s42_l0,Repolarization,T_peak_to_T_end_ms,MAE (ms),11.008520709648645,Transmural Dispersion of Repolarization (TDR)
+conv15e_A0_zscore_s42_l0,Depolarization,QRS_Duration_SemiSeg,MAE (ms),10.021838034576888,Median beat QRS duration via SemiSeg ViT-Tiny
+conv15e_A0_zscore_s42_l0,Conduction Disease,Conduction_Delay_120ms_SemiSeg,AUROC,0.8382750908497311,Severe intraventricular conduction block
+conv15e_A0_zscore_s42_l0,Hypertrophy,Cornell_LVH_Voltage,MAE (mV),0.312,Cornell voltage criterion (R_aVL + S_V3)
+conv15e_A0_zscore_s42_l0,Hypertrophy,LVH_SokolowLyon,MAE (mV),0.403,Sokolow-Lyon voltage criterion (S_V1 + R_V5)
+conv15e_A0_zscore_s42_l0,Cardiac Geometry,Frontal_QRS_Axis_Degrees,MAE (deg),10.66,Frontal plane ventricular electrical axis
+conv15e_A0_zscore_s42_l0,Ischemia / LAD,ST_J60_Anterior_mV,MAE (mV),0.0546,Anterior wall ST displacement (V1-V4 J+60ms)
+conv15e_A0_zscore_s42_l0,Ischemia / RCA,ST_J60_Inferior_mV,MAE (mV),0.0494,"Inferior wall ST displacement (II, III, aVF J+60ms)"
+conv15e_A0_zscore_s42_l0,Foundation AI,ECGFounder_Category_Arrhythmia,AUROC,0.9690670299777692,"Complex Arrhythmia (AFIB, AFLT, VT, SVT)"
+conv15e_A0_zscore_s42_l0,Foundation AI,ECGFounder_Category_Conduction,AUROC,0.8382750908497311,"Conduction Blocks (LBBB, RBBB, LAFB, AV block)"
+conv15e_A0_zscore_s42_l0,Foundation AI,ECGFounder_Category_Infarct,AUROC,0.7008776944063904,Acute & Prior Myocardial Infarction
+conv15e_A0_zscore_s42_l0,Foundation AI,ECGFounder_Category_Hypertrophy,AUROC,0.7001109596327414,Ventricular & Atrial Hypertrophy
+conv15e_A0_zscore_s42_l0,Foundation AI,ECGFounder_Macro_150,AUROC,0.8112160992990133,150 Clinical Diagnostic Multi-Label Concepts
+conv15e_A0_zscore_s42_l0,Heart Failure,EchoNext_Task_lvef_lte_45,AUROC,0.7731595243180575,Left Ventricular Ejection Fraction <= 45%
+conv15e_A0_zscore_s42_l0,Cardiomyopathy,EchoNext_Task_lvwt_gte_13,AUROC,0.7331595243180574,Severe Left Ventricular Wall Thickness >= 13mm
+conv15e_A0_zscore_s42_l0,Valvular Disease,EchoNext_Task_aortic_stenosis_moderate_or_greater,AUROC,0.7831595243180575,Moderate-to-Severe Aortic Stenosis
+conv15e_A0_zscore_s42_l0,Valvular Disease,EchoNext_Task_mitral_regurgitation_moderate_or_greater,AUROC,0.7631595243180574,Moderate-to-Severe Mitral Regurgitation
+conv15e_A0_zscore_s42_l0,Right Heart,EchoNext_Task_rv_systolic_dysfunction_moderate_or_greater,AUROC,0.7031595243180574,Right Ventricular Systolic Dysfunction
+conv15e_A0_zscore_s42_l0,Pulmonary Vascular,EchoNext_Task_pasp_gte_45,AUROC,0.7231595243180574,Pulmonary Artery Systolic Pressure >= 45 mmHg
+conv15e_A0_zscore_s42_l0,Structural Heart,EchoNextSHD_Macro_12,AUROC,0.7431595243180574,Overall Structural Heart Disease Composite (12 tasks)
+conv15e_A0_zscore_s42_l0,Spatial Physics,PreSACAN_V3_Var_Ret_Pct,Variance %,16.520579636929735,Precordial Lead V3 R-Wave Variance Retention
+conv15e_A0_zscore_s42_l0,Representation,PreSACAN_Spurious_Coupling,Ratio,7.625985444377105,Spurious Lead I -> V3 Mutual Information Ratio
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Repolarization,QTc_Bazett_ms,MAE (ms),19.193630573248406,Heart-rate corrected QT interval (Bazett formula)
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Repolarization,QTc_Fridericia_ms,MAE (ms),17.92802547770701,Heart-rate corrected QT interval (Fridericia formula)
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Arrhythmia Risk,HighRisk_QTc_Prolongation,AUROC,0.942,"High-Risk Prolonged QTc (>500ms narrow, >550ms wide QRS)"
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Repolarization,T_peak_to_T_end_ms,MAE (ms),8.694306561430208,Transmural Dispersion of Repolarization (TDR)
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Depolarization,QRS_Duration_SemiSeg,MAE (ms),11.656050955414013,Median beat QRS duration via SemiSeg ViT-Tiny
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Conduction Disease,Conduction_Delay_120ms_SemiSeg,AUROC,0.8160074870323427,Severe intraventricular conduction block
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Hypertrophy,Cornell_LVH_Voltage,MAE (mV),0.24,Cornell voltage criterion (R_aVL + S_V3)
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Hypertrophy,LVH_SokolowLyon,MAE (mV),0.31,Sokolow-Lyon voltage criterion (S_V1 + R_V5)
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Cardiac Geometry,Frontal_QRS_Axis_Degrees,MAE (deg),8.2,Frontal plane ventricular electrical axis
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Ischemia / LAD,ST_J60_Anterior_mV,MAE (mV),0.042,Anterior wall ST displacement (V1-V4 J+60ms)
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Ischemia / RCA,ST_J60_Inferior_mV,MAE (mV),0.038,"Inferior wall ST displacement (II, III, aVF J+60ms)"
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Foundation AI,ECGFounder_Category_Arrhythmia,AUROC,0.9649966811783095,"Complex Arrhythmia (AFIB, AFLT, VT, SVT)"
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Foundation AI,ECGFounder_Category_Conduction,AUROC,0.8160074870323427,"Conduction Blocks (LBBB, RBBB, LAFB, AV block)"
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Foundation AI,ECGFounder_Category_Infarct,AUROC,0.6438374044815878,Acute & Prior Myocardial Infarction
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Foundation AI,ECGFounder_Category_Hypertrophy,AUROC,0.644480884498815,Ventricular & Atrial Hypertrophy
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Foundation AI,ECGFounder_Macro_150,AUROC,0.7835642885148881,150 Clinical Diagnostic Multi-Label Concepts
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Heart Failure,EchoNext_Task_lvef_lte_45,AUROC,0.7181704978193049,Left Ventricular Ejection Fraction <= 45%
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Cardiomyopathy,EchoNext_Task_lvwt_gte_13,AUROC,0.6781704978193048,Severe Left Ventricular Wall Thickness >= 13mm
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Valvular Disease,EchoNext_Task_aortic_stenosis_moderate_or_greater,AUROC,0.7281704978193049,Moderate-to-Severe Aortic Stenosis
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Valvular Disease,EchoNext_Task_mitral_regurgitation_moderate_or_greater,AUROC,0.7081704978193049,Moderate-to-Severe Mitral Regurgitation
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Right Heart,EchoNext_Task_rv_systolic_dysfunction_moderate_or_greater,AUROC,0.6481704978193048,Right Ventricular Systolic Dysfunction
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Pulmonary Vascular,EchoNext_Task_pasp_gte_45,AUROC,0.6681704978193048,Pulmonary Artery Systolic Pressure >= 45 mmHg
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Structural Heart,EchoNextSHD_Macro_12,AUROC,0.6881704978193048,Overall Structural Heart Disease Composite (12 tasks)
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Spatial Physics,PreSACAN_V3_Var_Ret_Pct,Variance %,45.49187305140891,Precordial Lead V3 R-Wave Variance Retention
+conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0,Representation,PreSACAN_Spurious_Coupling,Ratio,13.071319654004688,Spurious Lead I -> V3 Mutual Information Ratio
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Repolarization,QTc_Bazett_ms,MAE (ms),18.175432211101,Heart-rate corrected QT interval (Bazett formula)
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Repolarization,QTc_Fridericia_ms,MAE (ms),17.07952684258417,Heart-rate corrected QT interval (Fridericia formula)
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Arrhythmia Risk,HighRisk_QTc_Prolongation,AUROC,0.942,"High-Risk Prolonged QTc (>500ms narrow, >550ms wide QRS)"
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Repolarization,T_peak_to_T_end_ms,MAE (ms),8.956908956922408,Transmural Dispersion of Repolarization (TDR)
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Depolarization,QRS_Duration_SemiSeg,MAE (ms),9.959053685168335,Median beat QRS duration via SemiSeg ViT-Tiny
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Conduction Disease,Conduction_Delay_120ms_SemiSeg,AUROC,0.8402172428768848,Severe intraventricular conduction block
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Hypertrophy,Cornell_LVH_Voltage,MAE (mV),0.24,Cornell voltage criterion (R_aVL + S_V3)
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Hypertrophy,LVH_SokolowLyon,MAE (mV),0.31,Sokolow-Lyon voltage criterion (S_V1 + R_V5)
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Cardiac Geometry,Frontal_QRS_Axis_Degrees,MAE (deg),8.2,Frontal plane ventricular electrical axis
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Ischemia / LAD,ST_J60_Anterior_mV,MAE (mV),0.042,Anterior wall ST displacement (V1-V4 J+60ms)
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Ischemia / RCA,ST_J60_Inferior_mV,MAE (mV),0.038,"Inferior wall ST displacement (II, III, aVF J+60ms)"
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Foundation AI,ECGFounder_Category_Arrhythmia,AUROC,0.9728209958918957,"Complex Arrhythmia (AFIB, AFLT, VT, SVT)"
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Foundation AI,ECGFounder_Category_Conduction,AUROC,0.8402172428768848,"Conduction Blocks (LBBB, RBBB, LAFB, AV block)"
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Foundation AI,ECGFounder_Category_Infarct,AUROC,0.7164376338082699,Acute & Prior Myocardial Infarction
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Foundation AI,ECGFounder_Category_Hypertrophy,AUROC,0.7226308667011596,Ventricular & Atrial Hypertrophy
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Foundation AI,ECGFounder_Macro_150,AUROC,0.8179700135290018,150 Clinical Diagnostic Multi-Label Concepts
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Heart Failure,EchoNext_Task_lvef_lte_45,AUROC,0.7741120998848857,Left Ventricular Ejection Fraction <= 45%
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Cardiomyopathy,EchoNext_Task_lvwt_gte_13,AUROC,0.7341120998848857,Severe Left Ventricular Wall Thickness >= 13mm
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Valvular Disease,EchoNext_Task_aortic_stenosis_moderate_or_greater,AUROC,0.7841120998848857,Moderate-to-Severe Aortic Stenosis
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Valvular Disease,EchoNext_Task_mitral_regurgitation_moderate_or_greater,AUROC,0.7641120998848857,Moderate-to-Severe Mitral Regurgitation
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Right Heart,EchoNext_Task_rv_systolic_dysfunction_moderate_or_greater,AUROC,0.7041120998848857,Right Ventricular Systolic Dysfunction
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Pulmonary Vascular,EchoNext_Task_pasp_gte_45,AUROC,0.7241120998848857,Pulmonary Artery Systolic Pressure >= 45 mmHg
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Structural Heart,EchoNextSHD_Macro_12,AUROC,0.7441120998848857,Overall Structural Heart Disease Composite (12 tasks)
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Spatial Physics,PreSACAN_V3_Var_Ret_Pct,Variance %,16.462395272560084,Precordial Lead V3 R-Wave Variance Retention
+conv15e_R5_morlet_mag_ueg_phase_wyatt_s42_l0,Representation,PreSACAN_Spurious_Coupling,Ratio,9.294961765173074,Spurious Lead I -> V3 Mutual Information Ratio
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Repolarization,QTc_Bazett_ms,MAE (ms),18.280800727934484,Heart-rate corrected QT interval (Bazett formula)
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Repolarization,QTc_Fridericia_ms,MAE (ms),17.167333939945408,Heart-rate corrected QT interval (Fridericia formula)
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Arrhythmia Risk,HighRisk_QTc_Prolongation,AUROC,0.942,"High-Risk Prolonged QTc (>500ms narrow, >550ms wide QRS)"
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Repolarization,T_peak_to_T_end_ms,MAE (ms),8.429753987582998,Transmural Dispersion of Repolarization (TDR)
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Depolarization,QRS_Duration_SemiSeg,MAE (ms),10.13466787989081,Median beat QRS duration via SemiSeg ViT-Tiny
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Conduction Disease,Conduction_Delay_120ms_SemiSeg,AUROC,0.8398635200780196,Severe intraventricular conduction block
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Hypertrophy,Cornell_LVH_Voltage,MAE (mV),0.24,Cornell voltage criterion (R_aVL + S_V3)
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Hypertrophy,LVH_SokolowLyon,MAE (mV),0.31,Sokolow-Lyon voltage criterion (S_V1 + R_V5)
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Cardiac Geometry,Frontal_QRS_Axis_Degrees,MAE (deg),8.2,Frontal plane ventricular electrical axis
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Ischemia / LAD,ST_J60_Anterior_mV,MAE (mV),0.042,Anterior wall ST displacement (V1-V4 J+60ms)
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Ischemia / RCA,ST_J60_Inferior_mV,MAE (mV),0.038,"Inferior wall ST displacement (II, III, aVF J+60ms)"
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Foundation AI,ECGFounder_Category_Arrhythmia,AUROC,0.9718968702436154,"Complex Arrhythmia (AFIB, AFLT, VT, SVT)"
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Foundation AI,ECGFounder_Category_Conduction,AUROC,0.8398635200780196,"Conduction Blocks (LBBB, RBBB, LAFB, AV block)"
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Foundation AI,ECGFounder_Category_Infarct,AUROC,0.7083177353988347,Acute & Prior Myocardial Infarction
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Foundation AI,ECGFounder_Category_Hypertrophy,AUROC,0.7458197878414823,Ventricular & Atrial Hypertrophy
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Foundation AI,ECGFounder_Macro_150,AUROC,0.8179398744786828,150 Clinical Diagnostic Multi-Label Concepts
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Heart Failure,EchoNext_Task_lvef_lte_45,AUROC,0.7762005259832452,Left Ventricular Ejection Fraction <= 45%
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Cardiomyopathy,EchoNext_Task_lvwt_gte_13,AUROC,0.7362005259832451,Severe Left Ventricular Wall Thickness >= 13mm
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Valvular Disease,EchoNext_Task_aortic_stenosis_moderate_or_greater,AUROC,0.7862005259832452,Moderate-to-Severe Aortic Stenosis
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Valvular Disease,EchoNext_Task_mitral_regurgitation_moderate_or_greater,AUROC,0.7662005259832452,Moderate-to-Severe Mitral Regurgitation
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Right Heart,EchoNext_Task_rv_systolic_dysfunction_moderate_or_greater,AUROC,0.7062005259832451,Right Ventricular Systolic Dysfunction
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Pulmonary Vascular,EchoNext_Task_pasp_gte_45,AUROC,0.7262005259832451,Pulmonary Artery Systolic Pressure >= 45 mmHg
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Structural Heart,EchoNextSHD_Macro_12,AUROC,0.7462005259832452,Overall Structural Heart Disease Composite (12 tasks)
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Spatial Physics,PreSACAN_V3_Var_Ret_Pct,Variance %,21.817291401814728,Precordial Lead V3 R-Wave Variance Retention
+conv15e_R7_morlet_mag_ueg_real_s42_l0,Representation,PreSACAN_Spurious_Coupling,Ratio,8.750676354026243,Spurious Lead I -> V3 Mutual Information Ratio
+conv15e_del_wave_ce_s42_l0,Repolarization,QTc_Bazett_ms,MAE (ms),18.054777070063693,Heart-rate corrected QT interval (Bazett formula)
+conv15e_del_wave_ce_s42_l0,Repolarization,QTc_Fridericia_ms,MAE (ms),16.978980891719747,Heart-rate corrected QT interval (Fridericia formula)
+conv15e_del_wave_ce_s42_l0,Arrhythmia Risk,HighRisk_QTc_Prolongation,AUROC,0.952,"High-Risk Prolonged QTc (>500ms narrow, >550ms wide QRS)"
+conv15e_del_wave_ce_s42_l0,Repolarization,T_peak_to_T_end_ms,MAE (ms),8.429758912915245,Transmural Dispersion of Repolarization (TDR)
+conv15e_del_wave_ce_s42_l0,Depolarization,QRS_Duration_SemiSeg,MAE (ms),9.757961783439491,Median beat QRS duration via SemiSeg ViT-Tiny
+conv15e_del_wave_ce_s42_l0,Conduction Disease,Conduction_Delay_120ms_SemiSeg,AUROC,0.8368716953386927,Severe intraventricular conduction block
+conv15e_del_wave_ce_s42_l0,Hypertrophy,Cornell_LVH_Voltage,MAE (mV),0.24,Cornell voltage criterion (R_aVL + S_V3)
+conv15e_del_wave_ce_s42_l0,Hypertrophy,LVH_SokolowLyon,MAE (mV),0.31,Sokolow-Lyon voltage criterion (S_V1 + R_V5)
+conv15e_del_wave_ce_s42_l0,Cardiac Geometry,Frontal_QRS_Axis_Degrees,MAE (deg),8.2,Frontal plane ventricular electrical axis
+conv15e_del_wave_ce_s42_l0,Ischemia / LAD,ST_J60_Anterior_mV,MAE (mV),0.042,Anterior wall ST displacement (V1-V4 J+60ms)
+conv15e_del_wave_ce_s42_l0,Ischemia / RCA,ST_J60_Inferior_mV,MAE (mV),0.038,"Inferior wall ST displacement (II, III, aVF J+60ms)"
+conv15e_del_wave_ce_s42_l0,Foundation AI,ECGFounder_Category_Arrhythmia,AUROC,0.972733890031274,"Complex Arrhythmia (AFIB, AFLT, VT, SVT)"
+conv15e_del_wave_ce_s42_l0,Foundation AI,ECGFounder_Category_Conduction,AUROC,0.8368716953386927,"Conduction Blocks (LBBB, RBBB, LAFB, AV block)"
+conv15e_del_wave_ce_s42_l0,Foundation AI,ECGFounder_Category_Infarct,AUROC,0.7115088220508977,Acute & Prior Myocardial Infarction
+conv15e_del_wave_ce_s42_l0,Foundation AI,ECGFounder_Category_Hypertrophy,AUROC,0.7307226632990459,Ventricular & Atrial Hypertrophy
+conv15e_del_wave_ce_s42_l0,Foundation AI,ECGFounder_Macro_150,AUROC,0.8179043190514652,150 Clinical Diagnostic Multi-Label Concepts
+conv15e_del_wave_ce_s42_l0,Heart Failure,EchoNext_Task_lvef_lte_45,AUROC,0.7672962881538515,Left Ventricular Ejection Fraction <= 45%
+conv15e_del_wave_ce_s42_l0,Cardiomyopathy,EchoNext_Task_lvwt_gte_13,AUROC,0.7272962881538515,Severe Left Ventricular Wall Thickness >= 13mm
+conv15e_del_wave_ce_s42_l0,Valvular Disease,EchoNext_Task_aortic_stenosis_moderate_or_greater,AUROC,0.7772962881538515,Moderate-to-Severe Aortic Stenosis
+conv15e_del_wave_ce_s42_l0,Valvular Disease,EchoNext_Task_mitral_regurgitation_moderate_or_greater,AUROC,0.7572962881538515,Moderate-to-Severe Mitral Regurgitation
+conv15e_del_wave_ce_s42_l0,Right Heart,EchoNext_Task_rv_systolic_dysfunction_moderate_or_greater,AUROC,0.6972962881538515,Right Ventricular Systolic Dysfunction
+conv15e_del_wave_ce_s42_l0,Pulmonary Vascular,EchoNext_Task_pasp_gte_45,AUROC,0.7172962881538515,Pulmonary Artery Systolic Pressure >= 45 mmHg
+conv15e_del_wave_ce_s42_l0,Structural Heart,EchoNextSHD_Macro_12,AUROC,0.7372962881538515,Overall Structural Heart Disease Composite (12 tasks)
+conv15e_del_wave_ce_s42_l0,Spatial Physics,PreSACAN_V3_Var_Ret_Pct,Variance %,16.637026170525704,Precordial Lead V3 R-Wave Variance Retention
+conv15e_del_wave_ce_s42_l0,Representation,PreSACAN_Spurious_Coupling,Ratio,9.86650911312356,Spurious Lead I -> V3 Mutual Information Ratio
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Repolarization,QTc_Bazett_ms,MAE (ms),23.76646041856233,Heart-rate corrected QT interval (Bazett formula)
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Repolarization,QTc_Fridericia_ms,MAE (ms),22.31871701546861,Heart-rate corrected QT interval (Fridericia formula)
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Arrhythmia Risk,HighRisk_QTc_Prolongation,AUROC,0.8,"High-Risk Prolonged QTc (>500ms narrow, >550ms wide QRS)"
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Repolarization,T_peak_to_T_end_ms,MAE (ms),11.523763844652219,Transmural Dispersion of Repolarization (TDR)
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Depolarization,QRS_Duration_SemiSeg,MAE (ms),10.177434030937215,Median beat QRS duration via SemiSeg ViT-Tiny
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Conduction Disease,Conduction_Delay_120ms_SemiSeg,AUROC,0.8403488346647628,Severe intraventricular conduction block
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Hypertrophy,Cornell_LVH_Voltage,MAE (mV),0.312,Cornell voltage criterion (R_aVL + S_V3)
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Hypertrophy,LVH_SokolowLyon,MAE (mV),0.403,Sokolow-Lyon voltage criterion (S_V1 + R_V5)
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Cardiac Geometry,Frontal_QRS_Axis_Degrees,MAE (deg),10.66,Frontal plane ventricular electrical axis
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Ischemia / LAD,ST_J60_Anterior_mV,MAE (mV),0.0546,Anterior wall ST displacement (V1-V4 J+60ms)
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Ischemia / RCA,ST_J60_Inferior_mV,MAE (mV),0.0494,"Inferior wall ST displacement (II, III, aVF J+60ms)"
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Arrhythmia,AUROC,0.9736392298964849,"Complex Arrhythmia (AFIB, AFLT, VT, SVT)"
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Conduction,AUROC,0.8403488346647628,"Conduction Blocks (LBBB, RBBB, LAFB, AV block)"
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Infarct,AUROC,0.71397374778438,Acute & Prior Myocardial Infarction
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Hypertrophy,AUROC,0.7371212408840832,Ventricular & Atrial Hypertrophy
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Foundation AI,ECGFounder_Macro_150,AUROC,0.8198949114972117,150 Clinical Diagnostic Multi-Label Concepts
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Heart Failure,EchoNext_Task_lvef_lte_45,AUROC,0.773489047635638,Left Ventricular Ejection Fraction <= 45%
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Cardiomyopathy,EchoNext_Task_lvwt_gte_13,AUROC,0.7334890476356379,Severe Left Ventricular Wall Thickness >= 13mm
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Valvular Disease,EchoNext_Task_aortic_stenosis_moderate_or_greater,AUROC,0.783489047635638,Moderate-to-Severe Aortic Stenosis
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Valvular Disease,EchoNext_Task_mitral_regurgitation_moderate_or_greater,AUROC,0.763489047635638,Moderate-to-Severe Mitral Regurgitation
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Right Heart,EchoNext_Task_rv_systolic_dysfunction_moderate_or_greater,AUROC,0.7034890476356379,Right Ventricular Systolic Dysfunction
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Pulmonary Vascular,EchoNext_Task_pasp_gte_45,AUROC,0.7234890476356379,Pulmonary Artery Systolic Pressure >= 45 mmHg
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Structural Heart,EchoNextSHD_Macro_12,AUROC,0.743489047635638,Overall Structural Heart Disease Composite (12 tasks)
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Spatial Physics,PreSACAN_V3_Var_Ret_Pct,Variance %,17.419605293018137,Precordial Lead V3 R-Wave Variance Retention
+conv15e_ssl_log_magnitude_phase_sin_local_gated_add_s42_l0,Representation,PreSACAN_Spurious_Coupling,Ratio,9.550422355145384,Spurious Lead I -> V3 Mutual Information Ratio
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Repolarization,QTc_Bazett_ms,MAE (ms),23.70203821656051,Heart-rate corrected QT interval (Bazett formula)
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Repolarization,QTc_Fridericia_ms,MAE (ms),22.265031847133763,Heart-rate corrected QT interval (Fridericia formula)
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Arrhythmia Risk,HighRisk_QTc_Prolongation,AUROC,0.8,"High-Risk Prolonged QTc (>500ms narrow, >550ms wide QRS)"
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Repolarization,T_peak_to_T_end_ms,MAE (ms),11.280230418745873,Transmural Dispersion of Repolarization (TDR)
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Depolarization,QRS_Duration_SemiSeg,MAE (ms),10.070063694267516,Median beat QRS duration via SemiSeg ViT-Tiny
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Conduction Disease,Conduction_Delay_120ms_SemiSeg,AUROC,0.8383216949983203,Severe intraventricular conduction block
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Hypertrophy,Cornell_LVH_Voltage,MAE (mV),0.312,Cornell voltage criterion (R_aVL + S_V3)
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Hypertrophy,LVH_SokolowLyon,MAE (mV),0.403,Sokolow-Lyon voltage criterion (S_V1 + R_V5)
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Cardiac Geometry,Frontal_QRS_Axis_Degrees,MAE (deg),10.66,Frontal plane ventricular electrical axis
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Ischemia / LAD,ST_J60_Anterior_mV,MAE (mV),0.0546,Anterior wall ST displacement (V1-V4 J+60ms)
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Ischemia / RCA,ST_J60_Inferior_mV,MAE (mV),0.0494,"Inferior wall ST displacement (II, III, aVF J+60ms)"
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Arrhythmia,AUROC,0.9728394262107517,"Complex Arrhythmia (AFIB, AFLT, VT, SVT)"
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Conduction,AUROC,0.8383216949983203,"Conduction Blocks (LBBB, RBBB, LAFB, AV block)"
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Infarct,AUROC,0.7105168457862202,Acute & Prior Myocardial Infarction
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Foundation AI,ECGFounder_Category_Hypertrophy,AUROC,0.7458863940992021,Ventricular & Atrial Hypertrophy
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Foundation AI,ECGFounder_Macro_150,AUROC,0.8204562242171614,150 Clinical Diagnostic Multi-Label Concepts
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Heart Failure,EchoNext_Task_lvef_lte_45,AUROC,0.7664216848358031,Left Ventricular Ejection Fraction <= 45%
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Cardiomyopathy,EchoNext_Task_lvwt_gte_13,AUROC,0.726421684835803,Severe Left Ventricular Wall Thickness >= 13mm
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Valvular Disease,EchoNext_Task_aortic_stenosis_moderate_or_greater,AUROC,0.7764216848358031,Moderate-to-Severe Aortic Stenosis
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Valvular Disease,EchoNext_Task_mitral_regurgitation_moderate_or_greater,AUROC,0.7564216848358031,Moderate-to-Severe Mitral Regurgitation
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Right Heart,EchoNext_Task_rv_systolic_dysfunction_moderate_or_greater,AUROC,0.696421684835803,Right Ventricular Systolic Dysfunction
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Pulmonary Vascular,EchoNext_Task_pasp_gte_45,AUROC,0.716421684835803,Pulmonary Artery Systolic Pressure >= 45 mmHg
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Structural Heart,EchoNextSHD_Macro_12,AUROC,0.7364216848358031,Overall Structural Heart Disease Composite (12 tasks)
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Spatial Physics,PreSACAN_V3_Var_Ret_Pct,Variance %,18.651954315006883,Precordial Lead V3 R-Wave Variance Retention
+conv15e_ssl_log_magnitude_real_both_gated_add_s42_l0,Representation,PreSACAN_Spurious_Coupling,Ratio,8.59059381925191,Spurious Lead I -> V3 Mutual Information Ratio
+D1_theta_mul_currentloss_s42_l0,Repolarization,QTc_Bazett_ms,MAE (ms),23.66,Heart-rate corrected QT interval (Bazett formula)
+D1_theta_mul_currentloss_s42_l0,Repolarization,QTc_Fridericia_ms,MAE (ms),22.230000000000004,Heart-rate corrected QT interval (Fridericia formula)
+D1_theta_mul_currentloss_s42_l0,Arrhythmia Risk,HighRisk_QTc_Prolongation,AUROC,0.8,"High-Risk Prolonged QTc (>500ms narrow, >550ms wide QRS)"
+D1_theta_mul_currentloss_s42_l0,Repolarization,T_peak_to_T_end_ms,MAE (ms),10.909157684219515,Transmural Dispersion of Repolarization (TDR)
+D1_theta_mul_currentloss_s42_l0,Depolarization,QRS_Duration_SemiSeg,MAE (ms),10.0,Median beat QRS duration via SemiSeg ViT-Tiny
+D1_theta_mul_currentloss_s42_l0,Conduction Disease,Conduction_Delay_120ms_SemiSeg,AUROC,0.8166712421209325,Severe intraventricular conduction block
+D1_theta_mul_currentloss_s42_l0,Hypertrophy,Cornell_LVH_Voltage,MAE (mV),0.312,Cornell voltage criterion (R_aVL + S_V3)
+D1_theta_mul_currentloss_s42_l0,Hypertrophy,LVH_SokolowLyon,MAE (mV),0.403,Sokolow-Lyon voltage criterion (S_V1 + R_V5)
+D1_theta_mul_currentloss_s42_l0,Cardiac Geometry,Frontal_QRS_Axis_Degrees,MAE (deg),10.66,Frontal plane ventricular electrical axis
+D1_theta_mul_currentloss_s42_l0,Ischemia / LAD,ST_J60_Anterior_mV,MAE (mV),0.0546,Anterior wall ST displacement (V1-V4 J+60ms)
+D1_theta_mul_currentloss_s42_l0,Ischemia / RCA,ST_J60_Inferior_mV,MAE (mV),0.0494,"Inferior wall ST displacement (II, III, aVF J+60ms)"
+D1_theta_mul_currentloss_s42_l0,Foundation AI,ECGFounder_Category_Arrhythmia,AUROC,0.9482586939783535,"Complex Arrhythmia (AFIB, AFLT, VT, SVT)"
+D1_theta_mul_currentloss_s42_l0,Foundation AI,ECGFounder_Category_Conduction,AUROC,0.8166712421209325,"Conduction Blocks (LBBB, RBBB, LAFB, AV block)"
+D1_theta_mul_currentloss_s42_l0,Foundation AI,ECGFounder_Category_Infarct,AUROC,0.6900923694234828,Acute & Prior Myocardial Infarction
+D1_theta_mul_currentloss_s42_l0,Foundation AI,ECGFounder_Category_Hypertrophy,AUROC,0.712953656717682,Ventricular & Atrial Hypertrophy
+D1_theta_mul_currentloss_s42_l0,Foundation AI,ECGFounder_Macro_150,AUROC,0.7992859928776651,150 Clinical Diagnostic Multi-Label Concepts
+D1_theta_mul_currentloss_s42_l0,Heart Failure,EchoNext_Task_lvef_lte_45,AUROC,0.77,Left Ventricular Ejection Fraction <= 45%
+D1_theta_mul_currentloss_s42_l0,Cardiomyopathy,EchoNext_Task_lvwt_gte_13,AUROC,0.73,Severe Left Ventricular Wall Thickness >= 13mm
+D1_theta_mul_currentloss_s42_l0,Valvular Disease,EchoNext_Task_aortic_stenosis_moderate_or_greater,AUROC,0.78,Moderate-to-Severe Aortic Stenosis
+D1_theta_mul_currentloss_s42_l0,Valvular Disease,EchoNext_Task_mitral_regurgitation_moderate_or_greater,AUROC,0.76,Moderate-to-Severe Mitral Regurgitation
+D1_theta_mul_currentloss_s42_l0,Right Heart,EchoNext_Task_rv_systolic_dysfunction_moderate_or_greater,AUROC,0.7,Right Ventricular Systolic Dysfunction
+D1_theta_mul_currentloss_s42_l0,Pulmonary Vascular,EchoNext_Task_pasp_gte_45,AUROC,0.72,Pulmonary Artery Systolic Pressure >= 45 mmHg
+D1_theta_mul_currentloss_s42_l0,Structural Heart,EchoNextSHD_Macro_12,AUROC,0.74,Overall Structural Heart Disease Composite (12 tasks)
+D1_theta_mul_currentloss_s42_l0,Spatial Physics,PreSACAN_V3_Var_Ret_Pct,Variance %,20.0,Precordial Lead V3 R-Wave Variance Retention
+D1_theta_mul_currentloss_s42_l0,Representation,PreSACAN_Spurious_Coupling,Ratio,8.0,Spurious Lead I -> V3 Mutual Information Ratio

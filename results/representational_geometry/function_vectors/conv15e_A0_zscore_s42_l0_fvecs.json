@@ -1,0 +1,57 @@
+{
+  "I->II": {
+    "mean_cosine_stability": 0.9989541172981262,
+    "norm_mean": 2561.86669921875,
+    "norm_std": 280.8553161621094
+  },
+  "II->III": {
+    "mean_cosine_stability": 0.7897131443023682,
+    "norm_mean": 225.04913330078125,
+    "norm_std": 81.40463256835938
+  },
+  "III->aVR": {
+    "mean_cosine_stability": 0.9895813465118408,
+    "norm_mean": 849.817138671875,
+    "norm_std": 178.99317932128906
+  },
+  "aVR->aVL": {
+    "mean_cosine_stability": 0.9657959342002869,
+    "norm_mean": 331.8586730957031,
+    "norm_std": 60.273170471191406
+  },
+  "aVL->aVF": {
+    "mean_cosine_stability": 0.987190306186676,
+    "norm_mean": 997.1765747070312,
+    "norm_std": 234.19773864746094
+  },
+  "aVF->V1": {
+    "mean_cosine_stability": 0.8025243878364563,
+    "norm_mean": 263.26263427734375,
+    "norm_std": 92.9503402709961
+  },
+  "V1->V2": {
+    "mean_cosine_stability": 0.938226044178009,
+    "norm_mean": 299.3077087402344,
+    "norm_std": 98.59266662597656
+  },
+  "V2->V3": {
+    "mean_cosine_stability": 0.714823842048645,
+    "norm_mean": 94.56025695800781,
+    "norm_std": 34.21582794189453
+  },
+  "V3->V4": {
+    "mean_cosine_stability": 0.9211664795875549,
+    "norm_mean": 209.78329467773438,
+    "norm_std": 94.45574951171875
+  },
+  "V4->V5": {
+    "mean_cosine_stability": 0.9860828518867493,
+    "norm_mean": 278.169189453125,
+    "norm_std": 81.29381561279297
+  },
+  "V5->V6": {
+    "mean_cosine_stability": 0.9867921471595764,
+    "norm_mean": 263.634033203125,
+    "norm_std": 59.99563217163086
+  }
+}

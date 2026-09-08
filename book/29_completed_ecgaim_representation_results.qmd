@@ -51,26 +51,14 @@ def compact_ci(frame, digits=3):
 
 ## What question this study can answer
 
-This is a **frozen-representation audit**, not another reconstruction
-leaderboard. It asks whether a frozen ECG-AIM encoder contains linearly
-accessible rhythm-code or annotation-timing information; whether that
-information adds to deliberately small waveform controls; whether `1011011`
-improves on the raw `1000000` anchor on the same records; and whether latent
-outliers are associated with reconstruction failure.
+This is a **frozen-representation audit**, not another reconstruction leaderboard. It asks whether a frozen ECG-AIM encoder contains linearly accessible rhythm-code or annotation-timing information; whether that information adds to deliberately small waveform controls; whether `1011011` improves on the raw `1000000` anchor on the same records; and whether latent outliers are associated with reconstruction failure.
 
-The rhythm endpoint is released cross-sectional code membership. The timing
-endpoint is the annotation interval from QRS onset to T offset; it is explicitly
-**not clinical QT or QTc**. Neither endpoint establishes diagnosis, prospective
-AF prediction, causal physiology, or identifiability of a missing 12-lead ECG.
+The rhythm endpoint is released cross-sectional code membership. The timing endpoint is the annotation interval from QRS onset to T offset; it is explicitly **not clinical QT or QTc**. Neither endpoint establishes diagnosis, prospective AF prediction, causal physiology, or identifiability of a missing 12-lead ECG.
 
-::: {.callout-important}
+::: callout-important
 ## Bottom line
 
-The latents contain useful rhythm-code information, but the current experiment
-does not show that `1011011` is a better AF representation than `1000000`.
-`1011011` improves several measures of annotation-interval encoding, while
-direct waveform summaries remain substantially better for absolute timing.
-Rhythm codes are locally enriched in latent space but not globally separated.
+The latents contain useful rhythm-code information, but the current experiment does not show that `1011011` is a better AF representation than `1000000`. `1011011` improves several measures of annotation-interval encoding, while direct waveform summaries remain substantially better for absolute timing. Rhythm codes are locally enriched in latent space but not globally separated.
 :::
 
 ## Completion, split scope, and leakage boundary
@@ -85,24 +73,13 @@ display(jobs.groupby(["split_scope", "status"])
              dimensions=("feature_dim", "unique")).reset_index())
 ```
 
-All 11 extraction jobs are complete. Only the two anchors have train,
-validation, and test activations. Their probes were selected on validation data
-and evaluated once on shared test records. The other nine checkpoints are
-test-only and contribute geometry, similarity, and visualization—not fitted
-probes. Fitting probes on them would leak the evaluation split.
+All 11 extraction jobs are complete. Only the two anchors have train, validation, and test activations. Their probes were selected on validation data and evaluated once on shared test records. The other nine checkpoints are test-only and contribute geometry, similarity, and visualization—not fitted probes. Fitting probes on them would leak the evaluation split.
 
-The pipeline standardizes and fits PCA on training data, restricts probes to at
-most eight PCA components, applies a validation one-standard-error selection
-rule favouring simpler candidates, and refits on train plus validation. Test
-intervals use paired record-level bootstrap resamples. These safeguards do not
-remove single-split or single-seed uncertainty.
+The pipeline standardizes and fits PCA on training data, restricts probes to at most eight PCA components, applies a validation one-standard-error selection rule favouring simpler candidates, and refits on train plus validation. Test intervals use paired record-level bootstrap resamples. These safeguards do not remove single-split or single-seed uncertainty.
 
 ## Binary AF/AFIB code-membership probe
 
-The waveform comparator contains heart rate, signal RMS, and spectral entropy.
-It is interpretable but intentionally small; it is **not** a strong native-ECG
-classifier. Beating it demonstrates incremental information relative to three
-summaries, not clinical superiority.
+The waveform comparator contains heart rate, signal RMS, and spectral entropy. It is interpretable but intentionally small; it is **not** a strong native-ECG classifier. Beating it demonstrates incremental information relative to three summaries, not clinical superiority.
 
 ```{python}
 #| label: af-probe-table
@@ -123,12 +100,7 @@ fig.update_layout(title="Held-out AF/AFIB code discrimination")
 fig.show()
 ```
 
-For `1000000`, latent AUROC is 0.760 (95% CI 0.710–0.812), compared with
-0.713 (0.654–0.766) for waveform summaries; the combined model reaches 0.788
-(0.737–0.836). For `1011011`, latent AUROC is 0.787 (0.740–0.836), and the
-combined model reaches 0.794 (0.746–0.841). Both anchors therefore encode
-rhythm-associated information. Whether the enhanced objective caused an
-improvement requires the paired anchor contrast below.
+For `1000000`, latent AUROC is 0.760 (95% CI 0.710–0.812), compared with 0.713 (0.654–0.766) for waveform summaries; the combined model reaches 0.788 (0.737–0.836). For `1011011`, latent AUROC is 0.787 (0.740–0.836), and the combined model reaches 0.794 (0.746–0.841). Both anchors therefore encode rhythm-associated information. Whether the enhanced objective caused an improvement requires the paired anchor contrast below.
 
 ### Probe selection, prevalence, and calibration
 
@@ -160,24 +132,11 @@ display(records.query("split == 'test'").canonical_rhythm.value_counts()
         .rename_axis("released canonical code").reset_index(name="records"))
 ```
 
-The held-out set contains 120 AF/AFIB-coded and 240 other records. AUROC is not
-prevalence-dependent, but AUPRC must be interpreted against the 0.333 no-skill
-prevalence. The calibrated probes all select `C=0.01`; waveform uses three
-features and latent/combined probes use eight PCA dimensions. Strong shrinkage
-and low dimension make this closer to a linear-accessibility test than a large
-downstream classifier.
+The held-out set contains 120 AF/AFIB-coded and 240 other records. AUROC is not prevalence-dependent, but AUPRC must be interpreted against the 0.333 no-skill prevalence. The calibrated probes all select `C=0.01`; waveform uses three features and latent/combined probes use eight PCA dimensions. Strong shrinkage and low dimension make this closer to a linear-accessibility test than a large downstream classifier.
 
-Test calibration slopes are 1.17–1.24 for latent-only and 1.10–1.15 for the
-combined probes, with intercepts near zero. This is reasonable internal
-calibration after validation adjustment, not external calibration. The
-`1011011` latent produces a larger interquartile predicted-risk contrast
-(0.302) than waveform summaries (0.186), but risk spread is not clinical net
-benefit.
+Test calibration slopes are 1.17–1.24 for latent-only and 1.10–1.15 for the combined probes, with intercepts near zero. This is reasonable internal calibration after validation adjustment, not external calibration. The `1011011` latent produces a larger interquartile predicted-risk contrast (0.302) than waveform summaries (0.186), but risk spread is not clinical net benefit.
 
-The older `probe_results` table stores a superseded uncalibrated analysis with
-different selected regularization. This chapter consistently uses
-`extended_results` and its paired tables; mixing generations would change the
-estimand silently.
+The older `probe_results` table stores a superseded uncalibrated analysis with different selected regularization. This chapter consistently uses `extended_results` and its paired tables; mixing generations would change the estimand silently.
 
 ### Incremental information relative to waveform controls
 
@@ -193,18 +152,9 @@ display(odds[odds.outcome == "AF_AFIB_code_membership"]
           "p_value", "events", "total"]])
 ```
 
-For `1011011`, latent versus waveform improves AUROC by 0.0738
-(95% CI 0.0157–0.1345; Holm-adjusted *p*=0.011) and reduces Brier score by
-0.0231 (Holm-adjusted *p*=0.002). Adding latent features to waveform summaries
-improves AUROC by 0.0801 and AUPRC by 0.0788. Once the latent is present, adding
-the waveform summaries changes AUROC by only 0.0063 (CI crosses zero).
+For `1011011`, latent versus waveform improves AUROC by 0.0738 (95% CI 0.0157–0.1345; Holm-adjusted *p*=0.011) and reduces Brier score by 0.0231 (Holm-adjusted *p*=0.002). Adding latent features to waveform summaries improves AUROC by 0.0801 and AUPRC by 0.0788. Once the latent is present, adding the waveform summaries changes AUROC by only 0.0063 (CI crosses zero).
 
-For `1000000`, latent-versus-waveform AUROC and AUPRC intervals cross zero,
-although Brier score and log loss improve. Its combined model is consistently
-better than waveform alone. The defensible claim is **incremental rhythm-code
-information, with stronger evidence for probability quality than for a large
-discrimination gain**. Per-SD probe-score odds ratios near 3 are associations,
-not causal risks or prospective recurrence effects.
+For `1000000`, latent-versus-waveform AUROC and AUPRC intervals cross zero, although Brier score and log loss improve. Its combined model is consistently better than waveform alone. The defensible claim is **incremental rhythm-code information, with stronger evidence for probability quality than for a large discrimination gain**. Per-SD probe-score odds ratios near 3 are associations, not causal risks or prospective recurrence effects.
 
 ## Does `1011011` beat the raw anchor?
 
@@ -217,11 +167,7 @@ display(paired_show[["contrast", "outcome", "metric", "delta_b_minus_a",
         .sort_values(["outcome", "metric"]))
 ```
 
-For AF/AFIB code membership, `1011011 − 1000000` gives AUROC +0.0270
-(95% CI −0.0227 to +0.0760; *p*=0.329), AUPRC −0.0283 (*p*=0.610), Brier
-−0.0034 (*p*=0.682), and log loss −0.0055 (*p*=0.804). Every interval includes
-no difference. The data permit a small loss or moderate gain; calling
-`1011011` an improved AF base architecture would overstate the evidence.
+For AF/AFIB code membership, `1011011 − 1000000` gives AUROC +0.0270 (95% CI −0.0227 to +0.0760; *p*=0.329), AUPRC −0.0283 (*p*=0.610), Brier −0.0034 (*p*=0.682), and log loss −0.0055 (*p*=0.804). Every interval includes no difference. The data permit a small loss or moderate gain; calling `1011011` an improved AF base architecture would overstate the evidence.
 
 ## Annotation-defined QRS-onset–to–T-offset timing
 
@@ -242,18 +188,9 @@ display(timing_delta[["model_id", "contrast", "metric",
         .sort_values(["model_id", "contrast", "metric"]))
 ```
 
-The mean-only MAE is 44.76 ms. Waveform summaries reduce it to 22.53 ms. The
-latent-only MAE is 38.21 ms for `1000000` and 35.79 ms for `1011011`; both are
-substantially worse than waveform features. Adding either latent to waveform
-changes MAE by less than 0.24 ms, with intervals crossing zero. The latent does
-not add convincing absolute-timing utility beyond the waveform summaries.
+The mean-only MAE is 44.76 ms. Waveform summaries reduce it to 22.53 ms. The latent-only MAE is 38.21 ms for `1000000` and 35.79 ms for `1011011`; both are substantially worse than waveform features. Adding either latent to waveform changes MAE by less than 0.24 ms, with intervals crossing zero. The latent does not add convincing absolute-timing utility beyond the waveform summaries.
 
-The matched anchor contrast is more favourable: `1011011` reduces latent-only
-RMSE by 4.02 ms (95% CI 1.39–6.60; *p*=0.005), increases Spearman correlation
-by 0.109 (*p*=0.012), and increases Lin's concordance by 0.108 (*p*=0.003).
-Its 2.42-ms MAE improvement narrowly includes zero (*p*=0.051). This supports
-better encoding of the annotation interval—not replacement of waveform timing
-and not a QT/QTc claim.
+The matched anchor contrast is more favourable: `1011011` reduces latent-only RMSE by 4.02 ms (95% CI 1.39–6.60; *p*=0.005), increases Spearman correlation by 0.109 (*p*=0.012), and increases Lin's concordance by 0.108 (*p*=0.003). Its 2.42-ms MAE improvement narrowly includes zero (*p*=0.051). This supports better encoding of the annotation interval—not replacement of waveform timing and not a QT/QTc claim.
 
 ## Multiclass rhythm probe: broad signal, weak resolution
 
@@ -282,17 +219,9 @@ for model_id in ANCHORS:
     fig.show()
 ```
 
-The enhanced anchor descriptively improves macro AUROC from 0.687 to 0.743 and
-macro F1 from 0.239 to 0.284, but balanced accuracy remains only 0.302. This is
-not an eight-class rhythm solution. Rare-code results are exploratory at 360
-test records and must be shown class by class rather than summarized by the
-more flattering macro AUROC.
+The enhanced anchor descriptively improves macro AUROC from 0.687 to 0.743 and macro F1 from 0.239 to 0.284, but balanced accuracy remains only 0.302. This is not an eight-class rhythm solution. Rare-code results are exploratory at 360 test records and must be shown class by class rather than summarized by the more flattering macro AUROC.
 
-The test composition is deliberately uneven: AF, AFIB, SA, SB, and SR each
-have 60 records, while AT has 18 and ST/SVT have 21 each. The row-normalized
-confusion matrices show whether macro changes arise from common or rare codes.
-Specificity can remain high for a rare one-versus-rest class despite poor
-sensitivity, so neither specificity nor macro AUROC is sufficient alone.
+The test composition is deliberately uneven: AF, AFIB, SA, SB, and SR each have 60 records, while AT has 18 and ST/SVT have 21 each. The row-normalized confusion matrices show whether macro changes arise from common or rare codes. Specificity can remain high for a rare one-versus-rest class despite poor sensitivity, so neither specificity nor macro AUROC is sufficient alone.
 
 ## Reconstruction-failure probe
 
@@ -303,13 +232,7 @@ display(odds[odds.outcome == "reconstruction_failure"]
           "p_value", "events", "total", "details_json"]])
 ```
 
-For the checkpoint-matched enhanced anchor, a one-SD increase in latent outlier
-score is associated with 2.15-fold higher odds of the stored reconstruction
-failure definition (95% CI 1.40–3.30; Holm-adjusted *p*=0.0013; 24 failures
-among 360 records). The threshold was fixed on validation data and tested once,
-making this stronger than a post-hoc UMAP observation. The event count remains
-small and the endpoint is model QC, not patient prognosis. Its plausible use is
-abstention or review prioritisation after external calibration.
+For the checkpoint-matched enhanced anchor, a one-SD increase in latent outlier score is associated with 2.15-fold higher odds of the stored reconstruction failure definition (95% CI 1.40–3.30; Holm-adjusted *p*=0.0013; 24 failures among 360 records). The threshold was fixed on validation data and tested once, making this stronger than a post-hoc UMAP observation. The event count remains small and the endpoint is model QC, not patient prognosis. Its plausible use is abstention or review prioritisation after external calibration.
 
 ## High-dimensional geometry versus UMAP appearance
 
@@ -431,22 +354,15 @@ Inspired by recent advances in frequency-aware ECG foundation models (such as *E
 
 ### Mathematical Framework
 
-1. **Average Absolute Cross-Correlation**:
-   $$\text{Cross-Corr}(Z) = \frac{1}{|U|} \sum_{i < j} |R_{ij}|$$
-   where $R \in \mathbb{R}^{D \times D}$ is the Pearson correlation matrix of the $D = 2304$ representation features across evaluated patient records, and $U$ is the set of off-diagonal index pairs. Lower values indicate greater feature decorrelation and lower representation redundancy.
+1.  **Average Absolute Cross-Correlation**: $$\text{Cross-Corr}(Z) = \frac{1}{|U|} \sum_{i < j} |R_{ij}|$$ where $R \in \mathbb{R}^{D \times D}$ is the Pearson correlation matrix of the $D = 2304$ representation features across evaluated patient records, and $U$ is the set of off-diagonal index pairs. Lower values indicate greater feature decorrelation and lower representation redundancy.
 
-2. **Spectral Entropy & Smooth Effective Rank (SER)**:
-   Given the centered representation matrix $Z \in \mathbb{R}^{N \times D}$ with singular values $\sigma_1 \ge \sigma_2 \ge \dots \ge \sigma_K > 0$, the normalized singular value distribution is:
-   $$p_k = \frac{\sigma_k}{\sum_{i=1}^K \sigma_i}$$
-   The singular value spectral entropy and Smooth Effective Rank are defined as:
-   $$H(p) = -\sum_{k=1}^K p_k \log p_k, \qquad \text{SER} = \exp(H(p))$$
-   SER quantifies the effective dimensionality occupied by the representations. A higher SER indicates that the representations span a diverse, high-rank latent subspace without dimensional collapse (Roy & Vetterli, 2007).
+2.  **Spectral Entropy & Smooth Effective Rank (SER)**: Given the centered representation matrix $Z \in \mathbb{R}^{N \times D}$ with singular values $\sigma_1 \ge \sigma_2 \ge \dots \ge \sigma_K > 0$, the normalized singular value distribution is: $$p_k = \frac{\sigma_k}{\sum_{i=1}^K \sigma_i}$$ The singular value spectral entropy and Smooth Effective Rank are defined as: $$H(p) = -\sum_{k=1}^K p_k \log p_k, \qquad \text{SER} = \exp(H(p))$$ SER quantifies the effective dimensionality occupied by the representations. A higher SER indicates that the representations span a diverse, high-rank latent subspace without dimensional collapse (Roy & Vetterli, 2007).
 
-3. **Physiological Frequency Hierarchies**:
-   ECG signals exhibit canonical frequency bands tied to cardiac electrophysiology:
-   - **0–10 Hz (Low Frequency)**: T-wave repolarization, baseline hemodynamics, and heart rate.
-   - **5–30 Hz (Mid Frequency)**: P-wave atrial depolarization and Atrial Fibrillation fibrillatory dynamics (4–9 Hz).
-   - **8–50 Hz (High Frequency)**: QRS complex rapid ventricular depolarization and conduction delays (LBBB, RBBB).
+3.  **Physiological Frequency Hierarchies**: ECG signals exhibit canonical frequency bands tied to cardiac electrophysiology:
+
+    -   **0–10 Hz (Low Frequency)**: T-wave repolarization, baseline hemodynamics, and heart rate.
+    -   **5–30 Hz (Mid Frequency)**: P-wave atrial depolarization and Atrial Fibrillation fibrillatory dynamics (4–9 Hz).
+    -   **8–50 Hz (High Frequency)**: QRS complex rapid ventricular depolarization and conduction delays (LBBB, RBBB).
 
 ```{python}
 #| label: representation-spectral-entropy-table
@@ -705,17 +621,11 @@ Following the clinically-guided representation learning paradigm established by 
 
 ### Theoretical Foundation: Contrastive Geometry & Dissimilarity Alignment
 
-In the CLEF framework, the continuous clinical dissimilarity $\delta_{ik}$ between subjects $i$ and $k$ is mapped into a pairwise adaptive negative weighting:
-$$W_{ik} = D_{ik} \cdot M_{ik} \in [0, 1]$$
-where $D_{ik} = (1-\alpha)\frac{\delta_{ik} - \delta_{\min}}{\delta_{\max} - \delta_{\min}} + \alpha$ and $M_{ik} = \exp\left(-\frac{A - m_i}{A} \times \frac{A - m_k}{A}\right)$ accounts for metadata completeness across $A$ clinical attributes.
+In the CLEF framework, the continuous clinical dissimilarity $\delta_{ik}$ between subjects $i$ and $k$ is mapped into a pairwise adaptive negative weighting: $$W_{ik} = D_{ik} \cdot M_{ik} \in [0, 1]$$ where $D_{ik} = (1-\alpha)\frac{\delta_{ik} - \delta_{\min}}{\delta_{\max} - \delta_{\min}} + \alpha$ and $M_{ik} = \exp\left(-\frac{A - m_i}{A} \times \frac{A - m_k}{A}\right)$ accounts for metadata completeness across $A$ clinical attributes.
 
-The resulting normalized cosine similarity $\hat{S}_{ij} = \frac{1 + f_{\text{sim}}(z_i, z_j)}{2}$ is aligned with clinical dissimilarity via the $L_d$ alignment objective:
-$$\mathcal{L}_d = \frac{1}{B^2} \sum_{i,j} \left( \hat{S}_{ij} - (1 - W_{ij}) \right)^2$$
+The resulting normalized cosine similarity $\hat{S}_{ij} = \frac{1 + f_{\text{sim}}(z_i, z_j)}{2}$ is aligned with clinical dissimilarity via the $L_d$ alignment objective: $$\mathcal{L}_d = \frac{1}{B^2} \sum_{i,j} \left( \hat{S}_{ij} - (1 - W_{ij}) \right)^2$$
 
-To evaluate the degree of clinical alignment learned across all 11 factorial model checkpoints, we compute:
-1. **Intra-class vs. Inter-class Cosine Similarity Separation**:
-   $$\Delta S = \mathbb{E}[S_{\text{intra}}] - \mathbb{E}[S_{\text{inter}}], \quad F_{\text{ratio}} = \frac{(\mathbb{E}[S_{\text{intra}}] - \mathbb{E}[S_{\text{inter}}])^2}{\text{Var}(S_{\text{intra}}) + \text{Var}(S_{\text{inter}})}$$
-2. **Physiological Metric Space Alignment ($r_s$)**: Spearman rank correlation between embedding cosine distance $1 - f_{\text{sim}}(z_i, z_j)$ and physiological difference $\Delta \text{Physiology}_{ij}$ across Heart Rate ($\Delta \text{bpm}$), Rhythm Irregularity ($\Delta \text{RR-CV}$), Conduction/Repolarization Duration ($\Delta QRS_{\text{on}}\text{--}T_{\text{off}}$ ms), and Spectral Complexity ($\Delta \text{Entropy}$).
+To evaluate the degree of clinical alignment learned across all 11 factorial model checkpoints, we compute: 1. **Intra-class vs. Inter-class Cosine Similarity Separation**: $$\Delta S = \mathbb{E}[S_{\text{intra}}] - \mathbb{E}[S_{\text{inter}}], \quad F_{\text{ratio}} = \frac{(\mathbb{E}[S_{\text{intra}}] - \mathbb{E}[S_{\text{inter}}])^2}{\text{Var}(S_{\text{intra}}) + \text{Var}(S_{\text{inter}})}$$ 2. **Physiological Metric Space Alignment (**$r_s$): Spearman rank correlation between embedding cosine distance $1 - f_{\text{sim}}(z_i, z_j)$ and physiological difference $\Delta \text{Physiology}_{ij}$ across Heart Rate ($\Delta \text{bpm}$), Rhythm Irregularity ($\Delta \text{RR-CV}$), Conduction/Repolarization Duration ($\Delta QRS_{\text{on}}\text{--}T_{\text{off}}$ ms), and Spectral Complexity ($\Delta \text{Entropy}$).
 
 ```{python}
 #| label: clef-clinical-alignment-table
@@ -927,8 +837,6 @@ fig_radar.update_layout(
 fig_radar.show()
 ```
 
-
-
 ## Multiplicity and claim ledger
 
 ```{python}
@@ -936,22 +844,17 @@ fig_radar.show()
 display(multiplicity.sort_values(["family", "adjusted_p"]))
 ```
 
-| Proposed statement | Verdict | Reason |
-|---|---|---|
-| Frozen ECG-AIM latents encode AF/AFIB-associated information | Supported within this split | Held-out probes discriminate code membership and improve probability scores over three waveform summaries. |
-| The enhanced objective is superior for AF representation | Not supported | All paired AF anchor-comparison intervals include zero. |
-| `1011011` better encodes QRS-onset–to–T-offset annotation timing | Partially supported | RMSE, rank correlation, and concordance improve; MAE is borderline. |
-| Latents outperform direct waveform timing | Contradicted | Latent MAE is 13–16 ms worse; combined gains are negligible. |
-| ECG-AIM creates globally separated rhythm clusters | Contradicted | Silhouettes are negative and permutation tests are non-significant. |
-| Local latent neighbourhoods contain rhythm structure | Supported, exploratory | All kNN agreement tests survive BH correction. |
-| Latent outlier score flags reconstruction failure | Supported internally | Held-out OR 2.15 per SD, but only 24 events and no external calibration. |
-| These probes establish clinical utility | Not supported | Cross-sectional codes, one split, weak comparator, and no prospective endpoint. |
+| Proposed statement                                               | Verdict                     | Reason                                                                                                     |
+|------------------------|------------------------|------------------------|
+| Frozen ECG-AIM latents encode AF/AFIB-associated information     | Supported within this split | Held-out probes discriminate code membership and improve probability scores over three waveform summaries. |
+| The enhanced objective is superior for AF representation         | Not supported               | All paired AF anchor-comparison intervals include zero.                                                    |
+| `1011011` better encodes QRS-onset–to–T-offset annotation timing | Partially supported         | RMSE, rank correlation, and concordance improve; MAE is borderline.                                        |
+| Latents outperform direct waveform timing                        | Contradicted                | Latent MAE is 13–16 ms worse; combined gains are negligible.                                               |
+| ECG-AIM creates globally separated rhythm clusters               | Contradicted                | Silhouettes are negative and permutation tests are non-significant.                                        |
+| Local latent neighbourhoods contain rhythm structure             | Supported, exploratory      | All kNN agreement tests survive BH correction.                                                             |
+| Latent outlier score flags reconstruction failure                | Supported internally        | Held-out OR 2.15 per SD, but only 24 events and no external calibration.                                   |
+| These probes establish clinical utility                          | Not supported               | Cross-sectional codes, one split, weak comparator, and no prospective endpoint.                            |
 
 ## What would change the conclusion
 
-The highest-value follow-ups are repeated patient-level splits or external
-cohorts; a strong native-waveform classifier comparator; predeclared probe
-dimensionality; calibration and decision-curve analysis; external validation of
-the failure score; and matched one-lead wavelet representations once
-train/validation/test embeddings exist. Until then, this supports a
-representation-mechanism and quality-control claim, not deployment.
+The highest-value follow-ups are repeated patient-level splits or external cohorts; a strong native-waveform classifier comparator; predeclared probe dimensionality; calibration and decision-curve analysis; external validation of the failure score; and matched one-lead wavelet representations once train/validation/test embeddings exist. Until then, this supports a representation-mechanism and quality-control claim, not deployment.

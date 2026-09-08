@@ -1,6 +1,11 @@
 {
   "model_family": "3dreconqt_reference",
   "fidelity_status": "architecture_reference",
+  "status": "ABORTED_DIAGNOSTIC",
+  "use_for_model_selection": false,
+  "use_for_theta_inference": false,
+  "aborted_at_epoch": 67,
+  "aborted_reason": "The reference run intentionally changed preprocessing, supervision, optimizer and architecture simultaneously relative to the validated ECG-AIM system. Its ~0.50 plateau therefore cannot identify an architecture effect and is no longer the right backbone for the spatial-representation question.",
   "cell": "RQ1Q_theta_l1",
   "run_name": "RQ1Q_theta_l1_s42",
   "seed": 42,

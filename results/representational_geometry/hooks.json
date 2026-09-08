@@ -1,0 +1,20 @@
+{
+  "Family B (ThreeDThetaECGAIM)": {
+    "H0_source_token": "model.patch_proj(patches) + model.pos_embed",
+    "H1_source_morphology": "model.source_encoder(H0)",
+    "H2_aux_branch": "None (No wavelet branch)",
+    "H3_fused": "None (No wavelet branch)",
+    "H4_target_conditioned": "model.conditioner(H1) [B, 12, P, 768]",
+    "H5_decoder_layers": "model.decoder.decoder.layers[0..3] [B*12, P, 768]",
+    "H6_pre_waveform": "model.decoder.decoder.norm(H5_4) / patch_head input"
+  },
+  "Family A (AliTokECGAIMWaveletMTL)": {
+    "H0_source_token": "model.patch_projection(patches) + time_embedding",
+    "H1_source_morphology": "model._encode_grid(tokens, available) [memory]",
+    "H2_aux_branch": "model._fusion_wave(fusion_source) [H_wave]",
+    "H3_fused": "model.fusion(tokens, H_wave) [H_fused]",
+    "H4_target_conditioned": "grid before decoder [B, 12, P, 768]",
+    "H5_decoder_layers": "model.decoder[0..3] [B, 12, P, 768]",
+    "H6_pre_waveform": "model.output_norm(grid) [B, 12, P, 768]"
+  }
+}

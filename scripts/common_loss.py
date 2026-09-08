@@ -1,4 +1,5 @@
 from dataclasses import asdict, dataclass
+import math
 
 import torch
 import torch.nn as nn
@@ -462,5 +463,81 @@ class CombinatorialCompositeLoss(nn.Module):
             loss = loss + (self.config.lambda_mmd * mmd / self.NORM["mmd"])
             
         return loss, mse, corr, deriv, vcg, ed, lead, mmd
+
+
+class AdaptiveCompositeLoss(nn.Module):
+    """Homoscedastic uncertainty-weighted composite loss (Kendall et al., CVPR 2018).
+
+    Learns log-variance s_i for each active loss term:
+        L_total = sum_{i in active} [ 0.5 * exp(-s_i) * L_i + 0.5 * s_i ]
+    This removes hand-engineered normalization constants (0.18, 0.12) and heuristic lambdas,
+    adaptively balancing MSE, Pearson correlation, and derivative losses during optimization.
+    """
+    def __init__(self, mask="1110000"):
+        super().__init__()
+        self.config = FactorialLossConfig.from_mask(mask)
+        self.vcg_loss_fn = KorsVCGLoss() if self.config.vcg else None
+        self.active_terms = []
+        if self.config.mse: self.active_terms.append("mse")
+        if self.config.corr: self.active_terms.append("corr")
+        if self.config.deriv: self.active_terms.append("deriv")
+        if self.config.vcg: self.active_terms.append("vcg")
+        if self.config.ed: self.active_terms.append("ed")
+        if self.config.lead: self.active_terms.append("lead")
+        if self.config.mmd_kernel > 0: self.active_terms.append("mmd")
+
+        # Initialize log_vars s_i so initial weights match standard normalizers: exp(-s_i) ~ 2 * lambda / NORM
+        target_norms = {"mse": 0.18, "mmd": 0.042, "deriv": 0.12, "corr": 1.0, "vcg": 1.0, "ed": 0.05, "lead": 0.1}
+        target_lambdas = {
+            "mse": self.config.lambda_mse, "corr": self.config.lambda_corr,
+            "deriv": self.config.lambda_deriv, "vcg": self.config.lambda_vcg,
+            "ed": self.config.lambda_ed, "lead": self.config.lambda_lead,
+            "mmd": self.config.lambda_mmd
+        }
+        init_s = []
+        for term in self.active_terms:
+            w_target = 2.0 * target_lambdas.get(term, 1.0) / target_norms.get(term, 1.0)
+            init_s.append(-math.log(max(w_target, 1e-3)))
+        self.log_vars = nn.Parameter(torch.tensor(init_s, dtype=torch.float32))
+
+    def forward(self, pred, target):
+        mse = F.mse_loss(pred, target)
+        corr = pearson_loss(pred, target) if self.config.corr else pred.new_zeros(())
+        deriv = derivative_l1_loss(pred, target) if self.config.deriv else pred.new_zeros(())
+        ed = energy_distance_loss(pred, target) if self.config.ed else pred.new_zeros(())
+        lead = lead_consistency_loss(pred) if self.config.lead else pred.new_zeros(())
+        vcg = pred.new_zeros(())
+        if self.config.vcg:
+            vcg, _, _ = self.vcg_loss_fn(pred, target)
+
+        mmd = pred.new_zeros(())
+        if self.config.mmd_kernel == 1:
+            mmd = mmd_loss(pred, target)
+        elif self.config.mmd_kernel == 2:
+            mmd = anatomical_block_mmd_loss(pred, target, kernel_type='laplacian')
+        elif self.config.mmd_kernel == 3:
+            mmd = anatomical_block_mmd_loss(pred, target, kernel_type='imq_multi')
+        elif self.config.mmd_kernel == 4:
+            mmd = kmeans_temporal_block_mmd_loss(pred, target)
+
+        term_map = {
+            "mse": mse, "corr": corr, "deriv": deriv, "vcg": vcg,
+            "ed": ed, "lead": lead, "mmd": mmd
+        }
+
+        loss = pred.new_zeros(())
+        for idx, term in enumerate(self.active_terms):
+            s = self.log_vars[idx]
+            precision = torch.exp(-s)
+            val = term_map[term]
+            loss = loss + 0.5 * precision * val + 0.5 * s
+
+        return loss, mse, corr, deriv, vcg, ed, lead, mmd
+
+    def get_effective_weights(self):
+        with torch.no_grad():
+            precisions = torch.exp(-self.log_vars)
+            return {term: (0.5 * precisions[i]).item() for i, term in enumerate(self.active_terms)}
+
 
 

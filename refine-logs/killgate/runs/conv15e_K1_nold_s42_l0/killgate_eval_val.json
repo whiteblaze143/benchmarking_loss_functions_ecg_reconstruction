@@ -1,0 +1,57 @@
+{
+  "candidate_run": "conv15e_K1_nold_s42_l0",
+  "anchor_run": "conv15e_A0_raw_s42_l0",
+  "split": "val",
+  "n_samples": 2183,
+  "evaluated_at": "2026-09-04T12:23:06.357342+00:00",
+  "gates": {
+    "pass_overall": true,
+    "pass_primary_missing11": true,
+    "pass_precordial_v1v6": true,
+    "pass_tail_robustness_p05": true
+  },
+  "missing11": {
+    "cand_mean": 0.7560889899365492,
+    "anchor_mean": 0.7455641850078264,
+    "delta_mean": 0.0105248049287227,
+    "cand_p05": 0.42266319394111634,
+    "anchor_p05": 0.4048074573278428,
+    "delta_p05": 0.017855736613273554,
+    "ci_lower_95": 0.008786097692178097,
+    "ci_upper_95": 0.012229340864568129,
+    "p_inferior": 0.0
+  },
+  "precordial_v1v6": {
+    "cand_mean": 0.7607792828622838,
+    "anchor_mean": 0.7529271207075776,
+    "delta_mean": 0.007852162154706258,
+    "cand_p05": 0.38410814106464386,
+    "anchor_p05": 0.36358656287193303,
+    "delta_p05": 0.020521578192710832,
+    "ci_lower_95": 0.006073028835789244,
+    "ci_upper_95": 0.009600806683434179,
+    "p_inferior": 0.0
+  },
+  "independent7": {
+    "cand_mean": 0.7572827265417418,
+    "anchor_mean": 0.7487083324549043,
+    "delta_mean": 0.00857439408683744,
+    "cand_p05": 0.3790015757083893,
+    "anchor_p05": 0.3684021234512329,
+    "delta_p05": 0.010599452257156416,
+    "ci_lower_95": 0.006808743920975863,
+    "ci_upper_95": 0.010310533535899273,
+    "p_inferior": 0.0
+  },
+  "lead2": {
+    "cand_mean": 0.7291532792842107,
+    "anchor_mean": 0.7121454946350338,
+    "delta_mean": 0.01700778464917682,
+    "cand_p05": 0.21602653563022617,
+    "anchor_p05": 0.17745346873998646,
+    "delta_p05": 0.038573066890239704,
+    "ci_lower_95": 0.013082613117512498,
+    "ci_upper_95": 0.0209205068478278,
+    "p_inferior": 0.0
+  }
+}

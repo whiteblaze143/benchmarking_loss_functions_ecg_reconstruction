@@ -38,11 +38,10 @@
 
 ---
 
-## Next Runs to Launch (Chained after Axis 5)
-1. `T_patch5`: Ultra-fine 10 ms tokenization probe (1,000 tokens/lead).
-2. `AV1_vcg_adaptive` (`1101000`): Adaptive MSE + Pearson + Kors 3D VCG loop alignment.
-3. `AV2_triplet_vcg_adaptive` (`1111000`): Full biophysical quad (MSE + Pearson + Deriv + Kors VCG).
-4. `AM1_mmd_imq_adaptive` (`1100003`): Anatomical block multiscale IMQ kernel MMD.
+## First Runs to Launch (Chained in `lean_abl2_adaptive_vcg_mmd_queue.sh`)
+1. `AV1_vcg_adaptive` (`1101000`): Adaptive MSE + Pearson + Kors 3D VCG loop alignment.
+2. `AV2_triplet_vcg_adaptive` (`1111000`): Full biophysical quad (MSE + Pearson + Deriv + Kors VCG).
+3. `AM1_mmd_imq_adaptive` (`1100003`): Anatomical block multiscale IMQ kernel MMD.
 
 ---
 
@@ -53,6 +52,5 @@
 ---
 
 ## Next Action
-- Allow the active tmux session `lean_abl2` to autonomously complete Axis 5 and run `T_patch5`.
-- Once `T_patch5` finishes, inspect its correlation ($r$), 95% bootstrap CI, and worst-tail ($P_{05}$) against `T_patch10` ($0.7635$).
-- Review findings together and apply any final adjustments to `lean_abl2_adaptive_vcg_mmd_queue.sh` (e.g. patch size 5 vs 10) before launching the 11 Adaptive VCG & MMD runs.
+- The chained queue `lean_abl2_adaptive_vcg_mmd_queue.sh` has been updated on disk with the Champion LCT-MTL Base.
+- Allow the active tmux session `lean_abl2` to autonomously complete Axis 5 and transition directly into the updated 11-job Adaptive VCG & MMD suite.

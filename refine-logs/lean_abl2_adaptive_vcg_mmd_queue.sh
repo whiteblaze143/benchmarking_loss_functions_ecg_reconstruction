@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Round-2 Adaptive VCG & MMD Ablation Queue (10 Top Configurations)
+# Round-2 Adaptive VCG & MMD Ablation Queue (11 Configurations)
 # Evaluates whether Homoscedastic Uncertainty Weighting (Adaptive Composite Loss)
 # resolves prior gradient competition between point-wise correlation and
 # higher-order biophysical geometry (Kors VCG loops) & distribution alignment (MMD).
-# Backbone: Clean Lean Core (enc4, dec4, width512, heads8, no_lead_dropout, zscore)
+# Backbone: LCT-MTL Champion Lean Base (enc4, dec4, width384, heads16, patch10, boundary0.2, nodice, no_lead_dropout, zscore)
 # Evaluator: scripts/evaluate_killgate_bootstrap.py
 # ==============================================================================
 
@@ -83,8 +83,14 @@ run_adaptive_cell() {
   log "Anchor: $LEAN_ANCHOR"
   mkdir -p "$rdir"
 
-  # Base Lean Core Flags with Adaptive Weighting and Epoch 10 Early Stopping Gate
-  # Baseline Clean Lean Core validation Pearson at epoch 10 was 0.7471.
+  # Base Lean Convolutional-Transformer Multi-Task Synthesizer (LCT-MTL) Base
+  # Incorporates Round-2 Empirical Takeaways:
+  # - Patch size 10 (20 ms at 500 Hz): +0.0083 gain, peak P05 tail robustness 0.4208
+  # - 16 Attention Heads: +0.0023 gain, finer cross-lead spatial subspace projections
+  # - Width 384: Optimal efficiency knee point, cuts parameters by 43.7% with only -0.0015 delta
+  # - Auxiliary Delineation: Boundary transition penalty (weight 0.2) + CE; Soft Dice pruned (0.0)
+  # - Loss Weighting: Homoscedastic Adaptive Uncertainty (LE2: adaptive_composite, +0.0054 gain)
+  # - Spatial Input: Dedicated Lead I (no whole-lead dropout: +0.0097 gain)
   local cmd=(
     "$PY" "$TRAIN"
     --run-name "$run_name"
@@ -100,18 +106,19 @@ run_adaptive_cell() {
     --delineation-dir "$BASE/data/rdb_wavelet_delineation_cache"
     --no-use-wavelet-branch
     --ssl-mode none
-    --width 512
-    --heads 8
+    --width 384
+    --heads 16
     --encoder-depth 4
     --decoder-depth 4
-    --patch-size 25
+    --patch-size 10
     --artificial-mask-mode no_lead_dropout
     --zscore-norm
     --reconstruction-loss-type adaptive_composite
     --early-stop-epoch 10
     --early-stop-min-pearson 0.7471
     --seg-ce-weight 1.0
-    --dice-weight 0.5
+    --dice-weight 0.0
+    --boundary-weight 0.2
     --seed 42
     --checkpoint-policy best
     --rolling-resume

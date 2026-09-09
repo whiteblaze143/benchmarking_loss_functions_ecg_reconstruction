@@ -115,8 +115,10 @@ run_ext_cell() {
     log "Training already completed for $run_name. Skipping train step."
   else
     log "Executing command..."
+    set +e
     "${cmd[@]}" 2>&1 | tee "$rdir/train.log"
     local rc=${PIPESTATUS[0]}
+    set -e
 
     if [ $rc -ne 0 ] || [ ! -f "$rdir/_SUCCESS.json" ]; then
       log "ERROR: $run_name failed (rc=$rc). Check $rdir/train.log"
@@ -132,7 +134,7 @@ run_ext_cell() {
       --anchor-dir "$LEAN_ANCHOR" \
       --split val \
       --n-boot 5000 \
-      --batch-size 32 2>&1 | tee -a "$LOG" || log "WARNING: Bootstrap evaluation failed for $run_name (continuing queue)."
+      --batch-size 16 2>&1 | tee -a "$LOG" || log "WARNING: Bootstrap evaluation failed for $run_name (continuing queue)."
   fi
 
   update_ledger "$cell_id" "$run_name" "COMPLETED" "$eval_file"
@@ -245,28 +247,38 @@ run_ext_cell "S_panorama" \
   "Spatial Conditioning: Panoramic Lead Geometry Embeddings" \
   --lead-conditioning-mode panorama
 
-run_ext_cell "R_mask15" \
-  "Regularization: 15% Random Point Masking Data Augmentation" \
-  --random-mask-ratio 0.15
+# ==============================================================================
+# Ultra-Fine Temporal Granularity Probe: Patch Size 5 (10 ms at 500 Hz)
+# Moved to execute immediately after S_panorama per user directive
+# ==============================================================================
+run_ext_cell "T_patch5" \
+  "Patch Tokenization: Ultra-Fine Patch Size 5 (10 ms at 500 Hz, 1000 tokens/lead, bs16 to fit 1000 tokens)" \
+  --patch-size 5 \
+  --batch-size 16 \
+  --delineation-batch-size 16
 
-run_ext_cell "R_tempmask15" \
-  "Regularization: 15% Contiguous Temporal Masking Data Augmentation" \
-  --temporal-mask-ratio 0.15
+log "======================================================================"
+log "CRITICAL PROBE COMPLETE: T_patch5 has finished evaluation!"
+log "======================================================================"
+log "PAUSED: Awaiting review of T_patch5 results before updating and launching"
+log "the 11-Job Adaptive VCG & MMD Suite (lean_abl2_adaptive_vcg_mmd_queue.sh)."
+log "To review T_patch5 results:"
+log "  python3 -c 'import json; print(json.load(open(\"refine-logs/lean_abl2/summary_ledger.json\"))[\"T_patch5\"])'"
+log "To launch the Adaptive Suite after review:"
+log "  bash $BASE/refine-logs/lean_abl2_adaptive_vcg_mmd_queue.sh"
+log "======================================================================"
 
-run_ext_cell "R_wd_low" \
-  "Regularization: Lower Weight Decay (1e-5)" \
-  --weight-decay 0.00001
-
-run_ext_cell "R_wd_high" \
-  "Regularization: Higher Weight Decay (1e-3)" \
-  --weight-decay 0.001
-
-log "All 26 Extended Lean Ablation cells have finished successfully!"
+read -t 14400 -p "PAUSED: Review T_patch5 results above. Press Enter to continue to deferred regularization cells (or Ctrl+C): " || true
 
 # ==============================================================================
-# Chained Adaptive VCG & MMD Queue (10 Top Configurations)
+# Deferred Axis 5 Regularization Sweep Cells:
 # ==============================================================================
-if [ -f "$BASE/refine-logs/lean_abl2_adaptive_vcg_mmd_queue.sh" ]; then
-  log "Launching chained Adaptive VCG & MMD queue (10 configs): lean_abl2_adaptive_vcg_mmd_queue.sh"
-  bash "$BASE/refine-logs/lean_abl2_adaptive_vcg_mmd_queue.sh"
-fi
+run_ext_cell "R_mask15"   "Regularization: 15% Random Point Masking Data Augmentation"   --random-mask-ratio 0.15
+
+run_ext_cell "R_tempmask15"   "Regularization: 15% Contiguous Temporal Masking Data Augmentation"   --temporal-mask-ratio 0.15
+
+run_ext_cell "R_wd_low"   "Regularization: Lower Weight Decay (1e-5)"   --weight-decay 0.00001
+
+run_ext_cell "R_wd_high"   "Regularization: Higher Weight Decay (1e-3)"   --weight-decay 0.001
+
+log "All Extended Lean Ablation cells have finished successfully!"

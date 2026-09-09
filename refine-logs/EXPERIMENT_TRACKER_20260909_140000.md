@@ -46,15 +46,6 @@
 | 23 | `D_cadence4` | COMPLETED | 0.7525 | -0.0027 | [-0.0041, -0.0013] | 0.4057 | **FAIL (Delineation Drift)** |
 | 24 | `D_boundary` | COMPLETED | **0.7566** | **+0.0013** | [+0.0001, +0.0025] | **0.4124** | **PASS (Transition Boundary Loss)** |
 | 25 | `D_fiducial` | COMPLETED | 0.7559 | +0.0006 | [-0.0006, +0.0019] | 0.4107 | **PASS (Fiducial Landmark Loss)** |
-| 26 | `D_heavy_seg` | COMPLETED | **0.7554** | **+0.0002** | [-0.0012, +0.0017] | 0.4074 | **PASS** (CE=2.0, Dice=1.0) |
-| 27 | `D_light_ce` | COMPLETED | 0.7517 | -0.0035 | 0.4161 | 0.7524 | **FAIL** (CE=0.5, Dice=0.25 degrades r) |
-| 28 | `S_film` | COMPLETED | **0.7572** | **+0.0020** | 0.4058 | **0.0000** | **PASS** (FiLM spatial conditioning) |
-| 29 | `S_panorama` | **RUNNING** | — | — | — | — | Active on GPU (Epoch 10/15) |
-| 30 | `T_patch5` | **NEXT UP** | — | — | — | — | **Ultra-Fine 10ms Granularity Probe (Moved Ahead)** |
-| 31 | `R_mask15` | DEFERRED | — | — | — | — | Pending post-T_patch5 review |
-| 32 | `R_tempmask15` | DEFERRED | — | — | — | — | Pending post-T_patch5 review |
-| 33 | `R_wd_low` | DEFERRED | — | — | — | — | Pending post-T_patch5 review |
-| 34 | `R_wd_high` | DEFERRED | — | — | — | — | Pending post-T_patch5 review |
 
 ---
 

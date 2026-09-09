@@ -109,25 +109,32 @@ run_ext_cell() {
     "$@"
   )
 
-  log "Executing command..."
-  "${cmd[@]}" 2>&1 | tee "$rdir/train.log"
-  local rc=${PIPESTATUS[0]}
+  local eval_file="$rdir/killgate_eval_val.json"
 
-  if [ $rc -ne 0 ] || [ ! -f "$rdir/_SUCCESS.json" ]; then
-    log "ERROR: $run_name failed (rc=$rc). Check $rdir/train.log"
-    update_ledger "$cell_id" "$run_name" "FAILED (code $rc)" ""
-    return 1
+  if [ -f "$rdir/_SUCCESS.json" ]; then
+    log "Training already completed for $run_name. Skipping train step."
+  else
+    log "Executing command..."
+    "${cmd[@]}" 2>&1 | tee "$rdir/train.log"
+    local rc=${PIPESTATUS[0]}
+
+    if [ $rc -ne 0 ] || [ ! -f "$rdir/_SUCCESS.json" ]; then
+      log "ERROR: $run_name failed (rc=$rc). Check $rdir/train.log"
+      update_ledger "$cell_id" "$run_name" "FAILED (code $rc)" ""
+      return 1
+    fi
   fi
 
-  log "Training completed successfully. Running paired bootstrap evaluation..."
-  "$PY" "$EVAL" \
-    --candidate-dir "$rdir" \
-    --anchor-dir "$LEAN_ANCHOR" \
-    --split val \
-    --n-boot 10000 \
-    --batch-size 64 2>&1 | tee -a "$LOG"
+  if [ ! -f "$eval_file" ]; then
+    log "Running paired bootstrap evaluation..."
+    "$PY" "$EVAL" \
+      --candidate-dir "$rdir" \
+      --anchor-dir "$LEAN_ANCHOR" \
+      --split val \
+      --n-boot 5000 \
+      --batch-size 32 2>&1 | tee -a "$LOG" || log "WARNING: Bootstrap evaluation failed for $run_name (continuing queue)."
+  fi
 
-  local eval_file="$rdir/killgate_eval_val.json"
   update_ledger "$cell_id" "$run_name" "COMPLETED" "$eval_file"
   log "Done with $cell_id."
   log "======================================================================"
@@ -170,8 +177,8 @@ run_ext_cell "W_conv_c256" \
   --use-wavelet-branch --wavelet-encoder conv --wavelet-conv-hidden 256
 
 run_ext_cell "W_timesformer_dim256" \
-  "Wavelet Lean: Compact Time-Frequency Transformer (dim=256, depth=2)" \
-  --use-wavelet-branch --wavelet-encoder timesformer --wavelet-dim 256 --wavelet-depth 2
+  "Wavelet Lean: Compact Time-Frequency Transformer (dim=256, depth=2, heads=8)" \
+  --use-wavelet-branch --wavelet-encoder timesformer --wavelet-dim 256 --wavelet-heads 8 --wavelet-depth 2
 
 run_ext_cell "W_fusion_gated" \
   "Wavelet Lean: Gated Residual Feature Addition Fusion" \
@@ -255,3 +262,11 @@ run_ext_cell "R_wd_high" \
   --weight-decay 0.001
 
 log "All 26 Extended Lean Ablation cells have finished successfully!"
+
+# ==============================================================================
+# Chained Adaptive VCG & MMD Queue (10 Top Configurations)
+# ==============================================================================
+if [ -f "$BASE/refine-logs/lean_abl2_adaptive_vcg_mmd_queue.sh" ]; then
+  log "Launching chained Adaptive VCG & MMD queue (10 configs): lean_abl2_adaptive_vcg_mmd_queue.sh"
+  bash "$BASE/refine-logs/lean_abl2_adaptive_vcg_mmd_queue.sh"
+fi

@@ -10,13 +10,14 @@
 
 ## 1. Experiment Grid Overview
 
-The study comprises **33 systematically designed cells**:
+The study comprises **44 systematically designed cells**:
 - **Phase 1: Lean Core & Occam Simplification (Cells 1–7)**
 - **Phase 2: Loss Triplet Decomposition (Cells 8–12)**
 - **Phase 3: Wavelet Multi-Spectral Variations on Lean Core (Cells 13–17)**
 - **Phase 4: Temporal Patching & Attention Subspaces (Cells 18–21)**
 - **Phase 5: Multi-Task Clinical Delineation Cadence & Weighting (Cells 22–27)**
 - **Phase 6: Spatial Conditioning & Regularization Robustness (Cells 28–33)**
+- **Phase 7: Adaptive VCG & MMD Frontier Suite (Cells 34–44)**
 
 ---
 
@@ -79,9 +80,26 @@ The study comprises **33 systematically designed cells**:
 | 32 | `R_wd_low` | Weight decay = $10^{-5}$ | Sensitivity to L2 weight regularization | `L1` |
 | 33 | `R_wd_high` | Weight decay = $10^{-3}$ | Impact of stronger L2 penalty on 512-dim model | `L1` |
 
+### Phase 7: Adaptive VCG & MMD Frontier Suite (Cells 34–44)
+*All cells evaluate on Clean Lean Core (enc4, dec4, width512, heads8, no_lead_dropout, zscore) with `--reconstruction-loss-type adaptive_composite`.*
+| # | Cell ID | Configuration | Mask | Question / Historical Grounding | Anchor |
+|---|:---|:---|:---:|:---|:---:|
+| 34 | `AV1_vcg_adaptive` | MSE + Pearson + 3D VCG loop | `1101000` | Historical benchmark: $r=0.8026$, AUROC=0.8588. Tests dipole geometry without gradient clash. | `L1` |
+| 35 | `AV2_triplet_vcg_adaptive` | MSE + Pearson + Deriv + VCG | `1111000` | Full biophysical quad under dynamic uncertainty weighting. | `L1` |
+| 36 | `AM1_mmd_imq_adaptive` | MSE + Pearson + Anatomical IMQ MMD | `1100003` | Historical benchmark: $r=0.8598$, AUROC=0.8594 (#1 correlation winner). Multi-scale kernel distribution matching. | `L1` |
+| 37 | `AM2_mmd_kmeans_adaptive` | MSE + Pearson + Temporal K-Means MMD | `1100004` | Historical benchmark: $r=0.8594$, AUROC=0.8593 (#2 correlation winner). Dynamic wave phase clustering. | `L1` |
+| 38 | `AM3_mmd_laplace_adaptive` | MSE + Pearson + Anatomical Laplacian MMD | `1100002` | Historical benchmark: $r=0.8340$, AUROC=0.8483. Heavy-tailed anatomical plane matching. | `L1` |
+| 39 | `AVM1_vcg_mmd_imq_adaptive` | MSE + Pearson + VCG + IMQ MMD | `1101003` | Historical benchmark: $r=0.7990$, AUROC=0.8582. Joint 3D loop + anatomical distribution matching. | `L1` |
+| 40 | `AVM2_vcg_mmd_kmeans_adaptive` | MSE + Pearson + VCG + K-Means MMD | `1101004` | Historical benchmark: $r=0.7968$, AUROC=0.8573. Joint 3D loop + temporal phase matching. | `L1` |
+| 41 | `AVM3_vcg_mmd_laplace_adaptive` | MSE + Pearson + VCG + Laplacian MMD | `1101002` | Historical benchmark: $r=0.7804$, AUROC=0.8488. Joint 3D loop + Laplacian regularizer. | `L1` |
+| 42 | `AVM4_full_probe_laplace_adaptive` | Full Pentad (MSE+Corr+Deriv+VCG+Laplacian) | `1111002` | Canonical 1111002 probe with adaptive precision to prevent collapse. | `L1` |
+| 43 | `AVM5_full_probe_imq_adaptive` | Full Pentad (MSE+Corr+Deriv+VCG+IMQ) | `1111003` | Full 5-objective composite with multi-scale IMQ kernel. | `L1` |
+| 44 | `AVLead1_vcg_lead_adaptive` | MSE + Pearson + VCG + Goldberger Lead | `1101010` | Historical benchmark: $r=0.7803$, AUROC=0.8572. Physical limb loop constraint. | `L1` |
+
 ---
 
 ## 3. Decision Gates & Stopping Criteria
 - **Gate 1 (Non-Inferiority)**: A cell passes if $p_{\text{inferior}} < 0.05$ with $\Delta_{\text{mean}} \ge -0.005$ on Missing-11 Pearson correlation.
 - **Gate 2 (Tail Robustness)**: The 5th percentile correlation ($p_{05}$) must not drop by more than $\Delta_{p05} = -0.010$.
 - **Gate 3 (Precordial Integrity)**: Precordial $V_1 - V_6$ correlation must satisfy non-inferiority independently.
+- **Gate 4 (Adaptive Dominance)**: If any Phase 7 model outperforms `LE2_adaptive` ($r > 0.7607$), it establishes that biophysical higher-order geometry *complements* parsimonious architecture once gradient scale interference is solved.

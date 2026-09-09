@@ -28,26 +28,25 @@
 ---
 
 ## Must-Prove Claims
-- **Claim 1 (Occam's Supremacy)**: The 4-layer/512-dim architecture (`L1`) achieves non-inferiority ($p_{\text{inferior}} < 0.05$) and higher correlation than the 8-layer anchor.
-- **Claim 2 (Loss Parsimony)**: The triplet loss ($\mathcal{L}_{\text{MSE}} + \mathcal{L}_{\text{Pearson}} + \mathcal{L}_{\text{Deriv}}$) is strictly optimal; dropping any component or adding MMD/VCG impairs correlation.
-- **Claim 3 (Delineation Grounding)**: Multi-task wave delineation is necessary for tail robustness ($p_{05}$), preventing catastrophic morphological failure.
+- **Claim 1 (Occam's Supremacy)**: The 4-layer/512-dim architecture (`L1`) achieves non-inferiority ($p_{\text{inferior}} < 0.05$) and higher correlation than the 8-layer anchor. [CONFIRMED: $0.7552$ vs $0.7456$, $+0.0097$]
+- **Claim 2 (Loss Parsimony & Adaptivity)**: Fixed heuristic loss weighting induced gradient competition; dynamic homoscedastic uncertainty weighting (`LE2_adaptive`) eliminates manual scale conflict and unlocks an all-time SOTA of $0.7607$.
+- **Claim 3 (Delineation Grounding)**: Multi-task wave delineation is non-negotiable for tail robustness ($p_{05}$), preventing catastrophic morphological failure. [CONFIRMED: `LA1_nodel` fails, $-0.0078$ mean, $-0.0118$ tail]
+- **Claim 4 (Adaptive Biophysical Reconcilement)**: Re-evaluating top historical VCG loop geometry and MMD distribution kernels with adaptive weighting will determine if physical and non-parametric priors can provide additive gains once gradient scales are decoupled.
 
 ---
 
 ## Active & Queued Runs
-1. `L1_clean_lean_best`: Baseline Clean Lean Best (currently training in `lean_abl2` tmux).
-2. `LA1_nodel`: Delineation ablation on lean core.
-3. `LB1_dec3`: Decoder depth $D=3$ probe.
-4. `LC1_width384`: Width $W=384$ probe.
-5. Extended Suite (Cells 8–33): 26 systematic configurations covering loss decomposition, wavelets, patch granularity, delineation cadence, and spatial conditioning.
+1. **Core Lean Cells 1–8**: Completed (with `LE2_adaptive` setting the SOTA at $0.7607$).
+2. **Extended Suite (Cells 9–33)**: Currently executing in `lean_abl2` tmux session (Cell 9 `L_corr_only` active).
+3. **Adaptive VCG & MMD Suite (Cells 34–44)**: Chained to run immediately following Cell 33 in `lean_abl2` (`lean_abl2_adaptive_vcg_mmd_queue.sh`).
 
 ---
 
 ## Main Risks
-- **Risk**: Decoder depth $D=3$ could potentially degrade lateral precordial leads ($V_4 - V_6$).
-- **Mitigation**: Precordial $V_1 - V_6$ correlation is evaluated as a dedicated kill-gate threshold.
+- **Risk**: High-dimensional MMD kernels or 3D VCG loss terms might still saturate gradients even with adaptive log-variance parameters.
+- **Mitigation**: Paired bootstrap non-inferiority kill-gate evaluation against the Lean Anchor (`L1_clean_lean_best`) immediately upon each run's completion.
 
 ---
 
 ## Next Action
-- The 33-cell suite is actively queued and executing inside the persistent detached `tmux` session `lean_abl2`. Monitor progress via `/monitor-experiment`.
+- The complete 44-cell queue is executing autonomously inside the persistent detached `tmux` session `lean_abl2`. Track progress in real time via `/monitor-experiment`.

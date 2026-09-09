@@ -192,6 +192,8 @@ def evaluate_pair(
     n_boot: int = 10000,
 ) -> dict[str, Any]:
     device = torch.device(device_str if torch.cuda.is_available() else "cpu")
+    # Disable cuDNN during evaluation to avoid ptrDesc->finalize descriptor bugs on wavelet convolutions
+    torch.backends.cudnn.enabled = False
     print(f"Loading candidate model from: {cand_dir}")
     cand_model, cand_args = load_model_from_dir(cand_dir, device)
     print(f"Loading anchor model from:    {anchor_dir}")

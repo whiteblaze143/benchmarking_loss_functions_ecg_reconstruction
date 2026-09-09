@@ -102,7 +102,7 @@ _NON_TRAINING_ARGS={
     "summarize_sweep","summary_csv","sweep_output_root","sweep_epochs","sweep_leads",
     "sweep_masks","quick_verify","retry_failed","queue_max_attempts",
     "queue_min_free_gib","queue_min_available_ram_gib","queue_continue_on_error",
-    "rolling_resume","resume_min_free_gib",
+    "rolling_resume","resume_min_free_gib","early_stop_epoch","early_stop_min_pearson",
 }
 
 def training_config(a):
@@ -637,6 +637,12 @@ def train(a):
             best,beste,bestm=score,ep,dict(m)
             if a.checkpoint_policy in {"best","all"}:
                 atomic_save(model_checkpoint_payload(model,a,protocol_sha,bestm),out/"best.pt")
+        if getattr(a, "early_stop_epoch", 0) and getattr(a, "early_stop_min_pearson", None) is not None:
+            if ep == a.early_stop_epoch:
+                best_p = max(row.get("val_missing_pearson", -1.0) for row in history)
+                if best_p < a.early_stop_min_pearson:
+                    print(f"[EARLY-STOP] Epoch {ep}: best val_missing_pearson {best_p:.4f} < {a.early_stop_min_pearson:.4f}. Early stopping triggered to conserve compute.", flush=True)
+                    break
         if a.rolling_resume:
             free=shutil.disk_usage(out).free
             if free<a.resume_min_free_gib*1024**3:
@@ -660,9 +666,11 @@ def train(a):
         if not bool(torch.isfinite(param).all()):raise FloatingPointError(f"non-finite model parameter: {name}")
     if a.checkpoint_policy in {"last","all"}:
         atomic_save(model_checkpoint_payload(model,a,protocol_sha,bestm),out/"last.pt")
-    summary={"run_name":a.run_name,"epochs_completed":a.epochs,"best_score":best,
+    is_early_stopped = bool(getattr(a, "early_stop_epoch", 0) and len(history) < a.epochs)
+    summary={"run_name":a.run_name,"epochs_completed":len(history),"best_score":best,
              "best_epoch":beste,"training_config_sha256":protocol_sha,
              "input_fingerprints":inputs,
+             "early_stopped":is_early_stopped,
              "peak_gpu_memory_bytes":max(
                  prior_peak,torch.cuda.max_memory_allocated(device) if device.type=="cuda" else 0
              ),
@@ -675,7 +683,8 @@ def train(a):
         if checkpoint_path.is_file():checkpoint_artifacts[checkpoint_name]=sha256_file(checkpoint_path)
     success={
         "version":1,"run_name":a.run_name,"completed_at":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime()),
-        "epochs_completed":a.epochs,"training_config_sha256":protocol_sha,
+        "epochs_completed":len(history),"training_config_sha256":protocol_sha,
+        "early_stopped":is_early_stopped,
         "training_config":training_config(a),"input_fingerprints":inputs,
         "checkpoint_artifacts":checkpoint_artifacts,
         "config_sha256":sha256_file(config_path),"metrics_sha256":sha256_file(out/"metrics.jsonl"),
@@ -915,6 +924,8 @@ def parser():
     p.add_argument("--reconstruction-weight",type=float,default=1.);p.add_argument("--train-head-only",action="store_true")
     p.add_argument("--artificial-mask-mode",choices=["all","no_lead_dropout","none"],default="all")
     p.add_argument("--reconstruction-loss-type",choices=["composite","adaptive_composite","l1","mse"],default="composite")
+    p.add_argument("--early-stop-epoch",type=int,default=0)
+    p.add_argument("--early-stop-min-pearson",type=float,default=None)
     add_bool(p,"deterministic_limb_derivation",False)
     add_bool(p,"zscore_norm")
     modes=p.add_mutually_exclusive_group()

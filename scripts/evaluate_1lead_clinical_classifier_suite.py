@@ -771,7 +771,7 @@ def evaluate_model(
             "loa_high": ba["loa_high"],
         })
 
-    # PreSACAN: R-wave variance retention across V1-V6
+    # PreSACAN: Nature Bland-Altman regression-to-the-mean & variance retention across V1-V6
     var_rets = []
     presacan_summary = {"model_id": model_id, "dataset": "ptb_xl", "evaluation_version": EVALUATION_VERSION}
     for prec_lead, l_idx in [("V3", 8), ("V6", 11)]:
@@ -785,13 +785,20 @@ def evaluate_model(
         ret_pct = (var_rec / var_real * 100.0) if var_real > 0 else 0.0
         var_rets.append(ret_pct)
 
+        # Direct agreement regression (yr vs yt)
         slope_d, _, r_d, _, _ = stats.linregress(yt_r, yr_r)
+
+        # PreSACAN error regression (yr - yt vs yt)
+        err_r = yr_r - yt_r
+        slope_ps, _, r_ps, _, _ = stats.linregress(yt_r, err_r)
         
         y_lead_I = np.max(y_true_all[:, 0, 1000:4000], axis=1)
         _, _, r_inter_real, _, _ = stats.linregress(y_lead_I, yt_r)
         _, _, r_inter_recon, _, _ = stats.linregress(y_lead_I, yr_r)
 
         if prec_lead == "V3":
+            presacan_summary["v3_r_presacan_slope"] = float(slope_ps)
+            presacan_summary["v3_r_presacan_r2"] = float(r_ps ** 2)
             presacan_summary["v3_r_direct_r2"] = float(r_d ** 2)
             presacan_summary["v3_r_direct_slope"] = float(slope_d)
             presacan_summary["v3_r_var_ret_pct"] = float(ret_pct)
@@ -799,28 +806,47 @@ def evaluate_model(
             presacan_summary["interlead_r2_recon_I_V3"] = float(r_inter_recon ** 2)
             presacan_summary["spurious_coupling_ratio_v3"] = float((r_inter_recon ** 2) / (r_inter_real ** 2 + 1e-6))
         else:
+            presacan_summary["v6_r_presacan_slope"] = float(slope_ps)
+            presacan_summary["v6_r_presacan_r2"] = float(r_ps ** 2)
             presacan_summary["v6_r_direct_r2"] = float(r_d ** 2)
             presacan_summary["v6_r_direct_slope"] = float(slope_d)
             presacan_summary["v6_r_var_ret_pct"] = float(ret_pct)
             presacan_summary["interlead_r2_real_I_V6"] = float(r_inter_real ** 2)
             presacan_summary["interlead_r2_recon_I_V6"] = float(r_inter_recon ** 2)
 
+    # PreSACAN T-Wave in V3
+    yt_t_v3 = np.max(y_true_all[:, 8, 3000:4500], axis=1)
+    yr_t_v3 = np.max(y_recon_all[:, 8, 3000:4500], axis=1)
+    var_real_t = float(np.var(yt_t_v3))
+    var_rec_t = float(np.var(yr_t_v3))
+    t_ret_pct = (var_rec_t / var_real_t * 100.0) if var_real_t > 0 else 0.0
+    slope_t_ps, _, r_t_ps, _, _ = stats.linregress(yt_t_v3, yr_t_v3 - yt_t_v3)
+    presacan_summary["v3_t_var_ret_pct"] = float(t_ret_pct)
+    presacan_summary["v3_t_presacan_slope"] = float(slope_t_ps)
+    presacan_summary["v3_t_presacan_r2"] = float(r_t_ps ** 2)
+
     presacan_summary["avg_precordial_var_ret_pct"] = float(np.mean(var_rets))
     with sqlite3.connect(db_path, timeout=60) as con:
         con.execute("""
             INSERT OR REPLACE INTO presacan_model_summary (
                 model_id, dataset, evaluation_version,
-                v3_r_direct_r2, v3_r_direct_slope, v3_r_var_ret_pct,
-                v6_r_direct_r2, v6_r_direct_slope, v6_r_var_ret_pct,
+                v3_r_presacan_r2, v3_r_presacan_slope, v3_r_var_ret_pct,
+                v3_r_direct_r2, v3_r_direct_slope,
+                v6_r_presacan_r2, v6_r_presacan_slope, v6_r_var_ret_pct,
+                v6_r_direct_r2, v6_r_direct_slope,
+                v3_t_presacan_r2, v3_t_presacan_slope, v3_t_var_ret_pct,
                 interlead_r2_real_I_V3, interlead_r2_recon_I_V3,
                 interlead_r2_real_I_V6, interlead_r2_recon_I_V6,
                 spurious_coupling_ratio_v3,
                 avg_precordial_var_ret_pct
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             presacan_summary["model_id"], presacan_summary["dataset"], presacan_summary["evaluation_version"],
-            presacan_summary.get("v3_r_direct_r2"), presacan_summary.get("v3_r_direct_slope"), presacan_summary.get("v3_r_var_ret_pct"),
-            presacan_summary.get("v6_r_direct_r2"), presacan_summary.get("v6_r_direct_slope"), presacan_summary.get("v6_r_var_ret_pct"),
+            presacan_summary.get("v3_r_presacan_r2"), presacan_summary.get("v3_r_presacan_slope"), presacan_summary.get("v3_r_var_ret_pct"),
+            presacan_summary.get("v3_r_direct_r2"), presacan_summary.get("v3_r_direct_slope"),
+            presacan_summary.get("v6_r_presacan_r2"), presacan_summary.get("v6_r_presacan_slope"), presacan_summary.get("v6_r_var_ret_pct"),
+            presacan_summary.get("v6_r_direct_r2"), presacan_summary.get("v6_r_direct_slope"),
+            presacan_summary.get("v3_t_presacan_r2"), presacan_summary.get("v3_t_presacan_slope"), presacan_summary.get("v3_t_var_ret_pct"),
             presacan_summary.get("interlead_r2_real_I_V3"), presacan_summary.get("interlead_r2_recon_I_V3"),
             presacan_summary.get("interlead_r2_real_I_V6"), presacan_summary.get("interlead_r2_recon_I_V6"),
             presacan_summary.get("spurious_coupling_ratio_v3"),
@@ -846,6 +872,13 @@ def evaluate_model(
         "auprc": m_lvh[1], "auprc_ci_low": c_lvh[1][0], "auprc_ci_high": c_lvh[1][1],
         "f1": m_lvh[2], "sens": m_lvh[3], "spec": m_lvh[4], "ppv": m_lvh[5], "npv": m_lvh[6]
     })
+    # Free PTB-XL tensors and models before EchoNext to prevent RAM accumulation on CPU
+    try:
+        del y_true_all, y_recon_all, fm_classifier, delineation_model
+    except Exception:
+        pass
+    import gc
+    gc.collect()
 
     # -------------------------------------------------------------------------
     # DATASET 2: EchoNext (Structural Heart Disease)

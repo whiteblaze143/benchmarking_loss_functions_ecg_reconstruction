@@ -50,7 +50,13 @@ MASTER_REPORT = OUT_DIR / "FINAL_CLINICAL_BENCHMARK_METRICS_MASTER_REPORT.md"
 
 
 def classify_family(mid: str) -> str:
-    if "wave" in mid or "morlet" in mid or "ssl" in mid or "del_" in mid:
+    if mid == "reference" or "ground_truth" in mid:
+        return "Physiological Ground Truth Standard"
+    elif mid.startswith("lean2_") or "lean" in mid:
+        return "Lean Ablation Suite (Round 2)"
+    elif any(k in mid for k in ["conv15e_K", "conv15e_B", "conv15e_C", "conv15e_Z"]):
+        return "Kill-Gate Ablation Suite (Round 1)"
+    elif "wave" in mid or "morlet" in mid or "ssl" in mid or "del_" in mid:
         return "Wavelet / MTL / SSL"
     elif mid.startswith("D") and ("theta" in mid or "learned" in mid or "current" in mid or "random" in mid):
         return "Ansari 3DRECON-QT (D-Series)"
@@ -219,34 +225,47 @@ def build_master_table():
             "lvh_sokolowlyon_f1": gm("LVH_SokolowLyon", "f1"),
 
             # 8. PreSACAN Physical Dipole Nullspace Matrix
+            "v3_r_presacan_slope": p_sub["v3_r_presacan_slope"].values[0] if (not p_sub.empty and "v3_r_presacan_slope" in p_sub.columns and pd.notna(p_sub["v3_r_presacan_slope"].values[0])) else np.nan,
+            "v3_r_presacan_r2": p_sub["v3_r_presacan_r2"].values[0] if (not p_sub.empty and "v3_r_presacan_r2" in p_sub.columns and pd.notna(p_sub["v3_r_presacan_r2"].values[0])) else np.nan,
             "v3_r_var_ret_pct": p_sub["v3_r_var_ret_pct"].values[0] if not p_sub.empty else np.nan,
             "v3_r_direct_slope": p_sub["v3_r_direct_slope"].values[0] if not p_sub.empty else np.nan,
             "v3_r_direct_r2": p_sub["v3_r_direct_r2"].values[0] if not p_sub.empty else np.nan,
+            "v6_r_presacan_slope": p_sub["v6_r_presacan_slope"].values[0] if (not p_sub.empty and "v6_r_presacan_slope" in p_sub.columns and pd.notna(p_sub["v6_r_presacan_slope"].values[0])) else np.nan,
+            "v6_r_presacan_r2": p_sub["v6_r_presacan_r2"].values[0] if (not p_sub.empty and "v6_r_presacan_r2" in p_sub.columns and pd.notna(p_sub["v6_r_presacan_r2"].values[0])) else np.nan,
             "v6_r_var_ret_pct": p_sub["v6_r_var_ret_pct"].values[0] if not p_sub.empty else np.nan,
             "v6_r_direct_slope": p_sub["v6_r_direct_slope"].values[0] if not p_sub.empty else np.nan,
             "v6_r_direct_r2": p_sub["v6_r_direct_r2"].values[0] if not p_sub.empty else np.nan,
+            "v3_t_var_ret_pct": p_sub["v3_t_var_ret_pct"].values[0] if (not p_sub.empty and "v3_t_var_ret_pct" in p_sub.columns and pd.notna(p_sub["v3_t_var_ret_pct"].values[0])) else np.nan,
+            "v3_t_presacan_slope": p_sub["v3_t_presacan_slope"].values[0] if (not p_sub.empty and "v3_t_presacan_slope" in p_sub.columns and pd.notna(p_sub["v3_t_presacan_slope"].values[0])) else np.nan,
+            "v3_t_presacan_r2": p_sub["v3_t_presacan_r2"].values[0] if (not p_sub.empty and "v3_t_presacan_r2" in p_sub.columns and pd.notna(p_sub["v3_t_presacan_r2"].values[0])) else np.nan,
             "avg_precordial_var_ret_pct": p_sub["avg_precordial_var_ret_pct"].values[0] if not p_sub.empty else np.nan,
             "spurious_coupling_ratio_v3": p_sub["spurious_coupling_ratio_v3"].values[0] if not p_sub.empty else np.nan,
 
             # 9. 12-Lead Complete Waveform Quality (All 12 Leads)
             "lead_I_pearson_r": gm("Signal_Lead_I", "pearson_r"),
             "lead_I_mae_mv": gm("Signal_Lead_I", "mae"),
+            "lead_I_bland_bias_mv": gm("Signal_Lead_I", "bland_bias"),
             "lead_II_pearson_r": gm("Signal_Lead_II", "pearson_r"),
             "lead_II_mae_mv": gm("Signal_Lead_II", "mae"),
             "lead_II_bland_bias_mv": gm("Signal_Lead_II", "bland_bias"),
             "lead_III_pearson_r": gm("Signal_Lead_III", "pearson_r"),
             "lead_III_mae_mv": gm("Signal_Lead_III", "mae"),
+            "lead_III_bland_bias_mv": gm("Signal_Lead_III", "bland_bias"),
             "lead_aVR_pearson_r": gm("Signal_Lead_aVR", "pearson_r"),
             "lead_aVR_mae_mv": gm("Signal_Lead_aVR", "mae"),
+            "lead_aVR_bland_bias_mv": gm("Signal_Lead_aVR", "bland_bias"),
             "lead_aVL_pearson_r": gm("Signal_Lead_aVL", "pearson_r"),
             "lead_aVL_mae_mv": gm("Signal_Lead_aVL", "mae"),
+            "lead_aVL_bland_bias_mv": gm("Signal_Lead_aVL", "bland_bias"),
             "lead_aVF_pearson_r": gm("Signal_Lead_aVF", "pearson_r"),
             "lead_aVF_mae_mv": gm("Signal_Lead_aVF", "mae"),
             "lead_aVF_bland_bias_mv": gm("Signal_Lead_aVF", "bland_bias"),
             "lead_V1_pearson_r": gm("Signal_Lead_V1", "pearson_r"),
             "lead_V1_mae_mv": gm("Signal_Lead_V1", "mae"),
+            "lead_V1_bland_bias_mv": gm("Signal_Lead_V1", "bland_bias"),
             "lead_V2_pearson_r": gm("Signal_Lead_V2", "pearson_r"),
             "lead_V2_mae_mv": gm("Signal_Lead_V2", "mae"),
+            "lead_V2_bland_bias_mv": gm("Signal_Lead_V2", "bland_bias"),
             "lead_V3_pearson_r": gm("Signal_Lead_V3", "pearson_r"),
             "lead_V3_mae_mv": gm("Signal_Lead_V3", "mae"),
             "lead_V3_bland_bias_mv": gm("Signal_Lead_V3", "bland_bias"),
@@ -254,8 +273,10 @@ def build_master_table():
             "lead_V3_loa_high_mv": gm("Signal_Lead_V3", "loa_high"),
             "lead_V4_pearson_r": gm("Signal_Lead_V4", "pearson_r"),
             "lead_V4_mae_mv": gm("Signal_Lead_V4", "mae"),
+            "lead_V4_bland_bias_mv": gm("Signal_Lead_V4", "bland_bias"),
             "lead_V5_pearson_r": gm("Signal_Lead_V5", "pearson_r"),
             "lead_V5_mae_mv": gm("Signal_Lead_V5", "mae"),
+            "lead_V5_bland_bias_mv": gm("Signal_Lead_V5", "bland_bias"),
             "lead_V6_pearson_r": gm("Signal_Lead_V6", "pearson_r"),
             "lead_V6_mae_mv": gm("Signal_Lead_V6", "mae"),
             "lead_V6_bland_bias_mv": gm("Signal_Lead_V6", "bland_bias"),
@@ -263,9 +284,14 @@ def build_master_table():
         clinical_records.append(row)
 
     df_clin = pd.DataFrame(clinical_records)
-    df_clin = df_clin.sort_values(by="ecgfounder_macro_150_auroc", ascending=False)
+    df_clin["_sort_key_ref"] = (df_clin["model_id"] == "reference").astype(int)
+    df_clin["_sort_key_clin"] = df_clin["ecgfounder_macro_150_auroc"].fillna(-1.0)
+    df_clin = df_clin.sort_values(
+        by=["_sort_key_ref", "_sort_key_clin"],
+        ascending=[False, False]
+    ).drop(columns=["_sort_key_ref", "_sort_key_clin"])
     df_clin.to_csv(CLINICAL_49_CSV, index=False)
-    logging.info("Saved dedicated 49-model clinical dataset: %s (%d rows, %d columns)", CLINICAL_49_CSV.name, len(df_clin), len(df_clin.columns))
+    logging.info("Saved dedicated clinical dataset: %s (%d rows, %d columns)", CLINICAL_49_CSV.name, len(df_clin), len(df_clin.columns))
 
     # 10. Merge with results/lead1_all_models_comprehensive_metrics.csv
     if LEAD1_CSV.exists():
@@ -285,13 +311,14 @@ def build_master_table():
         df_master["has_clinical_evaluation"] = df_master["model_id"].isin(set(df_clin["model_id"]))
         df_master["has_lead1_training_metrics"] = df_master["model_id"].isin(set(df_lead1["model_id"]))
 
-        # Sort: Clinically evaluated models first (sorted by ECGFounder AUROC desc), then remaining models (sorted by val_missing_pearson desc)
+        # Sort: Reference (Ground Truth) ALWAYS first at Row 0, then Clinically evaluated models (sorted by ECGFounder AUROC desc), then remaining models (sorted by val_missing_pearson desc)
+        df_master["_sort_key_ref"] = (df_master["model_id"] == "reference").astype(int)
         df_master["_sort_key_clin"] = df_master["ecgfounder_macro_150_auroc"].fillna(-1.0)
         df_master["_sort_key_val"] = df_master["val_missing_pearson"].fillna(-1.0)
         df_master = df_master.sort_values(
-            by=["has_clinical_evaluation", "_sort_key_clin", "_sort_key_val"],
-            ascending=[False, False, False]
-        ).drop(columns=["_sort_key_clin", "_sort_key_val"])
+            by=["_sort_key_ref", "has_clinical_evaluation", "_sort_key_clin", "_sort_key_val"],
+            ascending=[False, False, False, False]
+        ).drop(columns=["_sort_key_ref", "_sort_key_clin", "_sort_key_val"])
 
         # Move key identifiers to the very front
         lead_cols = ["model_id", "architecture_family", "has_clinical_evaluation", "has_lead1_training_metrics", "study_track", "architecture"]

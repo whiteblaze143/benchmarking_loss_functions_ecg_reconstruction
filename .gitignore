@@ -58,3 +58,4 @@ results/ecgaim_rdb_oracle/*.csv
 results/checkpoint_store/catalog.sqlite
 results/checkpoint_store/catalog.sqlite-shm
 results/checkpoint_store/catalog.sqlite-wal
+.env

@@ -346,8 +346,8 @@ class Unified1LeadReconstructor:
             model.load_state_dict(sd, strict=True)
             return model, "3dtheta"
 
-        # 2. Wavelet MTL Family (conv15e_*)
-        if self.model_id.startswith("conv15e_"):
+        # 2. Wavelet MTL Family (conv15e_* and lean2_*)
+        if self.model_id.startswith("conv15e_") or self.model_id.startswith("lean2_"):
             cfg = payload.get("config", {}) if isinstance(payload, dict) else {}
             no_del = cfg.get("no_delineation_head", False)
             use_wavelet = cfg.get("use_wavelet_branch", False)
@@ -360,10 +360,15 @@ class Unified1LeadReconstructor:
                 "encoder_depth": cfg.get("encoder_depth", 8),
                 "decoder_depth": cfg.get("decoder_depth", 4),
                 "heads": cfg.get("heads", 12),
+                "lead_conditioning_mode": cfg.get("lead_conditioning_mode", "learned"),
+                "use_relative_geometry": cfg.get("use_relative_geometry", False),
+                "use_spatial_film": cfg.get("use_spatial_film", False),
+                "spatial_gain_init": cfg.get("spatial_gain_init", 0.1),
+                "geometry_control": cfg.get("geometry_control", "standard"),
                 "use_wavelet_branch": use_wavelet,
                 "ssl_mode": ssl_mode,
                 "use_delineation_head": not no_del,
-                "predict_fiducials": False,
+                "predict_fiducials": cfg.get("predict_fiducials", False),
                 "wavelet_encoder": cfg.get("wavelet_encoder", "timesformer"),
                 "wavelet_dim": cfg.get("wavelet_dim", 192),
                 "wavelet_depth": cfg.get("wavelet_depth", 2),
@@ -372,7 +377,7 @@ class Unified1LeadReconstructor:
                 "wavelet_fusion": cfg.get("wavelet_fusion", "gated_add"),
                 "fusion_heads": cfg.get("fusion_heads", 8),
                 "view_a": cfg.get("view_a", "magnitude"),
-                "view_b": cfg.get("view_b", "phase"),
+                "view_b": cfg.get("view_b", "phase_sin" if "phase_sin" in str(cfg.get("view_b")) else cfg.get("view_b", "phase")),
                 "view_a_bank": cfg.get("view_a_bank", "morlet"),
                 "view_b_bank": cfg.get("view_b_bank", "morlet"),
                 "view_b_custom_wavelet_asset": cfg.get("view_b_custom_wavelet_asset", None),
@@ -383,6 +388,7 @@ class Unified1LeadReconstructor:
             }
             model = build_wavelet_ecg_aim(**wavelet_kwargs)
             model.load_state_dict(sd, strict=False)
+            self.is_zscore = bool(cfg.get("zscore_norm", False))
             return model, "wavelet_mtl"
 
         # 3. AliTok / Factorial / Spatial Grid (spatial_1lead_*, factorial_ecg_aim_*)
@@ -422,6 +428,7 @@ class Unified1LeadReconstructor:
             geometry_control=geom_control,
         )
         model.load_state_dict(sd, strict=False)
+        self.is_zscore = False
         return model, "alitok"
 
     @torch.inference_mode()
@@ -433,17 +440,27 @@ class Unified1LeadReconstructor:
         waveforms = waveforms.float().to(self.device)
         B = waveforms.shape[0]
 
+        if getattr(self, "is_zscore", False):
+            m = waveforms.mean(dim=(-2, -1), keepdim=True)
+            s = waveforms.std(dim=(-2, -1), keepdim=True).clamp_min(1e-6)
+            inp_waveforms = (waveforms - m) / s
+        else:
+            inp_waveforms = waveforms
+
         if self.arch_type == "3dtheta":
-            x_source = waveforms[:, 0:1, :]
+            x_source = inp_waveforms[:, 0:1, :]
             res = self.model(x_source, obs_lead_idx=0)
             recon = res["y_pred"]
         else:
-            masked = mask_unobserved_leads(waveforms, [OBSERVED_LEAD_IDX])
+            masked = mask_unobserved_leads(inp_waveforms, [OBSERVED_LEAD_IDX])
             lead_idx = make_lead_indices([OBSERVED_LEAD_IDX], B, self.device)
             if hasattr(self.model, "impute_from_regressor"):
                 recon = self.model.impute_from_regressor(masked, lead_indices=lead_idx)["y_pred"]
             else:
-                recon = self.model(masked, y_full=waveforms, lead_indices=lead_idx, mode="stage1")["y_pred"]
+                recon = self.model(masked, y_full=inp_waveforms, lead_indices=lead_idx, mode="stage1")["y_pred"]
+
+        if getattr(self, "is_zscore", False):
+            recon = recon * s + m
 
         min_len = min(recon.shape[-1], waveforms.shape[-1])
         recon = recon[..., :min_len]

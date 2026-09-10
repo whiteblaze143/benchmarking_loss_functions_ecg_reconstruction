@@ -1,15 +1,15 @@
 # Final Master Clinical Benchmark Metrics Report (100% Strictly Empirical)
 
-**Generated:** 2026-09-09 18:08:49  
+**Generated:** 2026-09-09 19:49:59  
 **Master CSV:** [`FINAL_CLINICAL_BENCHMARK_METRICS_MASTER.csv`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/clinical_biomarkers_multids/FINAL_CLINICAL_BENCHMARK_METRICS_MASTER.csv)  
 **Clinical 49-Model Dataset:** [`FINAL_CLINICAL_BENCHMARK_METRICS_49MODELS_CLINICAL.csv`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/clinical_biomarkers_multids/FINAL_CLINICAL_BENCHMARK_METRICS_49MODELS_CLINICAL.csv)  
 **Lead-1 Training Metrics Source:** [`lead1_all_models_comprehensive_metrics.csv`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/lead1_all_models_comprehensive_metrics.csv)  
 **Cohort Ground Truth:** PTB-XL ($N=2,198$ ECGs, $N=1,904$ patients) + EchoNext ($N=1,000$ patients)  
 **Evaluated Scope:**  
 - **Total Unique Models in Master:** 188 models (258 metrics per model)  
-- **Models with Downstream Clinical Foundation Evaluations:** 70 models  
+- **Models with Downstream Clinical Foundation Evaluations:** 71 models  
 - **Models with Lead-1 Training / Signal / RDB Fiducials:** 184 models  
-- **Models with BOTH Clinical + Training Metrics:** 66 models  
+- **Models with BOTH Clinical + Training Metrics:** 67 models  
 **Data Integrity Standard:** 100% Strictly Empirical. Zero heuristic formulas, zero synthetic noise, and zero simulated scores.
 
 ---
@@ -109,10 +109,11 @@
 | 64 | `factorial_ecg_aim_1100111_s42` | Factorial Baseline | 0.7968 | 0.7542 | 0.5789 | 10.69 | 0.8886 | 0.7132 | 26.1% | 28.59x |
 | 65 | `D0_current_id_currentloss_s42_l0` | Ansari 3DRECON-QT (D-Series) | 0.7965 | 0.6643 | 0.5543 | 10.32 | 0.8805 | 0.7405 | 7.9% | 2.28x |
 | 66 | `conv15e_B3_hardbasis_adaptive_s42_l0` | Kill-Gate Ablation Suite (Round 1) | 0.7951 | 0.6786 | 0.6652 | 10.14 | 0.9218 | 0.7316 | 20.7% | 8.94x |
-| 67 | `conv15e_B4_hardbasis_l1_s42_l0` | Kill-Gate Ablation Suite (Round 1) | 0.7893 | 0.7276 | 0.6068 | 9.72 | 0.8662 | 0.7026 | 29.7% | 10.78x |
-| 68 | `conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0` | Kill-Gate Ablation Suite (Round 1) | 0.7836 | 0.6882 | 0.5298 | 11.66 | 0.8025 | 0.6595 | 45.5% | 13.07x |
-| 69 | `factorial_ecg_aim_1101113_s42` | Factorial Baseline | 0.7537 | 0.7425 | 0.1203 | 22.14 | 0.6412 | 0.7138 | 10.5% | 25.00x |
-| 70 | `conv15e_K1_nold_s42_l0` | Kill-Gate Ablation Suite (Round 1) | 0.6955 | 0.7714 | 0.6885 | 9.77 | 0.9973 | 0.7395 | 16.9% | 25.17x |
+| 67 | `conv15e_Z2_hardbasis_zscore_s42_l0` | Kill-Gate Ablation Suite (Round 1) | 0.7947 | 0.7247 | 0.6037 | 9.95 | 0.8774 | 0.7350 | 14.7% | 9.88x |
+| 68 | `conv15e_B4_hardbasis_l1_s42_l0` | Kill-Gate Ablation Suite (Round 1) | 0.7893 | 0.7276 | 0.6068 | 9.72 | 0.8662 | 0.7026 | 29.7% | 10.78x |
+| 69 | `conv15e_C1_E1_morlet_mag_morlet_phase_s42_l0` | Kill-Gate Ablation Suite (Round 1) | 0.7836 | 0.6882 | 0.5298 | 11.66 | 0.8025 | 0.6595 | 45.5% | 13.07x |
+| 70 | `factorial_ecg_aim_1101113_s42` | Factorial Baseline | 0.7537 | 0.7425 | 0.1203 | 22.14 | 0.6412 | 0.7138 | 10.5% | 25.00x |
+| 71 | `conv15e_K1_nold_s42_l0` | Kill-Gate Ablation Suite (Round 1) | 0.6955 | 0.7714 | 0.6885 | 9.77 | 0.9973 | 0.7395 | 16.9% | 25.17x |
 
 ---
 

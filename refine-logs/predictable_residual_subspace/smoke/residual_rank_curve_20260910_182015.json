@@ -1,0 +1,292 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-10T18:20:15.996699+00:00",
+  "protocol": "predictable residual subspace / rank gate",
+  "FIXED_VCG_SPECIFICITY": "NOT_SUPPORTED",
+  "cohort": "PTB-XL folds 1-8 fit; fold 9 oracle only",
+  "n_fit_ecgs": 4,
+  "n_validation_ecgs": 4,
+  "n_validation_patients": 3,
+  "smoke_batches": 1,
+  "ranks": {
+    "1": {
+      "mean_independent_missing_r": 0.8841139752782027,
+      "p05_independent_missing_r": 0.8661338629781041,
+      "mean_all_missing_r": 0.7982986947831329,
+      "p05_all_missing_r": 0.745975759824437,
+      "independent_missing_mse": 0.04146715065987545,
+      "p_wave_iou": 0.3881766381766381,
+      "qrs_wave_iou": 0.7610899766121851,
+      "t_wave_iou": 0.48463043324131894,
+      "semiseg_miou": 0.5446323493433808,
+      "qrs_duration_mae_ms": 16.0,
+      "lvh_sokolowlyon_mae_mv": 0.3778685728708903,
+      "precordial_variance_retention": 2.5651931762695312,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": -0.3330972190766237,
+        "III": -0.5947234553904495,
+        "aVR": 0.3986742199330041,
+        "aVL": 0.2281899164881659,
+        "aVF": -0.6977979236543048,
+        "V1": 0.6576930118204382,
+        "V2": 0.9639875710542862,
+        "V3": 0.8903159505493738,
+        "V4": -0.010315620811375936,
+        "V5": 0.5085191048879569,
+        "V6": 0.6431477429133313
+      },
+      "training_residual_energy_fraction": 0.493097777295845,
+      "representation_efficiency": 0.493097777295845,
+      "marginal_oracle_gain": 0.3097207147837471,
+      "dependent_lead_r2_qc_sensitivity": {
+        "III": -0.5947234553904495,
+        "aVR": 0.3986742199330041,
+        "aVL": 0.2281899164881659,
+        "aVF": -0.6977979236543048
+      }
+    },
+    "2": {
+      "mean_independent_missing_r": 0.960626120974838,
+      "p05_independent_missing_r": 0.9540288430564121,
+      "mean_all_missing_r": 0.8983397332358501,
+      "p05_all_missing_r": 0.8689017803378072,
+      "independent_missing_mse": 0.01789370337013926,
+      "p_wave_iou": 0.43604782210691434,
+      "qrs_wave_iou": 0.7728763523035185,
+      "t_wave_iou": 0.5269573712285798,
+      "semiseg_miou": 0.5786271818796709,
+      "qrs_duration_mae_ms": 16.0,
+      "lvh_sokolowlyon_mae_mv": 0.07252697149912517,
+      "precordial_variance_retention": 0.6445157527923584,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": -0.24671133745572504,
+        "III": -0.4913843881114628,
+        "aVR": 0.4375742499326726,
+        "aVL": 0.2781244865874025,
+        "aVF": -0.5876956663674897,
+        "V1": 0.6437272382944775,
+        "V2": 0.9519369686538564,
+        "V3": 0.9522873823258158,
+        "V4": 0.9001058239846942,
+        "V5": 0.8611288710578843,
+        "V6": 0.7648650759449744
+      },
+      "training_residual_energy_fraction": 0.8559580000953853,
+      "representation_efficiency": 0.4279790000476926,
+      "marginal_oracle_gain": 0.07651214569663534,
+      "dependent_lead_r2_qc_sensitivity": {
+        "III": -0.4913843881114628,
+        "aVR": 0.4375742499326726,
+        "aVL": 0.2781244865874025,
+        "aVF": -0.5876956663674897
+      }
+    },
+    "3": {
+      "mean_independent_missing_r": 0.9843071936845762,
+      "p05_independent_missing_r": 0.9767955654461716,
+      "mean_all_missing_r": 0.988568886754809,
+      "p05_all_missing_r": 0.9819571416840411,
+      "independent_missing_mse": 0.0060971765039882055,
+      "p_wave_iou": 0.5501331811263318,
+      "qrs_wave_iou": 0.8871807171799343,
+      "t_wave_iou": 0.8309136246329955,
+      "semiseg_miou": 0.7560758409797539,
+      "qrs_duration_mae_ms": 4.333333333333333,
+      "lvh_sokolowlyon_mae_mv": 0.07043206691741943,
+      "precordial_variance_retention": 0.6250457167625427,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.9780021973921322,
+        "III": 0.9736834305672102,
+        "aVR": 0.9901437521936065,
+        "aVL": 0.9872491191866912,
+        "aVF": 0.9719386126218288,
+        "V1": 0.7890213594978,
+        "V2": 0.9822465582135097,
+        "V3": 0.9707475150274754,
+        "V4": 0.9107165530683337,
+        "V5": 0.875786120377585,
+        "V6": 0.8745005039623682
+      },
+      "training_residual_energy_fraction": 0.9720474395428796,
+      "representation_efficiency": 0.3240158131809599,
+      "marginal_oracle_gain": 0.023681072709738182,
+      "dependent_lead_r2_qc_sensitivity": {
+        "III": 0.9736834305672102,
+        "aVR": 0.9901437521936065,
+        "aVL": 0.9872491191866912,
+        "aVF": 0.9719386126218288
+      }
+    },
+    "4": {
+      "mean_independent_missing_r": 0.9867823555801785,
+      "p05_independent_missing_r": 0.9788268074495454,
+      "mean_all_missing_r": 0.9894115925670554,
+      "p05_all_missing_r": 0.9840811824581285,
+      "independent_missing_mse": 0.005087278303258962,
+      "p_wave_iou": 0.5416602177165557,
+      "qrs_wave_iou": 0.8919038772318318,
+      "t_wave_iou": 0.8564540620002857,
+      "semiseg_miou": 0.7633393856495577,
+      "qrs_duration_mae_ms": 4.0,
+      "lvh_sokolowlyon_mae_mv": 0.06461528937021892,
+      "precordial_variance_retention": 0.5875498056411743,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.975224890183718,
+        "III": 0.970364511065073,
+        "aVR": 0.9888954326671453,
+        "aVL": 0.9856327685024517,
+        "aVF": 0.9684147492353824,
+        "V1": 0.8569401563126737,
+        "V2": 0.9820691863921598,
+        "V3": 0.9815363414478498,
+        "V4": 0.9288754106764351,
+        "V5": 0.880160726819286,
+        "V6": 0.889347679007185
+      },
+      "training_residual_energy_fraction": 0.9859583137061134,
+      "representation_efficiency": 0.24648957842652836,
+      "marginal_oracle_gain": 0.0024751618956022625,
+      "dependent_lead_r2_qc_sensitivity": {
+        "III": 0.970364511065073,
+        "aVR": 0.9888954326671453,
+        "aVL": 0.9856327685024517,
+        "aVF": 0.9684147492353824
+      }
+    },
+    "5": {
+      "mean_independent_missing_r": 0.992815260514376,
+      "p05_independent_missing_r": 0.9892803452568726,
+      "mean_all_missing_r": 0.9924951427186977,
+      "p05_all_missing_r": 0.9879444945489584,
+      "independent_missing_mse": 0.004143396706687726,
+      "p_wave_iou": 0.5556544394572563,
+      "qrs_wave_iou": 0.892753478151194,
+      "t_wave_iou": 0.8529998970655398,
+      "semiseg_miou": 0.7671359382246634,
+      "qrs_duration_mae_ms": 4.0,
+      "lvh_sokolowlyon_mae_mv": 0.038404266039530434,
+      "precordial_variance_retention": 0.7010456919670105,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.9756600318605917,
+        "III": 0.9708852055947117,
+        "aVR": 0.9890950452427321,
+        "aVL": 0.9858973108406915,
+        "aVF": 0.9689579767243163,
+        "V1": 0.8730946489369218,
+        "V2": 0.9969056574131805,
+        "V3": 0.9967995711388585,
+        "V4": 0.9302736269143983,
+        "V5": 0.8903221436458335,
+        "V6": 0.8977630874394876
+      },
+      "training_residual_energy_fraction": 0.9946294110496677,
+      "representation_efficiency": 0.19892588220993354,
+      "marginal_oracle_gain": 0.006032904934197503,
+      "dependent_lead_r2_qc_sensitivity": {
+        "III": 0.9708852055947117,
+        "aVR": 0.9890950452427321,
+        "aVL": 0.9858973108406915,
+        "aVF": 0.9689579767243163
+      }
+    },
+    "6": {
+      "mean_independent_missing_r": 0.9995271750572922,
+      "p05_independent_missing_r": 0.9993296131490111,
+      "mean_all_missing_r": 0.9997359920017367,
+      "p05_all_missing_r": 0.9996647677360285,
+      "independent_missing_mse": 0.0010796652605038028,
+      "p_wave_iou": 0.6648250460405157,
+      "qrs_wave_iou": 0.9973980163778678,
+      "t_wave_iou": 0.9972260130908625,
+      "semiseg_miou": 0.8864830251697486,
+      "qrs_duration_mae_ms": 0.0,
+      "lvh_sokolowlyon_mae_mv": 0.08457716306050618,
+      "precordial_variance_retention": 1.0237294435501099,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.9999986220138403,
+        "III": 0.9999948012945711,
+        "aVR": 0.9999920686065997,
+        "aVL": 0.9999876185563095,
+        "aVF": 0.9999926500227289,
+        "V1": 0.9999983844886553,
+        "V2": 0.9999853426646252,
+        "V3": 0.9999980920132969,
+        "V4": 0.9942326411995458,
+        "V5": 0.9269114303380827,
+        "V6": 0.9670053532368101
+      },
+      "training_residual_energy_fraction": 0.9988464325073076,
+      "representation_efficiency": 0.1664744054178846,
+      "marginal_oracle_gain": 0.0067119145429161975,
+      "dependent_lead_r2_qc_sensitivity": {
+        "III": 0.9999948012945711,
+        "aVR": 0.9999920686065997,
+        "aVL": 0.9999876185563095,
+        "aVF": 0.9999926500227289
+      }
+    }
+  },
+  "K_STAR": 3,
+  "K_STAR_SELECTION_REASON": "smallest rank with >=90% training residual energy and G_4<0.005",
+  "qc": {
+    "gross_limb_threshold_mv": 0.01,
+    "gross_violation_ecgs": 0,
+    "gross_violation_ecg_ids": [],
+    "primary_independent_metrics_exclude_records": false,
+    "dependent_limb_sensitivity_excludes_records": true
+  },
+  "pca": {
+    "lead_i_coefficients": [
+      0.9386469644931527,
+      -0.35410963629752273,
+      0.5762399485491895,
+      1.5394265853387907,
+      1.6977724792853028,
+      1.3028311195127957,
+      0.9960859270950546
+    ],
+    "basis_k_star": [
+      [
+        -0.2602910101413727,
+        0.04960208386182785,
+        0.9203413724899292
+      ],
+      [
+        0.3153688907623291,
+        0.009352360852062702,
+        -0.13984444737434387
+      ],
+      [
+        0.6967583298683167,
+        -0.1038287952542305,
+        0.19397947192192078
+      ],
+      [
+        0.5861727595329285,
+        0.1898099035024643,
+        0.23259633779525757
+      ],
+      [
+        0.011727395467460155,
+        0.7249438762664795,
+        0.061312317848205566
+      ],
+      [
+        -0.035733696073293686,
+        0.5203965306282043,
+        -0.08421503752470016
+      ],
+      [
+        -0.048020727932453156,
+        0.39279481768608093,
+        -0.17559851706027985
+      ]
+    ]
+  }
+}

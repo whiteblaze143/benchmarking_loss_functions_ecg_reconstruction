@@ -1,0 +1,28 @@
+# Research Proposal: Predictable Residual Subspace Completion
+
+## Problem Anchor
+
+- Bottom-line problem: Determine the smallest low-dimensional residual subspace that preserves clinically relevant missing-lead ECG information and how much of that subspace is predictable from Lead I.
+- Must-solve bottleneck: PCA-oracle success is representational evidence, not evidence that its coefficients are predictable from Lead I.
+- Non-goals: VCG neural training, probabilistic generation, latent supervision, new losses, architecture sweeps, or external-test access.
+- Constraints: Fit/train on PTB-XL folds 1–8, select/evaluate on fold 9, seal fold 10 and pristine EchoNext; reuse T_patch10; 15 epochs; seed 42 first.
+- Success condition: A low-rank model must beat matched direct regression by at least 0.005 mean independent patient correlation with positive paired-bootstrap lower bound and no frozen clinical harm.
+
+## Thesis and mechanism
+
+Missing-lead reconstruction should use a compact residual subspace oriented toward what is conditionally observable from Lead I, rather than assuming that the highest-variance PCA directions are the most predictable.
+
+First, fit `Y=cI+R` and an uncentered residual eigendecomposition on folds 1–8. Evaluate ranks 1–6 as fold-9 oracles and freeze `K_STAR` by the preregistered energy/saturation rule. Then compare only:
+
+- B1: direct seven-output reconstruction.
+- C1: `K_STAR` outputs through the frozen PCA basis.
+- C2: `K_STAR` outputs through a learned `7 × K_STAR` basis made exactly orthonormal by thin QR.
+
+The same reconstructed-signal objective is used in every model. C1 has no latent-target loss. C2 adds only a few dozen parameters; the subspace, not coordinate identities, is interpreted. Shared trunk tensors must start byte-identically, proven by hashes; differently shaped heads follow the same frozen initialization rule.
+
+## Claims
+
+1. A compact residual output manifold can improve generalization and clinical fidelity over direct seven-channel regression.
+2. If C2 beats C1, the useful manifold is determined partly by conditional observability from Lead I rather than output variance alone.
+
+The method is intentionally non-frontier: generative modeling is premature until deterministic latent predictability is demonstrated.

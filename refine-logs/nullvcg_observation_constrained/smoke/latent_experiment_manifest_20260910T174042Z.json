@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-10T17:40:42.237914+00:00",
+  "protocol": "EXPERIMENT_PLAN_20260910_173054.md",
+  "random_seed": 20260910,
+  "bootstrap_replicates": 10000,
+  "splits": {
+    "pca_fit": "PTB-XL folds 1-8/train",
+    "selection": "PTB-XL fold 9/val",
+    "ptbxl_fold10": "SEALED"
+  },
+  "artifacts": {
+    "trunk_checkpoint": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/lean_abl2/runs/lean2_T_patch10_s42_l0/best.pt",
+      "sha256": "25fef94eda49c5ce853f226fba08e95824a09123dbcad3d12f0e2499010fc602"
+    },
+    "trunk_config": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/lean_abl2/runs/lean2_T_patch10_s42_l0/config.json",
+      "sha256": "78b5485e43d848f34fa3019778be6f35e2a36359c5e7d0554d5964f77d57de87"
+    },
+    "ptbxl_metadata": {
+      "path": "/home/mithunmanivannan/data/ptb_xl/ptbxl_database.csv",
+      "sha256": "7600de9c1b27d181d850b3c6038a35d7c3ddb6bb33b702e3a20252a6859d216b"
+    }
+  },
+  "echo_next_metadata_only_audit": {
+    "metadata_rows": 100000,
+    "available_waveform_rows": 5442,
+    "prior_prefix_rows": 1000,
+    "patient_disjoint_pristine_ecgs": 4097,
+    "sorted_ecg_key_sha256": "5b9e130196b57105005b7ab48ab0559b613e5a4aa6dc593ebd09076115d1ce78",
+    "status": "FROZEN_FOR_FUTURE; waveforms and labels not evaluated"
+  },
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.6.0+cu124",
+    "cuda": "12.4",
+    "gpu": "NVIDIA A100-PCIE-40GB"
+  },
+  "pca_parameters": {
+    "lead_i_coefficients": [
+      0.7315801443876886,
+      -0.5149564884030526,
+      0.03360634628066,
+      0.7814407117477018,
+      1.0219446214516246,
+      0.9451335965921851,
+      0.8421103334392422
+    ],
+    "basis": [
+      [
+        -0.17395628065080962,
+        0.2201692006070956
+      ],
+      [
+        0.3213045578660031,
+        -0.09549164251652897
+      ],
+      [
+        0.7389837485962798,
+        -0.20090408655999437
+      ],
+      [
+        0.5479528047379179,
+        0.23138284358791314
+      ],
+      [
+        0.13606511936417517,
+        0.6536862140629985
+      ],
+      [
+        0.026863814093853904,
+        0.5126814905856473
+      ],
+      [
+        -0.030297778662001704,
+        0.3979427342785085
+      ]
+    ]
+  },
+  "gate": "FAIL"
+}

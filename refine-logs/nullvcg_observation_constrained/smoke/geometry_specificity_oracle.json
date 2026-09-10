@@ -1,0 +1,244 @@
+{
+  "schema_version": 2,
+  "created_at": "2026-09-10T17:40:42.237914+00:00",
+  "cohort": "PTB-XL fold 9 only",
+  "n_ecgs": 8,
+  "n_patients": 3,
+  "smoke_batches": 2,
+  "pca_fit": {
+    "fit_ecgs": 8,
+    "fit_time_samples": 40000,
+    "lead_i_coefficients": [
+      0.7315801443876886,
+      -0.5149564884030526,
+      0.03360634628066,
+      0.7814407117477018,
+      1.0219446214516246,
+      0.9451335965921851,
+      0.8421103334392422
+    ],
+    "basis": [
+      [
+        -0.17395628065080962,
+        0.2201692006070956
+      ],
+      [
+        0.3213045578660031,
+        -0.09549164251652897
+      ],
+      [
+        0.7389837485962798,
+        -0.20090408655999437
+      ],
+      [
+        0.5479528047379179,
+        0.23138284358791314
+      ],
+      [
+        0.13606511936417517,
+        0.6536862140629985
+      ],
+      [
+        0.026863814093853904,
+        0.5126814905856473
+      ],
+      [
+        -0.030297778662001704,
+        0.3979427342785085
+      ]
+    ],
+    "eigenvalues": [
+      7075.5152808685225,
+      5414.617163710149,
+      1482.3335621601007,
+      719.4915942127197,
+      309.0070806174842,
+      147.18852443964548,
+      24.056123272970076
+    ],
+    "rank2_residual_energy_fraction": 0.8232243685481817,
+    "centering": "uncentered residual second moment"
+  },
+  "geometry": {
+    "shape": [
+      8,
+      3
+    ],
+    "rank": 3,
+    "missing_yz_rank": 2,
+    "missing_yz_condition_number": 1.7909148200034808,
+    "trainable_geometry_parameters": 0
+  },
+  "limb_algebra_audit": {
+    "per_lead": {
+      "III": {
+        "max_abs": 0.0010000616312026978,
+        "rmse": 0.0004003436189094014
+      },
+      "aVR": {
+        "max_abs": 0.0015000104904174805,
+        "rmse": 0.00045212699442126806
+      },
+      "aVL": {
+        "max_abs": 0.0015000253915786743,
+        "rmse": 0.000494330449612669
+      },
+      "aVF": {
+        "max_abs": 0.0015000700950622559,
+        "rmse": 0.000496468647913018
+      }
+    },
+    "max_abs": 0.0015000700950622559,
+    "threshold": 0.0001,
+    "pass": false
+  },
+  "metrics": {
+    "G0_fixed_vcg": {
+      "mean_independent_missing_r": 0.8846259608470085,
+      "p05_independent_missing_r": 0.8442757131257493,
+      "mean_all_missing_r": 0.8827496328751484,
+      "p05_all_missing_r": 0.8477690317368869,
+      "independent_missing_mse": 0.0333578153917963,
+      "p_wave_iou": 0.47210047209967887,
+      "qrs_wave_iou": 0.8396103527854385,
+      "t_wave_iou": 0.6845076650750103,
+      "semiseg_miou": 0.6654061633200424,
+      "qrs_duration_mae_ms": 8.222222222222223,
+      "lvh_sokolowlyon_mae_mv": 0.4757549100451999,
+      "precordial_variance_retention": 1.0312234163284302,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.5121467202362525,
+        "III": 0.3089490552623073,
+        "aVR": 0.8304728175977025,
+        "aVL": 0.7550908541945209,
+        "aVF": 0.25375664544544707,
+        "V1": 0.1078035231064961,
+        "V2": 0.785857272016486,
+        "V3": 0.6648071747945911,
+        "V4": 0.38999464403480055,
+        "V5": 0.5805418749366442,
+        "V6": 0.4738343279559105
+      }
+    },
+    "P0_train_pca": {
+      "mean_independent_missing_r": 0.9655837380700093,
+      "p05_independent_missing_r": 0.9574074536608113,
+      "mean_all_missing_r": 0.9171459176375484,
+      "p05_all_missing_r": 0.9097155398603779,
+      "independent_missing_mse": 0.010260781032193248,
+      "p_wave_iou": 0.5031228356426912,
+      "qrs_wave_iou": 0.8426979068289318,
+      "t_wave_iou": 0.6043213545828955,
+      "semiseg_miou": 0.6500473656848396,
+      "qrs_duration_mae_ms": 9.888888888888888,
+      "lvh_sokolowlyon_mae_mv": 0.05429553985595703,
+      "precordial_variance_retention": 0.6141865849494934,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.24443231315757952,
+        "III": -0.07027990393181316,
+        "aVR": 0.7362438706044381,
+        "aVL": 0.6197196534423051,
+        "aVF": -0.1534957851197516,
+        "V1": 0.6422453049347956,
+        "V2": 0.9746147369732603,
+        "V3": 0.9599231610412918,
+        "V4": 0.9091695619555643,
+        "V5": 0.9108794350049839,
+        "V6": 0.8634851467374681
+      }
+    },
+    "T0_patch10": {
+      "mean_independent_missing_r": 0.8295011298015741,
+      "p05_independent_missing_r": 0.7907159205369962,
+      "mean_all_missing_r": 0.7694035158440101,
+      "p05_all_missing_r": 0.7101563004376693,
+      "independent_missing_mse": 0.03982792205453664,
+      "p_wave_iou": 0.45293675496905794,
+      "qrs_wave_iou": 0.842071453891459,
+      "t_wave_iou": 0.620374741486173,
+      "semiseg_miou": 0.6384609834488967,
+      "qrs_duration_mae_ms": 7.111111111111112,
+      "lvh_sokolowlyon_mae_mv": 0.18409124347898698,
+      "precordial_variance_retention": 2.162971019744873,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.2185453005086988,
+        "III": -0.18110374344075297,
+        "aVR": 0.7410441008518418,
+        "aVL": 0.5999804510170452,
+        "aVF": -0.27016614831820496,
+        "V1": 0.5524403563234537,
+        "V2": 0.5452110782860005,
+        "V3": 0.5241470260033649,
+        "V4": 0.3741416146549862,
+        "V5": 0.575185137381564,
+        "V6": 0.6733242009829805
+      }
+    }
+  },
+  "paired_bootstrap": {
+    "G0_minus_P0": {
+      "delta": -0.08095777722300079,
+      "ci95_low": -0.13005813702739044,
+      "ci95_high": -0.04096614370496776,
+      "replicates": 10000,
+      "seed": 20260910
+    },
+    "G0_minus_T0": {
+      "delta": 0.05512483104543434,
+      "ci95_low": 0.025435288806286538,
+      "ci95_high": 0.1120453831392757,
+      "replicates": 10000,
+      "seed": 20260910
+    },
+    "P0_minus_T0": {
+      "delta": 0.13608260826843513,
+      "ci95_low": 0.0664014325112543,
+      "ci95_high": 0.18389443407591988,
+      "replicates": 10000,
+      "seed": 20260910
+    }
+  },
+  "clinical_compensation": {
+    "wins": 3,
+    "no_large_loss": [
+      true,
+      true,
+      false,
+      true
+    ],
+    "pass": false
+  },
+  "random_controls": [
+    {
+      "index": 0,
+      "mean_independent_missing_r": 0.7231896394179799,
+      "p05_independent_missing_r": 0.6408547080155769,
+      "independent_missing_mse": 0.05547020632425076
+    },
+    {
+      "index": 1,
+      "mean_independent_missing_r": 0.7447146317290904,
+      "p05_independent_missing_r": 0.7242579421823484,
+      "independent_missing_mse": 0.047235414124142866
+    },
+    {
+      "index": 2,
+      "mean_independent_missing_r": 0.8737754141286856,
+      "p05_independent_missing_r": 0.8564233188820225,
+      "independent_missing_mse": 0.033614492383606455
+    }
+  ],
+  "random_control_summary": {
+    "count": 3,
+    "seed": 20260910,
+    "mean_r_median": 0.7447146317290904,
+    "mean_r_max": 0.8737754141286856,
+    "vcg_percentile_mean_r": 100.0,
+    "pca_percentile_mean_r": 100.0
+  },
+  "GEOMETRY_SPECIFICITY_GATE": "FAIL",
+  "neural_action": "Stop; source limb-algebra audit exceeded the frozen threshold."
+}

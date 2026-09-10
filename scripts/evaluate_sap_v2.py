@@ -239,7 +239,7 @@ class Reconstructor:
         if bid in CELL_CONFIGS:
             c=CELL_CONFIGS[bid]; m=ThreeDThetaECGAIM(code_mode=c["code_mode"],fusion=c["fusion"],width=768,encoder_depth=8,decoder_depth=4,heads=12)
             m.load_state_dict(sd,strict=True); return m,"3dtheta"
-        if self.mid.startswith("conv15e_") or self.mid.startswith("lean2_"):
+        if self.mid.startswith(("conv10e_", "conv15e_", "lean2_")):
             c=pl.get("config",{}) if isinstance(pl,dict) else {}
             kw=dict(target_len=5000,patch_size=c.get("patch_size",25),width=c.get("width",768),
                     encoder_depth=c.get("encoder_depth",8),decoder_depth=c.get("decoder_depth",4),

@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-10T16:55:06.557920+00:00",
+  "cohort": "PTB-XL validation fold 9",
+  "n_ecgs": 2183,
+  "n_patients": 1942,
+  "smoke_batches": 0,
+  "geometry": {
+    "shape": [
+      8,
+      3
+    ],
+    "rank": 3,
+    "missing_yz_rank": 2,
+    "missing_yz_condition_number": 1.7909148200034808,
+    "trainable_geometry_parameters": 0
+  },
+  "error_decomposition_mse": {
+    "dipole_model_error_full_oracle": 0.026351042091846466,
+    "observation_constraint_penalty": 0.014508184045553207,
+    "constrained_oracle_total": 0.04085922613739967
+  },
+  "metrics": {
+    "ground_truth": {
+      "mean_all_missing_r": 0.9998999835072145,
+      "p05_all_missing_r": 0.9998999835072145,
+      "p_wave_iou": 0.9330629934775146,
+      "qrs_wave_iou": 1.0,
+      "t_wave_iou": 1.0,
+      "semiseg_miou": 0.9776876644925049,
+      "qrs_duration_mae_ms": 0.0,
+      "lvh_sokolowlyon_mae_mv": 0.0,
+      "precordial_variance_retention": 1.0,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 1.0,
+        "III": 1.0,
+        "aVR": 1.0,
+        "aVL": 1.0,
+        "aVF": 1.0,
+        "V1": 1.0,
+        "V2": 1.0,
+        "V3": 1.0,
+        "V4": 1.0,
+        "V5": 1.0,
+        "V6": 1.0
+      }
+    },
+    "full_oracle": {
+      "mean_all_missing_r": 0.9181751155481934,
+      "p05_all_missing_r": 0.8073204004265464,
+      "p_wave_iou": 0.6305179790159882,
+      "qrs_wave_iou": 0.8599815821678917,
+      "t_wave_iou": 0.8024351438366033,
+      "semiseg_miou": 0.764311568340161,
+      "qrs_duration_mae_ms": 5.953364229316856,
+      "lvh_sokolowlyon_mae_mv": 0.21079713337064568,
+      "precordial_variance_retention": 0.6523703932762146,
+      "per_lead_r2": {
+        "I": -0.2928783831448336,
+        "II": 0.8634836882359362,
+        "III": 0.2058296864052942,
+        "aVR": 0.36341260727812597,
+        "aVL": -0.4319640236793585,
+        "aVF": 0.8303774817791608,
+        "V1": 0.7036714387934009,
+        "V2": 0.8105057654538165,
+        "V3": 0.7731816775028063,
+        "V4": 0.6168833028377261,
+        "V5": 0.7318328864685028,
+        "V6": 0.5716067757126096
+      }
+    },
+    "constrained_oracle": {
+      "mean_all_missing_r": 0.8758742781539098,
+      "p05_all_missing_r": 0.7449219953238677,
+      "p_wave_iou": 0.5348426420209986,
+      "qrs_wave_iou": 0.8176668692926604,
+      "t_wave_iou": 0.7179812535759864,
+      "semiseg_miou": 0.6901635882965484,
+      "qrs_duration_mae_ms": 8.769773429454172,
+      "lvh_sokolowlyon_mae_mv": 0.48094444952539434,
+      "precordial_variance_retention": 0.5627124905586243,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.33251605445916343,
+        "III": 0.19389237083804756,
+        "aVR": 0.769735737480808,
+        "aVL": 0.7196616704606849,
+        "aVF": 0.042396235953832684,
+        "V1": 0.5796682616566027,
+        "V2": 0.7743047868414434,
+        "V3": 0.5240449362978259,
+        "V4": 0.20995874790002944,
+        "V5": 0.41800418835783626,
+        "V6": 0.3959416191428853
+      }
+    },
+    "a0_wavelet": {
+      "mean_all_missing_r": 0.8101147030392502,
+      "p05_all_missing_r": 0.5808728405134311,
+      "p_wave_iou": 0.5073091181053092,
+      "qrs_wave_iou": 0.790325318690962,
+      "t_wave_iou": 0.6936975997984776,
+      "semiseg_miou": 0.6637773455315829,
+      "qrs_duration_mae_ms": 10.084895296944731,
+      "lvh_sokolowlyon_mae_mv": 0.7409136129963287,
+      "precordial_variance_retention": 0.3081831932067871,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.4353240622737553,
+        "III": 0.29749992164920513,
+        "aVR": 0.7828325305451849,
+        "aVL": 0.7664414935785459,
+        "aVF": 0.18562685706292126,
+        "V1": 0.45310061211972075,
+        "V2": 0.45575866651619257,
+        "V3": 0.38246421123877283,
+        "V4": 0.23651416505197187,
+        "V5": 0.46403921536278103,
+        "V6": 0.3530426210534998
+      }
+    }
+  },
+  "gate_checks": {
+    "mean_all_missing_r": true,
+    "p05_all_missing_r": true,
+    "semiseg_miou": true,
+    "p_wave_iou": true,
+    "t_wave_iou": true,
+    "qrs_duration_mae_ms": true,
+    "lvh_sokolowlyon_mae_mv": true,
+    "precordial_variance_retention": true
+  },
+  "NULLVCG_ORACLE_GATE": "PASS"
+}

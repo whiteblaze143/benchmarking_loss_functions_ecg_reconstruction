@@ -142,10 +142,14 @@ def already_done(model_id: str) -> bool:
     try:
         with sqlite3.connect(DB_PATH, timeout=10) as con:
             r = con.execute(
-                "SELECT COUNT(*) FROM sap_model_metrics WHERE model_id=? AND evaluation_version='sap_v2'",
+                """SELECT COUNT(*),
+                          MIN(CASE WHEN dataset='ptbxl' THEN n_ecgs END),
+                          MAX(CASE WHEN dataset='ptbxl' THEN n_ecgs END)
+                   FROM sap_model_metrics
+                   WHERE model_id=? AND evaluation_version='sap_v2'""",
                 (model_id,)
             ).fetchone()
-            return r[0] > 50  # at least 50 metrics written → consider done
+            return r[0] > 50 and r[1] == 2198 and r[2] == 2198
     except Exception:
         return False
 

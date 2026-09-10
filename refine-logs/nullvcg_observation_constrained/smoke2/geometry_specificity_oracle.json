@@ -1,0 +1,233 @@
+{
+  "schema_version": 2,
+  "created_at": "2026-09-10T17:41:57.091705+00:00",
+  "cohort": "PTB-XL fold 9 only",
+  "n_ecgs": 2,
+  "n_patients": 2,
+  "smoke_batches": 1,
+  "pca_fit": {
+    "fit_ecgs": 2,
+    "fit_time_samples": 10000,
+    "lead_i_coefficients": [
+      0.9627699819713246,
+      -0.5928833480009237,
+      -0.0021795567869295433,
+      0.5442782392903829,
+      1.1613846855757368,
+      1.0019842315648537,
+      0.8045853545873458
+    ],
+    "basis": [
+      [
+        -0.12719169377421466,
+        0.02621672793704447
+      ],
+      [
+        0.31439081826147286,
+        -0.08391375399438543
+      ],
+      [
+        0.7405003336872708,
+        0.05139836591049126
+      ],
+      [
+        0.5541594695512749,
+        0.2387749883572155
+      ],
+      [
+        -0.04773435257667383,
+        0.7120324074819562
+      ],
+      [
+        -0.11422831391619082,
+        0.5126968904494911
+      ],
+      [
+        -0.11924994099524046,
+        0.40344470154218093
+      ]
+    ],
+    "eigenvalues": [
+      2020.6437557116762,
+      412.3265128783982,
+      187.51696981378745,
+      59.64013869938014,
+      23.77093388528754,
+      19.300842931236545,
+      4.4742687217726544
+    ],
+    "rank2_residual_energy_fraction": 0.8919580505476833,
+    "centering": "uncentered residual second moment"
+  },
+  "geometry": {
+    "shape": [
+      8,
+      3
+    ],
+    "rank": 3,
+    "missing_yz_rank": 2,
+    "missing_yz_condition_number": 1.7909148200034808,
+    "trainable_geometry_parameters": 0
+  },
+  "limb_algebra_audit": {
+    "per_lead": {
+      "III": {
+        "max_abs": 0.001000046730041504,
+        "rmse": 0.0003560897922455661
+      },
+      "aVR": {
+        "max_abs": 0.0015000104904174805,
+        "rmse": 0.0004438749998528315
+      },
+      "aVL": {
+        "max_abs": 0.0015000253915786743,
+        "rmse": 0.00047696975374467686
+      },
+      "aVF": {
+        "max_abs": 0.0015000700950622559,
+        "rmse": 0.00048007789378761063
+      }
+    },
+    "max_abs": 0.0015000700950622559,
+    "threshold": 0.002,
+    "threshold_rationale": "2 uV ceiling for independently quantized 1 uV-resolution mV channels",
+    "pass": true
+  },
+  "metrics": {
+    "G0_fixed_vcg": {
+      "mean_independent_missing_r": 0.8766364460341378,
+      "p05_independent_missing_r": 0.8418788625515754,
+      "mean_all_missing_r": 0.87235123776431,
+      "p05_all_missing_r": 0.844696255983459,
+      "independent_missing_mse": 0.024066237008261448,
+      "p_wave_iou": 0.6427908447400095,
+      "qrs_wave_iou": 0.822614783458157,
+      "t_wave_iou": 0.7946073257054478,
+      "semiseg_miou": 0.7533376513012048,
+      "qrs_duration_mae_ms": 11.0,
+      "lvh_sokolowlyon_mae_mv": 0.39342570304870605,
+      "precordial_variance_retention": 107.6784896850586,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.6826186421780167,
+        "III": 0.6571025489567586,
+        "aVR": 0.8022644323871964,
+        "aVL": 0.7705108924504159,
+        "aVF": 0.6458468201319525,
+        "V1": 0.590654917635586,
+        "V2": 0.807185321905913,
+        "V3": 0.7499652376226843,
+        "V4": 0.623398952193533,
+        "V5": 0.25208003462290596,
+        "V6": -0.4144574602034594
+      }
+    },
+    "P0_train_pca": {
+      "mean_independent_missing_r": 0.9646829756065368,
+      "p05_independent_missing_r": 0.9573535053977263,
+      "mean_all_missing_r": 0.915232883832591,
+      "p05_all_missing_r": 0.9141866045639133,
+      "independent_missing_mse": 0.010793177208173896,
+      "p_wave_iou": 0.712586122047244,
+      "qrs_wave_iou": 0.8262695227292558,
+      "t_wave_iou": 0.782809277469491,
+      "semiseg_miou": 0.7738883074153303,
+      "qrs_duration_mae_ms": 9.0,
+      "lvh_sokolowlyon_mae_mv": 0.12339997291564941,
+      "precordial_variance_retention": 1.1934956312179565,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.18561404894407507,
+        "III": 0.12012974286998113,
+        "aVR": 0.4929161955799026,
+        "aVL": 0.4113382410455899,
+        "aVF": 0.0910951712545709,
+        "V1": 0.8338877181060884,
+        "V2": 0.9737370660753522,
+        "V3": 0.9683612318950541,
+        "V4": 0.970676725119246,
+        "V5": 0.9727901584350704,
+        "V6": 0.8115638867797785
+      }
+    },
+    "T0_patch10": {
+      "mean_independent_missing_r": 0.8499719389455305,
+      "p05_independent_missing_r": 0.8141080465211779,
+      "mean_all_missing_r": 0.7801887791293238,
+      "p05_all_missing_r": 0.7133919543971264,
+      "independent_missing_mse": 0.022499463954338605,
+      "p_wave_iou": 0.6391318302174436,
+      "qrs_wave_iou": 0.8488563761819576,
+      "t_wave_iou": 0.7991520633126059,
+      "semiseg_miou": 0.7623800899040024,
+      "qrs_duration_mae_ms": 6.0,
+      "lvh_sokolowlyon_mae_mv": 0.12087380886077881,
+      "precordial_variance_retention": 31.658470153808594,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.1349716433567707,
+        "III": 0.09066493633361994,
+        "aVR": 0.47076724872368203,
+        "aVL": 0.382077787902421,
+        "aVF": 0.054700044846805906,
+        "V1": 0.6333007809480209,
+        "V2": 0.7531491408522838,
+        "V3": 0.7209723226068088,
+        "V4": 0.7622217101588367,
+        "V5": 0.7376057531218565,
+        "V6": 0.6057651019407898
+      }
+    }
+  },
+  "paired_bootstrap": {
+    "G0_minus_P0": {
+      "delta": -0.08804652957239906,
+      "ci95_low": -0.13480992256281332,
+      "ci95_high": -0.04128313658198479,
+      "replicates": 10000,
+      "seed": 20260910
+    },
+    "G0_minus_T0": {
+      "delta": 0.026664507088607292,
+      "ci95_low": 0.025435274931062568,
+      "ci95_high": 0.027893739246152016,
+      "replicates": 10000,
+      "seed": 20260910
+    },
+    "P0_minus_T0": {
+      "delta": 0.11471103666100635,
+      "ci95_low": 0.06671841151304736,
+      "ci95_high": 0.16270366180896534,
+      "replicates": 10000,
+      "seed": 20260910
+    }
+  },
+  "clinical_compensation": {
+    "wins": 0,
+    "no_large_loss": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "pass": false
+  },
+  "random_controls": [
+    {
+      "index": 0,
+      "mean_independent_missing_r": 0.7247699560609873,
+      "p05_independent_missing_r": 0.6341459410781158,
+      "independent_missing_mse": 0.0418993831328384
+    }
+  ],
+  "random_control_summary": {
+    "count": 1,
+    "seed": 20260910,
+    "mean_r_median": 0.7247699560609873,
+    "mean_r_max": 0.7247699560609873,
+    "vcg_percentile_mean_r": 100.0,
+    "pca_percentile_mean_r": 100.0
+  },
+  "GEOMETRY_SPECIFICITY_GATE": "LOW_RANK_ONLY",
+  "neural_action": "Proceed with B1/C1 for the low-rank claim; M1 is negative-control only."
+}

@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-10T17:41:57.091705+00:00",
+  "protocol": "EXPERIMENT_PLAN_20260910_173054.md",
+  "random_seed": 20260910,
+  "bootstrap_replicates": 10000,
+  "splits": {
+    "pca_fit": "PTB-XL folds 1-8/train",
+    "selection": "PTB-XL fold 9/val",
+    "ptbxl_fold10": "SEALED"
+  },
+  "artifacts": {
+    "trunk_checkpoint": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/lean_abl2/runs/lean2_T_patch10_s42_l0/best.pt",
+      "sha256": "25fef94eda49c5ce853f226fba08e95824a09123dbcad3d12f0e2499010fc602"
+    },
+    "trunk_config": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/lean_abl2/runs/lean2_T_patch10_s42_l0/config.json",
+      "sha256": "78b5485e43d848f34fa3019778be6f35e2a36359c5e7d0554d5964f77d57de87"
+    },
+    "ptbxl_metadata": {
+      "path": "/home/mithunmanivannan/data/ptb_xl/ptbxl_database.csv",
+      "sha256": "7600de9c1b27d181d850b3c6038a35d7c3ddb6bb33b702e3a20252a6859d216b"
+    }
+  },
+  "echo_next_metadata_only_audit": {
+    "metadata_rows": 100000,
+    "available_waveform_rows": 5442,
+    "prior_prefix_rows": 1000,
+    "patient_disjoint_pristine_ecgs": 4097,
+    "sorted_ecg_key_sha256": "5b9e130196b57105005b7ab48ab0559b613e5a4aa6dc593ebd09076115d1ce78",
+    "status": "FROZEN_FOR_FUTURE; waveforms and labels not evaluated"
+  },
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.6.0+cu124",
+    "cuda": "12.4",
+    "gpu": "NVIDIA A100-PCIE-40GB"
+  },
+  "pca_parameters": {
+    "lead_i_coefficients": [
+      0.9627699819713246,
+      -0.5928833480009237,
+      -0.0021795567869295433,
+      0.5442782392903829,
+      1.1613846855757368,
+      1.0019842315648537,
+      0.8045853545873458
+    ],
+    "basis": [
+      [
+        -0.12719169377421466,
+        0.02621672793704447
+      ],
+      [
+        0.31439081826147286,
+        -0.08391375399438543
+      ],
+      [
+        0.7405003336872708,
+        0.05139836591049126
+      ],
+      [
+        0.5541594695512749,
+        0.2387749883572155
+      ],
+      [
+        -0.04773435257667383,
+        0.7120324074819562
+      ],
+      [
+        -0.11422831391619082,
+        0.5126968904494911
+      ],
+      [
+        -0.11924994099524046,
+        0.40344470154218093
+      ]
+    ]
+  },
+  "gate": "LOW_RANK_ONLY"
+}

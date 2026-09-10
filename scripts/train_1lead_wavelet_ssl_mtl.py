@@ -32,6 +32,7 @@ setup_import_paths(include_fairseq=True)
 
 import numpy as np
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset,DataLoader
 from tqdm import tqdm
@@ -43,6 +44,7 @@ from unified_latents.engineering.utils.regimes import make_lead_indices
 from unified_latents.engineering.experimental.wavelet_ssl_ecg_aim import build_wavelet_ecg_aim
 
 LEADS=["I","II","III","aVR","aVL","aVF","V1","V2","V3","V4","V5","V6"]
+INDEPENDENT_MISSING=[1,6,7,8,9,10,11]
 _MODEL_PATH=_ROOT/"unified_latents/engineering/experimental/wavelet_ssl_ecg_aim.py"
 
 def seed_all(seed):
@@ -151,6 +153,10 @@ def input_fingerprints(a):
         initial=Path(a.init_checkpoint)
         if not initial.is_file():raise FileNotFoundError(f"initial checkpoint is missing: {initial}")
         result["init_checkpoint_sha256"]=sha256_file(initial)
+    if getattr(a,"output_representation","standard")!="standard":
+        manifest=Path(a.k_star_manifest)
+        if not manifest.is_file():raise FileNotFoundError(f"K_STAR manifest is missing: {manifest}")
+        result["k_star_manifest_sha256"]=sha256_file(manifest)
     return result
 
 def training_config_sha256(a):
@@ -199,6 +205,71 @@ def waveform_from_batch(batch):
             if x.ndim>=3 and x.shape[-2]==12: return x
         if ts: return ts[-1]
     raise TypeError(f"Cannot identify ECG waveform in {type(batch)}")
+
+def identifiers_from_batch(batch):
+    if isinstance(batch,dict) and "ecg_id" in batch and "patient_id" in batch:
+        return batch["ecg_id"],batch["patient_id"]
+    return None,None
+
+class IndexedTensorDataset(Dataset):
+    """PTB-XL tensor dataset carrying IDs for patient-weighted validation."""
+    def __init__(self,root,metadata):
+        self.files=sorted(Path(root).glob("*.pt"),key=lambda p:int(p.stem))
+        if not self.files:raise FileNotFoundError(f"No .pt files in {root}")
+        frame={}
+        with open(metadata,newline="") as handle:
+            for row in csv.DictReader(handle):frame[int(row["ecg_id"])]=int(float(row["patient_id"]))
+        missing=[int(path.stem) for path in self.files if int(path.stem) not in frame]
+        if missing:raise ValueError(f"metadata missing ECG IDs: {missing[:5]}")
+        self.patient_ids=frame
+    def __len__(self):return len(self.files)
+    def __getitem__(self,index):
+        path=self.files[index];ecg_id=int(path.stem)
+        return {"waveform":torch.load(path,map_location="cpu",weights_only=True).float(),
+                "ecg_id":ecg_id,"patient_id":self.patient_ids[ecg_id]}
+
+def standard_from_independent_prediction(lead_i,missing):
+    lead_ii=missing[:,0]
+    return torch.stack((
+        lead_i,lead_ii,lead_ii-lead_i,-(lead_i+lead_ii)/2,
+        lead_i-lead_ii/2,lead_ii-lead_i/2,
+        *(missing[:,index] for index in range(1,7))
+    ),dim=1)
+
+class ResidualOutputAdapter(nn.Module):
+    """Apply a direct, frozen-PCA, or learned orthonormal seven-lead output map."""
+    def __init__(self,base,mode,coefficients,basis):
+        super().__init__();self.base=base;self.mode=mode
+        self.architecture=f"{base.architecture}_residual_{mode}"
+        self.register_buffer("lead_i_coefficients",torch.as_tensor(coefficients,dtype=torch.float32))
+        initial=torch.as_tensor(basis,dtype=torch.float32)
+        if initial.ndim!=2 or initial.shape[0]!=7:raise ValueError("basis must have shape [7,K]")
+        if mode=="learned":self.basis_parameter=nn.Parameter(initial.clone())
+        else:self.register_buffer("basis_fixed",initial.clone())
+    @property
+    def delineation_head(self):return self.base.delineation_head
+    def output_basis(self):
+        if self.mode=="direct":return None
+        if self.mode=="frozen_pca":return self.basis_fixed
+        return torch.linalg.qr(self.basis_parameter,mode="reduced").Q
+    def forward(self,x,*args,**kwargs):
+        result=self.base(x,*args,**kwargs)
+        raw=result["y_pred"]
+        lead_i=x[:,0]
+        raw_missing=raw[:,INDEPENDENT_MISSING]
+        basis=self.output_basis()
+        if basis is None:missing=raw_missing;latent=None
+        else:
+            baseline=self.lead_i_coefficients[None,:,None].to(raw)*lead_i[:,None,:]
+            proposal=raw_missing-baseline
+            latent=torch.einsum("lk,blt->bkt",basis,proposal)
+            missing=baseline+torch.einsum("lk,bkt->blt",basis,latent)
+        prediction=standard_from_independent_prediction(lead_i,missing)
+        result["y_pred_raw"]=raw;result["y_pred"]=prediction
+        result["predicted_residual_latent"]=latent
+        result["limb_consistency_loss"]=prediction.new_zeros(())
+        return result
+    def update_byol_target(self,*args,**kwargs):return self.base.update_byol_target(*args,**kwargs)
 
 def missing_pearson(pred,y,observed):
     m=torch.ones(12,dtype=torch.bool,device=pred.device); m[observed]=False
@@ -354,7 +425,7 @@ def boundary_counts(logits,target,valid,lmask,tol):
 
 
 def build_model(a):
-    return build_wavelet_ecg_aim(
+    model=build_wavelet_ecg_aim(
         target_len=5000,patch_size=a.patch_size,width=a.width,encoder_depth=a.encoder_depth,
         decoder_depth=a.decoder_depth,heads=a.heads,random_mask_ratio=a.random_mask_ratio,
         temporal_mask_ratio=a.temporal_mask_ratio,consistency_weight=a.consistency_weight,
@@ -379,6 +450,13 @@ def build_model(a):
         artificial_mask_mode=getattr(a, "artificial_mask_mode", "all"),
         deterministic_limb_derivation=getattr(a, "deterministic_limb_derivation", False)
     )
+    mode=getattr(a,"output_representation","standard")
+    if mode=="standard":return model
+    manifest=json.loads(Path(a.k_star_manifest).read_text())
+    if manifest.get("status")!="FROZEN_BEFORE_NEURAL_TRAINING":raise ValueError("K_STAR manifest is not frozen")
+    pca=manifest["fixed_pca"]
+    mapped={"direct":"direct","frozen_pca":"frozen_pca","learned":"learned"}[mode]
+    return ResidualOutputAdapter(model,mapped,pca["lead_i_coefficients"],pca["basis"])
 
 def load_init(model,p,strict=True):
     if not p:return
@@ -399,12 +477,16 @@ def compose(res,y,criterion,a,db=None):
     recon=res["y_pred"].new_zeros(())
     if a.reconstruction_weight:
         loss_type = getattr(a, "reconstruction_loss_type", "composite")
+        prediction=res["y_pred"][...,:y.shape[-1]]
+        target=y
+        if getattr(a,"output_representation","standard")!="standard":
+            prediction=prediction[:,INDEPENDENT_MISSING];target=target[:,INDEPENDENT_MISSING]
         if loss_type == "l1":
-            recon = F.l1_loss(res["y_pred"][...,:y.shape[-1]], y)
+            recon = F.l1_loss(prediction,target)
         elif loss_type == "mse":
-            recon = F.mse_loss(res["y_pred"][...,:y.shape[-1]], y)
+            recon = F.mse_loss(prediction,target)
         else:
-            recon,*_=criterion(res["y_pred"][...,:y.shape[-1]],y)
+            recon,*_=criterion(prediction,target)
     consistency=res.get("limb_consistency_loss")
     if not isinstance(consistency,torch.Tensor):consistency=recon.new_zeros(())
     total=a.reconstruction_weight*recon+a.consistency_weight*consistency
@@ -429,7 +511,7 @@ def compose(res,y,criterion,a,db=None):
 
 @torch.no_grad()
 def validate_recon(model,loader,criterion,a,device):
-    model.eval(); losses=[]; rs=[]
+    model.eval(); losses=[]; rs=[];patient_ids=[]
     for i,b in enumerate(loader):
         if a.max_val_batches is not None and i>=a.max_val_batches:break
         y=waveform_from_batch(b)[...,:5000].to(device)
@@ -440,16 +522,35 @@ def validate_recon(model,loader,criterion,a,device):
                 model,y,a.observed_leads,compute_delineation=False,compute_ssl=False
             )
             loss_type = getattr(a, "reconstruction_loss_type", "composite")
+            prediction=r["y_pred"];target=y
+            if getattr(a,"output_representation","standard")!="standard":
+                prediction=prediction[:,INDEPENDENT_MISSING];target=target[:,INDEPENDENT_MISSING]
             if loss_type == "l1":
-                loss = F.l1_loss(r["y_pred"], y)
+                loss = F.l1_loss(prediction,target)
             elif loss_type == "mse":
-                loss = F.mse_loss(r["y_pred"], y)
+                loss = F.mse_loss(prediction,target)
             else:
-                loss,*_=criterion(r["y_pred"],y)
-        losses.append(float(loss)); rs+=missing_pearson(r["y_pred"].float(),y.float(),a.observed_leads).cpu().tolist()
+                loss,*_=criterion(prediction,target)
+        losses.append(float(loss))
+        if getattr(a,"output_representation","standard")!="standard":
+            p=prediction.float()-prediction.float().mean(-1,keepdim=True)
+            t=target.float()-target.float().mean(-1,keepdim=True)
+            current=F.cosine_similarity(p,t,dim=-1).cpu().numpy()
+            rs.extend(current.tolist())
+            _,batch_patients=identifiers_from_batch(b)
+            if batch_patients is None:raise RuntimeError("patient IDs required for residual-output validation")
+            patient_ids.extend(torch.as_tensor(batch_patients).cpu().tolist())
+        else:rs+=missing_pearson(r["y_pred"].float(),y.float(),a.observed_leads).cpu().tolist()
     if not losses or not rs:raise RuntimeError("reconstruction validation produced no samples")
     result={"val_recon_loss":float(np.mean(losses)),"val_missing_pearson":float(np.mean(rs)),
             "val_missing_pearson_p05":float(np.quantile(rs,.05))}
+    if getattr(a,"output_representation","standard")!="standard":
+        z=np.arctanh(np.clip(np.asarray(rs),-.9999,.9999))
+        patients=np.asarray(patient_ids);unique,inverse=np.unique(patients,return_inverse=True)
+        z_ecg=z.mean(axis=1);counts=np.bincount(inverse)
+        patient_r=np.tanh(np.bincount(inverse,weights=z_ecg)/counts)
+        result["val_independent_patient_r"]=float(patient_r.mean())
+        result["val_independent_patient_r_p05"]=float(np.quantile(patient_r,.05))
     if not all(math.isfinite(v) for v in result.values()):
         raise FloatingPointError(f"non-finite reconstruction metrics: {result}")
     return result
@@ -498,9 +599,15 @@ def train(a):
     pin=device.type=="cuda"
     root=Path(a.data_dir)
     tr_generator=torch.Generator()
-    tr=DataLoader(PTBXLDataset(str(root/"train")),batch_size=a.batch_size,shuffle=True,
+    dataset_type=IndexedTensorDataset if getattr(a,"output_representation","standard")!="standard" else PTBXLDataset
+    if dataset_type is IndexedTensorDataset:
+        train_dataset=dataset_type(root/"train",a.metadata)
+        val_dataset=dataset_type(root/"val",a.metadata)
+    else:
+        train_dataset=dataset_type(str(root/"train"));val_dataset=dataset_type(str(root/"val"))
+    tr=DataLoader(train_dataset,batch_size=a.batch_size,shuffle=True,
         num_workers=a.num_workers,pin_memory=pin,generator=tr_generator)
-    va=DataLoader(PTBXLDataset(str(root/"val")),batch_size=a.batch_size,shuffle=False,
+    va=DataLoader(val_dataset,batch_size=a.batch_size,shuffle=False,
         num_workers=a.num_workers,pin_memory=pin)
     dt=dv=None;dt_generator=None
     if a.delineation_dir:
@@ -536,6 +643,14 @@ def train(a):
         model.load_state_dict(resume["model_state_dict"],strict=True)
     else:
         load_init(model,a.init_checkpoint,a.init_strict)
+    if getattr(a,"output_representation","standard")!="standard" and resume is None:
+        digest=hashlib.sha256()
+        for name,tensor in sorted(model.base.state_dict().items()):
+            digest.update(name.encode());digest.update(tensor.detach().cpu().contiguous().numpy().tobytes())
+        basis=model.output_basis()
+        initialization={"shared_trunk_sha256":digest.hexdigest(),"output_representation":a.output_representation,
+                        "basis_orthogonality_max_abs":None if basis is None else float((basis.T@basis-torch.eye(basis.shape[1],device=basis.device)).abs().max())}
+        atomic_write_text(out/"initialization_manifest.json",json.dumps(initialization,indent=2,sort_keys=True,allow_nan=False)+"\n")
     if a.train_head_only:
         for p in model.parameters():p.requires_grad=False
         for p in model.delineation_head.parameters():p.requires_grad=True
@@ -628,7 +743,8 @@ def train(a):
         if terms:
             for k in terms[0]:m["train_"+k]=float(np.mean([x[k] for x in terms]))
         m.update(validate_recon(model,va,crit,a,device));m.update(validate_del(model,dv,a,device))
-        score=m.get("miou_wave",0)+.25*m.get("boundary_f1_smoke",0)+.1*m["val_missing_pearson"] if dv else m["val_missing_pearson"]
+        if getattr(a,"output_representation","standard")!="standard":score=m["val_independent_patient_r"]
+        else:score=m.get("miou_wave",0)+.25*m.get("boundary_f1_smoke",0)+.1*m["val_missing_pearson"] if dv else m["val_missing_pearson"]
         if not math.isfinite(score) or not all(math.isfinite(v) for v in m.values()):
             raise FloatingPointError(f"non-finite epoch metrics: {m}")
         print(json.dumps(m,sort_keys=True,allow_nan=False));history.append(m)
@@ -873,6 +989,9 @@ def parser():
     p.add_argument("--run-name",default="wavelet_smoke");p.add_argument("--output-dir",default="refine-logs/wavelet_single")
     p.add_argument("--data-dir",default="data/ptb_xl/tensors")
     p.add_argument("--data-manifest",default="refine-logs/ptbxl_tensor_content_manifest.json")
+    p.add_argument("--metadata",default="data/ptb_xl/ptbxl_database.csv")
+    p.add_argument("--output-representation",choices=["standard","direct","frozen_pca","learned"],default="standard")
+    p.add_argument("--k-star-manifest")
     p.add_argument("--delineation-dir")
     p.add_argument("--factorial-mask",default="1000000");p.add_argument("--observed-leads",type=int,nargs="+",default=[0])
     p.add_argument("--epochs",type=int,default=3);p.add_argument("--seed",type=int,default=42)
@@ -958,6 +1077,12 @@ def validate_train_args(a):
         raise ValueError("positive fiducial weight requires the fiducial head")
     if a.train_head_only and a.no_delineation_head:raise ValueError("head-only mode requires the delineation head")
     if a.resume_min_free_gib<=0:raise ValueError("--resume-min-free-gib must be positive")
+    if a.output_representation!="standard":
+        if a.observed_leads!=[0]:raise ValueError("residual output representations require observed Lead I")
+        if not a.k_star_manifest:raise ValueError("residual output representations require --k-star-manifest")
+        if a.factorial_mask!="1110000" or a.reconstruction_loss_type!="composite":
+            raise ValueError("residual output protocol freezes the established 1110000 composite objective")
+        if a.deterministic_limb_derivation:raise ValueError("residual adapter already derives dependent limb leads")
 
 def main():
     a=parser().parse_args()

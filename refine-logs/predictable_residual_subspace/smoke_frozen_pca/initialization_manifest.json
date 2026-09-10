@@ -1,0 +1,5 @@
+{
+  "basis_orthogonality_max_abs": 0.00026166439056396484,
+  "output_representation": "frozen_pca",
+  "shared_trunk_sha256": "99b26ca5e0a6ca9eb70bd8a8b4cfc98dc08832350a409c6a08c56d060289cfcf"
+}

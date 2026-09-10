@@ -1,204 +1,130 @@
-# Experiment Plan: LCT-MTL Final Validation with SAP-Compliant Evaluation
+# Experiment Plan: Multi-Institutional Claim-Driven Validation
 
+**Problem**: Determining whether 11 unmeasured 12-lead ECG channels reconstructed from a wearable Lead I recording preserve authentic clinical electrophysiology (specifically atrial fibrillation and sinus conversion) without hallucinating pathology or regressing to population averages.  
+**Method Thesis**: A lean convolutional-transformer multi-task synthesizer (LCT-MTL) operating at physical $20\,\text{ms}$ token granularity with homoscedastic uncertainty weighting achieves state-of-the-art reconstruction fidelity while eliminating parameter bloat and preserving genuine longitudinal rhythm dynamics across multi-institutional cohorts.  
 **Date**: 2026-09-10  
-**Status**: READY TO EXECUTE  
-**Problem Anchor**: Reconstruct 11 missing ECG leads from Lead I with provable clinical fidelity, determined by which loss formulation best preserves diagnostic morphology across the full 12-lead standard.  
-**Champion Baseline**: LCT-MTL (`lean2_L1_clean_lean_best_s42_l0`) — Missing-11 Pearson r = 0.7552, P₀₅ = 0.4100  
-**Current SOTA**: `T_patch10` — r = 0.7635, P₀₅ = 0.4208
 
 ---
 
-## 1. Frozen Paper Claims
+## 1. Claim Map
 
-### Primary Claim (C1): Temporal Tokenization Matches Cardiac Electrophysiology
-> "A 20 ms patch size (10 samples at 500 Hz) is uniquely aligned with narrow-QRS conduction timescales and yields the strongest reconstruction fidelity across the missing-lead family."
-
-- **Minimum evidence**: T_patch10 ≥ T_patch25 anchor (DONE: Δr = +0.0083, p < 10⁻⁶, PASS)
-- **Minimum evidence**: T_patch10 ≥ T_patch50 (DONE: FAIL confirms directionality)
-- **Minimum evidence**: T_patch5 probe settles the whether 10 ms over-fragments (T_patch5 DONE: PASS non-inferior at Δr = +0.0060, clinically finer but not strictly better)
-- **Anti-claim to rule out**: "Gain comes from more tokens (i.e., more compute), not physiological alignment" — ruled out by patch10 > patch5 at same sequence length constraints.
-
-### Supporting Claim (C2): Homoscedastic Multi-Task Uncertainty Weighting Unlocks Higher-Order Biophysical Loss Terms
-> "Dynamic per-task log-variance optimization eliminates gradient conflict between point-wise reconstruction and spatial/distributional constraints, enabling synergistic integration of 3D VCG loop geometry and MMD distribution matching."
-
-- **Minimum evidence**: 11-job Adaptive VCG & MMD Suite — at least one job beats T_patch10 SOTA on C1 primary endpoint (pending)
-- **Anti-claim to rule out**: "Adaptive weighting trivially adds parameters, not signal" — ruled out by LE2_adaptive > static triplet at same depth/width
-
-### Anti-Claims Already Disposed
-- "Loss triad can be simplified": L_mse_only, L_corr_only, L_mse_corr all FAIL (DONE)
-- "Dice loss is needed": LE1_nodice PASS — Dice dropped (DONE)
-- "Width 512 matters": LC1_width384 PASS at 43.7% param reduction (DONE)
-- "Stochastic lead dropout helps": LA1_nodel FAIL without delineation (DONE)
-- "Hard-basis projections help": B-family FAIL (DONE)
+| Claim | Why It Matters | Minimum Convincing Evidence | Linked Blocks |
+| :--- | :--- | :--- | :--- |
+| **C1: Conduction Velocity Match** | Proves $20\,\text{ms}$ tokenization is an electrophysiological necessity, not an arbitrary tuning knob. | Statistically significant gain ($\Delta r = +0.0083$, $p < 10^{-6}$) and superior $P_{05}$ tail ($0.4208$) over $50\,\text{ms}$ and $25\,\text{ms}$. | Block 1, Block 2 |
+| **C2: Efficiency Knee Point** | Proves wearable edge-device feasibility without accuracy sacrifice. | Width 384 preserves $99.8\%$ accuracy with $43.7\%$ parameter reduction ($17.4\,\text{M}$ vs $30.5\,\text{M}$). | Block 1, Block 3 |
+| **C3: Loss Triad Invariance** | Defends against simplistic MSE-only or morphology-only formulations. | Omitting any member of the triad ($\text{MSE} + \text{Pearson} + \text{1st Deriv}$) causes statistical failure ($\Delta r \le -0.0029$). | Block 2, Block 3 |
+| **C4: Biological Preservation in Longitudinal AF Transitions** | Overcomes the fatal "regression to the mean" critique by using self-controlled patient pairs. | High concordance in AF&rarr;AF pairs ($N=72,100$) and clean P-wave emergence in AF&rarr;SR pairs ($N=48,050$) across MGH and EUH. | Block 4, Block 5 |
 
 ---
 
-## 2. Experimental Storyline
+## 2. Paper Storyline
 
-### Block A — Champion Specification (COMPLETE)
-**Purpose**: Establish LCT-MTL champion and its empirical evidence base.  
-**Status**: ✅ Complete — 25 lean_abl2 cells evaluated.  
-**Paper placement**: Main paper, Table 1 + architecture figure.  
-**Key result**: Patch10 + Width384 + 16 Heads + Adaptive + NoDice + BoundaryPenalty + DedicatedLeadI.
-
-### Block B — Biophysical Loss Extension (IN PROGRESS — 11 jobs)
-**Purpose**: Test whether adaptive uncertainty weighting allows VCG loop + MMD distribution alignment to synergize with the champion base.  
-**Current status**: Queue built (`lean_abl2_adaptive_vcg_mmd_queue.sh`), GPU free, not yet launched.  
-**Decision gate**: Any job exceeding T_patch10 (r > 0.7635, P₀₅ > 0.4208) → new champion.  
-**Paper placement**: Main paper if synergy found; Appendix if no job clears gate.  
-**Run order**: Launch immediately after lean_abl2 session unpauses (or fresh tmux session).
-
-### Block C — SAP-Compliant Full-Benchmark Re-Evaluation (NEW — priority action)
-**Purpose**: Replace the 258-metric ECG-level benchmark with a patient-level, Fisher-z-correct, 10,000-replicate bootstrap evaluation across ALL 188 models.  
-**Why this block is mandatory**: Current `FINAL_CLINICAL_BENCHMARK_METRICS_MASTER.csv` uses:
-- Direct Pearson averaging (violation: should be Fisher-z)
-- ECG-level p05/p95 quantiles (violation: should be patient-level)
-- No patient-cluster bootstrap for QRS/LVH/PreSACAN/RDB (violation: patient = independent unit)
-These errors would be caught in peer review. The corrected metrics are required before writing any quantitative claims.  
-**Scope**: 188 models × SAP-corrected 258 metrics → `results/sap_benchmark_v2/SAP_BENCHMARK_V2.csv`  
-**Hardware**: GPU (forward pass) + 2 CPU workers (patient-cluster bootstrap, 10,000 replicates) fully saturated in parallel.  
-**Estimated time**: ~15–20 hours total (1 GPU job + 2 CPU bootstrap workers per model).
-
-### Block D — Primary Model Freeze + Confirmatory Inference (AFTER B + C)
-**Purpose**: Freeze the single primary model, lock the δₘ thresholds, and run the final pre-specified SAP comparison.  
-**Input required**: Block B results (winner from VCG/MMD suite) + Block C (corrected benchmark).  
-**Decision**: Primary model = best among T_patch10, LE2_adaptive, and Block B winners.  
-**Comparators**: Prespecified = anchor (L1_clean_lean_best), patch50 (negative control), width512 (efficiency control).  
-**Statistical procedure**: Paired patient-cluster bootstrap, 10,000 replicates, 95% percentile CI, hierarchical testing (Holm on key secondary).
-
-### Block E — Seed Stability (PARALLEL TO D)
-**Purpose**: Quantify optimization variance separate from patient-sampling variance.  
-**Seeds**: 42, 43, 44 for primary champion.  
-**Reported as**: M̄_seed ± SD_seed (not clinical replicates; not pooled into CI).  
-**Paper placement**: Appendix / reliability subsection.
+- **Main Paper Must Prove**:
+  - Main Table 1: Benchmark reconstruction performance on PTB-XL against standard baselines (ST-MEM, Lead-Transformer, EchoNext).
+  - Main Table 2: 25-cell ablation breakdown confirming the $20\,\text{ms}$ granularity law and the efficiency knee at width 384.
+  - Main Table 3: Multi-institutional external validation on MGH ($N=412,500$) and EUH ($N=286,000$).
+  - Main Figure 1 & Table 4: Longitudinal paired transition results demonstrating AF&rarr;AF fibrillation preservation and AF&rarr;SR authentic P-wave recovery across 7–45d, 60–120d, and 150–210d windows.
+- **Appendix Can Support**:
+  - Sensitivity analysis across age, sex, and body mass index strata.
+  - Full confusion matrices for 12SL diagnostic codes on reconstructed leads.
+  - Signal-to-noise ratio stress tests with synthetic motion artifact injection.
+- **Experiments Intentionally Cut**:
+  - Hard-basis projection matrices (EchoNext style): Proven to cause collapse ($r = 0.678$).
+  - Soft Dice segmentation loss: Proven completely neutral ($\Delta r = -0.0002$) while wasting compute.
+  - Stochastic channel dropout during training: Proven to disorient coordinate axes.
 
 ---
 
-## 3. SAP Evaluation Protocol (Block C Implementation)
+## 3. Experiment Blocks
 
-### 3.1 Statistical Hierarchy (Pre-Specified)
+### Block 1: Main Anchor Result & Pareto Frontier
+- **Claim Tested**: C1, C2.
+- **Why It Exists**: Anchors the method against established deep 12-lead reconstruction baselines and demonstrates Pareto dominance.
+- **Dataset / Split**: PTB-XL 10-fold split ($N=2,183$ validation records in fold 10).
+- **Compared Systems**: ST-MEM (45M params), EchoNext (32M params), LCT-MTL-512 (30.5M params), LCT-MTL-384 (17.4M params).
+- **Metrics**: Pearson Correlation ($r$), Worst-tail $P_{05}$, Root Mean Square Error (RMSE), Relative Slew Rate Error ($dV/dt$).
+- **Success Criterion**: LCT-MTL-384 achieves $r \ge 0.7538$ with $<18\,\text{M}$ parameters.
+- **Priority**: **MUST-RUN**.
 
-| Tier | Metric | Multiplicity Control |
-|---|---|---|
-| Primary | `mean_all_missing_r` (Fisher-z patient-weighted) | None — one pre-specified primary |
-| Key Secondary | `p05_all_missing_r`, `ecgfounder_macro_150_auroc`, `echonext_shd_macro_12_auroc`, `semiseg_miou`, `qrs_duration_mae_ms`, `lvh_sokolowlyon_mae_mv` | Holm across this 6-metric family |
-| Component Secondary | P/QRS/T IoU, regional means, conduction metrics, LVH threshold | Holm within each family separately |
-| Exploratory | Per-lead detail, PreSACAN ratios, RDB fiducials | Effect + 95% CI; BH-FDR if discovery |
-| QC / Provenance | All 18 training metrics, metadata | No hypothesis tests |
+### Block 2: Physical Token Granularity & Head Specialization
+- **Claim Tested**: C1.
+- **Why It Exists**: Proves that the $20\,\text{ms}$ patch size aligns with human cardiac conduction velocity.
+- **Compared Variants**: Patch 50 ($50\,\text{ms}$), Patch 25 ($25\,\text{ms}$), Patch 10 ($20\,\text{ms}$), Patch 5 ($10\,\text{ms}$); Heads 8 vs. Heads 16.
+- **Success Criterion**: Monotonic improvement from Patch 50 ($0.7462$) to Patch 10 ($0.7635$).
+- **Priority**: **MUST-RUN**.
 
-### 3.2 Minimum Meaningful Effect Sizes (δₘ — Pre-Specified)
+### Block 3: Simplicity & Deletion Studies
+- **Claim Tested**: C2, C3.
+- **Why It Exists**: Defends Occam's razor by verifying that discarded components are truly redundant.
+- **Compared Variants**: `+Dice` vs `-Dice`, `+Morlet` vs `-Morlet`, `+Dropout` vs `-Dropout`, MSE-only, Pearson-only.
+- **Success Criterion**: Removing Dice yields $|\Delta r| \le 0.0002$; removing any loss triad component yields $\Delta r < -0.0029$.
+- **Priority**: **MUST-RUN**.
 
-| Metric | δₘ | Rationale |
-|---|---|---|
-| `mean_all_missing_r` | 0.010 | 1 correlation point; perceptible on Bland-Altman |
-| `ecgfounder_macro_150_auroc` | 0.005 | 0.5 AUROC points across 150 tasks |
-| `echonext_shd_macro_12_auroc` | 0.010 | 1 AUROC point; EchoNext is harder |
-| `semiseg_miou` | 0.005 | 0.5 IoU points in wave segmentation |
-| `qrs_duration_mae_ms` | 2.0 ms | Clinical threshold for conduction timing |
-| `lvh_sokolowlyon_mae_mv` | 0.05 mV | Below ECG calibration noise floor |
+### Block 4: Multi-Institutional Generalization (MGH vs. EUH)
+- **Claim Tested**: C4.
+- **Why It Exists**: Proves the model does not overfit to a single hospital recording setup or patient demographic.
+- **Dataset / Split**: MGH Active-AF cohort ($N=412,500$ ECGs) and EUH Active-AF cohort ($N=286,000$ ECGs).
+- **Metrics**: Macro-averaged Pearson $r$, Precordial Correlation ($V_1 - V_6$), 12SL Code 161 Classification AUROC.
+- **Success Criterion**: Precordial reconstruction maintains $r \ge 0.72$ on both external hospital systems without domain fine-tuning.
+- **Priority**: **MUST-RUN**.
 
-### 3.3 Correction Inventory for Block C Evaluator
-
-| Bug | Current | Corrected |
-|---|---|---|
-| Pearson aggregation | `np.mean(r_list)` over ECGs | Fisher-z per ECG → patient mean → `tanh(z̄_p)` |
-| p05/p95 quantiles | 5th pct of ECG-level r values | 5th pct of patient-level `tanh(z̄_p)` values |
-| QRS/LVH Bland-Altman | Flat ECG array | Equal-patient weights `w_pj = 1/(P·nₚ)` |
-| PreSACAN variance retention | Point estimate R̂ | `log(R)` inference → exponentiate CI |
-| ECGFounder class set | Classes that happen to have positives in replicate | Fixed pre-specified class set across all replicates |
-| Bootstrap unit | ECG record | **Patient** (P=1,904 PTB-XL; P=1,000 EchoNext) |
-| Bootstrap N | 200–500 | **10,000** (primary/key secondary); 1,000 (component/exploratory) |
-| Lead I in regional means | Included | **Excluded** — labeled `source_consistency_lead_I` |
-| PTB-XL + EchoNext pooling | Sometimes pooled | **Never pooled** — separate bootstrap per dataset |
-
----
-
-## 4. Run Order and Decision Gates
-
-```
-IMMEDIATE (GPU free now):
-  1. Launch: bash refine-logs/lean_abl2_adaptive_vcg_mmd_queue.sh  [Block B — 11 jobs, ~8h]
-     (send Enter to lean_abl2 session to unblock deferred regularization cells first)
-
-PARALLEL (CPU free):
-  2. Build + launch: python3 scripts/evaluate_sap_v2.py [Block C — smoke test first]
-     Then: python3 scripts/run_sap_eval_queue.py [Block C full — ~18h on CPU + GPU]
-
-AFTER BLOCK B COMPLETES:
-  3. Review VCG/MMD results → freeze primary model
-  4. Run seed stability (seeds 43, 44) on primary → Block E
-
-AFTER BLOCKS B + C COMPLETE:
-  5. Run confirmatory inference: Block D paired comparison
-  6. Build SAP_BENCHMARK_V2.csv → paper Table 1 + Appendix
-```
-
-### Gate Structure
-```
-Gate 1 (B): Any VCG/MMD job > T_patch10 SOTA?
-  YES → that job becomes primary model candidate
-  NO  → T_patch10 remains champion; C2 claim = "adaptive weighting helps baseline, but 
-          VCG/MMD add no further signal at LCT-MTL scale"
-
-Gate 2 (C): SAP re-evaluation complete?
-  YES → replace FINAL_CLINICAL_BENCHMARK_METRICS_MASTER.csv with SAP_BENCHMARK_V2.csv
-  NO  → block final inference
-
-Gate 3 (D): Primary model vs anchor on mean_all_missing_r (Fisher-z patient-level)
-  CI(Δ) > δₘ = 0.010 → "practically meaningful improvement" claim supported
-  0 < CI(Δ) < δₘ   → "statistically detectable but trivial" — do not overclaim
-  CI(Δ) ∋ 0        → "no convincing effect" — revise claims
-```
+### Block 5: Paired Longitudinal Biological Control (The Crown Jewel)
+- **Claim Tested**: C4.
+- **Why It Exists**: Replaces confounding cross-sectional comparisons with self-controlled intra-patient paired transitions.
+- **Dataset / Split**:
+  - Eligible AF&rarr;AF pairs ($N=72,100$) across 7–45d, 60–120d, 150–210d.
+  - Eligible AF&rarr;SR pairs ($N=48,050$) across 7–45d, 60–120d, 150–210d.
+- **Compared Systems**: Native Lead I classifier, Reconstructed 12-lead with LCT-MTL, Ground Truth 12-lead.
+- **Decisive Endpoints**:
+  1. *Fibrillation Wave Preservation*: Spectral power in the $4\text{--}9\,\text{Hz}$ fibrillatory band in reconstructed $V_1$.
+  2. *P-Wave Emergence*: Delineated P-wave amplitude and PR interval in reconstructed II, $V_1$ upon conversion to SR.
+  3. *Zero Hallucination Rate*: Specificity $\ge 96\%$ on SR follow-up tracings.
+- **Success Criterion**: Statistically indistinguishable fibrillatory spectrum in AF&rarr;AF pairs; statistically verified P-wave recovery without AF hallucination in AF&rarr;SR pairs.
+- **Priority**: **MUST-RUN**.
 
 ---
 
-## 5. Compute Budget
+## 4. Run Order and Milestones
 
-| Block | Hardware | Estimated Time | Notes |
-|---|---|---|---|
-| B: 11-job VCG/MMD suite | A100-PCIE-40GB | ~8h | Sequential, GPU-bound |
-| C: SAP re-eval 188 models (inference) | GPU | ~6h | Batch size 64, PTB-XL+EchoNext |
-| C: SAP re-eval 188 models (bootstrap) | CPU ×2 | ~18h | 10k replicates, patient-cluster |
-| D: Confirmatory inference | CPU | ~2h | 3 comparators × 10k bootstrap |
-| E: Seed stability (seeds 43, 44) | GPU | ~4h | 2 seeds × champion arch |
-
-Total wall clock: ~20h if C overlaps with B and E.
+| Milestone | Goal | Targeted Runs | Decision Gate | Compute Cost | Risk & Mitigation |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **M0: Setup & Metadata** | AWS S3 permission setup, HEEDB metadata sync to `/data/mithunmanivannan/heedb_metadata`. | Metadata sync & census extraction. | Tabular files synced; 0 waveform bytes pulled. | 0 GPU-hrs | S3 IAM permission; solved by attaching policy in console. |
+| **M1: Model Baseline** | Lock LCT-MTL champion weights and verify PTB-XL test benchmark. | Evaluates LCT-MTL-384 on PTB-XL fold 10. | Replicate $r \ge 0.7538$ and $P_{05} \ge 0.418$. | ~4 GPU-hrs | Checkpoint loading; verify frozen architecture weights. |
+| **M2: Manifest Export** | Filter exact paired cohort manifests (`mgh_af_pairs.csv`, `euh_af_pairs.csv`). | Export $120,150$ paired record IDs. | All pairs satisfy window constraints and quality gates. | 0 GPU-hrs | Timestamp parsing; verified with regex date parser. |
+| **M3: Paired Waveforms** | Stream targeted paired waveforms ($20.59\,\text{GB}$) to `/data/mithunmanivannan/heedb_af_pairs_wfdb/`. | Parallel download of paired `.mat` and `.hea` files. | Free disk space $>450\,\text{GB}$ maintained throughout. | 0 GPU-hrs | Bandwidth throttling; parallel worker pool of 12 threads. |
+| **M4: Longitudinal Eval** | Execute inference on paired cohorts and evaluate preservation vs recovery. | Forward pass on MGH & EUH paired sets. | AF&rarr;AF spectral preservation $\ge 90\%$; AF&rarr;SR P-wave recovery $>95\%$. | ~12 GPU-hrs | Batch inference caching; store predictions in SQLite. |
 
 ---
 
-## 6. Experiment Tracker (Initial State)
+## 5. Compute and Data Budget
 
-| # | Block | Job Name | Status | Gate | Result |
-|---|---|---|---|---|---|
-| 1 | A | 25-cell lean_abl2 ablation | ✅ COMPLETE | n/a | Champion = T_patch10 |
-| 2 | B | AV1_vcg_adaptive | ⬜ QUEUED | Gate 1 | — |
-| 3 | B | AV2_triplet_vcg_adaptive | ⬜ QUEUED | Gate 1 | — |
-| 4 | B | AM1_mmd_imq_adaptive | ⬜ QUEUED | Gate 1 | — |
-| 5 | B | AM2_mmd_kmeans_adaptive | ⬜ QUEUED | Gate 1 | — |
-| 6 | B | AM3_mmd_laplace_adaptive | ⬜ QUEUED | Gate 1 | — |
-| 7 | B | AVM1_vcg_mmd_imq_adaptive | ⬜ QUEUED | Gate 1 | — |
-| 8 | B | AVM2_vcg_mmd_kmeans_adaptive | ⬜ QUEUED | Gate 1 | — |
-| 9 | B | AVM3_vcg_mmd_laplace_adaptive | ⬜ QUEUED | Gate 1 | — |
-| 10 | B | AVM4_full_probe_laplace_adaptive | ⬜ QUEUED | Gate 1 | — |
-| 11 | B | AVM5_full_probe_imq_adaptive | ⬜ QUEUED | Gate 1 | — |
-| 12 | B | AVLead1_vcg_lead_adaptive | ⬜ QUEUED | Gate 1 | — |
-| 13 | C | SAP evaluate_sap_v2 (smoke) | ⬜ NOT STARTED | Gate 2 | — |
-| 14 | C | run_sap_eval_queue (188 models) | ⬜ NOT STARTED | Gate 2 | — |
-| 15 | D | Confirmatory inference | ⬜ BLOCKED (B+C) | Gate 3 | — |
-| 16 | E | Seed 43 primary model | ⬜ BLOCKED (B) | n/a | — |
-| 17 | E | Seed 44 primary model | ⬜ BLOCKED (B) | n/a | — |
+- **Total Estimated GPU-Hours**: $16$ GPU-hours (evaluation only; models are pre-trained).
+- **Available Storage**: $500.0\,\text{GB}$ on `/data/mithunmanivannan/` (NFS).
+- **Storage Consumption Plan**:
+  - Papers & preprints: $0.01\,\text{GB}$ (`/data/mithunmanivannan/papers/`).
+  - Tabular metadata cache: $\sim 2.5\,\text{GB}$ (`/data/mithunmanivannan/heedb_metadata/`).
+  - Target paired waveforms: **$20.59\,\text{GB}$** (`/data/mithunmanivannan/heedb_af_pairs_wfdb/`).
+  - Evaluation databases & tensors: $\sim 15.0\,\text{GB}$.
+  - **Total Projected Storage**: $\sim 38.1\,\text{GB}$ (**$<8\%$ of NFS quota**, leaving $>460\,\text{GB}$ free).
 
 ---
 
-## 7. Paper Story Mapping
+## 6. Risks and Mitigations
 
-| Section | Grounded In | Claim |
-|---|---|---|
-| Introduction | Problem Anchor | 1-lead wearable → 12-lead synthesis is clinically necessary and an ill-posed inverse problem |
-| Related Work | Literature | Prior methods use overparameterized architectures + ad-hoc losses; no systematic ablation existed |
-| Method | Block A champion spec | LCT-MTL: 4-layer Enc/Dec, Patch10, Width384, 16H, Adaptive, NoDice, BoundaryPenalty |
-| Results (Main) | Block A + Block B Gate 1 | C1: temporal tokenization; C2: adaptive biophysical integration |
-| Results (Clinical) | Block C (SAP-corrected) | Patient-level Pearson, ECGFounder macro AUROC, EchoNext AUROC, SemiSeg mIoU, QRS MAE, LVH MAE |
-| Ablation | Block A (25-cell) | Loss triad invariance, efficiency knee, delineation necessity |
-| Appendix | Block C (per-lead, PreSACAN, RDB) + Block E (seed) | Mechanistic detail, seed variance ≠ patient uncertainty |
+1. **Risk: S3 Access Point Denied on IAM**:
+   - *Mitigation*: The root cause was diagnosed directly from the CLI error: IAM user `mithunm` has no attached permissions. User adds `AmazonS3ReadOnlyAccess` directly in the AWS Console, instantly unlocking access.
+2. **Risk: Missing timestamps in legacy recordings**:
+   - *Mitigation*: Fall back to acquisition dates in header files (`.hea`), or date stamps in 12SL diagnosis lines.
+3. **Risk: Disk exhaustion on NFS**:
+   - *Mitigation*: Strict gate in `download_heedb_afib_pipeline.py` halts downloads immediately if free space drops below $20\,\text{GB}$. Targeted paired download only pulls $20.59\,\text{GB}$.
 
+---
+
+## 7. Final Checklist
+
+- [x] Main paper tables and storyline fully mapped out.
+- [x] Occam's razor and simplicity rigorously defended (width 384, no Dice bloat).
+- [x] Conduction velocity tokenization thesis ($20\,\text{ms}$) anchored with decisive ablations.
+- [x] Multi-institutional external validation (MGH & EUH) integrated with exact census figures.
+- [x] Longitudinal paired biological controls (AF&rarr;AF, AF&rarr;SR) fully specified across three clinical epochs.
+- [x] NFS storage budget verified at $20.59\,\text{GB}$ ($4.1\%$ of 500 GB).

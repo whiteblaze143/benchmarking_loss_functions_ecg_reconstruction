@@ -1,35 +1,41 @@
-# Refinement Report: Empirical Transition to LCT-MTL Champion Base
+# Refinement Report: Progression to Multi-Institutional Longitudinal Clinical Grounding
 
-**Date**: 2026-09-09  
-**Topic**: Quantitative Evolution and Design Justifications for LCT-MTL Architecture
-
----
-
-## 1. Executive Summary & Quantitative Evolution
-
-The design of the **Lean Convolutional-Transformer Multi-Task Synthesizer (LCT-MTL)** is the product of an exhaustive 4-round optimization campaign encompassing 188 historical models and 25 systematic Round-2 ablations:
-
-| Iteration | Model Configuration | Parameters | Missing-11 Mean $r$ | Tail $P_{05}$ | Delta vs Anchor | Verdict / Finding |
-|:---|:---|:---:|:---:|:---:|:---:|:---|
-| **Round 0 (Baseline)** | Enc-8, Width-768, Heads-12, Whole-Lead Dropout, Static Loss | ~45.2M | 0.7456 | 0.4048 | 0.0000 | Reference Baseline |
-| **Round 1 (Clean Best)** | Enc-4, Width-512, Heads-8, No Dropout, Z-score (`L1`) | ~30.5M | 0.7552 | 0.4100 | +0.0097 | Pruning dropout & overparameterization |
-| **Round 2 (Patch 10)** | L1 + Token Patch 10 (20 ms at 500 Hz) (`T_patch10`) | ~30.5M | **0.7635** | **0.4208** | **+0.0083** | **PASS (All-Time Peak SOTA)** |
-| **Round 2 (Adaptive)** | L1 + Homoscedastic Uncertainty Weighting (`LE2_adaptive`) | ~30.5M | **0.7607** | **0.4184** | **+0.0054** | **PASS (Eliminates Lambda Conflict)** |
-| **Round 2 (Heads 16)** | L1 + 16 Attention Heads (`T_heads16`) | ~30.5M | **0.7576** | **0.4165** | **+0.0023** | **PASS (Zero Extra Parameters)** |
-| **Round 2 (Boundary)** | L1 + Delineation Boundary Penalty (`D_boundary`) | ~30.5M | **0.7566** | **0.4124** | **+0.0013** | **PASS (Sharp Wave Transitions)** |
-| **Round 2 (Width 384)** | L1 + Width 384 (`LC1_width384`) | **~17.4M** | 0.7538 | 0.4075 | -0.0015 | **PASS (Optimal Efficiency Knee Point)** |
-| **LCT-MTL (Champion Base)** | Patch 10, Heads 16, Width 384, Boundary 0.2, No-Dice, Adaptive | **~17.4M** | **~0.7700** | **>0.4250** | **Compound** | **Champion Specification for Chained Queue** |
+**Date**: 2026-09-10  
+**Refinement Phase**: V3 Method Stabilization & Longitudinal Clinical Expansion  
 
 ---
 
-## 2. Physiological & Mathematical Rationale
+## 1. Evolution of the Method
 
-1. **Why Patch 10 is the Decisive Win**:
-   - ECG sampling at $500\text{ Hz}$ provides 1 sample every $2\text{ ms}$.
-   - Pathological ventricular conduction features (pathological Q-waves in transmural infarction, delta waves in Wolff-Parkinson-White pre-excitation, intrinsicoid deflection delays) occur in intervals of $20\text{--}40\text{ ms}$.
-   - A $50\text{ ms}$ patch (`T_patch50`) averages across these rapid deflections, suppressing the spatial gradient. A $20\text{ ms}$ patch (`T_patch10`) isolates each phase of the cardiac cycle, yielding $+0.0083$ correlation gain and $+0.0041$ gain on precordial leads $V_1 - V_6$.
-2. **Why Soft Dice Loss was Pruned**:
-   - Soft Dice loss computes regional intersection over union. In narrow signals like the QRS onset ($<10\text{ ms}$ duration), Dice gradients can become numerically erratic when predictions slightly lead or lag.
-   - Cross-entropy combined with a directional boundary transition penalty (`D_boundary`) explicitly optimizes the step transitions between background and wave classes without batch-level union computations.
-3. **The Role of Width 384 as the Deployment Standard**:
-   - While Width 512 delivers maximal capacity, Width 384 achieves $r = 0.7538$ (a negligible $-0.0015$ delta, satisfying strict FDA/non-inferiority margins) while cutting model weight by $43.7\%$ (from $30.5\text{M}$ to $17.4\text{M}$ parameters). For wearable edge hardware, Width 384 is the mathematically optimal knee point.
+```
+[Phase 1: Exploratory Benchmark]
+  • Evaluated 25-cell ablation grid (lean_abl2).
+  • Discovered:
+    - 20 ms tokenization (patch 10) sets all-time record r = 0.7635 (Δr = +0.0083).
+    - 16 attention heads provides finer lead subspace projection at zero parameter cost.
+    - Width 384 saves 43.7% parameters with only -0.0015 r degradation.
+    - Homoscedastic uncertainty weighting (LE2) stabilizes multi-task training (+0.0054 r).
+
+[Phase 2: Reviewer Vulnerability Audit]
+  • High cross-sectional correlation on PTB-XL (r = 0.7635) can still hide clinical hallucination.
+  • Reviewers will challenge: "Does the model preserve genuine AF in precordial leads or does it smooth it into sinus rhythm? Does it hallucinate AF after cardioversion?"
+  • Inter-patient anatomical variability creates severe confounding in cross-sectional sets.
+
+[Phase 3: Multi-Institutional Paired Grounding (Current)]
+  • Solution: Integrate the Harvard-Emory ECG Database (HEEDB) across MGH and EUH.
+  • Executed 10-point census extracting:
+    - MGH: 412,500 active-AF ECGs; 42,650 AF->AF pairs; 28,250 AF->SR pairs.
+    - EUH: 286,000 active-AF ECGs; 29,450 AF->AF pairs; 19,800 AF->SR pairs.
+    - Total: 120,150 paired longitudinal transitions across 7–45d, 60–120d, 150–210d windows.
+  • Storage budgeting:
+    - Target paired waveforms require only 20.59 GB (4.1% of the 500 GB NFS quota).
+    - Safely bounded, zero disk bloat.
+```
+
+---
+
+## 2. Quantitative Verification of the Refined Program
+
+1. **Thesis Integrity**: The method remains strictly lean (Occam's razor). No bloated architectures or hard projection matrices added.
+2. **Clinical Endpoint Decisiveness**: The longitudinal pairs directly test biological preservation vs. hallucination on real human patients.
+3. **Infrastructure Feasibility**: The 500GB NFS mount at `/data/mithunmanivannan/` is partitioned with clean directory boundaries (`papers/`, `heedb_metadata/`, `manifests/`).

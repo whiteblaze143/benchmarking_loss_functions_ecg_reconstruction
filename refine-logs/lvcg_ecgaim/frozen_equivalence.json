@@ -1,0 +1,12 @@
+{
+  "checkpoint": "refine-logs/lean_abl2/runs/lean2_T_patch10_s42_l0/best.pt",
+  "record_id": "8",
+  "reconstruction_bitwise_equal": true,
+  "embedding_shape": [
+    1,
+    640
+  ],
+  "embedding_finite": true,
+  "beat_count": 13,
+  "checkpoint_best_epoch": null
+}

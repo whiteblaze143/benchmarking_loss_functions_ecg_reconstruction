@@ -1796,5 +1796,67 @@
         "p_inferior": 1.0
       }
     }
+  },
+  "T_patch5": {
+    "run_name": "lean2_T_patch5_s42_l0",
+    "status": "COMPLETED (PASS)",
+    "updated_at": "2026-09-10T03:43:07.310402+00:00",
+    "eval": {
+      "candidate_run": "lean2_T_patch5_s42_l0",
+      "anchor_run": "lean2_L1_clean_lean_best_s42_l0",
+      "split": "val",
+      "n_samples": 2183,
+      "evaluated_at": "2026-09-10T03:43:06.380472+00:00",
+      "gates": {
+        "pass_overall": true,
+        "pass_primary_missing11": true,
+        "pass_precordial_v1v6": true,
+        "pass_tail_robustness_p05": true
+      },
+      "missing11": {
+        "cand_mean": 0.7612165549255487,
+        "anchor_mean": 0.7552280914668972,
+        "delta_mean": 0.005988463458651613,
+        "cand_p05": 0.4212483406066895,
+        "anchor_p05": 0.4099589139223099,
+        "delta_p05": 0.0112894266843796,
+        "ci_lower_95": 0.00410752143023772,
+        "ci_upper_95": 0.007859347357943249,
+        "p_inferior": 0.0
+      },
+      "precordial_v1v6": {
+        "cand_mean": 0.7641950712807603,
+        "anchor_mean": 0.7591956507084372,
+        "delta_mean": 0.004999420572323123,
+        "cand_p05": 0.38373332619667055,
+        "anchor_p05": 0.37115541398525237,
+        "delta_p05": 0.012577912211418185,
+        "ci_lower_95": 0.0030677763255529764,
+        "ci_upper_95": 0.006972999897526522,
+        "p_inferior": 0.0
+      },
+      "independent7": {
+        "cand_mean": 0.7607727846931931,
+        "anchor_mean": 0.7556286119415236,
+        "delta_mean": 0.005144172751669402,
+        "cand_p05": 0.39040643274784087,
+        "anchor_p05": 0.3818734556436539,
+        "delta_p05": 0.00853297710418699,
+        "ci_lower_95": 0.0031947673174697244,
+        "ci_upper_95": 0.007085706085656512,
+        "p_inferior": 0.0
+      },
+      "lead2": {
+        "cand_mean": 0.7284389548067667,
+        "anchor_mean": 0.7206002384867046,
+        "delta_mean": 0.007838716320062087,
+        "cand_p05": 0.21034561395645143,
+        "anchor_p05": 0.19522550702095032,
+        "delta_p05": 0.015120106935501115,
+        "ci_lower_95": 0.00397681394246148,
+        "ci_upper_95": 0.011860701419868298,
+        "p_inferior": 0.0
+      }
+    }
   }
 }

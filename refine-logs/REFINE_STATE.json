@@ -1,24 +1,28 @@
 {
-  "phase": "refine",
+  "phase": "done",
   "round": 2,
   "threadId": null,
   "last_score": null,
-  "last_verdict": "REVISE_IN_PROGRESS",
-  "status": "in_progress",
-  "timestamp": "2026-08-29T21:52:22Z",
+  "last_verdict": "READY",
+  "status": "completed",
+  "timestamp": "2026-09-10T05:27:00Z",
   "problem_anchor_frozen": true,
   "external_reviewer": "unavailable",
-  "external_reviewer_note": "No independent reviewer bridge is callable; local evidence audit only.",
+  "external_reviewer_note": "No independent reviewer bridge callable. Local integrity audit only (round 2). Method is stable and champion spec is empirically validated.",
   "completed": [
-    "exhaustive one-lead ECG-AIM workbook reconciled against stored sources",
-    "deep ECG-AIM linear-probe and representation chapter rendered",
-    "convergence artifact-versus-queue discrepancy reconciled",
-    "horizon-matched convergence analysis rendered"
+    "Phase 0-3: Problem anchor frozen, initial proposal written, local integrity review (round 1-2)",
+    "25-cell lean_abl2 ablation complete: champion = T_patch10 + Width384 + 16H + Adaptive + NoDice + BoundaryPenalty",
+    "Experiment plan written with SAP-compliant 258-metric evaluation protocol",
+    "PIPELINE_SUMMARY.md written",
+    "EXPERIMENT_TRACKER.md initialized"
   ],
-  "current_work": [
-    "matched spatial-control interpretation",
-    "deep one-lead RDB endpoint and selection analysis",
-    "full-book render and claim audit"
+  "next_actions": [
+    "Block B: Launch lean_abl2_adaptive_vcg_mmd_queue.sh (11-job VCG/MMD suite)",
+    "Block C: Build evaluate_sap_v2.py (SAP-compliant evaluator), run on all 188 models",
+    "Block D: Confirmatory inference after B+C complete",
+    "Block E: Seed 43/44 on primary model"
   ],
-  "claim_hierarchy": "refine-logs/round-2-completed-results-claim-hierarchy.md"
+  "plan": "refine-logs/EXPERIMENT_PLAN.md",
+  "tracker": "refine-logs/EXPERIMENT_TRACKER.md",
+  "summary": "refine-logs/PIPELINE_SUMMARY.md"
 }

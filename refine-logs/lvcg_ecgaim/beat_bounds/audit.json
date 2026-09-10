@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "detector": "scipy_bandpass_derivative_energy_v1",
+  "reference_lead": "I",
+  "sample_rate_hz": 500,
+  "max_beats": 40,
+  "source_manifest": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/ptbxl_tensor_content_manifest.json",
+  "source_manifest_sha256": "87adfbc339de7faf1fdff96b0728b3ad3a4d484808b8fa123d92c8b6114f0541",
+  "splits": {
+    "train": {
+      "records": 17418,
+      "successes": 17418,
+      "failures": 0,
+      "failure_rate": 0.0,
+      "beat_count_min": 6,
+      "beat_count_median": 13.0,
+      "beat_count_max": 31,
+      "failure_examples": []
+    },
+    "val": {
+      "records": 2183,
+      "successes": 2183,
+      "failures": 0,
+      "failure_rate": 0.0,
+      "beat_count_min": 5,
+      "beat_count_median": 13.0,
+      "beat_count_max": 32,
+      "failure_examples": []
+    },
+    "test": {
+      "records": 2198,
+      "successes": 2198,
+      "failures": 0,
+      "failure_rate": 0.0,
+      "beat_count_min": 5,
+      "beat_count_median": 13.0,
+      "beat_count_max": 28,
+      "failure_examples": []
+    }
+  }
+}

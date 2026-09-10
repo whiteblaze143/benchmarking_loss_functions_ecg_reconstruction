@@ -2,6 +2,29 @@
 
 Updated: 2026-07-26T20:41:00Z
 
+## 2026-09-10 — Beat-Structured ECG-AIM refinement
+
+- `external/LVCG/` — vendored upstream LVCG source with nested Git metadata removed.
+- `external/LVCG_COMPARISON.md` — architectural and empirical comparison.
+- `unified_latents/engineering/models/ecg_aim_lvcg_variant.py` — auxiliary representation wrapper reusing unchanged upstream beat modules.
+- `tests/test_ecg_aim_lvcg_variant.py` — wrapper shape, gradient, identity, normalization, padding, and failure tests.
+- `refine-logs/lvcg_ecgaim/FINAL_PROPOSAL.md` — latest focused method proposal (timestamped source retained beside it).
+- `refine-logs/lvcg_ecgaim/REVIEW_SUMMARY.md` — critical review and unresolved gates.
+- `refine-logs/lvcg_ecgaim/REFINEMENT_REPORT.md` — route and scope decisions.
+- `refine-logs/lvcg_ecgaim/EXPERIMENT_PLAN.md` — claim-driven pilot protocol.
+- `refine-logs/lvcg_ecgaim/EXPERIMENT_TRACKER.md` — implementation and experiment status.
+- `refine-logs/lvcg_ecgaim/PIPELINE_SUMMARY.md` — integrated handoff.
+- `refine-logs/lvcg_ecgaim/REFINE_STATE.json` — completed refinement state.
+- `refine-logs/lvcg_ecgaim/UPSTREAM_SOURCE_SHA256.txt` — provenance hash for the unchanged reused source.
+- `scripts/materialize_ptbxl_beat_bounds.py` — deterministic Lead-I boundary materializer with a 1% fail-closed gate.
+- `scripts/audit_ptbxl_beat_bounds.py` — audit-only Lead-II peak-agreement verifier.
+- `scripts/train_ecg_aim_lvcg_embedding.py` — label-free auxiliary embedding pretrainer.
+- `scripts/extract_ecg_aim_lvcg_embeddings.py` — frozen component-wise embedding extractor.
+- `refine-logs/lvcg_ecgaim/beat_bounds/` — complete 21,799-record boundary index and quality audit.
+- `refine-logs/lvcg_ecgaim/frozen_equivalence.json` — real-checkpoint reconstruction invariance evidence.
+- `refine-logs/lvcg_ecgaim/pretrain_smoke/` — successful executable pretraining smoke artifacts.
+- `refine-logs/lvcg_ecgaim/extraction_smoke/` — successful component-wise extraction smoke artifacts.
+
 > **The v2 grid is invalid for MMD effects and interactions.** A
 > full-dimensional audit found effective gradient underflow in its fixed-width
 > MMD. The corrective v4 graph is complete (91/91 core jobs and 13/13 clinical

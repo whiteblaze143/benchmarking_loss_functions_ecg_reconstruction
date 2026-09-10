@@ -1,0 +1,602 @@
+[
+  {
+    "model_id": "conv_control_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "R7_morlet_mag_ueg_real_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "del_wave_ce_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "tf_sc16_cy4_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "R8_morlet_mag_ueg_mag_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_log_magnitude_real_local_gated_add_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "del_fid_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "R2_morlet_mag_ueg_phase_sin_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_magnitude_phase_both_gated_add_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "R1_morlet_mag_ueg_phase_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_log_magnitude_real_both_gated_add_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "R0_morlet_mag_morlet_phase_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "tf_sc16_cy8_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_log_magnitude_phase_sin_local_gated_add_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "tau0.999_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_log_magnitude_phase_sin_both_gated_add_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "del_wave_boundary_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "E1_ssl_both_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_w0.1_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "tf_sc48_cy6_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "C1_E1_morlet_mag_morlet_phase_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_w0.01_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_global_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "R4_morlet_mag_ueg_phase_wyatt_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_both_infer_mean_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "R6_morlet_mag_ueg_phase_wyatt_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "mask_fixed_wave_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "tf_sc32_cy4_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "R3_morlet_logmag_ueg_phase_sin_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "R5_morlet_mag_ueg_phase_wyatt_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "P1_A0_morlet_mag_phase_noSSL_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "tf_small96_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "A0_wave_noSSL_gated_add_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "tau0.99_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_magnitude_phase_sin_local_gated_add_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_magnitude_phase_local_gated_add_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_magnitude_phase_sin_both_gated_add_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "E1_wave_noSSL_gated_add_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "R9_ueg_mag_ueg_phase_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "del_ce_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "del_head64k9_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "del_head128k25_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_log_magnitude_phase_sin_both_cross_attn_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_magnitude_phase_both_cross_attn_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_magnitude_phase_local_cross_attn_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "del_boundary_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_magnitude_phase_sin_local_cross_attn_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "E1_raw_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_log_magnitude_phase_sin_local_cross_attn_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_log_magnitude_real_both_cross_attn_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_both_infer_b_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_magnitude_phase_sin_both_cross_attn_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "mask_fixed_raw_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "E1_wave_noSSL_cross_attn_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "ssl_log_magnitude_real_local_cross_attn_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "E1_ssl_cross_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "A0_wave_noSSL_cross_attn_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "A0_raw_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "E1_ssl_local_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_AM1_mmd_imq_adaptive_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_AM2_mmd_kmeans_adaptive_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_AM3_mmd_laplace_adaptive_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_AV1_vcg_adaptive_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_AV2_triplet_vcg_adaptive_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_AVLead1_vcg_lead_adaptive_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_AVM1_vcg_mmd_imq_adaptive_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_AVM2_vcg_mmd_kmeans_adaptive_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_AVM3_vcg_mmd_laplace_adaptive_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_AVM4_full_probe_laplace_adaptive_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_AVM5_full_probe_imq_adaptive_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_R_mask15_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_R_tempmask15_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_R_wd_high_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "lean2_R_wd_low_s42_l0",
+    "path": null,
+    "group": "Lean Ablation Suite (Round 2)",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  },
+  {
+    "model_id": "tf_deep4_1110000_s42_l0",
+    "path": null,
+    "group": "3-Epoch Wavelet & SSL Screening",
+    "source": "unavailable",
+    "available": false,
+    "is_ephemeral": false
+  }
+]

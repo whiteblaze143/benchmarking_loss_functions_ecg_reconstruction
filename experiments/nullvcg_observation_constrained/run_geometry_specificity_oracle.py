@@ -77,7 +77,7 @@ def canonicalize_columns(matrix: torch.Tensor) -> torch.Tensor:
     return matrix
 
 
-def fit_training_residual_pca(loader: DataLoader, device: torch.device, limit_batches: int = 0):
+def fit_training_residual_pca(loader: DataLoader, device: torch.device, limit_batches: int = 0, rank: int = 2):
     sxx = torch.zeros((), dtype=torch.float64, device=device)
     sxy = torch.zeros(7, dtype=torch.float64, device=device)
     syy = torch.zeros(7, 7, dtype=torch.float64, device=device)
@@ -103,15 +103,18 @@ def fit_training_residual_pca(loader: DataLoader, device: torch.device, limit_ba
     eigenvalues, eigenvectors = torch.linalg.eigh(residual_scatter)
     order = torch.argsort(eigenvalues, descending=True)
     eigenvalues = eigenvalues[order]
-    basis = canonicalize_columns(eigenvectors[:, order[:2]])
-    explained = eigenvalues[:2].sum() / eigenvalues.clamp_min(0).sum()
+    if not 1 <= rank <= 7:
+        raise ValueError(f"rank must be between 1 and 7, got {rank}")
+    basis = canonicalize_columns(eigenvectors[:, order[:rank]])
+    explained = eigenvalues[:rank].sum() / eigenvalues.clamp_min(0).sum()
     return coefficients.float(), basis.float(), {
         "fit_ecgs": ecgs,
         "fit_time_samples": samples,
         "lead_i_coefficients": coefficients.cpu().tolist(),
         "basis": basis.cpu().tolist(),
         "eigenvalues": eigenvalues.cpu().tolist(),
-        "rank2_residual_energy_fraction": float(explained),
+        "rank2_residual_energy_fraction": float(eigenvalues[:2].sum() / eigenvalues.clamp_min(0).sum()),
+        "selected_rank_residual_energy_fraction": float(explained),
         "centering": "uncentered residual second moment",
     }
 

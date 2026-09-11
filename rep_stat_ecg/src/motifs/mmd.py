@@ -263,6 +263,7 @@ def mmd2_from_block_sums(
     mask_i: np.ndarray,
     mask_j: np.ndarray,
     self_diagonal: np.ndarray | None = None,
+    clip_zero: bool = True,
 ) -> float:
     """Exact biased empirical MMD² from precomputed block kernel sums.
 
@@ -303,7 +304,7 @@ def mmd2_from_block_sums(
     term_ij = S_ij.sum() / (n_i * n_j)
 
     mmd2 = term_ii + term_jj - 2.0 * term_ij
-    return float(max(0.0, mmd2))
+    return float(max(0.0, mmd2) if clip_zero else mmd2)
 
 
 # ---------------------------------------------------------------------------
@@ -347,7 +348,8 @@ def generate_reference_repspat_assignments(
 
 
 def biased_mmd2_batch_from_block_sums(S: np.ndarray, block_sizes: np.ndarray,
-                                      Z: np.ndarray, batch_size: int = 64) -> np.ndarray:
+                                      Z: np.ndarray, batch_size: int = 64,
+                                      clip_zero: bool = True) -> np.ndarray:
     """Exact Eq. 6 statistics for block assignments, batched through BLAS."""
     Z = np.asarray(Z, dtype=np.float64)
     result = np.empty(len(Z), dtype=np.float64)
@@ -364,7 +366,7 @@ def biased_mmd2_batch_from_block_sums(S: np.ndarray, block_sizes: np.ndarray,
         s_xy = selected_row_sum - s_xx
         s_yy = total_kernel_sum - s_xx - 2.0 * s_xy
         result[start:start + len(z)] = s_xx / n_x**2 + s_yy / n_y**2 - 2.0 * s_xy / (n_x * n_y)
-    return np.maximum(result, 0.0)
+    return np.maximum(result, 0.0) if clip_zero else result
 
 
 def raw_biased_mmd2_for_assignments(blocks: list[np.ndarray], Z: np.ndarray,

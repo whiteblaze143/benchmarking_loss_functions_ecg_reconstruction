@@ -73,6 +73,21 @@ def test_reference_repspat_assignment_stops_at_or_above_target():
     assert np.all(assignments @ sizes == 10)
 
 
+def test_reference_statistic_preserves_unclipped_roundoff_and_exact_ties():
+    # M3R must not inherit the primary implementation's defensive clipping or
+    # tolerance-adjusted exceedance convention.
+    S = np.array([[1.0, 1.0], [1.0, 1.0 + 2e-16]])
+    sizes = np.ones(2, dtype=np.int64)
+    Z = np.array([[1.0, 0.0], [0.0, 1.0]])
+    raw = biased_mmd2_batch_from_block_sums(S, sizes, Z, clip_zero=False)
+    clipped = biased_mmd2_batch_from_block_sums(S, sizes, Z, clip_zero=True)
+    assert np.all(clipped >= 0.0)
+    observed = raw[0]
+    exact = int(np.count_nonzero(raw >= observed))
+    tolerant = int(np.count_nonzero(raw >= observed - 1e-12))
+    assert exact <= tolerant
+
+
 def test_block_aggregate_matches_raw_biased_mmd_for_same_assignments():
     rng = np.random.RandomState(11)
     blocks = [rng.normal(i, 0.1, size=(n, 3)) for i, n in enumerate([3, 4, 2, 5, 3])]

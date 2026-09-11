@@ -25,7 +25,6 @@ from rep_stat_ecg.src.motifs.mmd import (
     benjamini_hochberg,
     biased_mmd2_batch_from_block_sums,
     build_reference_repspat_blocks,
-    count_permutation_exceedances,
     generate_reference_repspat_assignments,
     mmd2_from_block_sums,
     precompute_block_kernel_sums,
@@ -182,14 +181,18 @@ def main() -> None:
         observed_mask = np.zeros(len(sizes), dtype=bool)
         observed_mask[:q_i] = True
         observed = mmd2_from_block_sums(
-            sums, sizes, observed_mask, ~observed_mask, diagonal
+            sums, sizes, observed_mask, ~observed_mask, diagonal, clip_zero=False
         )
         target = int(min(sizes[:q_i].sum(), sizes[q_i:].sum()))
         assignments = generate_reference_repspat_assignments(
             sizes, target, args.n_perm, np.random.RandomState(pair_seed)
         )
-        null = biased_mmd2_batch_from_block_sums(sums, sizes, assignments)
-        exceed = count_permutation_exceedances(null, observed)
+        null = biased_mmd2_batch_from_block_sums(
+            sums, sizes, assignments, clip_zero=False
+        )
+        # Released package convention is exactly mean(null >= observed), with
+        # no +1 correction and no numerical tie tolerance.
+        exceed = int(np.count_nonzero(null >= observed))
         row = {
             "domain_i": d1, "domain_j": d2,
             "n_i": int(sizes[:q_i].sum()), "n_j": int(sizes[q_i:].sum()),
@@ -236,6 +239,7 @@ def main() -> None:
 
     graph, topology = graph_summary(pair_table, domains)
     component_rows = []
+    domain_component_rows = []
     for component_id, component in enumerate(sorted(nx.connected_components(graph), key=lambda c: (-len(c), min(c)))):
         nodes = sorted(component)
         subgraph = graph.subgraph(nodes)
@@ -245,7 +249,14 @@ def main() -> None:
             "num_domains": len(nodes), "is_clique": is_clique,
             "status": "AMBIGUOUS_NON_CLIQUE" if not is_clique else "FULLY_CONNECTED",
         })
+        domain_component_rows.extend(
+            {"domain_id": domain, "component_id": component_id}
+            for domain in nodes
+        )
     pd.DataFrame(component_rows).to_parquet(out / "M3R_COMPONENTS.parquet", index=False)
+    pd.DataFrame(domain_component_rows).sort_values("domain_id").to_parquet(
+        out / "M3R_DOMAIN_TO_COMPONENT.parquet", index=False
+    )
 
     primary = pd.read_parquet(args.primary_pairs).sort_values(["domain_1", "domain_2"])
     reference = pair_table.sort_values(["domain_1", "domain_2"])

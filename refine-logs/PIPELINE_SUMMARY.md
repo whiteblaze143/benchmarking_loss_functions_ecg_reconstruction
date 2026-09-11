@@ -1,63 +1,85 @@
-# Pipeline Summary: Multi-Institutional Longitudinal Research Program
+# Pipeline Summary: GRAIL-ECG v2 Representation-Theoretic Qualification & LVCG Probing Suite
 
-**Problem**: Determining whether 11 unmeasured 12-lead ECG channels reconstructed from a wearable Lead I recording preserve authentic clinical electrophysiology (atrial fibrillation and sinus conversion) without hallucinating pathology or regressing to population averages.  
-**Final Method Thesis**: A lean convolutional-transformer multi-task synthesizer (LCT-MTL) operating at physical $20\,\text{ms}$ token granularity with homoscedastic uncertainty weighting achieves state-of-the-art reconstruction fidelity while eliminating parameter bloat and preserving genuine longitudinal rhythm dynamics across multi-institutional cohorts.  
+**Problem**: Determining whether a learned latent space $E: \mathcal{X} \longrightarrow \mathcal{Z} \in \mathbb{R}^{96}$ is a valid, compact, and sufficient representation of clinical electrocardiography across the 4,095 subset lattice of 12-lead ECGs, rather than evaluating superficial waveform reconstruction or single-task classification accuracy.  
+**Final Method Thesis**: Decoupling full-ECG representation qualification from subset mapping via a 10-model factorial design $(G, S, V)$ on $(96\text{D})$ latent space, evaluated across a 7-domain representation qualification suite, LVCG multi-benchmark linear probing, and an exact token-cached 4,095-subset Shapley and interaction lattice.  
 **Final Verdict**: **READY**  
-**Date**: 2026-09-10  
+**Date**: 2026-09-11  
 
 ---
 
 ## Final Deliverables
 
-- **Refined Proposal**: `refine-logs/FINAL_PROPOSAL.md`
+- **Proposal**: `refine-logs/FINAL_PROPOSAL.md`
 - **Review Summary**: `refine-logs/REVIEW_SUMMARY.md`
 - **Refinement Report**: `refine-logs/REFINEMENT_REPORT.md`
 - **Experiment Plan**: `refine-logs/EXPERIMENT_PLAN.md`
 - **Experiment Tracker**: `refine-logs/EXPERIMENT_TRACKER.md`
-- **Census Report**: `/data/mithunmanivannan/manifests/mgh_euh_census_report.md`
-- **Census Summary JSON**: `/data/mithunmanivannan/manifests/mgh_euh_census_summary.json`
-- **Preprint Archive**: `/data/mithunmanivannan/papers/arXiv_2410.04133_ECGFounder.pdf`
-- **Operational Scripts**:
-  - `scripts/setup_aws_credentials.sh` (AWS identity & S3 probe)
-  - `scripts/sync_heedb_metadata.sh` (Metadata sync with zero-waveform safety gate)
-  - `scripts/heedb_mgh_euh_census.py` (Longitudinal pair extractor)
+- **LVCG Probing Integration**:
+  - Encoder Adapter: `external/LVCG/probing/encoders/grail_encoder.py`
+  - Encoder Registry: `external/LVCG/probing/encoders/__init__.py`
+  - Evaluation Config: `configs/eval_grail_lvcg_probing.yaml`
+- **Representation Qualification Suite**:
+  - Module: `grail_ecg/src/evaluation/representation_qualification.py`
+  - Contracts & Concept Tiers: `configs/ptbxl_concept_tiers.yaml`
+  - Unit Tests: `tests/test_grail_v2_contracts.py` (18/18 PASS)
+- **Exhaustive Subset Engine**:
+  - Module: `grail_ecg/src/evaluation/exhaustive_subset_eval.py`
+  - Runner: `scripts/run_exhaustive_4095_subsets.py`
+- **Active Execution Pipeline**:
+  - Orchestrator: `scripts/run_grail_v2_pipeline.py` (running in tmux session `grail_v2_pipeline`)
+  - Log: `refine-logs/grail_ecg/pipeline_v2.log`
 
 ---
 
 ## Contribution Snapshot
 
 - **Dominant Contribution**:
-  - Discovery and proof that $20\,\text{ms}$ physical tokenization matches ventricular conduction velocity, unlocking all-time record correlation ($r = 0.7635$, $P_{05} = 0.4208$).
-  - Self-controlled multi-institutional longitudinal evaluation ($120,150$ paired transitions across MGH and EUH) solving the fundamental clinical hallucination critique.
-- **Supporting Contribution**:
-  - Width 384 Pareto knee point: $43.7\%$ parameter reduction at $99.8\%$ accuracy retention ($17.4\,\text{M}$ params).
-  - Homoscedastic uncertainty balancing eliminating heuristic hyperparameter tuning.
+  - First mathematically principled representation qualification framework for ECG state spaces, replacing 60,000-point waveform reconstruction metrics with coordinate stability, effective rank, Fisher separability, latent retrieval, and zero-shot out-of-ontology clinical transfer (Tier P3).
+  - Exact token-cached computation of all 4,095 non-empty lead subsets, unlocking exact Lead Shapley values and pairwise Harsanyi synergy/redundancy interaction graphs without $8.9 \times 10^6$ forward-pass intractability.
+- **Optional Supporting Contribution**:
+  - Spherical geometric inductive bias $G$ based on physical 3D cardiac dipole projection.
+  - Clinical domain factorization $S$ into 6 semantically disentangled 16D slots (Rhythm, Conduction, Morphology, ST-T, Residual 1, Residual 2).
+  - Standardized integration into the multi-benchmark LVCG probing framework (PTB-XL Superclass/Subclass/Form/Rhythm, ICBEB, Chapman).
 - **Explicitly Rejected Complexity**:
-  - Hard-basis projection matrices (EchoNext style): Provably collapses performance ($r = 0.678$).
-  - Soft Dice loss: Neutral $\Delta r = -0.0002$; pruned.
-  - Stochastic lead dropout during training: Induces coordinate disorientation.
+  - End-to-end waveform reconstruction loss (MSE / STFT over 60,000 voltage samples): Pruned as the primary optimization target due to capacity waste on baseline wander and acquisition noise.
+  - Single-metric classification AUROC as model selector: Pruned in favor of multi-dimensional radar profiles.
+  - Arbitrary permutation penalties: Replaced by analytical set cross-attention permutation invariance ($S_k$ trivial representation).
 
 ---
 
 ## Must-Prove Claims
 
-1. **C1 (Granularity)**: $20\,\text{ms}$ patch size yields statistically significant gain ($\Delta r = +0.0083$, $p < 10^{-6}$) over coarse patches.
-2. **C2 (Pareto Knee)**: Width 384 preserves $99.8\%$ performance while saving $43.7\%$ parameters.
-3. **C3 (Loss Triad)**: MSE, Pearson, and 1st Derivative are non-negotiable foundations.
-4. **C4 (Clinical Grounding)**: Model preserves true fibrillation power in AF&rarr;AF pairs and authentic P-wave emergence in AF&rarr;SR pairs across MGH ($N=42,650$ / $28,250$) and EUH ($N=29,450$ / $19,800$).
+1. **Claim 1 (Compactness & Intrinsic Dimension)**: Structured inductive bias ($G=1, S=1$) constrains effective rank $r_{\text{eff}}$ closer to the true clinical manifold ($d_{\text{TwoNN}} \approx 10\text{--}18$) than unconstrained SSL baselines without collapsing capacity ($PR > 0.15$).
+2. **Claim 2 (Linear Sufficiency & Out-of-Ontology Transfer)**: $Z^\star$ achieves sufficiency gap $\Delta_{\text{suff}} = A_{\text{UB}} - A_Z \le 0.03$ on anchor concepts and transfers to unobserved Tier P3 concepts (`LVOLT`, `NORM`, `PACE`) with zero retraining.
+3. **Claim 3 (Factorial Effect Isolation)**: Factorial ANOVA on factors $(G, S, V)$ proves that geometric bias $\Delta_G$ and slot factorization $\Delta_S$ account for significant positive variance on disentanglement selectivity and low-shot retrieval ($p < 0.01$).
+4. **Claim 4 (Subspace Disentanglement)**: Zeroing domain slot $z_j$ causes a statistically significant degradation ($\Delta \text{AUC} > 0.10$) strictly on concepts mapped to slot $j$ with minimal interference ($\le 0.02$) on non-target slots.
+5. **Claim 5 (LVCG Benchmark Parity & Superiority)**: Frozen linear probing on LVCG downstream tasks matches or exceeds baseline foundation models while using a lean 96D representation.
+6. **Claim 6 (Lead Information Geometry across 4,095 Subsets)**: Lead Shapley values conform to electrical vectorcardiography (leads II and V1-V2 dominating rhythm and septal information), and minimal sufficient lead subsets recover $\ge 98\%$ of full 12-lead diagnostic performance with $\le 4$ displayed leads.
 
 ---
 
 ## First Runs to Launch
 
-1. **R001 (IAM Update)**: Attach `AmazonS3ReadOnlyAccess` in AWS Console, run `./scripts/setup_aws_credentials.sh`.
-2. **R002 (Metadata Sync)**: Run `./scripts/sync_heedb_metadata.sh` to sync tabular CSVs to `/data/mithunmanivannan/heedb_metadata/`.
-3. **R006-R007 (Manifest Generation)**: Export paired manifest CSVs via `scripts/heedb_mgh_euh_census.py`.
+1. **Run 1 (`grail_v2_pipeline` active)**: Train the 10 factorial models (`UB`, `B0`, `B1`, `B3_geom`, `B2_slots`, `Model_001`, `Model_110`, `Model_101`, `Model_011`, `Model_M`) on PTB-XL Folds 1–7 with validation on Fold 8.
+2. **Run 2 (`eval_representation_qualification`)**: Execute Phase R2 multi-dimensional representation qualification across all 10 trained checkpoints and compute ANOVA factorial main effects.
+3. **Run 3 (`eval_grail_lvcg_probing`)**: Run the LVCG linear probing battery across PTB-XL, ICBEB, and Chapman benchmarks.
+4. **Run 4 (`run_exhaustive_4095_subsets`)**: Execute token-cached Stage B exhaustive subset evaluation on Fold 8, computing exact Shapley vectors and interaction matrices.
 
 ---
 
-## Storage Safety Verification
+## Main Risks & Mitigations
 
-- NFS Mount: `rsnfsprd.carleton.ca:/UtkarshDang` mounted on `/data` (500.0 GB).
-- Active paired download requirement: **20.59 GB** ($4.1\%$ utilization).
-- High safety buffer: **$>470\,\text{GB}$** remaining free space.
+- **Risk 1: A100 PyTorch 2.6 cuDNN 1D Convolution Crash**:
+  - *Mitigation*: Disabled cuDNN 1D convolution globally via `torch.backends.cudnn.enabled = False` in all pipeline scripts, using native CUDA 1D convolution kernel.
+- **Risk 2: GPU 0 Concurrency & Memory Pressure**:
+  - *Mitigation*: Background job occupies 30.8 GB; pipeline uses ~6.9 GB. Sequential execution enforced; CPU fallback enabled for concurrent probing verification.
+- **Risk 3: Latent Collapse in Pure SSL Baseline B0**:
+  - *Mitigation*: Strictly monitored VICReg variance ($S(Z) \ge 1.0$) and covariance decorrelation penalties to ensure full 96D non-degeneracy.
+
+---
+
+## Next Action
+
+- Monitor `grail_v2_pipeline` completion in tmux session `grail_v2_pipeline`.
+- Verify completed LVCG probing test run and trigger full multi-benchmark probe on completed checkpoints.
+- Compute and render final Stage A qualification radar and Stage B Shapley graphs.

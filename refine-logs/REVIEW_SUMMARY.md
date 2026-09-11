@@ -1,26 +1,30 @@
-# Review Summary: Method Refinement and Longitudinal Clinical Grounding
+# Review Summary: GRAIL-ECG v2 Representation Refinement
 
-**Date**: 2026-09-10  
-**Phase**: Method & Validation Refinement (V3)  
-**Status**: APPROVED WITH HIGH CONFIDENCE  
-
----
-
-## 1. Critical Reviewer Objections & Counter-Measures
-
-| Reviewer Objection | Vulnerability in Prior Approaches | LCT-MTL Solution & Empirical Defense |
-| :--- | :--- | :--- |
-| **1. "Cross-sectional error hides hallucination"** | High Pearson correlation on PTB-XL can occur simply by predicting the average QRS/T morphology of the population while completely missing patient-specific conduction blocks or fibrillation waves. | **Integrated Longitudinal MGH & EUH Census**: Evaluates $120,150$ paired transitions where each patient acts as their own anatomical control across 7–45d, 60–120d, and 150–210d windows. |
-| **2. "AF could be erased into pseudo-sinus rhythm"** | In deep neural networks trained with pure MSE, chaotic atrial fibrillation potentials in $V_1-V_6$ are smoothed out because the conditional expectation minimizes variance. | **AF→AF Preservation Endpoint**: Demonstrates that true fibrillation waveforms and R-R interval irregularity are retained in reconstructed precordial leads across repeated sessions. |
-| **3. "AF could be falsely hallucinated after cardioversion"** | If the model over-conditions on history or relies on an AF prior, it may continue generating irregular baseline noise after the patient has converted to sinus rhythm. | **AF→SR Conversion Endpoint**: Demonstrates clean P-wave emergence and normal PR intervals without residual fibrillatory noise in $48,050$ paired transitions. |
-| **4. "Over-parameterization without justification"** | Prior literature used 45M-parameter models with 12 layers and arbitrary auxiliary heads. | **Occam's Razor Ablation Suite**: Shows that width 384 preserves $99.8\%$ of accuracy while slashing parameters by $43.7\%$, establishing the exact Pareto knee. |
-| **5. "Single-center overfit"** | Models trained on PTB-XL or a single hospital fail under external domain shift. | **Multi-Institutional External Validation**: Dual validation across Massachusetts General Hospital ($N=412,500$ AF ECGs) and Emory University Hospital ($N=286,000$ AF ECGs). |
+**Date**: 2026-09-11  
+**Target Focus**: Representation-Theoretic Qualification vs Reconstruction & Classification  
 
 ---
 
-## 2. Structural Decisions Freezing the Method
+## 1. Prior Weaknesses & Reviewer Critiques Addressed
 
-1. **Dedicated Lead I Input**: Ban artificial stochastic lead dropout during training; dedicated single-lead training doubles precordial sensitivity and eliminates coordinate disorientation.
-2. **20 ms Physical Token Granularity**: Token size fixed at 10 samples ($20\,\text{ms}$ at $500\,\text{Hz}$), matching intrinsic ventricular activation wavefronts.
-3. **Kendall Homoscedastic Loss Balancing**: Automatic learning of task log-variances ($s_{\text{rec}}, s_{\text{deriv}}, s_{\text{delin}}$) completely eliminates heuristic tuning conflicts.
-4. **Targeted Waveform Footprint**: Download only the curated paired recordings ($20.59\,\text{GB}$) to `/data/mithunmanivannan/`, reserving $>420\,\text{GB}$ for checkpoints and evaluation tensors.
+| Prior Conceptual Weakness | Critical Flaw Identified | Methodological Resolution in v2 |
+|---|---|---|
+| **Reconstruction as Objective** | Synthesizing 60,000 voltage samples wastes model capacity on electrode skin noise and baseline drift rather than cardiac state. | Replaced with direct latent learning $E: \mathcal{X} \to \mathcal{Z} \in \mathbb{R}^{96}$; waveform reconstruction relegated to an auxiliary decoder factor ($V$) in factorial design. |
+| **B0 Baseline Contamination** | Running baseline `B0 Plain SSL` contained clinical anchor BCE, contaminating the unsupervised baseline. | Fixed: B0 is now trained strictly with VICReg loss ($L_{\text{sim}} + L_{\text{var}} + L_{\text{cov}}$) and zero clinical BCE. |
+| **Arbitrary Lead Sequence Order** | Brute-forcing lead sequences yields $1.3 \times 10^9$ permutations, confounding sequence order with clinical subsets. | Mathematical contract: Set cross-attention carries the trivial representation of $S_k$, proving lead-order permutation invariance and collapsing the space into exactly 4,095 subsets. |
+| **Treating 12 Leads as Independent** | Frontal leads are deterministically coupled ($III = II - I$, etc.), meaning displayed count $k \neq$ information rank. | Formalized independent rank $r(S) \in \{1..8\}$ relative to $\{I, II, V1-V6\}$ and $r_{\text{limb}} \le 2$. |
+| **Random 70/30 Label Splitting** | High label co-occurrence in PTB-XL creates leakage between anchor and probe tasks. | Built formal label dependency graph ($P(p\mid a), J(a, p)$) and partitioned probe targets into Tiers P1, P2, and pure ontology-distinct P3 (`LVOLT`, `NORM`, `PACE`). |
+| **Lack of Standard Downstream Probing** | Using only ad-hoc linear probes hinders comparison with literature benchmarks. | Integrated LVCG's multi-benchmark probing suite (PTB-XL Superclass, Subclass, Form, Rhythm, ICBEB, Chapman) with validation threshold optimization. |
+
+---
+
+## 2. Intentional Rejections & Tradeoffs
+
+1. **Rejected: Full Waveform Invertibility**  
+   An invertible representation of 60,000 voltage samples is neither necessary nor desirable; clinical ECG interpretation relies on invariant physiological morphology, not sample-level noise reproduction.
+2. **Rejected: Neural Mutual Information Estimators as Primary Proof**  
+   Variational neural estimators of $I(Z; Y)$ suffer from high variance, sample complexity bounds, and loose approximations in high dimensions. Replaced with verifiable operational proxies: linear sufficiency gaps, Fisher separability, low-shot sample efficiency, and retrieval metrics.
+3. **Rejected: Statistical Disentanglement as Independence**  
+   ECG clinical factors are biologically correlated (e.g. QRS duration and bundle branch block; ventricular hypertrophy and ST depression). Forcing statistical independence is biologically false. We seek **functional factorization** verified by slot selectivity and intervention specificity.
+4. **Rejected: Training 4,095 Individual Specialist Models**  
+   Training 4,095 specialists is computationally wasteful. Instead, we train a generalist subset model and compare against specialists on key Pareto-frontier subsets ($k \in \{1, 2, 4, 8, 12\}$).

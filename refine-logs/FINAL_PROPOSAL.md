@@ -1,99 +1,138 @@
-# Research Proposal: Lean Convolutional-Transformer Multi-Task Synthesizer (LCT-MTL) with Multi-Institutional Longitudinal AF Adjudication
+# Research Proposal: GRAIL-ECG v2 — Representation-Theoretic Qualification of a Clinical ECG State Space
 
-**Date**: 2026-09-10  
-**Status**: REFINED CHAMPION PROPOSAL (V3)  
-**Primary Anchors**:
-1. Inverse 12-Lead ECG Reconstruction from Wearable Lead I (`PTB-XL` $N=2,183$ benchmark test set)
-2. External Multi-Institutional Biological Control: HEEDB Longitudinal AF Cohorts (MGH $N=412,500$ AF ECGs, EUH $N=286,000$ AF ECGs; $N=120,150$ longitudinal paired transitions)
+**Date**: 2026-09-11  
+**Status**: ACTIVE CHAMPION PROPOSAL (v2 Superseding Reconstruction Framework)  
+**Target Venues**: NeurIPS / ICLR / ICML / Nature Machine Intelligence  
 
 ---
 
-## 1. Problem Anchor & Clinical Motivation
+## 1. Executive Summary & Problem Anchor
 
-### The Fundamental Identifiability Constraint of Wearable Lead I
-Consumer smartwatches and single-lead patches acquire a single frontal dipole projection (Lead I: $V_L - V_R$). In clinical electrophysiology, adjudicating atrial fibrillation (AF), recurrence after catheter ablation or cardioversion, and distinguishing AF from organized atrial tachycardia or sinus rhythm requires the complete 12-lead standard electrocardiogram. Specifically:
-$$\mathbf{V}_{\text{missing}}(t) = \mathcal{F}_{\theta}(\mathbf{V}_{\text{obs}}(t)) + \boldsymbol{\epsilon}(t)$$
-where the precordial leads $V_1 - V_6$ measure horizontal anterior-posterior cardiac dipole vectors that lie largely in the spatial nullspace of frontal Lead I.
+The fundamental object of investigation in electrocardiographic machine learning is **not waveform reconstruction and not narrow multi-label classification accuracy**. It is the learned latent representation itself:
 
-### Why Cross-Sectional Error Conceals Clinical Hallucination
-In standard cross-sectional benchmarks (such as PTB-XL or Chapman), models report low root-mean-square error (RMSE) or high average Pearson correlation by regressing toward the population mean. However, cross-sectional evaluations suffer from massive inter-patient anatomical confounding (chest geometry, body mass index, cardiac axis). More dangerously:
-- A model might artificially "clean up" chaotic fibrillation waves in precordial leads into a regularized pseudo-sinus rhythm.
-- Or it might hallucinate persistent fibrillation in patients who have successfully converted back to sinus rhythm.
+$$
+E: \mathcal{X} \longrightarrow \mathcal{Z}, \qquad \mathcal{Z} \in \mathbb{R}^d \quad (d=96)
+$$
 
-### The Decisive Multi-Institutional Longitudinal Solution: MGH & EUH Census
-To establish irrefutable evidence of clinical fidelity, we integrate the **Harvard-Emory ECG Database (HEEDB)** across two major health systems:
-- **Massachusetts General Hospital (MGH)**: 6.35M ECGs, 412,500 active-AF recordings, 78,400 unique AF patients.
-- **Emory University Hospital (EUH)**: 4.28M ECGs, 286,000 active-AF recordings, 54,200 unique AF patients.
+The central scientific question is whether $\mathcal{Z}$ is a **valid, compact, and sufficient representation of the clinically relevant information** contained in a standard 12-lead ECG.
 
-By mining **self-controlled intra-patient longitudinal pairs**, each patient acts as their own anatomical control across three clinical follow-up epochs:
-1. **Acute / Subacute Window ($7\text{--}45$ days)**: Post-cardioversion or early post-ablation recovery.
-2. **Intermediate Blanking Window ($60\text{--}120$ days)**: Standard 3-month clinical blanking period for rhythm stabilization.
-3. **Mid-term Maintenance Window ($150\text{--}210$ days)**: 6-month durable rhythm control.
+Waveform reconstruction (synthesizing 60,000 raw voltage samples) forces a model to expend representational capacity on high-frequency acquisition noise, electrode skin-impedance drift, and idiosyncratic baseline wander. Conversely, training end-to-end task classifiers entangles clinical knowledge into arbitrary non-linear decision boundaries that fail to transfer to unseen cardiac pathologies.
 
-```
-+-------------------------------------------------------------------------------------------------------+
-|                                    LONGITUDINAL PAIRED CENSUS OVERVIEW                                 |
-+------------------------------------+------------------+-------------------+---------------------------+
-| Cohort Stratum                     | MGH              | EUH               | Combined Total            |
-+------------------------------------+------------------+-------------------+---------------------------+
-| Active-AF ECGs (Code 161)          | 412,500          | 286,000           | 698,500                   |
-| Unique Active-AF Patients          | 78,400           | 54,200            | 132,600                   |
-| Persistent-AF ICD Patients         | 31,200           | 21,800            | 53,000                    |
-| Patients with >=1 Later ECG        | 42,800           | 29,600            | 72,400                    |
-| Eligible AF->AF Pairs (Total)      | 42,650           | 29,450            | 72,100                    |
-|   - 7 to 45 days                   | 18,650           | 12,800            | 31,450                    |
-|   - 60 to 120 days                 | 14,200           | 9,750             | 23,950                    |
-|   - 150 to 210 days                | 9,800            | 6,900             | 16,700                    |
-| Eligible AF->SR Pairs (Total)      | 28,250           | 19,800            | 48,050                    |
-|   - 7 to 45 days                   | 12,400           | 8,600             | 21,000                    |
-|   - 60 to 120 days                 | 9,100            | 6,400             | 15,500                    |
-|   - 150 to 210 days                | 6,750            | 4,800             | 11,550                    |
-| Physician-Supported Subsets (Pairs)| 29,069           | 20,192            | 49,261                    |
-| Technically Clean Subsets (Pairs)  | 66,503           | 46,197            | 112,700                   |
-| Target Paired Waveform Storage     | 12.35 GB         | 8.24 GB           | 20.59 GB (4.1% of NFS)    |
-+------------------------------------+------------------+-------------------+---------------------------+
-```
+We propose **GRAIL-ECG v2**, a representation-theoretic framework divided into two decoupled, verifiable stages:
+
+$$
+\boxed{\text{\bf Stage A: Construct & Qualify the Full-ECG Representation } \mathcal{Z}^\star = T_\theta(X_{\text{full}})}
+$$
+$$\Downarrow \quad (\text{only if qualified across multi-dimensional criteria})$$
+$$
+\boxed{\text{\bf Stage B: Map the Complete 4,095-Subset Information Lattice } Z_S = G_\phi(X_S, S)}
+$$
 
 ---
 
-## 2. Champion Model Specification: LCT-MTL
+## 2. Theoretical Formulation & Architecture Contracts
 
-```
-========================================================================================================================
-                         LEAN CONVOLUTIONAL-TRANSFORMER MULTI-TASK SYNTHESISER (LCT-MTL)
-========================================================================================================================
-Subsystem                Lean Specification                             Empirical Rationale
-------------------------------------------------------------------------------------------------------------------------
-Input Channel            Dedicated Lead I (No artificial dropout)       Doubles V3 slope to 0.119; cuts spurious bleed to 5.99x
-Temporal Tokenization    Patch Size = 10 samples (20 ms at 500 Hz)      All-time peak r = 0.7635 (Δr = +0.0083 vs patch-25)
-Transformer Backbone     Depth = 4 Encoder / 4 Decoder layers           Depth required for cross-lead transfer (dec3 fails)
-Attention Geometry       16 Heads, Hidden Width = 384                   16 heads specialize across leads; width 384 saves 43.7% params
-Multi-Task Head          Wave Delineation CE + Boundary Head (0.2)      Omission drops r by -0.0078; cadence = every 2 epochs
-Multi-Task Loss          Homoscedastic Adaptive Uncertainty (LE2)       Δr = +0.0054; balances reconstruction & boundary gradients
-Auxiliary Losses         First-order Derivative Penalty (L_mse_deriv)   Enforces slew-rate fidelity; ban pure MSE / L1 / Corr
-Discarded Bloat          - NO Dice Loss (LE1 proves neutral Δ = -0.0002)- Prunes redundant computation
-                         - NO Hard-Basis Projection Matrices            - Prevents EchoNext collapse (0.678) and ECE surge (0.52)
-                         - NO Continuous Morlet Phase Penalties         - Eliminates synthetic high-frequency phase ringing
-                         - NO Stochastic Whole-Lead Dropout             - Stabilizes coordinate orientation (+0.0097 boost)
-========================================================================================================================
-```
+### 2.1 The Representation Target
+Let complete standard ECG measurements be $X = \{x_I, x_{II}, x_{III}, x_{aVR}, x_{aVL}, x_{aVF}, x_{V1}, \ldots, x_{V6}\} \in \mathbb{R}^{12 \times 5000}$.
+We seek a teacher encoder $T_\theta(X) = Z^\star \in \mathbb{R}^{96}$ such that $Z^\star$ serves as a **task-family-sufficient statistic**:
+
+$$
+Y \perp X \mid Z^\star
+$$
+
+for all physiological variables $Y$ spanning cardiac rhythm, conduction kinetics, chamber morphology, and repolarization dynamics.
+
+### 2.2 Mathematical Architecture Contract: Lead-Order Permutation Invariance
+The ordering of leads in a tensor is arbitrary. The symmetric group $S_k$ acts on the order of observed lead channels. Global representation $Z$ must carry the **trivial representation** of $S_k$:
+
+$$
+G(\pi \cdot X_S) = G(X_S) \qquad \forall \pi \in S_k
+$$
+
+Using set cross-attention over spatio-temporal tokens where keys and values are permuted by permutation matrix $P$:
+
+$$
+\operatorname{softmax}\left(Q(PK)^T\right) (PV) = \operatorname{softmax}\left(QK^T P^T\right) PV = \operatorname{softmax}\left(QK^T\right) V
+$$
+
+Because no cross-lead positional embedding is injected, permutation invariance holds analytically. Consequently, the $1.3 \times 10^9$ ordered sequences collapse into exactly **4,095 unique subset equivalence classes**.
+
+### 2.3 Frontal Lead Geometry & Algebraic Rank
+Displayed lead count $k = |S|$ does not equal electrical information rank. Under Einthoven's Law ($III = II - I$) and Goldberger's equations, the frontal limb leads have algebraic rank $r_{\text{limb}} \le 2$. Every subset $S$ is characterized by independent rank $r(S) \in \{1..8\}$ relative to basis $\{I, II, V1..V6\}$.
 
 ---
 
-## 3. Dominant Contribution & Paper Claims
+## 3. The 10-Model Factorial Architecture Matrix
 
-### Claim 1: Temporal Token Granularity Matches Electrophysiological Conduction
-- **Thesis**: Tokenizing at $20\,\text{ms}$ ($10$ samples at $500\,\text{Hz}$) matches the intrinsic depolarization duration of rapid QRS vectors.
-- **Evidence**: Yields statistically significant gains ($\Delta r = +0.0083$, $p < 10^{-6}$) and superior $P_{05}$ tail robustness ($0.4208$) over coarser tokenization.
+To isolate the independent contributions of physical inductive bias and structured latent representations, we define a binary $2^3$ factorial design on factors $(G, S, V)$:
+- $G \in \{0, 1\}$: Spherical geometry harmonics ($\theta, \phi$).
+- $S \in \{0, 1\}$: Structured clinical slots (6 slots $\times$ 16D = 96D: Rhythm, Conduction, Morphology, ST-T, Residual 1, Residual 2).
+- $V \in \{0, 1\}$: View reconstruction auxiliary decoder.
 
-### Claim 2: Efficiency Knee Point at Hidden Width 384
-- **Thesis**: Hidden dimension $W=384$ with 16 attention heads maintains $99.8\%$ of reconstruction accuracy ($r = 0.7538$ vs $0.7553$) while cutting parameter count by **43.7%** ($17.4\,\text{M}$ vs $30.5\,\text{M}$ parameters), unlocking edge-device deployment on smartwatches.
+| Model ID | Geometry ($G$) | Structured Slots ($S$) | View Aux ($V$) | SSL (VICReg) | Clinical BCE |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **UB** | — | — | — | — | Fully Supervised Upper Bound |
+| **B0** | 0 | 0 | 0 | ✓ | — (True Plain SSL Baseline) |
+| **B1** | 0 | 0 | 0 | ✓ | ✓ |
+| **B3_geom** | 1 | 0 | 0 | ✓ | ✓ |
+| **B2_slots** | 0 | 1 | 0 | ✓ | ✓ |
+| **Model_001**| 0 | 0 | 1 | ✓ | ✓ |
+| **Model_110**| 1 | 1 | 0 | ✓ | ✓ |
+| **Model_101**| 1 | 0 | 1 | ✓ | ✓ |
+| **Model_011**| 0 | 1 | 1 | ✓ | ✓ |
+| **Model_M**  | 1 | 1 | 1 | ✓ | ✓ (Full GRAIL Architecture) |
 
-### Claim 3: Non-Negotiable Loss Triad Invariance
-- **Thesis**: Point-wise voltage anchoring (MSE), morphological alignment (Pearson correlation), and edge slew-rate preservation (1st Derivative) are jointly necessary. Stripping any member triggers immediate degradation.
+This factorial structure computes main effects $\Delta_G, \Delta_S, \Delta_V$ and all second- and third-order interactions.
 
-### Claim 4: Biological Fidelity in Multi-Institutional Longitudinal AF Transitions
-- **Thesis**: When evaluated on real patients across MGH ($N=42,650$ AF&rarr;AF, $N=28,250$ AF&rarr;SR pairs) and EUH ($N=29,450$ AF&rarr;AF, $N=19,800$ AF&rarr;SR pairs):
-  1. The reconstructed precordial leads faithfully preserve true fibrillation potentials and R-R irregularity in AF&rarr;AF pairs without regression to regularized sinus rhythm.
-  2. The reconstructed leads accurately capture genuine P-wave emergence and PR intervals in AF&rarr;SR pairs without false-positive AF residual hallucination.
-  3. Paired self-controlled design eliminates inter-patient anatomical confounding and demonstrates cross-hospital generalizability.
+---
+
+## 4. Multi-Dimensional Representation Qualification Suite
+
+A representation does not pass by single-number AUROC. It must pass an exhaustive qualification profile:
+
+1. **Linear Sufficiency**: Logistic probes on frozen $Z$ for Anchor concepts ($N=25$), Tier P1 (directly related, $N=11$), Tier P2 (within-domain transfer, $N=15$), and Tier P3 (pure ontology-distinct, $N=3$: `LVOLT`, `NORM`, `PACE`).
+2. **Compactness & Intrinsic Geometry**: Singular value spectrum, effective rank $r_{\text{eff}} = \exp(-\sum p_i \log p_i)$, participation ratio $PR$, condition number $\kappa$, and TwoNN intrinsic dimension $d_{\text{TwoNN}}$.
+3. **Geometric Separability**: Fisher separation criterion $J_c$, centroid distance $d_c$, and within-versus-between distance ratio $R_c$.
+4. **Local Semantic Geometry**: Latent nearest-neighbor retrieval precision $P@k$, $Recall@k$, and $nDCG@k$ for $k \in \{1, 5, 10, 20, 50\}$ under multi-label Jaccard overlap.
+5. **Functional Disentanglement**: $6 \times C$ Slot $\times$ Concept probe matrix, slot selectivity gap, and intervention specificity (selectively zeroing/ablating slot $z_j$ to verify domain-specific prediction drop).
+6. **Residual Slot Challenge**: Verifying that residual discovery slots ($Z_{\text{residual}} \in \mathbb{R}^{32}$) encode meaningful non-trivial information beyond structured slots ($Z_{\text{structured}} \in \mathbb{R}^{64}$).
+7. **Nuisance Accessibility**: Probing frozen $Z$ for patient Age ($R^2$ and MAE via Ridge regression) and Sex (AUROC).
+
+---
+
+## 5. Integration of LVCG Multi-Benchmark Probing Suite
+
+To ensure direct reproducibility and benchmark comparability against frontier ECG foundation models (such as LVCG, Zhan et al.), we integrate the complete LVCG downstream linear probing battery:
+- **Standard Downstream Benchmarks**:
+  1. `ptbxl_super_class` (5 superclasses: NORM, MI, STTC, CD, HYP)
+  2. `ptbxl_sub_class` (23 diagnostic subclasses)
+  3. `ptbxl_form` (19 ECG form/morphology diagnostic classes)
+  4. `ptbxl_rhythm` (12 rhythm statement classes)
+  5. `icbeb` (ICBEB 2018 9-class arrhythmia challenge)
+  6. `chapman` (Chapman CSN 4-class arrhythmia challenge)
+- **Protocol**:
+  - Backbone frozen; feature extraction precomputed in $O(N \times 12)$ steps.
+  - Multi-seed linear probing with Adam optimizer (lr=1e-3, batch_size=128/256).
+  - Class-wise optimal decision threshold search on validation set via F1 grid sweep.
+  - Multi-metric reporting: Macro AUROC, Macro F1, Accuracy, Precision, Recall.
+  - Low-shot sample efficiency sweeps across label ratios $\{0.01, 0.05, 0.10, 0.25, 0.50, 1.00\}$.
+
+---
+
+## 6. Stage B: Lead Information Theory across 4,095 Subsets
+
+Once the teacher encoder $Z^\star = T(X_{\text{full}})$ passes Stage A qualification, the generalist arbitrary-lead model $Z_S = G(X_S, S)$ is trained to align with $Z^\star$.
+
+We exhaustively evaluate all **4,095 non-empty subsets** using fast spatio-temporal token caching, yielding:
+1. **Coordinate-Preserving vs Reprobed Recovery**:
+   - $P_{\text{fixed}}(S) = \operatorname{Perf}(W^\star Z_S)$ vs $P_{\text{reprobe}}(S) = \operatorname{Perf}(W_S Z_S)$.
+   - Coordinate drift gap: $D_{\text{coordinate}}(S) = P_{\text{reprobe}}(S) - P_{\text{fixed}}(S)$.
+2. **Exact Lead Shapley Values**:
+   $$\phi_i^{(d)} = \sum_{S \subseteq N \setminus \{i\}} \frac{|S|!(12-|S|-1)!}{12!} [v_d(S \cup \{i\}) - v_d(S)]$$
+   Computed for latent similarity $\phi_i^{(Z)}$ and clinical diagnostic accuracy $\phi_i^{(d)}$.
+3. **Empirical Lead Synergy & Redundancy Graph**:
+   Pairwise Harsanyi/Möbius 2nd-order interaction matrix $I_{ij}^{(d)}$ identifying genuine clinical cooperation ($I_{ij} > 0$) vs redundant coverage ($I_{ij} < 0$).
+4. **Pareto Information Frontiers**:
+   Information retention bounds $\{P_{\min}, P_{\text{med}}, P_{\max}\}$ plotted against displayed lead count $k$ and independent rank $r(S)$.
+5. **Disease-Specific Minimal Sufficient Lead Sets**:
+   Minimal cardinality subsets $k_d^\star$ satisfying $P_d(S) \ge P_d(\text{full}) - 0.02$.

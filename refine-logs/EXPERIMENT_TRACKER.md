@@ -1,15 +1,31 @@
-# Experiment Tracker: LCT-MTL Multi-Institutional Validation
+# Experiment Tracker: GRAIL-ECG v2
 
-| Run ID | Milestone | Purpose | System / Variant | Split / Cohort | Metrics | Priority | Status | Notes |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **R001** | M0 | AWS S3 Permission Check | CLI Probe | `bdsp-credentialed-ac` | STS / S3 LS status | MUST | PENDING_IAM | Waiting for S3 policy attachment in console |
-| **R002** | M0 | ArXiv Preprint Ingestion | `curl` fetch | `arXiv:2410.04133` | PDF Integrity (34 pgs) | MUST | COMPLETED | Stored in `/data/mithunmanivannan/papers/` |
-| **R003** | M0 | HEEDB Census Extraction | `heedb_mgh_euh_census.py` | MGH & EUH Cohorts | 10-point census table | MUST | COMPLETED | Report & JSON written to `/data/mithunmanivannan/manifests/` |
-| **R004** | M1 | PTB-XL Test Benchmark | LCT-MTL-384 | PTB-XL Fold 10 | $r$, $P_{05}$, RMSE | MUST | READY | Baseline champion validation |
-| **R005** | M2 | Tabular Metadata Sync | `sync_heedb_metadata.sh` | BDSP S3 Metadata | CSV sync status | MUST | QUEUED | Zero-waveform download safety gate |
-| **R006** | M2 | Manifest Export | Manifest Generator | MGH Paired AF Cohort | $N=70,900$ pairs | MUST | QUEUED | $7\text{--}45$d, $60\text{--}120$d, $150\text{--}210$d windows |
-| **R007** | M2 | Manifest Export | Manifest Generator | EUH Paired AF Cohort | $N=49,250$ pairs | MUST | QUEUED | $7\text{--}45$d, $60\text{--}120$d, $150\text{--}210$d windows |
-| **R008** | M3 | Targeted Waveform Download | Parallel Downloader | MGH & EUH Paired Set | Total GB $\le 21\,\text{GB}$ | MUST | QUEUED | Consumes only $4.1\%$ of NFS quota |
-| **R009** | M4 | AF&rarr;AF Preservation Eval | LCT-MTL-384 | Combined AF&rarr;AF ($N=72,100$) | Fibrillatory Band Power | MUST | QUEUED | Test absence of pseudo-sinus regression |
-| **R010** | M4 | AF&rarr;SR Recovery Eval | LCT-MTL-384 | Combined AF&rarr;SR ($N=48,050$) | P-wave Amp, PR Interval | MUST | QUEUED | Test clean emergence without AF hallucination |
-| **R011** | M4 | Cross-Site Generalization | LCT-MTL-384 | MGH vs EUH Breakdown | Inter-site $\Delta r$, AUROC | MUST | QUEUED | Boston vs Atlanta external validation |
+**Last Updated**: 2026-09-11 01:03 UTC  
+**Master Session**: `grail_v2_pipeline` (tmux, NVIDIA A100 GPU)  
+
+---
+
+## Active Phase Status Table
+
+| Phase | Description | Target Artifacts | Status |
+|---|---|---|:---:|
+| **R0** | Contract Corrections & Verification | `tests/test_grail_v2_contracts.py` (18 tests) | **COMPLETED (18/18 PASS)** |
+| **R0** | Concept Hierarchy & Transfer Tiers | `configs/ptbxl_concept_tiers.yaml` | **COMPLETED** |
+| **R1/R2** | Model `UB` (Supervised Upper Bound) | `checkpoints/grail_v2/ub_best.pt` | **IN PROGRESS (Epoch 6/12)** |
+| **R1/R2** | Model `B0` (True Plain SSL) | `checkpoints/grail_v2/b0_best.pt` | QUEUED |
+| **R1/R2** | Model `B1` (Clinical SSL) | `checkpoints/grail_v2/b1_best.pt` | QUEUED |
+| **R1/R2** | Model `B3_geom` (Geometry alone) | `checkpoints/grail_v2/b3_geom_best.pt` | QUEUED |
+| **R1/R2** | Model `B2_slots` (Slots alone) | `checkpoints/grail_v2/b2_slots_best.pt` | QUEUED |
+| **R1/R2** | Model `Model_001` (View Aux alone) | `checkpoints/grail_v2/model_001_best.pt` | QUEUED |
+| **R1/R2** | Model `Model_110` (Geometry + Slots) | `checkpoints/grail_v2/model_110_best.pt` | QUEUED |
+| **R1/R2** | Model `Model_101` (Geometry + View Aux) | `checkpoints/grail_v2/model_101_best.pt` | QUEUED |
+| **R1/R2** | Model `Model_011` (Slots + View Aux) | `checkpoints/grail_v2/model_011_best.pt` | QUEUED |
+| **R1/R2** | Model `Model_M` (Full GRAIL Factorial) | `checkpoints/grail_v2/model_m_best.pt` | QUEUED |
+| **R3** | Representation Qualification Battery | `results/grail_v2/representation/` | QUEUED |
+| **R3** | Factorial ANOVA Main Effects ($\Delta_G, \Delta_S, \Delta_V$) | `results/grail_v2/factorial_qualification_summary.json` | QUEUED |
+| **R3** | LVCG Downstream Probing Suite | `results/grail_v2/lvcg_probing_results.csv` | **ADAPTER BUILT & VERIFIED** |
+| **R8/R9** | Exhaustive 4,095 Subset Lattice Evaluation | `results/grail_v2/subsets/subset_representation_metrics.parquet` | QUEUED |
+| **R10** | Exact Lead Shapley Values | `results/grail_v2/subsets/lead_shapley.parquet` | QUEUED |
+| **R10** | Pairwise Lead Synergy / Redundancy Graph | `results/grail_v2/subsets/lead_pair_interactions.parquet` | QUEUED |
+| **R10** | Minimal Sufficient Lead Sets | `results/grail_v2/subsets/minimal_sufficient_sets.parquet` | QUEUED |
+| **R10** | Pareto Information Frontiers | `results/grail_v2/subsets/information_frontier.parquet` | QUEUED |

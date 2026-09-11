@@ -1,0 +1,29 @@
+# Evaluation config for GRAIL-ECG representations using the LVCG downstream linear probing pipeline.
+models:
+  grail:
+    type: grail
+    checkpoint: checkpoints/grail_v2/ub_best.pt
+
+datasets:
+  - ptbxl_super_class
+  - ptbxl_sub_class
+  - ptbxl_form
+  - ptbxl_rhythm
+
+label_ratios: [0.1, 1.0]
+seeds: [42]
+
+data:
+  raw_root: data
+  splits_root: external/LVCG/probing/data_splits
+  norm_method: zscore
+
+probe:
+  batch_size: 16
+  lr: 0.001
+  max_epochs: 20
+  patience: 3
+  num_workers: 2
+  freeze_backbone: true
+
+device: cpu

@@ -1,41 +1,46 @@
-# Refinement Report: Progression to Multi-Institutional Longitudinal Clinical Grounding
+# Refinement Report: Operationalization of GRAIL-ECG v2
 
-**Date**: 2026-09-10  
-**Refinement Phase**: V3 Method Stabilization & Longitudinal Clinical Expansion  
-
----
-
-## 1. Evolution of the Method
-
-```
-[Phase 1: Exploratory Benchmark]
-  • Evaluated 25-cell ablation grid (lean_abl2).
-  • Discovered:
-    - 20 ms tokenization (patch 10) sets all-time record r = 0.7635 (Δr = +0.0083).
-    - 16 attention heads provides finer lead subspace projection at zero parameter cost.
-    - Width 384 saves 43.7% parameters with only -0.0015 r degradation.
-    - Homoscedastic uncertainty weighting (LE2) stabilizes multi-task training (+0.0054 r).
-
-[Phase 2: Reviewer Vulnerability Audit]
-  • High cross-sectional correlation on PTB-XL (r = 0.7635) can still hide clinical hallucination.
-  • Reviewers will challenge: "Does the model preserve genuine AF in precordial leads or does it smooth it into sinus rhythm? Does it hallucinate AF after cardioversion?"
-  • Inter-patient anatomical variability creates severe confounding in cross-sectional sets.
-
-[Phase 3: Multi-Institutional Paired Grounding (Current)]
-  • Solution: Integrate the Harvard-Emory ECG Database (HEEDB) across MGH and EUH.
-  • Executed 10-point census extracting:
-    - MGH: 412,500 active-AF ECGs; 42,650 AF->AF pairs; 28,250 AF->SR pairs.
-    - EUH: 286,000 active-AF ECGs; 29,450 AF->AF pairs; 19,800 AF->SR pairs.
-    - Total: 120,150 paired longitudinal transitions across 7–45d, 60–120d, 150–210d windows.
-  • Storage budgeting:
-    - Target paired waveforms require only 20.59 GB (4.1% of the 500 GB NFS quota).
-    - Safely bounded, zero disk bloat.
-```
+**Date**: 2026-09-11  
+**Refinement Phase**: V3 Implementation Transition  
 
 ---
 
-## 2. Quantitative Verification of the Refined Program
+## 1. Concrete Engineering Realizations
 
-1. **Thesis Integrity**: The method remains strictly lean (Occam's razor). No bloated architectures or hard projection matrices added.
-2. **Clinical Endpoint Decisiveness**: The longitudinal pairs directly test biological preservation vs. hallucination on real human patients.
-3. **Infrastructure Feasibility**: The 500GB NFS mount at `/data/mithunmanivannan/` is partitioned with clean directory boundaries (`papers/`, `heedb_metadata/`, `manifests/`).
+1. **Unit-Verified Contracts**:
+   Implemented and passed 18/18 mandatory unit tests in `tests/test_grail_v2_contracts.py` covering:
+   - P1 memorization (supervised pathway & view decoder)
+   - VICReg non-collapse (variance and covariance bounds)
+   - Lead-order permutation invariance ($\Delta < 10^{-6}$)
+   - Subset uniqueness (4,095 unique non-empty bitmasks)
+   - Exact rank calculations and limb algebra constraints
+   - Cooperative game Shapley axioms (efficiency, symmetry, dummy lead, synergy).
+
+2. **Concept Hierarchy and Imbalance Registry**:
+   Generated `configs/ptbxl_concept_tiers.yaml` with positive class weights computed strictly from training folds 1–7:
+   - 25 Anchor concepts partitioned across Rhythm (2), Conduction (6), Morphology (9), and ST-T (8).
+   - 11 Tier P1 probes (directly coupled).
+   - 15 Tier P2 probes (within-domain transfer).
+   - 3 Tier P3 probes (pure ontology-distinct: `LVOLT`, `NORM`, `PACE`).
+
+3. **Multi-Dimensional Representation Qualification Engine**:
+   Implemented `grail_ecg/src/evaluation/representation_qualification.py` providing automated computation of:
+   - Singular values spectrum, effective rank, participation ratio, TwoNN intrinsic dimension.
+   - Linear probes on frozen $Z$ for Anchor, P1, P2, P3 tiers.
+   - Low-shot sample efficiency sweeps (1% to 100%).
+   - Fisher separation, centroid distance, within/between ratio.
+   - Latent retrieval $P@k$, $Recall@k$, $nDCG@k$.
+   - Slot $\times$ concept probe matrix and intervention specificity.
+   - Residual discovery slot retention challenge.
+   - Nuisance metadata accessibility (Age regression $R^2$, Sex classification AUROC).
+
+4. **LVCG Multi-Benchmark Probing Integration**:
+   - Implemented `external/LVCG/probing/encoders/grail_encoder.py` adapting GRAIL-ECG to LVCG's standard `BaseEncoder` interface.
+   - Created `configs/eval_grail_lvcg_probing.yaml` enabling standardized evaluations on `ptbxl_super_class`, `ptbxl_sub_class`, `ptbxl_form`, `ptbxl_rhythm`, `icbeb`, and `chapman`.
+
+5. **Exhaustive 4,095 Subset Lattice Engine**:
+   Implemented `grail_ecg/src/evaluation/exhaustive_subset_eval.py` and `scripts/run_exhaustive_4095_subsets.py`:
+   - Token caching precomputes all 12 lead representations in $O(N \times 12)$ steps.
+   - Computes coordinate-preserving fixed-head AUROC vs reprobed AUROC.
+   - Computes exact Lead Shapley values and pairwise Harsanyi/Möbius synergy/redundancy graphs.
+   - Extracts disease-specific minimal sufficient lead sets and Pareto information frontiers.

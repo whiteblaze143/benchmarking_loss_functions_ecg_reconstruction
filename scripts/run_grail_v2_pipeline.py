@@ -122,6 +122,14 @@ def main():
     if summary_json.exists():
         analyze_factorial_effects(summary_json, PROJECT_ROOT / "GRAIL_V2_FACTORIAL_REPORT.md")
 
+    # 2b. Run LVCG Multi-Benchmark Linear Probing Battery
+    lvcg_config = PROJECT_ROOT / "configs" / "eval_grail_lvcg_probing.yaml"
+    if lvcg_config.exists():
+        run_cmd(
+            f"PYTHONPATH=external/LVCG:external/LVCG/probing:. {python_bin} external/LVCG/probing/run_probing.py --config {lvcg_config}",
+            "Phase R2-LVCG: LVCG Multi-Benchmark Linear Probing Battery (PTB-XL Superclass/Subclass/Form/Rhythm)",
+        )
+
     # 3. Run Exhaustive 4,095 Subset Lattice Evaluation on Best Model (Model M)
     best_ckpt = PROJECT_ROOT / "checkpoints" / "grail_v2" / "model_m_best.pt"
     if not best_ckpt.exists():

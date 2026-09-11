@@ -1,0 +1,150 @@
+version: 1
+dataset: PTB-XL
+min_prevalence: 50
+domains:
+  rhythm:
+    slot_index: 0
+    slot_name: z_rhythm
+    anchors:
+    - PVC
+    - AFLT
+    probes:
+    - PACE
+  conduction:
+    slot_index: 1
+    slot_name: z_conduction
+    anchors:
+    - ILBBB
+    - LPFB
+    - 1AVB
+    - IVCD
+    - CLBBB
+    - LAFB
+    probes:
+    - IRBBB
+    - WPW
+    - CRBBB
+  morphology:
+    slot_index: 2
+    slot_name: z_morphology
+    anchors:
+    - RAO/RAE
+    - ASMI
+    - RVH
+    - LVH
+    - IMI
+    - ALMI
+    - LAO/LAE
+    - LMI
+    - AMI
+    probes:
+    - INJAL
+    - ILMI
+    - INJAS
+    - IPLMI
+  stt:
+    slot_index: 3
+    slot_name: z_stt
+    anchors:
+    - ISCIN
+    - DIG
+    - EL
+    - LNGQT
+    - ISCAL
+    - ISCLA
+    - NST_
+    - ISCIL
+    probes:
+    - ISC_
+    - ISCAS
+    - NDT
+    - ANEUR
+  residual_1:
+    slot_index: 4
+    slot_name: z_residual1
+    anchors: []
+    probes: []
+    description: Unsupervised discovery slot A
+  residual_2:
+    slot_index: 5
+    slot_name: z_residual2
+    anchors: []
+    probes: []
+    description: Unsupervised discovery slot B
+all_anchor_codes:
+- PVC
+- AFLT
+- ILBBB
+- LPFB
+- 1AVB
+- IVCD
+- CLBBB
+- LAFB
+- RAO/RAE
+- ASMI
+- RVH
+- LVH
+- IMI
+- ALMI
+- LAO/LAE
+- LMI
+- AMI
+- ISCIN
+- DIG
+- EL
+- LNGQT
+- ISCAL
+- ISCLA
+- NST_
+- ISCIL
+all_probe_codes:
+- PACE
+- IRBBB
+- WPW
+- CRBBB
+- INJAL
+- ILMI
+- INJAS
+- IPLMI
+- ISC_
+- ISCAS
+- NDT
+- ANEUR
+statement_counts:
+  IMI: 2676
+  AFLT: 56
+  NDT: 1825
+  NST_: 559
+  DIG: 177
+  LVH: 2132
+  LPFB: 177
+  LNGQT: 116
+  LAFB: 1623
+  IRBBB: 1118
+  RAO/RAE: 99
+  RVH: 126
+  IVCD: 787
+  LMI: 201
+  ASMI: 2357
+  AMI: 353
+  ISCAL: 659
+  1AVB: 793
+  PACE: 287
+  ISCLA: 140
+  ISCIL: 179
+  ILMI: 478
+  ISC_: 1272
+  PVC: 1027
+  CRBBB: 541
+  CLBBB: 536
+  ALMI: 288
+  ANEUR: 104
+  ISCAS: 169
+  EL: 96
+  LAO/LAE: 426
+  ILBBB: 77
+  ISCIN: 218
+  INJAS: 214
+  INJAL: 145
+  IPLMI: 51
+  WPW: 79

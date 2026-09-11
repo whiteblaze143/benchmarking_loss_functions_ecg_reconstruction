@@ -1,0 +1,75 @@
+# general
+seed: 42
+loader_workers: 0
+# dataset_dir: "./datasets"
+device: 'cuda'
+
+# train options
+data_mod: 'tab' # img / tab
+
+#Income
+# train_path : "path_to_data"
+# test_path: "path_to_data"
+
+
+# Higgs
+# train_path : "path_to_data"
+# test_path: "path_to_data"
+
+dataset : "covetype" # mnist/ cifar10 / fashion_mnist / adult / covetype / higgs
+N_cls: 10
+batch_size: 256
+test_bs: 128
+epochs: 60
+loss_f : 'byol' # pca / simple / spectral / simclr / ae / bt / vicreg / byol
+patience: 3
+
+# loss options
+lambda_reg : 45
+ema_decay : 0.996
+learning_rate: 1.0e-4 #0.041572 #0.005
+weight_decay: 1.0e-5
+in_features: 110
+mlp_width: 1032
+num_blocks: 3
+
+# ------------------------------
+# Auto-encoder hyper parameter
+# ------------------------------
+lambda_cov : 0.001 #1.0e-3
+
+# ------------------------------
+# VIC Reg hyper parameter
+# ------------------------------
+tau: 1.0e-3 #1 
+lambda_inv: 25 #0.3
+mu_var: 25 #0.3 
+nu_cov: 1 #1 
+
+# ------------------------------
+# Transformer Model
+# ------------------------------
+in_features: 54 
+mlp_width: 1032
+num_blocks: 3
+
+# ------------------------------
+# MNIST CNN Model specifics
+# ------------------------------
+in_ch: 1  # 48k, 20k, 10k, 5k, 2k, 1k -> 1
+hd1: 10   # 48k -> 6| 20k -> 10| 10k -> 4| 5k -> 4| 2k -> 2| 1k -> 2
+hd2: 28    # 48k -> 6| 20k -> 28| 10k -> 4| 5k -> 8| 2k -> 4| 1k -> 2
+hd3: 32    # 48k -> 6| 20k -> 32| 10k -> 4| 5k -> 8| 2k -> 4| 1k -> 2
+hw: 7    # 48k -> 28| 20k, 5k, 2k -> 7 1st & 2nd conv stride=2 3rd conv stride=1| 10k -> 14 1st conv stride=2| 1k -> 7 1st, 2nd conv stride=2
+# batch_size: 256
+# epochs: 4
+# k: 32
+
+# ------------------------------
+# MNIST Transformer Model specifics
+# ------------------------------
+patch_size: 7   # 5k, 10k, 2k, 1k -> 7
+embed_dim: 48    # 5k -> 16/18 | 10k -> 32 | 2k -> 12/14 | 1k -> 8/8 | 20k -> 48/48
+num_heads: 3    # 5k -> 1/2  | 10k -> 2  | 2k -> 1/2  | 1k -> 1/2 | 20k -> 3/2
+ff_dim: 78      # 5k -> 32/56 | 10k -> 64 | 2k -> 24/13 | 1k -> 12/12| 20k -> 96/78
+num_classes: 10

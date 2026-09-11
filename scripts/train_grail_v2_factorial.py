@@ -27,6 +27,8 @@ import sys
 import time
 from typing import Any
 
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 import numpy as np
 import pandas as pd
 import torch
@@ -167,6 +169,7 @@ def train_epoch(
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
         optimizer.step()
+        optimizer.zero_grad(set_to_none=True)
 
         total_loss_acc += loss.item()
         ssl_loss_acc += l_ssl.item()
@@ -374,9 +377,11 @@ def main():
         help="Models to train: ub, b0, b1, b3_geom, b2_slots, model_001, model_110, model_101, model_011, model_m",
     )
     parser.add_argument("--epochs", type=int, default=12, help="Number of training epochs")
-    parser.add_argument("--batch-size", type=int, default=64, help="Batch size")
+    parser.add_argument("--batch-size", type=int, default=16, help="Batch size")
     parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
     parser.add_argument("--output-dir", type=str, default="results/grail_v2", help="Output directory")
+    parser.add_argument("--force-retrain", action="store_true", help="Force retraining even if checkpoint exists")
+    parser.add_argument("--force-requalify", action="store_true", help="Force requalification even if summary exists")
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -454,7 +459,17 @@ def main():
     augmenter = ECGPhysiologicalAugmenter()
     vicreg_loss_fn = VICRegLoss(sim_coeff=25.0, var_coeff=25.0, cov_coeff=1.0)
 
-    summary_results = {}
+    summary_path = output_dir / "factorial_qualification_summary.json"
+    if summary_path.exists():
+        try:
+            with open(summary_path) as f:
+                summary_results = json.load(f)
+            print(f"Resuming qualification summary with: {', '.join(summary_results) or 'no models'}")
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"WARNING: Could not load {summary_path}: {exc}. Starting a new summary.")
+            summary_results = {}
+    else:
+        summary_results = {}
 
     for model_name in models_to_run:
         cfg = factorial_configs.get(model_name)
@@ -488,60 +503,79 @@ def main():
         best_val_loss = float("inf")
         best_ckpt_path = ckpt_dir / f"{model_name}_best.pt"
 
-        start_time = time.time()
-        for epoch in range(1, args.epochs + 1):
-            epoch_metrics = train_epoch(
-                model=model,
-                model_name=model_name,
-                loader=train_loader,
-                optimizer=optimizer,
-                augmenter=augmenter,
-                vicreg_loss_fn=vicreg_loss_fn,
-                pos_weights=pos_weights,
-                domain_counts=domain_counts,
-                canonical_angles=canonical_angles,
-                device=device,
-            )
-            scheduler.step()
+        # Check if model was already trained
+        if best_ckpt_path.exists() and not args.force_retrain:
+            print(f"Found existing checkpoint for {model_name} at {best_ckpt_path}.")
+            ckpt = torch.load(best_ckpt_path, map_location=device)
+            model.load_state_dict(ckpt["model_state_dict"])
+            train_duration = 0.0
+            need_qualification = (model_name not in summary_results) or args.force_requalify
+        else:
+            need_qualification = True
+            start_time = time.time()
+            for epoch in range(1, args.epochs + 1):
+                epoch_metrics = train_epoch(
+                    model=model,
+                    model_name=model_name,
+                    loader=train_loader,
+                    optimizer=optimizer,
+                    augmenter=augmenter,
+                    vicreg_loss_fn=vicreg_loss_fn,
+                    pos_weights=pos_weights,
+                    domain_counts=domain_counts,
+                    canonical_angles=canonical_angles,
+                    device=device,
+                )
+                scheduler.step()
 
-            print(
-                f"[{model_name.upper()}] Epoch {epoch:02d}/{args.epochs:02d} | "
-                f"Loss: {epoch_metrics['loss']:.4f} "
-                f"(SSL: {epoch_metrics['loss_ssl']:.4f}, Clin: {epoch_metrics['loss_clin']:.4f}, View: {epoch_metrics['loss_view']:.4f}) | "
-                f"LR: {scheduler.get_last_lr()[0]:.2e}"
-            )
-
-            # Track and save checkpoint
-            if epoch_metrics["loss"] < best_val_loss:
-                best_val_loss = epoch_metrics["loss"]
-                torch.save(
-                    {"epoch": epoch, "model_state_dict": model.state_dict(), "metrics": epoch_metrics},
-                    best_ckpt_path,
+                print(
+                    f"[{model_name.upper()}] Epoch {epoch:02d}/{args.epochs:02d} | "
+                    f"Loss: {epoch_metrics['loss']:.4f} "
+                    f"(SSL: {epoch_metrics['loss_ssl']:.4f}, Clin: {epoch_metrics['loss_clin']:.4f}, View: {epoch_metrics['loss_view']:.4f}) | "
+                    f"LR: {scheduler.get_last_lr()[0]:.2e}"
                 )
 
-        train_duration = time.time() - start_time
-        print(f"Finished training {model_name} in {train_duration / 60:.1f} minutes. Checkpoint: {best_ckpt_path}")
+                # Track and save checkpoint
+                if epoch_metrics["loss"] < best_val_loss:
+                    best_val_loss = epoch_metrics["loss"]
+                    torch.save(
+                        {"epoch": epoch, "model_state_dict": model.state_dict(), "metrics": epoch_metrics},
+                        best_ckpt_path,
+                    )
 
-        # Load best model for full qualification
-        ckpt = torch.load(best_ckpt_path, map_location=device)
-        model.load_state_dict(ckpt["model_state_dict"])
+            train_duration = time.time() - start_time
+            print(f"Finished training {model_name} in {train_duration / 60:.1f} minutes. Checkpoint: {best_ckpt_path}")
 
-        # Run Qualification Battery
-        profile = run_full_qualification(
-            model=model,
-            model_name=model_name,
-            train_loader=train_loader,
-            val_loader=val_loader,
-            concept_tiers=concept_tiers,
-            device=device,
-            output_dir=output_dir,
-        )
-        profile["train_duration_sec"] = train_duration
-        summary_results[model_name] = profile
+            # Load best model for full qualification
+            ckpt = torch.load(best_ckpt_path, map_location=device)
+            model.load_state_dict(ckpt["model_state_dict"])
 
-        # Update summary JSON
-        with open(output_dir / "factorial_qualification_summary.json", "w") as f:
-            json.dump(summary_results, f, indent=2)
+        if need_qualification:
+            # Run Qualification Battery
+            profile = run_full_qualification(
+                model=model,
+                model_name=model_name,
+                train_loader=train_loader,
+                val_loader=val_loader,
+                concept_tiers=concept_tiers,
+                device=device,
+                output_dir=output_dir,
+            )
+            profile["train_duration_sec"] = train_duration
+            summary_results[model_name] = profile
+
+            # Update summary JSON
+            with open(summary_path, "w") as f:
+                json.dump(summary_results, f, indent=2)
+
+        # Clean up model and GPU cache before next model
+        del model, optimizer, scheduler
+        if 'ckpt' in locals():
+            del ckpt
+        import gc
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
     print("\n=======================================================")
     print("ALL MODELS TRAINED AND QUALIFIED SUCCESSFULLY!")

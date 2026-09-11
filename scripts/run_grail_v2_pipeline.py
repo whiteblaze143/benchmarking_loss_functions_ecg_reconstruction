@@ -104,6 +104,7 @@ def main():
     parser = argparse.ArgumentParser(description="GRAIL-ECG v2 Master Pipeline")
     parser.add_argument("--skip-training", action="store_true", help="Skip model training if already done")
     parser.add_argument("--epochs", type=int, default=12, help="Epochs per factorial model")
+    parser.add_argument("--batch-size", type=int, default=16, help="Batch size for training")
     args = parser.parse_args()
 
     python_bin = sys.executable
@@ -113,7 +114,7 @@ def main():
         models = ["ub", "b0", "b1", "b3_geom", "b2_slots", "model_001", "model_110", "model_101", "model_011", "model_m"]
         models_str = " ".join(models)
         run_cmd(
-            f"PYTHONPATH=. {python_bin} scripts/train_grail_v2_factorial.py --models {models_str} --epochs {args.epochs} --batch-size 64",
+            f"PYTHONPATH=. {python_bin} scripts/train_grail_v2_factorial.py --models {models_str} --epochs {args.epochs} --batch-size {args.batch_size}",
             "Phase R1 & R2: Factorial Representation Training & Qualification Suite",
         )
 

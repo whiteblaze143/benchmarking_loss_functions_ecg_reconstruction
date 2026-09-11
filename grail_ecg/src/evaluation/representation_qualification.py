@@ -21,6 +21,7 @@ from typing import Any
 import numpy as np
 from scipy.spatial.distance import cdist
 from sklearn.cluster import KMeans
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.metrics import (
     adjusted_mutual_info_score,
@@ -31,9 +32,13 @@ from sklearn.metrics import (
     roc_auc_score,
     silhouette_score,
 )
+from sklearn.preprocessing import StandardScaler
 import torch
 import torch.nn as nn
+import warnings
 import yaml
+
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
 
 # ==============================================================================
@@ -327,9 +332,10 @@ def compute_slot_concept_matrix(
     matrix = np.zeros((num_slots, num_concepts))
     
     # Train linear logistic probe for each (slot, concept)
+    scaler = StandardScaler()
     for s_idx in range(num_slots):
-        z_s_tr = slots_train[:, s_idx, :]
-        z_s_val = slots_val[:, s_idx, :]
+        z_s_tr = scaler.fit_transform(slots_train[:, s_idx, :])
+        z_s_val = scaler.transform(slots_val[:, s_idx, :])
         
         for c_idx in range(num_concepts):
             y_tr_c = y_train[:, c_idx]
@@ -339,7 +345,7 @@ def compute_slot_concept_matrix(
                 matrix[s_idx, c_idx] = 0.50
                 continue
                 
-            clf = LogisticRegression(max_iter=200, C=1.0, random_state=42)
+            clf = LogisticRegression(max_iter=500, C=1.0, random_state=42)
             clf.fit(z_s_tr, y_tr_c)
             probs = clf.predict_proba(z_s_val)[:, 1]
             try:
@@ -460,13 +466,16 @@ def compute_residual_slot_challenge(
     z_full_val = slots_val.reshape(len(slots_val), 96)
     
     def evaluate_rep(z_tr, z_v):
+        scaler = StandardScaler()
+        z_tr_sc = scaler.fit_transform(z_tr)
+        z_v_sc = scaler.transform(z_v)
         aurocs = []
         for c in range(y_train.shape[1]):
             if len(np.unique(y_train[:, c])) < 2 or len(np.unique(y_val[:, c])) < 2:
                 continue
-            clf = LogisticRegression(max_iter=150, C=1.0, random_state=42)
-            clf.fit(z_tr, y_train[:, c])
-            probs = clf.predict_proba(z_v)[:, 1]
+            clf = LogisticRegression(max_iter=500, C=1.0, random_state=42)
+            clf.fit(z_tr_sc, y_train[:, c])
+            probs = clf.predict_proba(z_v_sc)[:, 1]
             try:
                 aurocs.append(float(roc_auc_score(y_val[:, c], probs)))
             except ValueError:
@@ -500,19 +509,23 @@ def compute_low_shot_efficiency(
     N = len(z_train)
     results = {}
     
+    scaler = StandardScaler()
+    z_tr_sc = scaler.fit_transform(z_train)
+    z_val_sc = scaler.transform(z_val)
+    
     for frac in fractions:
         n_samples = max(int(N * frac), 10)
         idx = np.random.choice(N, size=n_samples, replace=False)
-        z_sub = z_train[idx]
+        z_sub = z_tr_sc[idx]
         y_sub = y_train[idx]
         
         aurocs = []
         for c in range(y_train.shape[1]):
             if len(np.unique(y_sub[:, c])) < 2 or len(np.unique(y_val[:, c])) < 2:
                 continue
-            clf = LogisticRegression(max_iter=100, C=1.0, random_state=42)
+            clf = LogisticRegression(max_iter=500, C=1.0, random_state=42)
             clf.fit(z_sub, y_sub[:, c])
-            probs = clf.predict_proba(z_val)[:, 1]
+            probs = clf.predict_proba(z_val_sc)[:, 1]
             try:
                 aurocs.append(float(roc_auc_score(y_val[:, c], probs)))
             except ValueError:
@@ -535,11 +548,15 @@ def compute_nuisance_probes(
     """Probes latent Z for non-cardiac patient variables (Age, Sex)."""
     results = {}
     
+    scaler = StandardScaler()
+    z_tr_sc = scaler.fit_transform(z_train)
+    z_val_sc = scaler.transform(z_val)
+    
     # 1. Sex (binary classification)
     if "sex" in meta_train and "sex" in meta_val:
-        clf_sex = LogisticRegression(max_iter=150, C=1.0, random_state=42)
-        clf_sex.fit(z_train, meta_train["sex"])
-        probs_sex = clf_sex.predict_proba(z_val)[:, 1]
+        clf_sex = LogisticRegression(max_iter=500, C=1.0, random_state=42)
+        clf_sex.fit(z_tr_sc, meta_train["sex"])
+        probs_sex = clf_sex.predict_proba(z_val_sc)[:, 1]
         results["sex_probe_auroc"] = float(roc_auc_score(meta_val["sex"], probs_sex))
         
     # 2. Age (continuous regression)
@@ -549,9 +566,9 @@ def compute_nuisance_probes(
         valid_val = ~np.isnan(meta_val["age"])
         if np.sum(valid_tr) > 50 and np.sum(valid_val) > 20:
             reg_age = Ridge(alpha=1.0)
-            reg_age.fit(z_train[valid_tr], meta_train["age"][valid_tr])
-            pred_age = reg_age.predict(z_val[valid_val])
-            r2 = float(reg_age.score(z_val[valid_val], meta_val["age"][valid_val]))
+            reg_age.fit(z_tr_sc[valid_tr], meta_train["age"][valid_tr])
+            pred_age = reg_age.predict(z_val_sc[valid_val])
+            r2 = float(reg_age.score(z_val_sc[valid_val], meta_val["age"][valid_val]))
             mae = float(np.mean(np.abs(pred_age - meta_val["age"][valid_val])))
             results["age_probe_r2"] = r2
             results["age_probe_mae_years"] = mae

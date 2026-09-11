@@ -1,0 +1,108 @@
+{
+  "status": "PASS",
+  "tolerance": 1e-10,
+  "n_real_pairs": 10,
+  "n_fixed_permutations_each": 99,
+  "pairs": [
+    {
+      "domain_i": 33,
+      "domain_j": 44,
+      "n_i": 30,
+      "n_j": 30,
+      "max_abs_error": 1.3322676295501878e-15,
+      "n_exceed_raw": 25,
+      "n_exceed_block": 25,
+      "p_value": 0.26
+    },
+    {
+      "domain_i": 33,
+      "domain_j": 58,
+      "n_i": 30,
+      "n_j": 31,
+      "max_abs_error": 2.9976021664879227e-15,
+      "n_exceed_raw": 78,
+      "n_exceed_block": 78,
+      "p_value": 0.79
+    },
+    {
+      "domain_i": 33,
+      "domain_j": 36,
+      "n_i": 30,
+      "n_j": 32,
+      "max_abs_error": 8.326672684688674e-15,
+      "n_exceed_raw": 89,
+      "n_exceed_block": 89,
+      "p_value": 0.9
+    },
+    {
+      "domain_i": 33,
+      "domain_j": 35,
+      "n_i": 30,
+      "n_j": 33,
+      "max_abs_error": 1.8318679906315083e-15,
+      "n_exceed_raw": 56,
+      "n_exceed_block": 56,
+      "p_value": 0.57
+    },
+    {
+      "domain_i": 44,
+      "domain_j": 58,
+      "n_i": 30,
+      "n_j": 31,
+      "max_abs_error": 1.887379141862766e-15,
+      "n_exceed_raw": 69,
+      "n_exceed_block": 69,
+      "p_value": 0.7
+    },
+    {
+      "domain_i": 44,
+      "domain_j": 36,
+      "n_i": 30,
+      "n_j": 32,
+      "max_abs_error": 6.439293542825908e-15,
+      "n_exceed_raw": 57,
+      "n_exceed_block": 57,
+      "p_value": 0.58
+    },
+    {
+      "domain_i": 44,
+      "domain_j": 35,
+      "n_i": 30,
+      "n_j": 33,
+      "max_abs_error": 9.992007221626409e-16,
+      "n_exceed_raw": 98,
+      "n_exceed_block": 98,
+      "p_value": 0.99
+    },
+    {
+      "domain_i": 58,
+      "domain_j": 36,
+      "n_i": 31,
+      "n_j": 32,
+      "max_abs_error": 2.631228568361621e-14,
+      "n_exceed_raw": 92,
+      "n_exceed_block": 92,
+      "p_value": 0.93
+    },
+    {
+      "domain_i": 58,
+      "domain_j": 35,
+      "n_i": 31,
+      "n_j": 33,
+      "max_abs_error": 1.1657341758564144e-15,
+      "n_exceed_raw": 82,
+      "n_exceed_block": 82,
+      "p_value": 0.83
+    },
+    {
+      "domain_i": 36,
+      "domain_j": 35,
+      "n_i": 32,
+      "n_j": 33,
+      "max_abs_error": 1.2323475573339238e-14,
+      "n_exceed_raw": 69,
+      "n_exceed_block": 69,
+      "p_value": 0.7
+    }
+  ]
+}

@@ -146,8 +146,15 @@ def fit_and_evaluate_linear_probe(
         macro_auroc = float(np.nanmean([m["auroc"] for m in class_metrics]))
         macro_auprc = float(np.nanmean([m["auprc"] for m in class_metrics]))
         macro_brier = float(np.nanmean([m["brier"] for m in class_metrics]))
+        macro_sens_at_95spec = float(np.nanmean([m["sens_at_95spec"] for m in class_metrics]))
+        macro_spec_at_95sens = float(np.nanmean([m["spec_at_95sens"] for m in class_metrics]))
+        macro_ece = float(np.nanmean([m["ece"] for m in class_metrics]))
         return {
             "macro_auroc": macro_auroc,
             "macro_auprc": macro_auprc,
             "macro_brier": macro_brier,
+            "macro_sens_at_95spec": macro_sens_at_95spec,
+            "macro_spec_at_95sens": macro_spec_at_95sens,
+            "macro_ece": macro_ece,
+            "class_metrics": class_metrics,
         }

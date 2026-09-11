@@ -23,6 +23,8 @@ from rep_stat_ecg.src.motifs.mmd import (
     compute_mmd2_u_stat,
     compute_patient_block_perm_mmd,
     calibrate_domain_self_reproducibility,
+    build_reference_repspat_blocks,
+    generate_reference_repspat_assignments,
 )
 from rep_stat_ecg.src.motifs.quotient import QuotientClosure
 
@@ -52,6 +54,23 @@ def test_repspat_assignment_uses_actual_overshoot_size():
     assert np.all(selected_sizes > 10)
     assert np.all(selected_sizes == 12)
     assert np.all(selected_sizes < sizes.sum())
+
+
+def test_reference_repspat_blocks_use_floor_and_released_kmeans_settings():
+    rng = np.random.RandomState(4)
+    xi = rng.normal(size=(25, 3))
+    blocks = build_reference_repspat_blocks(xi, neighborhood_size=10)
+    assert len(blocks) == 2
+    assert sum(map(len, blocks)) == 25
+    assert len(build_reference_repspat_blocks(xi[:8], neighborhood_size=10)) == 1
+
+
+def test_reference_repspat_assignment_stops_at_or_above_target():
+    sizes = np.array([5, 5, 5, 5])
+    assignments = generate_reference_repspat_assignments(
+        sizes, target_size=10, n_perm=20, rng=np.random.RandomState(3)
+    )
+    assert np.all(assignments @ sizes == 10)
 
 
 def test_block_aggregate_matches_raw_biased_mmd_for_same_assignments():

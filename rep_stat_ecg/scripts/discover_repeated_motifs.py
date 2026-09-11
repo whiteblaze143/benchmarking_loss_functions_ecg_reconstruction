@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import os
 import tempfile
@@ -65,6 +66,7 @@ def main():
     p.add_argument("--out-dir",default="refine-logs/qvcg"); p.add_argument("--cahc-neighborhood-size",type=int,default=10)
     p.add_argument("--n-perm",type=int,default=999); p.add_argument("--alpha",type=float,default=.05)
     p.add_argument("--seed",type=int,default=42); p.add_argument("--max-pairs",type=int,default=None,help="Validation-only pair cap; skips global BH")
+    p.add_argument("--pair-workers",type=int,default=1,help="Independent domain pairs to evaluate concurrently")
     a=p.parse_args(); out=Path(a.out_dir); out.mkdir(parents=True,exist_ok=True); checkpoint_dir=out/"m3_pair_checkpoints"
     stats=pd.read_parquet(a.domain_stats); registry=pd.read_parquet(a.domain_registry)
     df=assign_domains(pd.read_parquet(a.micro_table),registry,a.std_json)
@@ -83,11 +85,24 @@ def main():
     for d in tqdm(active,desc="K-means attribute blocks"):
         xi=df.loc[df.domain_id==d,["s","rho","kappa"]].to_numpy(dtype=np.float64)
         blocks[d]=build_attribute_blocks(xi,compute_n_blocks(len(xi),a.cahc_neighborhood_size),a.seed+d)
-    for ix,d1,d2,path in tqdm(missing,desc="IMQ fixed block-permutation tests"):
+    def compute_pair(task):
+        ix,d1,d2,path=task
         S,sizes,diag=precompute_block_kernel_sums(blocks[d1],blocks[d2],"IMQ",1.)
         obs,pv,n_done,_=run_block_permutation_test(S,sizes,len(blocks[d1]),len(blocks[d2]),B_max=a.n_perm,rng=np.random.RandomState(a.seed+ix),self_diagonal=diag)
         n_exceed=int(round(pv*(a.n_perm+1)-1)); row={"domain_i":d1,"domain_j":d2,"n_i":int(sizes[:len(blocks[d1])].sum()),"n_j":int(sizes[len(blocks[d1]):].sum()),"n_blocks_i":len(blocks[d1]),"n_blocks_j":len(blocks[d2]),"mmd2_obs":obs,"n_perm":a.n_perm,"n_exceed":n_exceed,"p_perm":pv,"seed":a.seed+ix}
-        atomic_npz(path,**row); rows.append(row)
+        atomic_npz(path,**row)
+        return row
+
+    pair_workers=max(1,a.pair_workers)
+    if pair_workers==1:
+        for task in tqdm(missing,desc="IMQ fixed block-permutation tests"):
+            rows.append(compute_pair(task))
+    else:
+        print(f"Evaluating missing pairs with {pair_workers} concurrent workers",flush=True)
+        with ThreadPoolExecutor(max_workers=pair_workers) as pool:
+            futures=[pool.submit(compute_pair,task) for task in missing]
+            for future in tqdm(as_completed(futures),total=len(futures),desc="IMQ fixed block-permutation tests"):
+                rows.append(future.result())
 
     # BH is deliberately impossible until every distinct pair has a valid result.
     complete=[]

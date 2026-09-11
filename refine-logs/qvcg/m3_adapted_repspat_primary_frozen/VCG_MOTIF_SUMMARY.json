@@ -1,0 +1,17 @@
+{
+  "method": "repSpat adapted block construction + exact inference",
+  "mmd_estimator": "biased empirical MMD squared (Eq. 6)",
+  "primary_kernel": "IMQ",
+  "imq_c_squared": 1.0,
+  "block_count_parameter_m": 10,
+  "n_domain_pairs": 2016,
+  "n_permutations_each": 999,
+  "bh_alpha": 0.05,
+  "edge_semantics": "BH non-rejection; not equivalence",
+  "num_similarity_edges": 953,
+  "num_connected_components": 1,
+  "non_clique_component_ids": [
+    0
+  ],
+  "num_non_clique_components": 1
+}

@@ -1,0 +1,25 @@
+{
+  "run_id": "M3_ADAPTED_REPSPAT_PRIMARY",
+  "status": "COMPLETE_FROZEN",
+  "graph_result": "SINGLE_AMBIGUOUS_NON_CLIQUE_COMPONENT",
+  "quotient_status": "FAIL",
+  "pairwise_structure_status": "NONTRIVIAL",
+  "n_domains": 64,
+  "n_pairs": 2016,
+  "n_bh_rejected": 1063,
+  "n_bh_nonrejected": 953,
+  "sha256": {
+    "VCG_REPSPAT_PAIR_TESTS.parquet": "a6a9c93dceb008b2e6fe984016afd05939746eae8d16cf2697e0e489c1a2edfb",
+    "VCG_MMD_MATRIX.npy": "890e77082220f165fef03850324e4abe6fd69d4137cdfdad44845e17ef5e7fd5",
+    "VCG_MOTIF_REGISTRY.parquet": "e3f8b574fc0500bef0785fc452f5bb49f51d19803ea2acd8042627ecb35924db",
+    "VCG_VOXEL_TO_MOTIF.parquet": "4ed37695b010c1644292260be0620bfd423327d9a32bf4eda387ca07d720d7fe",
+    "VCG_MOTIF_SUMMARY.json": "1adce3738e517f8482fe2010f54fa48c3ee8b147dbd8f090c77d5ff919d8cc67"
+  },
+  "source_paths": {
+    "VCG_REPSPAT_PAIR_TESTS.parquet": "refine-logs/qvcg/VCG_REPSPAT_PAIR_TESTS.parquet",
+    "VCG_MMD_MATRIX.npy": "refine-logs/qvcg/VCG_MMD_MATRIX.npy",
+    "VCG_MOTIF_REGISTRY.parquet": "refine-logs/qvcg/VCG_MOTIF_REGISTRY.parquet",
+    "VCG_VOXEL_TO_MOTIF.parquet": "refine-logs/qvcg/VCG_VOXEL_TO_MOTIF.parquet",
+    "VCG_MOTIF_SUMMARY.json": "refine-logs/qvcg/VCG_MOTIF_SUMMARY.json"
+  }
+}

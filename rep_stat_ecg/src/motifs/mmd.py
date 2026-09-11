@@ -170,6 +170,30 @@ def compute_n_blocks(n_microstates: int, cahc_neighborhood_size: int = 10) -> in
     return max(2, math.ceil(n_microstates / max(cahc_neighborhood_size, 1)))
 
 
+def build_reference_repspat_blocks(
+    xi: np.ndarray,
+    neighborhood_size: int = 10,
+) -> list[np.ndarray]:
+    """Released-repSpat block construction for the M3R sensitivity run.
+
+    This deliberately mirrors ``repspat.clustering.create_blocks``: use
+    ``floor(n / m)``, collapse to one block when that value is zero or is not
+    smaller than the number of unique attribute rows, and otherwise run
+    standard KMeans with ``n_init=10`` and ``random_state=0``.
+    """
+    from sklearn.cluster import KMeans
+
+    xi = np.asarray(xi, dtype=np.float64)
+    if len(xi) == 0:
+        return []
+    n_blocks = len(xi) // max(int(neighborhood_size), 1)
+    n_unique = len(np.unique(xi, axis=0))
+    if n_blocks == 0 or n_blocks >= n_unique:
+        return [xi]
+    labels = KMeans(n_clusters=n_blocks, n_init=10, random_state=0).fit_predict(xi)
+    return [xi[labels == block_id] for block_id in range(n_blocks)]
+
+
 # ---------------------------------------------------------------------------
 # Block kernel sum cache — the key vectorization
 # ---------------------------------------------------------------------------
@@ -295,6 +319,29 @@ def generate_repspat_assignments(block_sizes: np.ndarray, target_size: int,
         order = rng.permutation(q)
         cumulative = np.cumsum(block_sizes[order])
         count = min(int(np.searchsorted(cumulative, target_size, side="right")) + 1, q - 1)
+        Z[r, order[:count]] = 1.0
+    return Z
+
+
+def generate_reference_repspat_assignments(
+    block_sizes: np.ndarray,
+    target_size: int,
+    n_perm: int,
+    rng: np.random.RandomState,
+) -> np.ndarray:
+    """Mirror the released package's block draw loop (stop at ``>=`` target).
+
+    Sampling a random remaining block repeatedly is distributionally identical
+    to consuming a random permutation.  ``side='left'`` reproduces the package
+    loop's ``while n_permuted < n_size`` stopping rule.
+    """
+    block_sizes = np.asarray(block_sizes, dtype=np.int64)
+    q = len(block_sizes)
+    Z = np.zeros((n_perm, q), dtype=np.float64)
+    for r in range(n_perm):
+        order = rng.permutation(q)
+        cumulative = np.cumsum(block_sizes[order])
+        count = min(int(np.searchsorted(cumulative, target_size, side="left")) + 1, q - 1)
         Z[r, order[:count]] = 1.0
     return Z
 

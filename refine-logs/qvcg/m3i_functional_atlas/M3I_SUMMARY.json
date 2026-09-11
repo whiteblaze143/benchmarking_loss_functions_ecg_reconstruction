@@ -1,0 +1,76 @@
+{
+  "run_id": "M3I_FUNCTIONAL_ATLAS_AUDIT",
+  "status": "COMPLETE",
+  "scientific_object": "frozen M3 pairwise MMD geometry and BH non-rejection graph",
+  "categorical_labels_created": false,
+  "threshold_definitions": {
+    "physical_adjacency": "26-neighbor contact between occupied voxels of distinct domains",
+    "physically_distant": "pairwise centroid distance >= empirical Q75",
+    "physical_distance_q75": 0.2626961050790517
+  },
+  "topology": {
+    "num_nodes": 64,
+    "num_edges": 953,
+    "edge_density": 0.47271825396825395,
+    "degree_min": 14,
+    "degree_median": 21.0,
+    "degree_mean": 29.78125,
+    "degree_max": 63,
+    "num_connected_components": 1,
+    "component_sizes": [
+      64
+    ],
+    "average_clustering_coefficient": 0.8506285597200689,
+    "transitivity": 0.5854003509782865,
+    "diameter": 2,
+    "average_shortest_path_length": 1.527281746031746,
+    "shortest_path_length_counts": {
+      "1": 953,
+      "2": 1063
+    },
+    "clique_number": 22,
+    "num_maximal_cliques": 44,
+    "maximal_clique_size_counts": {
+      "15": 3,
+      "16": 6,
+      "17": 4,
+      "18": 9,
+      "19": 12,
+      "20": 5,
+      "21": 3,
+      "22": 2
+    }
+  },
+  "physical_functional_association": {
+    "spearman_rho": 0.602916898141761,
+    "spearman_p_value": 7.730054218404136e-200
+  },
+  "pair_counts": {
+    "physically_adjacent_pairs": 540,
+    "physically_adjacent_rejected_pairs": 414,
+    "physically_distant_pairs": 504,
+    "physically_distant_nonrejected_pairs": 330
+  },
+  "mmd_by_bh_decision": {
+    "nonrejected_median": 0.09614029544978475,
+    "rejected_median": 0.07109885204532185
+  },
+  "mds": {
+    "input_distance": "sqrt(max(MMD_squared, 0)); classical MDS receives squared distance matrix MMD_squared",
+    "positive_eigenvalue_sum": 2.998261017222304,
+    "negative_eigenvalue_magnitude_sum": -0.0,
+    "negative_to_positive_eigenmass": -0.0,
+    "top_eigenvalues": [
+      1.3623921132099477,
+      0.8043138352576368,
+      0.2707156308330153,
+      0.2142169657461027,
+      0.07499360955473897,
+      0.04410210139405314,
+      0.041885959667553464,
+      0.03026510471701871,
+      0.025558942196335147,
+      0.02027250118825669
+    ]
+  }
+}

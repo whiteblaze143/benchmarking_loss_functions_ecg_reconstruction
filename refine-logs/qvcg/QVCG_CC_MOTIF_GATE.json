@@ -1,0 +1,8 @@
+{
+  "gate": "QVCG_CC_MOTIF_GATE",
+  "status": "FAIL",
+  "reason": "All 64 domains form one AMBIGUOUS_NON_CLIQUE connected component despite 1,063 directly rejected pairs.",
+  "component_is_valid_motif": false,
+  "QVCG_RECURRENT_STRUCTURE": "UNRESOLVED",
+  "prohibited_interpretation": "The single connected component is not a valid motif or equivalence class."
+}

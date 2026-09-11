@@ -19,11 +19,11 @@ data:
   norm_method: zscore
 
 probe:
-  batch_size: 16
+  batch_size: 64
   lr: 0.001
   max_epochs: 20
   patience: 3
   num_workers: 2
   freeze_backbone: true
 
-device: cpu
+device: cuda

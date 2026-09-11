@@ -1,0 +1,485 @@
+version: 2
+description: GRAIL-ECG v2 Concept Hierarchy, Class Imbalance, and Transfer Tiers
+dataset: PTB-XL
+total_populated_concepts: 54
+anchor_concepts_count: 25
+tier_p1_directly_related_count: 11
+tier_p2_related_distinct_count: 15
+tier_p3_ontology_distinct_count: 3
+all_anchor_codes:
+- PVC
+- AFLT
+- ILBBB
+- LPFB
+- 1AVB
+- IVCD
+- CLBBB
+- LAFB
+- RAO/RAE
+- ASMI
+- RVH
+- LVH
+- IMI
+- ALMI
+- LAO/LAE
+- LMI
+- AMI
+- ISCIN
+- DIG
+- EL
+- LNGQT
+- ISCAL
+- ISCLA
+- NST_
+- ISCIL
+all_probe_codes:
+- ABQRS
+- ANEUR
+- CRBBB
+- ILMI
+- INJAL
+- INJAS
+- ISCAS
+- ISC_
+- NDT
+- STD_
+- VCLVH
+- AFIB
+- BIGU
+- INVT
+- IRBBB
+- LOWT
+- LPR
+- NT_
+- PAC
+- QWAVE
+- SARRH
+- SBRAD
+- SR
+- STACH
+- SVARR
+- WPW
+- LVOLT
+- NORM
+- PACE
+tier_p1_codes:
+- ABQRS
+- ANEUR
+- CRBBB
+- ILMI
+- INJAL
+- INJAS
+- ISCAS
+- ISC_
+- NDT
+- STD_
+- VCLVH
+tier_p2_codes:
+- AFIB
+- BIGU
+- INVT
+- IRBBB
+- LOWT
+- LPR
+- NT_
+- PAC
+- QWAVE
+- SARRH
+- SBRAD
+- SR
+- STACH
+- SVARR
+- WPW
+tier_p3_codes:
+- LVOLT
+- NORM
+- PACE
+anchor_counts_per_domain:
+  rhythm: 2
+  conduction: 6
+  morphology: 9
+  stt: 8
+domain_mapping:
+  PVC: rhythm
+  AFLT: rhythm
+  ILBBB: conduction
+  LPFB: conduction
+  1AVB: conduction
+  IVCD: conduction
+  CLBBB: conduction
+  LAFB: conduction
+  RAO/RAE: morphology
+  ASMI: morphology
+  RVH: morphology
+  LVH: morphology
+  IMI: morphology
+  ALMI: morphology
+  LAO/LAE: morphology
+  LMI: morphology
+  AMI: morphology
+  ISCIN: stt
+  DIG: stt
+  EL: stt
+  LNGQT: stt
+  ISCAL: stt
+  ISCLA: stt
+  NST_: stt
+  ISCIL: stt
+anchors:
+- code: PVC
+  description: ventricular premature complex
+  diagnostic_class: nan
+  diagnostic_subclass: nan
+  train_pos_count: 800
+  pos_weight: 18.056249618530273
+- code: AFLT
+  description: atrial flutter
+  diagnostic_class: nan
+  diagnostic_subclass: nan
+  train_pos_count: 51
+  pos_weight: 297.92156982421875
+- code: ILBBB
+  description: incomplete left bundle branch block
+  diagnostic_class: CD
+  diagnostic_subclass: ILBBB
+  train_pos_count: 54
+  pos_weight: 281.3148193359375
+- code: LPFB
+  description: left posterior fascicular block
+  diagnostic_class: CD
+  diagnostic_subclass: LAFB/LPFB
+  train_pos_count: 123
+  pos_weight: 122.9430923461914
+- code: 1AVB
+  description: first degree AV block
+  diagnostic_class: CD
+  diagnostic_subclass: _AVB
+  train_pos_count: 554
+  pos_weight: 26.518051147460938
+- code: IVCD
+  description: non-specific intraventricular conduction disturbance (block)
+  diagnostic_class: CD
+  diagnostic_subclass: IVCD
+  train_pos_count: 551
+  pos_weight: 26.667877197265625
+- code: CLBBB
+  description: complete left bundle branch block
+  diagnostic_class: CD
+  diagnostic_subclass: CLBBB
+  train_pos_count: 374
+  pos_weight: 39.76203155517578
+- code: LAFB
+  description: left anterior fascicular block
+  diagnostic_class: CD
+  diagnostic_subclass: LAFB/LPFB
+  train_pos_count: 1136
+  pos_weight: 12.419894218444824
+- code: RAO/RAE
+  description: right atrial overload/enlargement
+  diagnostic_class: HYP
+  diagnostic_subclass: RAO/RAE
+  train_pos_count: 69
+  pos_weight: 219.94203186035156
+- code: ASMI
+  description: anteroseptal myocardial infarction
+  diagnostic_class: MI
+  diagnostic_subclass: AMI
+  train_pos_count: 1653
+  pos_weight: 8.222625732421875
+- code: RVH
+  description: right ventricular hypertrophy
+  diagnostic_class: HYP
+  diagnostic_subclass: RVH
+  train_pos_count: 89
+  pos_weight: 170.29212951660156
+- code: LVH
+  description: left ventricular hypertrophy
+  diagnostic_class: HYP
+  diagnostic_subclass: LVH
+  train_pos_count: 1495
+  pos_weight: 9.197324752807617
+- code: IMI
+  description: inferior myocardial infarction
+  diagnostic_class: MI
+  diagnostic_subclass: IMI
+  train_pos_count: 1875
+  pos_weight: 7.130666732788086
+- code: ALMI
+  description: anterolateral myocardial infarction
+  diagnostic_class: MI
+  diagnostic_subclass: AMI
+  train_pos_count: 203
+  pos_weight: 74.09851837158203
+- code: LAO/LAE
+  description: left atrial overload/enlargement
+  diagnostic_class: HYP
+  diagnostic_subclass: LAO/LAE
+  train_pos_count: 298
+  pos_weight: 50.157718658447266
+- code: LMI
+  description: lateral myocardial infarction
+  diagnostic_class: MI
+  diagnostic_subclass: LMI
+  train_pos_count: 141
+  pos_weight: 107.12056732177734
+- code: AMI
+  description: anterior myocardial infarction
+  diagnostic_class: MI
+  diagnostic_subclass: AMI
+  train_pos_count: 247
+  pos_weight: 60.720645904541016
+- code: ISCIN
+  description: ischemic in inferior leads
+  diagnostic_class: STTC
+  diagnostic_subclass: ISCI
+  train_pos_count: 153
+  pos_weight: 98.6405258178711
+- code: DIG
+  description: digitalis-effect
+  diagnostic_class: STTC
+  diagnostic_subclass: STTC
+  train_pos_count: 127
+  pos_weight: 119.03936767578125
+- code: EL
+  description: electrolytic disturbance or drug (former EDIS)
+  diagnostic_class: STTC
+  diagnostic_subclass: STTC
+  train_pos_count: 67
+  pos_weight: 226.5373077392578
+- code: LNGQT
+  description: long QT-interval
+  diagnostic_class: STTC
+  diagnostic_subclass: STTC
+  train_pos_count: 82
+  pos_weight: 184.9146270751953
+- code: ISCAL
+  description: ischemic in anterolateral leads
+  diagnostic_class: STTC
+  diagnostic_subclass: ISCA
+  train_pos_count: 461
+  pos_weight: 32.06941604614258
+- code: ISCLA
+  description: ischemic in lateral leads
+  diagnostic_class: STTC
+  diagnostic_subclass: ISCA
+  train_pos_count: 99
+  pos_weight: 152.98989868164062
+- code: NST_
+  description: non-specific ST changes
+  diagnostic_class: STTC
+  diagnostic_subclass: NST_
+  train_pos_count: 538
+  pos_weight: 27.3364315032959
+- code: ISCIL
+  description: ischemic in inferolateral leads
+  diagnostic_class: STTC
+  diagnostic_subclass: ISCI
+  train_pos_count: 125
+  pos_weight: 120.95999908447266
+probes:
+  tier_p1_directly_related:
+  - code: ABQRS
+    description: abnormal QRS
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 2346
+    pos_weight: 5.498294830322266
+    max_anchor_jaccard: 0.3315
+  - code: ANEUR
+    description: ST-T changes compatible with ventricular aneurysm
+    diagnostic_class: STTC
+    diagnostic_subclass: STTC
+    train_pos_count: 73
+    pos_weight: 207.8356170654297
+    max_anchor_jaccard: 0.0494
+  - code: CRBBB
+    description: complete right bundle branch block
+    diagnostic_class: CD
+    diagnostic_subclass: CRBBB
+    train_pos_count: 378
+    pos_weight: 39.3306884765625
+    max_anchor_jaccard: 0.1465
+  - code: ILMI
+    description: inferolateral myocardial infarction
+    diagnostic_class: MI
+    diagnostic_subclass: IMI
+    train_pos_count: 335
+    pos_weight: 44.50746154785156
+    max_anchor_jaccard: 0.0654
+  - code: INJAL
+    description: subendocardial injury in anterolateral leads
+    diagnostic_class: MI
+    diagnostic_subclass: AMI
+    train_pos_count: 103
+    pos_weight: 147.00970458984375
+    max_anchor_jaccard: 0.0135
+  - code: INJAS
+    description: subendocardial injury in anteroseptal leads
+    diagnostic_class: MI
+    diagnostic_subclass: AMI
+    train_pos_count: 150
+    pos_weight: 100.63333129882812
+    max_anchor_jaccard: 0.0427
+  - code: ISCAS
+    description: ischemic in anteroseptal leads
+    diagnostic_class: STTC
+    diagnostic_subclass: ISCA
+    train_pos_count: 118
+    pos_weight: 128.19491577148438
+    max_anchor_jaccard: 0.0566
+  - code: ISC_
+    description: non-specific ischemic
+    diagnostic_class: STTC
+    diagnostic_subclass: ISC_
+    train_pos_count: 891
+    pos_weight: 16.109989166259766
+    max_anchor_jaccard: 0.5305
+  - code: NDT
+    description: non-diagnostic T abnormalities
+    diagnostic_class: STTC
+    diagnostic_subclass: STTC
+    train_pos_count: 1278
+    pos_weight: 10.928794860839844
+    max_anchor_jaccard: 0.0522
+  - code: STD_
+    description: non-specific ST depression
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 706
+    pos_weight: 20.59348487854004
+    max_anchor_jaccard: 0.1458
+  - code: VCLVH
+    description: voltage criteria (QRS) for left ventricular hypertrophy
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 613
+    pos_weight: 23.86949348449707
+    max_anchor_jaccard: 0.2807
+  tier_p2_related_distinct:
+  - code: AFIB
+    description: atrial fibrillation
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 1059
+    pos_weight: 13.39565658569336
+    max_anchor_jaccard: 0.106
+  - code: BIGU
+    description: bigeminal pattern (unknown origin, SV or Ventricular)
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 57
+    pos_weight: 266.4561462402344
+    max_anchor_jaccard: 0.0388
+  - code: INVT
+    description: inverted T-waves
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 206
+    pos_weight: 73.00485229492188
+    max_anchor_jaccard: 0.0448
+  - code: IRBBB
+    description: incomplete right bundle branch block
+    diagnostic_class: CD
+    diagnostic_subclass: IRBBB
+    train_pos_count: 783
+    pos_weight: 18.469987869262695
+    max_anchor_jaccard: 0.0456
+  - code: LOWT
+    description: low amplitude T-waves
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 307
+    pos_weight: 48.657981872558594
+    max_anchor_jaccard: 0.1186
+  - code: LPR
+    description: prolonged PR interval
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 238
+    pos_weight: 63.054622650146484
+    max_anchor_jaccard: 0.1171
+  - code: NT_
+    description: non-specific T-wave changes
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 297
+    pos_weight: 50.3299674987793
+    max_anchor_jaccard: 0.0254
+  - code: PAC
+    description: atrial premature complex
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 278
+    pos_weight: 53.838130950927734
+    max_anchor_jaccard: 0.0385
+  - code: QWAVE
+    description: Q waves present
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 383
+    pos_weight: 38.804176330566406
+    max_anchor_jaccard: 0.0924
+  - code: SARRH
+    description: sinus arrhythmia
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 541
+    pos_weight: 27.179298400878906
+    max_anchor_jaccard: 0.0737
+  - code: SBRAD
+    description: sinus bradycardia
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 445
+    pos_weight: 33.258426666259766
+    max_anchor_jaccard: 0.0205
+  - code: SR
+    description: sinus rhythm
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 11732
+    pos_weight: 0.29943743348121643
+    max_anchor_jaccard: 0.1153
+  - code: STACH
+    description: sinus tachycardia
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 578
+    pos_weight: 25.37543296813965
+    max_anchor_jaccard: 0.0489
+  - code: SVARR
+    description: supraventricular arrhythmia
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 112
+    pos_weight: 135.11607360839844
+    max_anchor_jaccard: 0.0252
+  - code: WPW
+    description: Wolf-Parkinson-White syndrome
+    diagnostic_class: CD
+    diagnostic_subclass: WPW
+    train_pos_count: 56
+    pos_weight: 271.2321472167969
+    max_anchor_jaccard: 0.0078
+  tier_p3_ontology_distinct:
+  - code: LVOLT
+    description: low QRS voltages in the frontal and horizontal leads
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 127
+    pos_weight: 119.03936767578125
+    max_anchor_jaccard: 0.0123
+  - code: NORM
+    description: normal ECG
+    diagnostic_class: NORM
+    diagnostic_subclass: NORM
+    train_pos_count: 6664
+    pos_weight: 1.2876650094985962
+    max_anchor_jaccard: 0.0169
+  - code: PACE
+    description: normal functioning artificial pacemaker
+    diagnostic_class: nan
+    diagnostic_subclass: nan
+    train_pos_count: 207
+    pos_weight: 72.64734649658203
+    max_anchor_jaccard: 0.0037

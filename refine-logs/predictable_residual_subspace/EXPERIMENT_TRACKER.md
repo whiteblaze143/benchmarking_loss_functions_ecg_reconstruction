@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|---|---|
 | PRS-R001 | M0 | Residual rank curve | PCA oracle k=1..6 | train folds1-8 / val fold9 | MUST | COMPLETE | K_STAR=5; first rank >=90% energy |
 | PRS-R002 | M1 | Geometry/head tests | B1/C1/C2 | synthetic + one batch | MUST | COMPLETE | 12 targeted tests; 3 GPU smokes; identical trunk hash |
-| PRS-R003 | M2 | Direct baseline | B1 seed42 15e | folds1-8/9 | MUST | RUNNING | tmux predictable_residual_s42; PID 1499750; epoch 3 in progress |
+| PRS-R003 | M2 | Direct baseline | B1 seed42 15e | folds1-8/9 | MUST | RUNNING | tmux predictable_residual_s42; PID 1499750; epoch 14 in progress |
 | PRS-R004 | M2 | Frozen PCA | C1 seed42 15e | folds1-8/9 | MUST | QUEUED | Queue position 2 |
 | PRS-R005 | M2 | Predictive subspace | C2 seed42 15e | folds1-8/9 | MUST | QUEUED | Queue position 3 |
 | PRS-R006 | M3 | Paired/clinical/latent evaluation | B1/C1/C2 | fold9 | MUST | BLOCKED | Same selected checkpoints |
@@ -24,4 +24,5 @@ Frozen gates: FIXED_VCG_SPECIFICITY=NOT_SUPPORTED; dependent-limb sensitivity ex
 - B1 epoch 1 completed in 8m40s and checkpointed correctly: patient-weighted validation independent r=0.635632, p05=0.289388. Epoch 2 began immediately. This is an early training milestone, not a model comparison.
 - Live check at 2026-09-10 20:55 EDT: B1 epoch 2 reached 323/545 batches (59%); GPU utilization 100%, 31,547/40,960 MiB used, and 7.4 GiB filesystem free. The extra trainer command lines are the two current and two retiring DataLoader worker children of PID 1499750, not duplicate queue launches.
 - B1 epoch 2 completed in 8m38s and improved the checkpoint metric from 0.635632 to 0.727541. Its patient-tail p05 improved from 0.289388 to 0.348616 and validation reconstruction loss fell from 9.076115 to 6.813446. Secondary validation metrics also moved in the favorable direction (P/QRS/T IoU 0.060738/0.830535/0.481349; mIoU 0.457541). Epoch 3 started immediately. These within-run learning dynamics show healthy convergence but are not a B1/C1/C2 comparison.
+- Live check at 2026-09-11 00:27 EDT: B1 completed 13/15 epochs and epoch 14 reached 89/545 batches. Epoch 13 is currently best by the frozen selection metric: patient-weighted independent r=0.811678, p05=0.526519, validation reconstruction loss=5.282073. Measured wall throughput is 17.42 minutes per completed epoch including validation/checkpointing; estimated B1 completion is about 00:59 EDT and all three sequential seed-42 trainings about 09:42 EDT if C1/C2 have comparable throughput.
 - The frozen post-training evaluator is implemented and compiles. Synthetic gates verify paired mean/p05 bootstrap behavior and exact latent-statistic recovery. It will evaluate checkpoint hashes, full metrics, dependent-lead QC sensitivity, clinical harm, oracle-gap closure, C1 coordinate predictability, and C2-to-PCA principal angles after all three runs complete.

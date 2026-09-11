@@ -80,3 +80,24 @@ class VICRegLoss(nn.Module):
             "var_loss": var_loss,
             "cov_loss": cov_loss,
         }
+
+
+def vicreg_loss(
+    z_a: torch.Tensor,
+    z_b: torch.Tensor,
+    sim_coeff: float = 25.0,
+    std_coeff: float = 25.0,
+    cov_coeff: float = 1.0,
+    gamma: float = 1.0,
+    epsilon: float = 1e-4,
+) -> dict[str, torch.Tensor]:
+    """Functional interface for VICReg loss."""
+    loss_module = VICRegLoss(
+        sim_coeff=sim_coeff,
+        var_coeff=std_coeff,
+        cov_coeff=cov_coeff,
+        gamma=gamma,
+        epsilon=epsilon,
+    )
+    return loss_module(z_a, z_b)
+

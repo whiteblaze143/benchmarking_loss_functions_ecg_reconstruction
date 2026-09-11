@@ -1,0 +1,631 @@
+version: 1
+dataset: Panobench
+total_leads: 48
+sampling_rate_hz: 250
+duration_seconds: 10.0
+num_samples: 2500
+leads:
+- channel_index: 0
+  lead_name: I
+  type: limb_independent
+  independent: true
+  theta_deg: 90
+  phi_deg: 90
+  theta_rad: 1.5707963267948966
+  phi_rad: 1.5707963267948966
+  unit_sphere_cartesian:
+    x: 0.0
+    y: 1.0
+    z: 0.0
+  notes: LA - RA
+- channel_index: 1
+  lead_name: II
+  type: limb_independent
+  independent: true
+  theta_deg: 150
+  phi_deg: 90
+  theta_rad: 2.6179938779914944
+  phi_rad: 1.5707963267948966
+  unit_sphere_cartesian:
+    x: 0.0
+    y: 0.5
+    z: -0.866025
+  notes: LL - RA
+- channel_index: 2
+  lead_name: view_1
+  type: precordial_bspm
+  independent: true
+  theta_deg: 106
+  phi_deg: -102
+  theta_rad: 1.8500490071139892
+  phi_rad: -1.780235837034216
+  unit_sphere_cartesian:
+    x: -0.199858
+    y: -0.940256
+    z: -0.275637
+  notes: Precordial electrode 1 vs WCT
+- channel_index: 3
+  lead_name: view_2
+  type: precordial_bspm
+  independent: true
+  theta_deg: 121
+  phi_deg: -101
+  theta_rad: 2.111848394913139
+  phi_rad: -1.7627825445142729
+  unit_sphere_cartesian:
+    x: -0.163555
+    y: -0.841419
+    z: -0.515038
+  notes: Precordial electrode 2 vs WCT
+- channel_index: 4
+  lead_name: view_3
+  type: precordial_bspm
+  independent: true
+  theta_deg: 132
+  phi_deg: -99
+  theta_rad: 2.303834612632515
+  phi_rad: -1.7278759594743864
+  unit_sphere_cartesian:
+    x: -0.116253
+    y: -0.733995
+    z: -0.669131
+  notes: Precordial electrode 3 vs WCT
+- channel_index: 5
+  lead_name: view_4
+  type: precordial_bspm
+  independent: true
+  theta_deg: 52
+  phi_deg: -83
+  theta_rad: 0.9075712110370514
+  phi_rad: -1.4486232791552935
+  unit_sphere_cartesian:
+    x: 0.096034
+    y: -0.782137
+    z: 0.615661
+  notes: Precordial electrode 4 vs WCT
+- channel_index: 6
+  lead_name: view_5
+  type: precordial_bspm
+  independent: true
+  theta_deg: 68
+  phi_deg: -78
+  theta_rad: 1.1868238913561442
+  phi_rad: -1.361356816555577
+  unit_sphere_cartesian:
+    x: 0.192772
+    y: -0.906923
+    z: 0.374607
+  notes: Precordial electrode 5 vs WCT
+- channel_index: 7
+  lead_name: view_6
+  type: precordial_bspm
+  independent: true
+  theta_deg: 90
+  phi_deg: -74
+  theta_rad: 1.5707963267948966
+  phi_rad: -1.2915436464758039
+  unit_sphere_cartesian:
+    x: 0.275637
+    y: -0.961262
+    z: 0.0
+  notes: Precordial electrode 6 vs WCT
+- channel_index: 8
+  lead_name: view_7
+  type: precordial_bspm
+  independent: true
+  theta_deg: 109
+  phi_deg: -75
+  theta_rad: 1.902408884673819
+  phi_rad: -1.3089969389957472
+  unit_sphere_cartesian:
+    x: 0.244718
+    y: -0.913301
+    z: -0.325568
+  notes: Precordial electrode 7 vs WCT
+- channel_index: 9
+  lead_name: view_8
+  type: precordial_bspm
+  independent: true
+  theta_deg: 125
+  phi_deg: -77
+  theta_rad: 2.1816615649929116
+  phi_rad: -1.3439035240356338
+  unit_sphere_cartesian:
+    x: 0.184269
+    y: -0.798157
+    z: -0.573576
+  notes: Precordial electrode 8 vs WCT
+- channel_index: 10
+  lead_name: view_9
+  type: precordial_bspm
+  independent: true
+  theta_deg: 137
+  phi_deg: -81
+  theta_rad: 2.3911010752322315
+  phi_rad: -1.413716694115407
+  unit_sphere_cartesian:
+    x: 0.106688
+    y: -0.673602
+    z: -0.731354
+  notes: Precordial electrode 9 vs WCT
+- channel_index: 11
+  lead_name: view_10
+  type: precordial_bspm
+  independent: true
+  theta_deg: 43
+  phi_deg: -74
+  theta_rad: 0.7504915783575616
+  phi_rad: -1.2915436464758039
+  unit_sphere_cartesian:
+    x: 0.187984
+    y: -0.655579
+    z: 0.731354
+  notes: Precordial electrode 10 vs WCT
+- channel_index: 12
+  lead_name: view_11
+  type: precordial_bspm
+  independent: true
+  theta_deg: 63
+  phi_deg: -61
+  theta_rad: 1.0995574287564276
+  phi_rad: -1.064650843716541
+  unit_sphere_cartesian:
+    x: 0.431969
+    y: -0.779292
+    z: 0.45399
+  notes: Precordial electrode 11 vs WCT
+- channel_index: 13
+  lead_name: view_12
+  type: precordial_bspm
+  independent: true
+  theta_deg: 90
+  phi_deg: -54
+  theta_rad: 1.5707963267948966
+  phi_rad: -0.9424777960769379
+  unit_sphere_cartesian:
+    x: 0.587785
+    y: -0.809017
+    z: 0.0
+  notes: Precordial electrode 12 vs WCT
+- channel_index: 14
+  lead_name: view_13
+  type: precordial_bspm
+  independent: true
+  theta_deg: 113
+  phi_deg: -55
+  theta_rad: 1.9722220547535922
+  phi_rad: -0.9599310885968813
+  unit_sphere_cartesian:
+    x: 0.52798
+    y: -0.754033
+    z: -0.390731
+  notes: Precordial electrode 13 vs WCT
+- channel_index: 15
+  lead_name: view_14
+  type: precordial_bspm
+  independent: true
+  theta_deg: 131
+  phi_deg: -62
+  theta_rad: 2.286381320112572
+  phi_rad: -1.0821041362364843
+  unit_sphere_cartesian:
+    x: 0.354315
+    y: -0.666369
+    z: -0.656059
+  notes: Precordial electrode 14 vs WCT
+- channel_index: 16
+  lead_name: view_15
+  type: precordial_bspm
+  independent: true
+  theta_deg: 144
+  phi_deg: -70
+  theta_rad: 2.5132741228718345
+  phi_rad: -1.2217304763960306
+  unit_sphere_cartesian:
+    x: 0.201034
+    y: -0.552337
+    z: -0.809017
+  notes: Precordial electrode 15 vs WCT
+- channel_index: 17
+  lead_name: view_16
+  type: precordial_bspm
+  independent: true
+  theta_deg: 30
+  phi_deg: -73
+  theta_rad: 0.5235987755982988
+  phi_rad: -1.2740903539558606
+  unit_sphere_cartesian:
+    x: 0.146186
+    y: -0.478152
+    z: 0.866025
+  notes: Precordial electrode 16 vs WCT
+- channel_index: 18
+  lead_name: view_17
+  type: precordial_bspm
+  independent: true
+  theta_deg: 54
+  phi_deg: -51
+  theta_rad: 0.9424777960769379
+  phi_rad: -0.890117918517108
+  unit_sphere_cartesian:
+    x: 0.509131
+    y: -0.628724
+    z: 0.587785
+  notes: Precordial electrode 17 vs WCT
+- channel_index: 19
+  lead_name: view_18
+  type: precordial_bspm
+  independent: true
+  theta_deg: 90
+  phi_deg: -33
+  theta_rad: 1.5707963267948966
+  phi_rad: -0.5759586531581288
+  unit_sphere_cartesian:
+    x: 0.838671
+    y: -0.544639
+    z: 0.0
+  notes: Precordial electrode 18 vs WCT
+- channel_index: 20
+  lead_name: view_19
+  type: precordial_bspm
+  independent: true
+  theta_deg: 118
+  phi_deg: -40
+  theta_rad: 2.0594885173533086
+  phi_rad: -0.6981317007977318
+  unit_sphere_cartesian:
+    x: 0.676377
+    y: -0.567548
+    z: -0.469472
+  notes: Precordial electrode 19 vs WCT
+- channel_index: 21
+  lead_name: view_20
+  type: precordial_bspm
+  independent: true
+  theta_deg: 137
+  phi_deg: -54
+  theta_rad: 2.3911010752322315
+  phi_rad: -0.9424777960769379
+  unit_sphere_cartesian:
+    x: 0.400869
+    y: -0.551748
+    z: -0.731354
+  notes: Precordial electrode 20 vs WCT
+- channel_index: 22
+  lead_name: view_21
+  type: precordial_bspm
+  independent: true
+  theta_deg: 149
+  phi_deg: -64
+  theta_rad: 2.600540585471551
+  phi_rad: -1.117010721276371
+  unit_sphere_cartesian:
+    x: 0.225778
+    y: -0.462913
+    z: -0.857167
+  notes: Precordial electrode 21 vs WCT
+- channel_index: 23
+  lead_name: view_22
+  type: precordial_bspm
+  independent: true
+  theta_deg: 20
+  phi_deg: 70
+  theta_rad: 0.3490658503988659
+  phi_rad: 1.2217304763960306
+  unit_sphere_cartesian:
+    x: 0.116978
+    y: 0.321394
+    z: 0.939693
+  notes: Precordial electrode 22 vs WCT
+- channel_index: 24
+  lead_name: view_23
+  type: precordial_bspm
+  independent: true
+  theta_deg: 48
+  phi_deg: 42
+  theta_rad: 0.8377580409572781
+  phi_rad: 0.7330382858376184
+  unit_sphere_cartesian:
+    x: 0.552264
+    y: 0.497261
+    z: 0.669131
+  notes: Precordial electrode 23 vs WCT
+- channel_index: 25
+  lead_name: view_24
+  type: precordial_bspm
+  independent: true
+  theta_deg: 90
+  phi_deg: 11
+  theta_rad: 1.5707963267948966
+  phi_rad: 0.19198621771937624
+  unit_sphere_cartesian:
+    x: 0.981627
+    y: 0.190809
+    z: 0.0
+  notes: Precordial electrode 24 vs WCT
+- channel_index: 26
+  lead_name: view_25
+  type: precordial_bspm
+  independent: true
+  theta_deg: 122
+  phi_deg: 32
+  theta_rad: 2.129301687433082
+  phi_rad: 0.5585053606381855
+  unit_sphere_cartesian:
+    x: 0.719186
+    y: 0.449397
+    z: -0.529919
+  notes: Precordial electrode 25 vs WCT
+- channel_index: 27
+  lead_name: view_26
+  type: precordial_bspm
+  independent: true
+  theta_deg: 141
+  phi_deg: 51
+  theta_rad: 2.4609142453120043
+  phi_rad: 0.890117918517108
+  unit_sphere_cartesian:
+    x: 0.396044
+    y: 0.489074
+    z: -0.777146
+  notes: Precordial electrode 26 vs WCT
+- channel_index: 28
+  lead_name: view_27
+  type: precordial_bspm
+  independent: true
+  theta_deg: 153
+  phi_deg: 63
+  theta_rad: 2.670353755551324
+  phi_rad: 1.0995574287564276
+  unit_sphere_cartesian:
+    x: 0.206107
+    y: 0.404508
+    z: -0.891007
+  notes: Precordial electrode 27 vs WCT
+- channel_index: 29
+  lead_name: view_28
+  type: precordial_bspm
+  independent: true
+  theta_deg: 30
+  phi_deg: 69
+  theta_rad: 0.5235987755982988
+  phi_rad: 1.2042771838760873
+  unit_sphere_cartesian:
+    x: 0.179184
+    y: 0.46679
+    z: 0.866025
+  notes: Precordial electrode 28 vs WCT
+- channel_index: 30
+  lead_name: view_29
+  type: precordial_bspm
+  independent: true
+  theta_deg: 54
+  phi_deg: 48
+  theta_rad: 0.9424777960769379
+  phi_rad: 0.8377580409572781
+  unit_sphere_cartesian:
+    x: 0.541338
+    y: 0.601217
+    z: 0.587785
+  notes: Precordial electrode 29 vs WCT
+- channel_index: 31
+  lead_name: view_30
+  type: precordial_bspm
+  independent: true
+  theta_deg: 90
+  phi_deg: 32
+  theta_rad: 1.5707963267948966
+  phi_rad: 0.5585053606381855
+  unit_sphere_cartesian:
+    x: 0.848048
+    y: 0.529919
+    z: 0.0
+  notes: Precordial electrode 30 vs WCT
+- channel_index: 32
+  lead_name: view_31
+  type: precordial_bspm
+  independent: true
+  theta_deg: 119
+  phi_deg: 41
+  theta_rad: 2.076941809873252
+  phi_rad: 0.715584993317675
+  unit_sphere_cartesian:
+    x: 0.660084
+    y: 0.573802
+    z: -0.48481
+  notes: Precordial electrode 31 vs WCT
+- channel_index: 33
+  lead_name: view_32
+  type: precordial_bspm
+  independent: true
+  theta_deg: 139
+  phi_deg: 55
+  theta_rad: 2.426007660272118
+  phi_rad: 0.9599310885968813
+  unit_sphere_cartesian:
+    x: 0.3763
+    y: 0.537412
+    z: -0.75471
+  notes: Precordial electrode 32 vs WCT
+- channel_index: 34
+  lead_name: view_33
+  type: precordial_bspm
+  independent: true
+  theta_deg: 152
+  phi_deg: 67
+  theta_rad: 2.6529004630313806
+  phi_rad: 1.1693705988362006
+  unit_sphere_cartesian:
+    x: 0.183437
+    y: 0.432151
+    z: -0.882948
+  notes: Precordial electrode 33 vs WCT
+- channel_index: 35
+  lead_name: view_34
+  type: precordial_bspm
+  independent: true
+  theta_deg: 40
+  phi_deg: 80
+  theta_rad: 0.6981317007977318
+  phi_rad: 1.3962634015954636
+  unit_sphere_cartesian:
+    x: 0.111619
+    y: 0.633022
+    z: 0.766044
+  notes: Precordial electrode 34 vs WCT
+- channel_index: 36
+  lead_name: view_35
+  type: precordial_bspm
+  independent: true
+  theta_deg: 60
+  phi_deg: 71
+  theta_rad: 1.0471975511965976
+  phi_rad: 1.239183768915974
+  unit_sphere_cartesian:
+    x: 0.28195
+    y: 0.818843
+    z: 0.5
+  notes: Precordial electrode 35 vs WCT
+- channel_index: 37
+  lead_name: view_36
+  type: precordial_bspm
+  independent: true
+  theta_deg: 90
+  phi_deg: 65
+  theta_rad: 1.5707963267948966
+  phi_rad: 1.1344640137963142
+  unit_sphere_cartesian:
+    x: 0.422618
+    y: 0.906308
+    z: 0.0
+  notes: Precordial electrode 36 vs WCT
+- channel_index: 38
+  lead_name: view_37
+  type: precordial_bspm
+  independent: true
+  theta_deg: 117
+  phi_deg: 66
+  theta_rad: 2.0420352248333655
+  phi_rad: 1.1519173063162575
+  unit_sphere_cartesian:
+    x: 0.362405
+    y: 0.813975
+    z: -0.45399
+  notes: Precordial electrode 37 vs WCT
+- channel_index: 39
+  lead_name: view_38
+  type: precordial_bspm
+  independent: true
+  theta_deg: 135
+  phi_deg: 69
+  theta_rad: 2.356194490192345
+  phi_rad: 1.2042771838760873
+  unit_sphere_cartesian:
+    x: 0.253404
+    y: 0.660141
+    z: -0.707107
+  notes: Precordial electrode 38 vs WCT
+- channel_index: 40
+  lead_name: view_39
+  type: precordial_bspm
+  independent: true
+  theta_deg: 147
+  phi_deg: 77
+  theta_rad: 2.5656340004316647
+  phi_rad: 1.3439035240356338
+  unit_sphere_cartesian:
+    x: 0.122517
+    y: 0.53068
+    z: -0.838671
+  notes: Precordial electrode 39 vs WCT
+- channel_index: 41
+  lead_name: view_40
+  type: precordial_bspm
+  independent: true
+  theta_deg: 112
+  phi_deg: 105
+  theta_rad: 1.9547687622336491
+  phi_rad: 1.8325957145940461
+  unit_sphere_cartesian:
+    x: -0.239973
+    y: 0.895591
+    z: -0.374607
+  notes: Precordial electrode 40 vs WCT
+- channel_index: 42
+  lead_name: view_41
+  type: precordial_bspm
+  independent: true
+  theta_deg: 129
+  phi_deg: 103
+  theta_rad: 2.251474735072685
+  phi_rad: 1.7976891295541593
+  unit_sphere_cartesian:
+    x: -0.17482
+    y: 0.757228
+    z: -0.62932
+  notes: Precordial electrode 41 vs WCT
+- channel_index: 43
+  lead_name: view_42
+  type: precordial_bspm
+  independent: true
+  theta_deg: 140
+  phi_deg: 100
+  theta_rad: 2.443460952792061
+  phi_rad: 1.7453292519943295
+  unit_sphere_cartesian:
+    x: -0.111619
+    y: 0.633022
+    z: -0.766044
+  notes: Precordial electrode 42 vs WCT
+- channel_index: 44
+  lead_name: III
+  type: limb_derived
+  independent: false
+  theta_deg: 150
+  phi_deg: -90
+  theta_rad: 2.6179938779914944
+  phi_rad: -1.5707963267948966
+  unit_sphere_cartesian:
+    x: 0.0
+    y: -0.5
+    z: -0.866025
+  algebraic_formula: II - I
+- channel_index: 45
+  lead_name: aVR
+  type: limb_derived
+  independent: false
+  theta_deg: 60
+  phi_deg: -90
+  theta_rad: 1.0471975511965976
+  phi_rad: -1.5707963267948966
+  unit_sphere_cartesian:
+    x: 0.0
+    y: -0.866025
+    z: 0.5
+  algebraic_formula: -(I + II)/2
+- channel_index: 46
+  lead_name: aVL
+  type: limb_derived
+  independent: false
+  theta_deg: 60
+  phi_deg: 90
+  theta_rad: 1.0471975511965976
+  phi_rad: 1.5707963267948966
+  unit_sphere_cartesian:
+    x: 0.0
+    y: 0.866025
+    z: 0.5
+  algebraic_formula: (I - III)/2
+- channel_index: 47
+  lead_name: aVF
+  type: limb_derived
+  independent: false
+  theta_deg: 180
+  phi_deg: 90
+  theta_rad: 3.141592653589793
+  phi_rad: 1.5707963267948966
+  unit_sphere_cartesian:
+    x: 0.0
+    y: 0.0
+    z: -1.0
+  algebraic_formula: (II + III)/2

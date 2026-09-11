@@ -187,6 +187,8 @@ def train_epoch_ssl(
         clin_loss_acc += l_clin.item()
         view_loss_acc += l_view.item()
         n_batches += 1
+        if n_batches % 50 == 0 or n_batches == 1:
+            print(f"    [Batch {n_batches:03d}/{len(loader)}] Total: {loss.item():.4f} | SSL: {l_ssl.item():.4f} | Clin: {l_clin.item():.4f} | View: {l_view.item():.4f}", flush=True)
 
     return {
         "total": total_loss_acc / n_batches,
@@ -216,6 +218,8 @@ def train_epoch_supervised(
         optimizer.step()
         total_loss += loss.item()
         n_batches += 1
+        if n_batches % 50 == 0 or n_batches == 1:
+            print(f"    [Batch {n_batches:03d}/{len(loader)}] BCE: {loss.item():.4f}", flush=True)
     return total_loss / n_batches
 
 
@@ -368,7 +372,7 @@ def evaluate_domain_selectivity(
 def main():
     parser = argparse.ArgumentParser(description="GRAIL-ECG Milestone P2 Screen")
     parser.add_argument("--epochs", type=int, default=15)
-    parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
     parser.add_argument("--output-dir", type=str, default="results/p2_screen")

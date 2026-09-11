@@ -75,6 +75,7 @@
 - C2 axes have no physiological interpretation.
 - FIXED_VCG_SPECIFICITY = NOT_SUPPORTED; old artifacts remain unchanged.
 - No generative primitive is claimed; probabilistic completion is conditional future work.
+- The selected trunk's inherited record-wide z-score uses full-record mean/scale. A pre-launch fold-9 audit found negligible impact on the primary Pearson endpoint (global 0.822248, Lead-I-only 0.822290, raw 0.822289), so it is retained identically across B1/C1/C2 for this controlled comparison. It is not deployment-clean for amplitude metrics; any later confirmation must include observable-only normalization sensitivity and may not conceal this limitation.
 
 ## Final checklist
 
@@ -85,4 +86,3 @@
 - [ ] Paired mean/tail bootstrap and harm screen complete.
 - [ ] Conditional seed decision recorded.
 - [x] Fold 10 and pristine EchoNext sealed.
-

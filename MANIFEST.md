@@ -2,6 +2,21 @@
 
 Updated: 2026-07-26T20:41:00Z
 
+## 2026-09-10 — Predictable residual subspace protocol
+
+- `refine-logs/predictable_residual_subspace/FINAL_PROPOSAL.md` — problem-anchored C2 method proposal; timestamped source retained.
+- `refine-logs/predictable_residual_subspace/REVIEW_SUMMARY.md` — internal critical review (external reviewer bridge unavailable).
+- `refine-logs/predictable_residual_subspace/REFINEMENT_REPORT.md` — refinement decisions and scope exclusions.
+- `refine-logs/predictable_residual_subspace/EXPERIMENT_PLAN.md` — claim-driven rank and neural validation plan.
+- `refine-logs/predictable_residual_subspace/EXPERIMENT_TRACKER.md` — live execution state.
+- `refine-logs/predictable_residual_subspace/residual_rank_curve.json` — full ranks 1–6 oracle metrics.
+- `refine-logs/predictable_residual_subspace/residual_rank_curve.md` — human-readable rank report.
+- `refine-logs/predictable_residual_subspace/K_STAR_manifest.json` — immutable pre-neural rank-5 and model contract.
+- `experiments/nullvcg_observation_constrained/run_residual_rank_curve.py` — closed-form rank evaluator with dependent-limb QC sensitivity.
+- `tests/test_predictable_residual_adapter.py` — direct/frozen/learned output-subspace invariants.
+- `scripts/run_predictable_residual_queue.sh` — sequential 15-epoch B1/C1/C2 seed-42 launcher.
+- `scripts/evaluate_predictable_residual.py` — frozen seed-42 paired bootstrap, clinical-harm, oracle-gap, and latent/subspace evaluator.
+
 ## 2026-09-10 — Beat-Structured ECG-AIM refinement
 
 - `external/LVCG/` — vendored upstream LVCG source with nested Git metadata removed.

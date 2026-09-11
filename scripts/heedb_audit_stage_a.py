@@ -14,8 +14,8 @@ import json
 import hashlib
 import datetime
 import subprocess
-import shutil
 import platform
+from concurrent.futures import ThreadPoolExecutor
 
 AUDIT_DIR = "/data/mithunmanivannan/heedb_audit"
 ENV_DIR = os.path.join(AUDIT_DIR, "00_environment")
@@ -30,22 +30,45 @@ def run_cmd(cmd):
     except Exception as e:
         return f"ERROR: {e}"
 
-def compute_file_stats(filepath):
-    h = hashlib.sha256()
+def compute_file_stats(filepath, max_workers=16, chunk_size=4 * 1024 * 1024):
     size = os.path.getsize(filepath)
     mtime = datetime.datetime.fromtimestamp(os.path.getmtime(filepath), datetime.timezone.utc).isoformat()
-    
-    # Check if text file for line counting
+    if size == 0:
+        return {
+            "filepath": filepath,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0,
+            "mtime_utc": mtime,
+            "row_count": 0
+        }
+
+    fd = os.open(filepath, os.O_RDONLY)
+    h = hashlib.sha256()
     line_count = 0
-    with open(filepath, 'rb') as f:
-        while True:
-            chunk = f.read(1024 * 1024 * 8)
-            if not chunk:
-                break
+    n_chunks = (size + chunk_size - 1) // chunk_size
+
+    def read_chunk(idx):
+        offset = idx * chunk_size
+        length = min(chunk_size, size - offset)
+        return idx, os.pread(fd, length, offset)
+
+    window_size = max_workers * 2
+    futures = {}
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        for i in range(min(window_size, n_chunks)):
+            futures[i] = pool.submit(read_chunk, i)
+
+        for i in range(n_chunks):
+            next_idx = i + window_size
+            if next_idx < n_chunks:
+                futures[next_idx] = pool.submit(read_chunk, next_idx)
+
+            _, chunk = futures.pop(i).result()
             h.update(chunk)
             if filepath.endswith('.csv'):
                 line_count += chunk.count(b'\n')
-                
+
+    os.close(fd)
     return {
         "filepath": filepath,
         "sha256": h.hexdigest(),
@@ -138,12 +161,13 @@ def main():
         "/data/mithunmanivannan/papers/Nature_Machine_Intelligence_2026_CSFM.pdf"
     ]
 
-    print("Computing SHA256 hashes and row counts for local source files...")
+    print("Computing SHA256 hashes and row counts for local source files via pipelined prefetch...")
     checksum_records = []
     for fp in source_files:
         if os.path.exists(fp):
-            print(f"Hashing: {fp}")
+            print(f"Hashing: {fp} (size: {os.path.getsize(fp) / (1024*1024):.2f} MB)")
             stats = compute_file_stats(fp)
+            print(f"  Done: SHA256={stats['sha256'][:12]}..., Rows={stats['row_count']}")
             checksum_records.append(stats)
         else:
             print(f"Missing file: {fp}")
@@ -155,7 +179,7 @@ def main():
         writer.writeheader()
         writer.writerows(checksum_records)
 
-    print("Stage A completed successfully.")
+    print("\nStage A completed successfully.")
     print(f"Checksum records saved to {os.path.join(ENV_DIR, 'source_file_checksums.csv')}")
 
 if __name__ == "__main__":

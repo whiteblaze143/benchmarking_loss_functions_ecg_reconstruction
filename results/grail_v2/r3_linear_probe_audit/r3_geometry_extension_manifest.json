@@ -1,0 +1,17 @@
+{
+  "status": "complete",
+  "eligible_concepts": 39,
+  "targets": [
+    "model_001",
+    "model_101",
+    "model_m"
+  ],
+  "expected_rows": 117,
+  "observed_rows": 117,
+  "fold8_used_for_alignment": false,
+  "fold8_used_for_hyperparameter_selection": false,
+  "encoders_frozen": true,
+  "all_probes_converged": true,
+  "explicit_invalid_rows": 0,
+  "registry_sha256": "be20a947fe1d8532a7650fdf0fb1096852ffc3516be63ac2cccf6390a50e39ce"
+}

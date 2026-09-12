@@ -1,0 +1,14 @@
+{
+  "status": "complete",
+  "rows": 117,
+  "expected_rows": 117,
+  "unique_rows": 117,
+  "duplicate_keys": 0,
+  "counts_by_target": {
+    "model_001": 39,
+    "model_101": 39,
+    "model_m": 39
+  },
+  "all_probes_converged": true,
+  "source_manifest_verified": true
+}

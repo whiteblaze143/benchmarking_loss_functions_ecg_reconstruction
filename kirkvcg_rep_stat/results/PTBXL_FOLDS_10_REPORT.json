@@ -1,0 +1,31 @@
+{
+  "status": "COMPLETED",
+  "dataset": "PTB-XL",
+  "official_folds_evaluated": [
+    10
+  ],
+  "total_records_evaluated": 5,
+  "elapsed_seconds": 28.81,
+  "throughput_records_per_sec": 0.17,
+  "diagnostic_class_summary": {
+    "NORM": {
+      "n_records": 5,
+      "mean_planarity": 0.9796747677792641,
+      "std_planarity": 0.008082266774554942,
+      "mean_qrst_angle": 91.63293173743988,
+      "std_qrst_angle": 45.88315363876475,
+      "mean_anomaly_fraction": 0.5969333333333333,
+      "std_anomaly_fraction": 0.5449274365556492,
+      "mean_cliques": 1.6
+    }
+  },
+  "fold_summary": {
+    "10": {
+      "n_records": 5,
+      "mean_planarity": 0.9796747677792641,
+      "mean_qrst_angle": 91.63293173743988,
+      "mean_anomaly_fraction": 0.5969333333333333,
+      "mean_cliques": 1.6
+    }
+  }
+}

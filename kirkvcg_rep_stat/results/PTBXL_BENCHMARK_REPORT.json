@@ -1,0 +1,59 @@
+{
+  "dataset": "PTB-XL",
+  "n_evaluated": 15,
+  "classes_evaluated": [
+    "NORM",
+    "MI",
+    "STTC",
+    "CD",
+    "HYP"
+  ],
+  "mean_kors_dower_rel_diff": 0.5716407996110805,
+  "class_summary": {
+    "NORM": {
+      "mean_planarity": 0.980946055082265,
+      "std_planarity": 0.006370986708742147,
+      "mean_qrst_angle": 78.21767816659589,
+      "std_qrst_angle": 30.485085083951386,
+      "mean_anomaly_fraction": 0.6644444444444445,
+      "mean_cliques": 1.3333333333333333
+    },
+    "MI": {
+      "mean_planarity": 0.9871709326294074,
+      "std_planarity": 0.0052707165844113725,
+      "mean_qrst_angle": 89.67830895033326,
+      "std_qrst_angle": 66.31847303207557,
+      "mean_anomaly_fraction": 0.9828888888888888,
+      "mean_cliques": 1.0
+    },
+    "STTC": {
+      "mean_planarity": 0.9731717207447724,
+      "std_planarity": 0.006426435449212021,
+      "mean_qrst_angle": 57.78748562914143,
+      "std_qrst_angle": 70.00626170559173,
+      "mean_anomaly_fraction": 0.6893333333333334,
+      "mean_cliques": 1.0
+    },
+    "CD": {
+      "mean_planarity": 0.9814422369521801,
+      "std_planarity": 0.012007181641307707,
+      "mean_qrst_angle": 66.1284686956665,
+      "std_qrst_angle": 44.0641529907977,
+      "mean_anomaly_fraction": 0.6593333333333333,
+      "mean_cliques": 2.0
+    },
+    "HYP": {
+      "mean_planarity": 0.987741015832507,
+      "std_planarity": 0.0039008482308297066,
+      "mean_qrst_angle": 115.20805881326551,
+      "std_qrst_angle": 56.812990391758234,
+      "mean_anomaly_fraction": 0.9975555555555555,
+      "mean_cliques": 0.6666666666666666
+    }
+  },
+  "transform_sensitivity_kors_vs_dower": {
+    "planarity_correlation": 0.18511410792805016,
+    "qrst_angle_correlation": 0.24695807419021884,
+    "clique_agreement_rate": 0.4
+  }
+}

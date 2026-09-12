@@ -154,8 +154,12 @@ def pairwise_cluster_testing(
     kernel_param: float = 1.0,
     n_permutations: int = 200,
     random_state: int = 42,
+    K_gram: np.ndarray | None = None,
 ) -> pd.DataFrame:
     """Executes pairwise MMD^2 block permutation tests across all cluster pairs.
+
+    Accelerated via precomputed kernel Gram matrix slicing and single-pass
+    feature-space k-means block partitioning (faithful to repSpat Steps 3a & 3b).
 
     Parameters
     ----------
@@ -173,44 +177,127 @@ def pairwise_cluster_testing(
         Permutations per pair.
     random_state : int
         Random seed.
+    K_gram : np.ndarray, optional
+        Precomputed kernel Gram matrix [n, n]. If None, computed once on X.
 
     Returns
     -------
     results_df : pd.DataFrame
         Table with columns: ['cluster_1', 'cluster_2', 'n_1', 'n_2', 'obs_mmd_sq', 'p_val'].
     """
+    X_arr = np.asarray(X, dtype=np.float64)
     labels = np.asarray(labels)
     unique_clusters = sorted(np.unique(labels))
     K = len(unique_clusters)
 
-    cluster_data = {
-        c: X[labels == c] for c in unique_clusters
-    }
+    # 1. Precompute full kernel Gram matrix ONCE (matching author repspat design)
+    if K_gram is None:
+        if kernel == "imq":
+            from .mmd import imq_kernel
+            K_gram = imq_kernel(X_arr, c=kernel_param)
+        else:
+            from .mmd import rbf_kernel
+            K_gram = rbf_kernel(X_arr, gamma=kernel_param)
 
+    # 2. Partition each unique cluster into feature-space blocks ONCE
+    cluster_indices = {}
+    cluster_blocks = {}
+    for c in unique_clusters:
+        idx = np.where(labels == c)[0]
+        cluster_indices[c] = idx
+        n_c = len(idx)
+        n_blocks = max(1, int(np.floor(n_c / float(max(1, m_neighbors)))))
+        n_blocks = min(n_blocks, n_c)
+        if n_blocks <= 1:
+            cluster_blocks[c] = [idx]
+        else:
+            km = KMeans(n_clusters=n_blocks, random_state=random_state, n_init=1)
+            blk_lbls = km.fit_predict(X_arr[idx])
+            cluster_blocks[c] = [idx[blk_lbls == b] for b in range(n_blocks) if (blk_lbls == b).any()]
+
+    # 3. Pairwise testing using precomputed Gram matrix submatrices
     records = []
     pair_count = 0
     for i in range(K):
         for j in range(i + 1, K):
             c1, c2 = unique_clusters[i], unique_clusters[j]
-            X1, X2 = cluster_data[c1], cluster_data[c2]
+            idx1, idx2 = cluster_indices[c1], cluster_indices[c2]
+            n1, n2 = len(idx1), len(idx2)
 
-            stat, p_val, _ = block_permutation_test(
-                X1,
-                X2,
-                m_neighbors=m_neighbors,
-                kernel=kernel,
-                kernel_param=kernel_param,
-                n_permutations=n_permutations,
-                random_state=random_state + pair_count,
-            )
+            if n1 == 0 or n2 == 0:
+                records.append({
+                    "cluster_1": c1,
+                    "cluster_2": c2,
+                    "n_1": n1,
+                    "n_2": n2,
+                    "obs_mmd_sq": 0.0,
+                    "p_val": 1.0,
+                })
+                pair_count += 1
+                continue
+
+            # Observed MMD^2 via Gram submatrices
+            term1 = K_gram[np.ix_(idx1, idx1)].sum() / (n1 * n1)
+            term2 = -2.0 * K_gram[np.ix_(idx1, idx2)].sum() / (n1 * n2)
+            term3 = K_gram[np.ix_(idx2, idx2)].sum() / (n2 * n2)
+            obs_stat = float(max(0.0, term1 + term2 + term3))
+
+            # Block permutation testing
+            blocks_all = cluster_blocks[c1] + cluster_blocks[c2]
+            n_blocks = len(blocks_all)
+            if n_blocks <= 1:
+                records.append({
+                    "cluster_1": c1,
+                    "cluster_2": c2,
+                    "n_1": n1,
+                    "n_2": n2,
+                    "obs_mmd_sq": obs_stat,
+                    "p_val": 1.0,
+                })
+                pair_count += 1
+                continue
+
+            target_n = min(n1, n2)
+            rng = np.random.default_rng(random_state + pair_count)
+            null_dist: list[float] = []
+
+            for b in range(n_permutations):
+                perm = rng.permutation(n_blocks)
+                g1_idx: list[np.ndarray] = []
+                count = 0
+                split_idx = 0
+                for k in perm:
+                    blk = blocks_all[k]
+                    g1_idx.append(blk)
+                    count += len(blk)
+                    split_idx += 1
+                    if count >= target_n:
+                        break
+
+                g2_blocks = [blocks_all[k] for k in perm[split_idx:]]
+                if not g2_blocks:
+                    null_dist.append(0.0)
+                else:
+                    p1 = np.concatenate(g1_idx)
+                    p2 = np.concatenate(g2_blocks)
+                    np1, np2 = len(p1), len(p2)
+                    p_term1 = K_gram[np.ix_(p1, p1)].sum() / (np1 * np1)
+                    p_term2 = -2.0 * K_gram[np.ix_(p1, p2)].sum() / (np1 * np2)
+                    p_term3 = K_gram[np.ix_(p2, p2)].sum() / (np2 * np2)
+                    null_dist.append(float(max(0.0, p_term1 + p_term2 + p_term3)))
+
+            null_arr = np.array(null_dist)
+            p_val = float(np.mean(null_arr >= obs_stat))
+
             records.append({
                 "cluster_1": c1,
                 "cluster_2": c2,
-                "n_1": len(X1),
-                "n_2": len(X2),
-                "obs_mmd_sq": stat,
+                "n_1": n1,
+                "n_2": n2,
+                "obs_mmd_sq": obs_stat,
                 "p_val": p_val,
             })
             pair_count += 1
 
     return pd.DataFrame(records)
+

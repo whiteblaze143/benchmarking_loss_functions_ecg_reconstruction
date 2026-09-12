@@ -204,10 +204,10 @@ def run_official_folds_evaluation(
                 elapsed = time.time() - start_time
                 rate = completed / max(0.1, elapsed)
                 remaining = (total - completed) / max(0.01, rate)
-                print(f"Progress: [{completed:4d}/{total:4d}] ({completed/total:5.1%}) | Rate: {rate:4.1f} rec/s | ETA: {remaining:4.0f}s | Valid: {len(results)}")
+                print(f"Progress: [{completed:4d}/{total:4d}] ({completed/total:5.1%}) | Rate: {rate:4.1f} rec/s | ETA: {remaining:4.0f}s | Valid: {len(results)}", flush=True)
 
     elapsed = time.time() - start_time
-    print(f"\nEvaluation completed in {elapsed:.1f}s ({len(results)} valid records).")
+    print(f"\nEvaluation completed in {elapsed:.1f}s ({len(results)} valid records).", flush=True)
 
     res_df = pd.DataFrame(results)
     csv_out = os.path.join(output_dir, f"ptbxl_folds_{'_'.join(map(str, folds))}_results.csv")

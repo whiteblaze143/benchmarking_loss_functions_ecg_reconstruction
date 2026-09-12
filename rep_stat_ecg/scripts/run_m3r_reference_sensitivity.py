@@ -7,11 +7,13 @@ from __future__ import annotations
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextlib import nullcontext
 from itertools import combinations
 import json
 import os
 from pathlib import Path
 import tempfile
+import threading
 
 import networkx as nx
 import numpy as np
@@ -52,6 +54,16 @@ def atomic_npz(path: Path, **values) -> None:
 def load_pair(path: Path, d1: int, d2: int, n_perm: int, seed: int) -> dict | None:
     if not path.exists():
         return None
+    try:
+        with np.load(path, allow_pickle=False) as values:
+            if not PAIR_KEYS.issubset(values.files):
+                return None
+            row = {key: values[key].item() for key in PAIR_KEYS}
+        observed = (int(row["domain_i"]), int(row["domain_j"]),
+                    int(row["n_perm"]), int(row["seed"]))
+        return row if observed == (d1, d2, n_perm, seed) else None
+    except (OSError, ValueError, EOFError):
+        return None
 
 
 def save_block_cache(path: Path, blocks: list[np.ndarray], n_rows: int, m: int) -> None:
@@ -87,18 +99,6 @@ def load_block_cache(path: Path, n_rows: int, m: int) -> list[np.ndarray] | None
         return [points[start:end] for start, end in zip(starts, ends)]
     except (OSError, ValueError, KeyError, EOFError):
         return None
-    try:
-        with np.load(path, allow_pickle=False) as values:
-            if not PAIR_KEYS.issubset(values.files):
-                return None
-            row = {key: values[key].item() for key in PAIR_KEYS}
-        observed = (int(row["domain_i"]), int(row["domain_j"]),
-                    int(row["n_perm"]), int(row["seed"]))
-        return row if observed == (d1, d2, n_perm, seed) else None
-    except (OSError, ValueError, EOFError):
-        return None
-
-
 def graph_summary(pair_table: pd.DataFrame, domains: list[int]) -> tuple[nx.Graph, dict]:
     graph = nx.Graph()
     graph.add_nodes_from(domains)
@@ -133,6 +133,8 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42000,
                         help="Deterministic execution seed; not a scientific parameter")
     parser.add_argument("--pair-workers", type=int, default=6)
+    parser.add_argument("--large-pair-block-threshold", type=int, default=9000,
+                        help="Serialize memory-heavy pairs; scheduling only, no statistical effect")
     args = parser.parse_args()
 
     if args.neighborhood_size != 10 or args.n_perm != 200 or args.alpha != 0.05:
@@ -173,36 +175,41 @@ def main() -> None:
                 save_block_cache(cache_path, cached_blocks, len(xi), args.neighborhood_size)
             blocks[domain] = cached_blocks
 
+    large_pair_semaphore = threading.Semaphore(1)
+
     def compute_pair(task: tuple[int, int, int, Path]) -> dict:
         index, d1, d2, path = task
         pair_seed = args.seed + index
-        sums, sizes, diagonal = precompute_block_kernel_sums(blocks[d1], blocks[d2], "IMQ", 1.0)
-        q_i = len(blocks[d1])
-        observed_mask = np.zeros(len(sizes), dtype=bool)
-        observed_mask[:q_i] = True
-        observed = mmd2_from_block_sums(
-            sums, sizes, observed_mask, ~observed_mask, diagonal, clip_zero=False
-        )
-        target = int(min(sizes[:q_i].sum(), sizes[q_i:].sum()))
-        assignments = generate_reference_repspat_assignments(
-            sizes, target, args.n_perm, np.random.RandomState(pair_seed)
-        )
-        null = biased_mmd2_batch_from_block_sums(
-            sums, sizes, assignments, clip_zero=False
-        )
-        # Released package convention is exactly mean(null >= observed), with
-        # no +1 correction and no numerical tie tolerance.
-        exceed = int(np.count_nonzero(null >= observed))
-        row = {
-            "domain_i": d1, "domain_j": d2,
-            "n_i": int(sizes[:q_i].sum()), "n_j": int(sizes[q_i:].sum()),
-            "n_blocks_i": q_i, "n_blocks_j": len(blocks[d2]),
-            "mmd2_obs": observed, "n_perm": args.n_perm,
-            "n_exceed": exceed, "p_perm": exceed / args.n_perm,
-            "seed": pair_seed,
-        }
-        atomic_npz(path, **row)
-        return row
+        is_large = len(blocks[d1]) + len(blocks[d2]) >= args.large_pair_block_threshold
+        lock = large_pair_semaphore if is_large else nullcontext()
+        with lock:
+            sums, sizes, diagonal = precompute_block_kernel_sums(blocks[d1], blocks[d2], "IMQ", 1.0)
+            q_i = len(blocks[d1])
+            observed_mask = np.zeros(len(sizes), dtype=bool)
+            observed_mask[:q_i] = True
+            observed = mmd2_from_block_sums(
+                sums, sizes, observed_mask, ~observed_mask, diagonal, clip_zero=False
+            )
+            target = int(min(sizes[:q_i].sum(), sizes[q_i:].sum()))
+            assignments = generate_reference_repspat_assignments(
+                sizes, target, args.n_perm, np.random.RandomState(pair_seed)
+            )
+            null = biased_mmd2_batch_from_block_sums(
+                sums, sizes, assignments, clip_zero=False
+            )
+            # Released package convention is exactly mean(null >= observed), with
+            # no +1 correction and no numerical tie tolerance.
+            exceed = int(np.count_nonzero(null >= observed))
+            row = {
+                "domain_i": d1, "domain_j": d2,
+                "n_i": int(sizes[:q_i].sum()), "n_j": int(sizes[q_i:].sum()),
+                "n_blocks_i": q_i, "n_blocks_j": len(blocks[d2]),
+                "mmd2_obs": observed, "n_perm": args.n_perm,
+                "n_exceed": exceed, "p_perm": exceed / args.n_perm,
+                "seed": pair_seed,
+            }
+            atomic_npz(path, **row)
+            return row
 
     with threadpool_limits(limits=1):
         with ThreadPoolExecutor(max_workers=max(1, args.pair_workers)) as pool:

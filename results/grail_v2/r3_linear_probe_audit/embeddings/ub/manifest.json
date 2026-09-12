@@ -1,0 +1,21 @@
+{
+  "model": "ub",
+  "checkpoint": "checkpoints/grail_v2/ub_best.pt",
+  "checkpoint_sha256": "9b28a8a27b8e71f1037fead1970838d745a36d75db11f22c32d73fb98477ad3d",
+  "encoder_frozen": true,
+  "fit_folds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "evaluation_fold": 8,
+  "n_ecgs": 17418,
+  "latent_dim": 128,
+  "slot_shape": null,
+  "contains_patient_id": true,
+  "contains_labels": true
+}

@@ -1,0 +1,44 @@
+{
+  "status": "complete",
+  "pass": "A_primary_registry",
+  "models": [
+    "ub",
+    "b0",
+    "b1",
+    "model_001",
+    "model_101",
+    "model_m"
+  ],
+  "C_grid": [
+    0.0001,
+    0.001,
+    0.01,
+    0.1,
+    1.0,
+    10.0,
+    100.0
+  ],
+  "fit_folds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "selection_fold": 7,
+  "refit_folds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "evaluation_fold": 8,
+  "tol": 1e-07,
+  "workers": 4,
+  "blas_threads_per_worker": 1,
+  "fold8_used_for_selection": false
+}

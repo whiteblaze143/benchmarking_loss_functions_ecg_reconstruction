@@ -1,0 +1,21 @@
+{
+  "model": "b1",
+  "checkpoint": "checkpoints/grail_v2/b1_best.pt",
+  "checkpoint_sha256": "c5839e800ea5a3364aa0a24307aad94d5105e7188d147955e7e28f8ae3909073",
+  "encoder_frozen": true,
+  "fit_folds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "evaluation_fold": 8,
+  "n_ecgs": 17418,
+  "latent_dim": 96,
+  "slot_shape": null,
+  "contains_patient_id": true,
+  "contains_labels": true
+}

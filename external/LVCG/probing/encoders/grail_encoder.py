@@ -8,11 +8,13 @@ import sys
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import yaml
 
 # Disable cuDNN to avoid ptrDesc->finalize() error on PyTorch 2.6 + A100
 torch.backends.cudnn.enabled = False
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+# encoders/ -> probing/ -> LVCG/ -> external/ -> project root
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -40,9 +42,18 @@ class GRAILEncoder(BaseEncoder):
         hidden_dim: int = 128,
         num_slots: int = 6,
         slot_dim: int = 16,
+        concept_config: str = "configs/ptbxl_concept_tiers.yaml",
     ):
         super().__init__()
         self.out_features = num_slots * slot_dim  # 96
+
+        anchor_counts_per_domain = None
+        if use_slots:
+            concept_path = Path(concept_config)
+            if not concept_path.is_absolute():
+                concept_path = PROJECT_ROOT / concept_path
+            with open(concept_path) as f:
+                anchor_counts_per_domain = yaml.safe_load(f)["anchor_counts_per_domain"]
 
         self.backbone = FactorialGRAILEncoder(
             use_geometry=use_geometry,
@@ -53,6 +64,7 @@ class GRAILEncoder(BaseEncoder):
             hidden_dim=hidden_dim,
             num_slots=num_slots,
             slot_dim=slot_dim,
+            anchor_counts_per_domain=anchor_counts_per_domain,
             total_anchor_classes=25,
         )
 
@@ -60,10 +72,14 @@ class GRAILEncoder(BaseEncoder):
         if not ckpt_path.is_absolute():
             ckpt_path = PROJECT_ROOT / ckpt_path
 
-        if ckpt_path.exists():
-            ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
-            state_dict = ckpt.get("model_state_dict", ckpt.get("model", ckpt))
-            self.backbone.load_state_dict(state_dict, strict=False)
+        if not ckpt_path.exists():
+            raise FileNotFoundError(f"GRAIL checkpoint not found: {ckpt_path}")
+        ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
+        state_dict = ckpt.get("model_state_dict", ckpt.get("model", ckpt))
+        # A probing run must never continue with a partly initialized encoder.
+        # The architecture flags in the evaluation config must exactly match the
+        # frozen checkpoint being evaluated.
+        self.backbone.load_state_dict(state_dict, strict=True)
 
         self.backbone.eval()
         self.angles = get_angles_tensor(INDEPENDENT_8_LEADS)

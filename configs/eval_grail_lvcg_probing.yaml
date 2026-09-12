@@ -2,7 +2,11 @@
 models:
   grail:
     type: grail
-    checkpoint: checkpoints/grail_v2/ub_best.pt
+    source: grail_v2_full_111
+    checkpoint: checkpoints/grail_v2/model_m_best.pt
+    use_geometry: true
+    use_slots: true
+    use_view_aux: true
 
 datasets:
   - ptbxl_super_class
@@ -19,7 +23,8 @@ data:
   norm_method: zscore
 
 probe:
-  batch_size: 64
+  # A100-40GB witness: batch 2048 uses 25.2 GiB and processes 337 ECG/s.
+  batch_size: 2048
   lr: 0.001
   max_epochs: 20
   patience: 3

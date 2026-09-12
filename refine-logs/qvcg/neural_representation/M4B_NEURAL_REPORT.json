@@ -1,0 +1,51 @@
+{
+  "run_id": "M4B_NEURAL_REFERENCE_REPRESENTATION",
+  "date": "2026-09-12 15:04:06",
+  "latent_dimension": 96,
+  "branches": {
+    "field": 32,
+    "functional": 32,
+    "residual": 32
+  },
+  "seeds_evaluated": [
+    42,
+    43,
+    44
+  ],
+  "gate_a_reproducibility": {
+    "verdict": "FAIL",
+    "mean_cka": 0.5509136517842611,
+    "mean_procrustes": 0.5130470270370994,
+    "mean_nn_overlap_k10": 0.20275555555555558
+  },
+  "gate_b_generalizability": {
+    "verdict": "PASS",
+    "mean_fold8_to_fold9_drop": 0.00775188500566056
+  },
+  "gate_c_interpretability": {
+    "verdict": "PASS",
+    "intervention_drops": [
+      {
+        "concept": "AFIB",
+        "baseline_auroc": 0.7818401340010714,
+        "drop_zero_field": 0.026944758568501426,
+        "drop_zero_func": 0.03338973395345679,
+        "drop_zero_res": 0.06177143294419751
+      },
+      {
+        "concept": "NORM",
+        "baseline_auroc": 0.8420871174499281,
+        "drop_zero_field": 0.1311191934204602,
+        "drop_zero_func": 0.04163480982357848,
+        "drop_zero_res": 0.014941157135813676
+      }
+    ]
+  },
+  "gate_d_added_value": {
+    "verdict": "PASS",
+    "median_delta_b3_minus_b1": 0.02712952175244864,
+    "median_delta_m_minus_b3": 0.010602909661701522
+  },
+  "overall_representation_qualification": "FAIL",
+  "explanation": "Stage M4B neural representation qualifies on Gates B, C, and D (Fold 9 transfer drop = +0.0078 <= 0.05; causal branch degradation confirms physical/functional/residual dissociation; median added value Delta(B3 - B1) = +0.0271), but FAILS Gate A (Reproducibility across seeds) due to rotational drift under non-contrastive SSL (mean CKA = 0.5509 < 0.85). In contrast, the Milestone M4A deterministic representation R4 in R^{121} provides exact zero-variance reproducibility (CKA = 1.0000) with equivalent or superior diagnostic performance."
+}

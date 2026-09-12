@@ -1,0 +1,16 @@
+{
+  "status": "complete",
+  "planned_cells": 28080,
+  "observed_cells": 28080,
+  "unique_cells": 28080,
+  "duplicate_cells": 0,
+  "missing_cells": 0,
+  "extra_cells": 0,
+  "ineligible_cells": 5004,
+  "invalid_nonconvergence_cells": 0,
+  "registry_sha256": "be20a947fe1d8532a7650fdf0fb1096852ffc3516be63ac2cccf6390a50e39ce",
+  "patient_design_sha256": "d6ce8ae0d3d94189b048f74b2c5a5d2da4708ef680e31797ac2d9f36c3a70b23",
+  "estimand": "fixed-hyperparameter low-shot accessibility",
+  "fold8_selection": false,
+  "full_fraction_deterministic": true
+}

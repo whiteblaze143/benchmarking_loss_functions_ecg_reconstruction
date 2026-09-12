@@ -1,0 +1,13 @@
+{
+  "run_id": "M3H_DEPENDENCE_CALIBRATION_BH",
+  "n_family_replicates": 20,
+  "n_pairs_per_replicate": 2016,
+  "mean_fdr": 0.0,
+  "ci95_fdr_bootstrap": [
+    0.0,
+    0.0
+  ],
+  "mean_tpr": 0.3281250000000001,
+  "gate_u95_bound": 0.075,
+  "verdict": "PASS"
+}

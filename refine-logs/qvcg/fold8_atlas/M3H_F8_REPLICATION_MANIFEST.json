@@ -1,0 +1,27 @@
+{
+  "run_id": "M3H_F8_HILBERT_ATLAS_REPLICATION",
+  "date": "2026-09-12 02:13:10",
+  "dataset": "PTB-XL",
+  "split": "Fold 8 (Development Replication)",
+  "n_patients": 1871,
+  "n_microstates": 505580,
+  "primary_metric": "rho_QAP(D_H_train, D_H_F8)",
+  "rho_qap": 0.7642817731311501,
+  "p_qap": 0.0001,
+  "n_perm_qap": 9999,
+  "procrustes_agreement": 0.6941565566680545,
+  "top3_neighbor_overlap": 0.5260416666666667,
+  "top5_neighbor_overlap": 0.603125,
+  "top10_neighbor_overlap": 0.671875,
+  "r90_dim": 6,
+  "r95_dim": 11,
+  "r99_dim": 21,
+  "gate_threshold_rho": 0.8,
+  "gate_threshold_p": 0.001,
+  "verdict": "FAIL",
+  "artifacts": {
+    "FOLD8_MMD_MATRIX.npy": "ca73ef124b95f4a5a7242aabe5b5011b3510b03e022c702ee272a82e82125478",
+    "FOLD8_VCG_MICROSTATE_TABLE.parquet": "aa42f433f8cd51078eb3ed46be8fdc90879fff72521baca871e3b237c6b515ba",
+    "figure_f8_vs_train_mmd_scatter.png": "93682af7b4cc351436cfc47347a6714c63da2bbfd9dd325609ffe97c940fd23e"
+  }
+}

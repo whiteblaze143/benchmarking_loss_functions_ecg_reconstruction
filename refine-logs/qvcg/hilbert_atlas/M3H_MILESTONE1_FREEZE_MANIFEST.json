@@ -1,0 +1,79 @@
+{
+  "milestone": "QVCG-H Milestone 1: Hilbert Atlas",
+  "status": "FROZEN",
+  "date": "2026-09-12",
+  "artifacts": {
+    "FUNCTIONAL_BOUNDARY_RANKING.parquet": {
+      "size_bytes": 13862,
+      "sha256": "3bcaae4ada461f7d4ea6db2c55f303dbf41522fe6fc31c08a15ace49371b7f32"
+    },
+    "FUNCTIONAL_FOLD_RANKING.parquet": {
+      "size_bytes": 23417,
+      "sha256": "0df8e458dc1dd9533072e2a3ecf040ab30c697e4ec41a9ef31c00109c8175555"
+    },
+    "HILBERT_ATLAS_COORDS.parquet": {
+      "size_bytes": 74078,
+      "sha256": "a1b177ada0f84177ee8f19b3818c0d1f9a87d74ac8d678af092d95ae6f604ead"
+    },
+    "HILBERT_ATLAS_SUMMARY.json": {
+      "size_bytes": 1004,
+      "sha256": "27d4c8899dc0b552abe499ff52fbb7fca870550f779b2ac4850735228bfbbca8"
+    },
+    "HILBERT_EIGENSPECTRUM.csv": {
+      "size_bytes": 3720,
+      "sha256": "328e5168263120482247398b8ef1b9829a5c4ee3bdb1139b2877b43c662faa0a"
+    },
+    "HILBERT_GRAM_MATRIX.npy": {
+      "size_bytes": 32896,
+      "sha256": "29add186e988d3b30f26827320e297bf8d1fa8b876847d46474597fba883b536"
+    },
+    "PHYSICAL_FUNCTIONAL_PAIR_TABLE.parquet": {
+      "size_bytes": 73234,
+      "sha256": "0dff063ab2aeaf6b8cd85121c1fe37229cc42c833024e00acf68b9b2256c3488"
+    },
+    "QAP_PHYSICAL_FUNCTIONAL.json": {
+      "size_bytes": 272,
+      "sha256": "d77b3428bd1be77d8bba179c0d97d7ae3ab683ba1dee6e91b494be63303bbf75"
+    },
+    "RSP_COMPATIBILITY_MEMBERSHIP.parquet": {
+      "size_bytes": 2797,
+      "sha256": "b07ea5aef34590c3393bc2873f7a70b075907faad152ac865331e1037788daa2"
+    },
+    "RSP_COMPATIBILITY_OVERLAP.npy": {
+      "size_bytes": 15616,
+      "sha256": "b8a836e01f15b67caa3f3bbe7da30375ded3e88fbb9318989fb9dde6342d8e21"
+    },
+    "RSP_COMPATIBILITY_SETS.parquet": {
+      "size_bytes": 8015,
+      "sha256": "19fe47fabbac745e28c1869a8b5e84fe3e4a257e95af7400a035ef1f78933737"
+    },
+    "figure_h1_vcg_centroids_z1.png": {
+      "size_bytes": 207160,
+      "sha256": "2b94b32ec673ca5d9be205505c231492ce0e6d44acc8864da27608d95062a233"
+    },
+    "figure_h2_hilbert_coords_z1_z2.png": {
+      "size_bytes": 189883,
+      "sha256": "f436766c2467578c48a5418aa9f4a1bb0714affd19980b3a03fdf07459293d68"
+    },
+    "figure_h3_physical_vs_hilbert_isotonic.png": {
+      "size_bytes": 441823,
+      "sha256": "6cfcb49650af900c08def5e9d7da4fd3662039bae89f2fd0f8c4dbb925d9851c"
+    },
+    "figure_h4_vcg_nonlocal_folds.png": {
+      "size_bytes": 306459,
+      "sha256": "fd2f69e07b81795d046963d094e26d95cabe33c83475d9e4b6eaff2d3129569b"
+    },
+    "figure_h5_vcg_local_boundaries.png": {
+      "size_bytes": 552590,
+      "sha256": "324026788ba1b19543fb69687739d86842dda2b982b1c78297f45bbe67eaa22a"
+    },
+    "figure_h6_eigenspectrum_cumulative_mass.png": {
+      "size_bytes": 132200,
+      "sha256": "4be570504d85c10fae6f3191d7ce4c89166d09411a4847914dda5d1a44da855b"
+    },
+    "figure_h7_compatibility_overlap_heatmap.png": {
+      "size_bytes": 119797,
+      "sha256": "9073d0ac2ea13ff62e9632e22533ef0ef445b2f6eb32c07a0702c03c51429243"
+    }
+  }
+}

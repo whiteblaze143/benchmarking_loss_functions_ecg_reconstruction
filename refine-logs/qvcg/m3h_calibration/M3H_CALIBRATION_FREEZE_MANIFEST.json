@@ -1,0 +1,79 @@
+{
+  "run_id": "M3H_DEPENDENCE_CALIBRATION",
+  "timestamp_utc": "2026-09-12 18:58:06",
+  "status": "PASS_WITH_CONSERVATISM",
+  "artifacts": {
+    "CAL0_DISJOINT_RESULTS.parquet": {
+      "sha256": "b5d18680615683ae15e238568ca47c4199cff68a078cabef0e15f2ce22eac9a5",
+      "bytes": 55818
+    },
+    "CAL0_SHARED_RESULTS.parquet": {
+      "sha256": "34a4359c9882410e1de3f565f37f75d611ae185fc307060284170f6dc94b8e1f",
+      "bytes": 49666
+    },
+    "CAL1_MEAN_SHIFT_RESULTS.parquet": {
+      "sha256": "deaa5f246061b2d55a3cbcc228df879d588b1be33b98dd2492e73118982d06d4",
+      "bytes": 43101
+    },
+    "CAL2_COVARIANCE_SHIFT_RESULTS.parquet": {
+      "sha256": "92df7a277b758ea584901b8f0936882144663ad91d3ffa18f97576fc3cb16aa0",
+      "bytes": 41506
+    },
+    "CAL3_DEPENDENCE_RESULTS.parquet": {
+      "sha256": "546d79e9b5bf80922b86e371e8bb9fce3b9f6a3f7ce88c8d6ba6ab3c1488bf25",
+      "bytes": 73715
+    },
+    "CALBH_FAMILY_RESULTS.parquet": {
+      "sha256": "0c05584c9a95d4edc9dd17120843a4fbc73d94ea5455fdc16a0ae8a65634c00c",
+      "bytes": 5510
+    },
+    "CALBH_SUMMARY.json": {
+      "sha256": "3b5383ad62bb4702f088c39d3d89d47b1fc29834e3ee5a80bd24d6cfb7c699a9",
+      "bytes": 258
+    },
+    "CAL_DOMAIN_SUPPORT.csv": {
+      "sha256": "ad9658775bbccceb2d16e7a579b484e5afe37d89c7a0854759f45f35b45d6941",
+      "bytes": 1616
+    },
+    "CAL_PAIR_PATIENT_OVERLAP.parquet": {
+      "sha256": "274da505d5e1f123a1effadaa181a195b7c7cde9e4189270071e706de672a19e",
+      "bytes": 25111
+    },
+    "CAL_SOURCE_DOMAIN_CENSUS.parquet": {
+      "sha256": "2734b987958073d39ae3061fe9c6ffcd0180257682af84f7637e29ffb897229e",
+      "bytes": 6021
+    },
+    "M3H_CALIBRATION_VERDICT.json": {
+      "sha256": "02bfb49df8637ae6e419e89a545952bb503e7b8982d418883206a90aa62d9af9",
+      "bytes": 1273
+    },
+    "calibration.log": {
+      "sha256": "1a3d9287e5e801cccd28a072b2ece336bedc43b57fab8fd9195e00566558cd6e",
+      "bytes": 475705
+    },
+    "figures/figure_cal0_pvalue_ecdf.png": {
+      "sha256": "9bdd66e6459e4d3e958d6ef2fd4eb33eef4a12502cb677bea441be52cca899b8",
+      "bytes": 82910
+    },
+    "figures/figure_cal0_type1_by_domain.png": {
+      "sha256": "cc03cc1bda3b2e22c3ae5634f4bb8f0334a5fb56f2a509118711ab9aff0dfca6",
+      "bytes": 74528
+    },
+    "figures/figure_cal1_power_curve.png": {
+      "sha256": "668c285eb786461e863165ae43946b18a0ed5d4f3225174418000f17b393e573",
+      "bytes": 76382
+    },
+    "figures/figure_cal2_power_curve.png": {
+      "sha256": "d366ac0efa382e5b3d6bdda515a849a14f7eef0f1439ddc69f71a1e60f9651ff",
+      "bytes": 63857
+    },
+    "figures/figure_cal3_dependence_vs_rejection.png": {
+      "sha256": "64e6c31d833fc9ac7e49f85ee0df21ab1003c9aca2cf136b0e350a4ecc963fd4",
+      "bytes": 101943
+    },
+    "figures/figure_calbh_fdp_distribution.png": {
+      "sha256": "1950b82da6c7d0918ec63ef15ef33be3e7979f69b6ced29771db4daff3ef99eb",
+      "bytes": 67971
+    }
+  }
+}

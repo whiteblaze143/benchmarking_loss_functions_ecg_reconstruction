@@ -1,0 +1,16 @@
+{
+  "run_id": "M3H_CAL_FAMILY_GRAPH_TOPOLOGY_AUDIT",
+  "n_family_replicates": 20,
+  "mean_fdp": 0.0,
+  "mean_tpr": 0.3281250000000001,
+  "mean_inferred_edges": 1512.0,
+  "mean_true_similarity_edges": 480.0,
+  "mean_missing_within_proto_edges": 0.0,
+  "mean_cross_prototype_false_edges": 1032.0,
+  "mean_fsr_edge": 0.6825245714415458,
+  "mean_edge_jaccard": 0.3174754285584541,
+  "component_collapse": true,
+  "repspat_binary_compatibility_overlay_verdict": "FAIL",
+  "explanation": "High false-similarity edge rate (mean FSR_edge=68.25%) with 1032.0 cross-prototype false edges creates severe topology collapse. repSpat binary non-rejection compatibility overlay fails as a topological coordinate system.",
+  "qvcg_h_hilbert_atlas_status": "CONTINUES_INDEPENDENTLY"
+}

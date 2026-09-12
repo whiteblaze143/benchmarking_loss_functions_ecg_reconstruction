@@ -1,0 +1,13 @@
+{
+  "run_id": "M4A_DETERMINISTIC_REPRESENTATION_QUALIFICATION",
+  "n_train_records": 3500,
+  "n_val_records": 2173,
+  "n_concepts_evaluated": 8,
+  "n_concepts_R3_exceeds_R0": 5,
+  "mean_delta_auroc_R3_minus_R0": 0.028692451003186792,
+  "median_delta_auroc_R3_minus_R0": 0.030446764928859612,
+  "mean_delta_auroc_R4_minus_R3": 0.0048144118176979495,
+  "median_delta_auroc_R4_minus_R3": 0.001809851452300594,
+  "deterministic_kill_gate_verdict": "PASS",
+  "explanation": "R3 (Physical + Functional) achieves a median Delta AUROC of +0.0304 over R0 (Physical VCG alone) across 8 clinical concepts (5/8 concepts improved). R4 (including non-dipolar residual) provides an additional +0.0018 median Delta AUROC. QVCG-H functional trajectory information is qualified for representation learning."
+}

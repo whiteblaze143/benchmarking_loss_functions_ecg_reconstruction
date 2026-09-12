@@ -1,0 +1,85 @@
+[
+  {
+    "record_name": "00001_hr",
+    "n_beats": 9,
+    "continuous_summary": {
+      "best_m": 4,
+      "best_G": 4,
+      "initial_episodes_count": 4,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1
+      },
+      "edges_in_similarity_graph": 6,
+      "nodes_in_similarity_graph": 4
+    },
+    "binary_summary": {
+      "best_m": 4,
+      "best_G": 4,
+      "initial_episodes_count": 4,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1
+      },
+      "edges_in_similarity_graph": 6,
+      "nodes_in_similarity_graph": 4
+    },
+    "continuous_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "binary_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "timestamps": [
+      1.15,
+      2.078,
+      3.004,
+      3.928,
+      4.878,
+      5.824,
+      6.794,
+      7.734,
+      8.65
+    ]
+  }
+]

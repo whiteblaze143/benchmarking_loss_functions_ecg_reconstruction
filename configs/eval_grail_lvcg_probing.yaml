@@ -7,6 +7,13 @@ models:
     use_geometry: true
     use_slots: true
     use_view_aux: true
+  lvcg:
+    type: grail
+    source: grail_v2_full_111
+    checkpoint: checkpoints/grail_v2/model_m_best.pt
+    use_geometry: true
+    use_slots: true
+    use_view_aux: true
 
 datasets:
   - ptbxl_super_class

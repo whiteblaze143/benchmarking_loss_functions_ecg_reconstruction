@@ -1,138 +1,75 @@
-# Research Proposal: GRAIL-ECG v2 — Representation-Theoretic Qualification of a Clinical ECG State Space
+# Research Proposal: Temporal repSpat — Nonparametric Discovery of Repeated Temporal Patterns in Electrocardiograms
 
-**Date**: 2026-09-11  
-**Status**: ACTIVE CHAMPION PROPOSAL (v2 Superseding Reconstruction Framework)  
-**Target Venues**: NeurIPS / ICLR / ICML / Nature Machine Intelligence  
-
----
-
-## 1. Executive Summary & Problem Anchor
-
-The fundamental object of investigation in electrocardiographic machine learning is **not waveform reconstruction and not narrow multi-label classification accuracy**. It is the learned latent representation itself:
-
-$$
-E: \mathcal{X} \longrightarrow \mathcal{Z}, \qquad \mathcal{Z} \in \mathbb{R}^d \quad (d=96)
-$$
-
-The central scientific question is whether $\mathcal{Z}$ is a **valid, compact, and sufficient representation of the clinically relevant information** contained in a standard 12-lead ECG.
-
-Waveform reconstruction (synthesizing 60,000 raw voltage samples) forces a model to expend representational capacity on high-frequency acquisition noise, electrode skin-impedance drift, and idiosyncratic baseline wander. Conversely, training end-to-end task classifiers entangles clinical knowledge into arbitrary non-linear decision boundaries that fail to transfer to unseen cardiac pathologies.
-
-We propose **GRAIL-ECG v2**, a representation-theoretic framework divided into two decoupled, verifiable stages:
-
-$$
-\boxed{\text{\bf Stage A: Construct & Qualify the Full-ECG Representation } \mathcal{Z}^\star = T_\theta(X_{\text{full}})}
-$$
-$$\Downarrow \quad (\text{only if qualified across multi-dimensional criteria})$$
-$$
-\boxed{\text{\bf Stage B: Map the Complete 4,095-Subset Information Lattice } Z_S = G_\phi(X_S, S)}
-$$
+**Date**: 2026-09-12  
+**Status**: ACTIVE PROPOSAL (`temporal_rep_stat_ecg`)  
+**Target Venues**: IEEE Transactions on Biomedical Engineering / NeurIPS / Spatial Statistics / Nature Digital Medicine  
+**Reference Origin**: Senanayake & Jeganathan (*Spatial Statistics*, 2026, Elsevier)  
 
 ---
 
-## 2. Theoretical Formulation & Architecture Contracts
+## 1. Problem Anchor & Executive Summary
 
-### 2.1 The Representation Target
-Let complete standard ECG measurements be $X = \{x_I, x_{II}, x_{III}, x_{aVR}, x_{aVL}, x_{aVF}, x_{V1}, \ldots, x_{V6}\} \in \mathbb{R}^{12 \times 5000}$.
-We seek a teacher encoder $T_\theta(X) = Z^\star \in \mathbb{R}^{96}$ such that $Z^\star$ serves as a **task-family-sufficient statistic**:
+Standard temporally constrained clustering algorithms enforce strict temporal contiguity. When applied to long-term or multi-beat electrocardiograms (ECGs), they inevitably **over-segment recurring physiological states** (such as paroxysmal arrhythmias, intermittent ST-segment ischemic episodes, or respiratory sinus arrhythmia cycles) into separate, disconnected cluster labels. Conversely, unconstrained clustering algorithms (e.g., standard K-Means or unconstrained HAC) discard temporal adjacency entirely, arbitrarily mixing scattered, isolated beats and inflating false positive pattern associations due to unaddressed temporal autocorrelation.
 
-$$
-Y \perp X \mid Z^\star
-$$
+We introduce **Temporal repSpat (`temporal_rep_stat_ecg`)**, a principled nonparametric framework that translates the spatial **repSpat** methodology to 1D temporal biomedical signals. By pairing **Constrained Agglomerative Hierarchical Clustering (CAHC)** with a post-clustering statistical testing stage based on the **Inverse Multiquadratic (IMQ) Maximum Mean Discrepancy ($\hat{MMD}^2$)**, **attribute-based block permutation**, and **maximal clique graph reassignment**, Temporal repSpat discovers **Repeated Temporal Patterns (RTPs)** while rigorously controlling the False Discovery Rate under temporal autocorrelation.
 
-for all physiological variables $Y$ spanning cardiac rhythm, conduction kinetics, chamber morphology, and repolarization dynamics.
+```
+=====================================================================================
+                          Temporal repSpat PIPELINE FOR ECG
+=====================================================================================
 
-### 2.2 Mathematical Architecture Contract: Lead-Order Permutation Invariance
-The ordering of leads in a tensor is arbitrary. The symmetric group $S_k$ acts on the order of observed lead channels. Global representation $Z$ must carry the **trivial representation** of $S_k$:
-
-$$
-G(\pi \cdot X_S) = G(X_S) \qquad \forall \pi \in S_k
-$$
-
-Using set cross-attention over spatio-temporal tokens where keys and values are permuted by permutation matrix $P$:
-
-$$
-\operatorname{softmax}\left(Q(PK)^T\right) (PV) = \operatorname{softmax}\left(QK^T P^T\right) PV = \operatorname{softmax}\left(QK^T\right) V
-$$
-
-Because no cross-lead positional embedding is injected, permutation invariance holds analytically. Consequently, the $1.3 \times 10^9$ ordered sequences collapse into exactly **4,095 unique subset equivalence classes**.
-
-### 2.3 Frontal Lead Geometry & Algebraic Rank
-Displayed lead count $k = |S|$ does not equal electrical information rank. Under Einthoven's Law ($III = II - I$) and Goldberger's equations, the frontal limb leads have algebraic rank $r_{\text{limb}} \le 2$. Every subset $S$ is characterized by independent rank $r(S) \in \{1..8\}$ relative to basis $\{I, II, V1..V6\}$.
-
----
-
-## 3. The 10-Model Factorial Architecture Matrix
-
-To isolate the independent contributions of physical inductive bias and structured latent representations, we define a binary $2^3$ factorial design on factors $(G, S, V)$:
-- $G \in \{0, 1\}$: Spherical geometry harmonics ($\theta, \phi$).
-- $S \in \{0, 1\}$: Structured clinical slots (6 slots $\times$ 16D = 96D: Rhythm, Conduction, Morphology, ST-T, Residual 1, Residual 2).
-- $V \in \{0, 1\}$: View reconstruction auxiliary decoder.
-
-| Model ID | Geometry ($G$) | Structured Slots ($S$) | View Aux ($V$) | SSL (VICReg) | Clinical BCE |
-|---|:---:|:---:|:---:|:---:|:---:|
-| **UB** | — | — | — | — | Fully Supervised Upper Bound |
-| **B0** | 0 | 0 | 0 | ✓ | — (True Plain SSL Baseline) |
-| **B1** | 0 | 0 | 0 | ✓ | ✓ |
-| **B3_geom** | 1 | 0 | 0 | ✓ | ✓ |
-| **B2_slots** | 0 | 1 | 0 | ✓ | ✓ |
-| **Model_001**| 0 | 0 | 1 | ✓ | ✓ |
-| **Model_110**| 1 | 1 | 0 | ✓ | ✓ |
-| **Model_101**| 1 | 0 | 1 | ✓ | ✓ |
-| **Model_011**| 0 | 1 | 1 | ✓ | ✓ |
-| **Model_M**  | 1 | 1 | 1 | ✓ | ✓ (Full GRAIL Architecture) |
-
-This factorial structure computes main effects $\Delta_G, \Delta_S, \Delta_V$ and all second- and third-order interactions.
+  [ STEP 1: ATTRIBUTE & TEMPORAL DISSIMILARITY ]
+  ├── Attribute Dissimilarity D : Euclidean (continuous morphology) / Jaccard (binary markers)
+  └── Temporal Adjacency L      : m-Nearest Neighbors along beat time axis (R¹)
+                                         │
+                                         ▼
+  [ STEP 2: TEMPORAL CAHC & PARAMETER OPTIMIZATION ]
+  ├── CAHC Merging              : Ward.D2 Lance–Williams subject to temporal links (L_ij = 1)
+  └── Hyperparameter Search     : Maximize Temporally-Informed (Modified) Silhouette Score
+                                  where b(i) is strictly restricted to adjacent episodes
+                                         │
+                                         ▼
+  [ STEP 3: PAIRWISE MMD² & ATTRIBUTE BLOCK PERMUTATION ]
+  ├── Empirical MMD²            : Characteristic IMQ Kernel k(x,y) = (||x-y||² + c²)⁻¹/²
+  ├── Autocorrelation Null      : k-means morphological blocking b(g) = max(1, floor(n_g/m))
+  └── Multiple Testing          : Benjamini–Hochberg FDR correction at alpha = 0.05
+                                         │
+                                         ▼
+  [ STEP 4: SIMILARITY GRAPH & MAXIMAL CLIQUE REASSIGNMENT ]
+  ├── Similarity Graph G_sim    : Edges between episodes with p_adj >= 0.05 (weight = MMD²)
+  └── Maximal Clique Merging    : Extract maximal cliques (size >= 3) -> Unified RTP Labels
+=====================================================================================
+```
 
 ---
 
-## 4. Multi-Dimensional Representation Qualification Suite
+## 2. Mathematical Architecture Contract
 
-A representation does not pass by single-number AUROC. It must pass an exhaustive qualification profile:
+### 2.1 Domain Mapping
+- Locations $s \in \mathbb{R}^2$ $\longrightarrow$ Beat timestamps $t \in \mathbb{R}^1$.
+- Sampling points $\{s_1, \dots, s_n\}$ $\longrightarrow$ R-peak timestamps $\{t_1, \dots, t_n\}$.
+- $p$-dimensional attribute vector $X(t) \in \mathbb{R}^p$ across $n$ beats:
+  - Continuous morphology: pre/post RR intervals, QRS duration, QRS peak-to-peak amplitude, ST deviation, T-wave amplitude.
+  - Binary markers: ST elevation, ST depression, T inversion, pathological Q, QRS prolongation, premature beat.
 
-1. **Linear Sufficiency**: Logistic probes on frozen $Z$ for Anchor concepts ($N=25$), Tier P1 (directly related, $N=11$), Tier P2 (within-domain transfer, $N=15$), and Tier P3 (pure ontology-distinct, $N=3$: `LVOLT`, `NORM`, `PACE`).
-2. **Compactness & Intrinsic Geometry**: Singular value spectrum, effective rank $r_{\text{eff}} = \exp(-\sum p_i \log p_i)$, participation ratio $PR$, condition number $\kappa$, and TwoNN intrinsic dimension $d_{\text{TwoNN}}$.
-3. **Geometric Separability**: Fisher separation criterion $J_c$, centroid distance $d_c$, and within-versus-between distance ratio $R_c$.
-4. **Local Semantic Geometry**: Latent nearest-neighbor retrieval precision $P@k$, $Recall@k$, and $nDCG@k$ for $k \in \{1, 5, 10, 20, 50\}$ under multi-label Jaccard overlap.
-5. **Functional Disentanglement**: $6 \times C$ Slot $\times$ Concept probe matrix, slot selectivity gap, and intervention specificity (selectively zeroing/ablating slot $z_j$ to verify domain-specific prediction drop).
-6. **Residual Slot Challenge**: Verifying that residual discovery slots ($Z_{\text{residual}} \in \mathbb{R}^{32}$) encode meaningful non-trivial information beyond structured slots ($Z_{\text{structured}} \in \mathbb{R}^{64}$).
-7. **Nuisance Accessibility**: Probing frozen $Z$ for patient Age ($R^2$ and MAE via Ridge regression) and Sex (AUROC).
+### 2.2 Temporally-Informed Silhouette Separation
+Unlike global silhouette scores, the between-cluster separation $b(i)$ evaluates only temporally adjacent episodes:
+$$b(i) = \min_{\mathcal{C}(\ell) \neq \mathcal{C}(g) : \ell_{g\ell} = 1} \left( \frac{1}{n_\ell} \sum_{j \in \mathcal{C}(\ell)} d_{ij} \right)$$
+ensuring that segmentation preserves sharp local temporal contrast.
 
----
+### 2.3 Dependence-Preserving Block Permutation
+Because consecutive heartbeats exhibit significant autonomic and physiological autocorrelation, standard i.i.d. beat permutation violates $H_0$ and inflates Type I error. We partition beats into $b(g) = \max(1, \lfloor n_g/m \rfloor)$ morphological blocks via $k$-means in attribute space and permute entire blocks without replacement, preserving local dependence structure under the null hypothesis.
 
-## 5. Integration of LVCG Multi-Benchmark Probing Suite
-
-To ensure direct reproducibility and benchmark comparability against frontier ECG foundation models (such as LVCG, Zhan et al.), we integrate the complete LVCG downstream linear probing battery:
-- **Standard Downstream Benchmarks**:
-  1. `ptbxl_super_class` (5 superclasses: NORM, MI, STTC, CD, HYP)
-  2. `ptbxl_sub_class` (23 diagnostic subclasses)
-  3. `ptbxl_form` (19 ECG form/morphology diagnostic classes)
-  4. `ptbxl_rhythm` (12 rhythm statement classes)
-  5. `icbeb` (ICBEB 2018 9-class arrhythmia challenge)
-  6. `chapman` (Chapman CSN 4-class arrhythmia challenge)
-- **Protocol**:
-  - Backbone frozen; feature extraction precomputed in $O(N \times 12)$ steps.
-  - Multi-seed linear probing with Adam optimizer (lr=1e-3, batch_size=128/256).
-  - Class-wise optimal decision threshold search on validation set via F1 grid sweep.
-  - Multi-metric reporting: Macro AUROC, Macro F1, Accuracy, Precision, Recall.
-  - Low-shot sample efficiency sweeps across label ratios $\{0.01, 0.05, 0.10, 0.25, 0.50, 1.00\}$.
+### 2.4 Maximal Clique Criterion ($\text{size} \ge 3$)
+A recurring clinical pattern requires mutual distributional equivalence across at least three temporally separated episodes:
+$$\text{clique}(G_{\text{sim}}) = \{ \mathcal{C}(g_1), \dots, \mathcal{C}(g_k) \} \quad \text{with } k \ge 3, \quad \forall u, v \in \text{clique}, \; p_{\text{adj}}(u, v) \ge 0.05$$
+preventing isolated, spurious pairwise matches from contaminating global episode taxonomy.
 
 ---
 
-## 6. Stage B: Lead Information Theory across 4,095 Subsets
+## 3. Dominant Contribution & Rejected Complexity
 
-Once the teacher encoder $Z^\star = T(X_{\text{full}})$ passes Stage A qualification, the generalist arbitrary-lead model $Z_S = G(X_S, S)$ is trained to align with $Z^\star$.
-
-We exhaustively evaluate all **4,095 non-empty subsets** using fast spatio-temporal token caching, yielding:
-1. **Coordinate-Preserving vs Reprobed Recovery**:
-   - $P_{\text{fixed}}(S) = \operatorname{Perf}(W^\star Z_S)$ vs $P_{\text{reprobe}}(S) = \operatorname{Perf}(W_S Z_S)$.
-   - Coordinate drift gap: $D_{\text{coordinate}}(S) = P_{\text{reprobe}}(S) - P_{\text{fixed}}(S)$.
-2. **Exact Lead Shapley Values**:
-   $$\phi_i^{(d)} = \sum_{S \subseteq N \setminus \{i\}} \frac{|S|!(12-|S|-1)!}{12!} [v_d(S \cup \{i\}) - v_d(S)]$$
-   Computed for latent similarity $\phi_i^{(Z)}$ and clinical diagnostic accuracy $\phi_i^{(d)}$.
-3. **Empirical Lead Synergy & Redundancy Graph**:
-   Pairwise Harsanyi/Möbius 2nd-order interaction matrix $I_{ij}^{(d)}$ identifying genuine clinical cooperation ($I_{ij} > 0$) vs redundant coverage ($I_{ij} < 0$).
-4. **Pareto Information Frontiers**:
-   Information retention bounds $\{P_{\min}, P_{\text{med}}, P_{\max}\}$ plotted against displayed lead count $k$ and independent rank $r(S)$.
-5. **Disease-Specific Minimal Sufficient Lead Sets**:
-   Minimal cardinality subsets $k_d^\star$ satisfying $P_d(S) \ge P_d(\text{full}) - 0.02$.
+- **Dominant Contribution**: The exact, provably valid translation of repSpat to 1D temporal biomedical time series, establishing the first nonparametric statistical discovery framework for Repeated Temporal Patterns in ECG.
+- **Explicitly Rejected Complexity**:
+  - *No heavy neural black-box clustering*: The framework remains fully non-parametric, interpretable, and reproducible without stochastic gradient descent or latent training instability.
+  - *No arbitrary heuristic thresholding*: Hypotheses are judged strictly by MMD with exact permutation null distributions and Benjamini-Hochberg FDR control.

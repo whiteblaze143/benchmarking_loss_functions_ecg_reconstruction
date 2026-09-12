@@ -1,46 +1,35 @@
-# Refinement Report: Operationalization of GRAIL-ECG v2
+# Refinement Report: Temporal repSpat for ECG Signal Analysis
 
-**Date**: 2026-09-11  
-**Refinement Phase**: V3 Implementation Transition  
+**Date**: 2026-09-12  
+**Document**: `refine-logs/REFINEMENT_REPORT.md`  
+**Package Root**: `temporal_rep_stat_ecg/`  
 
 ---
 
-## 1. Concrete Engineering Realizations
+## 1. Problem Framing & Line-by-Line Translation
 
-1. **Unit-Verified Contracts**:
-   Implemented and passed 18/18 mandatory unit tests in `tests/test_grail_v2_contracts.py` covering:
-   - P1 memorization (supervised pathway & view decoder)
-   - VICReg non-collapse (variance and covariance bounds)
-   - Lead-order permutation invariance ($\Delta < 10^{-6}$)
-   - Subset uniqueness (4,095 unique non-empty bitmasks)
-   - Exact rank calculations and limb algebra constraints
-   - Cooperative game Shapley axioms (efficiency, symmetry, dummy lead, synergy).
+| repSpat Spatial Object | Temporal repSpat ECG Analogue | Mathematical Specification |
+|---|---|---|
+| Sampling location $s \in \mathbb{R}^2$ | Beat timestamp $t \in \mathbb{R}^1$ | Detected R-peak time along continuous ECG recording |
+| Attribute vector $X(s) \in \mathbb{R}^p$ | Beat feature vector $X(t) \in \mathbb{R}^p$ | Continuous morphology (RR, QRS, ST, T) or binary clinical markers |
+| Spatial adjacency $L$ ($m$-NN in $\mathbb{R}^2$) | Temporal adjacency $L$ ($m$-NN in $\mathbb{R}^1$) | $L_{ij} = 1$ if beat $j$ is among the $m$ closest temporal neighbors of beat $i$ |
+| Spatial CAHC | Temporal CAHC | Ward.D2 agglomeration subject to temporal contiguity ($L_{ij}=1$) |
+| Modified spatial silhouette | Modified temporal silhouette | $b(i)$ evaluates only temporally adjacent episodes ($\ell_{g\ell}=1$) |
+| IMQ Kernel on spatial features | IMQ Kernel on beat features | $k(x, y) = (\|x-y\|_2^2 + c^2)^{-1/2}$ ($c \ge 1$) |
+| Spatial $k$-means blocking | Temporal $k$-means blocking | $b(g) = \max(1, \lfloor n_g/m \rfloor)$ morphological feature blocks |
+| Block permutation resampling | Block permutation resampling | Shuffling whole blocks across episodes ($B=200$) preserving autocorrelation |
+| Benjamini-Hochberg FDR | Benjamini-Hochberg FDR | Adjusted p-values across all $\binom{G}{2}$ pairwise tests at $\alpha = 0.05$ |
+| Similarity graph $G_{\text{sim}}$ | Similarity graph $G_{\text{sim}}$ | Undirected edge where $p_{\text{adj}} \ge 0.05$ weighted by $\hat{MMD}^2$ |
+| Maximal cliques of size $\ge 3$ | Maximal cliques of size $\ge 3$ | Reassignment into unified Repeated Temporal Patterns (RTPs) |
+| Repeated Spatial Patterns (RSPs) | Repeated Temporal Patterns (RTPs) | Unified recurring clinical / physiological rhythm states |
 
-2. **Concept Hierarchy and Imbalance Registry**:
-   Generated `configs/ptbxl_concept_tiers.yaml` with positive class weights computed strictly from training folds 1–7:
-   - 25 Anchor concepts partitioned across Rhythm (2), Conduction (6), Morphology (9), and ST-T (8).
-   - 11 Tier P1 probes (directly coupled).
-   - 15 Tier P2 probes (within-domain transfer).
-   - 3 Tier P3 probes (pure ontology-distinct: `LVOLT`, `NORM`, `PACE`).
+---
 
-3. **Multi-Dimensional Representation Qualification Engine**:
-   Implemented `grail_ecg/src/evaluation/representation_qualification.py` providing automated computation of:
-   - Singular values spectrum, effective rank, participation ratio, TwoNN intrinsic dimension.
-   - Linear probes on frozen $Z$ for Anchor, P1, P2, P3 tiers.
-   - Low-shot sample efficiency sweeps (1% to 100%).
-   - Fisher separation, centroid distance, within/between ratio.
-   - Latent retrieval $P@k$, $Recall@k$, $nDCG@k$.
-   - Slot $\times$ concept probe matrix and intervention specificity.
-   - Residual discovery slot retention challenge.
-   - Nuisance metadata accessibility (Age regression $R^2$, Sex classification AUROC).
+## 2. Refinement Evolution & Risk Mitigations
 
-4. **LVCG Multi-Benchmark Probing Integration**:
-   - Implemented `external/LVCG/probing/encoders/grail_encoder.py` adapting GRAIL-ECG to LVCG's standard `BaseEncoder` interface.
-   - Created `configs/eval_grail_lvcg_probing.yaml` enabling standardized evaluations on `ptbxl_super_class`, `ptbxl_sub_class`, `ptbxl_form`, `ptbxl_rhythm`, `icbeb`, and `chapman`.
-
-5. **Exhaustive 4,095 Subset Lattice Engine**:
-   Implemented `grail_ecg/src/evaluation/exhaustive_subset_eval.py` and `scripts/run_exhaustive_4095_subsets.py`:
-   - Token caching precomputes all 12 lead representations in $O(N \times 12)$ steps.
-   - Computes coordinate-preserving fixed-head AUROC vs reprobed AUROC.
-   - Computes exact Lead Shapley values and pairwise Harsanyi/Möbius synergy/redundancy graphs.
-   - Extracts disease-specific minimal sufficient lead sets and Pareto information frontiers.
+1. **Risk: False discoveries from temporal autocorrelation**:
+   - *Mitigation*: Attribute-based block permutation preserves the within-block temporal autocorrelation of consecutive heartbeats. Beats within a block share identical physiological states.
+2. **Risk: Over-segmentation from strict temporal contiguity**:
+   - *Mitigation*: Step 4 clique reassignment merges mutually distributionally equivalent episodes across the entire time recording into unified RTP labels.
+3. **Risk: Under-segmentation from unconstrained clustering**:
+   - *Mitigation*: Step 2 CAHC enforces strict temporal contiguity during initial episode formation, preventing noise from fusing distant, unrelated beats prematurely.

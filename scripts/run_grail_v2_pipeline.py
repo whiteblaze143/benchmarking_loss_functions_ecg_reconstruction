@@ -96,7 +96,15 @@ def analyze_factorial_effects(summary_json_path: Path, output_md_path: Path):
         }
 
     print("\nFactorial Main Effects:")
-    print(pd.DataFrame(effects))
+    effects_df = pd.DataFrame(effects)
+    print(effects_df)
+    with open(output_md_path, "w") as f:
+        f.write("# GRAIL-ECG v2 Factorial ANOVA Main Effects Report\n\n")
+        f.write("## 2^3 Factorial Design Table\n\n```\n")
+        f.write(df.to_string(index=False))
+        f.write("\n```\n\n## Main Effects (Delta_G, Delta_S, Delta_V)\n\n```\n")
+        f.write(effects_df.to_string())
+        f.write("\n```\n")
     return df, effects
 
 

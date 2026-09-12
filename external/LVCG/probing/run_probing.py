@@ -442,7 +442,10 @@ def main() -> None:
 
     config_path = Path(args.config)
     if not config_path.is_absolute():
-        config_path = PACKAGE_ROOT / config_path
+        if not config_path.exists() and (PACKAGE_ROOT / config_path).exists():
+            config_path = PACKAGE_ROOT / config_path
+        else:
+            config_path = config_path.resolve()
     with open(config_path) as f:
         cfg = yaml.safe_load(f)
     device = torch.device(
@@ -452,7 +455,10 @@ def main() -> None:
 
     csv_path = Path(args.results)
     if not csv_path.is_absolute():
-        csv_path = PACKAGE_ROOT / csv_path
+        if not csv_path.parent.exists() and (PACKAGE_ROOT / csv_path).parent.exists():
+            csv_path = PACKAGE_ROOT / csv_path
+        else:
+            csv_path = csv_path.resolve()
     init_csv(csv_path)
 
     all_models = cfg["models"]

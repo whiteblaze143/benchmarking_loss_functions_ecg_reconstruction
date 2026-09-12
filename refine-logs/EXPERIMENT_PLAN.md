@@ -1,95 +1,51 @@
-# Experiment Plan: M3 Reference Sensitivity and Functional Atlas Audit
+# Experiment Plan: Validation Roadmap for Temporal repSpat (`temporal_rep_stat_ecg`)
 
-**Problem**: The completed adapted-repSpat M3 pairwise tests contain substantial structure, but connected-component closure collapses all 64 domains into one non-clique component despite 1,063 direct rejections.
-**Method Thesis**: Q-VCG recurrence should be evaluated as statistically supported nonlocal correspondence in a continuous functional-distribution geometry, not forced into categorical motif labels.
-**Date**: 2026-09-11
+**Date**: 2026-09-12  
+**Document**: `refine-logs/EXPERIMENT_PLAN.md`  
+**Pipeline Orchestrator**: `temporal_rep_stat_ecg/scripts/run_comprehensive_evaluation.py`  
 
-## Claim Map
+---
 
-| Claim | Why It Matters | Minimum Convincing Evidence | Linked Blocks |
-|---|---|---|---|
-| C1: The categorical quotient gate fails. | Prevents a connected but contradictory graph from becoming a tokenizer. | Frozen M3 shows one `AMBIGUOUS_NON_CLIQUE` component and 1,063 rejected pairs; gate is explicitly `FAIL`. | B1 |
-| C2: Pairwise functional recurrence may remain scientifically meaningful. | Separates failure of transitive quotienting from failure of recurrent structure. | Full reference sensitivity plus label-free evidence of physically distant BH non-rejected pairs and physical/functional geometry analysis. | B2, B3 |
+## 1. Core Validation Claims
 
-Anti-claim: the giant component is merely an artifact of deviations from released repSpat block construction. It is ruled out only if the complete M3R graph shows comparable topology; a subset is insufficient.
+### Claim 1 (Simulation Superiority over Baselines)
+*Under temporal autoregressive correlation ($\eta \in \{0.3, 0.8\}$), Temporal repSpat achieves significantly higher Adjusted Rand Index (ARI $\approx 0.95\text{--}1.00$) in recovering Repeated Temporal Patterns compared to:*
+1. **CAHC alone**: Over-segments recurring intervals into disjoint labels (ARI $\le 0.60$).
+2. **Unconstrained K-Means / HAC**: Fails to preserve temporal contiguity, fragmenting segments and confusing background noise with patterns.
 
-## Paper Storyline
+### Claim 2 (Clinical Utility & Metric Sensitivity on Multi-Lead ECGs)
+*On real patient multi-lead ECGs from the PTB-XL database, Temporal repSpat discovers clinically interpretable Repeated Temporal Patterns (RTPs) under both Continuous Morphology (Euclidean distance) and Binary Clinical Indicators (Jaccard distance), capturing recurrent arrhythmias and repolarization dynamics.*
 
-- Main paper must report the categorical quotient gate as failed, without calling the giant component a motif.
-- Main paper may claim nonlocal recurrence only from declared pairwise/geometry statistics.
-- Appendix should report the complete M3R reference sensitivity and calibration limitations.
-- Community detection, spectral clustering, clinical labels, and any replacement categorical tokenizer are intentionally excluded.
+---
 
-## Experiment Blocks
+## 2. Experiment Execution Matrix
 
-### B1: Freeze and Gate M3
+### Block 1: Autoregressive Simulation Benchmark (Table 4 Replication in 1D)
+- **Grid configurations**:
+  - Autocorrelation $\eta \in \{0.3, 0.8\}$
+  - Attribute dimensions $p \in \{5, 10\}$
+  - Sequence lengths $n \in \{300, 600\}$
+  - Random seeds: 5 seeds per configuration
+- **Primary Metrics**: Adjusted Rand Index (ARI), Normalized Mutual Information (NMI), Fowlkes-Mallows Index (FMI).
+- **Ablation comparisons**:
+  - Baseline A: Standard CAHC alone
+  - Baseline B: Unconstrained K-Means
+  - Baseline C: Unconstrained Agglomerative Clustering
+  - Champion: Temporal repSpat (CAHC + IMQ MMD + Block Permutation + Maximal Cliques)
 
-- Claim tested: C1.
-- Dataset: completed M3 artifacts over 64 Q-VCG domains and 2,016 pairs.
-- Metrics: component count, clique status, rejected/non-rejected pairs, artifact SHA-256 checksums.
-- Success criterion: immutable snapshot and machine-readable `QVCG_CC_MOTIF_GATE=FAIL` with `QVCG_RECURRENT_STRUCTURE` left unresolved.
-- Failure interpretation: any missing/inconsistent artifact invalidates downstream work.
-- Priority: MUST-RUN.
+### Block 2: Clinical Multi-Lead ECG Benchmark (PTB-XL)
+- **Database**: PTB-XL (`data/ptb_xl/records500`)
+- **Evaluated representations**:
+  - Representation 1: Continuous Morphology features (RR intervals, QRS width, ST deviation, T amplitude) with Euclidean distance.
+  - Representation 2: Binary Clinical Markers (ST elevation, T inversion, premature beat, etc.) with Jaccard distance.
+- **Outputs**:
+  - Episode timelines with overlaid ECG waveforms
+  - Episode similarity graphs $G_{\text{sim}}$ with edge weights ($\hat{MMD}^2_{\text{obs}}$) and highlighted maximal cliques
+  - Structured JSON evaluation metrics.
 
-### B2: M3R Reference-Implementation Sensitivity
+---
 
-- Claim tested: C2 anti-claim.
-- Dataset: identical frozen microstate table, domain assignment, descriptors, and 64 domains used by M3.
-- System: `floor(n/10)` blocks; standard `KMeans(n_init=10, random_state=0)`; IMQ `c=1`; biased MMD²; 200 whole-block permutations; `p=exceed/200`; global BH 0.05; non-rejection graph and connected components.
-- Metrics: edge Jaccard, rejection agreement, p-value Spearman correlation, BH-decision agreement, component count, largest component, clique status.
-- Success criterion: all 2,016 checkpoints and comparison artifact generated. Comparable topology supports robustness; fragmentation attributes sensitivity to implementation choices.
-- Failure interpretation: M3R disagreement requires qualifying every topology claim rather than selecting the preferred graph.
-- Priority: MUST-RUN.
-
-### B3: M3I Functional Atlas Audit
-
-- Claim tested: C2.
-- Scientific objects: frozen primary M3 observed 64x64 MMD² matrix and BH graph; M3R is sensitivity only.
-- Metrics: edge density, degree distribution, connected components, clique number/maximal cliques, clustering coefficient, shortest paths, edge/non-edge MMD; Spearman association between physical centroid distance and MMD²; 26-neighbor physically adjacent rejected pairs; top-quartile-distance non-rejected pairs; classical-MDS coordinates and spectrum from `sqrt(MMD²)`.
-- Success criterion: complete label-free tables and figures with declared thresholds and no generated categorical labels.
-- Failure interpretation: absence of distant non-rejections weakens the recurrent-pattern hypothesis even if graph density is high.
-- Figure targets: physical-distance versus MMD² scatter; physical versus functional MDS embedding; graph/topology summary.
-- Priority: MUST-RUN.
-
-### B4: Dependence Calibration
-
-- Claim tested: whether adapted K-means block permutation is calibrated for repeated-patient/temporal ECG dependence.
-- Setup: synthetic Q-VCG-like null and alternative simulations preserving patient and temporal dependence.
-- Metrics: type-I error, power, p-value uniformity, sensitivity to block construction.
-- Success criterion: type-I error compatible with 0.05 and useful power under prespecified alternatives.
-- Failure interpretation: pairwise inferential claims require stronger qualification or patient-aware blocks.
-- Priority: NICE-TO-HAVE after B2/B3; not part of the immediate requested implementation.
-
-## Run Order and Milestones
-
-| Milestone | Goal | Runs | Decision Gate | Cost | Risk |
-|---|---|---|---|---|---|
-| M3-F | Freeze primary | checksum/copy/gate verification | all M3 invariants exact | minutes, CPU | accidental overwrite |
-| M3R | Full reference sensitivity | 2,016 x 200 permutations | all pairs then global BH | CPU-hours; restart-safe | large-domain kernel cost |
-| M3I | Label-free atlas | topology, physical-functional relation, MDS | no motif labels emitted | minutes, CPU | arbitrary distance thresholds |
-| M3I-CAL | Calibration | synthetic null/alternative | calibrated type-I error | moderate CPU | simulation mismatch |
-
-## Compute and Data Budget
-
-- GPU: none for M3R/M3I; preserve GPU allocation for GRAIL.
-- CPU: M3R uses bounded pair workers and atomic checkpoints.
-- Storage: separate `m3r_reference/` and `m3i_functional_atlas/`; primary M3 is never overwritten.
-- Biggest bottleneck: exact block-kernel sums for the largest domains.
-
-## Risks and Mitigations
-
-- Non-rejection is not equivalence: use “BH non-rejected correspondence,” never “equivalent motif.”
-- Connectedness is non-transitive: retain explicit non-clique diagnostics and failed quotient gate.
-- M3R still adapts `m=10`: record it in every summary.
-- MDS may be non-Euclidean numerically: report negative eigenmass and do not cluster coordinates.
-- Multiple exploratory thresholds: declare adjacency structurally and distant threshold as physical-distance Q75.
-
-## Final Checklist
-
-- [x] Claims revised around the observed failed quotient gate
-- [x] Reference sensitivity specified over all 2,016 pairs
-- [x] Label-free functional atlas specified
-- [x] No replacement clustering or motif labels authorized
-- [x] Frozen M3 checksums and gate artifact verified
-- [ ] M3R complete and compared to M3
-- [x] M3I outputs generated and audited
+## 3. Decision Gates & Stopping Criteria
+- **Gate 1**: Unit test suite passes 100% (12/12 tests).
+- **Gate 2**: Simulation benchmark confirms Temporal repSpat median ARI $\ge 0.85$ across configs.
+- **Gate 3**: Clinical benchmark successfully executes without errors across test patient records.

@@ -1,0 +1,92 @@
+{
+  "framework": "temporal_rep_stat_ecg",
+  "description": "Nonparametric discovery of Repeated Temporal Patterns (RTPs) in ECG",
+  "simulation_summary": [
+    {
+      "eta": 0.3,
+      "p_features": 5,
+      "n_beats": 300,
+      "temporal_repspat_ARI_median": 1.0,
+      "temporal_repspat_ARI_mean": 1.0,
+      "temporal_repspat_ARI_std": NaN,
+      "cahc_ARI_median": 0.23359066991392916,
+      "cahc_ARI_mean": 0.23359066991392916,
+      "unconstrained_ARI_median": 1.0,
+      "unconstrained_ARI_mean": 1.0,
+      "kmeans_ARI_median": 1.0,
+      "kmeans_ARI_mean": 1.0
+    },
+    {
+      "eta": 0.3,
+      "p_features": 5,
+      "n_beats": 600,
+      "temporal_repspat_ARI_median": 1.0,
+      "temporal_repspat_ARI_mean": 1.0,
+      "temporal_repspat_ARI_std": NaN,
+      "cahc_ARI_median": 0.2361784633502083,
+      "cahc_ARI_mean": 0.2361784633502083,
+      "unconstrained_ARI_median": 1.0,
+      "unconstrained_ARI_mean": 1.0,
+      "kmeans_ARI_median": 1.0,
+      "kmeans_ARI_mean": 1.0
+    },
+    {
+      "eta": 0.3,
+      "p_features": 10,
+      "n_beats": 300,
+      "temporal_repspat_ARI_median": 1.0,
+      "temporal_repspat_ARI_mean": 1.0,
+      "temporal_repspat_ARI_std": NaN,
+      "cahc_ARI_median": 0.23359066991392916,
+      "cahc_ARI_mean": 0.23359066991392916,
+      "unconstrained_ARI_median": 1.0,
+      "unconstrained_ARI_mean": 1.0,
+      "kmeans_ARI_median": 1.0,
+      "kmeans_ARI_mean": 1.0
+    },
+    {
+      "eta": 0.8,
+      "p_features": 5,
+      "n_beats": 300,
+      "temporal_repspat_ARI_median": 0.9167657271377021,
+      "temporal_repspat_ARI_mean": 0.9167657271377021,
+      "temporal_repspat_ARI_std": NaN,
+      "cahc_ARI_median": 0.23359066991392916,
+      "cahc_ARI_mean": 0.23359066991392916,
+      "unconstrained_ARI_median": 1.0,
+      "unconstrained_ARI_mean": 1.0,
+      "kmeans_ARI_median": 1.0,
+      "kmeans_ARI_mean": 1.0
+    },
+    {
+      "eta": 0.8,
+      "p_features": 5,
+      "n_beats": 600,
+      "temporal_repspat_ARI_median": 0.846136094771686,
+      "temporal_repspat_ARI_mean": 0.846136094771686,
+      "temporal_repspat_ARI_std": NaN,
+      "cahc_ARI_median": 0.2361784633502083,
+      "cahc_ARI_mean": 0.2361784633502083,
+      "unconstrained_ARI_median": 1.0,
+      "unconstrained_ARI_mean": 1.0,
+      "kmeans_ARI_median": 1.0,
+      "kmeans_ARI_mean": 1.0
+    },
+    {
+      "eta": 0.8,
+      "p_features": 10,
+      "n_beats": 300,
+      "temporal_repspat_ARI_median": 1.0,
+      "temporal_repspat_ARI_mean": 1.0,
+      "temporal_repspat_ARI_std": NaN,
+      "cahc_ARI_median": 0.23359066991392916,
+      "cahc_ARI_mean": 0.23359066991392916,
+      "unconstrained_ARI_median": 1.0,
+      "unconstrained_ARI_mean": 1.0,
+      "kmeans_ARI_median": 1.0,
+      "kmeans_ARI_mean": 1.0
+    }
+  ],
+  "clinical_evaluated_records": 1,
+  "status": "COMPLETED"
+}

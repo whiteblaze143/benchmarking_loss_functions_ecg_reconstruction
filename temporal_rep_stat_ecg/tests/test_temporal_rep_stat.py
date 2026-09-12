@@ -192,15 +192,14 @@ def test_clique_reassignment():
     assert np.all(reassigned[6:] == 4)
 
 
-def test_synthetic_ar_generator():
-    sim = generate_autoregressive_ecg_simulation(
-        n_beats=100, p_features=5, eta=0.4, random_state=42
-    )
-    assert sim["X"].shape == (100, 5)
-    assert len(sim["timestamps"]) == 100
-    assert len(sim["ground_truth_rtp"]) == 100
-    # Must have repeated labels (at least RTP-A label 2)
-    assert np.sum(sim["ground_truth_rtp"] == 2) > 0
+def test_semiseg_beat_feature_extraction():
+    from temporal_rep_stat_ecg.src.data.ecg_features import load_ptbxl_record, extract_beat_features
+    signals, fs, _ = load_ptbxl_record("00001_hr")
+    feats = extract_beat_features(signals, fs=fs, lead_idx=1)
+    assert len(feats["timestamps"]) >= 3
+    assert feats["continuous"].shape[1] == 8
+    assert feats["binary"].shape[1] == 8
+    assert "QRS_onset" in feats["delineation_boundaries"]
 
 
 def test_temporal_rep_spat_pipeline_end_to_end():

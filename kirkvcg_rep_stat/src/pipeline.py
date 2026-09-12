@@ -242,4 +242,5 @@ class KirkVCGRepSpat:
             "anomaly_fraction": self.encoding_.get("anomaly_fraction", 0.0)
             if self.encoding_
             else 0.0,
+            "encoding": self.encoding_,
         }

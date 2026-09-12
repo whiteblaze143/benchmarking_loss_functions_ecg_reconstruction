@@ -1,0 +1,46 @@
+[
+  {
+    "('method', '')":"KirkVCG_repSpat",
+    "('ari_vs_wave_gt', 'mean')":0.0566948672,
+    "('ari_vs_wave_gt', 'std')":0.0576983226,
+    "('nmi_vs_wave_gt', 'mean')":0.1058336974,
+    "('nmi_vs_wave_gt', 'std')":0.0772077099,
+    "('n_cliques', 'mean')":2.25,
+    "('n_cliques', 'std')":0.8660254038,
+    "('anomaly_fraction', 'mean')":0.2255,
+    "('anomaly_fraction', 'std')":0.3632341955
+  },
+  {
+    "('method', '')":"Standard_KMeans",
+    "('ari_vs_wave_gt', 'mean')":0.0781938976,
+    "('ari_vs_wave_gt', 'std')":0.0436431765,
+    "('nmi_vs_wave_gt', 'mean')":0.1332674862,
+    "('nmi_vs_wave_gt', 'std')":0.0717241715,
+    "('n_cliques', 'mean')":0.0,
+    "('n_cliques', 'std')":0.0,
+    "('anomaly_fraction', 'mean')":0.0,
+    "('anomaly_fraction', 'std')":0.0
+  },
+  {
+    "('method', '')":"Temporal_Only_HAC",
+    "('ari_vs_wave_gt', 'mean')":0.0045807717,
+    "('ari_vs_wave_gt', 'std')":0.011874562,
+    "('nmi_vs_wave_gt', 'mean')":0.039562685,
+    "('nmi_vs_wave_gt', 'std')":0.0269548195,
+    "('n_cliques', 'mean')":0.0,
+    "('n_cliques', 'std')":0.0,
+    "('anomaly_fraction', 'mean')":0.0,
+    "('anomaly_fraction', 'std')":0.0
+  },
+  {
+    "('method', '')":"Unconstrained_HAC",
+    "('ari_vs_wave_gt', 'mean')":0.0966856708,
+    "('ari_vs_wave_gt', 'std')":0.0478303244,
+    "('nmi_vs_wave_gt', 'mean')":0.152432376,
+    "('nmi_vs_wave_gt', 'std')":0.076964929,
+    "('n_cliques', 'mean')":0.0,
+    "('n_cliques', 'std')":0.0,
+    "('anomaly_fraction', 'mean')":0.0,
+    "('anomaly_fraction', 'std')":0.0
+  }
+]

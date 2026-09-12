@@ -14,7 +14,6 @@ from kirkvcg_rep_stat.src.vcg.kinematics import compute_vcg_kinematics
 from kirkvcg_rep_stat.src.features.ecg_features import (
     extract_sample_features,
     standardize_features,
-    binarize_features,
 )
 from kirkvcg_rep_stat.src.clustering.distance import compute_attribute_distances
 from kirkvcg_rep_stat.src.clustering.vcg_adjacency import (
@@ -83,15 +82,10 @@ def test_feature_extraction():
     features = extract_sample_features(ecg, fs=500.0)
 
     assert "continuous" in features
-    assert "binary" in features
     assert "vcg" in features
     assert features["continuous"].shape[0] == 150
-    assert features["binary"].shape[0] == 150
     assert features["vcg"].shape == (150, 3)
-
-    # Check binary marker values {0, 1}
-    u_vals = np.unique(features["binary"])
-    assert set(u_vals).issubset({0.0, 1.0})
+    assert len(features["feature_names"]) == features["continuous"].shape[1]
 
 
 def test_distance_computation():
@@ -103,12 +97,16 @@ def test_distance_computation():
     assert np.all(D_euc >= 0.0)
     assert np.allclose(D_euc, D_euc.T)
 
-    # Binary Jaccard
+    # Binary Jaccard on valid binary data
     X_bin = (X > 0).astype(float)
     D_jac = compute_attribute_distances(X_bin, metric="jaccard")
     assert D_jac.shape == (50, 50)
     assert np.all((D_jac >= 0.0) & (D_jac <= 1.0))
     np.testing.assert_allclose(np.diag(D_jac), 0.0)
+
+    # Jaccard on continuous data should raise ValueError (no synthetic threshold fallback)
+    with pytest.raises(ValueError, match="Jaccard distance metric requires binary"):
+        compute_attribute_distances(X, metric="jaccard")
 
 
 def test_vcg_adjacency():

@@ -1,0 +1,81 @@
+{
+  "status": "COMPLETED",
+  "benchmark_type": "actual_clinical_records",
+  "elapsed_seconds": 262.97,
+  "dataset": "RDB_clinical_cohort",
+  "n_patient_records": 12,
+  "rhythms_evaluated": [
+    "AF",
+    "AT",
+    "SA",
+    "SB",
+    "SR",
+    "ST",
+    "SVT"
+  ],
+  "metrics_summary": {
+    "KirkVCG_repSpat": {
+      "mean_ari": 0.05669486715941475,
+      "std_ari": 0.05769832258364822,
+      "mean_nmi": 0.10583369743598171,
+      "std_nmi": 0.07720770992916068,
+      "mean_cliques": 2.25,
+      "mean_anomaly_fraction": 0.2255
+    },
+    "Temporal_Only_HAC": {
+      "mean_ari": 0.004580771656599152,
+      "std_ari": 0.011874561972254448,
+      "mean_nmi": 0.03956268501903854,
+      "std_nmi": 0.02695481948036699
+    },
+    "Unconstrained_HAC": {
+      "mean_ari": 0.09668567078272448,
+      "std_ari": 0.04783032435804378,
+      "mean_nmi": 0.15243237602736212,
+      "std_nmi": 0.0769649290322493
+    },
+    "Standard_KMeans": {
+      "mean_ari": 0.07819389758092841,
+      "std_ari": 0.04364317652843018,
+      "mean_nmi": 0.13326748619189424,
+      "std_nmi": 0.07172417153773376
+    }
+  },
+  "rhythm_breakdown": {
+    "AF": {
+      "kirk_mean_ari": 0.11446564128128539,
+      "kirk_mean_anomaly_fraction": 0.013333333333333334,
+      "kirk_mean_cliques": 3.0
+    },
+    "AT": {
+      "kirk_mean_ari": 0.05985707213275276,
+      "kirk_mean_anomaly_fraction": 0.08,
+      "kirk_mean_cliques": 1.0
+    },
+    "SA": {
+      "kirk_mean_ari": 0.0542323578742184,
+      "kirk_mean_anomaly_fraction": 0.0,
+      "kirk_mean_cliques": 2.5
+    },
+    "SB": {
+      "kirk_mean_ari": 0.06905819905438408,
+      "kirk_mean_anomaly_fraction": 0.15433333333333332,
+      "kirk_mean_cliques": 2.0
+    },
+    "SR": {
+      "kirk_mean_ari": 0.04213731405433878,
+      "kirk_mean_anomaly_fraction": 0.47333333333333333,
+      "kirk_mean_cliques": 3.0
+    },
+    "ST": {
+      "kirk_mean_ari": 0.02640950923359472,
+      "kirk_mean_anomaly_fraction": 0.47733333333333333,
+      "kirk_mean_cliques": 1.5
+    },
+    "SVT": {
+      "kirk_mean_ari": 0.007875290784581409,
+      "kirk_mean_anomaly_fraction": 0.3893333333333333,
+      "kirk_mean_cliques": 2.0
+    }
+  }
+}

@@ -46,6 +46,7 @@ def main():
   rec=dict(model=m,tier=t,n_concepts=len(g),n_stable=len(valid),n_unstable=len(g)-len(valid),full_auroc_mean=g.full_auroc.mean())
   for col,label in [('d95_clinical','d95'),('d95_sustained','d95_sustained')]:
    x=valid[col].dropna();rec.update({f'{label}_median':x.median(),f'{label}_q1':x.quantile(.25),f'{label}_q3':x.quantile(.75),f'{label}_mean':x.mean(),f'{label}_n_reached':len(x)})
+   rec[f'{label}_reach_fraction']=len(x)/len(valid) if len(valid) else np.nan
    for k in (8,16,24,32):rec[f'{label}_fraction_le_{k}']=(valid[col]<=k).mean()
   for k in (8,16,24,32):rec[f'auroc_k{k}_mean']=g[k].mean() if k in g else np.nan
   sums.append(rec)
@@ -58,9 +59,17 @@ def main():
    for col in ['full_auroc','d95_clinical','d95_sustained',8,16,24,32]:rec[f'{col}_delta']=ga.loc[key,col]-gb.loc[key,col]
    paired.append(rec)
  pd.DataFrame(paired).to_parquet(OUT/"r3_pca_paired_model_deltas.parquet",index=False)
+ # Full-rank endpoint-equivalence QC against the frozen original Pass-A probe.
+ maxrank=d.sort_values('k').groupby(['model','tier','concept'],as_index=False).tail(1)
+ endpoint=maxrank[['model','concept','tier','full_auroc','auroc','k']].rename(columns={'full_auroc':'full_original_auroc','auroc':'maxrank_pca_auroc','k':'maxrank_k'})
+ endpoint['delta_fullrank']=endpoint.maxrank_pca_auroc-endpoint.full_original_auroc;endpoint['abs_delta_fullrank']=endpoint.delta_fullrank.abs()
+ endpoint.to_parquet(OUT/'r3_pca_endpoint_equivalence.parquet',index=False)
+ thresholds=[1e-4,1e-3,5e-3,1e-2]
+ qc=dict(rows=len(endpoint),median_abs_delta=float(endpoint.abs_delta_fullrank.median()),p95_abs_delta=float(endpoint.abs_delta_fullrank.quantile(.95)),max_abs_delta=float(endpoint.abs_delta_fullrank.max()),counts_exceeding={str(x):int((endpoint.abs_delta_fullrank>x).sum()) for x in thresholds},equivalent_at_1e_3=bool((endpoint.abs_delta_fullrank<=1e-3).all()),pca_whitened=False,pc_coordinates_restandardized_before_logistic_probe=True,source_of_discrepancy='Per-k StandardScaler on PCA coordinates changes the isotropic L2 penalty into a variance-weighted penalty in the original standardized feature space.')
+ (OUT/'r3_pca_endpoint_equivalence_summary.json').write_text(json.dumps(qc,indent=2)+'\n')
  # Compact, data-derived interpretation table.
  lead=summary[summary.model.isin(['b1','model_001','model_101','model_m'])][['model','tier','n_concepts','n_stable','full_auroc_mean','d95_median','d95_sustained_median','auroc_k8_mean','auroc_k16_mean','auroc_k24_mean','auroc_k32_mean']]
- text=["# R3 PCA Interpretation","","Estimand: **fixed-readout PCA clinical accessibility**. Sustained d95 is the conservative complexity measure. P3 is exploratory (n=2).","","```text",lead.to_string(index=False),"```",""]
+ text=["# R3 PCA Interpretation","","Estimand: **fixed-readout PCA clinical accessibility**. PC coordinates are re-standardized before the L2 logistic probe, so d95 is not a coordinate-invariant estimate of intrinsic information dimensionality. Sustained d95 is the conservative accessibility-complexity measure. Every median must be read with its n_reached/n_stable fields in the tier summary. P3 is exploratory (n=2).","",f"Endpoint QC: median |delta|={qc['median_abs_delta']:.6f}, p95={qc['p95_abs_delta']:.6f}, max={qc['max_abs_delta']:.6f}; {qc['counts_exceeding'][str(1e-3)]}/{qc['rows']} exceed 1e-3.","","```text",lead.to_string(index=False),"```",""]
  q=pd.DataFrame(paired)
  for comp in q.comparison.unique():
   text += [f"## {comp}","","```text",q[q.comparison==comp].groupby('tier')[['full_auroc_delta','d95_clinical_delta','d95_sustained_delta','8_delta','16_delta','24_delta','32_delta']].mean().to_string(),"```",""]

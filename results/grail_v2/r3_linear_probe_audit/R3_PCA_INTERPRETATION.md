@@ -1,6 +1,8 @@
 # R3 PCA Interpretation
 
-Estimand: **fixed-readout PCA clinical accessibility**. Sustained d95 is the conservative complexity measure. P3 is exploratory (n=2).
+Estimand: **fixed-readout PCA clinical accessibility**. PC coordinates are re-standardized before the L2 logistic probe, so d95 is not a coordinate-invariant estimate of intrinsic information dimensionality. Sustained d95 is the conservative accessibility-complexity measure. Every median must be read with its n_reached/n_stable fields in the tier summary. P3 is exploratory (n=2).
+
+Endpoint QC: median |delta|=0.008291, p95=0.066982, max=0.177962; 198/234 exceed 1e-3.
 
 ```text
     model   tier  n_concepts  n_stable  full_auroc_mean  d95_median  d95_sustained_median  auroc_k8_mean  auroc_k16_mean  auroc_k24_mean  auroc_k32_mean

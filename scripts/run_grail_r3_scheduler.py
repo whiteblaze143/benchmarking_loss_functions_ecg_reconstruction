@@ -91,10 +91,15 @@ def run_lowshot_model(model,workers,force_after=-1):
  path=OUT/f"lowshot_{model}.parquet";expected={(model,t,c,f,r) for t,c,_,_ in specs for f in FRACTIONS for r in range(20)}
  keys=["model","tier","concept","fraction","repeat"]
  if path.exists() and valid_keys(pd.read_parquet(path),keys,expected):return
- z=prepare_z(model,data);design=str(OUT/"lowshot_patient_subsets.parquet");rows=[]
- for lo in range(0,39,5):
-  memory("lowshot",model,lo)
-  tasks=[joblib.delayed(lowshot_task)(z,label_cache(model,t,c,y,data["strat_fold"],data["patient_id"]),design,model,t,c,cs) for t,c,y,cs in specs[lo:lo+5]]
+ z=prepare_z(model,data);design=str(OUT/"lowshot_patient_subsets.parquet");rows=[];completed=set()
+ if path.exists():
+  old=pd.read_parquet(path)
+  for (tier,concept),g in old.groupby(["tier","concept"]):
+   if len(g)==len(FRACTIONS)*20 and not g.duplicated(keys).any():completed.add((tier,concept));rows.extend(g.to_dict("records"))
+ pending=[s for s in specs if (s[0],s[1]) not in completed]
+ for lo in range(0,len(pending),5):
+  memory("lowshot",model,len(completed)+lo)
+  tasks=[joblib.delayed(lowshot_task)(z,label_cache(model,t,c,y,data["strat_fold"],data["patient_id"]),design,model,t,c,cs) for t,c,y,cs in pending[lo:lo+5]]
   parts=joblib.Parallel(n_jobs=workers,backend="loky")(tasks)
   for q in parts:rows.extend(q)
   atomic_df(pd.DataFrame(rows),path)

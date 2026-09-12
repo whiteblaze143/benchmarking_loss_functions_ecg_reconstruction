@@ -1,0 +1,16 @@
+{
+  "rows": 234,
+  "median_abs_delta": 0.008290516546922755,
+  "p95_abs_delta": 0.06698238989909593,
+  "max_abs_delta": 0.17796219455970486,
+  "counts_exceeding": {
+    "0.0001": 227,
+    "0.001": 198,
+    "0.005": 142,
+    "0.01": 111
+  },
+  "equivalent_at_1e_3": false,
+  "pca_whitened": false,
+  "pc_coordinates_restandardized_before_logistic_probe": true,
+  "source_of_discrepancy": "Per-k StandardScaler on PCA coordinates changes the isotropic L2 penalty into a variance-weighted penalty in the original standardized feature space."
+}

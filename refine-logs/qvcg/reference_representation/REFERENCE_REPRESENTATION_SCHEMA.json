@@ -1,0 +1,3188 @@
+{
+  "title": "PTB-XL Canonical Deterministic ECG Reference Representation Schema (Z_{12}^*)",
+  "milestone": "M5_REFERENCE_REPRESENTATION_LOCKDOWN",
+  "version": "1.0.0",
+  "date": "2026-09-12",
+  "primary_equation": "Z_{12}^* = R4(X_{12}) = [R0_basic, R2_H, Coupling_vh, R_residual] in R^{122}",
+  "matched_control_hypothesis": "R3 (101D) vs R0_rich (101D)",
+  "baselines_summary": {
+    "R0_basic": {
+      "dimension": 23,
+      "description": "Standard physical VCG dipole field statistics"
+    },
+    "R0_rich": {
+      "dimension": 101,
+      "description": "Capacity-matched physical-only VCG control"
+    },
+    "R1": {
+      "dimension": 67,
+      "description": "Spatial-domain categorical occupancy & dwell statistics"
+    },
+    "R2_H": {
+      "dimension": 68,
+      "description": "Hilbert functional trajectory statistics from h_H(t)"
+    },
+    "R3": {
+      "dimension": 101,
+      "description": "Coupled physical + Hilbert functional representation"
+    },
+    "R4": {
+      "dimension": 122,
+      "description": "Full canonical reference representation including non-dipolar residual"
+    }
+  },
+  "features": [
+    {
+      "id": 1,
+      "name": "v_mean_x",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(v_x(t))",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Temporal mean of physical dipole coordinate x"
+    },
+    {
+      "id": 2,
+      "name": "v_mean_y",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(v_y(t))",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Temporal mean of physical dipole coordinate y"
+    },
+    {
+      "id": 3,
+      "name": "v_mean_z",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(v_z(t))",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Temporal mean of physical dipole coordinate z"
+    },
+    {
+      "id": 4,
+      "name": "v_cov_xx",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_x, v_x)",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Covariance of physical coordinates x and x"
+    },
+    {
+      "id": 5,
+      "name": "v_cov_xy",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_x, v_y)",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Covariance of physical coordinates x and y"
+    },
+    {
+      "id": 6,
+      "name": "v_cov_xz",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_x, v_z)",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Covariance of physical coordinates x and z"
+    },
+    {
+      "id": 7,
+      "name": "v_cov_yy",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_y, v_y)",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Covariance of physical coordinates y and y"
+    },
+    {
+      "id": 8,
+      "name": "v_cov_yz",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_y, v_z)",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Covariance of physical coordinates y and z"
+    },
+    {
+      "id": 9,
+      "name": "v_cov_zz",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_z, v_z)",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Covariance of physical coordinates z and z"
+    },
+    {
+      "id": 10,
+      "name": "v_range_x",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(v_x(t))",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Peak-to-peak coordinate range of x"
+    },
+    {
+      "id": 11,
+      "name": "v_range_y",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(v_y(t))",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Peak-to-peak coordinate range of y"
+    },
+    {
+      "id": 12,
+      "name": "v_range_z",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(v_z(t))",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Peak-to-peak coordinate range of z"
+    },
+    {
+      "id": 13,
+      "name": "v_norm_mean",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(||v(t)||)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Mean dipole vector magnitude"
+    },
+    {
+      "id": 14,
+      "name": "v_norm_max",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "max(||v(t)||)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Maximum dipole vector magnitude"
+    },
+    {
+      "id": 15,
+      "name": "v_norm_std",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "std(||v(t)||)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Standard deviation of dipole magnitude"
+    },
+    {
+      "id": 16,
+      "name": "v_norm_p95",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "percentile(||v(t)||, 95)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "95th percentile of dipole magnitude"
+    },
+    {
+      "id": 17,
+      "name": "v_path_length",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "sum(||dv||) / T",
+      "input_source": "v(t)",
+      "units": "mV/sample",
+      "description": "Normalized dipole trajectory spatial path length"
+    },
+    {
+      "id": 18,
+      "name": "v_velocity_mean",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(||dv/dt||)",
+      "input_source": "v(t)",
+      "units": "mV/s",
+      "description": "Mean dipole velocity"
+    },
+    {
+      "id": 19,
+      "name": "v_velocity_p95",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "percentile(||dv/dt||, 95)",
+      "input_source": "v(t)",
+      "units": "mV/s",
+      "description": "95th percentile of dipole velocity"
+    },
+    {
+      "id": 20,
+      "name": "v_acceleration_mean",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(||d2v/dt2||)",
+      "input_source": "v(t)",
+      "units": "mV/s^2",
+      "description": "Mean dipole trajectory acceleration"
+    },
+    {
+      "id": 21,
+      "name": "v_inertia_eig_1",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "eigval_1(cov(v))",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Eigenvalue 1 of dipole covariance matrix sorted descending"
+    },
+    {
+      "id": 22,
+      "name": "v_inertia_eig_2",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "eigval_2(cov(v))",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Eigenvalue 2 of dipole covariance matrix sorted descending"
+    },
+    {
+      "id": 23,
+      "name": "v_inertia_eig_3",
+      "baseline_memberships": [
+        "R0_basic",
+        "R0_rich",
+        "R3",
+        "R4"
+      ],
+      "formula": "eigval_3(cov(v))",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Eigenvalue 3 of dipole covariance matrix sorted descending"
+    },
+    {
+      "id": 24,
+      "name": "v_quantile_x_p10",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_x(t), 10)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "10th percentile of coordinate x"
+    },
+    {
+      "id": 25,
+      "name": "v_quantile_x_p25",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_x(t), 25)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "25th percentile of coordinate x"
+    },
+    {
+      "id": 26,
+      "name": "v_quantile_x_p50",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_x(t), 50)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "50th percentile of coordinate x"
+    },
+    {
+      "id": 27,
+      "name": "v_quantile_x_p75",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_x(t), 75)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "75th percentile of coordinate x"
+    },
+    {
+      "id": 28,
+      "name": "v_quantile_x_p90",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_x(t), 90)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "90th percentile of coordinate x"
+    },
+    {
+      "id": 29,
+      "name": "v_quantile_y_p10",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_y(t), 10)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "10th percentile of coordinate y"
+    },
+    {
+      "id": 30,
+      "name": "v_quantile_y_p25",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_y(t), 25)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "25th percentile of coordinate y"
+    },
+    {
+      "id": 31,
+      "name": "v_quantile_y_p50",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_y(t), 50)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "50th percentile of coordinate y"
+    },
+    {
+      "id": 32,
+      "name": "v_quantile_y_p75",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_y(t), 75)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "75th percentile of coordinate y"
+    },
+    {
+      "id": 33,
+      "name": "v_quantile_y_p90",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_y(t), 90)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "90th percentile of coordinate y"
+    },
+    {
+      "id": 34,
+      "name": "v_quantile_z_p10",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_z(t), 10)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "10th percentile of coordinate z"
+    },
+    {
+      "id": 35,
+      "name": "v_quantile_z_p25",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_z(t), 25)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "25th percentile of coordinate z"
+    },
+    {
+      "id": 36,
+      "name": "v_quantile_z_p50",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_z(t), 50)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "50th percentile of coordinate z"
+    },
+    {
+      "id": 37,
+      "name": "v_quantile_z_p75",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_z(t), 75)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "75th percentile of coordinate z"
+    },
+    {
+      "id": 38,
+      "name": "v_quantile_z_p90",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(v_z(t), 90)",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "90th percentile of coordinate z"
+    },
+    {
+      "id": 39,
+      "name": "v_vel_cov_xx",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vdot_x, vdot_x)",
+      "input_source": "v(t)",
+      "units": "(mV/s)^2",
+      "description": "Covariance of velocity coordinates xx"
+    },
+    {
+      "id": 40,
+      "name": "v_vel_cov_xy",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vdot_x, vdot_y)",
+      "input_source": "v(t)",
+      "units": "(mV/s)^2",
+      "description": "Covariance of velocity coordinates xy"
+    },
+    {
+      "id": 41,
+      "name": "v_vel_cov_xz",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vdot_x, vdot_z)",
+      "input_source": "v(t)",
+      "units": "(mV/s)^2",
+      "description": "Covariance of velocity coordinates xz"
+    },
+    {
+      "id": 42,
+      "name": "v_vel_cov_yy",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vdot_y, vdot_y)",
+      "input_source": "v(t)",
+      "units": "(mV/s)^2",
+      "description": "Covariance of velocity coordinates yy"
+    },
+    {
+      "id": 43,
+      "name": "v_vel_cov_yz",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vdot_y, vdot_z)",
+      "input_source": "v(t)",
+      "units": "(mV/s)^2",
+      "description": "Covariance of velocity coordinates yz"
+    },
+    {
+      "id": 44,
+      "name": "v_vel_cov_zz",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vdot_z, vdot_z)",
+      "input_source": "v(t)",
+      "units": "(mV/s)^2",
+      "description": "Covariance of velocity coordinates zz"
+    },
+    {
+      "id": 45,
+      "name": "v_vel_range_x",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "ptp(vdot_x(t))",
+      "input_source": "v(t)",
+      "units": "mV/s",
+      "description": "Peak-to-peak velocity range of x"
+    },
+    {
+      "id": 46,
+      "name": "v_vel_range_y",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "ptp(vdot_y(t))",
+      "input_source": "v(t)",
+      "units": "mV/s",
+      "description": "Peak-to-peak velocity range of y"
+    },
+    {
+      "id": 47,
+      "name": "v_vel_range_z",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "ptp(vdot_z(t))",
+      "input_source": "v(t)",
+      "units": "mV/s",
+      "description": "Peak-to-peak velocity range of z"
+    },
+    {
+      "id": 48,
+      "name": "v_vel_max",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "max(||dv/dt||)",
+      "input_source": "v(t)",
+      "units": "mV/s",
+      "description": "Maximum velocity magnitude"
+    },
+    {
+      "id": 49,
+      "name": "v_vel_std",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "std(||dv/dt||)",
+      "input_source": "v(t)",
+      "units": "mV/s",
+      "description": "Standard deviation of velocity magnitude"
+    },
+    {
+      "id": 50,
+      "name": "v_speed_iqr",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "iqr(||dv/dt||)",
+      "input_source": "v(t)",
+      "units": "mV/s",
+      "description": "Interquartile range of velocity speed"
+    },
+    {
+      "id": 51,
+      "name": "v_ang_mom_mean_x",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean((v x vdot)_x)",
+      "input_source": "v(t)",
+      "units": "mV^2/s",
+      "description": "Mean angular momentum along axis x"
+    },
+    {
+      "id": 52,
+      "name": "v_ang_mom_mean_y",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean((v x vdot)_y)",
+      "input_source": "v(t)",
+      "units": "mV^2/s",
+      "description": "Mean angular momentum along axis y"
+    },
+    {
+      "id": 53,
+      "name": "v_ang_mom_mean_z",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean((v x vdot)_z)",
+      "input_source": "v(t)",
+      "units": "mV^2/s",
+      "description": "Mean angular momentum along axis z"
+    },
+    {
+      "id": 54,
+      "name": "v_ang_mom_cov_xx",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(L_x, L_x)",
+      "input_source": "v(t)",
+      "units": "(mV^2/s)^2",
+      "description": "Covariance of angular momentum vector xx"
+    },
+    {
+      "id": 55,
+      "name": "v_ang_mom_cov_xy",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(L_x, L_y)",
+      "input_source": "v(t)",
+      "units": "(mV^2/s)^2",
+      "description": "Covariance of angular momentum vector xy"
+    },
+    {
+      "id": 56,
+      "name": "v_ang_mom_cov_xz",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(L_x, L_z)",
+      "input_source": "v(t)",
+      "units": "(mV^2/s)^2",
+      "description": "Covariance of angular momentum vector xz"
+    },
+    {
+      "id": 57,
+      "name": "v_ang_mom_cov_yy",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(L_y, L_y)",
+      "input_source": "v(t)",
+      "units": "(mV^2/s)^2",
+      "description": "Covariance of angular momentum vector yy"
+    },
+    {
+      "id": 58,
+      "name": "v_ang_mom_cov_yz",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(L_y, L_z)",
+      "input_source": "v(t)",
+      "units": "(mV^2/s)^2",
+      "description": "Covariance of angular momentum vector yz"
+    },
+    {
+      "id": 59,
+      "name": "v_ang_mom_cov_zz",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(L_z, L_z)",
+      "input_source": "v(t)",
+      "units": "(mV^2/s)^2",
+      "description": "Covariance of angular momentum vector zz"
+    },
+    {
+      "id": 60,
+      "name": "v_ang_mom_mag_mean",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(||v x vdot||)",
+      "input_source": "v(t)",
+      "units": "mV^2/s",
+      "description": "Mean angular momentum loop magnitude"
+    },
+    {
+      "id": 61,
+      "name": "v_ang_mom_mag_p95",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "percentile(||v x vdot||, 95)",
+      "input_source": "v(t)",
+      "units": "mV^2/s",
+      "description": "95th percentile of angular momentum magnitude"
+    },
+    {
+      "id": 62,
+      "name": "v_loop_planarity",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "eigmin(cov(L)) / sum(eig(cov(L)))",
+      "input_source": "v(t)",
+      "units": "unitless",
+      "description": "Planar coplanarity ratio of dipole loop"
+    },
+    {
+      "id": 63,
+      "name": "v_acc_cov_xx",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vddot_x, vddot_x)",
+      "input_source": "v(t)",
+      "units": "(mV/s^2)^2",
+      "description": "Covariance of acceleration xx"
+    },
+    {
+      "id": 64,
+      "name": "v_acc_cov_xy",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vddot_x, vddot_y)",
+      "input_source": "v(t)",
+      "units": "(mV/s^2)^2",
+      "description": "Covariance of acceleration xy"
+    },
+    {
+      "id": 65,
+      "name": "v_acc_cov_xz",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vddot_x, vddot_z)",
+      "input_source": "v(t)",
+      "units": "(mV/s^2)^2",
+      "description": "Covariance of acceleration xz"
+    },
+    {
+      "id": 66,
+      "name": "v_acc_cov_yy",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vddot_y, vddot_y)",
+      "input_source": "v(t)",
+      "units": "(mV/s^2)^2",
+      "description": "Covariance of acceleration yy"
+    },
+    {
+      "id": 67,
+      "name": "v_acc_cov_yz",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vddot_y, vddot_z)",
+      "input_source": "v(t)",
+      "units": "(mV/s^2)^2",
+      "description": "Covariance of acceleration yz"
+    },
+    {
+      "id": 68,
+      "name": "v_acc_cov_zz",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "cov(vddot_z, vddot_z)",
+      "input_source": "v(t)",
+      "units": "(mV/s^2)^2",
+      "description": "Covariance of acceleration zz"
+    },
+    {
+      "id": 69,
+      "name": "v_short_window_var_x",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(rolling_var_50ms(v_x))",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Mean short-window local variance for coordinate x"
+    },
+    {
+      "id": 70,
+      "name": "v_long_window_var_x",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(rolling_var_200ms(v_x))",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Mean long-window local variance for coordinate x"
+    },
+    {
+      "id": 71,
+      "name": "v_short_window_var_y",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(rolling_var_50ms(v_y))",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Mean short-window local variance for coordinate y"
+    },
+    {
+      "id": 72,
+      "name": "v_long_window_var_y",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(rolling_var_200ms(v_y))",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Mean long-window local variance for coordinate y"
+    },
+    {
+      "id": 73,
+      "name": "v_short_window_var_z",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(rolling_var_50ms(v_z))",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Mean short-window local variance for coordinate z"
+    },
+    {
+      "id": 74,
+      "name": "v_long_window_var_z",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(rolling_var_200ms(v_z))",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Mean long-window local variance for coordinate z"
+    },
+    {
+      "id": 75,
+      "name": "v_octant_occupancy_0",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[octant(v_std(t)) == 0])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in spatial octant 0"
+    },
+    {
+      "id": 76,
+      "name": "v_octant_occupancy_1",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[octant(v_std(t)) == 1])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in spatial octant 1"
+    },
+    {
+      "id": 77,
+      "name": "v_octant_occupancy_2",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[octant(v_std(t)) == 2])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in spatial octant 2"
+    },
+    {
+      "id": 78,
+      "name": "v_octant_occupancy_3",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[octant(v_std(t)) == 3])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in spatial octant 3"
+    },
+    {
+      "id": 79,
+      "name": "v_octant_occupancy_4",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[octant(v_std(t)) == 4])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in spatial octant 4"
+    },
+    {
+      "id": 80,
+      "name": "v_octant_occupancy_5",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[octant(v_std(t)) == 5])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in spatial octant 5"
+    },
+    {
+      "id": 81,
+      "name": "v_octant_occupancy_6",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[octant(v_std(t)) == 6])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in spatial octant 6"
+    },
+    {
+      "id": 82,
+      "name": "v_octant_occupancy_7",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[octant(v_std(t)) == 7])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in spatial octant 7"
+    },
+    {
+      "id": 83,
+      "name": "v_radial_shell_0_to_0.5",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[||v_std(t)|| in 0_to_0.5])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in standardized radial shell 0_to_0.5"
+    },
+    {
+      "id": 84,
+      "name": "v_radial_shell_0.5_to_1.0",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[||v_std(t)|| in 0.5_to_1.0])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in standardized radial shell 0.5_to_1.0"
+    },
+    {
+      "id": 85,
+      "name": "v_radial_shell_1.0_to_2.0",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[||v_std(t)|| in 1.0_to_2.0])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in standardized radial shell 1.0_to_2.0"
+    },
+    {
+      "id": 86,
+      "name": "v_radial_shell_gt_2.0",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(I[||v_std(t)|| in gt_2.0])",
+      "input_source": "v(t)",
+      "units": "fraction",
+      "description": "Occupancy fraction in standardized radial shell gt_2.0"
+    },
+    {
+      "id": 87,
+      "name": "v_phase_corr_x",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "corr(v_x(t), vdot_x(t))",
+      "input_source": "v(t)",
+      "units": "unitless",
+      "description": "Correlation between coordinate x and its velocity"
+    },
+    {
+      "id": 88,
+      "name": "v_phase_area_x",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "ptp(v_x) * ptp(vdot_x)",
+      "input_source": "v(t)",
+      "units": "mV^2/s",
+      "description": "Phase-plane bounding box area for coordinate x"
+    },
+    {
+      "id": 89,
+      "name": "v_vel_skew_x",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "skew(vdot_x(t))",
+      "input_source": "v(t)",
+      "units": "unitless",
+      "description": "Skewness of velocity coordinate x"
+    },
+    {
+      "id": 90,
+      "name": "v_phase_corr_y",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "corr(v_y(t), vdot_y(t))",
+      "input_source": "v(t)",
+      "units": "unitless",
+      "description": "Correlation between coordinate y and its velocity"
+    },
+    {
+      "id": 91,
+      "name": "v_phase_area_y",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "ptp(v_y) * ptp(vdot_y)",
+      "input_source": "v(t)",
+      "units": "mV^2/s",
+      "description": "Phase-plane bounding box area for coordinate y"
+    },
+    {
+      "id": 92,
+      "name": "v_vel_skew_y",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "skew(vdot_y(t))",
+      "input_source": "v(t)",
+      "units": "unitless",
+      "description": "Skewness of velocity coordinate y"
+    },
+    {
+      "id": 93,
+      "name": "v_phase_corr_z",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "corr(v_z(t), vdot_z(t))",
+      "input_source": "v(t)",
+      "units": "unitless",
+      "description": "Correlation between coordinate z and its velocity"
+    },
+    {
+      "id": 94,
+      "name": "v_phase_area_z",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "ptp(v_z) * ptp(vdot_z)",
+      "input_source": "v(t)",
+      "units": "mV^2/s",
+      "description": "Phase-plane bounding box area for coordinate z"
+    },
+    {
+      "id": 95,
+      "name": "v_vel_skew_z",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "skew(vdot_z(t))",
+      "input_source": "v(t)",
+      "units": "unitless",
+      "description": "Skewness of velocity coordinate z"
+    },
+    {
+      "id": 96,
+      "name": "v_temporal_mean_drift_x",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(v_x[T/2:]) - mean(v_x[:T/2])",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Half-split mean drift for coordinate x"
+    },
+    {
+      "id": 97,
+      "name": "v_temporal_mean_drift_y",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(v_y[T/2:]) - mean(v_y[:T/2])",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Half-split mean drift for coordinate y"
+    },
+    {
+      "id": 98,
+      "name": "v_temporal_mean_drift_z",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(v_z[T/2:]) - mean(v_z[:T/2])",
+      "input_source": "v(t)",
+      "units": "mV",
+      "description": "Half-split mean drift for coordinate z"
+    },
+    {
+      "id": 99,
+      "name": "v_temporal_energy_drift",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "mean(||v[T/2:]||^2) - mean(||v[:T/2]||^2)",
+      "input_source": "v(t)",
+      "units": "mV^2",
+      "description": "Half-split energy drift"
+    },
+    {
+      "id": 100,
+      "name": "v_norm_autocorr_lag1",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "autocorr(||v(t)||, lag=50samples)",
+      "input_source": "v(t)",
+      "units": "unitless",
+      "description": "Autocorrelation of dipole magnitude at 100ms lag"
+    },
+    {
+      "id": 101,
+      "name": "v_norm_autocorr_lag2",
+      "baseline_memberships": [
+        "R0_rich"
+      ],
+      "formula": "autocorr(||v(t)||, lag=100samples)",
+      "input_source": "v(t)",
+      "units": "unitless",
+      "description": "Autocorrelation of dipole magnitude at 200ms lag"
+    },
+    {
+      "id": 102,
+      "name": "domain_occupancy_00",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 0])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 0"
+    },
+    {
+      "id": 103,
+      "name": "domain_occupancy_01",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 1])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 1"
+    },
+    {
+      "id": 104,
+      "name": "domain_occupancy_02",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 2])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 2"
+    },
+    {
+      "id": 105,
+      "name": "domain_occupancy_03",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 3])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 3"
+    },
+    {
+      "id": 106,
+      "name": "domain_occupancy_04",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 4])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 4"
+    },
+    {
+      "id": 107,
+      "name": "domain_occupancy_05",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 5])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 5"
+    },
+    {
+      "id": 108,
+      "name": "domain_occupancy_06",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 6])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 6"
+    },
+    {
+      "id": 109,
+      "name": "domain_occupancy_07",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 7])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 7"
+    },
+    {
+      "id": 110,
+      "name": "domain_occupancy_08",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 8])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 8"
+    },
+    {
+      "id": 111,
+      "name": "domain_occupancy_09",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 9])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 9"
+    },
+    {
+      "id": 112,
+      "name": "domain_occupancy_10",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 10])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 10"
+    },
+    {
+      "id": 113,
+      "name": "domain_occupancy_11",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 11])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 11"
+    },
+    {
+      "id": 114,
+      "name": "domain_occupancy_12",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 12])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 12"
+    },
+    {
+      "id": 115,
+      "name": "domain_occupancy_13",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 13])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 13"
+    },
+    {
+      "id": 116,
+      "name": "domain_occupancy_14",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 14])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 14"
+    },
+    {
+      "id": 117,
+      "name": "domain_occupancy_15",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 15])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 15"
+    },
+    {
+      "id": 118,
+      "name": "domain_occupancy_16",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 16])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 16"
+    },
+    {
+      "id": 119,
+      "name": "domain_occupancy_17",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 17])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 17"
+    },
+    {
+      "id": 120,
+      "name": "domain_occupancy_18",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 18])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 18"
+    },
+    {
+      "id": 121,
+      "name": "domain_occupancy_19",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 19])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 19"
+    },
+    {
+      "id": 122,
+      "name": "domain_occupancy_20",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 20])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 20"
+    },
+    {
+      "id": 123,
+      "name": "domain_occupancy_21",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 21])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 21"
+    },
+    {
+      "id": 124,
+      "name": "domain_occupancy_22",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 22])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 22"
+    },
+    {
+      "id": 125,
+      "name": "domain_occupancy_23",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 23])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 23"
+    },
+    {
+      "id": 126,
+      "name": "domain_occupancy_24",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 24])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 24"
+    },
+    {
+      "id": 127,
+      "name": "domain_occupancy_25",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 25])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 25"
+    },
+    {
+      "id": 128,
+      "name": "domain_occupancy_26",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 26])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 26"
+    },
+    {
+      "id": 129,
+      "name": "domain_occupancy_27",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 27])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 27"
+    },
+    {
+      "id": 130,
+      "name": "domain_occupancy_28",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 28])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 28"
+    },
+    {
+      "id": 131,
+      "name": "domain_occupancy_29",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 29])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 29"
+    },
+    {
+      "id": 132,
+      "name": "domain_occupancy_30",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 30])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 30"
+    },
+    {
+      "id": 133,
+      "name": "domain_occupancy_31",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 31])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 31"
+    },
+    {
+      "id": 134,
+      "name": "domain_occupancy_32",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 32])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 32"
+    },
+    {
+      "id": 135,
+      "name": "domain_occupancy_33",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 33])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 33"
+    },
+    {
+      "id": 136,
+      "name": "domain_occupancy_34",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 34])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 34"
+    },
+    {
+      "id": 137,
+      "name": "domain_occupancy_35",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 35])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 35"
+    },
+    {
+      "id": 138,
+      "name": "domain_occupancy_36",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 36])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 36"
+    },
+    {
+      "id": 139,
+      "name": "domain_occupancy_37",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 37])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 37"
+    },
+    {
+      "id": 140,
+      "name": "domain_occupancy_38",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 38])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 38"
+    },
+    {
+      "id": 141,
+      "name": "domain_occupancy_39",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 39])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 39"
+    },
+    {
+      "id": 142,
+      "name": "domain_occupancy_40",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 40])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 40"
+    },
+    {
+      "id": 143,
+      "name": "domain_occupancy_41",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 41])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 41"
+    },
+    {
+      "id": 144,
+      "name": "domain_occupancy_42",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 42])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 42"
+    },
+    {
+      "id": 145,
+      "name": "domain_occupancy_43",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 43])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 43"
+    },
+    {
+      "id": 146,
+      "name": "domain_occupancy_44",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 44])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 44"
+    },
+    {
+      "id": 147,
+      "name": "domain_occupancy_45",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 45])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 45"
+    },
+    {
+      "id": 148,
+      "name": "domain_occupancy_46",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 46])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 46"
+    },
+    {
+      "id": 149,
+      "name": "domain_occupancy_47",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 47])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 47"
+    },
+    {
+      "id": 150,
+      "name": "domain_occupancy_48",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 48])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 48"
+    },
+    {
+      "id": 151,
+      "name": "domain_occupancy_49",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 49])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 49"
+    },
+    {
+      "id": 152,
+      "name": "domain_occupancy_50",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 50])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 50"
+    },
+    {
+      "id": 153,
+      "name": "domain_occupancy_51",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 51])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 51"
+    },
+    {
+      "id": 154,
+      "name": "domain_occupancy_52",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 52])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 52"
+    },
+    {
+      "id": 155,
+      "name": "domain_occupancy_53",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 53])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 53"
+    },
+    {
+      "id": 156,
+      "name": "domain_occupancy_54",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 54])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 54"
+    },
+    {
+      "id": 157,
+      "name": "domain_occupancy_55",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 55])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 55"
+    },
+    {
+      "id": 158,
+      "name": "domain_occupancy_56",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 56])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 56"
+    },
+    {
+      "id": 159,
+      "name": "domain_occupancy_57",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 57])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 57"
+    },
+    {
+      "id": 160,
+      "name": "domain_occupancy_58",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 58])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 58"
+    },
+    {
+      "id": 161,
+      "name": "domain_occupancy_59",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 59])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 59"
+    },
+    {
+      "id": 162,
+      "name": "domain_occupancy_60",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 60])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 60"
+    },
+    {
+      "id": 163,
+      "name": "domain_occupancy_61",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 61])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 61"
+    },
+    {
+      "id": 164,
+      "name": "domain_occupancy_62",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 62])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 62"
+    },
+    {
+      "id": 165,
+      "name": "domain_occupancy_63",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "mean(I[G(v(t)) == 63])",
+      "input_source": "G(v(t))",
+      "units": "fraction",
+      "description": "Temporal occupancy fraction of spatial domain 63"
+    },
+    {
+      "id": 166,
+      "name": "domain_occupancy_entropy",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "-sum(p_g * log(p_g + eps))",
+      "input_source": "G(v(t))",
+      "units": "nats",
+      "description": "Shannon entropy of spatial domain occupancy distribution"
+    },
+    {
+      "id": 167,
+      "name": "domain_unique_count",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "sum(I[p_g > 0])",
+      "input_source": "G(v(t))",
+      "units": "count",
+      "description": "Number of distinct spatial domains visited"
+    },
+    {
+      "id": 168,
+      "name": "domain_mean_dwell",
+      "baseline_memberships": [
+        "R1"
+      ],
+      "formula": "T / max(n_transitions, 1)",
+      "input_source": "G(v(t))",
+      "units": "samples",
+      "description": "Mean dwell time in samples per spatial domain visit"
+    },
+    {
+      "id": 169,
+      "name": "h_mean_00",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(h_H,0(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Temporal mean of Hilbert coordinate 0"
+    },
+    {
+      "id": 170,
+      "name": "h_mean_01",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(h_H,1(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Temporal mean of Hilbert coordinate 1"
+    },
+    {
+      "id": 171,
+      "name": "h_mean_02",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(h_H,2(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Temporal mean of Hilbert coordinate 2"
+    },
+    {
+      "id": 172,
+      "name": "h_mean_03",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(h_H,3(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Temporal mean of Hilbert coordinate 3"
+    },
+    {
+      "id": 173,
+      "name": "h_mean_04",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(h_H,4(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Temporal mean of Hilbert coordinate 4"
+    },
+    {
+      "id": 174,
+      "name": "h_mean_05",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(h_H,5(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Temporal mean of Hilbert coordinate 5"
+    },
+    {
+      "id": 175,
+      "name": "h_mean_06",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(h_H,6(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Temporal mean of Hilbert coordinate 6"
+    },
+    {
+      "id": 176,
+      "name": "h_mean_07",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(h_H,7(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Temporal mean of Hilbert coordinate 7"
+    },
+    {
+      "id": 177,
+      "name": "h_mean_08",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(h_H,8(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Temporal mean of Hilbert coordinate 8"
+    },
+    {
+      "id": 178,
+      "name": "h_cov_00_00",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,0, h_H,0)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 0 and 0"
+    },
+    {
+      "id": 179,
+      "name": "h_cov_00_01",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,0, h_H,1)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 0 and 1"
+    },
+    {
+      "id": 180,
+      "name": "h_cov_00_02",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,0, h_H,2)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 0 and 2"
+    },
+    {
+      "id": 181,
+      "name": "h_cov_00_03",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,0, h_H,3)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 0 and 3"
+    },
+    {
+      "id": 182,
+      "name": "h_cov_00_04",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,0, h_H,4)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 0 and 4"
+    },
+    {
+      "id": 183,
+      "name": "h_cov_00_05",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,0, h_H,5)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 0 and 5"
+    },
+    {
+      "id": 184,
+      "name": "h_cov_00_06",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,0, h_H,6)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 0 and 6"
+    },
+    {
+      "id": 185,
+      "name": "h_cov_00_07",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,0, h_H,7)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 0 and 7"
+    },
+    {
+      "id": 186,
+      "name": "h_cov_00_08",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,0, h_H,8)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 0 and 8"
+    },
+    {
+      "id": 187,
+      "name": "h_cov_01_01",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,1, h_H,1)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 1 and 1"
+    },
+    {
+      "id": 188,
+      "name": "h_cov_01_02",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,1, h_H,2)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 1 and 2"
+    },
+    {
+      "id": 189,
+      "name": "h_cov_01_03",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,1, h_H,3)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 1 and 3"
+    },
+    {
+      "id": 190,
+      "name": "h_cov_01_04",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,1, h_H,4)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 1 and 4"
+    },
+    {
+      "id": 191,
+      "name": "h_cov_01_05",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,1, h_H,5)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 1 and 5"
+    },
+    {
+      "id": 192,
+      "name": "h_cov_01_06",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,1, h_H,6)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 1 and 6"
+    },
+    {
+      "id": 193,
+      "name": "h_cov_01_07",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,1, h_H,7)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 1 and 7"
+    },
+    {
+      "id": 194,
+      "name": "h_cov_01_08",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,1, h_H,8)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 1 and 8"
+    },
+    {
+      "id": 195,
+      "name": "h_cov_02_02",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,2, h_H,2)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 2 and 2"
+    },
+    {
+      "id": 196,
+      "name": "h_cov_02_03",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,2, h_H,3)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 2 and 3"
+    },
+    {
+      "id": 197,
+      "name": "h_cov_02_04",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,2, h_H,4)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 2 and 4"
+    },
+    {
+      "id": 198,
+      "name": "h_cov_02_05",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,2, h_H,5)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 2 and 5"
+    },
+    {
+      "id": 199,
+      "name": "h_cov_02_06",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,2, h_H,6)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 2 and 6"
+    },
+    {
+      "id": 200,
+      "name": "h_cov_02_07",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,2, h_H,7)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 2 and 7"
+    },
+    {
+      "id": 201,
+      "name": "h_cov_02_08",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,2, h_H,8)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 2 and 8"
+    },
+    {
+      "id": 202,
+      "name": "h_cov_03_03",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,3, h_H,3)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 3 and 3"
+    },
+    {
+      "id": 203,
+      "name": "h_cov_03_04",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,3, h_H,4)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 3 and 4"
+    },
+    {
+      "id": 204,
+      "name": "h_cov_03_05",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,3, h_H,5)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 3 and 5"
+    },
+    {
+      "id": 205,
+      "name": "h_cov_03_06",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,3, h_H,6)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 3 and 6"
+    },
+    {
+      "id": 206,
+      "name": "h_cov_03_07",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,3, h_H,7)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 3 and 7"
+    },
+    {
+      "id": 207,
+      "name": "h_cov_03_08",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,3, h_H,8)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 3 and 8"
+    },
+    {
+      "id": 208,
+      "name": "h_cov_04_04",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,4, h_H,4)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 4 and 4"
+    },
+    {
+      "id": 209,
+      "name": "h_cov_04_05",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,4, h_H,5)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 4 and 5"
+    },
+    {
+      "id": 210,
+      "name": "h_cov_04_06",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,4, h_H,6)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 4 and 6"
+    },
+    {
+      "id": 211,
+      "name": "h_cov_04_07",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,4, h_H,7)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 4 and 7"
+    },
+    {
+      "id": 212,
+      "name": "h_cov_04_08",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,4, h_H,8)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 4 and 8"
+    },
+    {
+      "id": 213,
+      "name": "h_cov_05_05",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,5, h_H,5)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 5 and 5"
+    },
+    {
+      "id": 214,
+      "name": "h_cov_05_06",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,5, h_H,6)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 5 and 6"
+    },
+    {
+      "id": 215,
+      "name": "h_cov_05_07",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,5, h_H,7)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 5 and 7"
+    },
+    {
+      "id": 216,
+      "name": "h_cov_05_08",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,5, h_H,8)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 5 and 8"
+    },
+    {
+      "id": 217,
+      "name": "h_cov_06_06",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,6, h_H,6)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 6 and 6"
+    },
+    {
+      "id": 218,
+      "name": "h_cov_06_07",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,6, h_H,7)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 6 and 7"
+    },
+    {
+      "id": 219,
+      "name": "h_cov_06_08",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,6, h_H,8)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 6 and 8"
+    },
+    {
+      "id": 220,
+      "name": "h_cov_07_07",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,7, h_H,7)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 7 and 7"
+    },
+    {
+      "id": 221,
+      "name": "h_cov_07_08",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,7, h_H,8)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 7 and 8"
+    },
+    {
+      "id": 222,
+      "name": "h_cov_08_08",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(h_H,8, h_H,8)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units^2",
+      "description": "Covariance of Hilbert coordinates 8 and 8"
+    },
+    {
+      "id": 223,
+      "name": "h_range_00",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(h_H,0(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Peak-to-peak coordinate range of Hilbert axis 0"
+    },
+    {
+      "id": 224,
+      "name": "h_range_01",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(h_H,1(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Peak-to-peak coordinate range of Hilbert axis 1"
+    },
+    {
+      "id": 225,
+      "name": "h_range_02",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(h_H,2(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Peak-to-peak coordinate range of Hilbert axis 2"
+    },
+    {
+      "id": 226,
+      "name": "h_range_03",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(h_H,3(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Peak-to-peak coordinate range of Hilbert axis 3"
+    },
+    {
+      "id": 227,
+      "name": "h_range_04",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(h_H,4(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Peak-to-peak coordinate range of Hilbert axis 4"
+    },
+    {
+      "id": 228,
+      "name": "h_range_05",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(h_H,5(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Peak-to-peak coordinate range of Hilbert axis 5"
+    },
+    {
+      "id": 229,
+      "name": "h_range_06",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(h_H,6(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Peak-to-peak coordinate range of Hilbert axis 6"
+    },
+    {
+      "id": 230,
+      "name": "h_range_07",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(h_H,7(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Peak-to-peak coordinate range of Hilbert axis 7"
+    },
+    {
+      "id": 231,
+      "name": "h_range_08",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "ptp(h_H,8(t))",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Peak-to-peak coordinate range of Hilbert axis 8"
+    },
+    {
+      "id": 232,
+      "name": "h_path_length",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "sum(||dh_H||) / T",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units/sample",
+      "description": "Normalized path length in Hilbert RKHS space"
+    },
+    {
+      "id": 233,
+      "name": "h_trans_dist_mean",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(||dh_H[transitions]||)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Mean jump distance in Hilbert space during domain transitions"
+    },
+    {
+      "id": 234,
+      "name": "h_dwell_mean",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "T / max(n_transitions, 1)",
+      "input_source": "G(v(t))",
+      "units": "samples",
+      "description": "Mean dwell time per functional microstate domain"
+    },
+    {
+      "id": 235,
+      "name": "h_occ_entropy",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "-sum(p_g * log(p_g + eps))",
+      "input_source": "G(v(t))",
+      "units": "nats",
+      "description": "Functional domain occupancy entropy"
+    },
+    {
+      "id": 236,
+      "name": "h_norm_mean",
+      "baseline_memberships": [
+        "R2_H",
+        "R3",
+        "R4"
+      ],
+      "formula": "mean(||h_H(t)||)",
+      "input_source": "h_H(t)",
+      "units": "RKHS_units",
+      "description": "Mean magnitude of Hilbert coordinate vector"
+    },
+    {
+      "id": 237,
+      "name": "vh_cross_cov_x_h0",
+      "baseline_memberships": [
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_x, h_H,0)",
+      "input_source": "v(t), h_H(t)",
+      "units": "mV*RKHS_units",
+      "description": "Cross-covariance between physical x and Hilbert coordinate 0"
+    },
+    {
+      "id": 238,
+      "name": "vh_cross_cov_x_h1",
+      "baseline_memberships": [
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_x, h_H,1)",
+      "input_source": "v(t), h_H(t)",
+      "units": "mV*RKHS_units",
+      "description": "Cross-covariance between physical x and Hilbert coordinate 1"
+    },
+    {
+      "id": 239,
+      "name": "vh_cross_cov_x_h2",
+      "baseline_memberships": [
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_x, h_H,2)",
+      "input_source": "v(t), h_H(t)",
+      "units": "mV*RKHS_units",
+      "description": "Cross-covariance between physical x and Hilbert coordinate 2"
+    },
+    {
+      "id": 240,
+      "name": "vh_cross_cov_y_h0",
+      "baseline_memberships": [
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_y, h_H,0)",
+      "input_source": "v(t), h_H(t)",
+      "units": "mV*RKHS_units",
+      "description": "Cross-covariance between physical y and Hilbert coordinate 0"
+    },
+    {
+      "id": 241,
+      "name": "vh_cross_cov_y_h1",
+      "baseline_memberships": [
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_y, h_H,1)",
+      "input_source": "v(t), h_H(t)",
+      "units": "mV*RKHS_units",
+      "description": "Cross-covariance between physical y and Hilbert coordinate 1"
+    },
+    {
+      "id": 242,
+      "name": "vh_cross_cov_y_h2",
+      "baseline_memberships": [
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_y, h_H,2)",
+      "input_source": "v(t), h_H(t)",
+      "units": "mV*RKHS_units",
+      "description": "Cross-covariance between physical y and Hilbert coordinate 2"
+    },
+    {
+      "id": 243,
+      "name": "vh_cross_cov_z_h0",
+      "baseline_memberships": [
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_z, h_H,0)",
+      "input_source": "v(t), h_H(t)",
+      "units": "mV*RKHS_units",
+      "description": "Cross-covariance between physical z and Hilbert coordinate 0"
+    },
+    {
+      "id": 244,
+      "name": "vh_cross_cov_z_h1",
+      "baseline_memberships": [
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_z, h_H,1)",
+      "input_source": "v(t), h_H(t)",
+      "units": "mV*RKHS_units",
+      "description": "Cross-covariance between physical z and Hilbert coordinate 1"
+    },
+    {
+      "id": 245,
+      "name": "vh_cross_cov_z_h2",
+      "baseline_memberships": [
+        "R3",
+        "R4"
+      ],
+      "formula": "cov(v_z, h_H,2)",
+      "input_source": "v(t), h_H(t)",
+      "units": "mV*RKHS_units",
+      "description": "Cross-covariance between physical z and Hilbert coordinate 2"
+    },
+    {
+      "id": 246,
+      "name": "vh_norm_corr",
+      "baseline_memberships": [
+        "R3",
+        "R4"
+      ],
+      "formula": "corr(||v(t)||, ||h_H(t)||)",
+      "input_source": "v(t), h_H(t)",
+      "units": "unitless",
+      "description": "Correlation between physical dipole magnitude and Hilbert functional magnitude"
+    },
+    {
+      "id": 247,
+      "name": "residual_rms_I",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "sqrt(mean(r_I(t)^2))",
+      "input_source": "r(t)",
+      "units": "mV",
+      "description": "Root Mean Square residual error on lead I"
+    },
+    {
+      "id": 248,
+      "name": "residual_rms_II",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "sqrt(mean(r_II(t)^2))",
+      "input_source": "r(t)",
+      "units": "mV",
+      "description": "Root Mean Square residual error on lead II"
+    },
+    {
+      "id": 249,
+      "name": "residual_rms_V1",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "sqrt(mean(r_V1(t)^2))",
+      "input_source": "r(t)",
+      "units": "mV",
+      "description": "Root Mean Square residual error on lead V1"
+    },
+    {
+      "id": 250,
+      "name": "residual_rms_V2",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "sqrt(mean(r_V2(t)^2))",
+      "input_source": "r(t)",
+      "units": "mV",
+      "description": "Root Mean Square residual error on lead V2"
+    },
+    {
+      "id": 251,
+      "name": "residual_rms_V3",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "sqrt(mean(r_V3(t)^2))",
+      "input_source": "r(t)",
+      "units": "mV",
+      "description": "Root Mean Square residual error on lead V3"
+    },
+    {
+      "id": 252,
+      "name": "residual_rms_V4",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "sqrt(mean(r_V4(t)^2))",
+      "input_source": "r(t)",
+      "units": "mV",
+      "description": "Root Mean Square residual error on lead V4"
+    },
+    {
+      "id": 253,
+      "name": "residual_rms_V5",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "sqrt(mean(r_V5(t)^2))",
+      "input_source": "r(t)",
+      "units": "mV",
+      "description": "Root Mean Square residual error on lead V5"
+    },
+    {
+      "id": 254,
+      "name": "residual_rms_V6",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "sqrt(mean(r_V6(t)^2))",
+      "input_source": "r(t)",
+      "units": "mV",
+      "description": "Root Mean Square residual error on lead V6"
+    },
+    {
+      "id": 255,
+      "name": "residual_precordial_ratio",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "sum(rms(r_V1..V6)^2) / sum(rms(r_I,II)^2 + eps)",
+      "input_source": "r(t)",
+      "units": "ratio",
+      "description": "Precordial to limb non-dipolar residual power ratio"
+    },
+    {
+      "id": 256,
+      "name": "residual_fraction_I",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "rms(r_I) / rms(E_I + eps)",
+      "input_source": "r(t), E(t)",
+      "units": "fraction",
+      "description": "Fraction of lead I signal energy unexplained by 3D dipole"
+    },
+    {
+      "id": 257,
+      "name": "residual_fraction_II",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "rms(r_II) / rms(E_II + eps)",
+      "input_source": "r(t), E(t)",
+      "units": "fraction",
+      "description": "Fraction of lead II signal energy unexplained by 3D dipole"
+    },
+    {
+      "id": 258,
+      "name": "residual_fraction_V1",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "rms(r_V1) / rms(E_V1 + eps)",
+      "input_source": "r(t), E(t)",
+      "units": "fraction",
+      "description": "Fraction of lead V1 signal energy unexplained by 3D dipole"
+    },
+    {
+      "id": 259,
+      "name": "residual_fraction_V2",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "rms(r_V2) / rms(E_V2 + eps)",
+      "input_source": "r(t), E(t)",
+      "units": "fraction",
+      "description": "Fraction of lead V2 signal energy unexplained by 3D dipole"
+    },
+    {
+      "id": 260,
+      "name": "residual_fraction_V3",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "rms(r_V3) / rms(E_V3 + eps)",
+      "input_source": "r(t), E(t)",
+      "units": "fraction",
+      "description": "Fraction of lead V3 signal energy unexplained by 3D dipole"
+    },
+    {
+      "id": 261,
+      "name": "residual_fraction_V4",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "rms(r_V4) / rms(E_V4 + eps)",
+      "input_source": "r(t), E(t)",
+      "units": "fraction",
+      "description": "Fraction of lead V4 signal energy unexplained by 3D dipole"
+    },
+    {
+      "id": 262,
+      "name": "residual_fraction_V5",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "rms(r_V5) / rms(E_V5 + eps)",
+      "input_source": "r(t), E(t)",
+      "units": "fraction",
+      "description": "Fraction of lead V5 signal energy unexplained by 3D dipole"
+    },
+    {
+      "id": 263,
+      "name": "residual_fraction_V6",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "rms(r_V6) / rms(E_V6 + eps)",
+      "input_source": "r(t), E(t)",
+      "units": "fraction",
+      "description": "Fraction of lead V6 signal energy unexplained by 3D dipole"
+    },
+    {
+      "id": 264,
+      "name": "residual_hf_power_I",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "mean((dr_I/dt)^2)",
+      "input_source": "r(t)",
+      "units": "(mV/s)^2",
+      "description": "High-frequency residual noise/local activity on lead I"
+    },
+    {
+      "id": 265,
+      "name": "residual_hf_power_II",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "mean((dr_II/dt)^2)",
+      "input_source": "r(t)",
+      "units": "(mV/s)^2",
+      "description": "High-frequency residual noise/local activity on lead II"
+    },
+    {
+      "id": 266,
+      "name": "residual_hf_power_V2",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "mean((dr_V2/dt)^2)",
+      "input_source": "r(t)",
+      "units": "(mV/s)^2",
+      "description": "High-frequency residual noise/local activity on lead V2"
+    },
+    {
+      "id": 267,
+      "name": "residual_hf_power_V5",
+      "baseline_memberships": [
+        "R4"
+      ],
+      "formula": "mean((dr_V5/dt)^2)",
+      "input_source": "r(t)",
+      "units": "(mV/s)^2",
+      "description": "High-frequency residual noise/local activity on lead V5"
+    }
+  ]
+}

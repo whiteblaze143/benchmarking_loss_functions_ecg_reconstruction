@@ -1,0 +1,51 @@
+{
+  "manifest_name": "M5_REFERENCE_REPRESENTATION_FREEZE_MANIFEST",
+  "date": "2026-09-12 15:27:42",
+  "milestone": "M5_REFERENCE_REPRESENTATION_LOCKDOWN",
+  "verdicts": {
+    "BINARY_REPSPAT_OVERLAY": "KILL",
+    "NEURAL_FULL12_REFERENCE": "DEMOTE_TO_SUPPORTING_STUDY",
+    "MATCHED_CAPACITY_GATE_R3_VS_R0RICH": "FAIL (Capacity Confounding Confirmed)",
+    "CANONICAL_REFERENCE_STATE": "Z_{12}^* = R4(X_{12}) in R^{122}",
+    "FOLD9_CONFIRMATION_TRANSFER": "PASS (Mean Drop = 0.0152 <= 0.03)",
+    "FOLD8_SUPPORT_SENSITIVITY": "GENUINE_COHORT_GEOMETRY_DRIFT (Median rho = 0.6512)"
+  },
+  "frozen_artifacts": {
+    "refine-logs/qvcg/reference_representation/REFERENCE_REPRESENTATION_SCHEMA.json": {
+      "sha256": "6265ed9c1c0f251145a07881bca61b89aecf13b42dc482225ba44ca5f8ea166a",
+      "size_bytes": 80763
+    },
+    "refine-logs/qvcg/reference_representation/M5_PROBE_RESULTS.csv": {
+      "sha256": "0cb7cf7e49ad1c380d05e08133fe4e3288d069f37eb5fc3d84eefaa6cd959243",
+      "size_bytes": 6979
+    },
+    "refine-logs/qvcg/reference_representation/M5_REFERENCE_REPORT.json": {
+      "sha256": "4e67b05e6affe6ab53089c1ee15cc9be31cab09078fff6e343cf713b338305fd",
+      "size_bytes": 1680
+    },
+    "refine-logs/qvcg/reference_representation/figures/figure_m5_matched_capacity_comparison.png": {
+      "sha256": "f861f9a1d3ba61c626a6a623a9c04161b7e573aab79c2cb9e570be1507f09584",
+      "size_bytes": 216918
+    },
+    "refine-logs/qvcg/fold8_atlas/FOLD8_SUPPORT_SENSITIVITY_REPORT.json": {
+      "sha256": "e507a778a9c32e0b0ec4f5e66830fe4bd3437b22d064b9e8f2bc0a2ec6a8057a",
+      "size_bytes": 967
+    },
+    "refine-logs/qvcg/fold8_atlas/figures/figure_f8_support_matched_distribution.png": {
+      "sha256": "eb9bc083c3156bd1b0f2e9075313916aa05d173f34788e51dc73eac5e70e2bd3",
+      "size_bytes": 122647
+    },
+    "refine-logs/qvcg/reference_representation/features/TRAIN_FOLDS1_7_FEATURES.npz": {
+      "sha256": "1076d5d20ad7dc98a651a298336f6ef958cfae99d1809f16145c3e55b9cd7402",
+      "size_bytes": 24763754
+    },
+    "refine-logs/qvcg/reference_representation/features/VAL_FOLD8_FEATURES.npz": {
+      "sha256": "fbe633480c4e76379e92f956457bd7dc0d162f994ed7f8a150571aa556ba32c8",
+      "size_bytes": 3532571
+    },
+    "refine-logs/qvcg/reference_representation/features/CONFIRM_FOLD9_FEATURES.npz": {
+      "sha256": "ea0481e532616a30db924e3c11d2158d40db216ee31ef8ac2ba8cfceb2870e29",
+      "size_bytes": 3545651
+    }
+  }
+}

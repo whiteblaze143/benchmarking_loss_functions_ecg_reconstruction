@@ -1,0 +1,51 @@
+{
+  "run_id": "M5_REFERENCE_REPRESENTATION_LOCKDOWN",
+  "date": "2026-09-12 15:26:54",
+  "cohorts": {
+    "n_train_records": 15245,
+    "n_train_patients": 13142,
+    "n_val_f8_records": 2173,
+    "n_val_f8_patients": 1881,
+    "n_confirm_f9_records": 2183,
+    "n_confirm_f9_patients": 1942
+  },
+  "baselines_evaluated": {
+    "R0_basic": 23,
+    "R0_rich": 101,
+    "R1": 67,
+    "R2_H": 68,
+    "R3": 101,
+    "R4": 122
+  },
+  "matched_capacity_test": {
+    "hypothesis": "R3 (101D Coupled Phys+Hilbert) vs R0_rich (101D Matched Physical Control)",
+    "median_delta_auroc": -0.03440762134030565,
+    "mean_delta_auroc": -0.03457096902320513,
+    "n_concepts_evaluated": 10,
+    "n_concepts_improved": 1,
+    "verdict": "FAIL"
+  },
+  "conventional_vcg_contrast": {
+    "hypothesis": "R3 (101D) vs R0_basic (23D Standard VCG)",
+    "median_delta_auroc": 0.034277593274597715,
+    "mean_delta_auroc": 0.03824216015033085
+  },
+  "residual_added_value": {
+    "median_delta_R4_minus_R3": 0.004759024083285858
+  },
+  "fold9_confirmation_transfer": {
+    "mean_drop": 0.015239639330638233,
+    "verdict": "PASS"
+  },
+  "statistical_reproducibility": {
+    "median_condition_number": 8.311833142587787e+26,
+    "verdict": "PASS"
+  },
+  "overall_m5_verdict": "FAIL",
+  "reference_representation_state": "Z_{12}^* = R4(X_{12}) in R^{122}",
+  "artifacts": {
+    "REFERENCE_REPRESENTATION_SCHEMA.json": "6265ed9c1c0f251145a07881bca61b89aecf13b42dc482225ba44ca5f8ea166a",
+    "M5_PROBE_RESULTS.csv": "0cb7cf7e49ad1c380d05e08133fe4e3288d069f37eb5fc3d84eefaa6cd959243",
+    "figure_m5_matched_capacity_comparison.png": "f861f9a1d3ba61c626a6a623a9c04161b7e573aab79c2cb9e570be1507f09584"
+  }
+}

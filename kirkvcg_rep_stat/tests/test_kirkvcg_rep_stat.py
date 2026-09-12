@@ -220,7 +220,36 @@ def test_encoder():
     assert np.isclose(sum(res["occupancy"].values()), 1.0)
     assert res["transition_matrix"].shape == (5, 5)
     assert "rep_centroids_vcg" in res
+    assert "loop_planarity" in res
+    assert 0.0 <= res["loop_planarity"] <= 1.0
+    assert "spatial_qrst_angle" in res
+    assert 0.0 <= res["spatial_qrst_angle"] <= 180.0
     assert len(res["flat_feature_vector"]) > 0
+
+
+def test_planarity_and_qrst_angle():
+    from kirkvcg_rep_stat.src.vcg.kinematics import compute_vcg_loop_planarity, compute_spatial_qrst_angle
+
+    # Planar 2D circle embedded in 3D: [cos(t), sin(t), 0]
+    t = np.linspace(0, 2 * np.pi, 100)
+    vcg_planar = np.column_stack([np.cos(t), np.sin(t), np.zeros(100)])
+    planarity_perfect = compute_vcg_loop_planarity(vcg_planar)
+    assert planarity_perfect > 0.99
+
+    # Highly non-planar 3D spherical cloud
+    vcg_3d = np.random.randn(200, 3)
+    planarity_3d = compute_vcg_loop_planarity(vcg_3d)
+    assert planarity_3d < planarity_perfect
+
+    # Orthogonal vectors: 90 degrees
+    v1 = np.array([1.0, 0.0, 0.0])
+    v2 = np.array([0.0, 1.0, 0.0])
+    angle = compute_spatial_qrst_angle(v1, v2)
+    assert np.isclose(angle, 90.0)
+
+    # Parallel vectors: 0 degrees
+    angle_par = compute_spatial_qrst_angle(v1, v1)
+    assert np.isclose(angle_par, 0.0)
 
 
 def test_end_to_end_synthetic():

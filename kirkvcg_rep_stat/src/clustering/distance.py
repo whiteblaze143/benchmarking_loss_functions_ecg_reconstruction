@@ -40,14 +40,14 @@ def compute_attribute_distances(
         raise ValueError(f"Metric must be 'euclidean' or 'jaccard', got '{metric}'")
 
     if metric == "jaccard":
-        # Ensure binary {0, 1}
         unique_vals = np.unique(X_arr)
         if not set(unique_vals).issubset({0.0, 1.0}):
-            # Nonparametric median thresholding
-            medians = np.median(X_arr, axis=0, keepdims=True)
-            X_bin = (X_arr > medians).astype(bool)
-        else:
-            X_bin = X_arr.astype(bool)
+            raise ValueError(
+                "Jaccard distance metric requires binary {0, 1} attributes; "
+                f"found non-binary values in range [{X_arr.min()}, {X_arr.max()}]. "
+                "Use metric='euclidean' for continuous electrophysiological attributes."
+            )
+        X_bin = X_arr.astype(bool)
         condensed = pdist(X_bin, metric="jaccard")
         condensed = np.nan_to_num(condensed, nan=0.0)
     else:

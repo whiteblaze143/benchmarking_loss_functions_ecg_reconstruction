@@ -122,20 +122,14 @@ def extract_sample_features(
         feature_cols.append(local_rms)
         feature_names.append("vcg_local_rms")
 
-    # Stack continuous feature matrix [n_samples, p]
+    # Stack continuous electrophysiological feature matrix [n_samples, p]
     X_continuous = np.column_stack(feature_cols)
-
-    # 5. Nonparametric median binarization per repSpat protocol
-    medians = np.median(X_continuous, axis=0)
-    X_binary = (X_continuous > medians).astype(np.float64)
-    feature_names_bin = [f"{name}_above_median" for name in feature_names]
 
     return {
         "continuous": X_continuous,
-        "binary": X_binary,
+        "features": X_continuous,
         "vcg": vcg,
         "feature_names": feature_names,
-        "feature_names_bin": feature_names_bin,
     }
 
 
@@ -157,27 +151,3 @@ def standardize_features(X: np.ndarray, eps: float = 1e-8) -> np.ndarray:
     mean = np.mean(X, axis=0, keepdims=True)
     std = np.std(X, axis=0, keepdims=True)
     return (X - mean) / (std + eps)
-
-
-def binarize_features(X: np.ndarray, threshold: str = "median") -> np.ndarray:
-    """Binarizes feature matrix into {0, 1} for Jaccard distance calculation.
-
-    Parameters
-    ----------
-    X : np.ndarray
-        Continuous feature matrix [n, p].
-    threshold : str
-        'median' (default) or 'zero'.
-
-    Returns
-    -------
-    X_bin : np.ndarray
-        Binary feature matrix of shape [n, p].
-    """
-    if threshold == "median":
-        thresh_vals = np.median(X, axis=0, keepdims=True)
-        return (X > thresh_vals).astype(np.float64)
-    elif threshold == "zero":
-        return (X > 0.0).astype(np.float64)
-    else:
-        raise ValueError(f"Unknown thresholding mode '{threshold}'")

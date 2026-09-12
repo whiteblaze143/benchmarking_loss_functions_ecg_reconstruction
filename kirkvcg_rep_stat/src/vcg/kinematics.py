@@ -159,8 +159,11 @@ def compute_spatial_qrst_angle(
     v_qrs = np.asarray(qrs_vector, dtype=np.float64)
     v_t = np.asarray(t_vector, dtype=np.float64)
 
-    norm_qrs = np.linalg.norm(v_qrs) + eps
-    norm_t = np.linalg.norm(v_t) + eps
+    norm_qrs = float(np.linalg.norm(v_qrs))
+    norm_t = float(np.linalg.norm(v_t))
+    if norm_qrs < eps or norm_t < eps:
+        return 0.0
+
     cos_theta = float(np.dot(v_qrs, v_t) / (norm_qrs * norm_t))
     cos_theta = float(np.clip(cos_theta, -1.0, 1.0))
     angle_rad = float(np.arccos(cos_theta))

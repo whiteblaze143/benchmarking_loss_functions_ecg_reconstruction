@@ -132,6 +132,7 @@ class KirkVCGRepSpatEncoder:
         # 4. Clique Structure & Rhythm Regularity
         n_reps = len([s for s in unique_states if s in rep_state_ids])
         n_singletons = len([s for s in unique_states if s not in rep_state_ids])
+        n_cliques = len([item for item in (clique_metadata or []) if item.get("is_rep", False)])
 
         # Anomaly fraction = fraction of time spent in singleton/non-REP states
         anomaly_samples = np.sum([np.sum(labels == s) for s in unique_states if s not in rep_state_ids])

@@ -77,10 +77,7 @@ def compute_vcg_modified_silhouette(
 
         neighbors = neighbor_labels.get(lab, [])
         if not neighbors:
-            # Fallback to all other clusters if no adjacent neighbor found
-            neighbors = [o for o in unique_labels if o != lab]
-            if not neighbors:
-                continue
+            continue
 
         b_candidates = [
             dist_matrix[np.ix_(members, label_indices[neighbor])].mean(axis=1)

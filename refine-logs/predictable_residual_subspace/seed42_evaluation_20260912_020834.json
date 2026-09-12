@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-12T02:08:34.457394+00:00",
+  "cohort": "PTB-XL fold 9 only",
+  "n_ecgs": 2183,
+  "n_patients": 1942,
+  "K_STAR": 5,
+  "checkpoint_artifacts": {
+    "B1": {
+      "checkpoint": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/predictable_residual_subspace/runs/prs_direct_k5_s42_l0/best.pt",
+      "sha256": "e6a786c87eee3a87f031c4607973a175748dd7a566dafc17b8ce79384fbafce1",
+      "best_epoch": 15
+    },
+    "C1": {
+      "checkpoint": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/predictable_residual_subspace/runs/prs_frozen_pca_k5_s42_l0/best.pt",
+      "sha256": "84303de4222c1aa2c17cba130cf0fa30f91905d3409ea4a860a3871ab61f5860",
+      "best_epoch": 15
+    },
+    "C2": {
+      "checkpoint": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/refine-logs/predictable_residual_subspace/runs/prs_learned_k5_s42_l0/best.pt",
+      "sha256": "597fb7c956bda3e193d9c9ac4ba100ae7aa85d7a34f11f322f26294d2cbcae9d",
+      "best_epoch": 15
+    }
+  },
+  "metrics": {
+    "B1": {
+      "mean_independent_missing_r": 0.8120889044102494,
+      "p05_independent_missing_r": 0.5338523309822255,
+      "mean_all_missing_r": 0.8138017010742209,
+      "p05_all_missing_r": 0.5797358345885039,
+      "independent_missing_mse": 0.051477124192742224,
+      "p_wave_iou": 0.4998664955477557,
+      "qrs_wave_iou": 0.7948065799296044,
+      "t_wave_iou": 0.6879660544446504,
+      "semiseg_miou": 0.6608797099740035,
+      "qrs_duration_mae_ms": 9.844945073807073,
+      "lvh_sokolowlyon_mae_mv": 0.6762055288909474,
+      "precordial_variance_retention": 0.23105458915233612,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.3894730736184545,
+        "III": 0.231798311744573,
+        "aVR": 0.7408153187209293,
+        "aVL": 0.7434786715506334,
+        "aVF": 0.111655657299076,
+        "V1": 0.49697292041433794,
+        "V2": 0.47205022232851235,
+        "V3": 0.39406120270276723,
+        "V4": 0.3129852226761368,
+        "V5": 0.475440405066614,
+        "V6": 0.3606321301408205
+      },
+      "precordial_variance_retention_per_lead": {
+        "V1": 0.3686276972293854,
+        "V2": 0.12977227568626404,
+        "V3": 0.14692790806293488,
+        "V4": 0.20494957268238068,
+        "V5": 0.263996958732605,
+        "V6": 0.2720530927181244
+      },
+      "dependent_lead_r2_qc_sensitivity": {
+        "III": 0.22473787247707078,
+        "aVR": 0.74174603578867,
+        "aVL": 0.7430547990078895,
+        "aVF": 0.10456178854675657
+      }
+    },
+    "C1": {
+      "mean_independent_missing_r": 0.8063027667568593,
+      "p05_independent_missing_r": 0.5278076943129204,
+      "mean_all_missing_r": 0.7975974215121082,
+      "p05_all_missing_r": 0.5666861163672618,
+      "independent_missing_mse": 0.05240028897246453,
+      "p_wave_iou": 0.502038247223924,
+      "qrs_wave_iou": 0.7933557994934243,
+      "t_wave_iou": 0.6735102932457571,
+      "semiseg_miou": 0.6563014466543684,
+      "qrs_duration_mae_ms": 10.658745279780295,
+      "lvh_sokolowlyon_mae_mv": 0.6895710457002548,
+      "precordial_variance_retention": 0.23042555153369904,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.32202104255216424,
+        "III": 0.13779988576753355,
+        "aVR": 0.7318425915553866,
+        "aVL": 0.7193049149140174,
+        "aVF": 0.007709377450018429,
+        "V1": 0.491565658648781,
+        "V2": 0.4621615956975266,
+        "V3": 0.3798452108253608,
+        "V4": 0.3051912454832202,
+        "V5": 0.4757011417922389,
+        "V6": 0.3604682502065525
+      },
+      "precordial_variance_retention_per_lead": {
+        "V1": 0.29752177000045776,
+        "V2": 0.12952986359596252,
+        "V3": 0.1540117710828781,
+        "V4": 0.22789530456066132,
+        "V5": 0.27674412727355957,
+        "V6": 0.29685044288635254
+      },
+      "dependent_lead_r2_qc_sensitivity": {
+        "III": 0.13233011545043294,
+        "aVR": 0.7336185884385839,
+        "aVL": 0.7197340732294515,
+        "aVF": 0.002723870015036156
+      }
+    },
+    "C2": {
+      "mean_independent_missing_r": 0.8088115550868993,
+      "p05_independent_missing_r": 0.5237776043598517,
+      "mean_all_missing_r": 0.8081546688679431,
+      "p05_all_missing_r": 0.5689828037282466,
+      "independent_missing_mse": 0.05205929162034823,
+      "p_wave_iou": 0.5005050211576069,
+      "qrs_wave_iou": 0.7961914965137525,
+      "t_wave_iou": 0.6835464627694763,
+      "semiseg_miou": 0.6600809934802786,
+      "qrs_duration_mae_ms": 9.5075266048747,
+      "lvh_sokolowlyon_mae_mv": 0.705468482535922,
+      "precordial_variance_retention": 0.23365139961242676,
+      "per_lead_r2": {
+        "I": 1.0,
+        "II": 0.4321413890810839,
+        "III": 0.2828490890623587,
+        "aVR": 0.756088248354059,
+        "aVL": 0.7614330773752508,
+        "aVF": 0.17270695050668894,
+        "V1": 0.4890608280287483,
+        "V2": 0.4561060573256285,
+        "V3": 0.38066043587479537,
+        "V4": 0.3001619749376595,
+        "V5": 0.47880726011308616,
+        "V6": 0.3599778301790726
+      },
+      "precordial_variance_retention_per_lead": {
+        "V1": 0.3030852973461151,
+        "V2": 0.13063037395477295,
+        "V3": 0.1478225141763687,
+        "V4": 0.24394603073596954,
+        "V5": 0.28768959641456604,
+        "V6": 0.288734495639801
+      },
+      "dependent_lead_r2_qc_sensitivity": {
+        "III": 0.27804210500522963,
+        "aVR": 0.7574568640266159,
+        "aVL": 0.7616636199944359,
+        "aVF": 0.16823142110429135
+      }
+    }
+  },
+  "paired_bootstrap": {
+    "C1_minus_B1": {
+      "mean_independent_r": {
+        "delta": -0.005786137653390089,
+        "ci95_low": -0.006920099934825302,
+        "ci95_high": -0.0046554230149779665
+      },
+      "p05_independent_r": {
+        "delta": -0.0060446366693051035,
+        "ci95_low": -0.024175049397407,
+        "ci95_high": 0.019262510945867808
+      },
+      "seed": 20260910,
+      "replicates": 10000
+    },
+    "C2_minus_B1": {
+      "mean_independent_r": {
+        "delta": -0.0032773493233501094,
+        "ci95_low": -0.004562902710414351,
+        "ci95_high": -0.002038196327750497
+      },
+      "p05_independent_r": {
+        "delta": -0.010074726622373853,
+        "ci95_low": -0.02359998956867313,
+        "ci95_high": 0.015019530356091765
+      },
+      "seed": 20260910,
+      "replicates": 10000
+    },
+    "C2_minus_C1": {
+      "mean_independent_r": {
+        "delta": 0.0025087883300399794,
+        "ci95_low": 0.0011132738046590236,
+        "ci95_high": 0.0038714278911388396
+      },
+      "p05_independent_r": {
+        "delta": -0.0040300899530687495,
+        "ci95_low": -0.01594337780433825,
+        "ci95_high": 0.01752798785833744
+      },
+      "seed": 20260910,
+      "replicates": 10000
+    }
+  },
+  "latent_diagnostics": {
+    "C1_coordinate_predictability": [
+      {
+        "coordinate": 1,
+        "correlation": 0.7434632883186325,
+        "r2": 0.5498911401130422
+      },
+      {
+        "coordinate": 2,
+        "correlation": 0.6613866709606447,
+        "r2": 0.43391351584384164
+      },
+      {
+        "coordinate": 3,
+        "correlation": 0.25220011304998086,
+        "r2": 0.06265679436577098
+      },
+      {
+        "coordinate": 4,
+        "correlation": 0.1726412203020669,
+        "r2": 0.028372883082609213
+      },
+      {
+        "coordinate": 5,
+        "correlation": 0.32613394716815497,
+        "r2": 0.10183955435000058
+      }
+    ],
+    "C2_vs_PCA_principal_angles_degrees": [
+      0.0,
+      0.03956468030810356,
+      0.10835235565900803,
+      23.32980728149414,
+      52.35383605957031
+    ]
+  },
+  "decisions": {
+    "C1": {
+      "advance": false,
+      "harm_screen": {
+        "checks": {
+          "semiseg_miou": true,
+          "p_wave_iou": true,
+          "t_wave_iou": false,
+          "qrs_duration_mae_ms": true,
+          "lvh_sokolowlyon_mae_mv": true,
+          "precordial_variance_log_error": true
+        },
+        "pass": false
+      },
+      "oracle_mean_gap_closed": -0.03326041247593261,
+      "oracle_p05_gap_closed": -0.014250507712771306
+    },
+    "C2": {
+      "advance": false,
+      "harm_screen": {
+        "checks": {
+          "semiseg_miou": true,
+          "p_wave_iou": true,
+          "t_wave_iou": true,
+          "qrs_duration_mae_ms": true,
+          "lvh_sokolowlyon_mae_mv": true,
+          "precordial_variance_log_error": true
+        },
+        "pass": true
+      },
+      "oracle_mean_gap_closed": -0.018839162987848525,
+      "oracle_p05_gap_closed": -0.02375162930226308
+    }
+  },
+  "multi_seed_action": "Stop low-rank development; no seed-42 system advanced.",
+  "qc": {
+    "gross_limb_threshold_mv": 0.01,
+    "excluded_from_primary": false,
+    "dependent_sensitivity_excluded_ids": [
+      5930,
+      15867
+    ]
+  }
+}

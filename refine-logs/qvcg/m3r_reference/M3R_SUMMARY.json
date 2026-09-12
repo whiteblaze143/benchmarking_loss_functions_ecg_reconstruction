@@ -1,0 +1,28 @@
+{
+  "run_id": "M3R_REFERENCE_IMPLEMENTATION_SENSITIVITY",
+  "status": "COMPLETE",
+  "reference_details": {
+    "block_count": "floor(n/m)",
+    "m": 10,
+    "m_is_qvcg_adaptation": true,
+    "clustering": "sklearn.KMeans(n_init=10, random_state=0)",
+    "kernel": "IMQ",
+    "c": 1.0,
+    "mmd_estimator": "biased Eq. 6",
+    "n_permutations": 200,
+    "p_value": "n_exceed / B",
+    "multiple_testing": "global BH",
+    "alpha": 0.05,
+    "edge": "BH non-rejection"
+  },
+  "num_similarity_edges": 978,
+  "num_connected_components": 1,
+  "largest_component_size": 64,
+  "component_sizes": [
+    64
+  ],
+  "non_clique_component_ids": [
+    0
+  ],
+  "num_non_clique_components": 1
+}

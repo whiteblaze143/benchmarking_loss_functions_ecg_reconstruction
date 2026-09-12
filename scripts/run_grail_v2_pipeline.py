@@ -126,8 +126,9 @@ def main():
     # 2b. Run LVCG Multi-Benchmark Linear Probing Battery
     lvcg_config = PROJECT_ROOT / "configs" / "eval_grail_lvcg_probing.yaml"
     if lvcg_config.exists():
+        results_csv = PROJECT_ROOT / "results" / "grail_v2" / "lvcg_linear_probing.csv"
         run_cmd(
-            f"PYTHONPATH=external/LVCG:external/LVCG/probing:. {python_bin} external/LVCG/probing/run_probing.py --config {lvcg_config} --models grail --results results/grail_v2/lvcg_linear_probing.csv",
+            f"PYTHONPATH=external/LVCG:external/LVCG/probing:. {python_bin} external/LVCG/probing/run_probing.py --config {lvcg_config} --models grail --results {results_csv}",
             "Phase R2-LVCG: LVCG Multi-Benchmark Linear Probing Battery (PTB-XL Superclass/Subclass/Form/Rhythm)",
         )
 

@@ -1,0 +1,20 @@
+{
+  "edge_jaccard": 0.9724208375893769,
+  "raw_rejection_agreement": 0.9885912698412699,
+  "bh_decision_agreement": 0.9866071428571429,
+  "p_value_spearman_rho": 0.9882511662379523,
+  "primary_num_edges": 953,
+  "m3r_num_edges": 978,
+  "primary_num_rejections": 1063,
+  "m3r_num_rejections": 1038,
+  "num_similarity_edges": 978,
+  "num_connected_components": 1,
+  "largest_component_size": 64,
+  "component_sizes": [
+    64
+  ],
+  "non_clique_component_ids": [
+    0
+  ],
+  "num_non_clique_components": 1
+}

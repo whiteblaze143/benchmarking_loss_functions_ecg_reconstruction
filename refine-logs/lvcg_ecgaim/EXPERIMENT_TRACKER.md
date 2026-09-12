@@ -9,7 +9,7 @@
 | D0 | DONE | 21,799/21,799 boundaries; 0 failures; cross-lead QA passed | `beat_bounds/audit.json`, `beat_bounds/quality_audit.json` |
 | E0 | PARTIAL | Bitwise equivalence passed on real T_patch10 checkpoint/record; 100-record batch remains | `frozen_equivalence.json` |
 | E1 | TODO | Current 640-D dimension-matched pooling baseline | — |
-| E2 | TODO | Proposed auxiliary embedding pilot | — |
+| E2 | RUNNING | Proposed auxiliary embedding pilot | `runs/pilot_learned/`, tmux `train_lvcg_ecgaim_embedding` (PID 2189012) |
 | E3 | READY | Triplication capacity control implemented and smoke-tested | `--field-mode triplicate` |
 | E4 | READY | Count-matched uniform-window control implemented and smoke-tested | `--boundary-control uniform` |
 | E5 | TODO | Component deletion probes | — |

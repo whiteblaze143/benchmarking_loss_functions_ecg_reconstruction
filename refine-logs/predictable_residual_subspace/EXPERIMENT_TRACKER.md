@@ -4,11 +4,11 @@
 |---|---|---|---|---|---|---|---|
 | PRS-R001 | M0 | Residual rank curve | PCA oracle k=1..6 | train folds1-8 / val fold9 | MUST | COMPLETE | K_STAR=5; first rank >=90% energy |
 | PRS-R002 | M1 | Geometry/head tests | B1/C1/C2 | synthetic + one batch | MUST | COMPLETE | 12 targeted tests; 3 GPU smokes; identical trunk hash |
-| PRS-R003 | M2 | Direct baseline | B1 seed42 15e | folds1-8/9 | MUST | RUNNING | tmux predictable_residual_s42; PID 1499750; epoch 14 in progress |
-| PRS-R004 | M2 | Frozen PCA | C1 seed42 15e | folds1-8/9 | MUST | QUEUED | Queue position 2 |
-| PRS-R005 | M2 | Predictive subspace | C2 seed42 15e | folds1-8/9 | MUST | QUEUED | Queue position 3 |
-| PRS-R006 | M3 | Paired/clinical/latent evaluation | B1/C1/C2 | fold9 | MUST | BLOCKED | Same selected checkpoints |
-| PRS-R007 | M4 | Replication | advancing systems seeds43/44 | folds1-8/9 | CONDITIONAL | BLOCKED | Requires R006 |
+| PRS-R003 | M2 | Direct baseline | B1 seed42 15e | folds1-8/9 | MUST | COMPLETE | 15/15e; best val r=0.812089 |
+| PRS-R004 | M2 | Frozen PCA | C1 seed42 15e | folds1-8/9 | MUST | COMPLETE | 15/15e; best val r=0.806303 |
+| PRS-R005 | M2 | Predictive subspace | C2 seed42 15e | folds1-8/9 | MUST | COMPLETE | 15/15e; best val r=0.808812 |
+| PRS-R006 | M3 | Paired/clinical/latent evaluation | B1/C1/C2 | fold9 | MUST | COMPLETE | Evaluated; C1-B1 delta=-0.0058, C2-B1 delta=-0.0033, C2-C1 delta=+0.0025; gate failed (no advance) |
+| PRS-R007 | M4 | Replication | advancing systems seeds43/44 | folds1-8/9 | CONDITIONAL | STOPPED | Gate rule triggered: neither C1 nor C2 advanced over B1 |
 | PRS-R008 | M5 | Confirmation | final frozen model | fold10/EchoNext | DEFERRED | SEALED | Not current phase |
 
 Frozen gates: FIXED_VCG_SPECIFICITY=NOT_SUPPORTED; dependent-limb sensitivity excludes source residual >0.01 mV; advance requires delta mean independent r >=0.005, paired CI95 low >0, and all harm margins.

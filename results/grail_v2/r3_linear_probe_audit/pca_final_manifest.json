@@ -1,0 +1,7 @@
+{
+  "status": "complete",
+  "cells": 2379,
+  "unique_cells": 2379,
+  "estimand": "fixed-readout PCA clinical accessibility",
+  "registry_sha256": "be20a947fe1d8532a7650fdf0fb1096852ffc3516be63ac2cccf6390a50e39ce"
+}

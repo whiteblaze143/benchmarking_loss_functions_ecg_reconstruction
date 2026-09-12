@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "ub_pca_cells": 429,
+  "ub_pca_sha256": "fa0ea7c3a477197f3872e4981ab6ddfcb67e0b6cc690f09d7e24eaeaaabb7639",
+  "remaining_pca_cells": 1950,
+  "final_pca_cells": 2379,
+  "lowshot_planned_cells": 28080,
+  "lowshot_design_unique_cells": 28080,
+  "duplicates": 0,
+  "missing_key_detection": true,
+  "incomplete_resume_detection": true,
+  "forced_interruption_checkpoint_preserved": true,
+  "atomic_checkpoint_recovery": true,
+  "memory_guard_graceful_test": true,
+  "memory_logging_instrumented": true,
+  "registry_sha256": "be20a947fe1d8532a7650fdf0fb1096852ffc3516be63ac2cccf6390a50e39ce",
+  "patient_design_sha256": "d6ce8ae0d3d94189b048f74b2c5a5d2da4708ef680e31797ac2d9f36c3a70b23",
+  "mmap_read_only": true,
+  "worker_payload": "paths_and_identifiers_only",
+  "pca_fits_per_model": 1,
+  "blas_threads": 1
+}

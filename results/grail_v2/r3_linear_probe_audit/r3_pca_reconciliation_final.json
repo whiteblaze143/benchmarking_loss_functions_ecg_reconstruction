@@ -1,0 +1,18 @@
+{
+  "status": "complete",
+  "cells": 2379,
+  "unique_cells": 2379,
+  "duplicate_cells": 0,
+  "missing_expected_cells": 0,
+  "models": {
+    "b0": 390,
+    "b1": 390,
+    "model_001": 390,
+    "model_101": 390,
+    "model_m": 390,
+    "ub": 429
+  },
+  "registry_sha256": "be20a947fe1d8532a7650fdf0fb1096852ffc3516be63ac2cccf6390a50e39ce",
+  "estimand": "fixed-readout PCA clinical accessibility",
+  "unstable_denominator_threshold_abs_full_minus_chance": 0.05
+}

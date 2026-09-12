@@ -1,0 +1,8 @@
+{
+  "status": "frozen",
+  "r3_geometry_incremental_per_concept.parquet": "833faec6020e893272c5fa2dfec3a1b8d6c4bce8fe6fa4be4afa600fd9962e90",
+  "r3_geometry_incremental_tier_summary.csv": "7767ee88d4b4beab1a4ac953813207738c07cc9e9bdb8a228bb082dabcb3dfa3",
+  "r3_residual_retention_per_concept.parquet": "b2faa9123522dc4ec684fe34cb84dabe46d955d29d5dc4136adce7d5084cc341",
+  "r3_geometry_extension_manifest.json": "13b4a67cd4c5f6ebcebda3999431d2c17e626d91057a6a411e28cd5d2df6f914",
+  "R3_G2_INTERPRETATION.md": "75008e0552ee0995e673304a9680010825d1741da5f34b80577dae184cc21b58"
+}

@@ -86,10 +86,10 @@ def main():
         save_path=os.path.join(args.figures_dir, "simulation_benchmark_comparison.png"),
     )
 
-    # 2. Clinical ECG Benchmark
+    # 2. Clinical ECG Benchmark (RDB Fiducial Ground Truth)
     clinical_results = run_clinical_benchmark(
         n_records=args.clinical_records,
-        base_dir="data/ptb_xl/records500",
+        cache_root="data/rdb_wavelet_delineation_cache",
         output_dir=args.output_dir,
         figures_dir=args.figures_dir,
     )

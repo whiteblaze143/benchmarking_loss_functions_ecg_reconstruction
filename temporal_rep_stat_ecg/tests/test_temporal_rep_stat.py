@@ -192,14 +192,16 @@ def test_clique_reassignment():
     assert np.all(reassigned[6:] == 4)
 
 
-def test_semiseg_beat_feature_extraction():
-    from temporal_rep_stat_ecg.src.data.ecg_features import load_ptbxl_record, extract_beat_features
-    signals, fs, _ = load_ptbxl_record("00001_hr")
-    feats = extract_beat_features(signals, fs=fs, lead_idx=1)
+def test_rdb_beat_feature_extraction():
+    from temporal_rep_stat_ecg.src.data.ecg_features import load_rdb_record, extract_beat_features, list_rdb_records
+    records = list_rdb_records(split="test")
+    assert len(records) > 0
+    rec = load_rdb_record(records[0]["pt_path"])
+    feats = extract_beat_features(rec["waveform"], seg_record=rec["segmentation"], fs=rec["fs"], lead_idx=1)
     assert len(feats["timestamps"]) >= 3
-    assert feats["continuous"].shape[1] == 8
-    assert feats["binary"].shape[1] == 8
-    assert "QRS_onset" in feats["delineation_boundaries"]
+    assert feats["continuous"].shape[1] >= 5
+    assert feats["binary"].shape[1] >= 5
+    assert "QRS_onset" in feats["boundaries"]
 
 
 def test_temporal_rep_spat_pipeline_end_to_end():

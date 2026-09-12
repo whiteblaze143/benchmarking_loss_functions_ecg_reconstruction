@@ -1,96 +1,8 @@
 [
   {
-    "record_name": "00001_hr",
-    "n_beats": 11,
-    "continuous_summary": {
-      "best_m": 2,
-      "best_G": 4,
-      "initial_episodes_count": 4,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1
-      },
-      "edges_in_similarity_graph": 6,
-      "nodes_in_similarity_graph": 4
-    },
-    "binary_summary": {
-      "best_m": 4,
-      "best_G": 4,
-      "initial_episodes_count": 4,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1
-      },
-      "edges_in_similarity_graph": 6,
-      "nodes_in_similarity_graph": 4
-    },
-    "continuous_labels": [
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1
-    ],
-    "binary_labels": [
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1
-    ],
-    "timestamps": [
-      0.226,
-      1.15,
-      2.078,
-      3.004,
-      3.934,
-      4.878,
-      5.83,
-      6.794,
-      7.734,
-      8.65,
-      9.61
-    ]
-  },
-  {
-    "record_name": "00002_hr",
-    "n_beats": 8,
+    "record_id": "AF0006",
+    "canonical_rhythm": "AF",
+    "n_beats": 13,
     "continuous_summary": {
       "best_m": 4,
       "best_G": 4,
@@ -145,88 +57,6 @@
       1,
       1,
       1,
-      1
-    ],
-    "binary_labels": [
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1
-    ],
-    "timestamps": [
-      1.008,
-      2.31,
-      3.68,
-      5.026,
-      6.276,
-      6.85,
-      7.474,
-      8.636
-    ]
-  },
-  {
-    "record_name": "00003_hr",
-    "n_beats": 11,
-    "continuous_summary": {
-      "best_m": 2,
-      "best_G": 5,
-      "initial_episodes_count": 5,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
-      },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
-    },
-    "binary_summary": {
-      "best_m": 4,
-      "best_G": 5,
-      "initial_episodes_count": 5,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
-      },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
-    },
-    "continuous_labels": [
-      1,
-      1,
-      1,
-      1,
-      1,
       1,
       1,
       1,
@@ -245,25 +75,355 @@
       1,
       1,
       1,
+      1,
+      1,
       1
     ],
     "timestamps": [
-      1.046,
-      2.022,
-      2.982,
-      3.94,
-      4.534,
-      4.854,
+      0.326,
+      1.028,
+      1.642,
+      2.342,
+      3.186,
+      4.05,
+      4.91,
       5.776,
-      6.706,
-      7.64,
-      8.572,
-      9.51
+      6.642,
+      7.51,
+      8.368,
+      8.99,
+      9.69
     ]
   },
   {
-    "record_name": "00004_hr",
-    "n_beats": 12,
+    "record_id": "AF0036",
+    "canonical_rhythm": "AF",
+    "n_beats": 19,
+    "continuous_summary": {
+      "best_m": 2,
+      "best_G": 3,
+      "initial_episodes_count": 3,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1
+      },
+      "edges_in_similarity_graph": 3,
+      "nodes_in_similarity_graph": 3
+    },
+    "binary_summary": {
+      "best_m": 4,
+      "best_G": 3,
+      "initial_episodes_count": 3,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1
+      },
+      "edges_in_similarity_graph": 3,
+      "nodes_in_similarity_graph": 3
+    },
+    "continuous_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "binary_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "timestamps": [
+      0.552,
+      0.97,
+      1.604,
+      2.152,
+      2.57,
+      3.2,
+      3.716,
+      4.206,
+      4.604,
+      5.058,
+      5.65,
+      6.146,
+      6.59,
+      7.068,
+      7.664,
+      8.224,
+      8.636,
+      9.262,
+      9.776
+    ]
+  },
+  {
+    "record_id": "AFIB0005",
+    "canonical_rhythm": "AFIB",
+    "n_beats": 16,
+    "continuous_summary": {
+      "best_m": 2,
+      "best_G": 4,
+      "initial_episodes_count": 4,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1
+      },
+      "edges_in_similarity_graph": 6,
+      "nodes_in_similarity_graph": 4
+    },
+    "binary_summary": {
+      "best_m": 4,
+      "best_G": 4,
+      "initial_episodes_count": 4,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1
+      },
+      "edges_in_similarity_graph": 6,
+      "nodes_in_similarity_graph": 4
+    },
+    "continuous_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "binary_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "timestamps": [
+      0.29,
+      0.814,
+      1.486,
+      2.102,
+      2.522,
+      3.286,
+      3.934,
+      4.486,
+      5.08,
+      5.726,
+      6.2,
+      6.732,
+      7.35,
+      7.712,
+      8.432,
+      8.908
+    ]
+  },
+  {
+    "record_id": "AFIB0006",
+    "canonical_rhythm": "AFIB",
+    "n_beats": 19,
+    "continuous_summary": {
+      "best_m": 4,
+      "best_G": 3,
+      "initial_episodes_count": 3,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1
+      },
+      "edges_in_similarity_graph": 3,
+      "nodes_in_similarity_graph": 3
+    },
+    "binary_summary": {
+      "best_m": 4,
+      "best_G": 3,
+      "initial_episodes_count": 3,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1
+      },
+      "edges_in_similarity_graph": 3,
+      "nodes_in_similarity_graph": 3
+    },
+    "continuous_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "binary_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "timestamps": [
+      0.492,
+      0.938,
+      1.372,
+      1.818,
+      2.438,
+      2.846,
+      3.608,
+      4.182,
+      4.662,
+      5.182,
+      5.636,
+      6.174,
+      6.708,
+      7.156,
+      7.568,
+      7.95,
+      8.73,
+      9.302,
+      9.822
+    ]
+  },
+  {
+    "record_id": "SI0003",
+    "canonical_rhythm": "SA",
+    "n_beats": 11,
     "continuous_summary": {
       "best_m": 2,
       "best_G": 5,
@@ -325,6 +485,97 @@
       1,
       1,
       1,
+      1
+    ],
+    "binary_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "timestamps": [
+      0.954,
+      1.802,
+      2.628,
+      3.394,
+      4.196,
+      5.018,
+      5.888,
+      6.7,
+      7.432,
+      8.166,
+      9.072
+    ]
+  },
+  {
+    "record_id": "SI0007",
+    "canonical_rhythm": "SA",
+    "n_beats": 13,
+    "continuous_summary": {
+      "best_m": 2,
+      "best_G": 4,
+      "initial_episodes_count": 4,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1
+      },
+      "edges_in_similarity_graph": 6,
+      "nodes_in_similarity_graph": 4
+    },
+    "binary_summary": {
+      "best_m": 4,
+      "best_G": 4,
+      "initial_episodes_count": 4,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1
+      },
+      "edges_in_similarity_graph": 6,
+      "nodes_in_similarity_graph": 4
+    },
+    "continuous_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
       1,
       1
     ],
@@ -340,75 +591,288 @@
       1,
       1,
       1,
+      1,
       1
     ],
     "timestamps": [
-      0.304,
-      1.084,
-      1.912,
-      2.786,
-      3.646,
-      4.464,
-      5.226,
-      6.012,
-      6.802,
-      7.626,
-      8.41,
-      9.168
+      0.232,
+      0.956,
+      1.64,
+      2.348,
+      3.106,
+      4.084,
+      4.91,
+      5.7,
+      6.54,
+      7.388,
+      8.154,
+      8.884,
+      9.676
     ]
   },
   {
-    "record_name": "00005_hr",
-    "n_beats": 11,
+    "record_id": "ST0012",
+    "canonical_rhythm": "ST",
+    "n_beats": 17,
     "continuous_summary": {
-      "best_m": 2,
+      "best_m": 4,
       "best_G": 4,
       "initial_episodes_count": 4,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1
+      },
+      "edges_in_similarity_graph": 6,
+      "nodes_in_similarity_graph": 4
+    },
+    "binary_summary": {
+      "best_m": 4,
+      "best_G": 4,
+      "initial_episodes_count": 4,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1
+      },
+      "edges_in_similarity_graph": 6,
+      "nodes_in_similarity_graph": 4
+    },
+    "continuous_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "binary_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "timestamps": [
+      0.696,
+      1.244,
+      1.808,
+      2.374,
+      2.808,
+      3.502,
+      4.058,
+      4.622,
+      5.186,
+      5.628,
+      6.322,
+      6.88,
+      7.454,
+      8.02,
+      8.462,
+      9.182,
+      9.74
+    ]
+  },
+  {
+    "record_id": "ST0017",
+    "canonical_rhythm": "ST",
+    "n_beats": 18,
+    "continuous_summary": {
+      "best_m": 2,
+      "best_G": 3,
+      "initial_episodes_count": 3,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1
+      },
+      "edges_in_similarity_graph": 3,
+      "nodes_in_similarity_graph": 3
+    },
+    "binary_summary": {
+      "best_m": 4,
+      "best_G": 3,
+      "initial_episodes_count": 3,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1
+      },
+      "edges_in_similarity_graph": 3,
+      "nodes_in_similarity_graph": 3
+    },
+    "continuous_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "binary_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "timestamps": [
+      0.526,
+      1.06,
+      1.608,
+      2.136,
+      2.684,
+      3.224,
+      3.746,
+      4.29,
+      4.828,
+      5.35,
+      5.896,
+      6.43,
+      6.95,
+      7.476,
+      8.022,
+      8.558,
+      9.082,
+      9.604
+    ]
+  },
+  {
+    "record_id": "AT0002",
+    "canonical_rhythm": "AT",
+    "n_beats": 26,
+    "continuous_summary": {
+      "best_m": 4,
+      "best_G": 3,
+      "initial_episodes_count": 3,
+      "rtp_clusters_count": 1,
+      "maximal_cliques_count": 1,
+      "maximal_cliques": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "label_mapping": {
+        "1": 1,
+        "2": 1,
+        "3": 1
+      },
+      "edges_in_similarity_graph": 3,
+      "nodes_in_similarity_graph": 3
+    },
+    "binary_summary": {
+      "best_m": 4,
+      "best_G": 3,
+      "initial_episodes_count": 3,
       "rtp_clusters_count": 1,
       "maximal_cliques_count": 2,
       "maximal_cliques": [
         [
           1,
-          3,
-          4
+          2
         ],
         [
-          2,
-          3,
-          4
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1
-      },
-      "edges_in_similarity_graph": 5,
-      "nodes_in_similarity_graph": 4
-    },
-    "binary_summary": {
-      "best_m": 4,
-      "best_G": 4,
-      "initial_episodes_count": 4,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
           1,
-          2,
-          3,
-          4
+          3
         ]
       ],
       "label_mapping": {
         "1": 1,
         "2": 1,
-        "3": 1,
-        "4": 1
+        "3": 1
       },
-      "edges_in_similarity_graph": 6,
-      "nodes_in_similarity_graph": 4
+      "edges_in_similarity_graph": 2,
+      "nodes_in_similarity_graph": 3
     },
     "continuous_labels": [
       1,
@@ -421,89 +885,9 @@
       1,
       1,
       1,
-      1
-    ],
-    "binary_labels": [
       1,
       1,
       1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1
-    ],
-    "timestamps": [
-      0.334,
-      1.234,
-      2.194,
-      3.126,
-      3.99,
-      4.82,
-      5.708,
-      6.692,
-      7.64,
-      8.544,
-      9.386
-    ]
-  },
-  {
-    "record_name": "00006_hr",
-    "n_beats": 13,
-    "continuous_summary": {
-      "best_m": 2,
-      "best_G": 5,
-      "initial_episodes_count": 5,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
-      },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
-    },
-    "binary_summary": {
-      "best_m": 4,
-      "best_G": 5,
-      "initial_episodes_count": 5,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
-      },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
-    },
-    "continuous_labels": [
       1,
       1,
       1,
@@ -531,182 +915,8 @@
       1,
       1,
       1,
-      1
-    ],
-    "timestamps": [
-      0.638,
-      1.306,
-      1.992,
-      2.708,
-      3.468,
-      4.218,
-      4.966,
-      5.722,
-      6.422,
-      7.094,
-      7.79,
-      8.53,
-      9.302
-    ]
-  },
-  {
-    "record_name": "00007_hr",
-    "n_beats": 10,
-    "continuous_summary": {
-      "best_m": 4,
-      "best_G": 5,
-      "initial_episodes_count": 5,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
-      },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
-    },
-    "binary_summary": {
-      "best_m": 4,
-      "best_G": 5,
-      "initial_episodes_count": 5,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
-      },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
-    },
-    "continuous_labels": [
       1,
       1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1
-    ],
-    "binary_labels": [
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1
-    ],
-    "timestamps": [
-      0.398,
-      1.35,
-      2.338,
-      3.296,
-      4.258,
-      5.254,
-      6.2,
-      7.17,
-      8.158,
-      9.104
-    ]
-  },
-  {
-    "record_name": "00008_hr",
-    "n_beats": 12,
-    "continuous_summary": {
-      "best_m": 4,
-      "best_G": 5,
-      "initial_episodes_count": 5,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
-      },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
-    },
-    "binary_summary": {
-      "best_m": 4,
-      "best_G": 5,
-      "initial_episodes_count": 5,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
-      },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
-    },
-    "continuous_labels": [
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1
-    ],
-    "binary_labels": [
       1,
       1,
       1,
@@ -721,164 +931,87 @@
       1
     ],
     "timestamps": [
-      0.472,
-      1.296,
-      2.112,
-      2.906,
-      3.7,
-      4.514,
-      5.34,
-      6.148,
+      0.408,
+      0.77,
+      1.132,
+      1.498,
+      1.86,
+      2.222,
+      2.588,
+      2.95,
+      3.312,
+      3.678,
+      4.04,
+      4.402,
+      4.77,
+      5.13,
+      5.492,
+      5.86,
+      6.222,
+      6.582,
       6.95,
-      7.772,
-      8.614,
-      9.426
+      7.314,
+      7.678,
+      8.044,
+      8.404,
+      8.766,
+      9.132,
+      9.494
     ]
   },
   {
-    "record_name": "00009_hr",
-    "n_beats": 10,
-    "continuous_summary": {
-      "best_m": 4,
-      "best_G": 5,
-      "initial_episodes_count": 5,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
-      },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
-    },
-    "binary_summary": {
-      "best_m": 4,
-      "best_G": 5,
-      "initial_episodes_count": 5,
-      "rtp_clusters_count": 1,
-      "maximal_cliques_count": 1,
-      "maximal_cliques": [
-        [
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      ],
-      "label_mapping": {
-        "1": 1,
-        "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
-      },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
-    },
-    "continuous_labels": [
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1
-    ],
-    "binary_labels": [
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1
-    ],
-    "timestamps": [
-      0.864,
-      1.78,
-      2.732,
-      3.718,
-      4.69,
-      5.698,
-      6.72,
-      7.748,
-      8.754,
-      9.738
-    ]
-  },
-  {
-    "record_name": "00010_hr",
-    "n_beats": 10,
+    "record_id": "AT0012",
+    "canonical_rhythm": "AT",
+    "n_beats": 16,
     "continuous_summary": {
       "best_m": 2,
-      "best_G": 5,
-      "initial_episodes_count": 5,
+      "best_G": 3,
+      "initial_episodes_count": 3,
       "rtp_clusters_count": 1,
       "maximal_cliques_count": 1,
       "maximal_cliques": [
         [
           1,
           2,
-          3,
-          4,
-          5
+          3
         ]
       ],
       "label_mapping": {
         "1": 1,
         "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
+        "3": 1
       },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
+      "edges_in_similarity_graph": 3,
+      "nodes_in_similarity_graph": 3
     },
     "binary_summary": {
       "best_m": 4,
-      "best_G": 5,
-      "initial_episodes_count": 5,
+      "best_G": 3,
+      "initial_episodes_count": 3,
       "rtp_clusters_count": 1,
       "maximal_cliques_count": 1,
       "maximal_cliques": [
         [
           1,
           2,
-          3,
-          4,
-          5
+          3
         ]
       ],
       "label_mapping": {
         "1": 1,
         "2": 1,
-        "3": 1,
-        "4": 1,
-        "5": 1
+        "3": 1
       },
-      "edges_in_similarity_graph": 10,
-      "nodes_in_similarity_graph": 5
+      "edges_in_similarity_graph": 3,
+      "nodes_in_similarity_graph": 3
     },
     "continuous_labels": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
       1,
       1,
       1,
@@ -900,19 +1033,31 @@
       1,
       1,
       1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
       1
     ],
     "timestamps": [
-      0.866,
-      1.704,
-      2.628,
-      3.632,
-      4.64,
-      5.644,
-      6.644,
-      7.628,
-      8.566,
-      9.446
+      0.662,
+      1.514,
+      2.042,
+      2.498,
+      2.968,
+      3.46,
+      4.002,
+      4.856,
+      5.344,
+      6.02,
+      6.418,
+      6.794,
+      7.44,
+      8.242,
+      8.828,
+      9.66
     ]
   }
 ]

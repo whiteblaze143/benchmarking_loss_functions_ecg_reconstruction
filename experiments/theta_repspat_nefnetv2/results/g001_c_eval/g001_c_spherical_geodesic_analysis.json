@@ -1,0 +1,104 @@
+{
+  "analysis_type": "spherical_geodesic_distance_analysis",
+  "description": "Evaluates whether clinical transfer performance correlates with spherical geodesic distance from V3 vs nearest observed lead",
+  "reference_view_V3": {
+    "theta_deg": 95.0,
+    "phi_deg": 14.999999999999998
+  },
+  "rows_sorted_by_dist_from_V3": [
+    {
+      "lead": "V2",
+      "theta_deg": 90.0,
+      "phi_deg": 10.0,
+      "dist_from_V3_deg": 7.066574389261593,
+      "dist_from_I_deg": 80.0,
+      "dist_from_II_deg": 85.01907467807114,
+      "dist_min_obs_deg": 7.066574389261593,
+      "pearson_r_mean": 0.24447267232625744,
+      "pearson_r_std": 0.47398472553018905,
+      "l1_norm_mean": 0.05706420477014035,
+      "l1_mv_mean": 0.127632408445701,
+      "psnr_db_mean": 21.412165966687887,
+      "ssim_mean": 0.8715618792384828
+    },
+    {
+      "lead": "V4",
+      "theta_deg": 98.99999999999999,
+      "phi_deg": 29.999999999999996,
+      "dist_from_V3_deg": 15.412498621473778,
+      "dist_from_I_deg": 60.40643753757294,
+      "dist_from_II_deg": 67.51768141695055,
+      "dist_min_obs_deg": 15.412498621473778,
+      "pearson_r_mean": 0.4997874665420968,
+      "pearson_r_std": 0.46415181709880626,
+      "l1_norm_mean": 0.04921330289170146,
+      "l1_mv_mean": 0.11373702914640307,
+      "psnr_db_mean": 22.89879610091808,
+      "ssim_mean": 0.9006833258689032
+    },
+    {
+      "lead": "V1",
+      "theta_deg": 90.0,
+      "phi_deg": -10.0,
+      "dist_from_V3_deg": 25.46354583240636,
+      "dist_from_I_deg": 100.0,
+      "dist_from_II_deg": 94.98092532192888,
+      "dist_min_obs_deg": 25.46354583240636,
+      "pearson_r_mean": -0.0030122882302384825,
+      "pearson_r_std": 0.486448962926911,
+      "l1_norm_mean": 0.04857525890134275,
+      "l1_mv_mean": 0.10690121742151677,
+      "psnr_db_mean": 22.80045841788152,
+      "ssim_mean": 0.8730310418586877
+    },
+    {
+      "lead": "V5",
+      "theta_deg": 96.0,
+      "phi_deg": 59.99999999999999,
+      "dist_from_V3_deg": 44.79213805220387,
+      "dist_from_I_deg": 30.53925533656726,
+      "dist_from_II_deg": 58.58957564855771,
+      "dist_min_obs_deg": 30.53925533656726,
+      "pearson_r_mean": 0.655189689883031,
+      "pearson_r_std": 0.3913792154966366,
+      "l1_norm_mean": 0.04228255090303719,
+      "l1_mv_mean": 0.09648700078763067,
+      "psnr_db_mean": 24.790469162079127,
+      "ssim_mean": 0.9247339883475267
+    },
+    {
+      "lead": "V6",
+      "theta_deg": 96.0,
+      "phi_deg": 90.0,
+      "dist_from_V3_deg": 74.6014348415959,
+      "dist_from_I_deg": 5.9999999999999645,
+      "dist_from_II_deg": 54.00000000000001,
+      "dist_min_obs_deg": 5.9999999999999645,
+      "pearson_r_mean": 0.7229086538692936,
+      "pearson_r_std": 0.3447057528446307,
+      "l1_norm_mean": 0.03577440607128665,
+      "l1_mv_mean": 0.07983454361557961,
+      "psnr_db_mean": 26.673712833039268,
+      "ssim_mean": 0.9375100669355682
+    }
+  ],
+  "rank_correlations": {
+    "dist_from_V3_vs_pearson_r": {
+      "spearman_rho": 0.7,
+      "interpretation": "POSITIVE_CORRELATION: Farther from V3 has HIGHER correlation (r_V6 > r_V5 > r_V4 > r_V2 > r_V1), directly rejecting local angular interpolation from V3."
+    },
+    "dist_min_obs_vs_pearson_r": {
+      "spearman_rho": -0.3
+    }
+  },
+  "critical_comparison": {
+    "V2_dist_from_V3_deg": 7.066574389261593,
+    "V2_pearson_r": 0.24447267232625744,
+    "V6_dist_from_V3_deg": 74.6014348415959,
+    "V6_pearson_r": 0.7229086538692936,
+    "V1_dist_from_V3_deg": 25.46354583240636,
+    "V1_pearson_r": -0.0030122882302384825,
+    "interpolation_hypothesis_falsified": true,
+    "conclusion": "LOCAL_INTERPOLATION_REJECTED: Performance does not decay with spherical distance from V3. V2 is only 7.1\u00b0 from V3 yet achieves r=0.245, whereas V6 is 74.6\u00b0 away yet achieves r=0.723. The failure at V1/V2 reflects a domain/torso-geometry transport barrier across the interventricular septum, while V6 benefits from proximity (6.0\u00b0) to Lead I."
+  }
+}

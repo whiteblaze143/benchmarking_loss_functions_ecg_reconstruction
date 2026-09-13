@@ -1,0 +1,142 @@
+{
+  "analysis_type": "g001_a_query_view_stratification",
+  "description": "Decomposes G001-A angular stratification into within-query angular effects vs between-query identity effects",
+  "total_evaluations": 5150,
+  "unique_query_views": 42,
+  "naive_between_and_within": {
+    "naive_slope_db_per_deg": 0.03305676726757705,
+    "naive_r": 0.24947783686695776,
+    "naive_p": 6.498554585992508e-74,
+    "interpretation": "Across all views pooled, PSNR appears to increase with distance."
+  },
+  "fixed_effects_within_query": {
+    "within_query_slope_db_per_deg": -0.0009818531582002936,
+    "within_query_l1_slope_per_deg": -5.937551236011058e-07,
+    "within_query_r": -0.003900656192181294,
+    "within_query_p": 0.7795865613077035,
+    "mean_individual_within_slope": 0.003699802753404883,
+    "interpretation": "After controlling for query-view fixed effects, within-query angular distance slope is -0.0010 dB/deg (compared to naive +0.0331 dB/deg)."
+  },
+  "between_query_effects": {
+    "correlation_query_mean_dist_vs_mean_psnr": 0.4175125827416997,
+    "p_value": 0.005940959668351827,
+    "highest_psnr_views": [
+      {
+        "query_idx": 35,
+        "n": 133,
+        "ang_dist_mean_deg": 80.13100711564373,
+        "ang_dist_std_deg": 13.62946598003268,
+        "l1_mean": 0.0024052059599128377,
+        "l1_std": 0.0012480566683137615,
+        "psnr_mean_db": 48.46480813582252,
+        "psnr_std_db": 4.182483650770294,
+        "ssim_mean": 0.9948700180030662
+      },
+      {
+        "query_idx": 5,
+        "n": 113,
+        "ang_dist_mean_deg": 155.61769259292467,
+        "ang_dist_std_deg": 22.341240119840798,
+        "l1_mean": 0.0034212040064848168,
+        "l1_std": 0.0032878868283547275,
+        "psnr_mean_db": 46.99775186665405,
+        "psnr_std_db": 6.855255233693226,
+        "ssim_mean": 0.9912386791940471
+      },
+      {
+        "query_idx": 40,
+        "n": 121,
+        "ang_dist_mean_deg": 44.417740987352104,
+        "ang_dist_std_deg": 14.739569585285018,
+        "l1_mean": 0.003528634620222363,
+        "l1_std": 0.0012377356663932789,
+        "psnr_mean_db": 44.16423659862674,
+        "psnr_std_db": 2.588943108530386,
+        "ssim_mean": 0.9948582126729201
+      },
+      {
+        "query_idx": 29,
+        "n": 92,
+        "ang_dist_mean_deg": 89.79182633109714,
+        "ang_dist_std_deg": 11.322239172324998,
+        "l1_mean": 0.004117358825169504,
+        "l1_std": 0.00248289477901248,
+        "psnr_mean_db": 44.161977819861185,
+        "psnr_std_db": 4.5754539415431505,
+        "ssim_mean": 0.990788343732468
+      },
+      {
+        "query_idx": 11,
+        "n": 115,
+        "ang_dist_mean_deg": 152.57484110956608,
+        "ang_dist_std_deg": 22.163367216110334,
+        "l1_mean": 0.00768920901413683,
+        "l1_std": 0.010045435350886757,
+        "psnr_mean_db": 43.150766667014764,
+        "psnr_std_db": 9.354625979733832,
+        "ssim_mean": 0.9707722577616019
+      }
+    ],
+    "lowest_psnr_views": [
+      {
+        "query_idx": 32,
+        "n": 124,
+        "ang_dist_mean_deg": 29.775504323744006,
+        "ang_dist_std_deg": 17.350999229329734,
+        "l1_mean": 0.02184600849455643,
+        "l1_std": 0.007837526196102866,
+        "psnr_mean_db": 28.50800942330904,
+        "psnr_std_db": 4.028214996929099,
+        "ssim_mean": 0.9569181876638356
+      },
+      {
+        "query_idx": 26,
+        "n": 117,
+        "ang_dist_mean_deg": 33.07325404729598,
+        "ang_dist_std_deg": 20.692136610023177,
+        "l1_mean": 0.0197033089482122,
+        "l1_std": 0.005841802259038479,
+        "psnr_mean_db": 29.808687470977084,
+        "psnr_std_db": 2.370410181919126,
+        "ssim_mean": 0.9580836473032676
+      },
+      {
+        "query_idx": 25,
+        "n": 121,
+        "ang_dist_mean_deg": 56.00827957973007,
+        "ang_dist_std_deg": 20.675904233759287,
+        "l1_mean": 0.01943632350726561,
+        "l1_std": 0.008324016166073612,
+        "psnr_mean_db": 30.203888202042098,
+        "psnr_std_db": 3.850192019988207,
+        "ssim_mean": 0.9599572012966034
+      },
+      {
+        "query_idx": 37,
+        "n": 118,
+        "ang_dist_mean_deg": 35.85232712050616,
+        "ang_dist_std_deg": 10.009515173875613,
+        "l1_mean": 0.015427903765496813,
+        "l1_std": 0.006068584674696687,
+        "psnr_mean_db": 31.162725900389493,
+        "psnr_std_db": 2.829163821259852,
+        "ssim_mean": 0.9709594688834416
+      },
+      {
+        "query_idx": 31,
+        "n": 117,
+        "ang_dist_mean_deg": 42.528320442917,
+        "ang_dist_std_deg": 17.991895834193993,
+        "l1_mean": 0.016882893295051195,
+        "l1_std": 0.008124149144918427,
+        "psnr_mean_db": 31.198831515037426,
+        "psnr_std_db": 4.070251202035646,
+        "ssim_mean": 0.9674949202528303
+      }
+    ]
+  },
+  "scientific_verdict": {
+    "artifact_confirmed": true,
+    "conclusion": "CONFIRMED: The apparent rise in PSNR with larger angular distance is driven by between-query identity effects (between-view r = +0.418), where distant views have inherently lower variance or amplitude. Controlling for query-view fixed effects flattens the slope from +0.0331 to -0.0010 dB/deg. Distant views do NOT inherently generalize better."
+  }
+}

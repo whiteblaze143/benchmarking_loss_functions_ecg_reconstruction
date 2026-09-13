@@ -1,0 +1,1002 @@
+[
+  {
+    "record": "1",
+    "third_view_idx": 34,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.6324941324751043,
+      "knn_jaccard_k10": 0.18062305616639981,
+      "knn_jaccard_k20": 0.20501334536995797,
+      "cahc_ari": 0.35362891985819506
+    }
+  },
+  {
+    "record": "2",
+    "third_view_idx": 20,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9686294872096367,
+      "knn_jaccard_k10": 0.31288193282465726,
+      "knn_jaccard_k20": 0.3669875183137675,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "3",
+    "third_view_idx": 38,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9552323760809999,
+      "knn_jaccard_k10": 0.3027904111712161,
+      "knn_jaccard_k20": 0.3700161243482491,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "4",
+    "third_view_idx": 31,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9706523529534696,
+      "knn_jaccard_k10": 0.3278416059344852,
+      "knn_jaccard_k20": 0.39426168598095673,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "5",
+    "third_view_idx": 5,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9471347942468633,
+      "knn_jaccard_k10": 0.26985387385232584,
+      "knn_jaccard_k20": 0.3427292584928377,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "6",
+    "third_view_idx": 42,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9296848478897348,
+      "knn_jaccard_k10": 0.30123700207601134,
+      "knn_jaccard_k20": 0.3630124069130942,
+      "cahc_ari": 0.5020121511438014
+    }
+  },
+  {
+    "record": "7",
+    "third_view_idx": 33,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.840109782562146,
+      "knn_jaccard_k10": 0.24343663010536074,
+      "knn_jaccard_k20": 0.29240053541469957,
+      "cahc_ari": 0.5033850959479332
+    }
+  },
+  {
+    "record": "8",
+    "third_view_idx": 35,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.5495371009288008,
+      "knn_jaccard_k10": 0.1439144929717685,
+      "knn_jaccard_k20": 0.16670710158694874,
+      "cahc_ari": 0.4785151589848795
+    }
+  },
+  {
+    "record": "9",
+    "third_view_idx": 7,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.6732137125716224,
+      "knn_jaccard_k10": 0.1715583848555985,
+      "knn_jaccard_k20": 0.19478524128895577,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "10",
+    "third_view_idx": 20,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.44625403290238386,
+      "knn_jaccard_k10": 0.1589977073150448,
+      "knn_jaccard_k20": 0.18914356569814994,
+      "cahc_ari": -0.14629472864684379
+    }
+  },
+  {
+    "record": "11",
+    "third_view_idx": 17,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.5362267911985145,
+      "knn_jaccard_k10": 0.22474480833923557,
+      "knn_jaccard_k20": 0.27216632012774195,
+      "cahc_ari": 0.2788551769196831
+    }
+  },
+  {
+    "record": "12",
+    "third_view_idx": 40,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9438203022287092,
+      "knn_jaccard_k10": 0.35729102545201613,
+      "knn_jaccard_k20": 0.39354175942408526,
+      "cahc_ari": 0.5020498015341962
+    }
+  },
+  {
+    "record": "13",
+    "third_view_idx": 29,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8988902114822042,
+      "knn_jaccard_k10": 0.3359046572622424,
+      "knn_jaccard_k20": 0.38041257953852103,
+      "cahc_ari": 0.869604197724202
+    }
+  },
+  {
+    "record": "14",
+    "third_view_idx": 36,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9206764355272878,
+      "knn_jaccard_k10": 0.3299658678095211,
+      "knn_jaccard_k20": 0.3819671198069766,
+      "cahc_ari": 0.8171653097867827
+    }
+  },
+  {
+    "record": "15",
+    "third_view_idx": 20,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.5284506337736533,
+      "knn_jaccard_k10": 0.16281517055356062,
+      "knn_jaccard_k20": 0.19433921742560772,
+      "cahc_ari": 0.6761013964103173
+    }
+  },
+  {
+    "record": "16",
+    "third_view_idx": 11,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.7362489173307107,
+      "knn_jaccard_k10": 0.21749787793905437,
+      "knn_jaccard_k20": 0.2760745777420734,
+      "cahc_ari": 0.8329199127526451
+    }
+  },
+  {
+    "record": "17",
+    "third_view_idx": 25,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9227469554120009,
+      "knn_jaccard_k10": 0.32656515672150344,
+      "knn_jaccard_k20": 0.4017824813310747,
+      "cahc_ari": 0.8856721630478525
+    }
+  },
+  {
+    "record": "18",
+    "third_view_idx": 4,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9528282377375343,
+      "knn_jaccard_k10": 0.34436527352936025,
+      "knn_jaccard_k20": 0.3974293664494109,
+      "cahc_ari": 0.7284422822697234
+    }
+  },
+  {
+    "record": "19",
+    "third_view_idx": 36,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9604628101558038,
+      "knn_jaccard_k10": 0.347306854480229,
+      "knn_jaccard_k20": 0.3987811295329118,
+      "cahc_ari": 0.710322862445233
+    }
+  },
+  {
+    "record": "20",
+    "third_view_idx": 28,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9787047490661759,
+      "knn_jaccard_k10": 0.46031748420138513,
+      "knn_jaccard_k20": 0.5179596039004943,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "21",
+    "third_view_idx": 33,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8327565699273581,
+      "knn_jaccard_k10": 0.20815822412881238,
+      "knn_jaccard_k20": 0.2545154236678555,
+      "cahc_ari": 0.66959708735401
+    }
+  },
+  {
+    "record": "22",
+    "third_view_idx": 16,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8220949838618616,
+      "knn_jaccard_k10": 0.25394649193256,
+      "knn_jaccard_k20": 0.29500397438174597,
+      "cahc_ari": 0.7112886879468703
+    }
+  },
+  {
+    "record": "23",
+    "third_view_idx": 42,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8278307529827248,
+      "knn_jaccard_k10": 0.26728971956835734,
+      "knn_jaccard_k20": 0.32135837657561184,
+      "cahc_ari": 0.6345135111929492
+    }
+  },
+  {
+    "record": "24",
+    "third_view_idx": 39,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.7019837819742725,
+      "knn_jaccard_k10": 0.23340516604138895,
+      "knn_jaccard_k20": 0.2715487755398134,
+      "cahc_ari": 0.6345885527175539
+    }
+  },
+  {
+    "record": "25",
+    "third_view_idx": 34,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.5295151034046154,
+      "knn_jaccard_k10": 0.2008178768256168,
+      "knn_jaccard_k20": 0.2211645712368749,
+      "cahc_ari": 0.5998281985055989
+    }
+  },
+  {
+    "record": "26",
+    "third_view_idx": 10,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.481938392920417,
+      "knn_jaccard_k10": 0.15451251088093193,
+      "knn_jaccard_k20": 0.17564844563324214,
+      "cahc_ari": 0.48238880399612616
+    }
+  },
+  {
+    "record": "27",
+    "third_view_idx": 21,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8992752996384051,
+      "knn_jaccard_k10": 0.2606868135304668,
+      "knn_jaccard_k20": 0.3290579642913239,
+      "cahc_ari": 0.7101069517221655
+    }
+  },
+  {
+    "record": "28",
+    "third_view_idx": 3,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8993188848362861,
+      "knn_jaccard_k10": 0.2634933803726373,
+      "knn_jaccard_k20": 0.32273743837960883,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "29",
+    "third_view_idx": 8,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8932574893558164,
+      "knn_jaccard_k10": 0.27303719895515566,
+      "knn_jaccard_k20": 0.3326840277515021,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "30",
+    "third_view_idx": 30,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9288660555734686,
+      "knn_jaccard_k10": 0.2851742028181657,
+      "knn_jaccard_k20": 0.35816820409092587,
+      "cahc_ari": 0.831406217434108
+    }
+  },
+  {
+    "record": "31",
+    "third_view_idx": 33,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8976904497469064,
+      "knn_jaccard_k10": 0.27823080050324633,
+      "knn_jaccard_k20": 0.32949612945235973,
+      "cahc_ari": 0.8568409187384658
+    }
+  },
+  {
+    "record": "32",
+    "third_view_idx": 42,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8865073037578483,
+      "knn_jaccard_k10": 0.23802661579906162,
+      "knn_jaccard_k20": 0.30617613940091826,
+      "cahc_ari": 0.3397785438781939
+    }
+  },
+  {
+    "record": "33",
+    "third_view_idx": 15,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8770659207264658,
+      "knn_jaccard_k10": 0.2780151566699554,
+      "knn_jaccard_k20": 0.3198279618515786,
+      "cahc_ari": 0.9934879109883303
+    }
+  },
+  {
+    "record": "34",
+    "third_view_idx": 17,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.929618417823055,
+      "knn_jaccard_k10": 0.302057708201671,
+      "knn_jaccard_k20": 0.3472564489088843,
+      "cahc_ari": 0.8266993966373001
+    }
+  },
+  {
+    "record": "35",
+    "third_view_idx": 21,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8880511400792909,
+      "knn_jaccard_k10": 0.27501577576190583,
+      "knn_jaccard_k20": 0.31538702473953,
+      "cahc_ari": 0.3936804308509569
+    }
+  },
+  {
+    "record": "36",
+    "third_view_idx": 9,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8938767267925422,
+      "knn_jaccard_k10": 0.2600661351032868,
+      "knn_jaccard_k20": 0.3165658351598573,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "37",
+    "third_view_idx": 7,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8082822517450882,
+      "knn_jaccard_k10": 0.1579799258189351,
+      "knn_jaccard_k20": 0.18397151225041244,
+      "cahc_ari": 0.1731802883444266
+    }
+  },
+  {
+    "record": "38",
+    "third_view_idx": 21,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.7902623634661318,
+      "knn_jaccard_k10": 0.15729766346484614,
+      "knn_jaccard_k20": 0.19241381025484738,
+      "cahc_ari": 0.4479047116375782
+    }
+  },
+  {
+    "record": "39",
+    "third_view_idx": 11,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8030262826402265,
+      "knn_jaccard_k10": 0.18452425111867837,
+      "knn_jaccard_k20": 0.2266448951543789,
+      "cahc_ari": 0.5282751709171194
+    }
+  },
+  {
+    "record": "40",
+    "third_view_idx": 30,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8294149323404442,
+      "knn_jaccard_k10": 0.21828978039504357,
+      "knn_jaccard_k20": 0.25489029835923355,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "41",
+    "third_view_idx": 20,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.6303258195622573,
+      "knn_jaccard_k10": 0.1996266636700073,
+      "knn_jaccard_k20": 0.2094613530367232,
+      "cahc_ari": 0.3411774555081047
+    }
+  },
+  {
+    "record": "42",
+    "third_view_idx": 36,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9435166356155625,
+      "knn_jaccard_k10": 0.2572858118833351,
+      "knn_jaccard_k20": 0.2714492839850404,
+      "cahc_ari": 0.47960195913764403
+    }
+  },
+  {
+    "record": "43",
+    "third_view_idx": 31,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9111553813051064,
+      "knn_jaccard_k10": 0.29913231883355723,
+      "knn_jaccard_k20": 0.31962322572348284,
+      "cahc_ari": 0.6727542185468732
+    }
+  },
+  {
+    "record": "44",
+    "third_view_idx": 15,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.7664685073126992,
+      "knn_jaccard_k10": 0.1753154817318904,
+      "knn_jaccard_k20": 0.19195144193197075,
+      "cahc_ari": 0.7843404060840221
+    }
+  },
+  {
+    "record": "45",
+    "third_view_idx": 36,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.944763804354921,
+      "knn_jaccard_k10": 0.2337660767165411,
+      "knn_jaccard_k20": 0.27661468593205235,
+      "cahc_ari": 0.6811081258727442
+    }
+  },
+  {
+    "record": "46",
+    "third_view_idx": 35,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9111483563157396,
+      "knn_jaccard_k10": 0.20453770996805054,
+      "knn_jaccard_k20": 0.22939421722458164,
+      "cahc_ari": 0.6884918830302957
+    }
+  },
+  {
+    "record": "47",
+    "third_view_idx": 18,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9413579413804344,
+      "knn_jaccard_k10": 0.21741863605950296,
+      "knn_jaccard_k20": 0.25826248111598177,
+      "cahc_ari": 0.5616185695365835
+    }
+  },
+  {
+    "record": "48",
+    "third_view_idx": 14,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.7804445577976044,
+      "knn_jaccard_k10": 0.1467325036504603,
+      "knn_jaccard_k20": 0.1698762994831178,
+      "cahc_ari": 0.11385131759371325
+    }
+  },
+  {
+    "record": "49",
+    "third_view_idx": 30,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9406414118966758,
+      "knn_jaccard_k10": 0.19639993391541377,
+      "knn_jaccard_k20": 0.24111126338353941,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "50",
+    "third_view_idx": 7,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.8638694260518986,
+      "knn_jaccard_k10": 0.1887642450428828,
+      "knn_jaccard_k20": 0.22331484691364062,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "51",
+    "third_view_idx": 10,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.6975255420770279,
+      "knn_jaccard_k10": 0.14489098173927897,
+      "knn_jaccard_k20": 0.14953649574061786,
+      "cahc_ari": 0.47520646594295357
+    }
+  },
+  {
+    "record": "52",
+    "third_view_idx": 2,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9696132507510525,
+      "knn_jaccard_k10": 0.367420235766985,
+      "knn_jaccard_k20": 0.43714437750364127,
+      "cahc_ari": 0.7857383094907864
+    }
+  },
+  {
+    "record": "53",
+    "third_view_idx": 35,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9655684625231172,
+      "knn_jaccard_k10": 0.3898471729508881,
+      "knn_jaccard_k20": 0.4677442616821509,
+      "cahc_ari": 0.6461825623340195
+    }
+  },
+  {
+    "record": "54",
+    "third_view_idx": 29,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9671647625658352,
+      "knn_jaccard_k10": 0.41654076229927617,
+      "knn_jaccard_k20": 0.48938192524871316,
+      "cahc_ari": 0.8697647335084348
+    }
+  },
+  {
+    "record": "55",
+    "third_view_idx": 31,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9796238268755444,
+      "knn_jaccard_k10": 0.4355366621682411,
+      "knn_jaccard_k20": 0.5189014698271803,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "56",
+    "third_view_idx": 34,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9681432600326101,
+      "knn_jaccard_k10": 0.40266421298000243,
+      "knn_jaccard_k20": 0.475533891810178,
+      "cahc_ari": 0.6236936390671168
+    }
+  },
+  {
+    "record": "57",
+    "third_view_idx": 21,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9596844234924797,
+      "knn_jaccard_k10": 0.33756390685338056,
+      "knn_jaccard_k20": 0.38720720435816314,
+      "cahc_ari": 0.8542805461315925
+    }
+  },
+  {
+    "record": "58",
+    "third_view_idx": 25,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9703096276425902,
+      "knn_jaccard_k10": 0.3698070694355524,
+      "knn_jaccard_k20": 0.41996191830170154,
+      "cahc_ari": 0.3812217278327454
+    }
+  },
+  {
+    "record": "59",
+    "third_view_idx": 7,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9738908757302215,
+      "knn_jaccard_k10": 0.4046977399965016,
+      "knn_jaccard_k20": 0.465829889918769,
+      "cahc_ari": 0.27125436345872894
+    }
+  },
+  {
+    "record": "60",
+    "third_view_idx": 6,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9653408721619331,
+      "knn_jaccard_k10": 0.42344031200997145,
+      "knn_jaccard_k20": 0.5052910485741321,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "61",
+    "third_view_idx": 30,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9648937951201476,
+      "knn_jaccard_k10": 0.390091666675258,
+      "knn_jaccard_k20": 0.47682979364731165,
+      "cahc_ari": 0.5766689634045388
+    }
+  },
+  {
+    "record": "62",
+    "third_view_idx": 21,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9695500439366502,
+      "knn_jaccard_k10": 0.4430407530206292,
+      "knn_jaccard_k20": 0.5037070687191169,
+      "cahc_ari": 0.5473830269510812
+    }
+  },
+  {
+    "record": "63",
+    "third_view_idx": 25,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9797430778647785,
+      "knn_jaccard_k10": 0.4375797650921489,
+      "knn_jaccard_k20": 0.5130856890027936,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "64",
+    "third_view_idx": 34,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9676277325668139,
+      "knn_jaccard_k10": 0.43156066688729233,
+      "knn_jaccard_k20": 0.5194651171861812,
+      "cahc_ari": 0.5533011513626391
+    }
+  },
+  {
+    "record": "65",
+    "third_view_idx": 28,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9726301674309455,
+      "knn_jaccard_k10": 0.4104404867578242,
+      "knn_jaccard_k20": 0.49244871123924217,
+      "cahc_ari": 0.5586642551328482
+    }
+  },
+  {
+    "record": "66",
+    "third_view_idx": 25,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9777629062700122,
+      "knn_jaccard_k10": 0.43160062503715757,
+      "knn_jaccard_k20": 0.5127319762903523,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "67",
+    "third_view_idx": 25,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9781113425418226,
+      "knn_jaccard_k10": 0.445924171631602,
+      "knn_jaccard_k20": 0.5338205992087086,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "68",
+    "third_view_idx": 14,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9729651842048015,
+      "knn_jaccard_k10": 0.39523335488041367,
+      "knn_jaccard_k20": 0.4715007737864978,
+      "cahc_ari": 0.46525438306014993
+    }
+  },
+  {
+    "record": "69",
+    "third_view_idx": 3,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9680635082745888,
+      "knn_jaccard_k10": 0.3910984589885519,
+      "knn_jaccard_k20": 0.47036949893275315,
+      "cahc_ari": 0.7244335381249063
+    }
+  },
+  {
+    "record": "70",
+    "third_view_idx": 20,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.970134129086045,
+      "knn_jaccard_k10": 0.42718997686180354,
+      "knn_jaccard_k20": 0.4979996159391245,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "71",
+    "third_view_idx": 11,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9693632290452532,
+      "knn_jaccard_k10": 0.40178321111293247,
+      "knn_jaccard_k20": 0.49456322205449355,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "72",
+    "third_view_idx": 19,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9701766683103643,
+      "knn_jaccard_k10": 0.37375572432383575,
+      "knn_jaccard_k20": 0.44618988880604665,
+      "cahc_ari": 0.5598458329194439
+    }
+  },
+  {
+    "record": "73",
+    "third_view_idx": 37,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9711916493695845,
+      "knn_jaccard_k10": 0.4350463263946236,
+      "knn_jaccard_k20": 0.5134648325541404,
+      "cahc_ari": 0.7829890495701726
+    }
+  },
+  {
+    "record": "74",
+    "third_view_idx": 11,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9687312700704382,
+      "knn_jaccard_k10": 0.42240862766404563,
+      "knn_jaccard_k20": 0.48968984111577957,
+      "cahc_ari": 0.7542982378425248
+    }
+  },
+  {
+    "record": "75",
+    "third_view_idx": 4,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9705583874189402,
+      "knn_jaccard_k10": 0.4384881140531295,
+      "knn_jaccard_k20": 0.5110097192854013,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "76",
+    "third_view_idx": 13,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9695517763730535,
+      "knn_jaccard_k10": 0.4349199677171813,
+      "knn_jaccard_k20": 0.5163447095345466,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "77",
+    "third_view_idx": 14,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9693389119074046,
+      "knn_jaccard_k10": 0.43808258683181284,
+      "knn_jaccard_k20": 0.4992868323656205,
+      "cahc_ari": 0.7681738960108607
+    }
+  },
+  {
+    "record": "78",
+    "third_view_idx": 29,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9674410826433373,
+      "knn_jaccard_k10": 0.43063060572038897,
+      "knn_jaccard_k20": 0.5243330240077215,
+      "cahc_ari": 0.49807566600909176
+    }
+  },
+  {
+    "record": "79",
+    "third_view_idx": 25,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.975857658468213,
+      "knn_jaccard_k10": 0.4404609136993038,
+      "knn_jaccard_k20": 0.5194007756237504,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "80",
+    "third_view_idx": 34,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9712504881114027,
+      "knn_jaccard_k10": 0.44597135990944037,
+      "knn_jaccard_k20": 0.5359191017997124,
+      "cahc_ari": 0.7599990270757425
+    }
+  },
+  {
+    "record": "81",
+    "third_view_idx": 29,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9681540927084337,
+      "knn_jaccard_k10": 0.4710441124063415,
+      "knn_jaccard_k20": 0.5217008110979952,
+      "cahc_ari": 0.7032684690575266
+    }
+  },
+  {
+    "record": "82",
+    "third_view_idx": 19,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9689347846302785,
+      "knn_jaccard_k10": 0.39766141907627967,
+      "knn_jaccard_k20": 0.48003329271061673,
+      "cahc_ari": 0.9360342560836313
+    }
+  },
+  {
+    "record": "83",
+    "third_view_idx": 36,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9696329719854612,
+      "knn_jaccard_k10": 0.4188311702057832,
+      "knn_jaccard_k20": 0.4054615409920206,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "84",
+    "third_view_idx": 9,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9684638484478549,
+      "knn_jaccard_k10": 0.3859761480349716,
+      "knn_jaccard_k20": 0.45584717476938486,
+      "cahc_ari": 0.6647760158000703
+    }
+  },
+  {
+    "record": "85",
+    "third_view_idx": 2,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9667199554109259,
+      "knn_jaccard_k10": 0.395425586625277,
+      "knn_jaccard_k20": 0.47076377421980137,
+      "cahc_ari": 0.5007880097566499
+    }
+  },
+  {
+    "record": "86",
+    "third_view_idx": 5,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.971501557299531,
+      "knn_jaccard_k10": 0.39928203873869506,
+      "knn_jaccard_k20": 0.47985279403952585,
+      "cahc_ari": 0.5416407310552472
+    }
+  },
+  {
+    "record": "87",
+    "third_view_idx": 32,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9878844247881524,
+      "knn_jaccard_k10": 0.49307103165152705,
+      "knn_jaccard_k20": 0.5881338428833562,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "88",
+    "third_view_idx": 21,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.970544482318357,
+      "knn_jaccard_k10": 0.43658408533331133,
+      "knn_jaccard_k20": 0.5290126219514245,
+      "cahc_ari": 0.7907919580547879
+    }
+  },
+  {
+    "record": "89",
+    "third_view_idx": 8,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9706994760155317,
+      "knn_jaccard_k10": 0.4340758003606301,
+      "knn_jaccard_k20": 0.5337124264849156,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "90",
+    "third_view_idx": 23,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9669332718159398,
+      "knn_jaccard_k10": 0.4003818168415691,
+      "knn_jaccard_k20": 0.5107231523510579,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "91",
+    "third_view_idx": 8,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9701095348443091,
+      "knn_jaccard_k10": 0.4458992842382935,
+      "knn_jaccard_k20": 0.5202618600520289,
+      "cahc_ari": 0.3344945956855587
+    }
+  },
+  {
+    "record": "92",
+    "third_view_idx": 31,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9799477507038479,
+      "knn_jaccard_k10": 0.42089640390569183,
+      "knn_jaccard_k20": 0.5211530730200395,
+      "cahc_ari": 0.9393433820505381
+    }
+  },
+  {
+    "record": "93",
+    "third_view_idx": 20,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9724357082894501,
+      "knn_jaccard_k10": 0.42898055075299657,
+      "knn_jaccard_k20": 0.5149013365954657,
+      "cahc_ari": 0.6968923240301744
+    }
+  },
+  {
+    "record": "94",
+    "third_view_idx": 18,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9709423822821499,
+      "knn_jaccard_k10": 0.41507319821561306,
+      "knn_jaccard_k20": 0.5130665019235839,
+      "cahc_ari": 0.7592697284708377
+    }
+  },
+  {
+    "record": "95",
+    "third_view_idx": 14,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9689430612077803,
+      "knn_jaccard_k10": 0.35468129479739385,
+      "knn_jaccard_k20": 0.4459526566804341,
+      "cahc_ari": 0.42499490079349417
+    }
+  },
+  {
+    "record": "96",
+    "third_view_idx": 28,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9667918483990104,
+      "knn_jaccard_k10": 0.37758137528106567,
+      "knn_jaccard_k20": 0.4587931027695127,
+      "cahc_ari": 0.7345144642476948
+    }
+  },
+  {
+    "record": "97",
+    "third_view_idx": 17,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9707802476720913,
+      "knn_jaccard_k10": 0.45095738609515695,
+      "knn_jaccard_k20": 0.5218786284625098,
+      "cahc_ari": 1.0
+    }
+  },
+  {
+    "record": "98",
+    "third_view_idx": 5,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9678202389933018,
+      "knn_jaccard_k10": 0.39744088573964736,
+      "knn_jaccard_k20": 0.46849375727236453,
+      "cahc_ari": 0.8761611710978539
+    }
+  },
+  {
+    "record": "99",
+    "third_view_idx": 6,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9717513265544884,
+      "knn_jaccard_k10": 0.4205460122952383,
+      "knn_jaccard_k20": 0.4980243766521394,
+      "cahc_ari": 0.7522669949530586
+    }
+  },
+  {
+    "record": "100",
+    "third_view_idx": 42,
+    "dense_44_metrics": {
+      "spearman_rho_d": 0.9713208744610091,
+      "knn_jaccard_k10": 0.4109351417416433,
+      "knn_jaccard_k20": 0.49442640377132113,
+      "cahc_ari": 1.0
+    }
+  }
+]

@@ -1,0 +1,53 @@
+{
+  "R2_vs_R0 (Nef Panorama vs Kors VCG)": {
+    "delta_rho_D": {
+      "mean": -0.03359773240746023,
+      "std": 0.056266052897147485,
+      "median": -0.023664661865991643,
+      "p25": -0.054778081260941525,
+      "p75": -0.005188488921646445
+    },
+    "delta_j10": {
+      "mean": -0.103009949753377,
+      "std": 0.13627817159884423,
+      "median": -0.07218724550303499,
+      "p25": -0.11536557989653966,
+      "p75": -0.03691772052337074
+    },
+    "delta_ari": {
+      "mean": -0.09863982202781256,
+      "std": 0.2687982499957082,
+      "median": -0.040684757607888866,
+      "p25": -0.24709245824279452,
+      "p75": 0.005559090962595548
+    },
+    "interpretation": "Tests whether 8D panoramic completion preserves geometry better than linear 3D Kors projection."
+  },
+  "R2_vs_R3 (Nef Panorama vs Kors-on-Nef)": {
+    "delta_rho_D": {
+      "mean": 0.06247499406473267,
+      "std": 0.056827715505711744,
+      "median": 0.05180390997131146,
+      "p25": 0.022010238476991628,
+      "p75": 0.0913412871207285
+    },
+    "delta_j10": {
+      "mean": 0.09749522566941142,
+      "std": 0.0439072314411163,
+      "median": 0.09671830122062322,
+      "p25": 0.06301145912910618,
+      "p75": 0.13126079858394102
+    },
+    "interpretation": "Tests whether the panoramic representation contains non-linear structure destroyed by Kors projection."
+  },
+  "R3_vs_R0 (Kors-on-Nef vs True Kors)": {
+    "delta_rho_D": {
+      "mean": -0.0960727264721929,
+      "std": 0.07073237830669661,
+      "median": -0.08302565039326215,
+      "p25": -0.12778322274468806,
+      "p75": -0.0509235157141375
+    },
+    "interpretation": "Isolates canonicalization while fixing dimensionality at 3."
+  }
+}

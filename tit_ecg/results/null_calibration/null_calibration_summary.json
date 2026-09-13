@@ -1,0 +1,40 @@
+{
+  "n_trials": 100,
+  "nominal_alpha": 0.05,
+  "elapsed_sec": 255.21948051452637,
+  "schemes": {
+    "Scheme_A_Attribute_KMeans": {
+      "description": "Paper-faithful attribute k-means blocks (Appendix A.2)",
+      "empirical_type_1_error": 0.0,
+      "ci_95": [
+        0.0,
+        0.03621669264519054
+      ],
+      "is_calibrated": false,
+      "ks_uniform_p_value": 2.0761436956550274e-270,
+      "p_value_mean": 0.9999800399201597
+    },
+    "Scheme_B_Contiguous_Temporal": {
+      "description": "Contiguous temporal blocks of matched expected size",
+      "empirical_type_1_error": 0.0,
+      "ci_95": [
+        0.0,
+        0.03621669264519054
+      ],
+      "is_calibrated": false,
+      "ks_uniform_p_value": 2.6318248019498303e-240,
+      "p_value_mean": 0.999940119760479
+    },
+    "Scheme_C_Beat_Level": {
+      "description": "Beat-scale windowed blocks",
+      "empirical_type_1_error": 0.0,
+      "ci_95": [
+        0.0,
+        0.03621669264519054
+      ],
+      "is_calibrated": false,
+      "ks_uniform_p_value": 2.0761436956550274e-270,
+      "p_value_mean": 0.9999800399201597
+    }
+  }
+}

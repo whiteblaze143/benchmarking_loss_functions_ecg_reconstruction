@@ -205,6 +205,55 @@ def reassign_by_cliques(
         "selected_cliques": selected_cliques,
         "n_maximal_cliques": len(cliques),
         "n_final_clique_groups": len(np.unique(labels_clique)),
+        "graph_descriptors": compute_graph_descriptors(G_sim, cliques, overlapping_nodes),
     }
 
     return labels_clique, cluster_to_label, audit_info
+
+
+def compute_graph_descriptors(
+    G_sim: nx.Graph,
+    cliques: list[list[int]] | None = None,
+    overlapping_nodes: list[int] | None = None,
+) -> dict:
+    """Computes first-class topological graph descriptors for similarity graph G_sim."""
+    n_nodes = G_sim.number_of_nodes()
+    n_edges = G_sim.number_of_edges()
+    max_edges = n_nodes * (n_nodes - 1) / 2 if n_nodes > 1 else 1
+    density = float(n_edges / max_edges)
+
+    if cliques is None:
+        cliques = extract_maximal_cliques(G_sim, min_size=2)
+    if overlapping_nodes is None:
+        node_to_cliques = {node: [] for node in G_sim.nodes()}
+        for c_idx, c in enumerate(cliques):
+            for node in c:
+                node_to_cliques[node].append(c_idx)
+        overlapping_nodes = [node for node, clist in node_to_cliques.items() if len(clist) > 1]
+
+    weights = [d.get("weight", 0.0) for _, _, d in G_sim.edges(data=True)]
+    mean_edge_weight = float(np.mean(weights)) if weights else 0.0
+
+    degrees = [d for _, d in G_sim.degree()]
+    if sum(degrees) > 0:
+        p_deg = np.array(degrees) / sum(degrees)
+        p_deg = p_deg[p_deg > 0]
+        deg_entropy = float(-np.sum(p_deg * np.log2(p_deg)))
+    else:
+        deg_entropy = 0.0
+
+    clique_sizes = [len(c) for c in cliques]
+
+    return {
+        "n_nodes": int(n_nodes),
+        "n_edges": int(n_edges),
+        "density": density,
+        "n_maximal_cliques": len(cliques),
+        "clique_sizes": clique_sizes,
+        "max_clique_size": int(max(clique_sizes)) if clique_sizes else 0,
+        "overlap_nodes_count": len(overlapping_nodes),
+        "overlap_fraction": float(len(overlapping_nodes) / n_nodes) if n_nodes > 0 else 0.0,
+        "mean_retained_edge_weight": mean_edge_weight,
+        "degree_entropy": deg_entropy,
+    }
+

@@ -108,31 +108,35 @@ class RepSpatConfig:
         Default: 42.
         Status: [AMBIGUOUS completion]
     """
-    # Contiguity & Dissimilarity
+    # --- STAGE 1: Contiguity & Dissimilarity ---
     metric: str = "euclidean"
     m_grid: list[int] = field(default_factory=lambda: [2, 3, 4, 5, 6, 7, 8, 9, 10])
+    m_ms_grid: list[float] | None = None  # Candidate neighborhood in milliseconds [ECG_ADAPTATION]
     G_grid: list[int] = field(default_factory=lambda: [2, 3, 4, 5, 6, 7, 8, 9, 10])
     linkage: str = "ward"
     symmetrize_links: str = "or"
 
-    # MMD & Kernel
+    # --- STAGE 2: MMD & Kernel ---
     kernel: str = "imq"
-    kernel_param: float = 1.0
+    kernel_param: float = 1.0  # Fixed c, or gamma multiplier if median_heuristic
+    kernel_scale_rule: str = "fixed"  # 'fixed' (c=1) or 'median_heuristic' (c = gamma * d_med) [AMBIGUOUS completion]
     biased_mmd: bool = True
 
-    # Block Permutation
+    # --- STAGE 3: Block Permutation ---
     n_permutations: int = 9999
+    block_permutation_mode: str = "attribute_kmeans"  # 'attribute_kmeans' or 'temporal_contiguous' [AMBIGUOUS completion]
     rounding_rule: str = "nearest"
     strict_block_exceed: bool = True
     kmeans_n_init: int = 50
     p_value_correction: bool = True
 
-    # Inference & Graph Reassignment
+    # --- STAGE 4: Inference & Graph Reassignment ---
     fdr_alpha: float = 0.05
     clique_min_size: int = 2
     reassignment_primary: str = "clique"
+    extract_graph_descriptors: bool = True  # Whether to extract topological graph descriptor vector
 
-    # ECG Adaptation
+    # --- ECG Adaptation ---
     vcg_projection: str = "kors"
     random_state: int = 42
 

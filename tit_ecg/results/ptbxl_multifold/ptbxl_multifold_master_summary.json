@@ -1,0 +1,19 @@
+{
+  "total_records": 90,
+  "folds_evaluated": [
+    10,
+    9,
+    1
+  ],
+  "mean_graph_density": 0.17047619047619045,
+  "mean_cc_groups": 4.122222222222222,
+  "mean_clique_groups": 4.633333333333334,
+  "fraction_with_clique_overlap": 0.4444444444444444,
+  "per_class_cliques": {
+    "CD": 5.166666666666667,
+    "HYP": 4.277777777777778,
+    "MI": 4.333333333333333,
+    "NORM": 4.555555555555555,
+    "STTC": 4.833333333333333
+  }
+}

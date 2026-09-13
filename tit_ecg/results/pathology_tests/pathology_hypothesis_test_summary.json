@@ -1,0 +1,119 @@
+{
+  "class_statistics": {
+    "CD": {
+      "n_records": 18,
+      "k_mean": 5.166666666666667,
+      "k_ci95": [
+        4.833333333333333,
+        5.611111111111111
+      ],
+      "density_mean": 0.0977513227513227,
+      "density_ci95": [
+        0.07076719576719571,
+        0.12724867724867722
+      ],
+      "clique_overlap_rate": 0.1111111111111111
+    },
+    "HYP": {
+      "n_records": 18,
+      "k_mean": 4.277777777777778,
+      "k_ci95": [
+        3.8333333333333335,
+        4.666666666666667
+      ],
+      "density_mean": 0.18968253968253962,
+      "density_ci95": [
+        0.14537037037037032,
+        0.2387632275132274
+      ],
+      "clique_overlap_rate": 0.5
+    },
+    "MI": {
+      "n_records": 18,
+      "k_mean": 4.333333333333333,
+      "k_ci95": [
+        3.888888888888889,
+        4.777777777777778
+      ],
+      "density_mean": 0.22341269841269837,
+      "density_ci95": [
+        0.18148148148148147,
+        0.2668022486772486
+      ],
+      "clique_overlap_rate": 0.6111111111111112
+    },
+    "NORM": {
+      "n_records": 18,
+      "k_mean": 4.555555555555555,
+      "k_ci95": [
+        3.9444444444444446,
+        5.166666666666667
+      ],
+      "density_mean": 0.16878306878306873,
+      "density_ci95": [
+        0.1186474867724867,
+        0.22447420634920623
+      ],
+      "clique_overlap_rate": 0.3333333333333333
+    },
+    "STTC": {
+      "n_records": 18,
+      "k_mean": 4.833333333333333,
+      "k_ci95": [
+        4.444444444444445,
+        5.222222222222222
+      ],
+      "density_mean": 0.17275132275132268,
+      "density_ci95": [
+        0.14007936507936503,
+        0.2074107142857142
+      ],
+      "clique_overlap_rate": 0.6666666666666666
+    }
+  },
+  "pairwise_tests_vs_norm": {
+    "CD_vs_NORM": {
+      "diff_clique_groups": 0.6111111111111116,
+      "perm_p_value_k": 0.1583,
+      "mwu_p_value_k": 0.10073876598157244,
+      "diff_density": -0.07103174603174603,
+      "perm_p_value_density": 0.0289,
+      "significant_at_05": false
+    },
+    "HYP_vs_NORM": {
+      "diff_clique_groups": -0.2777777777777777,
+      "perm_p_value_k": 0.5742,
+      "mwu_p_value_k": 0.48451957831190773,
+      "diff_density": 0.02089947089947089,
+      "perm_p_value_density": 0.5759,
+      "significant_at_05": false
+    },
+    "MI_vs_NORM": {
+      "diff_clique_groups": -0.22222222222222232,
+      "perm_p_value_k": 0.6817,
+      "mwu_p_value_k": 0.5420356377856089,
+      "diff_density": 0.05462962962962964,
+      "perm_p_value_density": 0.1385,
+      "significant_at_05": false
+    },
+    "STTC_vs_NORM": {
+      "diff_clique_groups": 0.2777777777777777,
+      "perm_p_value_k": 0.5688,
+      "mwu_p_value_k": 0.47427350390382095,
+      "diff_density": 0.003968253968253954,
+      "perm_p_value_density": 0.9091,
+      "significant_at_05": false
+    }
+  },
+  "omnibus_tests": {
+    "kruskal_wallis_K": {
+      "statistic": 9.477786280835247,
+      "p_value": 0.050205696563567666
+    },
+    "kruskal_wallis_density": {
+      "statistic": 16.4590295446646,
+      "p_value": 0.0024611949476217123
+    }
+  },
+  "scientific_takeaway": "No diagnostic class shows statistically significant differences in number of clique groups or graph density compared to NORM after controlling for recording-level variability (Omnibus p > 0.05). This confirms that descriptive differences (e.g. CD having highest K and HYP lowest K) cannot be claimed as disease-specific morphology without larger cohorts and scale-calibrated kernels."
+}

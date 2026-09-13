@@ -1,0 +1,9 @@
+{
+  "n_records_evaluated": 20,
+  "total_test_cohort": 5442,
+  "mean_graph_density": 0.38059523809523815,
+  "mean_cc_groups": 2.0,
+  "mean_clique_groups": 2.8,
+  "fraction_with_clique_overlap": 0.6,
+  "total_elapsed_sec": 33.15354537963867
+}

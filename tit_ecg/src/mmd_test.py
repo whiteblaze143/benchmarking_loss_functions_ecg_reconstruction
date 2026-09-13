@@ -110,11 +110,12 @@ def create_attribute_blocks(
     X: np.ndarray,
     labels: np.ndarray,
     m_star: int,
+    block_mode: str = "attribute_kmeans",
     rounding_rule: str = "nearest",
     n_init: int = 50,
     random_state: int = 42,
 ) -> dict[int, list[np.ndarray]]:
-    """Partitions each CAHC cluster separately into attribute k-means blocks.
+    """Partitions each CAHC cluster separately into blocks.
 
     Parameters
     ----------
@@ -124,6 +125,9 @@ def create_attribute_blocks(
         Initial CAHC cluster labels.
     m_star : int
         Selected nearest-neighbor count.
+    block_mode : str
+        'attribute_kmeans' (paper default): k-means on X within each cluster.
+        'temporal_contiguous': contiguous chronological chunks of expected size m.
     rounding_rule : str
         'nearest': b_g = max(1, floor(n_g / m_star + 0.5)) [AMBIGUOUS completion]
         'floor': b_g = max(1, n_g // m_star)
@@ -158,25 +162,32 @@ def create_attribute_blocks(
             else:
                 num_blocks = max(1, int(np.round(n_g / m_star)))
 
-        # Do not request more clusters than distinct attribute rows
-        distinct_rows = len(np.unique(X[members], axis=0))
-        num_blocks = min(num_blocks, max(1, distinct_rows))
-
         if num_blocks <= 1:
             cluster_blocks[g] = [members]
+        elif block_mode == "temporal_contiguous":
+            # Contiguous temporal blocks of expected size m_star
+            sorted_members = np.sort(members)
+            blocks_g = np.array_split(sorted_members, num_blocks)
+            cluster_blocks[g] = [b for b in blocks_g if len(b) > 0]
         else:
-            km = KMeans(
-                n_clusters=num_blocks,
-                n_init=n_init,
-                random_state=random_state + int(g),
-            )
-            km_labels = km.fit_predict(X[members])
-            blocks_g = [
-                members[km_labels == b]
-                for b in range(num_blocks)
-                if np.any(km_labels == b)
-            ]
-            cluster_blocks[g] = blocks_g
+            # Paper attribute k-means blocks
+            distinct_rows = len(np.unique(X[members], axis=0))
+            num_blocks = min(num_blocks, max(1, distinct_rows))
+            if num_blocks <= 1:
+                cluster_blocks[g] = [members]
+            else:
+                km = KMeans(
+                    n_clusters=num_blocks,
+                    n_init=n_init,
+                    random_state=random_state + int(g),
+                )
+                km_labels = km.fit_predict(X[members])
+                blocks_g = [
+                    members[km_labels == b]
+                    for b in range(num_blocks)
+                    if np.any(km_labels == b)
+                ]
+                cluster_blocks[g] = blocks_g
 
     return cluster_blocks
 
@@ -321,6 +332,8 @@ def run_all_pairwise_mmd_tests(
     m_star: int,
     kernel: str = "imq",
     kernel_param: float = 1.0,
+    kernel_scale_rule: str = "fixed",
+    block_mode: str = "attribute_kmeans",
     n_permutations: int = 9999,
     fdr_alpha: float = 0.05,
     rounding_rule: str = "nearest",
@@ -332,49 +345,25 @@ def run_all_pairwise_mmd_tests(
     """Runs pairwise MMD^2 block permutation tests across all unique cluster pairs.
 
     Applies Benjamini-Hochberg FDR correction across all G*(G-1)/2 tests.
-
-    Parameters
-    ----------
-    X : np.ndarray
-        Attributes [n, p].
-    labels : np.ndarray
-        Initial CAHC labels.
-    dist_matrix : np.ndarray
-        Pairwise attribute dissimilarity matrix D.
-    m_star : int
-        Selected m nearest neighbors.
-    kernel : str
-        'imq' or 'gaussian'.
-    kernel_param : float
-        Kernel parameter c or sigma.
-    n_permutations : int
-        Number of block permutations B.
-    fdr_alpha : float
-        FDR threshold (0.05).
-    rounding_rule : str
-        Rounding rule for block counts.
-    strict_exceed : bool
-        Strict '>' stopping criterion in permutation.
-    kmeans_n_init : int
-        Number of initializations for k-means.
-    p_value_correction : bool
-        (R+1)/(B+1) Monte-Carlo p-value formula.
-    random_state : int
-        Random seed.
-
-    Returns
-    -------
-    results_df : pd.DataFrame
-        Table of all tested pairs with observed MMD^2, raw p-value, and BH-adjusted q-value.
     """
     unique_clusters = sorted(np.unique(labels))
     G = len(unique_clusters)
 
-    # 1. Precompute k-means blocks for each CAHC cluster once [Appendix A.2]
+    # 0. Determine effective kernel scale parameter [Gate 2: Scale Invariance]
+    if kernel_scale_rule == "median_heuristic":
+        # Distance-relative bandwidth: c = gamma * median_{i<j, D_ij > 0} D_ij
+        nonzero_dists = dist_matrix[dist_matrix > 0]
+        d_med = float(np.median(nonzero_dists)) if len(nonzero_dists) > 0 else 1.0
+        effective_kernel_param = float(kernel_param) * d_med
+    else:
+        effective_kernel_param = float(kernel_param)
+
+    # 1. Precompute blocks for each CAHC cluster once [Appendix A.2]
     cluster_blocks = create_attribute_blocks(
         X=X,
         labels=labels,
         m_star=m_star,
+        block_mode=block_mode,
         rounding_rule=rounding_rule,
         n_init=kmeans_n_init,
         random_state=random_state,
@@ -390,7 +379,7 @@ def run_all_pairwise_mmd_tests(
             blocks_h=cluster_blocks[h],
             dist_matrix=dist_matrix,
             kernel=kernel,
-            kernel_param=kernel_param,
+            kernel_param=effective_kernel_param,
             n_permutations=n_permutations,
             strict_exceed=strict_exceed,
             p_value_correction=p_value_correction,

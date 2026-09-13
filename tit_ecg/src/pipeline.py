@@ -89,7 +89,7 @@ class ExactRepSpat:
             # Recompute if not cached
             D = compute_attribute_dissimilarity(X, metric=self.config.metric)
             L = construct_domain_links(S, m=m_star, symmetrize=self.config.symmetrize_links)
-            initial_labels = run_cahc(D=D, L=L, n_clusters=G_star, linkage=self.config.linkage)
+            initial_labels = run_cahc(D=D, L=L, n_clusters=G_star, linkage=self.config.linkage, X=X)
         else:
             D = compute_attribute_dissimilarity(X, metric=self.config.metric)
             L = construct_domain_links(S, m=m_star, symmetrize=self.config.symmetrize_links)
@@ -102,6 +102,8 @@ class ExactRepSpat:
             m_star=m_star,
             kernel=self.config.kernel,
             kernel_param=self.config.kernel_param,
+            kernel_scale_rule=self.config.kernel_scale_rule,
+            block_mode=self.config.block_permutation_mode,
             n_permutations=self.config.n_permutations,
             fdr_alpha=self.config.fdr_alpha,
             rounding_rule=self.config.rounding_rule,
@@ -147,6 +149,7 @@ class ExactRepSpat:
             "cluster_to_cc": cluster_to_cc,
             "cluster_to_clique": cluster_to_clique,
             "clique_audit": clique_audit,
+            "graph_descriptors": clique_audit.get("graph_descriptors", {}),
             "config": asdict(self.config),
             "n_samples": n_samples,
             "n_initial_clusters": len(unique_cahc_clusters),
@@ -205,6 +208,14 @@ class TemporalRepSpatECG:
             vcg = ecg_to_vcg_kors(arr)
         else:
             vcg = arr
+
+        # [ECG-ADAPTATION]: Invariant neighborhood scale in milliseconds
+        if self.config.m_ms_grid is not None:
+            m_samples = [
+                max(2, int(round(ms * float(sampling_rate) / 1000.0)))
+                for ms in self.config.m_ms_grid
+            ]
+            self.model.config.m_grid = sorted(list(set(m_samples)))
 
         n_samples = len(vcg)
         time_tau = np.arange(n_samples, dtype=float) / float(sampling_rate)

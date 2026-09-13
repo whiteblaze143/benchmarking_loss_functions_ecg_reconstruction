@@ -1,0 +1,85 @@
+{
+  "training_sweep_summary": {
+    "Fixed Baseline (c=1, discrete m)": {
+      "mean_density": 0.18154761904761904,
+      "mean_clique_groups": 4.5,
+      "mean_cc_groups": 3.9375,
+      "mean_overlap_fraction": 0.09114583333333331
+    },
+    "Relative c=0.25*d_med (ms grid)": {
+      "mean_density": 0.8062499999999999,
+      "mean_clique_groups": 2.1875,
+      "mean_cc_groups": 1.1875,
+      "mean_overlap_fraction": 0.3177083333333333
+    },
+    "Relative c=0.5*d_med (ms grid)": {
+      "mean_density": 0.6763392857142858,
+      "mean_clique_groups": 2.5625,
+      "mean_cc_groups": 1.375,
+      "mean_overlap_fraction": 0.390625
+    },
+    "Relative c=1.0*d_med (ms grid)": {
+      "mean_density": 0.45476190476190476,
+      "mean_clique_groups": 3.3125,
+      "mean_cc_groups": 2.125,
+      "mean_overlap_fraction": 0.28385416666666663
+    },
+    "Relative c=2.0*d_med (ms grid)": {
+      "mean_density": 0.3461309523809524,
+      "mean_clique_groups": 3.375,
+      "mean_cc_groups": 2.75,
+      "mean_overlap_fraction": 0.10416666666666667
+    }
+  },
+  "frozen_rule": {
+    "name": "Relative c=1.0*d_med (ms grid)",
+    "kernel_scale_rule": "median_heuristic",
+    "gamma": 1.0,
+    "m_ms_grid": [
+      16,
+      32,
+      64,
+      128
+    ]
+  },
+  "cohort_comparison": [
+    {
+      "cohort_condition": "PTBXL_Test_Fixed",
+      "mean_d_med": 0.13216610953471952,
+      "mean_density": 0.18973214285714288,
+      "std_density": 0.0855188192325685,
+      "mean_clique_groups": 4.125,
+      "mean_cc_groups": 3.6875,
+      "mean_overlap_fraction": 0.09895833333333333
+    },
+    {
+      "cohort_condition": "PTBXL_Test_Invariant",
+      "mean_d_med": 0.13216610953471952,
+      "mean_density": 0.48630952380952375,
+      "std_density": 0.3058271314254976,
+      "mean_clique_groups": 3.0,
+      "mean_cc_groups": 2.375,
+      "mean_overlap_fraction": 0.23958333333333331
+    },
+    {
+      "cohort_condition": "EchoNext_Fixed",
+      "mean_d_med": 0.01958747333276905,
+      "mean_density": 0.37916666666666665,
+      "std_density": 0.08310171894497717,
+      "mean_clique_groups": 2.625,
+      "mean_cc_groups": 2.3125,
+      "mean_overlap_fraction": 0.0625
+    },
+    {
+      "cohort_condition": "EchoNext_Invariant",
+      "mean_d_med": 0.01958747333276905,
+      "mean_density": 0.7872023809523809,
+      "std_density": 0.2344964128708197,
+      "mean_clique_groups": 1.875,
+      "mean_cc_groups": 1.3125,
+      "mean_overlap_fraction": 0.25260416666666663
+    }
+  ],
+  "raw_train_d_med_mean": 0.12085571429768271,
+  "raw_echonext_d_med_mean": 0.01958747333276905
+}

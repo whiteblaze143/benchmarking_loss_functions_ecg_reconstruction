@@ -511,6 +511,7 @@ class ZhejiangAdapter(BaseDatasetAdapter):
 
     def load_record(self, record_id: str, n_samples: int = 2000) -> dict[str, Any]:
         import pickle
+        from scipy.signal import resample_poly
 
         lead_order = ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"]
         signals = []
@@ -519,19 +520,35 @@ class ZhejiangAdapter(BaseDatasetAdapter):
             with open(fpath, "rb") as f:
                 sig = pickle.load(f)
             signals.append(np.asarray(sig, dtype=np.float32))
-        raw_ecg = np.column_stack(signals)[:n_samples]
-        ecg = raw_ecg / 1000.0  # standardize uV/ADC scale to physical mV
-        vcg = ecg_to_vcg_kors(ecg)
-        fs = self.sampling_rate
-        time_vec = np.arange(len(ecg)) / fs
+        raw_ecg = np.column_stack(signals)
 
         # Load wave label: 0=iso, 1=P, 2=QRS, 3=T
         lbl_path = os.path.join(self.label_dir, f"{record_id}.pkl")
-        seg = np.zeros(len(ecg), dtype=int)
-        if os.path.exists(lbl_path):
-            with open(lbl_path, "rb") as f:
-                raw_lbl = pickle.load(f)
-            seg = np.asarray(raw_lbl[:n_samples], dtype=int)
+        if not os.path.exists(lbl_path):
+            raise FileNotFoundError(f"Missing Zhejiang label: {lbl_path}")
+        with open(lbl_path, "rb") as f:
+            raw_lbl = np.asarray(pickle.load(f))
+
+        if len(raw_ecg) != len(raw_lbl):
+            raise ValueError(
+                f"Zhejiang {record_id} signal/label length mismatch: "
+                f"{len(raw_ecg)} vs {len(raw_lbl)}"
+            )
+        if len(raw_ecg) == 20000:
+            raw_ecg = resample_poly(raw_ecg, up=1, down=4, axis=0)
+            raw_lbl = raw_lbl[::4]
+        elif len(raw_ecg) != 5000:
+            raise ValueError(
+                f"Unsupported Zhejiang record length {len(raw_ecg)}; expected 20000 or 5000"
+            )
+
+        ecg = raw_ecg[:n_samples] / 1000.0  # provisional microvolt-like -> mV convention
+        seg = raw_lbl[:n_samples].astype(int)
+        if not set(np.unique(seg)).issubset({0, 1, 2, 3}):
+            raise ValueError(f"Zhejiang {record_id} mask violates the {{0,1,2,3}} contract")
+        vcg = ecg_to_vcg_kors(ecg)
+        fs = self.sampling_rate
+        time_vec = np.arange(len(ecg)) / fs
 
         return {
             "record_id": str(record_id),
@@ -541,5 +558,7 @@ class ZhejiangAdapter(BaseDatasetAdapter):
             "fs": fs,
             "time": time_vec,
             "segmentation": seg,
+            "source_sampling_rate": 2000.0,
+            "source_unit": "undocumented_microvolt_like_provisional",
+            "preprocessing": "polyphase_2000_to_500_hz_and_label_stride_4",
         }
-

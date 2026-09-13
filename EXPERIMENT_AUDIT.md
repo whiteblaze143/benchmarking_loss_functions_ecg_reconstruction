@@ -17,7 +17,7 @@
 > 1. **CAHC Exact Author Parity Verified**: `tit_ecg.src.cahc` was tested directly against the official author code (`repspat-main/src/repspat/clustering.py`). On both synthetic benchmarks and real clinical ECG waveforms, `tit_ecg` reproduces the author's spatial silhouette scores and cluster partitions at **exact machine precision ($\Delta = 0.00\times 10^0$)**.
 > 2. **Gate 1 Implementation Pass; Frozen-Grid Result Mixed**: The resampling pipeline is parallel-from-original. Across 10 records, physical geometry beats discrete $m$ at 500-to-250 Hz (**0.825 vs 0.569**) and 1000-to-250 Hz (**0.806 vs 0.615**), but loses at 1000-to-500 Hz (**0.767 vs 0.844**).
 > 3. **Gate 2A Scale-Equivariance Multi-Record Regression**: Analytical scale-equivariance ($\widehat{\text{MMD}}'^2 = \frac{1}{|a|} \widehat{\text{MMD}}^2$ with invariant permutation ordering) was empirically confirmed across **10 heterogeneous clinical records** from LUDB, ISP, and PTB-XL under $1\times, 10\times, 1000\times$ voltage scalings: **$\max \Delta p = 0.00\times 10^0$ and $\max \Delta q = 0.00\times 10^0$ across all 10 records**.
-> 4. **Gate 3B Completed and Failed**: Exact phase/beat membership eliminates tunable purity thresholds. Across 34 eligible patients, mean $r_p$ is **0.136** for attribute blocks and **0.175** for temporal blocks, above the 0.08 calibration target; LUDB and Zhejiang show substantial excess rejection.
+> 4. **Gate 3B Recomputed After Zhejiang Data Correction**: Exact phase/beat membership eliminates tunable purity thresholds. The frozen attribute-block rerun gives patient-mean $r_p=0.08039$ across 34 eligible patients, narrowly above the prespecified 0.08 target. Zhejiang is corrected; LUDB remains high but underpowered, and cross-cohort power is not established.
 > 5. **RDB Provenance Explicitly Categorized as Algorithmic**: Documentation confirms RDB delineations are **wavelet-derived** (`data/rdb_wavelet_delineation_cache`), not manual cardiologist annotations. It is categorized under `algorithmic_delineation`.
 > 6. **Three-Object Hierarchy for Cliques**: Disentangles the similarity graph $\mathcal{G}_{\text{sim}}$, the maximal cliques $\{\mathcal{Q}_1, \ldots, \mathcal{Q}_K\}$, and the hard partition heuristic $Y_{\text{resolved}}$, reporting graph/clique stability separately from partition heuristics.
 > 7. **Candidate Topology Terminology Enforced**: The similarity graph is designated as a **candidate electrophysiological topology** or **derived recurrence-graph phenotype**.
@@ -44,7 +44,7 @@ $$
 $$
 
 $$
-\boxed{\texttt{GATE3B\_POST\_CAHC\_CALIBRATION = FAIL}}
+\boxed{\texttt{GATE3B\_POST\_CAHC\_CALIBRATION = BORDERLINE\ FAIL\ (0.08039 > 0.08)}}
 $$
 
 $$
@@ -154,9 +154,9 @@ $$
 2. **Gate 3B (Post-CAHC Recurrence Controls; completed 120/120)**:
    - Evaluates whether data-dependent CAHC selection induces excess rejection.
    - Protocol: admits a CAHC cluster only if every sample has the same annotated phase and QRS-defined beat (exact purity 1.0; no tunable purity cutoff). Null pairs share phase and have distinct beat IDs separated by $\ge 200\text{ ms}$.
-   - Primary patient-equal mean $r_p$ across 34 eligible patients: **0.136** (attribute k-means blocks), **0.175** (temporal blocks), and **0.597** (naive unblocked comparator).
-   - Cohort failures are material: LUDB mean $r_p=0.250$ for both blocked schemes; Zhejiang mean $r_p=0.315$ (attribute) and $0.411$ (temporal). The prespecified calibration target $\le 0.08$ is not met.
-   - Exact-purity filtering leaves no alternative pairs in ISP, LUDB, or RDB, so power is not established by this run.
+   - After correcting the Zhejiang 2000-to-500 Hz adapter defect, the frozen attribute-block patient-equal mean $r_p$ across 34 eligible patients is **0.08039**, narrowly above the prespecified 0.08 target. Pair-pooled rejection is **6/149 = 0.0403**.
+   - Cohort patient means are ISP **0.020**, LUDB **0.250**, RDB **0.022**, and corrected Zhejiang **0.0476**. LUDB has only 8 eligible patients and 12 pairs, so its estimate remains imprecise.
+   - Exact-purity filtering yields only two positive-control pairs, both in Zhejiang and both rejected; cross-cohort power remains unestablished.
 
 ---
 
@@ -170,10 +170,12 @@ To separate graph-theoretic properties from partition heuristics:
 ### G. Gate 3B Cohort-Heterogeneity Diagnostic
 
 1. **Decision consistency**: recurrence and positive controls use rejection at BH-adjusted $q<0.05$, exactly matching the quantity used to decide whether the graph retains an edge.
-2. **Patient-level cohort contrast**: patient-bootstrap 95% intervals are ISP **0.000–0.060**, LUDB **0.000–0.625**, RDB **0.000–0.067**, and Zhejiang **0.095–0.560**. Only Zhejiang's interval excludes the 0.08 operational target, while LUDB is too small and imprecise to localize confidently.
-3. **Apparent predictors are cohort-confounded**: raw patient-level associations with temporal separation ($\rho=0.377$) and heart rate ($\rho=-0.463$) weaken after within-dataset ranking ($\rho=0.174$ and $-0.264$). No examined predictor has a within-dataset exploratory $p<0.05$.
-4. **Annotation/duration signal**: Zhejiang has much longer median control separation (**2799 ms**) and an implausibly low annotation-derived median heart rate (**21.3 bpm**), compared with **899–1038 ms** and **67–125 bpm** elsewhere. This points to cohort-specific annotation coverage or record-window structure as the first diagnostic target; it is not proof of a causal mechanism.
-5. **Power remains incomplete**: allowing exact-purity clusters from different phases without a distinct-beat requirement produces 7/7 rejected positive controls, but all are from Zhejiang. All admissible recurrence controls are QRS, so phase heterogeneity and cross-cohort power remain unidentifiable.
+2. **Concrete Zhejiang adapter defect corrected**: native 20,000-sample signals and masks are at 2000 Hz and require a synchronized 4:1 mapping to 500 Hz. The previous adapter cropped native samples before declaring 500 Hz, stretching timing and using the wrong physical geometry.
+3. **All-record contract audit**: 334/334 records have matched signal/mask lengths, monotonic contiguous beat IDs, and one QRS occurrence per derived beat after correction. Cohort medians are **650 ms RR** and **110 ms QRS duration**. Annotation coverage is partial (median last labeled sample at **2.321 s** of the 10 s container), so Zhejiang remains exploratory despite the corrected timing contract.
+4. **Corrected patient-level cohort contrast**: patient-bootstrap 95% intervals are ISP **0.000–0.060**, LUDB **0.000–0.625**, RDB **0.000–0.067**, and Zhejiang **0.000–0.143**. Zhejiang's mean falls from **0.315** to **0.0476**.
+5. **No localized covariate mechanism remains**: no examined patient-level predictor has an exploratory within-dataset rank $p<0.05$ after correction.
+6. **Morphology-distance scope**: raw morphology distance has unresolved cohort-specific units and is restricted to within-cohort diagnostic use.
+7. **Power remains incomplete**: allowing exact-purity clusters from different phases without a distinct-beat requirement produces 2/2 rejected positive controls, both from Zhejiang. All admissible recurrence controls are QRS, so phase heterogeneity and cross-cohort power remain unidentifiable.
 
 ---
 
@@ -185,9 +187,10 @@ To separate graph-theoretic properties from partition heuristics:
 | **ACT-2** | Gate 1 resampling chain | Implement parallel-from-original design; run direct vs cascaded check. | ✅ **PASSED (RMSE = 0.068%)** |
 | **ACT-3** | Gate 1 frozen-grid results | Collect aggregate metrics across real 1000/500/250 Hz signals. | ⚠️ **MIXED (physical geometry wins 2/3 comparisons)** |
 | **ACT-4** | Multi-record scale equivariance | Test $1\times, 10\times, 1000\times$ across 10 heterogeneous records. | ✅ **PASSED ($\Delta p = 0.00\times 10^0$)** |
-| **ACT-5** | Gate 3B patient-level calibration | Run exact phase/beat-pure post-CAHC controls and compute patient-level $r_p$. | ❌ **FAIL (blocked mean $r_p=0.136$–$0.175$)** |
+| **ACT-5** | Gate 3B patient-level calibration | Run exact phase/beat-pure post-CAHC controls and compute patient-level $r_p$. | ⚠️ **BORDERLINE FAIL (attribute mean $r_p=0.08039$)** |
 | **ACT-6** | RDB provenance correction | Classify RDB as algorithmic/wavelet-derived delineation. | ✅ **CORRECTED** |
 | **ACT-7** | Three-object clique reporting | Maintain $\mathcal{G}_{\text{sim}}$, $\{\mathcal{Q}_k\}$, and $Y_{\text{resolved}}$ as separate objects. | ✅ **ADOPTED** |
 | **ACT-8** | Scope wording | Enforce "no fully synthetic ECGs or synthetic labels". | ✅ **ENFORCED** |
 | **ACT-9** | Gate 3B terminology | Replace null/Type-I artifact fields with recurrence-control terminology. | ✅ **COMPLETED** |
 | **ACT-10** | Cohort heterogeneity | Stratify the faithful attribute-block result at patient level without retuning. | ✅ **COMPLETED; annotation/window heterogeneity prioritized** |
+| **ACT-11** | Zhejiang data contract | Audit all records, correct synchronized 2000-to-500 Hz mapping, and rerun frozen Gate 3B. | ⚠️ **TIMING CORRECTED; partial annotation coverage and units remain provisional** |

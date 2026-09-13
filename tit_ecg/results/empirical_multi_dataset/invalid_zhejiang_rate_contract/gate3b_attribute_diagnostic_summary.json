@@ -13,7 +13,7 @@
       "total_alt_pairs": 0,
       "alt_rejections": 0,
       "empirical_power": NaN,
-      "mean_edge_jaccard_30db": 0.5151768309663047,
+      "mean_edge_jaccard_30db": 0.5151768309663046,
       "mean_density": 0.45,
       "mean_cliques": 3.3
     },
@@ -53,17 +53,17 @@
       "dataset": "Zhejiang",
       "permutation_scheme": "attribute_kmeans",
       "n_records": 10,
-      "total_recurrence_control_pairs": 28,
-      "recurrence_rejections": 1,
-      "pooled_recurrence_rejection_rate": 0.03571428571428571,
-      "patient_level_mean_recurrence_rejection_rate": 0.047619047619047616,
+      "total_recurrence_control_pairs": 31,
+      "recurrence_rejections": 12,
+      "pooled_recurrence_rejection_rate": 0.3870967741935484,
+      "patient_level_mean_recurrence_rejection_rate": 0.3154761904761904,
       "n_patients_with_recurrence_pairs": 7,
-      "total_alt_pairs": 2,
-      "alt_rejections": 2,
+      "total_alt_pairs": 7,
+      "alt_rejections": 7,
       "empirical_power": 1.0,
-      "mean_edge_jaccard_30db": 0.5827020202020202,
-      "mean_density": 0.5009523809523809,
-      "mean_cliques": 2.7
+      "mean_edge_jaccard_30db": 0.1573412698412698,
+      "mean_density": 0.16404761904761905,
+      "mean_cliques": 4.8
     }
   ]
 }

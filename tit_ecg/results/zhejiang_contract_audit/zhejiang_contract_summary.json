@@ -1,0 +1,24 @@
+{
+  "n_records": 334,
+  "native_lengths": [
+    20000
+  ],
+  "corrected_lengths": [
+    5000
+  ],
+  "contract_failures": {
+    "beat_ids_monotonic": 0,
+    "qrs_ids_contiguous": 0,
+    "one_qrs_occurrence_per_beat": 0,
+    "signal_label_lengths_match_native": 0
+  },
+  "median_n_qrs": 4.0,
+  "median_rr_ms": 650.25,
+  "median_qrs_duration_ms": 110.0,
+  "median_unlabeled_fraction": 0.8546,
+  "median_active_signal_duration_seconds": 10.0,
+  "median_annotation_coverage_duration_seconds": 2.3209999999999997,
+  "median_tail_padding_seconds": 0.0,
+  "source_rate_contract": "native 2000 Hz mapped 4:1 to 500 Hz",
+  "unit_contract": "undocumented; division by 1000 remains provisional"
+}

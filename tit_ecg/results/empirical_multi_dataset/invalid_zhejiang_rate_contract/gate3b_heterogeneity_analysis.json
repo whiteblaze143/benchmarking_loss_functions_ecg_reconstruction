@@ -2,13 +2,7 @@
   "decision_quantity": "BH-adjusted q_value < 0.05 (same decision used by graph construction)",
   "purity_rule": "exact_phase_and_beat_membership",
   "n_eligible_patients": 34,
-  "n_recurrence_control_pairs": 149,
-  "overall_patient_mean_recurrence_rejection_rate": 0.0803921568627451,
-  "overall_patient_bootstrap_ci95": [
-    0.011764705882352941,
-    0.17058823529411765
-  ],
-  "overall_pooled_recurrence_rejection_rate": 0.040268456375838924,
+  "n_recurrence_control_pairs": 152,
   "observed_recurrence_phases": [
     2
   ],
@@ -59,73 +53,73 @@
     {
       "dataset": "Zhejiang",
       "n_patients": 7,
-      "n_recurrence_control_pairs": 28,
-      "patient_mean_recurrence_rejection_rate": 0.047619047619047616,
-      "patient_bootstrap_ci95_low": 0.0,
-      "patient_bootstrap_ci95_high": 0.14285714285714285,
-      "median_cluster_size": 28.0,
-      "median_m_star": 32.0,
-      "median_G_star": 6.0,
-      "median_temporal_separation_ms": 1552.0,
-      "median_heart_rate_bpm": 96.15384615384616,
-      "median_morphology_distance": 5.255089230390995
+      "n_recurrence_control_pairs": 31,
+      "patient_mean_recurrence_rejection_rate": 0.3154761904761904,
+      "patient_bootstrap_ci95_low": 0.09523809523809523,
+      "patient_bootstrap_ci95_high": 0.5596726190476169,
+      "median_cluster_size": 40.0,
+      "median_m_star": 16.0,
+      "median_G_star": 8.0,
+      "median_temporal_separation_ms": 2799.0,
+      "median_heart_rate_bpm": 21.27659574468085,
+      "median_morphology_distance": 8.075353031536624
     }
   ],
   "patient_level_associations": [
     {
       "predictor": "cluster_size",
       "n_patients": 34,
-      "raw_spearman_rho": -0.04403126213208456,
-      "raw_p_value_exploratory": 0.8047065244115873,
-      "within_dataset_rank_spearman_rho": 0.08613725321714776,
-      "within_dataset_rank_p_value_exploratory": 0.6281180725591411
+      "raw_spearman_rho": 0.2529822848419857,
+      "raw_p_value_exploratory": 0.14886434297756232,
+      "within_dataset_rank_spearman_rho": 0.2370521459477657,
+      "within_dataset_rank_p_value_exploratory": 0.17705750440795132
     },
     {
       "predictor": "m_star",
       "n_patients": 34,
-      "raw_spearman_rho": 0.07994093501396009,
-      "raw_p_value_exploratory": 0.6531309575648414,
-      "within_dataset_rank_spearman_rho": 0.13427936420586298,
-      "within_dataset_rank_p_value_exploratory": 0.4489728032357325
+      "raw_spearman_rho": -0.2909208736020517,
+      "raw_p_value_exploratory": 0.09507381476859776,
+      "within_dataset_rank_spearman_rho": -0.0024896484709006866,
+      "within_dataset_rank_p_value_exploratory": 0.9888507090764956
     },
     {
       "predictor": "G_star",
       "n_patients": 34,
-      "raw_spearman_rho": -0.030107500023076775,
-      "raw_p_value_exploratory": 0.8657754216516378,
-      "within_dataset_rank_spearman_rho": -0.004756580822621996,
-      "within_dataset_rank_p_value_exploratory": 0.9787005480265745
+      "raw_spearman_rho": -0.036177572331207095,
+      "raw_p_value_exploratory": 0.8390368881470225,
+      "within_dataset_rank_spearman_rho": -0.06789579506720082,
+      "within_dataset_rank_p_value_exploratory": 0.7028102766834976
     },
     {
       "predictor": "temporal_separation",
       "n_patients": 34,
-      "raw_spearman_rho": 0.12998346257175722,
-      "raw_p_value_exploratory": 0.46374462402599215,
-      "within_dataset_rank_spearman_rho": 0.199732217435322,
-      "within_dataset_rank_p_value_exploratory": 0.25741408941428895
+      "raw_spearman_rho": 0.37673275811703566,
+      "raw_p_value_exploratory": 0.02807940495842219,
+      "within_dataset_rank_spearman_rho": 0.1735087046308854,
+      "within_dataset_rank_p_value_exploratory": 0.3264211472144303
     },
     {
       "predictor": "heart_rate",
       "n_patients": 34,
-      "raw_spearman_rho": -0.190758173125346,
-      "raw_p_value_exploratory": 0.27984901540239354,
-      "within_dataset_rank_spearman_rho": -0.1638573816125699,
-      "within_dataset_rank_p_value_exploratory": 0.3544529408963478
+      "raw_spearman_rho": -0.46305450302110285,
+      "raw_p_value_exploratory": 0.0058195422443375975,
+      "within_dataset_rank_spearman_rho": -0.2635028460369463,
+      "within_dataset_rank_p_value_exploratory": 0.13212955538695056
     },
     {
       "predictor": "morphology_distance",
       "n_patients": 34,
-      "raw_spearman_rho": -0.17389009019618665,
-      "raw_p_value_exploratory": 0.32534242112077605,
-      "within_dataset_rank_spearman_rho": -0.10836931374831331,
-      "within_dataset_rank_p_value_exploratory": 0.5418210005075822
+      "raw_spearman_rho": -0.06330261292964921,
+      "raw_p_value_exploratory": 0.7220914092440432,
+      "within_dataset_rank_spearman_rho": 0.04309433742758802,
+      "within_dataset_rank_p_value_exploratory": 0.8087845753490898
     }
   ],
   "positive_controls": [
     {
       "dataset": "Zhejiang",
-      "n_positive_control_pairs": 2,
-      "positive_control_rejections": 2,
+      "n_positive_control_pairs": 7,
+      "positive_control_rejections": 7,
       "positive_control_power": 1.0
     }
   ],

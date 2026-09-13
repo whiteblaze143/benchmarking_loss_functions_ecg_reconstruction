@@ -113,6 +113,7 @@ def run_cahc(
     L: sp.csr_matrix,
     n_clusters: int,
     linkage: str = "ward",
+    X: np.ndarray | None = None,
 ) -> np.ndarray:
     """Performs Constrained Agglomerative Hierarchical Clustering (CAHC).
 
@@ -128,6 +129,8 @@ def run_cahc(
         Target number of clusters G. [PAPER §2.1]
     linkage : str
         'ward', 'single', 'complete', or 'average' [PAPER Table A.7].
+    X : np.ndarray of shape [n, p], optional
+        Feature matrix (required for Ward linkage in scikit-learn).
 
     Returns
     -------
@@ -140,15 +143,38 @@ def run_cahc(
     if n_clusters <= 1:
         return np.zeros(n, dtype=int)
 
-    # Ensure L is connected enough for G clusters; if graph has multiple components > G,
-    # AgglomerativeClustering automatically completes graph to prevent early stopping.
-    model = AgglomerativeClustering(
-        n_clusters=n_clusters,
-        metric="precomputed",
-        linkage=linkage.lower(),
-        connectivity=L,
-    )
-    labels = model.fit_predict(D)
+    linkage_clean = linkage.lower()
+
+    if linkage_clean == "ward":
+        # Scikit-learn Ward linkage requires metric='euclidean' and coordinates X
+        if X is not None:
+            clustering_input = np.asarray(X, dtype=float)
+        elif D.shape[0] != D.shape[1]:
+            # D was passed as feature matrix
+            clustering_input = D
+        else:
+            # Reconstruct coordinates via MDS if only distance matrix provided
+            from sklearn.manifold import MDS
+            mds = MDS(n_components=min(10, n - 1), dissimilarity="precomputed", random_state=42)
+            clustering_input = mds.fit_transform(D)
+
+        model = AgglomerativeClustering(
+            n_clusters=n_clusters,
+            metric="euclidean",
+            linkage="ward",
+            connectivity=L,
+        )
+        labels = model.fit_predict(clustering_input)
+    else:
+        # Precomputed distances supported for single, complete, average
+        model = AgglomerativeClustering(
+            n_clusters=n_clusters,
+            metric="precomputed",
+            linkage=linkage_clean,
+            connectivity=L,
+        )
+        labels = model.fit_predict(D)
+
     return labels
 
 
@@ -287,7 +313,7 @@ def search_optimal_cahc(
         L = construct_domain_links(S, m=m, symmetrize=symmetrize_links)
 
         for G in G_grid:
-            labels = run_cahc(D=D, L=L, n_clusters=G, linkage=linkage)
+            labels = run_cahc(D=D, L=L, n_clusters=G, linkage=linkage, X=X)
             avg_score, _, is_valid = compute_modified_silhouette(D=D, L=L, labels=labels)
 
             results.append({
@@ -311,7 +337,7 @@ def search_optimal_cahc(
         m_star = int(best_row["m"])
         G_star = int(best_row["G"])
         L_star = construct_domain_links(S, m=m_star, symmetrize=symmetrize_links)
-        labels_fallback = run_cahc(D=D, L=L_star, n_clusters=G_star, linkage=linkage)
+        labels_fallback = run_cahc(D=D, L=L_star, n_clusters=G_star, linkage=linkage, X=X)
         partition_cache[(m_star, G_star)] = labels_fallback
         return m_star, G_star, scores_df, partition_cache
 

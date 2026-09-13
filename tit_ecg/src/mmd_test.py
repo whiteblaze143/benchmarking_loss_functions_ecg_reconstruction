@@ -128,6 +128,7 @@ def create_attribute_blocks(
     block_mode : str
         'attribute_kmeans' (paper default): k-means on X within each cluster.
         'temporal_contiguous': contiguous chronological chunks of expected size m.
+        'unblocked': each observation is its own exchangeable unit.
     rounding_rule : str
         'nearest': b_g = max(1, floor(n_g / m_star + 0.5)) [AMBIGUOUS completion]
         'floor': b_g = max(1, n_g // m_star)
@@ -162,7 +163,11 @@ def create_attribute_blocks(
             else:
                 num_blocks = max(1, int(np.round(n_g / m_star)))
 
-        if num_blocks <= 1:
+        if block_mode == "unblocked":
+            cluster_blocks[g] = [np.asarray([member], dtype=int) for member in members]
+        elif block_mode not in {"attribute_kmeans", "temporal_contiguous"}:
+            raise ValueError(f"Unsupported block_mode: {block_mode}")
+        elif num_blocks <= 1:
             cluster_blocks[g] = [members]
         elif block_mode == "temporal_contiguous":
             # Contiguous temporal blocks of expected size m_star
@@ -280,11 +285,11 @@ def run_block_permutation_test(
                     break
 
         # Selected blocks -> pseudo-small cluster; remaining blocks -> other pseudo-group
-        remaining_block_indices = [
-            b_idx for b_idx in range(n_blocks) if b_idx not in selected_block_indices
-        ]
+        selected_mask = np.zeros(n_blocks, dtype=bool)
+        selected_mask[selected_block_indices] = True
+        remaining_block_indices = np.flatnonzero(~selected_mask)
 
-        if not remaining_block_indices or not selected_block_indices:
+        if len(remaining_block_indices) == 0 or len(selected_block_indices) == 0:
             # Pathological case where all blocks were selected; redraw [AMBIGUOUS completion]
             continue
 

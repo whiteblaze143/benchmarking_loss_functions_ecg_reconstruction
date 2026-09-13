@@ -1,0 +1,127 @@
+{
+  "decision_quantity": "BH-adjusted q_value < 0.05 (same decision used by graph construction)",
+  "purity_rule": "exact_phase_and_beat_membership",
+  "n_eligible_patients": 34,
+  "n_recurrence_control_pairs": 152,
+  "observed_recurrence_phases": [
+    2
+  ],
+  "phase_analysis_limitation": "All admissible recurrence controls are QRS (phase 2); phase heterogeneity is not estimable.",
+  "dataset_summary": [
+    {
+      "dataset": "ISP",
+      "n_patients": 10,
+      "n_recurrence_control_pairs": 53,
+      "patient_mean_recurrence_rejection_rate": 0.02,
+      "patient_bootstrap_ci95_low": 0.0,
+      "patient_bootstrap_ci95_high": 0.06000000000000001,
+      "median_cluster_size": 23.0,
+      "median_m_star": 32.0,
+      "median_G_star": 8.0,
+      "median_temporal_separation_ms": 1037.625,
+      "median_heart_rate_bpm": 75.71203663947331,
+      "median_morphology_distance": 693.8105707951587
+    },
+    {
+      "dataset": "LUDB",
+      "n_patients": 8,
+      "n_recurrence_control_pairs": 12,
+      "patient_mean_recurrence_rejection_rate": 0.25,
+      "patient_bootstrap_ci95_low": 0.0,
+      "patient_bootstrap_ci95_high": 0.625,
+      "median_cluster_size": 13.0,
+      "median_m_star": 24.0,
+      "median_G_star": 7.0,
+      "median_temporal_separation_ms": 947.0,
+      "median_heart_rate_bpm": 67.19944615014147,
+      "median_morphology_distance": 0.07777048064410474
+    },
+    {
+      "dataset": "RDB",
+      "n_patients": 9,
+      "n_recurrence_control_pairs": 56,
+      "patient_mean_recurrence_rejection_rate": 0.022222222222222223,
+      "patient_bootstrap_ci95_low": 0.0,
+      "patient_bootstrap_ci95_high": 0.06666666666666668,
+      "median_cluster_size": 12.0,
+      "median_m_star": 32.0,
+      "median_G_star": 6.0,
+      "median_temporal_separation_ms": 899.0,
+      "median_heart_rate_bpm": 125.0,
+      "median_morphology_distance": 0.3278291075855871
+    },
+    {
+      "dataset": "Zhejiang",
+      "n_patients": 7,
+      "n_recurrence_control_pairs": 31,
+      "patient_mean_recurrence_rejection_rate": 0.3154761904761904,
+      "patient_bootstrap_ci95_low": 0.09523809523809523,
+      "patient_bootstrap_ci95_high": 0.5596726190476169,
+      "median_cluster_size": 40.0,
+      "median_m_star": 16.0,
+      "median_G_star": 8.0,
+      "median_temporal_separation_ms": 2799.0,
+      "median_heart_rate_bpm": 21.27659574468085,
+      "median_morphology_distance": 8.075353031536624
+    }
+  ],
+  "patient_level_associations": [
+    {
+      "predictor": "cluster_size",
+      "n_patients": 34,
+      "raw_spearman_rho": 0.2529822848419857,
+      "raw_p_value_exploratory": 0.14886434297756232,
+      "within_dataset_rank_spearman_rho": 0.2370521459477657,
+      "within_dataset_rank_p_value_exploratory": 0.17705750440795132
+    },
+    {
+      "predictor": "m_star",
+      "n_patients": 34,
+      "raw_spearman_rho": -0.2909208736020517,
+      "raw_p_value_exploratory": 0.09507381476859776,
+      "within_dataset_rank_spearman_rho": -0.0024896484709006866,
+      "within_dataset_rank_p_value_exploratory": 0.9888507090764956
+    },
+    {
+      "predictor": "G_star",
+      "n_patients": 34,
+      "raw_spearman_rho": -0.036177572331207095,
+      "raw_p_value_exploratory": 0.8390368881470225,
+      "within_dataset_rank_spearman_rho": -0.06789579506720082,
+      "within_dataset_rank_p_value_exploratory": 0.7028102766834976
+    },
+    {
+      "predictor": "temporal_separation",
+      "n_patients": 34,
+      "raw_spearman_rho": 0.37673275811703566,
+      "raw_p_value_exploratory": 0.02807940495842219,
+      "within_dataset_rank_spearman_rho": 0.1735087046308854,
+      "within_dataset_rank_p_value_exploratory": 0.3264211472144303
+    },
+    {
+      "predictor": "heart_rate",
+      "n_patients": 34,
+      "raw_spearman_rho": -0.46305450302110285,
+      "raw_p_value_exploratory": 0.0058195422443375975,
+      "within_dataset_rank_spearman_rho": -0.2635028460369463,
+      "within_dataset_rank_p_value_exploratory": 0.13212955538695056
+    },
+    {
+      "predictor": "morphology_distance",
+      "n_patients": 34,
+      "raw_spearman_rho": -0.06330261292964921,
+      "raw_p_value_exploratory": 0.7220914092440432,
+      "within_dataset_rank_spearman_rho": 0.04309433742758802,
+      "within_dataset_rank_p_value_exploratory": 0.8087845753490898
+    }
+  ],
+  "positive_controls": [
+    {
+      "dataset": "Zhejiang",
+      "n_positive_control_pairs": 7,
+      "positive_control_rejections": 7,
+      "positive_control_power": 1.0
+    }
+  ],
+  "power_limitation": "Positive controls occur only in Zhejiang; cross-cohort power is not established."
+}

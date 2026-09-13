@@ -26,6 +26,7 @@ Key Empirical Benchmark Targets:
 from __future__ import annotations
 
 from concurrent.futures import ProcessPoolExecutor, as_completed
+import argparse
 import json
 import os
 import sys
@@ -49,12 +50,31 @@ from tit_ecg.src.dataset_adapters import (
 from tit_ecg.src.pipeline import TemporalRepSpatECG
 
 
+# Gate 3B uses exact membership, not a tunable purity threshold: every sample in
+# an admissible CAHC cluster must belong to one annotated phase and one beat.
+GATE3B_REQUIRED_PURITY = 1.0
+
+
+def beat_ids_from_segmentation(segmentation: np.ndarray) -> np.ndarray:
+    """Assign every sample to the nearest annotated QRS occurrence."""
+    qrs = np.asarray(segmentation) == 2
+    starts = np.flatnonzero(qrs & ~np.r_[False, qrs[:-1]])
+    ends = np.flatnonzero(qrs & ~np.r_[qrs[1:], False])
+    if len(starts) == 0:
+        return np.zeros(len(qrs), dtype=int)
+
+    centers = (starts + ends) / 2.0
+    boundaries = (centers[:-1] + centers[1:]) / 2.0
+    return np.searchsorted(boundaries, np.arange(len(qrs)), side="right") + 1
+
+
 def evaluate_empirical_null_and_power_record(
     dataset_name: str,
     record_id: Any,
     vcg: np.ndarray,
     fs: float,
     segmentation: np.ndarray,
+    beat_ids: np.ndarray,
     block_mode: str = "attribute_kmeans",
     gamma: float = 1.0,
     m_ms_grid: list[float] | None = None,
@@ -95,11 +115,16 @@ def evaluate_empirical_null_and_power_record(
     # Analyze CAHC clusters against ground-truth wave segmentation
     # Classes: 1=P, 2=QRS, 3=T, 0=Isoelectric
     cluster_wave_map = {}
+    cluster_beat_map = {}
     cluster_centers = {}
+    cluster_sizes = {}
+    cluster_means = {}
     for c_id in np.unique(initial_labels):
         c_mask = initial_labels == c_id
         c_samples = np.where(c_mask)[0]
         cluster_centers[c_id] = float(np.mean(c_samples))
+        cluster_sizes[c_id] = int(len(c_samples))
+        cluster_means[c_id] = np.mean(vcg[c_mask], axis=0)
 
         seg_in_c = segmentation[c_mask]
         vals, counts = np.unique(seg_in_c, return_counts=True)
@@ -107,11 +132,30 @@ def evaluate_empirical_null_and_power_record(
         majority_frac = np.max(counts) / len(seg_in_c)
         cluster_wave_map[c_id] = (int(majority_wave), float(majority_frac))
 
+        beats_in_c = beat_ids[c_mask]
+        beat_vals, beat_counts = np.unique(beats_in_c[beats_in_c > 0], return_counts=True)
+        if len(beat_vals):
+            majority_beat_index = int(np.argmax(beat_counts))
+            cluster_beat_map[c_id] = (
+                int(beat_vals[majority_beat_index]),
+                float(beat_counts[majority_beat_index] / len(beats_in_c)),
+            )
+        else:
+            cluster_beat_map[c_id] = (0, 0.0)
+
     # Evaluate pairwise tests
-    null_p_vals = []
-    null_q_vals = []
+    recurrence_p_vals = []
+    recurrence_q_vals = []
     alt_p_vals = []
     alt_q_vals = []
+    diagnostic_pairs = []
+
+    qrs = np.asarray(segmentation) == 2
+    qrs_starts = np.flatnonzero(qrs & ~np.r_[False, qrs[:-1]])
+    qrs_ends = np.flatnonzero(qrs & ~np.r_[qrs[1:], False])
+    qrs_centers = (qrs_starts + qrs_ends) / 2.0
+    rr_seconds = np.diff(qrs_centers) / fs
+    heart_rate_bpm = float(60.0 / np.median(rr_seconds)) if len(rr_seconds) else np.nan
 
     col_c1 = "cluster_1" if "cluster_1" in pairwise_df.columns else "region_1"
     col_c2 = "cluster_2" if "cluster_2" in pairwise_df.columns else "region_2"
@@ -122,28 +166,58 @@ def evaluate_empirical_null_and_power_record(
         c2 = int(row[col_c2])
         w1, frac1 = cluster_wave_map[c1]
         w2, frac2 = cluster_wave_map[c2]
+        b1, beat_frac1 = cluster_beat_map[c1]
+        b2, beat_frac2 = cluster_beat_map[c2]
 
-        # Require >= 50% wave purity to be a clean evaluation
-        if frac1 >= 0.50 and frac2 >= 0.50:
-            # Check temporal separation: require centers separated by at least 200 ms (100 samples at 500 Hz)
+        if (
+            frac1 == GATE3B_REQUIRED_PURITY
+            and frac2 == GATE3B_REQUIRED_PURITY
+            and beat_frac1 == GATE3B_REQUIRED_PURITY
+            and beat_frac2 == GATE3B_REQUIRED_PURITY
+        ):
             time_sep_ms = abs(cluster_centers[c1] - cluster_centers[c2]) * 1000.0 / fs
+            pair_kind = None
 
-            if w1 == w2 and w1 in [1, 2, 3] and time_sep_ms >= 200.0:
-                # Real Empirical Null Pair: Same wave across different beats of the patient!
-                null_p_vals.append(float(row["p_value"]))
-                null_q_vals.append(float(row[col_q]))
+            if w1 == w2 and w1 in [1, 2, 3] and b1 != b2 and time_sep_ms >= 200.0:
+                pair_kind = "recurrence_control"
+                recurrence_p_vals.append(float(row["p_value"]))
+                recurrence_q_vals.append(float(row[col_q]))
             elif w1 != w2 and (w1 in [1, 2, 3] and w2 in [1, 2, 3]):
-                # Real Empirical Alternative Pair: Different waves (e.g. QRS vs T)!
+                pair_kind = "positive_control"
                 alt_p_vals.append(float(row["p_value"]))
                 alt_q_vals.append(float(row[col_q]))
 
-    n_null = len(null_q_vals)
+            if pair_kind is not None:
+                diagnostic_pairs.append({
+                    "dataset": dataset_name,
+                    "record_id": str(record_id),
+                    "patient_id": f"{dataset_name}:{record_id}",
+                    "block_mode": block_mode,
+                    "pair_kind": pair_kind,
+                    "phase_1": w1,
+                    "phase_2": w2,
+                    "beat_1": b1,
+                    "beat_2": b2,
+                    "cluster_1_size": cluster_sizes[c1],
+                    "cluster_2_size": cluster_sizes[c2],
+                    "min_cluster_size": min(cluster_sizes[c1], cluster_sizes[c2]),
+                    "m_star": int(res["m_star"]),
+                    "G_star": int(res["G_star"]),
+                    "temporal_separation_ms": float(time_sep_ms),
+                    "heart_rate_bpm": heart_rate_bpm,
+                    "morphology_distance": float(np.linalg.norm(cluster_means[c1] - cluster_means[c2])),
+                    "p_value": float(row["p_value"]),
+                    "q_value": float(row[col_q]),
+                    "rejected_by_graph_rule": bool(row[col_q] < cfg.fdr_alpha),
+                })
+
+    n_recurrence = len(recurrence_q_vals)
     n_alt = len(alt_q_vals)
 
-    null_rejections = sum(q < 0.05 for q in null_q_vals) if n_null > 0 else 0
+    recurrence_rejections = sum(q < 0.05 for q in recurrence_q_vals) if n_recurrence > 0 else 0
     alt_rejections = sum(q < 0.05 for q in alt_q_vals) if n_alt > 0 else 0
 
-    type1_error = (null_rejections / n_null) if n_null > 0 else np.nan
+    recurrence_rejection_rate = (recurrence_rejections / n_recurrence) if n_recurrence > 0 else np.nan
     power = (alt_rejections / n_alt) if n_alt > 0 else np.nan
 
     # Test perturbation stability at 30 dB SNR
@@ -184,9 +258,10 @@ def evaluate_empirical_null_and_power_record(
         "gamma": gamma,
         "m_star": int(res["m_star"]),
         "G_star": int(res["G_star"]),
-        "n_null_pairs": n_null,
-        "null_rejections": null_rejections,
-        "type1_error": type1_error,
+        "purity_rule": "exact_phase_and_beat_membership",
+        "n_recurrence_control_pairs": n_recurrence,
+        "recurrence_rejections": recurrence_rejections,
+        "recurrence_rejection_rate": recurrence_rejection_rate,
         "n_alt_pairs": n_alt,
         "alt_rejections": alt_rejections,
         "power": power,
@@ -196,6 +271,7 @@ def evaluate_empirical_null_and_power_record(
         "overlap_fraction": float(g_desc.get("overlap_fraction", 0.0)),
         "edge_jaccard_30db": float(edge_jaccard),
         "elapsed_sec": float(elapsed),
+        "diagnostic_pairs": diagnostic_pairs,
     }
 
 
@@ -252,7 +328,7 @@ def run_cross_dataset_topological_record(
     }
 
 
-def main():
+def main(gate3b_only: bool = False, diagnostic_only: bool = False):
     print("=" * 80)
     print("EMPIRICAL MULTI-DATASET REPSPAT CAHC BENCHMARK SUITE (9 REAL DATASETS)")
     print("=" * 80)
@@ -289,29 +365,29 @@ def main():
     print(f"Loaded delineated records: {len(ludb_records)} LUDB, {len(rdb_records)} RDB, {len(isp_records)} ISP, {len(zhejiang_records)} Zhejiang.")
 
     # Schemes: A (Attribute k-means), B (Temporal contiguous blocks), C (Unblocked) at gamma = 1.0
-    schemes = ["attribute_kmeans", "temporal_contiguous", "unblocked"]
+    schemes = ["attribute_kmeans"] if diagnostic_only else ["attribute_kmeans", "temporal_contiguous", "unblocked"]
 
     # Preload delineated records
     delineated_data = []
     for rid in ludb_records:
         rec = ludb.load_record(rid, n_samples=1500)
-        delineated_data.append(("LUDB", rid, rec["vcg"], rec["fs"], rec["segmentation"]))
+        delineated_data.append(("LUDB", rid, rec["vcg"], rec["fs"], rec["segmentation"], beat_ids_from_segmentation(rec["segmentation"])))
     for rid in rdb_records:
         rec = rdb.load_record(rid, n_samples=1500)
-        delineated_data.append(("RDB", rec["record_id"], rec["vcg"], rec["fs"], rec["segmentation"]))
+        delineated_data.append(("RDB", rec["record_id"], rec["vcg"], rec["fs"], rec["segmentation"], beat_ids_from_segmentation(rec["segmentation"])))
     for rid in isp_records:
         rec = isp.load_record(rid, n_samples=3000)
-        delineated_data.append(("ISP", rid, rec["vcg"], rec["fs"], rec["segmentation"]))
+        delineated_data.append(("ISP", rid, rec["vcg"], rec["fs"], rec["segmentation"], beat_ids_from_segmentation(rec["segmentation"])))
     for rid in zhejiang_records:
         rec = zhejiang.load_record(rid, n_samples=2000)
-        delineated_data.append(("Zhejiang", rid, rec["vcg"], rec["fs"], rec["segmentation"]))
+        delineated_data.append(("Zhejiang", rid, rec["vcg"], rec["fs"], rec["segmentation"], beat_ids_from_segmentation(rec["segmentation"])))
 
     phase1_tasks = []
-    for dname, rid, vcg, fs, seg in delineated_data:
+    for dname, rid, vcg, fs, seg, beat_ids in delineated_data:
         for sch in schemes:
-            phase1_tasks.append((dname, rid, vcg, fs, seg, sch, 1.0))
+            phase1_tasks.append((dname, rid, vcg, fs, seg, beat_ids, sch, 1.0))
 
-    print(f"Total Phase 1 tasks: {len(phase1_tasks)} ({len(delineated_data)} delineated records x 3 schemes)")
+    print(f"Total Phase 1 tasks: {len(phase1_tasks)} ({len(delineated_data)} delineated records x {len(schemes)} schemes)")
 
     phase1_results = []
     with ProcessPoolExecutor(max_workers=8) as executor:
@@ -323,10 +399,11 @@ def main():
                 vcg,
                 fs,
                 seg,
+                beat_ids,
                 sch,
                 g,
             ): (dname, rid, sch)
-            for dname, rid, vcg, fs, seg, sch, g in phase1_tasks
+            for dname, rid, vcg, fs, seg, beat_ids, sch, g in phase1_tasks
         }
         for fut in as_completed(futures):
             info = futures[fut]
@@ -338,29 +415,40 @@ def main():
             except Exception as e:
                 print(f"  Error on {info}: {e}")
 
+    diagnostic_pairs = [pair for result in phase1_results for pair in result.pop("diagnostic_pairs")]
+    df_pairs = pd.DataFrame(diagnostic_pairs)
+    pair_csv = os.path.join(out_dir, "gate3b_pair_diagnostics.csv")
+    df_pairs.to_csv(pair_csv, index=False)
+    print(f"Saved pair-level diagnostics to {pair_csv}")
+
     df_p1 = pd.DataFrame(phase1_results)
-    p1_csv = os.path.join(out_dir, "empirical_null_calibration_runs.csv")
+    run_stem = "gate3b_attribute_diagnostic" if diagnostic_only else "empirical_recurrence_calibration"
+    p1_csv = os.path.join(out_dir, f"{run_stem}_runs.csv")
     df_p1.to_csv(p1_csv, index=False)
     print(f"Saved Phase 1 runs to {p1_csv}")
 
     # Summary table for Scheme comparison on real heartbeats
     p1_summary = []
     for (dname, sch), grp in df_p1.groupby(["dataset", "block_mode"]):
-        tot_null = grp["n_null_pairs"].sum()
-        tot_null_rej = grp["null_rejections"].sum()
-        pooled_type1 = float(tot_null_rej / tot_null) if tot_null > 0 else np.nan
+        total_recurrence = grp["n_recurrence_control_pairs"].sum()
+        total_recurrence_rejections = grp["recurrence_rejections"].sum()
+        pooled_recurrence_rate = float(total_recurrence_rejections / total_recurrence) if total_recurrence > 0 else np.nan
 
         tot_alt = grp["n_alt_pairs"].sum()
         tot_alt_rej = grp["alt_rejections"].sum()
         pooled_power = float(tot_alt_rej / tot_alt) if tot_alt > 0 else np.nan
+        eligible = grp[grp["n_recurrence_control_pairs"] > 0]
+        patient_level_rate = float(eligible["recurrence_rejection_rate"].mean()) if len(eligible) else np.nan
 
         p1_summary.append({
             "dataset": dname,
             "permutation_scheme": sch,
             "n_records": len(grp),
-            "total_null_pairs": int(tot_null),
-            "null_rejections": int(tot_null_rej),
-            "empirical_type1_error": pooled_type1,
+            "total_recurrence_control_pairs": int(total_recurrence),
+            "recurrence_rejections": int(total_recurrence_rejections),
+            "pooled_recurrence_rejection_rate": pooled_recurrence_rate,
+            "patient_level_mean_recurrence_rejection_rate": patient_level_rate,
+            "n_patients_with_recurrence_pairs": int(len(eligible)),
             "total_alt_pairs": int(tot_alt),
             "alt_rejections": int(tot_alt_rej),
             "empirical_power": pooled_power,
@@ -370,9 +458,24 @@ def main():
         })
 
     df_p1_sum = pd.DataFrame(p1_summary)
-    p1_sum_csv = os.path.join(out_dir, "empirical_null_calibration_summary.csv")
+    p1_sum_csv = os.path.join(out_dir, f"{run_stem}_summary.csv")
     df_p1_sum.to_csv(p1_sum_csv, index=False)
     print(f"Saved Phase 1 summary table to {p1_sum_csv}")
+
+    if gate3b_only:
+        json_name = "gate3b_attribute_diagnostic_summary.json" if diagnostic_only else "gate3b_patient_level_summary.json"
+        gate3b_json = os.path.join(out_dir, json_name)
+        with open(gate3b_json, "w") as f:
+            json.dump(
+                {
+                    "purity_rule": "exact_phase_and_beat_membership",
+                    "patient_level_results": p1_summary,
+                },
+                f,
+                indent=2,
+            )
+        print(f"Saved Gate 3B patient-level summary to {gate3b_json}")
+        return
 
     # -------------------------------------------------------------------------
     # EXPERIMENT 2: Lexicographic Gamma Sweep on Real Patient Data (Scheme A)
@@ -383,9 +486,9 @@ def main():
     phase2_tasks = []
     # Test on LUDB and ISP records
     p2_records = [d for d in delineated_data if d[0] in ["LUDB", "ISP"]][:16]
-    for dname, rid, vcg, fs, seg in p2_records:
+    for dname, rid, vcg, fs, seg, beat_ids in p2_records:
         for g in gamma_candidates:
-            phase2_tasks.append((dname, rid, vcg, fs, seg, "attribute_kmeans", g))
+            phase2_tasks.append((dname, rid, vcg, fs, seg, beat_ids, "attribute_kmeans", g))
 
     print(f"Total Phase 2 tasks: {len(phase2_tasks)} ({len(gamma_candidates)} gammas x {len(p2_records)} records)")
 
@@ -399,10 +502,11 @@ def main():
                 vcg,
                 fs,
                 seg,
+                beat_ids,
                 "attribute_kmeans",
                 g,
             ): (dname, rid, g)
-            for dname, rid, vcg, fs, seg, _, g in phase2_tasks
+            for dname, rid, vcg, fs, seg, beat_ids, _, g in phase2_tasks
         }
         for fut in as_completed(futures):
             info = futures[fut]
@@ -420,20 +524,23 @@ def main():
 
     p2_summary = []
     for g, grp in df_p2.groupby("gamma"):
-        tot_null = grp["n_null_pairs"].sum()
-        tot_null_rej = grp["null_rejections"].sum()
-        type1 = float(tot_null_rej / tot_null) if tot_null > 0 else np.nan
+        total_recurrence = grp["n_recurrence_control_pairs"].sum()
+        total_recurrence_rejections = grp["recurrence_rejections"].sum()
+        recurrence_rate = float(total_recurrence_rejections / total_recurrence) if total_recurrence > 0 else np.nan
 
         tot_alt = grp["n_alt_pairs"].sum()
         tot_alt_rej = grp["alt_rejections"].sum()
         power = float(tot_alt_rej / tot_alt) if tot_alt > 0 else np.nan
+        eligible = grp[grp["n_recurrence_control_pairs"] > 0]
 
         p2_summary.append({
             "gamma": float(g),
             "n_records": len(grp),
-            "total_null_pairs": int(tot_null),
-            "null_rejections": int(tot_null_rej),
-            "empirical_type1_error": type1,
+            "total_recurrence_control_pairs": int(total_recurrence),
+            "recurrence_rejections": int(total_recurrence_rejections),
+            "pooled_recurrence_rejection_rate": recurrence_rate,
+            "patient_level_mean_recurrence_rejection_rate": float(eligible["recurrence_rejection_rate"].mean()) if len(eligible) else np.nan,
+            "n_patients_with_recurrence_pairs": int(len(eligible)),
             "total_alt_pairs": int(tot_alt),
             "power": power,
             "perturbation_stability_30db": float(grp["edge_jaccard_30db"].mean()),
@@ -526,4 +633,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--gate3b-only", action="store_true")
+    parser.add_argument("--diagnostic-only", action="store_true")
+    args = parser.parse_args()
+    main(gate3b_only=args.gate3b_only, diagnostic_only=args.diagnostic_only)

@@ -1,0 +1,38 @@
+{
+  "n_records": 10,
+  "candidate_delta_spans_ms": [
+    16.0,
+    32.0,
+    64.0
+  ],
+  "delta_max_ms": 64.0,
+  "mean_ari_geom_1000_500": 0.7667905448494753,
+  "mean_ari_geom_1000_250": 0.8063054947767527,
+  "mean_ari_geom_500_250": 0.8248843800055136,
+  "mean_ari_disc_1000_500": 0.8437170418550091,
+  "mean_ari_disc_1000_250": 0.6151258606716519,
+  "mean_ari_disc_500_250": 0.569030583824252,
+  "mean_density_1000": 0.3733333333333333,
+  "mean_density_500": 0.39666666666666667,
+  "mean_density_250": 0.3433333333333334,
+  "table_rows": [
+    {
+      "comparison": "Same-signal 500 Hz -> 250 Hz (representative of PTB-XL/EchoNext acquisition rates)",
+      "ari_physical_ms": 0.8248843800055136,
+      "ari_discrete_m": 0.569030583824252,
+      "interpretation": "Scale-equivariant ms geometry outperforms discrete unadjusted m"
+    },
+    {
+      "comparison": "Same-signal 1000 Hz -> 500 Hz (representative of ISP/PTB-XL acquisition rates)",
+      "ari_physical_ms": 0.7667905448494753,
+      "ari_discrete_m": 0.8437170418550091,
+      "interpretation": "Equivariance under globally frozen Delta_max = 64 ms"
+    },
+    {
+      "comparison": "Same-signal 1000 Hz -> 250 Hz (representative of ISP/EchoNext acquisition rates)",
+      "ari_physical_ms": 0.8063054947767527,
+      "ari_discrete_m": 0.6151258606716519,
+      "interpretation": "Cross-scale 4x downsampling comparison"
+    }
+  ]
+}

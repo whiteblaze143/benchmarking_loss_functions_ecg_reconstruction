@@ -114,7 +114,8 @@ def run_cahc(
     n_clusters: int,
     linkage: str = "ward",
     X: np.ndarray | None = None,
-) -> np.ndarray:
+    return_model: bool = False,
+) -> np.ndarray | tuple[np.ndarray, AgglomerativeClustering]:
     """Performs Constrained Agglomerative Hierarchical Clustering (CAHC).
 
     Merges are strictly constrained to clusters sharing at least one domain link in L.
@@ -131,17 +132,23 @@ def run_cahc(
         'ward', 'single', 'complete', or 'average' [PAPER Table A.7].
     X : np.ndarray of shape [n, p], optional
         Feature matrix (required for Ward linkage in scikit-learn).
+    return_model : bool
+        If True, return (labels, model) tuple exposing merge hierarchy (children_).
 
     Returns
     -------
     labels : np.ndarray of shape [n]
         Cluster labels in {0, ..., n_clusters - 1}.
+    model : AgglomerativeClustering (optional)
+        Fitted scikit-learn model if return_model is True.
     """
     n = len(D)
     if n_clusters >= n:
-        return np.arange(n)
+        labels = np.arange(n)
+        return (labels, None) if return_model else labels
     if n_clusters <= 1:
-        return np.zeros(n, dtype=int)
+        labels = np.zeros(n, dtype=int)
+        return (labels, None) if return_model else labels
 
     linkage_clean = linkage.lower()
 
@@ -175,6 +182,8 @@ def run_cahc(
         )
         labels = model.fit_predict(D)
 
+    if return_model:
+        return labels, model
     return labels
 
 
@@ -182,6 +191,7 @@ def compute_modified_silhouette(
     D: np.ndarray,
     L: sp.csr_matrix,
     labels: np.ndarray,
+    strict_validity: bool = False,
 ) -> tuple[float, np.ndarray, bool]:
     """Computes the spatially-informed modified silhouette score (Eqs. 2-4).
 
@@ -193,6 +203,10 @@ def compute_modified_silhouette(
         Domain adjacency matrix.
     labels : np.ndarray of shape [n]
         Cluster assignment for each point.
+    strict_validity : bool, default=False
+        If True, rejects partitions with singletons or disconnected clusters with -inf (strict paper text).
+        If False (default), handles singletons and isolated clusters identically to author's code
+        in repspat/clustering.py (setting a=0.0 and s_i=0.0).
 
     Returns
     -------
@@ -201,8 +215,7 @@ def compute_modified_silhouette(
     sh_values : np.ndarray of shape [n]
         Per-sample modified silhouette values.
     is_valid : bool
-        Whether the candidate partition satisfies all paper conditions
-        (no singletons, every cluster has at least one adjacent cluster).
+        Whether the candidate partition satisfies all conditions.
     """
     n = len(labels)
     unique_labels, cluster_sizes = np.unique(labels, return_counts=True)
@@ -211,8 +224,7 @@ def compute_modified_silhouette(
     if G <= 1:
         return -np.inf, np.full(n, -np.inf), False
 
-    # Check for singletons: Eq. (2) denominator is n_g - 1, undefined if n_g == 1 [PAPER §2.1 / AMBIGUOUS default]
-    if np.any(cluster_sizes <= 1):
+    if strict_validity and np.any(cluster_sizes <= 1):
         return -np.inf, np.full(n, -np.inf), False
 
     label_to_members = {
@@ -221,9 +233,8 @@ def compute_modified_silhouette(
     }
 
     # Identify cluster-level adjacency from L
-    # Cluster g and cluster h are adjacent iff exists i in g, j in h such that L_ij == 1
     L_dense = L.toarray().astype(bool)
-    cluster_adj = {lbl: [] for lbl in unique_labels}
+    cluster_adj = {}
 
     for lbl in unique_labels:
         members = label_to_members[lbl]
@@ -232,8 +243,7 @@ def compute_modified_silhouette(
             other for other in np.unique(labels[connected_to_members])
             if other != lbl
         ]
-        if not neighbors:
-            # Cluster has no adjacent neighbors: b(i) is undefined [PAPER Eq. 3 / AMBIGUOUS default]
+        if strict_validity and not neighbors:
             return -np.inf, np.full(n, -np.inf), False
         cluster_adj[lbl] = neighbors
 
@@ -243,12 +253,18 @@ def compute_modified_silhouette(
         members = label_to_members[lbl]
         n_g = len(members)
 
-        # Within-cluster dissimilarity a(i) = 1/(n_g - 1) * sum_{j in C_g, j != i} D_ij [PAPER Eq. 2]
-        intra_D = D[np.ix_(members, members)]
-        a_i = (intra_D.sum(axis=1) - np.diag(intra_D)) / (n_g - 1)
+        # Within-cluster dissimilarity a(i)
+        if n_g > 1:
+            intra_D = D[np.ix_(members, members)]
+            a_i = (intra_D.sum(axis=1) - np.diag(intra_D)) / (n_g - 1)
+        else:
+            a_i = np.zeros(n_g, dtype=float)
 
-        # Between-cluster dissimilarity b(i) = min_{C_ell: L_g_ell = 1} 1/|C_ell| * sum_{j in C_ell} D_ij [PAPER Eq. 3]
-        adj_clusters = cluster_adj[lbl]
+        # Between-cluster dissimilarity b(i)
+        adj_clusters = cluster_adj.get(lbl, [])
+        if not adj_clusters:
+            continue
+
         b_candidates = [
             D[np.ix_(members, label_to_members[other_lbl])].mean(axis=1)
             for other_lbl in adj_clusters

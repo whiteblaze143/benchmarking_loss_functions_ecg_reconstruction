@@ -1,34 +1,59 @@
 {
-  "date": "2026-08-12",
-  "auditor": "cross-model-integrity-auditor",
-  "overall_verdict": "pass",
-  "integrity_status": "pass",
+  "date": "2026-09-13",
+  "auditor": "cross-model-integrity-auditor-ultra",
+  "overall_verdict": "warn",
+  "integrity_status": "warn",
+  "data_provenance": "real_clinical",
+  "status_ledger": {
+    "CORE_METHOD_AUDIT": "WARN",
+    "GATE1A_IMPLEMENTATION": "PASS_PARALLEL_FROM_ORIGINAL",
+    "GATE1B_FROZEN_GRID": "MIXED_PHYSICAL_GEOMETRY_WINS_2_OF_3_COMPARISONS",
+    "GATE2A_ANALYTIC_EQUIVARIANCE": "PASS_CONFIRMED_ON_10_RECORDS",
+    "GATE3A_RECURRENCE_CONTROL": "RUNNING",
+    "GATE3B_POST_CAHC_CALIBRATION": "FAIL_PATIENT_LEVEL_MEAN_RP_0.136_ATTRIBUTE_0.175_TEMPORAL",
+    "GATE3B_PURITY_RULE": "EXACT_PHASE_AND_BEAT_MEMBERSHIP_NO_TUNABLE_THRESHOLD",
+    "GATE3B_HETEROGENEITY_DIAGNOSTIC": "COMPLETE_COHORT_PATTERN_NOT_EXPLAINED_BY_WITHIN_DATASET_PREDICTORS",
+    "GATE3B_POWER": "NOT_ESTABLISHED_POSITIVE_CONTROLS_ONLY_IN_ZHEJIANG",
+    "METHOD_FREEZE_DECISION": "NO_GO",
+    "CLIQUE_GRAPH_LOGIC": "SUPPORTED_PREVENTS_TRANSITIVE_CHAINS",
+    "CLIQUE_OVERLAP_RESOLUTION": "ECG_EXTENSION_SEPARATE_OBJECT",
+    "9_COHORT_BENCHMARK": "RUNNING_IN_TMUX",
+    "PATHOLOGY_CLAIMS": "EXPLORATORY"
+  },
+  "cahc_author_parity": {
+    "status": "pass",
+    "silhouette_difference": 0.0,
+    "cluster_agreement": "exact_machine_precision",
+    "verified_on": ["synthetic_grid", "LUDB_record_1_clinical"]
+  },
   "checks": {
     "gt_provenance": {
       "status": "pass",
-      "details": "Ground truth loaded directly from data/ptb_xl/tensors/test/*.pt and raw dataset XML/DAT files"
+      "data_provenance": "real_clinical",
+      "synthetic_policy": "no_fully_synthetic_ecgs_or_synthetic_labels",
+      "evaluation_types": {
+        "wave_delineation_gt": ["LUDB", "ISP", "Zhejiang"],
+        "algorithmic_delineation": ["RDB_wavelet_derived"],
+        "diagnostic_labels": ["PTB-XL", "EchoNext_Pierre_Elias"],
+        "unlabeled_topology": ["Kingston-ICU", "Emory-MUSE", "Sunnybrook"]
+      }
     },
     "score_normalization": {
       "status": "pass",
-      "details": "Raw standard metrics used without self-normalization"
+      "details": "IMQ scale-equivariance analytically proven and empirically verified on 10 heterogeneous records across 1x, 10x, 1000x (max Delta p = 0.00e+00)."
     },
     "result_existence": {
       "status": "pass",
-      "details": "33-row CSV duplicate caught and fixed; CSV and SQLite now 100% synchronized (56 rows)"
+      "details": "Gate 1 frozen-grid and Gate 3B patient-level result files exist; the superseded pre-purity Gate 3B outputs are quarantined under invalid_pre_purity."
     },
     "dead_code": {
       "status": "pass",
-      "details": "All custom metric and bootstrap functions actively called"
+      "details": "All CAHC, MMD testing, clique reassignment, and dataset adapter pipelines are actively exercised."
     },
     "scope": {
-      "status": "pass",
-      "details": "6 datasets, 220+ model specs, 500 patient bootstraps, 1,000 metric bootstraps"
+      "status": "warn",
+      "details": "Gate 1B is mixed (physical geometry wins 2/3 comparisons). Gate 3B fails patient-level calibration overall and in LUDB/Zhejiang; exact-purity filtering does not establish power in three cohorts. Method freeze is NO_GO."
     },
-    "eval_type": "real_gt"
-  },
-  "claims": [
-    {"id": "C1_macro_auroc_drop", "impact": "supported", "delta": -0.0349, "p_value": 0.00399},
-    {"id": "C2_qrs_underestimation", "impact": "supported", "bias_ms": -14.31, "p_value": 1.18e-223},
-    {"id": "C3_lvh_attenuation", "impact": "supported", "bias_mv": -0.397, "p_value": 1.93e-113}
-  ]
+    "eval_type": "real_clinical_tiered"
+  }
 }

@@ -196,6 +196,23 @@ def reassign_by_cliques(
             assigned_nodes.add(node)
             next_label += 1
 
+    # Explicit Invariant Validation: every non-singleton group R in Y_resolved must induce a clique in G_sim
+    # Formally: forall g, h in R, g != h => (g, h) in E_sim
+    resolved_groups: dict[int, list[int]] = {}
+    for node, lbl in cluster_to_label.items():
+        resolved_groups.setdefault(lbl, []).append(node)
+
+    for lbl, members in resolved_groups.items():
+        if len(members) > 1:
+            for i in range(len(members)):
+                for j in range(i + 1, len(members)):
+                    u, v = members[i], members[j]
+                    if not G_sim.has_edge(u, v):
+                        raise RuntimeError(
+                            f"Clique resolver invariant violation: resolved group {lbl} contains non-adjacent nodes "
+                            f"({u}, {v}) in G_sim! Unsupported transitivity reintroduced."
+                        )
+
     labels_clique = np.array([cluster_to_label.get(lbl, lbl) for lbl in initial_labels], dtype=int)
 
     audit_info = {
@@ -203,6 +220,8 @@ def reassign_by_cliques(
         "overlapping_nodes": overlapping_nodes,
         "has_overlap": has_overlap,
         "selected_cliques": selected_cliques,
+        "resolved_groups": resolved_groups,
+        "clique_invariant_verified": True,
         "n_maximal_cliques": len(cliques),
         "n_final_clique_groups": len(np.unique(labels_clique)),
         "graph_descriptors": compute_graph_descriptors(G_sim, cliques, overlapping_nodes),

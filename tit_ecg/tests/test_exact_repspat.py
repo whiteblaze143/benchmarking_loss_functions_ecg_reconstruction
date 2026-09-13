@@ -118,14 +118,20 @@ def test_modified_silhouette_adjacent_only():
     assert -1.0 <= score <= 1.0
 
 
-def test_modified_silhouette_invalid_singletons():
-    """Verify candidate (m, G) with singletons is marked invalid [PAPER Eq. 2 denominator]."""
+def test_modified_silhouette_singleton_author_default_and_strict_paper_mode():
+    """Separate author-compatible singleton handling from strict paper-text validity."""
     D = np.ones((4, 4)) - np.eye(4)
     S = np.array([[0, 0], [1, 0], [2, 0], [3, 0]], dtype=float)
     L = construct_domain_links(S, m=1, symmetrize="or")
     labels_with_singleton = np.array([0, 1, 1, 1])  # cluster 0 has size 1
 
     score, _, valid = compute_modified_silhouette(D, L, labels_with_singleton)
+    assert valid is True
+    assert np.isfinite(score)
+
+    score, _, valid = compute_modified_silhouette(
+        D, L, labels_with_singleton, strict_validity=True
+    )
     assert valid is False
     assert score == -np.inf
 

@@ -1,0 +1,31 @@
+{
+  "checkpoint": "results/panobench_fixed_triplet_randview3_geovt_seed123/model_final.pt",
+  "test_root": "/data/mithunmanivannan/panobench/test",
+  "n_records": 1030,
+  "n_samples_per_record": 5,
+  "n_total_evaluations": 5150,
+  "eval_seed": 42,
+  "scientific_contract": {
+    "model": "nefnet_plus.layer",
+    "super_mode": "optimization",
+    "lead_num": 3,
+    "third_view": "random from PanoBench indices 2-43 (same as training)",
+    "normalization": "global min-max across all 44 channels (author-faithful, mild leakage from unobserved views)",
+    "any_pairs": false,
+    "note": "Fixed-triplet random-third-view proof-of-concept. NOT Any-Pairs. NOT the final frozen Theta-repSpat representation."
+  },
+  "l1": {
+    "mean": 0.009151657403727035,
+    "std": 0.0068680905965819265,
+    "p5": 0.0023434819653630258,
+    "p95": 0.025165421050041926
+  },
+  "psnr_db": {
+    "mean": 38.0849992264715,
+    "std": 6.5221322547601215
+  },
+  "ssim": {
+    "mean": 0.977306645034974,
+    "std": 0.028127704118336476
+  }
+}

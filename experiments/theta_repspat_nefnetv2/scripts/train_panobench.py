@@ -21,11 +21,11 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-root", type=Path, default=Path("/data/mithunmanivannan/panobench/train"))
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--epochs", type=int, default=150)
-    parser.add_argument("--batch-size", type=int, default=16)
-    parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--epochs", type=int, default=200)
+    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--seed", type=int, default=123)
-    parser.add_argument("--lr", type=float, default=0.1)
+    parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--resume", type=Path)
     return parser.parse_args()
 
@@ -48,6 +48,11 @@ def main():
     torch.cuda.manual_seed_all(args.seed)
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
+    # cuDNN 9.2.x (bundled in PyTorch 2.6+cu124) is incompatible with the
+    # system CUDA 13.0 driver (580.173.02): every conv throws ptrDesc->finalize().
+    # Disable cuDNN entirely to fall back to the native CUDA conv path, which
+    # is still GPU-accelerated and fully correct on A100.
+    torch.backends.cudnn.enabled = False
 
     root = Path(__file__).resolve().parents[1]
     device = torch.device("cuda")
@@ -61,12 +66,17 @@ def main():
         pin_memory=True,
         drop_last=False,
         generator=generator,
+        persistent_workers=args.workers > 0,
+        prefetch_factor=4 if args.workers > 0 else None,
     )
     model = instantiate_author_model(root / "author_code" / "nefnet_v2", device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=0.01)
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 100], gamma=0.5)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(
+        optimizer, milestones=[50, 100, 150], gamma=0.5
+    )
     start_epoch = 0
 
+    state: dict = {}
     args.output.mkdir(parents=True, exist_ok=True)
     if args.resume:
         state = torch.load(args.resume, map_location="cpu", weights_only=True)
@@ -74,8 +84,12 @@ def main():
             "epoch", "model", "optimizer", "scheduler", "rng_state",
             "cuda_rng_state", "loader_rng_state",
         }
-        if set(state) != required:
-            raise ValueError(f"resume checkpoint keys must be exactly {sorted(required)}")
+        optional = {"scaler"}
+        unknown = set(state) - required - optional
+        if unknown:
+            raise ValueError(f"unexpected resume checkpoint keys: {sorted(unknown)}")
+        if not required.issubset(state):
+            raise ValueError(f"missing resume checkpoint keys: {sorted(required - set(state))}")
         model.load_state_dict(state["model"], strict=True)
         optimizer.load_state_dict(state["optimizer"])
         scheduler.load_state_dict(state["scheduler"])
@@ -83,6 +97,12 @@ def main():
         torch.cuda.set_rng_state_all(state["cuda_rng_state"])
         generator.set_state(state["loader_rng_state"])
         start_epoch = int(state["epoch"]) + 1
+
+    # ── throughput optimisations (no effect on training contract) ─────────
+    # persistent_workers + prefetch_factor keep the A100 fed from disk.
+    # torch.compile and AMP both trigger cuDNN descriptor bugs on GeoVT conv1d
+    # layers (ptrDesc->finalize() under PyTorch 2.6 + CUDA 12.4) and are
+    # intentionally omitted.
 
     metrics_path = args.output / "train_metrics.jsonl"
     for epoch in range(start_epoch, args.epochs):

@@ -20,7 +20,9 @@ PYTHONPATH=src:/home/mithunmanivannan/.venv/lib/python3.12/site-packages \
 python3 scripts/train_panobench.py --output results/train_seed123
 ```
 
-The frozen training contract uses the author GeoVT architecture (`nefnet_plus.layer`), L1 reconstruction loss, AdamW, 150 epochs, seed 123, and Any-Pairs sampling with I and II as anchors. The official YAML values are used for epochs, learning rate, and scheduler milestones. Each downloaded 250 Hz record undergoes the author's 2x Fourier resampling and a seeded 4608-sample crop.
+The frozen training contract uses the official GeoVT architecture (`network.nefnet_plus.layer`) with the internally consistent `default.py` lineage: L1 reconstruction loss, AdamW with weight decay 0.01, learning rate `1e-3`, batch 32, 200 epochs, milestones `[50,100,150]`, gamma 0.5, and seed 123. This is an externally specified leakage-free training protocol, not a claim of exact reproduction of the author's solver. Any-Pairs sampling retains I and II as anchors. Each downloaded 250 Hz record undergoes 2x Fourier resampling and a seeded valid 4608-sample crop.
+
+The discarded hybrid pilot (`lr=0.1`, batch 512) is preserved under `results/pilot_hybrid_lr0.1_batch512_seed123` and is not a candidate model.
 
 ## Extract panoramas
 

@@ -1,0 +1,9 @@
+cohort,condition,geometry,kernel,mean_density,std_density,mean_cliques,mean_cc,disconnected_rate,mean_m_star,mean_G_star,mean_edges
+EchoNext,C1_reference,discrete_m,fixed_c1,0.3813988095238095,0.08396908849766829,2.625,2.375,0.0,4.5,7.125,8.4375
+EchoNext,C2_geom_only,ms_based,fixed_c1,0.5723214285714285,0.1736667711230051,2.1875,1.6875,0.0,23.5,5.875,8.6875
+EchoNext,C3_kernel_only,discrete_m,relative_dmed,0.44107142857142856,0.16620684869549746,2.5,1.9375,0.0,4.5,7.125,9.3125
+EchoNext,C4_combined,ms_based,relative_dmed,0.8188988095238096,0.22579408667349898,1.4375,1.25,0.0,23.5,5.875,11.125
+PTB-XL,C1_reference,discrete_m,fixed_c1,0.18973214285714285,0.08144443709725785,4.25,3.5625,0.0,4.75,6.5,3.5
+PTB-XL,C2_geom_only,ms_based,fixed_c1,0.41875,0.16614402179686147,2.875,2.0625,0.0,31.0,6.5,8.5625
+PTB-XL,C3_kernel_only,discrete_m,relative_dmed,0.19226190476190477,0.0811598648246301,4.25,3.6875,0.0,4.75,6.5,3.625
+PTB-XL,C4_combined,ms_based,relative_dmed,0.6376488095238095,0.2099944547192844,2.5,1.3125,0.0,31.0,6.5,11.4375

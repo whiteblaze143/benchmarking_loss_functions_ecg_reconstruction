@@ -1,0 +1,180 @@
+{
+  "conditions": [
+    [
+      "C1_reference",
+      "discrete_m",
+      "fixed_c1"
+    ],
+    [
+      "C2_geom_only",
+      "ms_based",
+      "fixed_c1"
+    ],
+    [
+      "C3_kernel_only",
+      "discrete_m",
+      "relative_dmed"
+    ],
+    [
+      "C4_combined",
+      "ms_based",
+      "relative_dmed"
+    ]
+  ],
+  "n_ptbxl": 16,
+  "n_echonext": 16,
+  "summary_table": [
+    {
+      "cohort": "EchoNext",
+      "condition": "C1_reference",
+      "geometry": "discrete_m",
+      "kernel": "fixed_c1",
+      "mean_density": 0.3813988095238095,
+      "std_density": 0.08396908849766829,
+      "mean_cliques": 2.625,
+      "mean_cc": 2.375,
+      "disconnected_rate": 0.0,
+      "mean_m_star": 4.5,
+      "mean_G_star": 7.125,
+      "mean_edges": 8.4375
+    },
+    {
+      "cohort": "EchoNext",
+      "condition": "C2_geom_only",
+      "geometry": "ms_based",
+      "kernel": "fixed_c1",
+      "mean_density": 0.5723214285714285,
+      "std_density": 0.1736667711230051,
+      "mean_cliques": 2.1875,
+      "mean_cc": 1.6875,
+      "disconnected_rate": 0.0,
+      "mean_m_star": 23.5,
+      "mean_G_star": 5.875,
+      "mean_edges": 8.6875
+    },
+    {
+      "cohort": "EchoNext",
+      "condition": "C3_kernel_only",
+      "geometry": "discrete_m",
+      "kernel": "relative_dmed",
+      "mean_density": 0.44107142857142856,
+      "std_density": 0.16620684869549746,
+      "mean_cliques": 2.5,
+      "mean_cc": 1.9375,
+      "disconnected_rate": 0.0,
+      "mean_m_star": 4.5,
+      "mean_G_star": 7.125,
+      "mean_edges": 9.3125
+    },
+    {
+      "cohort": "EchoNext",
+      "condition": "C4_combined",
+      "geometry": "ms_based",
+      "kernel": "relative_dmed",
+      "mean_density": 0.8188988095238096,
+      "std_density": 0.22579408667349898,
+      "mean_cliques": 1.4375,
+      "mean_cc": 1.25,
+      "disconnected_rate": 0.0,
+      "mean_m_star": 23.5,
+      "mean_G_star": 5.875,
+      "mean_edges": 11.125
+    },
+    {
+      "cohort": "PTB-XL",
+      "condition": "C1_reference",
+      "geometry": "discrete_m",
+      "kernel": "fixed_c1",
+      "mean_density": 0.18973214285714285,
+      "std_density": 0.08144443709725785,
+      "mean_cliques": 4.25,
+      "mean_cc": 3.5625,
+      "disconnected_rate": 0.0,
+      "mean_m_star": 4.75,
+      "mean_G_star": 6.5,
+      "mean_edges": 3.5
+    },
+    {
+      "cohort": "PTB-XL",
+      "condition": "C2_geom_only",
+      "geometry": "ms_based",
+      "kernel": "fixed_c1",
+      "mean_density": 0.41875,
+      "std_density": 0.16614402179686147,
+      "mean_cliques": 2.875,
+      "mean_cc": 2.0625,
+      "disconnected_rate": 0.0,
+      "mean_m_star": 31.0,
+      "mean_G_star": 6.5,
+      "mean_edges": 8.5625
+    },
+    {
+      "cohort": "PTB-XL",
+      "condition": "C3_kernel_only",
+      "geometry": "discrete_m",
+      "kernel": "relative_dmed",
+      "mean_density": 0.19226190476190477,
+      "std_density": 0.0811598648246301,
+      "mean_cliques": 4.25,
+      "mean_cc": 3.6875,
+      "disconnected_rate": 0.0,
+      "mean_m_star": 4.75,
+      "mean_G_star": 6.5,
+      "mean_edges": 3.625
+    },
+    {
+      "cohort": "PTB-XL",
+      "condition": "C4_combined",
+      "geometry": "ms_based",
+      "kernel": "relative_dmed",
+      "mean_density": 0.6376488095238095,
+      "std_density": 0.2099944547192844,
+      "mean_cliques": 2.5,
+      "mean_cc": 1.3125,
+      "disconnected_rate": 0.0,
+      "mean_m_star": 31.0,
+      "mean_G_star": 6.5,
+      "mean_edges": 11.4375
+    }
+  ],
+  "marginal_geom_effect_PTB-XL_fixed_c1": {
+    "discrete_m_density": 0.18973214285714285,
+    "ms_based_density": 0.41875,
+    "delta_density": 0.22901785714285716
+  },
+  "marginal_geom_effect_EchoNext_fixed_c1": {
+    "discrete_m_density": 0.3813988095238095,
+    "ms_based_density": 0.5723214285714285,
+    "delta_density": 0.19092261904761904
+  },
+  "marginal_geom_effect_PTB-XL_relative_dmed": {
+    "discrete_m_density": 0.19226190476190477,
+    "ms_based_density": 0.6376488095238095,
+    "delta_density": 0.4453869047619048
+  },
+  "marginal_geom_effect_EchoNext_relative_dmed": {
+    "discrete_m_density": 0.44107142857142856,
+    "ms_based_density": 0.8188988095238096,
+    "delta_density": 0.377827380952381
+  },
+  "marginal_kernel_effect_PTB-XL_discrete_m": {
+    "fixed_c1_density": 0.18973214285714285,
+    "relative_dmed_density": 0.19226190476190477,
+    "delta_density": 0.0025297619047619235
+  },
+  "marginal_kernel_effect_EchoNext_discrete_m": {
+    "fixed_c1_density": 0.3813988095238095,
+    "relative_dmed_density": 0.44107142857142856,
+    "delta_density": 0.05967261904761906
+  },
+  "marginal_kernel_effect_PTB-XL_ms_based": {
+    "fixed_c1_density": 0.41875,
+    "relative_dmed_density": 0.6376488095238095,
+    "delta_density": 0.21889880952380952
+  },
+  "marginal_kernel_effect_EchoNext_ms_based": {
+    "fixed_c1_density": 0.5723214285714285,
+    "relative_dmed_density": 0.8188988095238096,
+    "delta_density": 0.24657738095238102
+  }
+}

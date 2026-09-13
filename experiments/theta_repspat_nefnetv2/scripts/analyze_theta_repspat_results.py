@@ -151,8 +151,9 @@ def main():
     parser.add_argument("--output-dir", type=str, default="results/theta_repspat_eval")
     args = parser.parse_args()
 
-    json_path = exp_root / args.json
-    output_dir = exp_root / args.output_dir
+    exp_root = Path(__file__).resolve().parent.parent
+    json_path = exp_root / args.json if not Path(args.json).is_absolute() else Path(args.json)
+    output_dir = exp_root / args.output_dir if not Path(args.output_dir).is_absolute() else Path(args.output_dir)
     analyze_phase_results(json_path, output_dir)
 
 

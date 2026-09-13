@@ -11,7 +11,12 @@ from types import SimpleNamespace
 import torch
 
 
-def instantiate_author_model(source_root: Path, device: torch.device):
+def instantiate_author_model(
+    source_root: Path,
+    device: torch.device,
+    super_mode: str = "optimization",
+    lead_num: int = 3,
+):
     """Instantiate the author model without executing its eager package imports.
 
     The release's ``network/__init__.py`` eagerly imports unrelated models and
@@ -45,9 +50,10 @@ def instantiate_author_model(source_root: Path, device: torch.device):
     model_class = importlib.import_module("network.nefnet_plus").layer
     config = SimpleNamespace(
         MODEL=SimpleNamespace(layers=4, theta_L=1),
-        DATA=SimpleNamespace(super_mode="optimization", lead_num=3),
+        DATA=SimpleNamespace(super_mode=super_mode, lead_num=lead_num),
     )
     return model_class(config).to(device)
+
 
 
 def load_author_model(source_root: Path, checkpoint: Path, device: torch.device):

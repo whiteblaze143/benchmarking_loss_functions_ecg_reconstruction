@@ -139,6 +139,25 @@ The author Nef-Net tree is kept unchanged. All experiment-specific code lives in
 - **Local $k$-NN Jaccard $J_{10}(44)$**: mean = $0.3290 \pm 0.0999$, median = $0.3510$
 - **CAHC Partition Agreement $\text{ARI}(44)$**: mean = $0.7226 \pm 0.2480$, median = $0.7434$
 
+#### Part C: Scale-Aligned Metric Stress & Centered Kernel Alignment (G002-C, $N=100$)
+Removing arbitrary coordinate scaling ($a_X^* = \langle D^X, D^{GT} \rangle / \|D^X\|^2$) and evaluating similarity geometry under repSpat's IMQ median heuristic kernel ($A_K(X, GT) = \langle \widetilde{K}_X, \widetilde{K}_{GT} \rangle_F$):
+
+| Arm | Scale-Aligned Stress $\epsilon_D^{\text{aligned}}$ (95% CI) | Centered Kernel Alignment $A_K$ (95% CI) | Normalized Hilbert-Schmidt Dist $d_{\text{HS}}$ |
+| :--- | :---: | :---: | :---: |
+| **$R1$ (Observational Ref)** | $0.0000$ (def.) | $1.0000$ (def.) | $0.0000$ (def.) |
+| **$R0$ (Kors VCG)** | **$0.1517$** $[0.1404, 0.1633]$ | **$0.9254$** $[0.9132, 0.9367]$ | **$0.3862$** |
+| **$R2$ (Nef Panorama)** | $0.2150$ $[0.2006, 0.2318]$ | $0.8912$ $[0.8752, 0.9060]$ | $0.4664$ |
+| **$R3$ (Kors on Nef)** | $0.2993$ $[0.2775, 0.3242]$ | $0.7944$ $[0.7679, 0.8197]$ | $0.6412$ |
+
+- **Paired Contrasts (G002-C)**:
+  - $\Delta \epsilon_D^{\text{aligned}} (R2 - R0) = +0.0633$ (95% CI: $[+0.0507, +0.0769]$): Under scale alignment, Kors has lower shape distortion than zero-shot $N002$.
+  - $\Delta A_K (R2 - R0) = -0.0342$ (95% CI: $[-0.0474, -0.0202]$): Kors induces higher similarity alignment with the observational reference under MMD's IMQ kernel.
+  - $\Delta \epsilon_D^{\text{aligned}} (R2 - R3) = -0.0843$ (95% CI: $[-0.0994, -0.0692]$) ($p < 10^{-15}$): Re-confirms that preserving the 8D panorama significantly outperforms linear Kors compression.
+  - $\Delta A_K (R2 - R3) = +0.0969$ (95% CI: $[+0.0795, +0.1160]$) ($p < 10^{-15}$): Collapsing the reconstructed panorama through Kors reduces similarity alignment by nearly 10 percentage points.
+- **PanoBench 44-View Reference (G002-C)**:
+  - $\epsilon_D^{\text{aligned}}(44) = 0.2574$ (95% CI: $[0.2281, 0.2880]$)
+  - $A_K(44) = 0.8822$ (95% CI: $[0.8593, 0.9044]$)
+
 ### Paired Contrasts (Bootstrap 95% Confidence Intervals, $N=500$)
 1. **$R2 \text{ vs } R0$ (Nef 8D Panorama vs Kors 3D VCG)**:
    - $\Delta \rho_D = -0.0336$ (95% CI: $[-0.0386, -0.0283]$): Kors preserves distance rank slightly better.
@@ -155,47 +174,78 @@ The author Nef-Net tree is kept unchanged. All experiment-specific code lives in
 
 ---
 
+#### Part D: Nonlocal / Lag-Controlled Geometry & PCA-3 Diagnostic (G002-D, $N=100$)
+Addressing temporal smoothness confounds and testing whether 3D compression per se vs. Kors projection specifically degrades geometry:
+1. **Locality Radius**: $\Delta_{\max} = 50$ samples ($100$ ms at 500 Hz).
+2. **Lag Stratification**: Local ($\le 50$), Nonlocal ($> 50$), Intra-beat ($50 < \Delta \le 250$), Cross-beat ($\Delta > 250$).
+3. **Non-Candidate Diagnostic**: $R2_{\text{PCA3}}$ (top 3 principal components of $R2$, fitted purely on $R2(t)$ without labels).
+
+| Representation Arm | Stress $\epsilon_D^{\text{aligned}}$ (95% CI) | CKA (All Pairs) | CKA (Nonlocal, $>100\text{ms}$) | CKA (Cross-beat, $>500\text{ms}$) |
+| :--- | :---: | :---: | :---: | :---: |
+| **$R1$ (Observational Ref)** | $0.0000$ (def.) | $1.0000$ (def.) | $1.0000$ (def.) | $1.0000$ (def.) |
+| **$R0$ (Kors 3D VCG)** | **$0.1517$** $[0.1401, 0.1628]$ | **$0.9246$** $[0.9112, 0.9359]$ | **$0.9224$** $[0.9085, 0.9342]$ | **$0.9220$** $[0.9080, 0.9343]$ |
+| **$R2$ (Nef 8D Panorama)** | $0.2150$ $[0.2001, 0.2314]$ | $0.8900$ $[0.8734, 0.9056]$ | $0.8876$ $[0.8706, 0.9034]$ | $0.8873$ $[0.8696, 0.9031]$ |
+| **$R2_{\text{PCA3}}$ (3D PCA of Nef)** | $0.2179$ $[0.2021, 0.2346]$ | $0.8849$ $[0.8681, 0.9012]$ | $0.8825$ $[0.8653, 0.8992]$ | $0.8824$ $[0.8647, 0.8989]$ |
+| **$R3$ (Kors on Nef)** | $0.2993$ $[0.2766, 0.3238]$ | $0.7918$ $[0.7646, 0.8173]$ | $0.7875$ $[0.7599, 0.8136]$ | $0.7876$ $[0.7599, 0.8135]$ |
+
+- **Paired Contrasts (G002-D)**:
+  - **Nonlocal State-Space Deficit**:
+    $$\Delta \text{CKA}_{\text{nonlocal}}(R2 - R0) = -0.0348 \quad [-0.0489, -0.0206]$$
+    Confirming that $A_K^{\text{nonlocal}}(R0) > A_K^{\text{nonlocal}}(R2)$ holds even after excluding local waveform correlations. The $N002$ deficit is genuinely state-space geometry.
+  - **Narrowed R2-vs-R3 Dimensionality Finding**:
+    * $R2$ Top-3 Principal Components Variance Explained: **$97.68\% \pm 1.15\%$**.
+    * $\Delta \text{CKA}_{\text{nonlocal}}(R2 - R2_{\text{PCA3}}) = +0.0050$ ($[+0.0031, +0.0076]$): Optimal 3D linear PCA of $R2$ loses only 0.5% of kernel alignment!
+    * $\Delta \text{CKA}_{\text{nonlocal}}(\text{PCA3} - \text{Kors}) = +0.0950$ ($[+0.0767, +0.1152]$): Fixed Kors projection loses nearly 10 percentage points relative to optimal 3D PCA.
+    * **Defensible Statement**:
+      $$\boxed{\text{Kors projection of the Nef panorama materially degrades its observational-geometry alignment.}}$$
+      3-D compression per se is not inadequate; rather, the fixed Kors matrix is misaligned for Nef-synthesized leads.
+
+---
+
 ## Scientific Ledger & Decision Status
 
 ```
 N002_TRAINING            = PASS
 PANOBENCH_SYNTHESIS      = PASS
-DENSE_PANORAMA_GEOMETRY  = PASS
+DENSE_PANORAMA_GEOMETRY  = IN_DOMAIN SUPPORTED (AK=0.8822, eps=0.2574)
 CLINICAL_TRANSFER        = PARTIAL
-R2_VS_R3                 = STRONG PASS (Kors compression destroys useful panoramic structure)
-R2_VS_R0                 = MIXED (R2 lower unaligned distance error; R0 better rank, J10, CAHC)
+R2_VS_R3                 = STRONG PASS (Kors projection materially degrades Nef panorama alignment)
+R2_VS_R0                 = MIXED (R2 lower unaligned error; R0 better scale-aligned stress, rank, CKA)
 G002                     = MIXED
 FINAL REPRESENTATION FREEZE = NO (N002 not ready for confirmatory freeze)
-N003                     = JUSTIFIED
+N003a                    = LAUNCHED (PTB-XL Any-Pairs pretraining)
+N003                     = JUSTIFIED (multi-dataset Any-Pairs + PanoBench geometry)
 ```
 
 ### Pre-Registered Expectations for `PHASE1_N002_EXPLORATORY`
 - Current running job (`repspat_phase1`) is labeled `PHASE1_N002_EXPLORATORY` (evaluated with $B=500$, exploratory baseline rather than prespecified confirmatory $B=1000$).
 - **Pre-registered qualitative expectation**:
   - $R2$ may improve some global recurrence-distribution behavior because it retains more of the full lead field.
-  - However, its CAHC segmentation and local graph structure are expected to be less stable than $R0$ in cohorts whose septal morphology matters, because $J_{10}^{R2} < J_{10}^{R0}$ and $\text{ARI}_{\text{CAHC}}^{R2} < \text{ARI}_{\text{CAHC}}^{R0}$ on clinical leads.
+  - However, its CAHC segmentation and local graph structure are expected to be less stable than $R0$ in cohorts whose septal morphology matters, because $J_{10}^{R2} < J_{10}^{R0}$ ($0.2909 < 0.3939$) and $\text{ARI}_{\text{CAHC}}^{R2} < \text{ARI}_{\text{CAHC}}^{R0}$ ($0.6934 < 0.7921$).
 
 ---
 
-## N003 Design Specification
+## N003 / N003a Specification & Acceptance Protocol
 
-Because $N002$'s PanoBench-only training regime exhibits incomplete clinical transport across the septum, $N003$ implements the authors' intended two-stage architecture workflow:
+### 1. Naming & Lineage Separation
+- **`N003a = PTBXL Any-Pairs clinical pretraining`**: Pure clinical Any-Pairs pretraining on 17,418 records of PTB-XL.
+- **`N003 = multi-dataset Any-Pairs + PanoBench geometry`**: Multi-dataset clinical Any-Pairs (PTB-XL, Zhejiang, CPSC2018) followed by Stage II PanoBench calibration.
 
-1. **Architecture**:
-   - Identical official `nefnet_plus.layer` (GeoVT). No speculative architectural redesign.
-2. **Stage I (Clinical Any-Pairs Pretraining)**:
-   - Multi-dataset clinical Any-Pairs pretraining on standard published ECG datasets:
-     $$\text{PTB-XL}, \quad \text{CPSC2018}, \quad \text{ChinaDB}, \quad \text{Tianchi}$$
-   - Variable-cardinality input slots learning robust cross-lead clinical correlations.
-3. **Stage II (Dense Angular Supervision)**:
-   - Fine-tuning/calibration on PanoBench dense CT-localized torso-view geometry to acquire continuous angular interpolation.
-4. **Data Separation Contract**:
-   $$\mathcal{D}_{\text{N003 train}} \cap \mathcal{D}_{\text{repSpat eval}} = \varnothing$$
-   - LUDB, ISP, RDB, and HEEDB Emory are strictly excluded from N003 pretraining, remaining pure external evaluation cohorts.
-5. **Deployment-Consistent Normalization**:
-   - Training normalization computed strictly from observed input views $\mathcal{O}$:
-     $$m_{\text{obs}} = \min_{j \in \mathcal{O}, t} x_j(t), \quad M_{\text{obs}} = \max_{j \in \mathcal{O}, t} x_j(t)$$
-     $$\tilde{x}_q = \frac{x_q - m_{\text{obs}}}{M_{\text{obs}} - m_{\text{obs}}}$$
-     preventing test-time target statistics leakage.
+### 2. Stage I Verified Invariants
+- `super_mode='pretrain'` verified in GeoVT (`nefnet_plus.layer`).
+- Dynamic runtime variable cardinality $L_{\text{input}} = 2 + k$ ($k \in \{1, 2, 3\}$), with anchors Lead I (0) and Lead II (1).
+- Runtime dynamic slot dimension $L = x.\text{shape}[1]$ (no fixed module lists).
+- Prospective deployment-consistent normalization:
+  $$m_{\text{obs}} = \min_{j \in \mathcal{O}, t} x_j(t), \quad M_{\text{obs}} = \max_{j \in \mathcal{O}, t} x_j(t), \quad \tilde{x}_q = \frac{x_q - m_{\text{obs}}}{M_{\text{obs}} - m_{\text{obs}}}$$
+- Strict cohort separation:
+  $$\mathcal{D}_{\text{N003a train}} \cap \mathcal{D}_{\text{repSpat eval}} = \varnothing$$
+  LUDB, ISP, RDB, and HEEDB Emory strictly excluded from pretraining.
+
+### 3. Acceptance Protocol for Candidate Freeze
+The finalized representation candidate must be evaluated paired against $N002$ and $R0$ on exactly the same frozen external records:
+$$\text{clinical zero-shot V1/V2/V4/V5/V6}, \quad \rho_D^{\rm nonlocal}, \quad J_{10}, \quad \text{ARI}_{\rm CAHC}, \quad A_K^{\rm nonlocal}, \quad \epsilon_D^{\rm aligned}, \quad \text{dense PanoBench geometry}$$
+**Target**:
+$$\boxed{\text{retain N002's panoramic capability} + \text{recover R0-level clinical local/kernel geometry}}$$
+
 
 

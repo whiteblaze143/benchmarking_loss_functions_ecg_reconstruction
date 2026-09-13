@@ -26,7 +26,7 @@
           "nmi_initial": 0.1960634359494174,
           "nmi_clique": 0.17807756130115865
         },
-        "elapsed_seconds": 7.384593725204468
+        "elapsed_seconds": 25.929458141326904
       },
       "R0_KorsVCG_3Lead": {
         "m_star": 3,
@@ -49,7 +49,7 @@
           "nmi_initial": 0.1932874386764926,
           "nmi_clique": 0.17165674628933614
         },
-        "elapsed_seconds": 6.543947219848633
+        "elapsed_seconds": 25.5902042388916
       },
       "R2_NefPanorama_8Lead": {
         "m_star": 3,
@@ -72,7 +72,7 @@
           "nmi_initial": 0.18175990816283033,
           "nmi_clique": 0.161380220316632
         },
-        "elapsed_seconds": 6.74596095085144
+        "elapsed_seconds": 25.856667518615723
       },
       "R3_KorsNef_3Lead": {
         "m_star": 3,
@@ -95,7 +95,7 @@
           "nmi_initial": 0.18913041175367398,
           "nmi_clique": 0.16972361587733467
         },
-        "elapsed_seconds": 6.5151121616363525
+        "elapsed_seconds": 26.98681116104126
       }
     }
   },
@@ -110,23 +110,23 @@
         "G_star": 8,
         "n_samples": 1500,
         "n_initial_clusters": 8,
-        "n_clique_clusters": 5,
-        "n_cc_clusters": 5,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
         "graph_nodes": 8,
-        "graph_edges": 4,
-        "graph_density": 0.14285714285714285,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
         "n_pairs": 28,
-        "n_rejected_pairs": 24,
-        "rejection_rate": 0.8571428571428571,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
         "mean_mmd_stat": 3.8714248344062923,
         "wave_concordance": {
           "ari_initial": 0.09422951018417032,
-          "ari_clique": 0.06375179053005109,
-          "ari_cc": 0.06375179053005109,
+          "ari_clique": 0.09405884276458623,
+          "ari_cc": 0.09405884276458623,
           "nmi_initial": 0.20678971604921126,
-          "nmi_clique": 0.2137208457428993
+          "nmi_clique": 0.1995603971968905
         },
-        "elapsed_seconds": 5.980984449386597
+        "elapsed_seconds": 23.814985036849976
       },
       "R0_KorsVCG_3Lead": {
         "m_star": 3,
@@ -149,7 +149,7 @@
           "nmi_initial": 0.17178977719896407,
           "nmi_clique": 0.16399536592128416
         },
-        "elapsed_seconds": 6.078903675079346
+        "elapsed_seconds": 22.729803800582886
       },
       "R2_NefPanorama_8Lead": {
         "m_star": 3,
@@ -172,7 +172,7 @@
           "nmi_initial": 0.16468375853710618,
           "nmi_clique": 0.16518533959169734
         },
-        "elapsed_seconds": 6.0403008460998535
+        "elapsed_seconds": 23.28562593460083
       },
       "R3_KorsNef_3Lead": {
         "m_star": 4,
@@ -195,7 +195,1407 @@
           "nmi_initial": 0.2331115619266291,
           "nmi_clique": 0.2331115619266291
         },
-        "elapsed_seconds": 4.890746593475342
+        "elapsed_seconds": 21.789495706558228
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "100",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 1.5094409814273748,
+        "wave_concordance": {
+          "ari_initial": 0.06963497883617029,
+          "ari_clique": 0.07037364974605863,
+          "ari_cc": 0.07037364974605863,
+          "nmi_initial": 0.20923387072194943,
+          "nmi_clique": 0.21101659991319846
+        },
+        "elapsed_seconds": 20.851173162460327
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 4.021209997510299,
+        "wave_concordance": {
+          "ari_initial": 0.0010424562433554788,
+          "ari_clique": 0.0005183961675725462,
+          "ari_cc": 0.0005183961675725462,
+          "nmi_initial": 0.17570564934045213,
+          "nmi_clique": 0.1621702507310989
+        },
+        "elapsed_seconds": 23.158275842666626
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 2.0277027410055557,
+        "wave_concordance": {
+          "ari_initial": 0.09311045456071611,
+          "ari_clique": 0.09311058790920085,
+          "ari_cc": 0.09311058790920085,
+          "nmi_initial": 0.2163234605006693,
+          "nmi_clique": 0.2088659827453326
+        },
+        "elapsed_seconds": 23.22217559814453
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 3.8024431115128072,
+        "wave_concordance": {
+          "ari_initial": 0.006335448297123279,
+          "ari_clique": 0.006242663831311575,
+          "ari_cc": 0.006242663831311575,
+          "nmi_initial": 0.185625216732235,
+          "nmi_clique": 0.1759205251906205
+        },
+        "elapsed_seconds": 23.33479928970337
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "101",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 3.1548039113413258,
+        "wave_concordance": {
+          "ari_initial": 0.06038702928766638,
+          "ari_clique": 0.061349340208248074,
+          "ari_cc": 0.061349340208248074,
+          "nmi_initial": 0.17778169161918972,
+          "nmi_clique": 0.18047597234669419
+        },
+        "elapsed_seconds": 23.693450450897217
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 6.630513486966421,
+        "wave_concordance": {
+          "ari_initial": 0.04944618476864382,
+          "ari_clique": 0.04867782162363589,
+          "ari_cc": 0.04867782162363589,
+          "nmi_initial": 0.1622299616176805,
+          "nmi_clique": 0.14558315493642254
+        },
+        "elapsed_seconds": 23.106231212615967
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 2.9693803146951736,
+        "wave_concordance": {
+          "ari_initial": -0.03841100424917737,
+          "ari_clique": -0.0380949052029025,
+          "ari_cc": -0.0380949052029025,
+          "nmi_initial": 0.1714304730927502,
+          "nmi_clique": 0.17272890982537153
+        },
+        "elapsed_seconds": 25.53847312927246
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 7.453566578963156,
+        "wave_concordance": {
+          "ari_initial": 0.05991349454678021,
+          "ari_clique": 0.06076980638695741,
+          "ari_cc": 0.06076980638695741,
+          "nmi_initial": 0.17614642375599798,
+          "nmi_clique": 0.1786764702673397
+        },
+        "elapsed_seconds": 23.41967797279358
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "102",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 2.347247580531462,
+        "wave_concordance": {
+          "ari_initial": 0.05222587234146262,
+          "ari_clique": 0.05246169483580707,
+          "ari_cc": 0.05246169483580707,
+          "nmi_initial": 0.22050129971154206,
+          "nmi_clique": 0.22164563054206682
+        },
+        "elapsed_seconds": 23.811631202697754
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 5.8449251652855185,
+        "wave_concordance": {
+          "ari_initial": 0.05827817479542191,
+          "ari_clique": 0.058675096395698866,
+          "ari_cc": 0.058675096395698866,
+          "nmi_initial": 0.23278371418667868,
+          "nmi_clique": 0.23434406002571734
+        },
+        "elapsed_seconds": 23.396156072616577
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 5.071872275037607,
+        "wave_concordance": {
+          "ari_initial": 0.07216691991603162,
+          "ari_clique": 0.07174805418956394,
+          "ari_cc": 0.07174805418956394,
+          "nmi_initial": 0.22387529481602483,
+          "nmi_clique": 0.21254004109745528
+        },
+        "elapsed_seconds": 25.15613031387329
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 4,
+        "graph_density": 0.14285714285714285,
+        "n_pairs": 28,
+        "n_rejected_pairs": 24,
+        "rejection_rate": 0.8571428571428571,
+        "mean_mmd_stat": 9.76786730063338,
+        "wave_concordance": {
+          "ari_initial": 0.07228045685873291,
+          "ari_clique": -0.007152493130149963,
+          "ari_cc": -0.007152493130149963,
+          "nmi_initial": 0.22842970293464562,
+          "nmi_clique": 0.21891266463312664
+        },
+        "elapsed_seconds": 24.877854585647583
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "103",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 2.6148199216577366,
+        "wave_concordance": {
+          "ari_initial": 0.08880607216598102,
+          "ari_clique": 0.0885384736557723,
+          "ari_cc": 0.0885384736557723,
+          "nmi_initial": 0.08917292376463533,
+          "nmi_clique": 0.07771383555588512
+        },
+        "elapsed_seconds": 25.958471059799194
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 4,
+        "graph_density": 0.14285714285714285,
+        "n_pairs": 28,
+        "n_rejected_pairs": 24,
+        "rejection_rate": 0.8571428571428571,
+        "mean_mmd_stat": 3.816615836708508,
+        "wave_concordance": {
+          "ari_initial": 0.08977615803207063,
+          "ari_clique": 0.06092050823020434,
+          "ari_cc": 0.06092050823020434,
+          "nmi_initial": 0.09439508464705604,
+          "nmi_clique": 0.08120866419710916
+        },
+        "elapsed_seconds": 25.924728393554688
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 3,
+        "graph_nodes": 8,
+        "graph_edges": 7,
+        "graph_density": 0.25,
+        "n_pairs": 28,
+        "n_rejected_pairs": 21,
+        "rejection_rate": 0.75,
+        "mean_mmd_stat": 1.7007933390961258,
+        "wave_concordance": {
+          "ari_initial": 0.091213623292561,
+          "ari_clique": -0.010627099863288192,
+          "ari_cc": 0.03408876731664743,
+          "nmi_initial": 0.10440104010900958,
+          "nmi_clique": 0.06389890309072695
+        },
+        "elapsed_seconds": 25.96449303627014
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 3,
+        "graph_nodes": 8,
+        "graph_edges": 8,
+        "graph_density": 0.2857142857142857,
+        "n_pairs": 28,
+        "n_rejected_pairs": 20,
+        "rejection_rate": 0.7142857142857143,
+        "mean_mmd_stat": 3.78038492771899,
+        "wave_concordance": {
+          "ari_initial": 0.0929162604470646,
+          "ari_clique": -0.02371987139680062,
+          "ari_cc": 0.019821897503098797,
+          "nmi_initial": 0.10039366954518647,
+          "nmi_clique": 0.055781858299247485
+        },
+        "elapsed_seconds": 24.80747699737549
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "104",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 2.4089520529969275,
+        "wave_concordance": {
+          "ari_initial": 0.04788923781423289,
+          "ari_clique": 0.049030292325979115,
+          "ari_cc": 0.049030292325979115,
+          "nmi_initial": 0.12161100386229645,
+          "nmi_clique": 0.12484993460618599
+        },
+        "elapsed_seconds": 21.91938042640686
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 5.592648187117289,
+        "wave_concordance": {
+          "ari_initial": 0.023951019422266673,
+          "ari_clique": 0.02575814961796576,
+          "ari_cc": 0.02575814961796576,
+          "nmi_initial": 0.11296737398108676,
+          "nmi_clique": 0.11697881496071168
+        },
+        "elapsed_seconds": 24.1292724609375
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 3.924438324565801,
+        "wave_concordance": {
+          "ari_initial": 0.04700972888134874,
+          "ari_clique": 0.04906825565850837,
+          "ari_cc": 0.04906825565850837,
+          "nmi_initial": 0.12391309637270277,
+          "nmi_clique": 0.1283149597024027
+        },
+        "elapsed_seconds": 22.883718490600586
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 12.06639404144629,
+        "wave_concordance": {
+          "ari_initial": 0.02402919912182928,
+          "ari_clique": 0.024999351922655826,
+          "ari_cc": 0.02694806718072581,
+          "nmi_initial": 0.11410174117818517,
+          "nmi_clique": 0.11688644479452122
+        },
+        "elapsed_seconds": 24.430869579315186
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "105",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 3.7665957919515356,
+        "wave_concordance": {
+          "ari_initial": 0.053057895440448366,
+          "ari_clique": 0.05391169418193471,
+          "ari_cc": 0.05391169418193471,
+          "nmi_initial": 0.15575359168062808,
+          "nmi_clique": 0.15773271006336254
+        },
+        "elapsed_seconds": 34.765377044677734
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 7.927402310193968,
+        "wave_concordance": {
+          "ari_initial": 0.0412627013918031,
+          "ari_clique": 0.04088533522047272,
+          "ari_cc": 0.04088533522047272,
+          "nmi_initial": 0.13254330207319556,
+          "nmi_clique": 0.1198504792077615
+        },
+        "elapsed_seconds": 30.732932567596436
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 4,
+        "graph_nodes": 4,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 6,
+        "n_rejected_pairs": 6,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 3.9031832781654026,
+        "wave_concordance": {
+          "ari_initial": -0.010323703431081046,
+          "ari_clique": -0.010323703431081046,
+          "ari_cc": -0.010323703431081046,
+          "nmi_initial": 0.07174115537743915,
+          "nmi_clique": 0.07174115537743915
+        },
+        "elapsed_seconds": 40.621405363082886
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 4,
+        "graph_nodes": 4,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 6,
+        "n_rejected_pairs": 6,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 9.05808053735133,
+        "wave_concordance": {
+          "ari_initial": -0.011063173888478214,
+          "ari_clique": -0.011063173888478214,
+          "ari_cc": -0.011063173888478214,
+          "nmi_initial": 0.07196107362685643,
+          "nmi_clique": 0.07196107362685643
+        },
+        "elapsed_seconds": 38.00812768936157
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "106",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 3.9421697426953384,
+        "wave_concordance": {
+          "ari_initial": 0.03832510126702974,
+          "ari_clique": 0.037847956954410254,
+          "ari_cc": 0.037847956954410254,
+          "nmi_initial": 0.244904553770091,
+          "nmi_clique": 0.23448170773410346
+        },
+        "elapsed_seconds": 26.15621328353882
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 7.800953871807913,
+        "wave_concordance": {
+          "ari_initial": 0.18969202690384765,
+          "ari_clique": 0.1917385102065108,
+          "ari_cc": 0.1917385102065108,
+          "nmi_initial": 0.25446499766366765,
+          "nmi_clique": 0.25780216300112035
+        },
+        "elapsed_seconds": 23.029481172561646
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 4.202567406494828,
+        "wave_concordance": {
+          "ari_initial": 0.17583374211931777,
+          "ari_clique": 0.1778383022073247,
+          "ari_cc": 0.1778383022073247,
+          "nmi_initial": 0.23010822912027287,
+          "nmi_clique": 0.2331238143212948
+        },
+        "elapsed_seconds": 23.018630743026733
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 6,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 15,
+        "n_rejected_pairs": 15,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 8.215242199766278,
+        "wave_concordance": {
+          "ari_initial": 0.1636680636654,
+          "ari_clique": 0.1636680636654,
+          "ari_cc": 0.1636680636654,
+          "nmi_initial": 0.2836591173877031,
+          "nmi_clique": 0.2836591173877031
+        },
+        "elapsed_seconds": 21.247304677963257
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "107",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 4,
+        "graph_density": 0.14285714285714285,
+        "n_pairs": 28,
+        "n_rejected_pairs": 24,
+        "rejection_rate": 0.8571428571428571,
+        "mean_mmd_stat": 2.883995394977213,
+        "wave_concordance": {
+          "ari_initial": 0.06365801897431812,
+          "ari_clique": 0.06280579403819621,
+          "ari_cc": 0.06245542286250917,
+          "nmi_initial": 0.22144976518914103,
+          "nmi_clique": 0.20577817538854165
+        },
+        "elapsed_seconds": 25.206684112548828
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 5,
+        "graph_density": 0.17857142857142858,
+        "n_pairs": 28,
+        "n_rejected_pairs": 23,
+        "rejection_rate": 0.8214285714285714,
+        "mean_mmd_stat": 7.923670284472428,
+        "wave_concordance": {
+          "ari_initial": 0.0471195893387137,
+          "ari_clique": 0.04704839354204115,
+          "ari_cc": 0.04667817489109005,
+          "nmi_initial": 0.17827766814540372,
+          "nmi_clique": 0.17232315882917906
+        },
+        "elapsed_seconds": 25.980461835861206
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 3.8773604220169267,
+        "wave_concordance": {
+          "ari_initial": 0.07463451452945685,
+          "ari_clique": 0.0741618596578923,
+          "ari_cc": 0.0741618596578923,
+          "nmi_initial": 0.22012883465121735,
+          "nmi_clique": 0.2072108494793664
+        },
+        "elapsed_seconds": 26.88731336593628
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 4,
+        "graph_nodes": 8,
+        "graph_edges": 5,
+        "graph_density": 0.17857142857142858,
+        "n_pairs": 28,
+        "n_rejected_pairs": 23,
+        "rejection_rate": 0.8214285714285714,
+        "mean_mmd_stat": 8.767453252481507,
+        "wave_concordance": {
+          "ari_initial": 0.07198939489895578,
+          "ari_clique": 0.1836499177021896,
+          "ari_cc": 0.18355973805127287,
+          "nmi_initial": 0.21528382829789663,
+          "nmi_clique": 0.22773277389504684
+        },
+        "elapsed_seconds": 25.608819007873535
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "108",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 8,
+        "n_cc_clusters": 8,
+        "graph_nodes": 8,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 28,
+        "n_rejected_pairs": 28,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 1.3700657507430836,
+        "wave_concordance": {
+          "ari_initial": 0.010040310301156768,
+          "ari_clique": 0.010040310301156768,
+          "ari_cc": 0.010040310301156768,
+          "nmi_initial": 0.15413933325761206,
+          "nmi_clique": 0.15413933325761206
+        },
+        "elapsed_seconds": 23.04777193069458
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 2.2766313225077597,
+        "wave_concordance": {
+          "ari_initial": 0.009033810106878242,
+          "ari_clique": 0.00917997409814141,
+          "ari_cc": 0.00917997409814141,
+          "nmi_initial": 0.15402382417092036,
+          "nmi_clique": 0.1496594100483853
+        },
+        "elapsed_seconds": 23.498775959014893
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 2,
+        "graph_density": 0.07142857142857142,
+        "n_pairs": 28,
+        "n_rejected_pairs": 26,
+        "rejection_rate": 0.9285714285714286,
+        "mean_mmd_stat": 1.6948340615949022,
+        "wave_concordance": {
+          "ari_initial": -0.0275185275379389,
+          "ari_clique": -0.02772156225900144,
+          "ari_cc": -0.02772156225900144,
+          "nmi_initial": 0.13913603585575335,
+          "nmi_clique": 0.12488980812447888
+        },
+        "elapsed_seconds": 25.585020303726196
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 2.5790861471697304,
+        "wave_concordance": {
+          "ari_initial": -0.022903119000770984,
+          "ari_clique": -0.02355373085519145,
+          "ari_cc": -0.02355373085519145,
+          "nmi_initial": 0.16499369924297322,
+          "nmi_clique": 0.15337619720961457
+        },
+        "elapsed_seconds": 26.240280628204346
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "109",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 4,
+        "graph_nodes": 4,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 6,
+        "n_rejected_pairs": 6,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 4.077817773238688,
+        "wave_concordance": {
+          "ari_initial": 0.15269759639590938,
+          "ari_clique": 0.15269759639590938,
+          "ari_cc": 0.15269759639590938,
+          "nmi_initial": 0.0850616803726757,
+          "nmi_clique": 0.0850616803726757
+        },
+        "elapsed_seconds": 27.945965051651
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 4,
+        "graph_nodes": 4,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 6,
+        "n_rejected_pairs": 6,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 8.395275459653776,
+        "wave_concordance": {
+          "ari_initial": 0.15269759639590938,
+          "ari_clique": 0.15269759639590938,
+          "ari_cc": 0.15269759639590938,
+          "nmi_initial": 0.0850616803726757,
+          "nmi_clique": 0.0850616803726757
+        },
+        "elapsed_seconds": 27.240874528884888
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 2,
+        "graph_density": 0.07142857142857142,
+        "n_pairs": 28,
+        "n_rejected_pairs": 26,
+        "rejection_rate": 0.9285714285714286,
+        "mean_mmd_stat": 5.2384803294371505,
+        "wave_concordance": {
+          "ari_initial": 0.05436330968823397,
+          "ari_clique": 0.05458578187013052,
+          "ari_cc": 0.055001168206763325,
+          "nmi_initial": 0.13899596351745977,
+          "nmi_clique": 0.13983041612816388
+        },
+        "elapsed_seconds": 26.275763511657715
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 12.013324975467825,
+        "wave_concordance": {
+          "ari_initial": 0.05445378918876312,
+          "ari_clique": 0.055093104991802026,
+          "ari_cc": 0.055093104991802026,
+          "nmi_initial": 0.13991600045043368,
+          "nmi_clique": 0.14188983161409857
+        },
+        "elapsed_seconds": 25.412142515182495
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "11",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 4,
+        "graph_density": 0.14285714285714285,
+        "n_pairs": 28,
+        "n_rejected_pairs": 24,
+        "rejection_rate": 0.8571428571428571,
+        "mean_mmd_stat": 2.4725020505353816,
+        "wave_concordance": {
+          "ari_initial": 0.03535950939878619,
+          "ari_clique": 0.01741034189601745,
+          "ari_cc": 0.01741034189601745,
+          "nmi_initial": 0.22146743104934355,
+          "nmi_clique": 0.17295289735913894
+        },
+        "elapsed_seconds": 23.82845401763916
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 4,
+        "graph_density": 0.14285714285714285,
+        "n_pairs": 28,
+        "n_rejected_pairs": 24,
+        "rejection_rate": 0.8571428571428571,
+        "mean_mmd_stat": 4.715680872412913,
+        "wave_concordance": {
+          "ari_initial": 0.151483770265891,
+          "ari_clique": 0.13179010249608628,
+          "ari_cc": 0.13179010249608628,
+          "nmi_initial": 0.2822670854641656,
+          "nmi_clique": 0.2871385711147943
+        },
+        "elapsed_seconds": 23.13294792175293
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 2,
+        "graph_density": 0.07142857142857142,
+        "n_pairs": 28,
+        "n_rejected_pairs": 26,
+        "rejection_rate": 0.9285714285714286,
+        "mean_mmd_stat": 3.653365358136443,
+        "wave_concordance": {
+          "ari_initial": 0.006082283378206371,
+          "ari_clique": -0.0040117324561819235,
+          "ari_cc": -0.0040117324561819235,
+          "nmi_initial": 0.20175313664923977,
+          "nmi_clique": 0.1457254676425709
+        },
+        "elapsed_seconds": 24.326398611068726
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 4,
+        "graph_nodes": 8,
+        "graph_edges": 5,
+        "graph_density": 0.17857142857142858,
+        "n_pairs": 28,
+        "n_rejected_pairs": 23,
+        "rejection_rate": 0.8214285714285714,
+        "mean_mmd_stat": 5.137748042117692,
+        "wave_concordance": {
+          "ari_initial": 0.0892908960946372,
+          "ari_clique": 0.05621404099019588,
+          "ari_cc": 0.05621404099019588,
+          "nmi_initial": 0.2668817936137722,
+          "nmi_clique": 0.22284571900055197
+        },
+        "elapsed_seconds": 20.83252763748169
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "110",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 3.5768565618207004,
+        "wave_concordance": {
+          "ari_initial": 0.02162201930398164,
+          "ari_clique": 0.02066133736181216,
+          "ari_cc": 0.02066133736181216,
+          "nmi_initial": 0.13668628179621298,
+          "nmi_clique": 0.1182465319211992
+        },
+        "elapsed_seconds": 22.591440677642822
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 4,
+        "graph_density": 0.14285714285714285,
+        "n_pairs": 28,
+        "n_rejected_pairs": 24,
+        "rejection_rate": 0.8571428571428571,
+        "mean_mmd_stat": 10.925611730429258,
+        "wave_concordance": {
+          "ari_initial": 0.019447815594507967,
+          "ari_clique": 0.05928959705459255,
+          "ari_cc": 0.05928959705459255,
+          "nmi_initial": 0.11251564116677835,
+          "nmi_clique": 0.1015255869019387
+        },
+        "elapsed_seconds": 21.93481469154358
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 5.201155944478136,
+        "wave_concordance": {
+          "ari_initial": 0.017427210855601102,
+          "ari_clique": 0.01672118589058656,
+          "ari_cc": 0.01672118589058656,
+          "nmi_initial": 0.11263257680350261,
+          "nmi_clique": 0.09700821426648232
+        },
+        "elapsed_seconds": 22.43671679496765
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 12.237164398052434,
+        "wave_concordance": {
+          "ari_initial": 0.014577556244051899,
+          "ari_clique": 0.013966540485286739,
+          "ari_cc": 0.013966540485286739,
+          "nmi_initial": 0.10316397608221729,
+          "nmi_clique": 0.08838518812163387
+        },
+        "elapsed_seconds": 22.27703595161438
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "111",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 6,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 15,
+        "n_rejected_pairs": 15,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 1.462941407293885,
+        "wave_concordance": {
+          "ari_initial": 0.11182362345197581,
+          "ari_clique": 0.11182362345197581,
+          "ari_cc": 0.11182362345197581,
+          "nmi_initial": 0.2883739671564096,
+          "nmi_clique": 0.2883739671564096
+        },
+        "elapsed_seconds": 19.934084177017212
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 3.2479451747682315,
+        "wave_concordance": {
+          "ari_initial": 0.11760550787261168,
+          "ari_clique": 0.1103653066265072,
+          "ari_cc": 0.1103653066265072,
+          "nmi_initial": 0.2992884418468124,
+          "nmi_clique": 0.2599890053936129
+        },
+        "elapsed_seconds": 20.64911198616028
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 6,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 15,
+        "n_rejected_pairs": 15,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 2.2092797029315756,
+        "wave_concordance": {
+          "ari_initial": 0.10171550084424993,
+          "ari_clique": 0.10171550084424993,
+          "ari_cc": 0.10171550084424993,
+          "nmi_initial": 0.2655977311051303,
+          "nmi_clique": 0.2655977311051303
+        },
+        "elapsed_seconds": 20.447689533233643
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 3.9544692279208893,
+        "wave_concordance": {
+          "ari_initial": 0.07485061667157329,
+          "ari_clique": 0.06366376412487192,
+          "ari_cc": 0.06366376412487192,
+          "nmi_initial": 0.2589506553171765,
+          "nmi_clique": 0.24781194484125055
+        },
+        "elapsed_seconds": 23.363785982131958
+      }
+    }
+  },
+  {
+    "dataset": "LUDB",
+    "record_id": "112",
+    "n_samples": 1500,
+    "sampling_rate": 500.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 6,
+        "graph_density": 0.21428571428571427,
+        "n_pairs": 28,
+        "n_rejected_pairs": 22,
+        "rejection_rate": 0.7857142857142857,
+        "mean_mmd_stat": 2.9942665566297153,
+        "wave_concordance": {
+          "ari_initial": 0.07588445184607058,
+          "ari_clique": 0.07589581991873061,
+          "ari_cc": 0.07589581991873061,
+          "nmi_initial": 0.1731550344139282,
+          "nmi_clique": 0.15918288447645096
+        },
+        "elapsed_seconds": 28.285367250442505
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 6,
+        "graph_density": 0.21428571428571427,
+        "n_pairs": 28,
+        "n_rejected_pairs": 22,
+        "rejection_rate": 0.7857142857142857,
+        "mean_mmd_stat": 7.019608715256269,
+        "wave_concordance": {
+          "ari_initial": 0.07134365688226067,
+          "ari_clique": 0.07112310795244621,
+          "ari_cc": 0.07112310795244621,
+          "nmi_initial": 0.16348967330772404,
+          "nmi_clique": 0.14866983515381038
+        },
+        "elapsed_seconds": 28.984378576278687
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 3,
+        "n_cc_clusters": 3,
+        "graph_nodes": 8,
+        "graph_edges": 9,
+        "graph_density": 0.32142857142857145,
+        "n_pairs": 28,
+        "n_rejected_pairs": 19,
+        "rejection_rate": 0.6785714285714286,
+        "mean_mmd_stat": 3.0303198330056462,
+        "wave_concordance": {
+          "ari_initial": 0.14619698018227292,
+          "ari_clique": 0.08821028763566911,
+          "ari_cc": 0.08821028763566911,
+          "nmi_initial": 0.18929627085662692,
+          "nmi_clique": 0.14808671740237866
+        },
+        "elapsed_seconds": 26.883435010910034
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 3,
+        "graph_nodes": 8,
+        "graph_edges": 8,
+        "graph_density": 0.2857142857142857,
+        "n_pairs": 28,
+        "n_rejected_pairs": 20,
+        "rejection_rate": 0.7142857142857143,
+        "mean_mmd_stat": 6.004076309014898,
+        "wave_concordance": {
+          "ari_initial": 0.09062745347559119,
+          "ari_clique": 0.11028865764976668,
+          "ari_cc": 0.05560881570134133,
+          "nmi_initial": 0.15034554651011925,
+          "nmi_clique": 0.11014959490302832
+        },
+        "elapsed_seconds": 25.681352138519287
       }
     }
   },
@@ -226,30 +1626,30 @@
           "nmi_initial": 0.17158009434034466,
           "nmi_clique": 0.17285529664318308
         },
-        "elapsed_seconds": 6.498082637786865
+        "elapsed_seconds": 29.286741971969604
       },
       "R0_KorsVCG_3Lead": {
         "m_star": 6,
         "G_star": 6,
         "n_samples": 1500,
         "n_initial_clusters": 6,
-        "n_clique_clusters": 4,
+        "n_clique_clusters": 5,
         "n_cc_clusters": 4,
         "graph_nodes": 6,
-        "graph_edges": 3,
-        "graph_density": 0.2,
+        "graph_edges": 2,
+        "graph_density": 0.13333333333333333,
         "n_pairs": 15,
-        "n_rejected_pairs": 12,
-        "rejection_rate": 0.8,
+        "n_rejected_pairs": 13,
+        "rejection_rate": 0.8666666666666667,
         "mean_mmd_stat": 0.0014568887572645414,
         "wave_concordance": {
           "ari_initial": 0.030513402705592732,
-          "ari_clique": 0.03490204802519408,
+          "ari_clique": 0.03176961369884038,
           "ari_cc": 0.03490204802519408,
           "nmi_initial": 0.1720007809252687,
-          "nmi_clique": 0.17633652857085177
+          "nmi_clique": 0.17365014449629793
         },
-        "elapsed_seconds": 5.113375902175903
+        "elapsed_seconds": 27.276690244674683
       },
       "R2_NefPanorama_8Lead": {
         "m_star": 3,
@@ -272,7 +1672,7 @@
           "nmi_initial": 0.27202679722969053,
           "nmi_clique": 0.2737934849193648
         },
-        "elapsed_seconds": 6.147525072097778
+        "elapsed_seconds": 25.35525631904602
       },
       "R3_KorsNef_3Lead": {
         "m_star": 3,
@@ -295,7 +1695,7 @@
           "nmi_initial": 0.24666146276302633,
           "nmi_clique": 0.24827909909126997
         },
-        "elapsed_seconds": 5.932530879974365
+        "elapsed_seconds": 25.32685089111328
       }
     }
   },
@@ -326,7 +1726,7 @@
           "nmi_initial": 0.17467124313453156,
           "nmi_clique": 0.18133873094916708
         },
-        "elapsed_seconds": 4.686888217926025
+        "elapsed_seconds": 27.614120960235596
       },
       "R0_KorsVCG_3Lead": {
         "m_star": 3,
@@ -349,7 +1749,7 @@
           "nmi_initial": 0.18924623850157268,
           "nmi_clique": 0.19711907574252388
         },
-        "elapsed_seconds": 6.275736093521118
+        "elapsed_seconds": 28.33692240715027
       },
       "R2_NefPanorama_8Lead": {
         "m_star": 3,
@@ -372,7 +1772,7 @@
           "nmi_initial": 0.169872297448314,
           "nmi_clique": 0.17268999035635774
         },
-        "elapsed_seconds": 6.771236181259155
+        "elapsed_seconds": 28.166744709014893
       },
       "R3_KorsNef_3Lead": {
         "m_star": 3,
@@ -395,7 +1795,1407 @@
           "nmi_initial": 0.18730257138200018,
           "nmi_clique": 0.18845186797540467
         },
-        "elapsed_seconds": 6.299626588821411
+        "elapsed_seconds": 29.297510147094727
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "3",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.0014441095948728325,
+        "wave_concordance": {
+          "ari_initial": 0.08322407321971122,
+          "ari_clique": 0.08439384945196064,
+          "ari_cc": 0.08439384945196064,
+          "nmi_initial": 0.1828566224879973,
+          "nmi_clique": 0.18436212211524933
+        },
+        "elapsed_seconds": 29.27324151992798
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.0031366737630229976,
+        "wave_concordance": {
+          "ari_initial": 0.0852412177859244,
+          "ari_clique": 0.0861756571231283,
+          "ari_cc": 0.0861756571231283,
+          "nmi_initial": 0.18611205700269315,
+          "nmi_clique": 0.18745223242636144
+        },
+        "elapsed_seconds": 29.743919134140015
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.0018174618125594898,
+        "wave_concordance": {
+          "ari_initial": 0.05530799500037832,
+          "ari_clique": 0.05649288763287644,
+          "ari_cc": 0.05649288763287644,
+          "nmi_initial": 0.1669497421154522,
+          "nmi_clique": 0.16813164300853337
+        },
+        "elapsed_seconds": 22.92046070098877
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 0.0046587028454157815,
+        "wave_concordance": {
+          "ari_initial": 0.06281175739658361,
+          "ari_clique": 0.06344014405894087,
+          "ari_cc": 0.06344014405894087,
+          "nmi_initial": 0.18061581709419883,
+          "nmi_clique": 0.18152430052350046
+        },
+        "elapsed_seconds": 30.198408365249634
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "4",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 2,
+        "graph_density": 0.07142857142857142,
+        "n_pairs": 28,
+        "n_rejected_pairs": 26,
+        "rejection_rate": 0.9285714285714286,
+        "mean_mmd_stat": 0.0005086354112231244,
+        "wave_concordance": {
+          "ari_initial": 0.030195882112321222,
+          "ari_clique": 0.0314191639983465,
+          "ari_cc": 0.03386912345792416,
+          "nmi_initial": 0.12324604072780203,
+          "nmi_clique": 0.12409494167692038
+        },
+        "elapsed_seconds": 31.62373423576355
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 4,
+        "graph_density": 0.14285714285714285,
+        "n_pairs": 28,
+        "n_rejected_pairs": 24,
+        "rejection_rate": 0.8571428571428571,
+        "mean_mmd_stat": 0.0010619617551456482,
+        "wave_concordance": {
+          "ari_initial": 0.033234165468024816,
+          "ari_clique": 0.055797395726695745,
+          "ari_cc": 0.055797395726695745,
+          "nmi_initial": 0.1309954293731637,
+          "nmi_clique": 0.12764291643828263
+        },
+        "elapsed_seconds": 30.119957447052002
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 4,
+        "graph_nodes": 6,
+        "graph_edges": 2,
+        "graph_density": 0.13333333333333333,
+        "n_pairs": 15,
+        "n_rejected_pairs": 13,
+        "rejection_rate": 0.8666666666666667,
+        "mean_mmd_stat": 0.0004240426824692418,
+        "wave_concordance": {
+          "ari_initial": 0.028572038569159856,
+          "ari_clique": 0.048514124925125655,
+          "ari_cc": 0.048514124925125655,
+          "nmi_initial": 0.11458002026615799,
+          "nmi_clique": 0.10723048843836061
+        },
+        "elapsed_seconds": 24.8574378490448
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 3,
+        "graph_nodes": 6,
+        "graph_edges": 3,
+        "graph_density": 0.2,
+        "n_pairs": 15,
+        "n_rejected_pairs": 12,
+        "rejection_rate": 0.8,
+        "mean_mmd_stat": 0.0008909813784255882,
+        "wave_concordance": {
+          "ari_initial": 0.028713606562810336,
+          "ari_clique": 0.022772323301388783,
+          "ari_cc": 0.045488997386299385,
+          "nmi_initial": 0.11471136014851575,
+          "nmi_clique": 0.1423587905293738
+        },
+        "elapsed_seconds": 28.189860582351685
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "5",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 6,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 15,
+        "n_rejected_pairs": 15,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.00035110697561282193,
+        "wave_concordance": {
+          "ari_initial": 0.0794227718552582,
+          "ari_clique": 0.0794227718552582,
+          "ari_cc": 0.0794227718552582,
+          "nmi_initial": 0.2079689873697678,
+          "nmi_clique": 0.2079689873697678
+        },
+        "elapsed_seconds": 38.92645478248596
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 6,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 15,
+        "n_rejected_pairs": 15,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.0007916293127495994,
+        "wave_concordance": {
+          "ari_initial": 0.0788139542957867,
+          "ari_clique": 0.0788139542957867,
+          "ari_cc": 0.0788139542957867,
+          "nmi_initial": 0.2048287185926551,
+          "nmi_clique": 0.2048287185926551
+        },
+        "elapsed_seconds": 38.293572425842285
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 6,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 15,
+        "n_rejected_pairs": 15,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.0005580769865023029,
+        "wave_concordance": {
+          "ari_initial": 0.07258524243024135,
+          "ari_clique": 0.07258524243024135,
+          "ari_cc": 0.07258524243024135,
+          "nmi_initial": 0.19509935309953236,
+          "nmi_clique": 0.19509935309953236
+        },
+        "elapsed_seconds": 25.621436595916748
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 6,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 15,
+        "n_rejected_pairs": 15,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.001046918621892759,
+        "wave_concordance": {
+          "ari_initial": 0.09499486846364048,
+          "ari_clique": 0.09499486846364048,
+          "ari_cc": 0.09499486846364048,
+          "nmi_initial": 0.23377718444365025,
+          "nmi_clique": 0.23377718444365025
+        },
+        "elapsed_seconds": 25.19305920600891
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "6",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.0010208517615055332,
+        "wave_concordance": {
+          "ari_initial": 0.08987449469252289,
+          "ari_clique": 0.09218378976556747,
+          "ari_cc": 0.09218378976556747,
+          "nmi_initial": 0.19856373024668875,
+          "nmi_clique": 0.20059216533227608
+        },
+        "elapsed_seconds": 25.20737314224243
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 0.0028514459862763776,
+        "wave_concordance": {
+          "ari_initial": 0.09176936458360815,
+          "ari_clique": 0.0950930138434279,
+          "ari_cc": 0.09627281836072277,
+          "nmi_initial": 0.21655690383935397,
+          "nmi_clique": 0.2201817035681699
+        },
+        "elapsed_seconds": 32.43559432029724
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 5,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 0.0012240080086601082,
+        "wave_concordance": {
+          "ari_initial": 0.09202007082803997,
+          "ari_clique": 0.09532020008418567,
+          "ari_cc": 0.09640470703900336,
+          "nmi_initial": 0.2138688689893091,
+          "nmi_clique": 0.21754391682658974
+        },
+        "elapsed_seconds": 33.131022930145264
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 4,
+        "graph_nodes": 6,
+        "graph_edges": 2,
+        "graph_density": 0.13333333333333333,
+        "n_pairs": 15,
+        "n_rejected_pairs": 13,
+        "rejection_rate": 0.8666666666666667,
+        "mean_mmd_stat": 0.0024479260750070414,
+        "wave_concordance": {
+          "ari_initial": 0.07850086542072335,
+          "ari_clique": 0.0803665647083756,
+          "ari_cc": 0.08384563188559006,
+          "nmi_initial": 0.18798425525358967,
+          "nmi_clique": 0.1897290696235194
+        },
+        "elapsed_seconds": 26.065576314926147
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "7",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 0.0008222202262836622,
+        "wave_concordance": {
+          "ari_initial": 0.10820750551621379,
+          "ari_clique": 0.11020781599808753,
+          "ari_cc": 0.11020781599808753,
+          "nmi_initial": 0.25278129913590497,
+          "nmi_clique": 0.25501141143609657
+        },
+        "elapsed_seconds": 31.27580451965332
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 0.001487215835947718,
+        "wave_concordance": {
+          "ari_initial": 0.10649192437195351,
+          "ari_clique": 0.10741761432317444,
+          "ari_cc": 0.10741761432317444,
+          "nmi_initial": 0.25543036996395574,
+          "nmi_clique": 0.25696991846533884
+        },
+        "elapsed_seconds": 34.12157869338989
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 6,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 15,
+        "n_rejected_pairs": 15,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.0010787000091911248,
+        "wave_concordance": {
+          "ari_initial": 0.09926554715759175,
+          "ari_clique": 0.09926554715759175,
+          "ari_cc": 0.09926554715759175,
+          "nmi_initial": 0.2238539278046811,
+          "nmi_clique": 0.2238539278046811
+        },
+        "elapsed_seconds": 27.02453351020813
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 6,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 15,
+        "n_rejected_pairs": 15,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.002255045166546939,
+        "wave_concordance": {
+          "ari_initial": 0.09966398131694167,
+          "ari_clique": 0.09966398131694167,
+          "ari_cc": 0.09966398131694167,
+          "nmi_initial": 0.22654338081563652,
+          "nmi_clique": 0.22654338081563652
+        },
+        "elapsed_seconds": 27.401572942733765
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "8",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 4,
+        "graph_nodes": 4,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 6,
+        "n_rejected_pairs": 6,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.001711427480743921,
+        "wave_concordance": {
+          "ari_initial": 0.03574853749274663,
+          "ari_clique": 0.03574853749274663,
+          "ari_cc": 0.03574853749274663,
+          "nmi_initial": 0.14526272649482563,
+          "nmi_clique": 0.14526272649482563
+        },
+        "elapsed_seconds": 28.36062741279602
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 3,
+        "n_cc_clusters": 3,
+        "graph_nodes": 4,
+        "graph_edges": 1,
+        "graph_density": 0.16666666666666666,
+        "n_pairs": 6,
+        "n_rejected_pairs": 5,
+        "rejection_rate": 0.8333333333333334,
+        "mean_mmd_stat": 0.0028166229458833174,
+        "wave_concordance": {
+          "ari_initial": 0.0391795882450905,
+          "ari_clique": 0.04044946962388089,
+          "ari_cc": 0.04044946962388089,
+          "nmi_initial": 0.1477280207996555,
+          "nmi_clique": 0.14949482844857861
+        },
+        "elapsed_seconds": 28.093738079071045
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 3,
+        "n_cc_clusters": 3,
+        "graph_nodes": 4,
+        "graph_edges": 1,
+        "graph_density": 0.16666666666666666,
+        "n_pairs": 6,
+        "n_rejected_pairs": 5,
+        "rejection_rate": 0.8333333333333334,
+        "mean_mmd_stat": 0.0015176959079810464,
+        "wave_concordance": {
+          "ari_initial": 0.03471245094239671,
+          "ari_clique": 0.035337767915941794,
+          "ari_cc": 0.035337767915941794,
+          "nmi_initial": 0.1332745719079046,
+          "nmi_clique": 0.13433706203461104
+        },
+        "elapsed_seconds": 26.407196283340454
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 3,
+        "n_cc_clusters": 3,
+        "graph_nodes": 4,
+        "graph_edges": 1,
+        "graph_density": 0.16666666666666666,
+        "n_pairs": 6,
+        "n_rejected_pairs": 5,
+        "rejection_rate": 0.8333333333333334,
+        "mean_mmd_stat": 0.002675814796527632,
+        "wave_concordance": {
+          "ari_initial": 0.04095831722783807,
+          "ari_clique": 0.042228489849679196,
+          "ari_cc": 0.042228489849679196,
+          "nmi_initial": 0.1475409313615763,
+          "nmi_clique": 0.1493041264478854
+        },
+        "elapsed_seconds": 25.725831747055054
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "9",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 6,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 2,
+        "graph_density": 0.07142857142857142,
+        "n_pairs": 28,
+        "n_rejected_pairs": 26,
+        "rejection_rate": 0.9285714285714286,
+        "mean_mmd_stat": 0.000855074304499368,
+        "wave_concordance": {
+          "ari_initial": 0.12304453867563572,
+          "ari_clique": 0.12476890324788853,
+          "ari_cc": 0.12668441789328946,
+          "nmi_initial": 0.25304793579386853,
+          "nmi_clique": 0.25527845599435395
+        },
+        "elapsed_seconds": 26.476553440093994
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 6,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 8,
+        "n_cc_clusters": 8,
+        "graph_nodes": 8,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 28,
+        "n_rejected_pairs": 28,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.0018505477655810913,
+        "wave_concordance": {
+          "ari_initial": 0.11840639808441801,
+          "ari_clique": 0.11840639808441801,
+          "ari_cc": 0.11840639808441801,
+          "nmi_initial": 0.24032519733094465,
+          "nmi_clique": 0.24032519733094465
+        },
+        "elapsed_seconds": 27.067441701889038
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 0.0017143165254956915,
+        "wave_concordance": {
+          "ari_initial": 0.13120999569003078,
+          "ari_clique": 0.1324917171472245,
+          "ari_cc": 0.1324917171472245,
+          "nmi_initial": 0.26226923037925715,
+          "nmi_clique": 0.26429321486504354
+        },
+        "elapsed_seconds": 27.984679222106934
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 0.0038192091322409305,
+        "wave_concordance": {
+          "ari_initial": 0.1208937363942134,
+          "ari_clique": 0.12223442316569198,
+          "ari_cc": 0.12223442316569198,
+          "nmi_initial": 0.2447161105943905,
+          "nmi_clique": 0.24666002474009457
+        },
+        "elapsed_seconds": 28.474539041519165
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "10",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 6,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 15,
+        "n_rejected_pairs": 15,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.0014141259246355765,
+        "wave_concordance": {
+          "ari_initial": 0.08620128928172263,
+          "ari_clique": 0.08620128928172263,
+          "ari_cc": 0.08620128928172263,
+          "nmi_initial": 0.18005125403205396,
+          "nmi_clique": 0.18005125403205396
+        },
+        "elapsed_seconds": 27.218696355819702
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.003149431616901914,
+        "wave_concordance": {
+          "ari_initial": 0.08152442053889403,
+          "ari_clique": 0.08251870689154533,
+          "ari_cc": 0.08251870689154533,
+          "nmi_initial": 0.172964384785917,
+          "nmi_clique": 0.17431684919449214
+        },
+        "elapsed_seconds": 26.91663122177124
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 0.0015444359111277794,
+        "wave_concordance": {
+          "ari_initial": 0.15078751047681402,
+          "ari_clique": 0.15164918994806728,
+          "ari_cc": 0.15164918994806728,
+          "nmi_initial": 0.2433651985117661,
+          "nmi_clique": 0.24479435988531834
+        },
+        "elapsed_seconds": 27.219440460205078
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 4,
+        "graph_nodes": 6,
+        "graph_edges": 2,
+        "graph_density": 0.13333333333333333,
+        "n_pairs": 15,
+        "n_rejected_pairs": 13,
+        "rejection_rate": 0.8666666666666667,
+        "mean_mmd_stat": 0.003632185944453664,
+        "wave_concordance": {
+          "ari_initial": 0.07568516896762001,
+          "ari_clique": 0.07639640414306798,
+          "ari_cc": 0.07735345123555923,
+          "nmi_initial": 0.1665118016373139,
+          "nmi_clique": 0.16760502078647643
+        },
+        "elapsed_seconds": 28.29582190513611
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "11",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 4,
+        "graph_nodes": 6,
+        "graph_edges": 2,
+        "graph_density": 0.13333333333333333,
+        "n_pairs": 15,
+        "n_rejected_pairs": 13,
+        "rejection_rate": 0.8666666666666667,
+        "mean_mmd_stat": 0.0006526833173759176,
+        "wave_concordance": {
+          "ari_initial": 0.1296148811551804,
+          "ari_clique": 0.13058653412915305,
+          "ari_cc": 0.1324590441977986,
+          "nmi_initial": 0.19199099966413583,
+          "nmi_clique": 0.19344157957170077
+        },
+        "elapsed_seconds": 29.223695278167725
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.001392912594679799,
+        "wave_concordance": {
+          "ari_initial": 0.12418166595504314,
+          "ari_clique": 0.1253249022186615,
+          "ari_cc": 0.1253249022186615,
+          "nmi_initial": 0.18890185094468895,
+          "nmi_clique": 0.19049810964709255
+        },
+        "elapsed_seconds": 29.701273202896118
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 4,
+        "graph_nodes": 6,
+        "graph_edges": 2,
+        "graph_density": 0.13333333333333333,
+        "n_pairs": 15,
+        "n_rejected_pairs": 13,
+        "rejection_rate": 0.8666666666666667,
+        "mean_mmd_stat": 0.0006150320116103809,
+        "wave_concordance": {
+          "ari_initial": 0.11975765834012551,
+          "ari_clique": 0.12046910773747208,
+          "ari_cc": 0.12147654303800431,
+          "nmi_initial": 0.17706597824657638,
+          "nmi_clique": 0.17825748154106835
+        },
+        "elapsed_seconds": 31.222018718719482
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 4,
+        "graph_nodes": 6,
+        "graph_edges": 2,
+        "graph_density": 0.13333333333333333,
+        "n_pairs": 15,
+        "n_rejected_pairs": 13,
+        "rejection_rate": 0.8666666666666667,
+        "mean_mmd_stat": 0.0013567491205169634,
+        "wave_concordance": {
+          "ari_initial": 0.12149888694528323,
+          "ari_clique": 0.12238140720969519,
+          "ari_cc": 0.12341420640499123,
+          "nmi_initial": 0.17951609209461092,
+          "nmi_clique": 0.18085603244500573
+        },
+        "elapsed_seconds": 31.196760177612305
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "12",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 4,
+        "graph_nodes": 4,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 6,
+        "n_rejected_pairs": 6,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.0017796047778016893,
+        "wave_concordance": {
+          "ari_initial": 0.1348510876115208,
+          "ari_clique": 0.1348510876115208,
+          "ari_cc": 0.1348510876115208,
+          "nmi_initial": 0.2130659966063415,
+          "nmi_clique": 0.2130659966063415
+        },
+        "elapsed_seconds": 22.151890516281128
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 4,
+        "graph_nodes": 4,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 6,
+        "n_rejected_pairs": 6,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.0032403246510887686,
+        "wave_concordance": {
+          "ari_initial": 0.056058746810104254,
+          "ari_clique": 0.056058746810104254,
+          "ari_cc": 0.056058746810104254,
+          "nmi_initial": 0.17914766324691303,
+          "nmi_clique": 0.17914766324691303
+        },
+        "elapsed_seconds": 20.758240222930908
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 6,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 15,
+        "n_rejected_pairs": 15,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.0012926881707130736,
+        "wave_concordance": {
+          "ari_initial": 0.1780828838246663,
+          "ari_clique": 0.1780828838246663,
+          "ari_cc": 0.1780828838246663,
+          "nmi_initial": 0.33072051913666295,
+          "nmi_clique": 0.33072051913666295
+        },
+        "elapsed_seconds": 22.89256000518799
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 4,
+        "graph_nodes": 4,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 6,
+        "n_rejected_pairs": 6,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.003008857289881,
+        "wave_concordance": {
+          "ari_initial": 0.04090942098792685,
+          "ari_clique": 0.04090942098792685,
+          "ari_cc": 0.04090942098792685,
+          "nmi_initial": 0.14218983846648633,
+          "nmi_clique": 0.14218983846648633
+        },
+        "elapsed_seconds": 21.897693157196045
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "13",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.0010421991385027786,
+        "wave_concordance": {
+          "ari_initial": 0.08686818856006323,
+          "ari_clique": 0.0876780017186876,
+          "ari_cc": 0.0876780017186876,
+          "nmi_initial": 0.13773746472668283,
+          "nmi_clique": 0.13907790972744127
+        },
+        "elapsed_seconds": 29.191555500030518
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.002367425799618936,
+        "wave_concordance": {
+          "ari_initial": 0.07324786537537467,
+          "ari_clique": 0.07422633942927152,
+          "ari_cc": 0.07422633942927152,
+          "nmi_initial": 0.11935579109033667,
+          "nmi_clique": 0.1206453553998929
+        },
+        "elapsed_seconds": 31.00627851486206
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.0010594813537624047,
+        "wave_concordance": {
+          "ari_initial": 0.06487658252832909,
+          "ari_clique": 0.06563260335585132,
+          "ari_cc": 0.06563260335585132,
+          "nmi_initial": 0.1041705687510908,
+          "nmi_clique": 0.10516623224593528
+        },
+        "elapsed_seconds": 30.739323139190674
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.0018972256061227642,
+        "wave_concordance": {
+          "ari_initial": 0.10005306213702983,
+          "ari_clique": 0.10186004328980836,
+          "ari_cc": 0.10186004328980836,
+          "nmi_initial": 0.15982305720296328,
+          "nmi_clique": 0.16209507917155427
+        },
+        "elapsed_seconds": 29.65882921218872
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "14",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.0021698223212255558,
+        "wave_concordance": {
+          "ari_initial": 0.0707674763051851,
+          "ari_clique": 0.07166238017975836,
+          "ari_cc": 0.07166238017975836,
+          "nmi_initial": 0.15984612162512296,
+          "nmi_clique": 0.16111696980112816
+        },
+        "elapsed_seconds": 33.82325601577759
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 5,
+        "graph_nodes": 6,
+        "graph_edges": 1,
+        "graph_density": 0.06666666666666667,
+        "n_pairs": 15,
+        "n_rejected_pairs": 14,
+        "rejection_rate": 0.9333333333333333,
+        "mean_mmd_stat": 0.0039131500225495575,
+        "wave_concordance": {
+          "ari_initial": 0.07909619857215909,
+          "ari_clique": 0.08094603727398732,
+          "ari_cc": 0.08094603727398732,
+          "nmi_initial": 0.17699067657711443,
+          "nmi_clique": 0.17899732257886103
+        },
+        "elapsed_seconds": 34.75022220611572
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 0.00235750964178795,
+        "wave_concordance": {
+          "ari_initial": 0.13533895470639137,
+          "ari_clique": 0.13667223349643043,
+          "ari_cc": 0.13667223349643043,
+          "nmi_initial": 0.2543065409692661,
+          "nmi_clique": 0.25621409521422495
+        },
+        "elapsed_seconds": 28.71677279472351
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 0.004482451133637503,
+        "wave_concordance": {
+          "ari_initial": 0.13321652598034475,
+          "ari_clique": 0.13369136211433694,
+          "ari_cc": 0.13369136211433694,
+          "nmi_initial": 0.24343428884400597,
+          "nmi_clique": 0.24452090508153113
+        },
+        "elapsed_seconds": 28.368746280670166
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "15",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 0.001535055428780683,
+        "wave_concordance": {
+          "ari_initial": 0.21546133412552038,
+          "ari_clique": 0.2164031788718468,
+          "ari_cc": 0.2164031788718468,
+          "nmi_initial": 0.2704033131280493,
+          "nmi_clique": 0.2722975348010419
+        },
+        "elapsed_seconds": 31.34543538093567
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 0.004109604058706256,
+        "wave_concordance": {
+          "ari_initial": 0.23037228737529217,
+          "ari_clique": 0.2313625805258363,
+          "ari_cc": 0.2313625805258363,
+          "nmi_initial": 0.2776970803376608,
+          "nmi_clique": 0.27968529784350427
+        },
+        "elapsed_seconds": 32.165844440460205
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 7,
+        "n_cc_clusters": 7,
+        "graph_nodes": 8,
+        "graph_edges": 1,
+        "graph_density": 0.03571428571428571,
+        "n_pairs": 28,
+        "n_rejected_pairs": 27,
+        "rejection_rate": 0.9642857142857143,
+        "mean_mmd_stat": 0.0021650178365798267,
+        "wave_concordance": {
+          "ari_initial": 0.22790076356919656,
+          "ari_clique": 0.22862224741387852,
+          "ari_cc": 0.22862224741387852,
+          "nmi_initial": 0.27212488050805367,
+          "nmi_clique": 0.2737903560786977
+        },
+        "elapsed_seconds": 31.79673957824707
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 6,
+        "G_star": 8,
+        "n_samples": 1500,
+        "n_initial_clusters": 8,
+        "n_clique_clusters": 6,
+        "n_cc_clusters": 6,
+        "graph_nodes": 8,
+        "graph_edges": 3,
+        "graph_density": 0.10714285714285714,
+        "n_pairs": 28,
+        "n_rejected_pairs": 25,
+        "rejection_rate": 0.8928571428571429,
+        "mean_mmd_stat": 0.006539747258772667,
+        "wave_concordance": {
+          "ari_initial": 0.206141349121169,
+          "ari_clique": 0.2080876062269221,
+          "ari_cc": 0.2080876062269221,
+          "nmi_initial": 0.25160265492777906,
+          "nmi_clique": 0.2551296698885843
+        },
+        "elapsed_seconds": 30.367066383361816
+      }
+    }
+  },
+  {
+    "dataset": "ISP",
+    "record_id": "16",
+    "n_samples": 1500,
+    "sampling_rate": 1000.0,
+    "arms": {
+      "R1_Oracle_8Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 5,
+        "n_cc_clusters": 4,
+        "graph_nodes": 6,
+        "graph_edges": 2,
+        "graph_density": 0.13333333333333333,
+        "n_pairs": 15,
+        "n_rejected_pairs": 13,
+        "rejection_rate": 0.8666666666666667,
+        "mean_mmd_stat": 0.0009781777343316558,
+        "wave_concordance": {
+          "ari_initial": 0.07319871895677796,
+          "ari_clique": 0.07408456653225057,
+          "ari_cc": 0.07497904703920232,
+          "nmi_initial": 0.1546619519715418,
+          "nmi_clique": 0.1560221424247358
+        },
+        "elapsed_seconds": 34.22196960449219
+      },
+      "R0_KorsVCG_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 3,
+        "graph_nodes": 6,
+        "graph_edges": 3,
+        "graph_density": 0.2,
+        "n_pairs": 15,
+        "n_rejected_pairs": 12,
+        "rejection_rate": 0.8,
+        "mean_mmd_stat": 0.0020307057136095858,
+        "wave_concordance": {
+          "ari_initial": 0.08080596227799951,
+          "ari_clique": 0.06050566214310444,
+          "ari_cc": 0.06167576119811024,
+          "nmi_initial": 0.16579515949371146,
+          "nmi_clique": 0.13158675904216635
+        },
+        "elapsed_seconds": 32.03787660598755
+      },
+      "R2_NefPanorama_8Lead": {
+        "m_star": 3,
+        "G_star": 4,
+        "n_samples": 1500,
+        "n_initial_clusters": 4,
+        "n_clique_clusters": 4,
+        "n_cc_clusters": 4,
+        "graph_nodes": 4,
+        "graph_edges": 0,
+        "graph_density": 0.0,
+        "n_pairs": 6,
+        "n_rejected_pairs": 6,
+        "rejection_rate": 1.0,
+        "mean_mmd_stat": 0.0008659631984458444,
+        "wave_concordance": {
+          "ari_initial": 0.07215348878143238,
+          "ari_clique": 0.07215348878143238,
+          "ari_cc": 0.07215348878143238,
+          "nmi_initial": 0.14801383587551672,
+          "nmi_clique": 0.14801383587551672
+        },
+        "elapsed_seconds": 24.14141321182251
+      },
+      "R3_KorsNef_3Lead": {
+        "m_star": 3,
+        "G_star": 6,
+        "n_samples": 1500,
+        "n_initial_clusters": 6,
+        "n_clique_clusters": 2,
+        "n_cc_clusters": 2,
+        "graph_nodes": 6,
+        "graph_edges": 6,
+        "graph_density": 0.4,
+        "n_pairs": 15,
+        "n_rejected_pairs": 9,
+        "rejection_rate": 0.6,
+        "mean_mmd_stat": 0.0022540657721402757,
+        "wave_concordance": {
+          "ari_initial": 0.07257743403577262,
+          "ari_clique": 0.05246864801598865,
+          "ari_cc": 0.05246864801598865,
+          "nmi_initial": 0.15273356853688916,
+          "nmi_clique": 0.10048749806084463
+        },
+        "elapsed_seconds": 34.23055076599121
       }
     }
   }

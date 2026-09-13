@@ -1,0 +1,34 @@
+{
+  "checkpoint": "results/panobench_3view_variablethird_geovt_seed123/model_final.pt",
+  "test_root": "/data/mithunmanivannan/panobench/test",
+  "n_records": 1030,
+  "n_samples_per_record": 5,
+  "n_total_evaluations": 5150,
+  "eval_seed": 42,
+  "scientific_contract": {
+    "model": "nefnet_plus.layer",
+    "super_mode": "optimization",
+    "lead_num": 3,
+    "normalization": "observed_only (m_obs, M_obs from 3 input channels only; no unobserved view leakage)",
+    "evaluation_scale": "author-equivalent scale [0, 1] for direct G001-A delta",
+    "note": "G001-B evaluates realistic test-time deployment where unobserved leads cannot leak min/max."
+  },
+  "l1": {
+    "mean": 0.014037353971100511,
+    "std": 0.010090208185485262,
+    "p5": 0.0031641065143048763,
+    "p95": 0.03498430363833905
+  },
+  "psnr_db": {
+    "mean": 34.5854737880271,
+    "std": 6.162175851870714
+  },
+  "ssim": {
+    "mean": 0.9683239539850187,
+    "std": 0.02850765421549595
+  },
+  "l1_physical": {
+    "mean": 0.35561167325064974,
+    "std": 0.279630790550491
+  }
+}

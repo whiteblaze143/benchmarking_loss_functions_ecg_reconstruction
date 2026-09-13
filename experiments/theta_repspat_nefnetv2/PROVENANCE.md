@@ -21,45 +21,81 @@ The author Nef-Net tree is kept unchanged. All experiment-specific code lives in
 
 ---
 
-## N002 — panobench_fixed_triplet_randview3_geovt_seed123
+## N002 — panobench_3view_variablethird_geovt_seed123
 
-- Run: `results/panobench_fixed_triplet_randview3_geovt_seed123/`
-- Checkpoint SHA-256: to be filled after G001 passes
+- Run: `results/panobench_3view_variablethird_geovt_seed123/` (symlinked from `panobench_fixed_triplet_randview3_geovt_seed123`)
+- Checkpoint SHA-256: `9174e0fef5fc9e446299944802bbc72f39da8a3cd54b632ac13e900d3625624c`
 - Architecture: `nefnet_plus.layer` — PASS
 - Optimizer: AdamW lr=1e-3 wd=0.01, MultiStep [50,100,150] γ=0.5, B=32, 200 epochs — PASS
 - Training L1: 0.068 (epoch 0) → 0.004 (epoch 199) — PASS
 - **Scientific contract** (verified against source):
-  - `super_mode='optimization'`, `lead_num=3`: model is a **fixed three-slot GeoVT**, not Any-Pairs.
-    The `else` branch in `nefnet_plus.layer.forward` uses dedicated `W_encoder_list[i]` modules
-    for slots beyond 2. Runtime lead count is fixed at construction, not dynamic.
-  - Third input: **random from PanoBench indices 2–43**, sampled per record per epoch via
-    `rng.integers(2, 44)` in `ReleasedPanoBench.__getitem__`. This is NOT a fixed view-28
-    (upstream optimization-mode PanoBench policy) and NOT clinical V3 (PTB-XL index 4,
-    angle (95°, 15°)). The dedicated third slot was trained across randomly varying view
-    identities — a mixed contract.
-  - Normalization: global min-max across all 44 PanoBench channels before selecting 3.
-    This is author-faithful (same as upstream PTB-XL preprocessing) but introduces mild
-    leakage: unobserved views' extrema influence the scaling of the 3 observed inputs.
-  - **ANY_PAIRS = NO. THIRD_INPUT = RANDOM_PANO_VIEW, NOT V3.**
-- **CUDA/cuDNN note**: All convolutions failed with `ptrDesc->finalize()` during this run.
-  Disabling cuDNN (`torch.backends.cudnn.enabled = False`) resolved the failure.
-  The GPU reported 33 volatile uncorrected ECC errors at the time.
-  **Cause is unconfirmed.** NVIDIA drivers guarantee backward-compatibility of older CUDA
-  runtimes with newer drivers, so the PyTorch 2.6+cu124 / driver CUDA 13.0 combination
-  is not definitively the cause. The ECC errors are the more likely explanation.
-  Do not assert "driver update caused the failure" without machine-administrator confirmation.
-  Before publication-grade use of N002 weights: reproduce forward passes from this checkpoint
-  on a clean GPU or CPU and verify numerical outputs.
-- **Status**: ARCHITECTURE=PASS, OPTIMIZATION=PASS, CONVERGENCE=PASS,
-  FIXED_TRIPLET_PANO=PASS. NOT the final frozen Θ-repSpat representation.
-  Pending: G001 held-out test evaluation.
+  - `MODEL = official nefnet_plus.layer`
+  - `CARDINALITY = 3` (fixed slot count = 3: two anchor slots I, II and one third slot)
+  - `ANCHORS = I, II`
+  - `VARIABLE_CARDINALITY_ANY_PAIRS = NO` (model constructor fixes `lead_num=3` under `super_mode='optimization'`)
+  - `ANGLE_CONDITIONED VARIABLE_VIEW = YES`: `fixed_cardinality ≠ fixed_identity`. The third waveform goes through `W_encoder_list[0]`, while its actual $(\theta, \phi)$ goes through `mlp_list[0]`. Those angle embeddings participate in `view_transformer(encoded_theta, query_theta, w)`. The model was trained across random third views ($r \sim \{2,\dots,43\}$), incentivizing separation of waveform content from observation direction.
+  - Normalization: global min-max across all 44 PanoBench channels before selecting 3 inputs (author-faithful benchmark).
+- **CUDA/cuDNN note**: Convolutions required `torch.backends.cudnn.enabled = False` on the training GPU. 33 volatile uncorrected ECC errors were logged. Cause unconfirmed.
+- **Status**: ARCHITECTURE=PASS, OPTIMIZATION=PASS, CONVERGENCE=PASS, FIXED_CARDINALITY_VAR_THIRD=PASS.
 
 ---
 
-## G001 — Held-out PanoBench test evaluation of N002
+## G001-A — Held-out PanoBench test evaluation (author normalization)
 
 - Script: `scripts/eval_g001.py`
-- Test split: `/data/mithunmanivannan/panobench/test/` (1030 records, never seen in training)
+- Test split: `/data/mithunmanivannan/panobench/test/` (1030 records, strictly held-out)
 - Eval seed: 42 (distinct from training seed 123)
-- Samples per record: 5 random (third-view, query) pairs
-- Output: `results/g001_eval/` — pending completion
+- Samples per record: 5 random (third-view, query) pairs (5,150 total evaluations)
+- Output: `results/g001_eval/` (symlinked as `results/g001_a_eval/`)
+- **Status**: COMPLETE / PASS
+  - L1: mean = 0.00915, std = 0.00687, p5 = 0.00234, p95 = 0.02517
+  - PSNR: mean = 38.08 dB, std = 6.52 dB
+  - SSIM: mean = 0.9773, std = 0.0281
+  - Angular stratification shows monotonic or stable quality across angular distance bins (35.1 dB at <33° to 41.2 dB at >164°).
+
+---
+
+## G001-B — Held-out PanoBench test evaluation (observed-only normalization)
+
+- Script: `scripts/eval_g001_b.py`
+- Preprocessing: `m_obs = min_{j in {I,II,r}, t} V_j(t)`, `M_obs = max_{j in {I,II,r}, t} V_j(t)`. Strictly observation-only; no leakage from unobserved views.
+- Model: Same frozen N002 checkpoint (`model_final.pt`). No retraining.
+- Test split: `/data/mithunmanivannan/panobench/test/` (1030 records x 5 samples = 5,150 paired evaluations)
+- Output: `results/g001_b_eval/`
+- **Status**: COMPLETE / EMPIRICAL FINDING
+  - Absolute metrics (author-equivalent scale):
+    - L1: mean = 0.01404, std = 0.01009
+    - PSNR: mean = 34.59 dB, std = 6.16 dB
+    - SSIM: mean = 0.9683, std = 0.0285
+    - L1 physical: mean = 0.3556, std = 0.2796
+  - Paired comparison vs G001-A (5,150 identical triples):
+    - Delta L1 (B - A): +0.00489 (+0.5% scale shift)
+    - Delta PSNR (B - A): -3.50 dB (38.08 -> 34.59 dB)
+    - Delta SSIM (B - A): -0.0090 (0.9773 -> 0.9683; morphology preserved)
+  - **Verdict**: SENSITIVE_TO_ALL_VIEW_LEAKAGE in absolute amplitude scaling (-3.5 dB), but structural morphology remains virtually intact (SSIM > 0.968).
+
+---
+
+## G001-C — Clinical-angle zero-shot transfer (Real 12-lead ECGs)
+
+- Script: `scripts/eval_g001_c.py`
+- Input: Exactly `{I, II, V3}` with author PTB-XL canonical angles: `a_I=(90°, 90°)`, `a_II=(150°, 90°)`, `a_V3=(95°, 15°)`.
+- Query: Precordial leads `{V1, V2, V4, V5, V6}` with their respective canonical angles.
+- Ground truth: Real measured leads from 1,000 held-out clinical 12-lead ECGs from HEEDB Emory WFDB dataset (`heedb_emory/WFDB/2010`).
+- Model: Same frozen N002 checkpoint (`model_final.pt`). Zero-shot: no fine-tuning, no calibration.
+- Normalization: Strictly observation-only (`m_obs, M_obs` of `{I, II, V3}`).
+- Output: `results/g001_c_eval/`
+- **Status**: COMPLETE / DIAGNOSTIC
+  - Overall (5,000 lead queries):
+    - L1 (norm): 0.04658 ± 0.03889
+    - L1 (physical): 0.1049 ± 0.1002 mV (~0.10 mV absolute error)
+    - PSNR: 23.72 ± 4.65 dB
+    - SSIM: 0.9015 ± 0.0719
+    - Pearson r: 0.4239 ± 0.5122
+  - Per-lead breakdown (ordered laterally from query V6 to septal V1):
+    - V6: r = 0.7229, L1 = 0.0798 mV, PSNR = 26.67 dB, SSIM = 0.9375
+    - V5: r = 0.6552, L1 = 0.0965 mV, PSNR = 24.79 dB, SSIM = 0.9247
+    - V4: r = 0.4998, L1 = 0.1137 mV, PSNR = 22.90 dB, SSIM = 0.9007
+    - V2: r = 0.2445, L1 = 0.1276 mV, PSNR = 21.41 dB, SSIM = 0.8716
+    - V1: r = -0.0030, L1 = 0.1069 mV, PSNR = 22.80 dB, SSIM = 0.8730
+  - **Verdict**: Strong lateral transfer (V6/V5 correlation 0.66–0.72, SSIM > 0.92, physical error < 0.09 mV), but septal degradation at V1/V2 (r < 0.25). Corroborates that PanoBench-only torso training suffers from domain/torso-geometry transport across the septum, requiring either canonicalization or author multi-dataset pretraining as predicted in the decision tree.

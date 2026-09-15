@@ -386,6 +386,7 @@ class AliTokECGAIMWaveletMTL(_PARENT):
         self.ssl_mode,self.byol_tau=ssl_mode,float(byol_tau)
         self.inference_view=inference_view
         self.mask_type_mode=mask_type_mode
+        self.pre_decoder_adapter = None
 
         if self.use_wavelet_branch:
             def make_bank(kind, asset):
@@ -548,6 +549,10 @@ class AliTokECGAIMWaveletMTL(_PARENT):
         )
         baseline=self._limb_prior(patches,available)
         grid=grid+self.baseline_projection(baseline)
+        if self.pre_decoder_adapter is not None:
+            grid = self.pre_decoder_adapter(
+                grid, normalized, inherited, artificial
+            )
         for block in self.decoder:
             try: grid=block(grid,lead_condition=cond)
             except TypeError: grid=block(grid)

@@ -153,6 +153,13 @@ def input_fingerprints(a):
         initial=Path(a.init_checkpoint)
         if not initial.is_file():raise FileNotFoundError(f"initial checkpoint is missing: {initial}")
         result["init_checkpoint_sha256"]=sha256_file(initial)
+    if getattr(a, "nef_core_mode", "none") != "none":
+        core_checkpoint = Path(a.nef_core_checkpoint)
+        if not core_checkpoint.is_file():
+            raise FileNotFoundError(f"NEF checkpoint is missing: {core_checkpoint}")
+        result["nef_core_checkpoint_sha256"] = sha256_file(core_checkpoint)
+        graft_source = _ROOT / "unified_latents/engineering/experimental/nef_latent_graft.py"
+        result["nef_latent_graft_sha256"] = sha256_file(graft_source)
     if getattr(a,"output_representation","standard")!="standard":
         manifest=Path(a.k_star_manifest)
         if not manifest.is_file():raise FileNotFoundError(f"K_STAR manifest is missing: {manifest}")
@@ -640,9 +647,22 @@ def train(a):
     atomic_write_text(config_path,json.dumps(vars(a),indent=2,sort_keys=True,allow_nan=False)+"\n")
     model=build_model(a).to(device)
     if resume is not None:
+        if getattr(a,"nef_core_mode","none") != "none":
+            from unified_latents.engineering.experimental.nef_latent_graft import FrozenNEFPreDecoderGraft
+            model.pre_decoder_adapter = FrozenNEFPreDecoderGraft(
+                a.nef_core_mode, a.nef_core_checkpoint, model.width, model.num_patches
+            ).to(device)
         model.load_state_dict(resume["model_state_dict"],strict=True)
     else:
         load_init(model,a.init_checkpoint,a.init_strict)
+        if getattr(a,"nef_core_mode","none") != "none":
+            from unified_latents.engineering.experimental.nef_latent_graft import FrozenNEFPreDecoderGraft
+            model.pre_decoder_adapter = FrozenNEFPreDecoderGraft(
+                a.nef_core_mode, a.nef_core_checkpoint, model.width, model.num_patches
+            ).to(device)
+    # Core construction differs by arm; restore the shared training RNG state so
+    # batch order and A0 artificial masks remain matched across all three cells.
+    seed_all(a.seed)
     if getattr(a,"output_representation","standard")!="standard" and resume is None:
         digest=hashlib.sha256()
         for name,tensor in sorted(model.base.state_dict().items()):
@@ -749,6 +769,8 @@ def train(a):
             raise FloatingPointError(f"non-finite epoch metrics: {m}")
         print(json.dumps(m,sort_keys=True,allow_nan=False));history.append(m)
         atomic_write_text(out/"metrics.jsonl","".join(json.dumps(row,sort_keys=True,allow_nan=False)+"\n" for row in history))
+        if getattr(a, "save_every_epoch", False):
+            atomic_save(model_checkpoint_payload(model,a,protocol_sha,m),out/f"epoch_{ep:02d}.pt")
         if score>best:
             best,beste,bestm=score,ep,dict(m)
             if a.checkpoint_policy in {"best","all"}:
@@ -999,6 +1021,9 @@ def parser():
     p.add_argument("--num-workers",type=int,default=2);p.add_argument("--max-train-batches",type=int)
     p.add_argument("--max-val-batches",type=int);p.add_argument("--delineation-every",type=int,default=2)
     p.add_argument("--init-checkpoint");add_bool(p,"init_strict",True)
+    p.add_argument("--nef-core-mode",choices=["none","AE_VE","FULL"],default="none")
+    p.add_argument("--nef-core-checkpoint")
+    add_bool(p,"save_every_epoch",False)
     p.add_argument("--checkpoint-policy",choices=["none","best","last","all"],default="none")
     add_bool(p,"rolling_resume");p.add_argument("--resume-min-free-gib",type=float,default=3.)
     add_bool(p,"require_cuda")

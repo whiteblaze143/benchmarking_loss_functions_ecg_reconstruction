@@ -1,0 +1,23 @@
+{
+  "dataset": "LUDB",
+  "record_id": "104",
+  "block_mode": "attribute_kmeans",
+  "gamma": 1.0,
+  "m_star": 64,
+  "G_star": 6,
+  "purity_rule": "exact_phase_and_beat_membership",
+  "n_recurrence_control_pairs": 0,
+  "recurrence_rejections": 0,
+  "recurrence_rejection_rate": NaN,
+  "n_alt_pairs": 0,
+  "alt_rejections": 0,
+  "power": NaN,
+  "graph_density": 0.6,
+  "n_clique_groups": 2,
+  "n_cc_groups": 1,
+  "overlap_fraction": 0.16666666666666666,
+  "edge_jaccard_30db": 0.25,
+  "elapsed_sec": 46.13590455055237,
+  "diagnostic_pairs": [],
+  "arm": "N002"
+}

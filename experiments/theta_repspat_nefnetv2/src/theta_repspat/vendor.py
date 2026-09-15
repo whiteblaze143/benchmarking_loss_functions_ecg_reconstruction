@@ -47,7 +47,15 @@ def instantiate_author_model(
     sys.modules.setdefault("timm", timm_module)
     sys.modules.setdefault("timm.models", timm_models)
     sys.modules.setdefault("timm.models.layers", timm_layers)
-    model_class = importlib.import_module("network.nefnet_plus").layer
+    nefnet_module = importlib.import_module("network.nefnet_plus")
+    if lead_num == 1:
+        model_class = nefnet_module.layer1
+    elif lead_num == 2:
+        model_class = nefnet_module.layer2
+    elif lead_num >= 3:
+        model_class = nefnet_module.layer
+    else:
+        raise ValueError(f"lead_num must be positive, got {lead_num}")
     config = SimpleNamespace(
         MODEL=SimpleNamespace(layers=4, theta_L=1),
         DATA=SimpleNamespace(super_mode=super_mode, lead_num=lead_num),

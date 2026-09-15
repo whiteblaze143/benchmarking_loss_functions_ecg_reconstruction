@@ -1,12 +1,7 @@
 """Clinical Any-Pairs dataset adapter for Stage I N003 pretraining.
 
-Adheres strictly to the user-specified deployment-consistent normalization contract:
-    m_obs = min_{j in O, t} x_j(t)
-    M_obs = max_{j in O, t} x_j(t)
-    x_tilde = (x - m_obs) / (M_obs - m_obs)
-
-Target query waveforms are normalized strictly using observed-view extrema,
-preventing target statistics leakage into the model.
+PTB-XL tensors are reordered from WFDB order to the Nef-Net canonical order.
+Both inputs and targets use one frozen, train-derived amplitude transform.
 
 Datasets:
     PTB-XL, Zhejiang/ChinaDB, CPSC2018 (strictly separated from LUDB, ISP, RDB, Emory).
@@ -14,17 +9,24 @@ Datasets:
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
-from typing import Sequence
 
 import numpy as np
 import torch
 from torch.utils.data import Dataset
 
 
-# Standard 12-lead angles in spherical coordinates (theta, phi) in radians:
-# Lead ordering matching standard WFDB 12-lead:
+# On-disk WFDB order -> Nef-Net canonical order
+# [I, II, V1, V2, V3, V4, V5, V6, III, aVR, aVL, aVF].
+DISK_TO_CANONICAL = [0, 1, 6, 7, 8, 9, 10, 11, 2, 3, 4, 5]
+INDEPENDENT_LEAD_INDICES = tuple(range(8))
+PRECORDIAL_LEAD_INDICES = tuple(range(2, 8))
+TRAIN_LOWER_MV = -4.0
+TRAIN_UPPER_MV = 4.0
+NORMALIZATION_EPS = 1e-4
+
+
+# Legacy WFDB-order angle table used by existing evaluation scripts.
 # 0: I, 1: II, 2: III, 3: aVR, 4: aVL, 5: aVF, 6: V1, 7: V2, 8: V3, 9: V4, 10: V5, 11: V6
 STANDARD_12LEAD_ANGLES_RAD = np.asarray([
     [np.pi / 2, np.pi / 2],          # 0: I
@@ -40,6 +42,14 @@ STANDARD_12LEAD_ANGLES_RAD = np.asarray([
     [np.pi * 16 / 30, np.pi / 3],    # 10: V5
     [np.pi * 16 / 30, np.pi / 2],    # 11: V6
 ], dtype=np.float32)
+
+CANONICAL_12LEAD_ANGLES_RAD = STANDARD_12LEAD_ANGLES_RAD[DISK_TO_CANONICAL].copy()
+
+
+def normalize_fixed_train_bounds(waveforms: torch.Tensor) -> torch.Tensor:
+    """Map physical mV to the decoder support using frozen PTB-XL train bounds."""
+    normalized = (waveforms - TRAIN_LOWER_MV) / (TRAIN_UPPER_MV - TRAIN_LOWER_MV)
+    return normalized.clamp(NORMALIZATION_EPS, 1.0 - NORMALIZATION_EPS)
 
 
 class PTBXL12LeadDataset(Dataset):
@@ -91,7 +101,7 @@ class PTBXL12LeadDataset(Dataset):
             crop = torch.nn.functional.pad(data, (0, pad_len), mode="constant", value=0.0)
         else:
             crop = data
-        return crop  # [12, target_len]
+        return crop[DISK_TO_CANONICAL]  # [12, target_len], canonical order
 
 
 class PTBXLClinicalAnyPairs(Dataset):
@@ -149,37 +159,31 @@ class PTBXLClinicalAnyPairs(Dataset):
         else:
             crop = data
 
-        # Select input slots: anchor leads I (0) and II (1), plus additional leads
+        crop = crop[DISK_TO_CANONICAL]
+
+        # Select input slots: anchors I/II plus independent precordial leads only.
         if self.lead_cardinality is not None:
             num_additional = max(1, self.lead_cardinality - 2)
         else:
             # Dynamic cardinality: k in {1, 2, 3} -> L_input in {3, 4, 5}
             num_additional = int(rng.choice([1, 2, 3]))
 
-        available_additional = list(range(2, 12))
+        available_additional = list(PRECORDIAL_LEAD_INDICES)
         selected_additional = rng.choice(available_additional, size=num_additional, replace=False).tolist()
         input_indices = [0, 1] + sorted(selected_additional)
 
         # Select 1 target lead from remaining leads
-        unused_leads = [i for i in range(12) if i not in input_indices]
+        unused_leads = [i for i in PRECORDIAL_LEAD_INDICES if i not in input_indices]
         target_index = int(rng.choice(unused_leads))
 
         input_waveforms = crop[input_indices]  # [C_in, L]
         target_waveform = crop[target_index : target_index + 1]  # [1, L]
 
-        # Prospective deployment-consistent normalization:
-        # Compute min/max strictly from observed input views!
-        m_obs = float(input_waveforms.min())
-        M_obs = float(input_waveforms.max())
-        diff = M_obs - m_obs
-        if diff < 1e-6:
-            diff = 1.0
+        input_norm = normalize_fixed_train_bounds(input_waveforms)
+        target_norm = normalize_fixed_train_bounds(target_waveform)
 
-        input_norm = (input_waveforms - m_obs) / diff
-        target_norm = (target_waveform - m_obs) / diff
-
-        input_angles = torch.from_numpy(STANDARD_12LEAD_ANGLES_RAD[input_indices])
-        target_angle = torch.from_numpy(STANDARD_12LEAD_ANGLES_RAD[target_index])
+        input_angles = torch.from_numpy(CANONICAL_12LEAD_ANGLES_RAD[input_indices])
+        target_angle = torch.from_numpy(CANONICAL_12LEAD_ANGLES_RAD[target_index])
 
         return {
             "input": input_norm,                     # [lead_cardinality, target_len]
@@ -188,6 +192,4 @@ class PTBXLClinicalAnyPairs(Dataset):
             "target_angle": target_angle,           # [2]
             "input_indices": torch.tensor(input_indices, dtype=torch.long),
             "target_index": torch.tensor(target_index, dtype=torch.long),
-            "m_obs": torch.tensor(m_obs, dtype=torch.float32),
-            "M_obs": torch.tensor(M_obs, dtype=torch.float32),
         }

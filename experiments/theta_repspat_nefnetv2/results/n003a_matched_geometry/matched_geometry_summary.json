@@ -1,0 +1,115 @@
+{
+  "protocol": {
+    "core_record_source": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/theta_repspat_nefnetv2/results/g002_eval/g002_clinical_records.json",
+    "core_record_source_sha256": "3c2c25aa70d0b8972188f201e2cd0b143ed1f8481a1a94173debff2a286a15aa",
+    "n_core": 500,
+    "n_nonlocal": 100,
+    "delta_max_samples": 50,
+    "sampling_hz": 500,
+    "bootstrap_unit": "BDSPPatientID"
+  },
+  "checkpoints": {
+    "N002": "9174e0fef5fc9e446299944802bbc72f39da8a3cd54b632ac13e900d3625624c",
+    "N003a": "76fa796e63099dcdbde4e5b4c8b52c8ce16afe3f25806ddc7cac488582b84a19"
+  },
+  "paired_n003a_minus_n002": {
+    "spearman_rho_d": {
+      "n_patients": 489,
+      "mean": 0.026718165487234685,
+      "ci95": [
+        0.02430645226217933,
+        0.029203742192720254
+      ]
+    },
+    "knn_jaccard_k10": {
+      "n_patients": 489,
+      "mean": 0.036395537605228206,
+      "ci95": [
+        0.0336818944730567,
+        0.039117598059245466
+      ]
+    },
+    "cahc_ari": {
+      "n_patients": 489,
+      "mean": 0.05325487865046771,
+      "ci95": [
+        0.030951825831074052,
+        0.07524532415830647
+      ]
+    },
+    "eps_aligned": {
+      "n_patients": 99,
+      "mean": -0.04457888123814506,
+      "ci95": [
+        -0.05658638098963884,
+        -0.03290291025275083
+      ]
+    },
+    "cka": {
+      "n_patients": 99,
+      "mean": 0.027323396111848183,
+      "ci95": [
+        0.019344180335164513,
+        0.03559298331123885
+      ]
+    },
+    "cka_nonlocal": {
+      "n_patients": 99,
+      "mean": 0.027988061286606768,
+      "ci95": [
+        0.019342755642814607,
+        0.03657678090530333
+      ]
+    }
+  },
+  "n003a_minus_r0": {
+    "spearman_rho_d": {
+      "n_patients": 489,
+      "mean": -0.007260187131042067,
+      "ci95": [
+        -0.012108156309183046,
+        -0.002488029057396965
+      ]
+    },
+    "knn_jaccard_k10": {
+      "n_patients": 489,
+      "mean": -0.06741631418829624,
+      "ci95": [
+        -0.07997189818310763,
+        -0.05516741129454449
+      ]
+    },
+    "cahc_ari": {
+      "n_patients": 489,
+      "mean": -0.04790581316238603,
+      "ci95": [
+        -0.07103496048948488,
+        -0.025280347948926245
+      ]
+    },
+    "eps_aligned": {
+      "n_patients": 99,
+      "mean": 0.018553120110548233,
+      "ci95": [
+        0.0057813690092932525,
+        0.03170858395446131
+      ]
+    },
+    "cka": {
+      "n_patients": 99,
+      "mean": -0.006303669480591142,
+      "ci95": [
+        -0.02148414761335683,
+        0.00813350262986197
+      ]
+    },
+    "cka_nonlocal": {
+      "n_patients": 99,
+      "mean": -0.006162296981522171,
+      "ci95": [
+        -0.0223879128792887,
+        0.008962944131041355
+      ]
+    }
+  }
+}

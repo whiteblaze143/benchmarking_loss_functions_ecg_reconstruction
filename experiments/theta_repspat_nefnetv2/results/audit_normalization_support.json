@@ -94,5 +94,66 @@
         "l_floor": 0.0009296416941860821
       }
     }
+  },
+  "fixed_train_bounds_clipping": {
+    "bounds_mv": [
+      -4.0,
+      4.0
+    ],
+    "n_records": 17418,
+    "p_clip": 0.00010069659738967352,
+    "p_record_any_clip": 0.04179584338041107,
+    "mean_absolute_clipping_distortion_mv": 0.00020024542836136964,
+    "sigmoid_support_mismatch": 0.0,
+    "per_lead": {
+      "I": {
+        "p_clip": 8.422321736135032e-05,
+        "mean_absolute_clipping_distortion_mv": 0.0004504627827648619
+      },
+      "II": {
+        "p_clip": 1.0517855092433116e-05,
+        "mean_absolute_clipping_distortion_mv": 1.2669755413551694e-05
+      },
+      "V1": {
+        "p_clip": 8.478585371454817e-05,
+        "mean_absolute_clipping_distortion_mv": 0.00017932932614212483
+      },
+      "V2": {
+        "p_clip": 0.0002511310138936732,
+        "mean_absolute_clipping_distortion_mv": 0.00021107984000361598
+      },
+      "V3": {
+        "p_clip": 0.0002762200022964749,
+        "mean_absolute_clipping_distortion_mv": 0.0002631584789958555
+      },
+      "V4": {
+        "p_clip": 0.00012094385118842577,
+        "mean_absolute_clipping_distortion_mv": 0.00010149569295142271
+      },
+      "V5": {
+        "p_clip": 0.00016079917326903203,
+        "mean_absolute_clipping_distortion_mv": 0.0006795419426678324
+      },
+      "V6": {
+        "p_clip": 8.660006889424733e-05,
+        "mean_absolute_clipping_distortion_mv": 0.0001498436318019841
+      },
+      "III": {
+        "p_clip": 5.980020668274199e-05,
+        "mean_absolute_clipping_distortion_mv": 0.00014886653916900666
+      },
+      "aVR": {
+        "p_clip": 9.840394993684695e-06,
+        "mean_absolute_clipping_distortion_mv": 3.299402918494217e-05
+      },
+      "aVL": {
+        "p_clip": 5.890458146744747e-05,
+        "mean_absolute_clipping_distortion_mv": 0.00014735207197408558
+      },
+      "aVF": {
+        "p_clip": 4.5929498220231945e-06,
+        "mean_absolute_clipping_distortion_mv": 2.615104926715202e-05
+      }
+    }
   }
 }

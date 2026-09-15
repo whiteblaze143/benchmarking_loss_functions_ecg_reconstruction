@@ -1,0 +1,155 @@
+{
+  "experiment": "N003a_clean_stage1_seed123",
+  "selection_status": "FROZEN_BEFORE_EXTERNAL_EVALUATION",
+  "selected_checkpoint": "model_best.pt",
+  "selected_checkpoint_sha256": "76fa796e63099dcdbde4e5b4c8b52c8ce16afe3f25806ddc7cac488582b84a19",
+  "model_final_sha256": "4f7079cf8974627a08e10f25bdd71283948f56553ecfe197479b5aa130681ff1",
+  "training_state_sha256": "a65d984ef87c080e061f9ffcbe4a491dd52933932e0563fc4e0f451d91448da4",
+  "training_metrics_sha256": "524fc1c9f733df5e369e3e2540b72469e9c334a6ef5b8c82f455bf18e5b9f055",
+  "validation_manifest_sha256": "dba23007d6e2df42d6f0a8d6725e7b403c7de9f4bf10b53757d91a442691c009",
+  "git_commit": "06895630a411536c735c05c7892597173b6838d2",
+  "executed_source_sha256": {
+    "experiments/theta_repspat_nefnetv2/scripts/train_n003_stage1_clinical.py": "0cb29259b722fda61c9337661147e886ad7b844b9a38969970c222e97dbdf824",
+    "experiments/theta_repspat_nefnetv2/src/theta_repspat/clinical_dataset.py": "e5ec2580cbfe7b35be89eb509f27add1384031bcedff4be824ce2ebb7f4f18fd",
+    "experiments/theta_repspat_nefnetv2/src/theta_repspat/vendor.py": "13eb9f5585ae28f6049a767e61a21ab5a282c837d0755f901f82fe0257145385"
+  },
+  "author_tree_matches_upstream": true,
+  "author_tree_manifest_sha256": "16e7805473b6dae8e572b27d2933d9b89b217473129a0416d9e7720bbe975723",
+  "data": {
+    "train_folds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "validation_folds": [
+      9
+    ],
+    "test_fold": 10,
+    "train_records": 17418,
+    "validation_records": 2183,
+    "train_patients": 15023,
+    "validation_patients": 1942,
+    "train_validation_patient_overlap": 0
+  },
+  "model": {
+    "architecture": "official nefnet_plus.layer",
+    "super_mode": "pretrain"
+  },
+  "optimization": {
+    "seed": 123,
+    "epochs": 100,
+    "batch_size": 64,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.01,
+    "scheduler": "MultiStepLR",
+    "milestones": [
+      30,
+      60,
+      80
+    ],
+    "gamma": 0.5
+  },
+  "amplitude_transform": {
+    "lower_mv": -4.0,
+    "upper_mv": 4.0,
+    "clip_epsilon": 0.0001
+  },
+  "canonical_leads": [
+    "I",
+    "II",
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6",
+    "III",
+    "aVR",
+    "aVL",
+    "aVF"
+  ],
+  "disk_to_canonical": [
+    0,
+    1,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    2,
+    3,
+    4,
+    5
+  ],
+  "canonical_angles_rad": [
+    [
+      1.5707963705062866,
+      1.5707963705062866
+    ],
+    [
+      2.6179938316345215,
+      1.5707963705062866
+    ],
+    [
+      1.5707963705062866,
+      -0.1745329201221466
+    ],
+    [
+      1.5707963705062866,
+      0.1745329201221466
+    ],
+    [
+      1.6580628156661987,
+      0.2617993950843811
+    ],
+    [
+      1.7278759479522705,
+      0.5235987901687622
+    ],
+    [
+      1.675516128540039,
+      1.0471975803375244
+    ],
+    [
+      1.675516128540039,
+      1.5707963705062866
+    ],
+    [
+      2.6179938316345215,
+      -1.5707963705062866
+    ],
+    [
+      1.0471975803375244,
+      -1.5707963705062866
+    ],
+    [
+      1.0471975803375244,
+      1.5707963705062866
+    ],
+    [
+      3.1415927410125732,
+      1.5707963705062866
+    ]
+  ],
+  "checkpoint": {
+    "epoch": 100,
+    "best_validation_l1": 0.011078089515116345,
+    "state_keys": [
+      "best_val_l1",
+      "cuda_rng_state",
+      "epoch",
+      "loader_rng_state",
+      "model",
+      "optimizer",
+      "rng_state",
+      "scheduler"
+    ]
+  }
+}

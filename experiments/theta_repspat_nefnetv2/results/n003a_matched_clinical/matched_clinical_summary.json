@@ -1,0 +1,257 @@
+{
+  "protocol": {
+    "records_source": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/theta_repspat_nefnetv2/results/g001_c_eval/g001_c_results.json",
+    "records_source_sha256": "f74208851a10d72f65ff1407a76babefb650945090adffdb50dbd16d669fbcfe",
+    "n_records": 1000,
+    "n_patients_mapped": 975,
+    "records_without_patient_id": [
+      "MUSE_20191204_112830_59000",
+      "MUSE_20191204_113757_48000",
+      "MUSE_20191204_122835_81000",
+      "MUSE_20191204_124156_40000",
+      "MUSE_20191205_131122_53000",
+      "MUSE_20191205_172544_31000",
+      "MUSE_20191205_182508_03000"
+    ],
+    "input_leads": [
+      "I",
+      "II",
+      "V3"
+    ],
+    "query_leads": [
+      "V1",
+      "V2",
+      "V4",
+      "V5",
+      "V6"
+    ],
+    "calibration": "none",
+    "bootstrap_unit": "BDSPPatientID",
+    "n002_preprocessing": "observed-only min-max, inverted per record",
+    "n003a_preprocessing": "frozen [-4,4] mV clipped affine, inverted with x=8*y-4"
+  },
+  "checkpoints": {
+    "N002": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/theta_repspat_nefnetv2/results/panobench_3view_variablethird_geovt_seed123/model_final.pt",
+      "sha256": "9174e0fef5fc9e446299944802bbc72f39da8a3cd54b632ac13e900d3625624c"
+    },
+    "N003a": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/theta_repspat_nefnetv2/results/n003a_stage1_fixed_norm_seed123/model_best.pt",
+      "sha256": "76fa796e63099dcdbde4e5b4c8b52c8ce16afe3f25806ddc7cac488582b84a19"
+    }
+  },
+  "balanced_primary": {
+    "mae_mv": {
+      "n_patients": 975,
+      "n002_mean": 0.10498181595392207,
+      "n003a_mean": 0.07001420504306881,
+      "delta_n003a_minus_n002": -0.03496761091085327,
+      "delta_ci95": [
+        -0.03758503709924049,
+        -0.03236269240905173
+      ]
+    },
+    "pearson_r": {
+      "n_patients": 975,
+      "n002_mean": 0.4250855798337879,
+      "n003a_mean": 0.8364729166687507,
+      "delta_n003a_minus_n002": 0.41138733683496265,
+      "delta_ci95": [
+        0.3934845015303896,
+        0.4298164245351524
+      ]
+    },
+    "ssim": {
+      "n_patients": 975,
+      "n002_mean": 0.28408216764455047,
+      "n003a_mean": 0.5320648842926393,
+      "delta_n003a_minus_n002": 0.2479827166480889,
+      "delta_ci95": [
+        0.2333406317900283,
+        0.26307886263037344
+      ]
+    }
+  },
+  "all_record_point_estimates": {
+    "mae_mv": {
+      "n_records": 1000,
+      "n002_mean": 0.10491843988336623,
+      "n003a_mean": 0.07022762264851481,
+      "delta_n003a_minus_n002": -0.03469081723485142
+    },
+    "pearson_r": {
+      "n_records": 1000,
+      "n002_mean": 0.42386923887808803,
+      "n003a_mean": 0.8342999121942324,
+      "delta_n003a_minus_n002": 0.4104306733161444
+    },
+    "ssim": {
+      "n_records": 1000,
+      "n002_mean": 0.28504486534616386,
+      "n003a_mean": 0.530386967729125,
+      "delta_n003a_minus_n002": 0.2453421023829611
+    }
+  },
+  "per_lead": {
+    "V1": {
+      "mae_mv": {
+        "n_patients": 975,
+        "n002_mean": 0.10692446406644124,
+        "n003a_mean": 0.05705766876443074,
+        "delta_n003a_minus_n002": -0.0498667953020105,
+        "delta_ci95": [
+          -0.05313357479500178,
+          -0.04673506873447257
+        ]
+      },
+      "pearson_r": {
+        "n_patients": 975,
+        "n002_mean": -0.0018843690695193333,
+        "n003a_mean": 0.8101983778901461,
+        "delta_n003a_minus_n002": 0.8120827469596655,
+        "delta_ci95": [
+          0.7792032027520959,
+          0.8456130694642555
+        ]
+      },
+      "ssim": {
+        "n_patients": 975,
+        "n002_mean": 0.0945823985184926,
+        "n003a_mean": 0.4202258939319579,
+        "delta_n003a_minus_n002": 0.3256434954134654,
+        "delta_ci95": [
+          0.30308829011474947,
+          0.34821788102042783
+        ]
+      }
+    },
+    "V2": {
+      "mae_mv": {
+        "n_patients": 975,
+        "n002_mean": 0.1278309475713306,
+        "n003a_mean": 0.0877681253821804,
+        "delta_n003a_minus_n002": -0.04006282218915021,
+        "delta_ci95": [
+          -0.04452532830415692,
+          -0.035759835811785594
+        ]
+      },
+      "pearson_r": {
+        "n_patients": 975,
+        "n002_mean": 0.2428109129710505,
+        "n003a_mean": 0.7824013289556099,
+        "delta_n003a_minus_n002": 0.5395904159845594,
+        "delta_ci95": [
+          0.5054480747214537,
+          0.574375557725082
+        ]
+      },
+      "ssim": {
+        "n_patients": 975,
+        "n002_mean": 0.2341934120291211,
+        "n003a_mean": 0.5057563974694763,
+        "delta_n003a_minus_n002": 0.2715629854403552,
+        "delta_ci95": [
+          0.25120465393422997,
+          0.2918053242940712
+        ]
+      }
+    },
+    "V4": {
+      "mae_mv": {
+        "n_patients": 975,
+        "n002_mean": 0.11371563683526638,
+        "n003a_mean": 0.06792690117962849,
+        "delta_n003a_minus_n002": -0.04578873565563789,
+        "delta_ci95": [
+          -0.0499292620373651,
+          -0.04169035621405316
+        ]
+      },
+      "pearson_r": {
+        "n_patients": 975,
+        "n002_mean": 0.5028604358382937,
+        "n003a_mean": 0.8850080030990971,
+        "delta_n003a_minus_n002": 0.38214756726080346,
+        "delta_ci95": [
+          0.3536251998721964,
+          0.4103131513781686
+        ]
+      },
+      "ssim": {
+        "n_patients": 975,
+        "n002_mean": 0.31496357306553097,
+        "n003a_mean": 0.6288449512515832,
+        "delta_n003a_minus_n002": 0.31388137818605233,
+        "delta_ci95": [
+          0.2929566528552512,
+          0.33538686095304554
+        ]
+      }
+    },
+    "V5": {
+      "mae_mv": {
+        "n_patients": 975,
+        "n002_mean": 0.09646941193658061,
+        "n003a_mean": 0.07186979115423228,
+        "delta_n003a_minus_n002": -0.024599620782348335,
+        "delta_ci95": [
+          -0.028072521490403093,
+          -0.021188682072684487
+        ]
+      },
+      "pearson_r": {
+        "n_patients": 975,
+        "n002_mean": 0.6572836181276246,
+        "n003a_mean": 0.8540949456869729,
+        "delta_n003a_minus_n002": 0.1968113275593481,
+        "delta_ci95": [
+          0.17710376112102172,
+          0.21770762519047665
+        ]
+      },
+      "ssim": {
+        "n_patients": 975,
+        "n002_mean": 0.38201901112252906,
+        "n003a_mean": 0.5768734407389401,
+        "delta_n003a_minus_n002": 0.19485442961641097,
+        "delta_ci95": [
+          0.1746060038679271,
+          0.21554385526656172
+        ]
+      }
+    },
+    "V6": {
+      "mae_mv": {
+        "n_patients": 975,
+        "n002_mean": 0.07996861935999149,
+        "n003a_mean": 0.06544853873487211,
+        "delta_n003a_minus_n002": -0.014520080625119372,
+        "delta_ci95": [
+          -0.017486724364388192,
+          -0.011742937875601154
+        ]
+      },
+      "pearson_r": {
+        "n_patients": 975,
+        "n002_mean": 0.72435730130149,
+        "n003a_mean": 0.850661927711927,
+        "delta_n003a_minus_n002": 0.126304626410437,
+        "delta_ci95": [
+          0.10859069464535008,
+          0.14518175560417465
+        ]
+      },
+      "ssim": {
+        "n_patients": 975,
+        "n002_mean": 0.3946524434870788,
+        "n003a_mean": 0.5286237380712394,
+        "delta_n003a_minus_n002": 0.13397129458416057,
+        "delta_ci95": [
+          0.11392388501926085,
+          0.15507465111205046
+        ]
+      }
+    }
+  }
+}

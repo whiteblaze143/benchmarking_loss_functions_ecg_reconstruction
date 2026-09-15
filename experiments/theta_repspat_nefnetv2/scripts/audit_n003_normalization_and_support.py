@@ -23,6 +23,7 @@ import torch
 # Nef canonical order: 0:I, 1:II, 2:V1, 3:V2, 4:V3, 5:V4, 6:V5, 7:V6, 8:III, 9:aVR, 10:aVL, 11:aVF
 DISK_TO_CANONICAL = [0, 1, 6, 7, 8, 9, 10, 11, 2, 3, 4, 5]
 LEAD_NAMES = ["V1", "V2", "V3", "V4", "V5", "V6"]
+ALL_LEAD_NAMES = ["I", "II", "V1", "V2", "V3", "V4", "V5", "V6", "III", "aVR", "aVL", "aVF"]
 
 
 def run_audit(split: str, sample_limit: int | None = None) -> dict:
@@ -116,12 +117,57 @@ def run_audit(split: str, sample_limit: int | None = None) -> dict:
     return result
 
 
+def run_fixed_bounds_clipping_audit() -> dict:
+    """Measure physical saturation induced by the frozen [-4, 4] mV transform."""
+    files = sorted(Path("/home/mithunmanivannan/data/ptb_xl/tensors/train").glob("*.pt"))
+    per_lead = {name: {"samples": 0, "clipped": 0, "absolute_distortion_mv": 0.0}
+                for name in ALL_LEAD_NAMES}
+    records_with_clipping = 0
+    for index, filepath in enumerate(files):
+        data = torch.load(filepath, map_location="cpu", weights_only=True)
+        if isinstance(data, dict):
+            data = data["ecg"]
+        data = data[DISK_TO_CANONICAL].float()
+        clipped = data.clamp(-4.0, 4.0)
+        mask = data.ne(clipped)
+        records_with_clipping += int(mask.any())
+        distortion = (data - clipped).abs()
+        for lead_index, lead_name in enumerate(ALL_LEAD_NAMES):
+            stats = per_lead[lead_name]
+            stats["samples"] += data.shape[1]
+            stats["clipped"] += int(mask[lead_index].sum())
+            stats["absolute_distortion_mv"] += float(distortion[lead_index].sum())
+        if (index + 1) % 5000 == 0 or index + 1 == len(files):
+            print(f"  Fixed-bound audit: {index + 1}/{len(files)} train records")
+    total_samples = sum(item["samples"] for item in per_lead.values())
+    total_clipped = sum(item["clipped"] for item in per_lead.values())
+    total_distortion = sum(item["absolute_distortion_mv"] for item in per_lead.values())
+    result = {
+        "bounds_mv": [-4.0, 4.0],
+        "n_records": len(files),
+        "p_clip": total_clipped / total_samples,
+        "p_record_any_clip": records_with_clipping / len(files),
+        "mean_absolute_clipping_distortion_mv": total_distortion / total_samples,
+        "sigmoid_support_mismatch": 0.0,
+        "per_lead": {
+            name: {
+                "p_clip": item["clipped"] / item["samples"],
+                "mean_absolute_clipping_distortion_mv": item["absolute_distortion_mv"] / item["samples"],
+            }
+            for name, item in per_lead.items()
+        },
+    }
+    print(json.dumps(result, indent=2))
+    return result
+
+
 def main():
     results = {}
     for split in ["train", "val"]:
         results[split] = run_audit(split)
+    results["fixed_train_bounds_clipping"] = run_fixed_bounds_clipping_audit()
         
-    out_path = Path("experiments/theta_repspat_nefnetv2/results/audit_normalization_support.json")
+    out_path = Path(__file__).resolve().parents[1] / "results/audit_normalization_support.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(results, f, indent=2)

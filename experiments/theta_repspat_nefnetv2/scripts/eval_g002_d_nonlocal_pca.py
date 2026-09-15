@@ -171,7 +171,8 @@ def evaluate_record_geometry(
 
     record_results = {"var_exp_pca": var_exp.tolist()}
 
-    for arm_name in ["R0", "R2", "R3", "R2_PCA3"]:
+    eval_arms = [a for a in arms.keys() if a != "R1"]
+    for arm_name in eval_arms:
         arm_res = {}
         D_X = D_dict[arm_name]
         K_tilde_X = K_tilde_dict[arm_name]

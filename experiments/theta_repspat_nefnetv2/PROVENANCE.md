@@ -212,40 +212,67 @@ CLINICAL_TRANSFER        = PARTIAL
 R2_VS_R3                 = STRONG PASS (Kors projection materially degrades Nef panorama alignment)
 R2_VS_R0                 = MIXED (R2 lower unaligned error; R0 better scale-aligned stress, rank, CKA)
 G002                     = MIXED
-FINAL REPRESENTATION FREEZE = NO (N002 not ready for confirmatory freeze)
-N003a                    = LAUNCHED (PTB-XL Any-Pairs pretraining)
+G002D_NONLOCAL_EXCLUSION = 100ms (CONFIRMED REAL DEFICIT: AK(R0)=0.9224 > AK(R2)=0.8876)
+GLOBAL_PCA3_DIAGNOSTIC   = CONFIRMED (AK(Global PCA3)=0.8837, Delta vs R2=+0.0038, Kors drops -0.0962)
+FINAL REPRESENTATION FREEZE = NO (N002 closed as valuable negative/ablation baseline)
+PHASE1_N002_EXPLORATORY  = COMPLETE (B=500 on LUDB & ISP: R2 tracks R1 rejection, R3 degrades)
+N003a_VALID              = PENDING (Audits 1-3 complete, pilot preserved at epoch 63, clean launch staged)
 N003                     = JUSTIFIED (multi-dataset Any-Pairs + PanoBench geometry)
 ```
 
-### Pre-Registered Expectations for `PHASE1_N002_EXPLORATORY`
-- Current running job (`repspat_phase1`) is labeled `PHASE1_N002_EXPLORATORY` (evaluated with $B=500$, exploratory baseline rather than prespecified confirmatory $B=1000$).
-- **Pre-registered qualitative expectation**:
-  - $R2$ may improve some global recurrence-distribution behavior because it retains more of the full lead field.
-  - However, its CAHC segmentation and local graph structure are expected to be less stable than $R0$ in cohorts whose septal morphology matters, because $J_{10}^{R2} < J_{10}^{R0}$ ($0.2909 < 0.3939$) and $\text{ARI}_{\text{CAHC}}^{R2} < \text{ARI}_{\text{CAHC}}^{R0}$ ($0.6934 < 0.7921$).
+---
+
+## Phase 1 Exploratory Baseline Results (`PHASE1_N002_EXPLORATORY`)
+
+Evaluated with $B=500$ permutations across LUDB and ISP (`results/theta_repspat_eval/theta_repspat_phase1_results_summary.csv`):
+- **ISP** (16 records):
+  * $R1$ (Oracle 8-lead): Rejection Rate = $0.9402 \pm 0.0459$, Mean MMD = $0.00109$, Cliques = $5.50$, Density = $0.0598$
+  * $R0$ (Kors VCG): Rejection Rate = $0.9189 \pm 0.0599$, Mean MMD = $0.00229$, Cliques = $5.31$, Density = $0.0811$
+  * $R2$ (Nef 8-lead): Rejection Rate = $0.9423 \pm 0.0511$, Mean MMD = $0.00126$, Cliques = $5.69$, Density = $0.0577$
+  * $R3$ (Kors on Nef): Rejection Rate = $0.9028 \pm 0.0988$, Mean MMD = $0.00283$, Cliques = $5.38$, Density = $0.0972$
+- **LUDB** (16 records):
+  * $R1$ (Oracle 8-lead): Rejection Rate = $0.9074 \pm 0.0640$, Mean MMD = $2.875$, Cliques = $5.81$, Density = $0.0926$
+  * $R0$ (Kors VCG): Rejection Rate = $0.8874 \pm 0.0569$, Mean MMD = $6.104$, Cliques = $5.56$, Density = $0.1126$
+  * $R2$ (Nef 8-lead): Rejection Rate = $0.8918 \pm 0.0823$, Mean MMD = $3.577$, Cliques = $5.50$, Density = $0.1082$
+  * $R3$ (Kors on Nef): Rejection Rate = $0.8826 \pm 0.0890$, Mean MMD = $7.447$, Cliques = $5.50$, Density = $0.1174$
 
 ---
 
-## N003 / N003a Specification & Acceptance Protocol
+## Hard Implementation Audits & Decisions for N003a
 
-### 1. Naming & Lineage Separation
-- **`N003a = PTBXL Any-Pairs clinical pretraining`**: Pure clinical Any-Pairs pretraining on 17,418 records of PTB-XL.
-- **`N003 = multi-dataset Any-Pairs + PanoBench geometry`**: Multi-dataset clinical Any-Pairs (PTB-XL, Zhejiang, CPSC2018) followed by Stage II PanoBench calibration.
+### 1. Author Tree Immutability Audit
+- Upstream external commit: `external/NEFNET-v2-main`.
+- Upstream aggregate SHA-256: `ad8baf335a16ea7f363e52cf91b3e0c86f641cda4a8c234721b532633460aaad`.
+- Finding: `author_code/nefnet_v2/codes/network/nefnet_plus.py` had a 2-line patch (`query_theta.unsqueeze(1)`).
+- Action taken: Restored byte-for-byte from `external/NEFNET-v2-main`.
+- Verification: `diff -qr -x "__pycache__"` is clean (exit code 0); hash `ad8baf335a16ea7f363e52cf91b3e0c86f641cda4a8c234721b532633460aaad` matches.
+- Shape adapter relocated to caller/wrapper in `src/theta_repspat/`.
 
-### 2. Stage I Verified Invariants
-- `super_mode='pretrain'` verified in GeoVT (`nefnet_plus.layer`).
-- Dynamic runtime variable cardinality $L_{\text{input}} = 2 + k$ ($k \in \{1, 2, 3\}$), with anchors Lead I (0) and Lead II (1).
-- Runtime dynamic slot dimension $L = x.\text{shape}[1]$ (no fixed module lists).
-- Prospective deployment-consistent normalization:
-  $$m_{\text{obs}} = \min_{j \in \mathcal{O}, t} x_j(t), \quad M_{\text{obs}} = \max_{j \in \mathcal{O}, t} x_j(t), \quad \tilde{x}_q = \frac{x_q - m_{\text{obs}}}{M_{\text{obs}} - m_{\text{obs}}}$$
-- Strict cohort separation:
-  $$\mathcal{D}_{\text{N003a train}} \cap \mathcal{D}_{\text{repSpat eval}} = \varnothing$$
-  LUDB, ISP, RDB, and HEEDB Emory strictly excluded from pretraining.
+### 2. PTB-XL Canonical Lead Ordering & Independent Set Audit
+- Finding: Disk tensors follow WFDB order `[I, II, III, aVR, aVL, aVF, V1..V6]` ($III = II - I$ at index 2, error 0.00013 mV).
+- Nef-Net expects canonical order `[I, II, V1..V6, III, aVR..aVF]`.
+- Action taken: Enforce `DISK_TO_CANONICAL = [0, 1, 6, 7, 8, 9, 10, 11, 2, 3, 4, 5]`.
+- Independent set contract: $\mathcal{O} = \{I, II\} \cup \text{sample}_k\{V1, \ldots, V6\}$ with $k \in \{1, 2, 3\}$, and $q \in \{V1, \ldots, V6\} \setminus \mathcal{O}$.
+- Linearly dependent limb leads $\{III, aVR, aVL, aVF\}$ are never sampled as independent inputs or queries.
 
-### 3. Acceptance Protocol for Candidate Freeze
-The finalized representation candidate must be evaluated paired against $N002$ and $R0$ on exactly the same frozen external records:
-$$\text{clinical zero-shot V1/V2/V4/V5/V6}, \quad \rho_D^{\rm nonlocal}, \quad J_{10}, \quad \text{ARI}_{\rm CAHC}, \quad A_K^{\rm nonlocal}, \quad \epsilon_D^{\rm aligned}, \quad \text{dense PanoBench geometry}$$
-**Target**:
-$$\boxed{\text{retain N002's panoramic capability} + \text{recover R0-level clinical local/kernel geometry}}$$
+### 3. Normalization & Decoder Sigmoid Support Audit (19,601 Records)
+- Empirical findings:
+  * Train: $p_{\rm OOR} = 1.2429\%$, $L_{\rm floor} = 0.00267$.
+  * Val: $p_{\rm OOR} = 1.2383\%$, $L_{\rm floor} = 0.00275$.
+  * On $V2$: $p_{\rm OOR} = 2.08\%$, $L_{\rm floor} = 0.00506$.
+- Unchanged author decoder ends with $\sigma(z/3) \in (0, 1)$. Observed-only normalization causes target waveforms to escape $[0, 1]$, creating an irreducible error floor that caused training loss to plateau around ~0.033.
+- Pilot run preserved: Halted at epoch 63 and archived to `results/pilot_n003a_stage1_observed_norm/`.
+- Remediation contract: Use fixed training-set amplitude bounds derived from PTB-XL train quantiles ($99.98\%$ in $[-3.5, +3.5]$ mV):
+  $$L_{\rm train} = -4.0\text{ mV}, \qquad U_{\rm train} = +4.0\text{ mV}$$
+  $$\tilde{x} = \text{clip}\left(\frac{x - L_{\rm train}}{U_{\rm train} - L_{\rm train}}, 10^{-4}, 1 - 10^{-4}\right)$$
+  Guarantees zero query leakage, perfect sigmoid support compatibility, and $L_{\rm floor} = 0.0000$.
+
+### 4. Model Selection & Stage II Pre-Registration
+- **N003a Checkpoint Selection**: Balanced validation mean across all held-out precordial queries:
+  $$L_{\rm val} = \frac{1}{6} \sum_{q \in \{V1,\dots,V6\}} L_{1,q}$$
+  on held-out PTB-XL val ($N=2,183$). LUDB, ISP, RDB, Emory completely invisible.
+- **Stage-II 3-Checkpoint Protocol**:
+  Preserve $C_0$ (N003a pre-PanoBench), $C_{\rm best}$ (best PanoBench val), $C_{\rm final}$ (final Stage II), evaluated on PTB-XL val ($V1/V2/V4/V5/V6$) and held-out PanoBench ($\rho_D^{44}, A_K^{44}, \epsilon_D^{44,\rm aligned}$).
 
 
 

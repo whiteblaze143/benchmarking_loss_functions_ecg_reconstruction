@@ -20,6 +20,7 @@ data/
 experiment_queue/**/logs/
 experiment_queue/**/queue_manager.log
 experiment_queue/**/queue_state.json
+experiments/theta_repspat_nefnetv2/results/n003a_followup_queue/
 results/factorial_v2/smoke/
 results/**/per_record/
 results/**/echonext_per_record/

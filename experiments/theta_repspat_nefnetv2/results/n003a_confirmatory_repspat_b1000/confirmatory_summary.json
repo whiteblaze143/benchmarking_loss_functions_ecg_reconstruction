@@ -1,0 +1,185 @@
+{
+  "protocol": {
+    "B": 1000,
+    "block_mode": "attribute_kmeans",
+    "gamma": 1.0,
+    "m_ms_grid": [
+      32,
+      64,
+      128
+    ],
+    "G_grid": [
+      4,
+      6,
+      8
+    ],
+    "global_BH_alpha": 0.05,
+    "purity_rule": "exact_phase_and_beat_membership",
+    "record_ids": {
+      "LUDB": [
+        "1",
+        "10",
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106",
+        "107",
+        "108",
+        "109",
+        "11",
+        "110",
+        "111",
+        "112"
+      ],
+      "ISP": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+      ]
+    }
+  },
+  "checkpoints": {
+    "N002": "9174e0fef5fc9e446299944802bbc72f39da8a3cd54b632ac13e900d3625624c",
+    "N003a": "76fa796e63099dcdbde4e5b4c8b52c8ce16afe3f25806ddc7cac488582b84a19"
+  },
+  "results": [
+    {
+      "dataset": "ISP",
+      "arm": "N002",
+      "n_records": 16,
+      "n_eligible_patients": 16,
+      "n_recurrence_pairs": 63,
+      "recurrence_rejections": 2,
+      "pooled_recurrence_rejection_rate": 0.031746031746031744,
+      "patient_mean_recurrence_rejection_rate": 0.041666666666666664,
+      "n_positive_pairs": 2,
+      "positive_rejections": 2,
+      "positive_control_power": 1.0
+    },
+    {
+      "dataset": "ISP",
+      "arm": "N003a",
+      "n_records": 16,
+      "n_eligible_patients": 16,
+      "n_recurrence_pairs": 85,
+      "recurrence_rejections": 3,
+      "pooled_recurrence_rejection_rate": 0.03529411764705882,
+      "patient_mean_recurrence_rejection_rate": 0.03333333333333333,
+      "n_positive_pairs": 0,
+      "positive_rejections": 0,
+      "positive_control_power": null
+    },
+    {
+      "dataset": "ISP",
+      "arm": "R0_Kors",
+      "n_records": 16,
+      "n_eligible_patients": 16,
+      "n_recurrence_pairs": 82,
+      "recurrence_rejections": 3,
+      "pooled_recurrence_rejection_rate": 0.036585365853658534,
+      "patient_mean_recurrence_rejection_rate": 0.03854166666666667,
+      "n_positive_pairs": 0,
+      "positive_rejections": 0,
+      "positive_control_power": null
+    },
+    {
+      "dataset": "ISP",
+      "arm": "R1_Oracle",
+      "n_records": 16,
+      "n_eligible_patients": 16,
+      "n_recurrence_pairs": 61,
+      "recurrence_rejections": 1,
+      "pooled_recurrence_rejection_rate": 0.01639344262295082,
+      "patient_mean_recurrence_rejection_rate": 0.0125,
+      "n_positive_pairs": 0,
+      "positive_rejections": 0,
+      "positive_control_power": null
+    },
+    {
+      "dataset": "LUDB",
+      "arm": "N002",
+      "n_records": 16,
+      "n_eligible_patients": 12,
+      "n_recurrence_pairs": 34,
+      "recurrence_rejections": 2,
+      "pooled_recurrence_rejection_rate": 0.058823529411764705,
+      "patient_mean_recurrence_rejection_rate": 0.09722222222222222,
+      "n_positive_pairs": 1,
+      "positive_rejections": 0,
+      "positive_control_power": 0.0
+    },
+    {
+      "dataset": "LUDB",
+      "arm": "N003a",
+      "n_records": 16,
+      "n_eligible_patients": 13,
+      "n_recurrence_pairs": 23,
+      "recurrence_rejections": 0,
+      "pooled_recurrence_rejection_rate": 0.0,
+      "patient_mean_recurrence_rejection_rate": 0.0,
+      "n_positive_pairs": 0,
+      "positive_rejections": 0,
+      "positive_control_power": null
+    },
+    {
+      "dataset": "LUDB",
+      "arm": "R0_Kors",
+      "n_records": 16,
+      "n_eligible_patients": 13,
+      "n_recurrence_pairs": 21,
+      "recurrence_rejections": 2,
+      "pooled_recurrence_rejection_rate": 0.09523809523809523,
+      "patient_mean_recurrence_rejection_rate": 0.15384615384615385,
+      "n_positive_pairs": 0,
+      "positive_rejections": 0,
+      "positive_control_power": null
+    },
+    {
+      "dataset": "LUDB",
+      "arm": "R1_Oracle",
+      "n_records": 16,
+      "n_eligible_patients": 14,
+      "n_recurrence_pairs": 29,
+      "recurrence_rejections": 4,
+      "pooled_recurrence_rejection_rate": 0.13793103448275862,
+      "patient_mean_recurrence_rejection_rate": 0.22619047619047622,
+      "n_positive_pairs": 0,
+      "positive_rejections": 0,
+      "positive_control_power": null
+    }
+  ],
+  "paired_recurrence_deltas": {
+    "N003a_minus_N002": {
+      "n_paired_patients": 28,
+      "mean_delta": -0.04642857142857142,
+      "ci95": [
+        -0.1369047619047619,
+        0.021428571428571432
+      ]
+    },
+    "N003a_minus_R0": {
+      "n_paired_patients": 28,
+      "mean_delta": -0.0744047619047619,
+      "ci95": [
+        -0.1886904761904762,
+        0.015476190476190478
+      ]
+    }
+  }
+}

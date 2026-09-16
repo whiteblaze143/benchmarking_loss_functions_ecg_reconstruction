@@ -7,6 +7,7 @@ import argparse
 import copy
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -130,19 +131,33 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-root", type=Path, default=ROOT / "refine-logs/a0_nef_hybrid_stage1")
     parser.add_argument("--identity-only", action="store_true")
+    parser.add_argument(
+        "--exec-cell",
+        choices=[
+            "H0_A0_BASE_CONTINUED",
+            "H1_A0_PLUS_FROZEN_AEVE_E15",
+            "H2_A0_PLUS_FROZEN_FULL_E13",
+        ],
+        help="Replace this process with one training cell; avoids retaining orchestrator RAM.",
+    )
     args = parser.parse_args()
     verify_inputs()
+    cells = (
+        ("H0_A0_BASE_CONTINUED", "none", None),
+        ("H1_A0_PLUS_FROZEN_AEVE_E15", "AE_VE", AEVE),
+        ("H2_A0_PLUS_FROZEN_FULL_E13", "FULL", FULL),
+    )
+    if args.exec_cell:
+        selected = next(row for row in cells if row[0] == args.exec_cell)
+        cmd = command(*selected, args.output_root)
+        print("EXEC_CELL " + json.dumps(cmd), flush=True)
+        os.execv(cmd[0], cmd)
     gate = identity_gate()
     args.output_root.mkdir(parents=True, exist_ok=True)
     (args.output_root / "identity_gate.json").write_text(json.dumps(gate, indent=2, sort_keys=True) + "\n")
     print(json.dumps(gate, sort_keys=True), flush=True)
     if args.identity_only:
         return
-    cells = (
-        ("H0_A0_BASE_CONTINUED", "none", None),
-        ("H1_A0_PLUS_FROZEN_AEVE_E15", "AE_VE", AEVE),
-        ("H2_A0_PLUS_FROZEN_FULL_E13", "FULL", FULL),
-    )
     for cell, mode, checkpoint in cells:
         cmd = command(cell, mode, checkpoint, args.output_root)
         print("LAUNCH_CELL " + json.dumps(cmd), flush=True)

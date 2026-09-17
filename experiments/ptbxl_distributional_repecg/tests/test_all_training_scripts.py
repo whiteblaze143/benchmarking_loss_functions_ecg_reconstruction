@@ -1,37 +1,41 @@
 from __future__ import annotations
 
 import importlib.util
+import re
 from pathlib import Path
-import sys
-import torch
+
+from repecg.common.variants import get_variants_for_paper
+
 
 REPO = Path("/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction")
-SRC = REPO / "experiments/ptbxl_distributional_repecg/src"
-SCRIPTS = REPO / "experiments/ptbxl_distributional_repecg/scripts"
-
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
+EXPERIMENT = REPO / "experiments/ptbxl_distributional_repecg"
+SCRIPTS = EXPERIMENT / "scripts"
 
 
-def test_import_all_training_scripts():
-    for num in range(1, 16):
-        paper_dir = SCRIPTS / f"paper{num:02d}"
-        train_script = paper_dir / f"train_paper{num:02d}_shared_grid.py"
-        assert train_script.exists(), f"Missing script: {train_script}"
-        
-        # Load module dynamically to verify syntax and imports
-        spec = importlib.util.spec_from_file_location(f"train_paper{num:02d}", train_script)
+def test_all_training_scripts_import() -> None:
+    for paper_id in range(1, 16):
+        train_script = SCRIPTS / f"paper{paper_id:02d}/train_paper{paper_id:02d}_shared_grid.py"
+        assert train_script.exists()
+        spec = importlib.util.spec_from_file_location(f"train_paper{paper_id:02d}", train_script)
         assert spec is not None and spec.loader is not None
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
-        
-        # Verify required attributes
-        assert hasattr(mod, "VARIANTS"), f"{train_script} missing VARIANTS"
-        assert hasattr(mod, "LEARNING_RATES"), f"{train_script} missing LEARNING_RATES"
-        assert hasattr(mod, "_train_variant"), f"{train_script} missing _train_variant"
-        assert hasattr(mod, "main"), f"{train_script} missing main"
-        print(f"[VERIFIED SCRIPT] {train_script.name}: module successfully loaded and inspected")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        for attribute in ("LEARNING_RATES", "WEIGHT_DECAYS", "_train_variant", "main"):
+            assert hasattr(module, attribute), (train_script, attribute)
 
 
-if __name__ == "__main__":
-    test_import_all_training_scripts()
+def test_runner_variants_exactly_match_registry() -> None:
+    for paper_id in range(1, 16):
+        runner = SCRIPTS / f"paper{paper_id:02d}/run_paper{paper_id:02d}_grid.sh"
+        text = runner.read_text()
+        match = re.search(r'for variant in ([^;]+); do', text)
+        assert match is not None, runner
+        observed = re.findall(r'"([^"]+)"', match.group(1))
+        assert observed == list(get_variants_for_paper(paper_id)), (paper_id, observed)
+        assert 'cells/.done_${variant}' in text
+
+
+def test_strict_shared_grid_tools_exist() -> None:
+    assert (SCRIPTS / "aggregate_grid.py").is_file()
+    assert (SCRIPTS / "evaluate_grid.py").is_file()
+    assert (SCRIPTS / "run_smoke_master.sh").is_file()

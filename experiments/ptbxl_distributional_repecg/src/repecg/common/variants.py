@@ -18,7 +18,7 @@ PAPER01_VARIANTS = {
 PAPER02_VARIANTS = {
     "full": ExperimentVariant(),
     "linear_probe": ExperimentVariant(head="linear"),
-    "linear_kernel": ExperimentVariant(mechanism="linear_kernel"),
+    "linear_kernel": ExperimentVariant(representation="linear"),
     "no_circular": ExperimentVariant(mechanism="no_circular")
 }
 

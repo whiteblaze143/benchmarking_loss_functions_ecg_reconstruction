@@ -1,84 +1,74 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo="/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction"
-python="/home/mithunmanivannan/.venv/bin/python"
+repo=/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction
+experiment=$repo/experiments/ptbxl_distributional_repecg
+python=/home/mithunmanivannan/.venv/bin/python
+representations=$experiment/outputs/paper02_kernel_mean/development_representations
+smoke_root=$experiment/outputs/smoke_test
+export PYTHONPATH="$experiment/src"
 
-echo "================================================================="
-echo " Starting Full End-to-End Smoke Test Queue (All 15 Pipelines)"
-echo " Covering: Multi-Variant Training -> Aggregation -> Universal Eval"
-echo "================================================================="
+if [[ ! -f "$representations/representation_train.npz" || ! -f "$representations/representation_val.npz" ]]; then
+    echo "Development representations are incomplete: $representations" >&2
+    exit 1
+fi
 
-for i in {1..15}; do
-    paper_id=$(printf "%02d" $i)
-    echo ""
-    echo "-----------------------------------------------------------------"
-    echo " [1/3] Smoke Testing Pipeline: Paper $paper_id"
-    echo "-----------------------------------------------------------------"
-    
-    train_script="$repo/experiments/ptbxl_distributional_repecg/scripts/paper$paper_id/train_paper${paper_id}_shared_grid.py"
-    run_script="$repo/experiments/ptbxl_distributional_repecg/scripts/paper$paper_id/run_paper${paper_id}_grid.sh"
-    agg_script="$repo/experiments/ptbxl_distributional_repecg/scripts/paper$paper_id/aggregate_paper${paper_id}_grid.py"
-    eval_script="$repo/experiments/ptbxl_distributional_repecg/scripts/paper$paper_id/evaluate_paper${paper_id}_ood.py"
-    
-    if [ ! -f "$run_script" ]; then
-        echo "Missing $run_script, skipping."
-        continue
+for number in $(seq 1 15); do
+    paper_id=$(printf '%02d' "$number")
+    train_script=$experiment/scripts/paper$paper_id/train_paper${paper_id}_shared_grid.py
+    output=$smoke_root/paper$paper_id
+    if [[ ! -f "$train_script" ]]; then
+        echo "Missing trainer: $train_script" >&2
+        exit 1
     fi
-    
-    rep_dir=$(grep "representations=" "$run_script" | head -n 1 | cut -d'=' -f2)
-    rep_dir=$(eval echo "$rep_dir")
-    
-    out_dir="$repo/experiments/ptbxl_distributional_repecg/outputs/smoke_test/paper$paper_id"
-    mkdir -p "$out_dir"
-    
-    if [ ! -f "$rep_dir/manifest.json" ]; then
-        echo "Representations not found at $rep_dir, skipping Paper $paper_id."
-        continue
-    fi
-    
-    # 1. Train 2 variants (e.g. full and the first ablation)
-    echo ">> [Step A] Training variants (1-2 epochs dry run)..."
-    for variant in "full" "linear"; do
-        echo "   Training variant: $variant"
+    mapfile -t variants < <(
+        "$python" - "$number" <<'PY'
+import sys
+from repecg.common.variants import get_variants_for_paper
+print(*get_variants_for_paper(int(sys.argv[1])), sep="\n")
+PY
+    )
+    echo "=== Paper $paper_id smoke: ${variants[*]} ==="
+    for variant in "${variants[@]}"; do
         CUDA_VISIBLE_DEVICES=0 "$python" -u "$train_script" \
-            --representations "$rep_dir" \
-            --output "$out_dir" \
+            --representations "$representations" \
+            --output "$output" \
             --batch 2048 \
-            --max-epochs 2 \
+            --max-epochs 1 \
             --patience 1 \
             --seed 42 \
-            --variant "$variant" || {
-                # If linear is not valid for this paper, fallback to full
-                echo "   Note: variant $variant might not exist for paper $paper_id, continuing."
-            }
+            --variant "$variant"
     done
-    
-    # 2. Aggregation step
-    echo ">> [Step B] Aggregating hyperparameter cells..."
-    if [ -f "$agg_script" ]; then
-        "$python" "$agg_script" \
-            --cells "$out_dir/cells" \
-            --output "$out_dir" \
-            --seed 42 || { echo "Paper $paper_id aggregation FAILED!"; exit 1; }
-        echo "   Aggregation successful."
-    fi
-    
-    # 3. Universal Protocol Evaluation step
-    echo ">> [Step C] Universal Battery Evaluation..."
-    if [ -f "$eval_script" ]; then
-        CUDA_VISIBLE_DEVICES=0 "$python" "$eval_script" \
-            --training "$out_dir" \
-            --representations "$rep_dir" \
-            --output "$out_dir/ood_evaluation" \
-            --variant "full" || { echo "Paper $paper_id evaluation FAILED!"; exit 1; }
-        echo "   Universal evaluation successful."
-    fi
-    
-    echo ">>> Paper $paper_id FULL PIPELINE smoke test PASSED! <<<"
+    "$python" "$experiment/scripts/aggregate_grid.py" \
+        --paper-id "$number" \
+        --cells "$output/cells" \
+        --output "$output" \
+        --seed 42
+    for variant in "${variants[@]}"; do
+        CUDA_VISIBLE_DEVICES=0 "$python" "$experiment/scripts/evaluate_grid.py" \
+            --paper-id "$number" \
+            --variant "$variant" \
+            --representations "$representations" \
+            --training "$output" \
+            --output "$output/development_evaluation"
+    done
+    "$python" - "$number" "$output" <<'PY'
+import json
+import sys
+from pathlib import Path
+from repecg.common.variants import get_variants_for_paper
+
+paper_id = int(sys.argv[1])
+output = Path(sys.argv[2])
+variants = set(get_variants_for_paper(paper_id))
+manifest = json.loads((output / "manifest.json").read_text())
+assert set(manifest["variants"]) == variants
+assert manifest["cells"] == 9 * len(variants)
+for variant in variants:
+    assert (output / f"{variant}_best.pt").is_file()
+    assert (output / "development_evaluation" / f"metrics_{variant}.json").is_file()
+print(f"Paper {paper_id:02d}: verified {len(variants)} variants, {manifest['cells']} cells, all evaluations")
+PY
 done
 
-echo ""
-echo "================================================================="
-echo " All 15 Paper Pipelines Successfully Verified End-to-End!"
-echo "================================================================="
+echo "All 15 paper smoke pipelines passed strict training, aggregation, and evaluation checks."

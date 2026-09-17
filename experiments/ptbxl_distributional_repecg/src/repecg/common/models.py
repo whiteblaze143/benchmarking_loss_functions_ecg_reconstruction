@@ -220,13 +220,14 @@ class HankelDynamicsModel(nn.Module):
             H1 = H[:, :, :-1]
             H2 = H[:, :, 1:]
         H1T = H1.transpose(1, 2)
-        C11 = torch.bmm(H1, H1T)
-        reg = 1e-4 * torch.eye(C11.shape[1], device=x.device, dtype=x.dtype).unsqueeze(0)
-        C11_reg = C11 + reg
-        C21 = torch.bmm(H2, H1T)
+        C11 = torch.bmm(H1, H1T).float()
+        C21 = torch.bmm(H2, H1T).float()
+        scale = C11.diagonal(dim1=-2, dim2=-1).mean(dim=-1).clamp_min(1e-6)
+        identity = torch.eye(C11.shape[1], device=x.device, dtype=torch.float32).unsqueeze(0)
+        C11_reg = C11 + (1e-4 * scale)[:, None, None] * identity
         
         # torch.linalg.solve doesn't support bfloat16 on CUDA
-        A = torch.linalg.solve(C11_reg.float(), C21.float()).to(x.dtype)
+        A = torch.linalg.solve(C11_reg, C21).to(x.dtype)
         
         return self.head(A.flatten(1))
 
@@ -258,15 +259,13 @@ class KoopmanOperatorModel(nn.Module):
         if self.variant.head == "linear":
             return self.head(phase_features.mean(dim=1))
             
-        if self.variant.mechanism == "occupancy_only":
-            idx = torch.randperm(phase_features.shape[1], device=phase_features.device)
-            phase_features = phase_features[:, idx, :]
-            
         z = self.lift(phase_features)
         z_mean = z.mean(dim=1)
-        
-        z_pred = torch.matmul(z[:, :-1], self.koopman_k)
-        dyn_residual = (z[:, 1:] - z_pred).mean(dim=1)
+        if self.variant.mechanism == "occupancy_only":
+            dyn_residual = torch.zeros_like(z_mean)
+        else:
+            z_pred = torch.matmul(z[:, :-1], self.koopman_k)
+            dyn_residual = (z[:, 1:] - z_pred).mean(dim=1)
         return self.head(torch.cat([z_mean, dyn_residual], dim=-1))
 
     def forward_koopman_loss(self, phase_features: torch.Tensor) -> torch.Tensor:
@@ -274,8 +273,7 @@ class KoopmanOperatorModel(nn.Module):
             return torch.tensor(0.0, device=phase_features.device, requires_grad=True)
             
         if self.variant.mechanism == "occupancy_only":
-            idx = torch.randperm(phase_features.shape[1], device=phase_features.device)
-            phase_features = phase_features[:, idx, :]
+            return torch.zeros((), device=phase_features.device, requires_grad=True)
             
         z = self.lift(phase_features)
         z_pred = torch.matmul(z[:, :-1], self.koopman_k)

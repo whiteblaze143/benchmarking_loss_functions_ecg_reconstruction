@@ -8,7 +8,7 @@ ood_representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper0
 output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper01_distributional_recurrence
 for variant in "full" "linear_probe" "mean_distance_recurrence"; do
     echo "Running variant: $variant"
-    if [ -f "$output/cells/variant_${variant}/done" ]; then
+    if [ -f "$output/cells/.done_${variant}" ]; then
         echo "Variant $variant already completed. Skipping."
         continue
     fi
@@ -20,7 +20,7 @@ for variant in "full" "linear_probe" "mean_distance_recurrence"; do
     --patience 10 \
     --seed 42 \
         --variant "$variant"
-    touch "$output/cells/variant_${variant}/done"
+    touch "$output/cells/.done_${variant}"
 done
 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper01/aggregate_paper01_grid.py" \
     --cells "$output/cells" \

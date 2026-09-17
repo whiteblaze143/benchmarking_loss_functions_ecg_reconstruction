@@ -1,0 +1,71 @@
+program: ptbxl_distributional_repecg
+data:
+  root: data/ptb_xl
+  records_dir: records500
+  metadata: ptbxl_database.csv
+  statements: scp_statements.csv
+  sampling_hz: 500
+  duration_seconds: 10
+splits:
+  development_train: [1, 2, 3, 4, 5, 6, 7]
+  development_select: [8]
+  final_train: [1, 2, 3, 4, 5, 6, 7, 8]
+  final_select: [9]
+  locked_test: [10]
+labels:
+  task: superdiagnostic
+  classes: [NORM, MI, STTC, CD, HYP]
+  use_clinical_metadata: false
+signal:
+  canonical_leads: [I, II, III, aVR, aVL, aVF, V1, V2, V3, V4, V5, V6]
+  independent_leads: [I, II, V1, V2, V3, V4, V5, V6]
+  filter:
+    kind: butterworth
+    order: 4
+    low_hz: 0.5
+    high_hz: 40.0
+    zero_phase: true
+  scaling: train_global_per_lead
+beats:
+  detector: wfdb_xqrs
+  primary_lead: II
+  fallback_leads: [I, V2, V5]
+  min_rr_ms: 300
+  max_rr_ms: 2000
+  min_full_cycles: 2
+  phase_samples: 256
+  interpolation: pchip
+  phase_cells: 16
+kernel:
+  kind: imq
+  whiten_train_only: true
+  primary_c2: 1.0
+  scale_sensitivity: [0.5, 1.0, 2.0, median]
+  nystrom_landmarks: 128
+  nystrom_landmarks_fallback: 256
+  landmark_fit_observations: 500000
+  audit_pairs: 1000
+  min_spearman: 0.95
+  max_median_relative_error: 0.10
+training:
+  optimizer: adamw
+  max_epochs: 100
+  early_stopping_patience: 10
+  selection_metric: validation_macro_auroc
+  scheduler: cosine
+  gradient_clip: 1.0
+  seeds: [42, 43, 44, 45, 46]
+  learning_rate_search: [0.0001, 0.0003, 0.001]
+  weight_decay_search: [0.00001, 0.0001, 0.001]
+  loss: multilabel_bce
+  positive_weight_cap: 10.0
+statistics:
+  bootstrap_unit: patient
+  bootstrap_replicates: 2000
+  primary_metric: macro_auroc
+  secondary_metrics: [macro_auprc, classwise_auroc, classwise_auprc, micro_auroc, brier, ece, validation_threshold_macro_f1]
+  secondary_fdr: bh
+  secondary_q: 0.05
+firewall:
+  require_freeze_manifest_before_fold10: true
+  forbid_test_tuning: true

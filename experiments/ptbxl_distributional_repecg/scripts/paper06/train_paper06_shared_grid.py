@@ -13,9 +13,10 @@ from torch import nn
 
 from repecg.common.metrics import multilabel_metrics
 from repecg.common.models import ConditionalRepStatModel
+from repecg.common.variants import get_variants_for_paper
 
 
-VARIANTS = ("kernel", "moments", "gaussian", "linear")
+REPRESENTATION_VARIANTS = ("kernel", "moments", "gaussian", "linear")
 LEARNING_RATES = (1e-4, 3e-4, 1e-3)
 WEIGHT_DECAYS = (1e-5, 1e-4, 1e-3)
 
@@ -80,6 +81,8 @@ def _save_cell(
 
 def _train_variant(
     *,
+    variant_obj,
+
     variant: str,
     variant_index: int,
     train_x: torch.Tensor,
@@ -96,7 +99,7 @@ def _train_variant(
 ) -> None:
     run_seed = seed + variant_index * 100
     _seed(run_seed)
-    template = ConditionalRepStatModel(input_dim=train_x.shape[-1], classes=train_y.shape[-1]).cuda()
+    template = ConditionalRepStatModel(input_dim=train_x.shape[-1], classes=train_y.shape[-1], variant=variant_obj).cuda()
     initial_state = copy.deepcopy(template.state_dict())
     del template
     prevalence = train_y.mean(dim=0)
@@ -107,7 +110,7 @@ def _train_variant(
             path = _cell_path(cells_root, variant, learning_rate, weight_decay)
             if (path / "summary.json").exists():
                 continue
-            model = ConditionalRepStatModel(input_dim=train_x.shape[-1], classes=train_y.shape[-1]).cuda()
+            model = ConditionalRepStatModel(input_dim=train_x.shape[-1], classes=train_y.shape[-1], variant=variant_obj).cuda()
             model.load_state_dict(initial_state)
             optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
             cells.append(
@@ -245,6 +248,8 @@ def main() -> None:
     parser.add_argument("--max-epochs", type=int, default=100)
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--variant", type=str, required=True)
+
     args = parser.parse_args()
 
     args.output.mkdir(parents=True, exist_ok=True)
@@ -258,27 +263,36 @@ def main() -> None:
         validation = {name: np.asarray(item[name]) for name in item.files}
     train_y = torch.from_numpy(train["labels"]).cuda()
     val_y = validation["labels"]
-
-    for variant_index, variant in enumerate(VARIANTS):
-        train_x = torch.from_numpy(train[variant]).cuda()
-        val_x = torch.from_numpy(validation[variant]).cuda()
-        _train_variant(
-            variant=variant,
-            variant_index=variant_index,
-            train_x=train_x,
-            train_y=train_y,
-            val_x=val_x,
-            val_y=val_y,
-            ecg_ids=validation["ecg_ids"],
-            patient_ids=validation["patient_ids"],
-            cells_root=cells_root,
-            batch=args.batch,
-            max_epochs=args.max_epochs,
-            patience=args.patience,
-            seed=args.seed,
-        )
-        del train_x, val_x
-        torch.cuda.empty_cache()
+    variant_registry = get_variants_for_paper(6)
+    if args.variant not in variant_registry:
+        raise ValueError(f"Variant {args.variant} not found.")
+    variant_obj = variant_registry[args.variant]
+    
+    rep_key = variant_obj.representation if variant_obj.representation != "full" else REPRESENTATION_VARIANTS[0]
+    if rep_key not in train:
+        rep_key = REPRESENTATION_VARIANTS[0]
+        
+    train_x = torch.from_numpy(train[rep_key]).cuda()
+    val_x = torch.from_numpy(validation[rep_key]).cuda()
+    
+    _train_variant(
+        variant_obj=variant_obj,
+        variant=args.variant,
+        variant_index=0,
+        train_x=train_x,
+        train_y=train_y,
+        val_x=val_x,
+        val_y=val_y,
+        ecg_ids=validation["ecg_ids"],
+        patient_ids=validation["patient_ids"],
+        cells_root=cells_root,
+        batch=args.batch,
+        max_epochs=args.max_epochs,
+        patience=args.patience,
+        seed=args.seed,
+    )
+    del train_x, val_x
+    torch.cuda.empty_cache()
 
 
 if __name__ == "__main__":

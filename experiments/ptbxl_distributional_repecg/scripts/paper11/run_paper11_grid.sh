@@ -10,13 +10,17 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper11_causal_stat
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper11_causal_state_ecg: Training Grid ==="
-CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper11/train_paper11_shared_grid.py" \
+for variant in "full" "linear" "no_gru"; do
+    echo "Running variant: $ablation"
+    CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper11/train_paper11_shared_grid.py" \
     --representations "$representations" \
     --output "$output" \
     --batch 2048 \
     --max-epochs 100 \
     --patience 10 \
-    --seed 42
+    --seed 42 \
+        --variant "$variant"
+done
 
 echo "=== [AGGREGATING] paper11_causal_state_ecg ==="
 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper11/aggregate_paper11_grid.py" \

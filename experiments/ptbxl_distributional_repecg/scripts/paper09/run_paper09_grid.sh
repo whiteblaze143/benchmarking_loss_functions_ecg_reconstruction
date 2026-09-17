@@ -10,13 +10,17 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper09_counterfact
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper09_counterfactual_measurement: Training Grid ==="
-CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper09/train_paper09_shared_grid.py" \
+for variant in "full" "linear" "fixed_operator"; do
+    echo "Running variant: $ablation"
+    CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper09/train_paper09_shared_grid.py" \
     --representations "$representations" \
     --output "$output" \
     --batch 2048 \
     --max-epochs 100 \
     --patience 10 \
-    --seed 42
+    --seed 42 \
+        --variant "$variant"
+done
 
 echo "=== [AGGREGATING] paper09_counterfactual_measurement ==="
 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper09/aggregate_paper09_grid.py" \

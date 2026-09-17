@@ -10,8 +10,9 @@ import pandas as pd
 import torch
 
 from repecg.common.models import RecurrenceCNN
+from repecg.common.variants import get_variants_for_paper
 
-VARIANTS = ("kernel", "moments", "gaussian", "linear")
+VARIANTS = list(get_variants_for_paper(1).keys())
 
 
 def main() -> None:
@@ -21,6 +22,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
+    torch.backends.cudnn.enabled = False
 
     # First, parse metrics.csv to find the best model path for each variant
     metrics_path = args.training / "metrics.csv"
@@ -69,8 +71,12 @@ def main() -> None:
                 continue
             
             checkpoint = torch.load(best_models[variant], map_location="cpu", weights_only=False)
-            x_val = torch.from_numpy(ood_data[variant]).float().cuda()
-            model = RecurrenceCNN(classes=5).cuda()
+            variant_obj = get_variants_for_paper(1)[variant]
+            rep_key = variant_obj.representation if variant_obj.representation != "full" else "kernel"
+            if rep_key not in ood_data:
+                rep_key = list(ood_data.keys())[0] # fallback
+            x_val = torch.from_numpy(ood_data[rep_key]).float().cuda()
+            model = RecurrenceCNN(classes=5, variant=get_variants_for_paper(1)[variant]).cuda()
             model.load_state_dict(checkpoint["state_dict"])
             model.eval()
             

@@ -10,13 +10,17 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper05_koopman_ope
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper05_koopman_operator: Training Grid ==="
-CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper05/train_paper05_shared_grid.py" \
+for variant in "full" "linear" "static_koopman"; do
+    echo "Running variant: $ablation"
+    CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper05/train_paper05_shared_grid.py" \
     --representations "$representations" \
     --output "$output" \
     --batch 2048 \
     --max-epochs 100 \
     --patience 10 \
-    --seed 42
+    --seed 42 \
+        --variant "$variant"
+done
 
 echo "=== [AGGREGATING] paper05_koopman_operator ==="
 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper05/aggregate_paper05_grid.py" \

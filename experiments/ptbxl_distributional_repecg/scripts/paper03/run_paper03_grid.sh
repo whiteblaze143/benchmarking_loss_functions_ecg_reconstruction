@@ -10,13 +10,17 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper03_signature_p
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper03_signature_path: Training Grid ==="
-CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper03/train_paper03_shared_grid.py" \
+for variant in "full" "linear" "no_level2"; do
+    echo "Running variant: $ablation"
+    CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper03/train_paper03_shared_grid.py" \
     --representations "$representations" \
     --output "$output" \
     --batch 2048 \
     --max-epochs 100 \
     --patience 10 \
-    --seed 42
+    --seed 42 \
+        --variant "$variant"
+done
 
 echo "=== [AGGREGATING] paper03_signature_path ==="
 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper03/aggregate_paper03_grid.py" \

@@ -29,6 +29,7 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
+    torch.backends.cudnn.enabled = False
 
     predictions = {}
     reference: pd.DataFrame | None = None

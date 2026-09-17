@@ -10,13 +10,17 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper07_operator_re
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper07_operator_reconstruction: Training Grid ==="
-CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper07/train_paper07_shared_grid.py" \
+for variant in "full" "linear" "no_circular"; do
+    echo "Running variant: $ablation"
+    CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper07/train_paper07_shared_grid.py" \
     --representations "$representations" \
     --output "$output" \
     --batch 2048 \
     --max-epochs 100 \
     --patience 10 \
-    --seed 42
+    --seed 42 \
+        --variant "$variant"
+done
 
 echo "=== [AGGREGATING] paper07_operator_reconstruction ==="
 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper07/aggregate_paper07_grid.py" \

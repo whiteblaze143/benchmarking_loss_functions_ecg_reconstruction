@@ -5,6 +5,8 @@ repo=/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruct
 python=/home/mithunmanivannan/.venv/bin/python
 representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/development_representations
 output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/development_training
+ood_representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/ood_representations
+
 CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/train_paper02_shared_grid.py" \
     --representations "$representations" \
     --output "$output" \
@@ -17,3 +19,16 @@ CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repe
     --cells "$output/cells" \
     --output "$output" \
     --seed 42
+
+# OOD Representation Building
+"$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/build_paper02_ood_representations.py" \
+    --kernel-fit "$representations/kernel_fit.npz" \
+    --scaler "$repo/experiments/ptbxl_distributional_repecg/outputs/prepare_smoke/scaler.json" \
+    --output "$ood_representations" \
+    --seed 42
+
+# OOD Evaluation
+CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/evaluate_paper02_ood.py" \
+    --training "$output" \
+    --representations "$ood_representations" \
+    --output "$output/ood_evaluation"

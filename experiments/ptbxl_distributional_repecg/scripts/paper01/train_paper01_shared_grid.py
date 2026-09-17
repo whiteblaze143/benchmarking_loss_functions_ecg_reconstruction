@@ -156,7 +156,7 @@ def _train_variant(
         epoch_losses: dict[int, list[torch.Tensor]] = {id(cell): [] for cell in active}
         for start in range(0, len(train_x), batch):
             index = permutation[start : start + batch]
-            batch_operator = torch.cdist(train_x[index], train_x[index], p=2).pow(2)
+            batch_operator = train_x[index]
             batch_y = train_y[index]
             for cell in active:
                 stream = cell["stream"]
@@ -177,8 +177,7 @@ def _train_variant(
             torch.cuda.synchronize()
 
         probabilities: dict[int, torch.Tensor] = {}
-        with torch.inference_mode():
-            val_operator = torch.cdist(val_x, val_x, p=2).pow(2)
+        val_operator = val_x
         for cell in active:
             scheduler = cell["scheduler"]
             stream = cell["stream"]

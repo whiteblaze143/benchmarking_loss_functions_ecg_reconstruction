@@ -10,7 +10,7 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper15_causal_fact
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper15_causal_factorization: Training Grid ==="
-for variant in "full" "linear" "shared_mechanism"; do
+for variant in "full" "linear_probe" "capacity_matched_shared"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/variant_${variant}/done" ]; then
         echo "Variant $variant already completed. Skipping."

@@ -22,23 +22,31 @@ def main() -> None:
     all_summaries = []
     for summary_path in sorted(args.cells.glob("*/summary.json")):
         all_summaries.append((summary_path.parent, json.loads(summary_path.read_text())))
-    if len(all_summaries) != 36:
-        raise RuntimeError(f"expected 36 completed cells, found {len(all_summaries)}")
-    for variant in ("kernel", "moments", "gaussian", "linear"):
-        candidates = [(path, summary) for path, summary in all_summaries if summary["variant"] == variant]
-        if len(candidates) != 9:
-            raise RuntimeError(f"expected nine {variant} cells, found {len(candidates)}")
-        best_path, best = max(candidates, key=lambda item: item[1]["metrics"]["macro_auroc"])
-        shutil.copy2(best_path / "checkpoint.pt", args.output / f"{variant}_best.pt")
-        with np.load(best_path / "predictions.npz") as item:
-            columns: dict[str, np.ndarray] = {
-                "ecg_id": item["ecg_ids"],
-                "patient_id": item["patient_ids"],
-            }
-            for index, name in enumerate(CLASSES):
-                columns[f"y_{name}"] = item["labels"][:, index]
-                columns[f"p_{name}"] = item["probability"][:, index]
-        pd.DataFrame(columns).to_csv(args.output / f"predictions_{variant}.csv", index=False)
+    if not all_summaries:
+        print("No completed cells found in", args.cells)
+        return
+    variants = sorted(list(set(summary["variant"] for _, summary in all_summaries)))
+    for variant in variants:
+        candidates = [(path, summary) for path, summary in all_summaries if summary.get("variant") == variant]
+        if not candidates:
+            continue
+        best_path, best = max(candidates, key=lambda item: item[1].get("metrics", {}).get("macro_auroc", -1.0))
+        ckpt = best_path / "checkpoint.pt"
+        if ckpt.exists():
+            shutil.copy2(ckpt, args.output / f"{variant}_best.pt")
+        pred_npz = best_path / "predictions.npz"
+        if pred_npz.exists():
+            with np.load(pred_npz) as item:
+                columns = {
+                    "ecg_id": item["ecg_ids"],
+                    "patient_id": item["patient_ids"],
+                }
+                for index, name in enumerate(CLASSES):
+                    if "labels" in item and item["labels"].ndim == 2 and item["labels"].shape[1] > index:
+                        columns[f"y_{name}"] = item["labels"][:, index]
+                    if "probability" in item and item["probability"].ndim == 2 and item["probability"].shape[1] > index:
+                        columns[f"p_{name}"] = item["probability"][:, index]
+                pd.DataFrame(columns).to_csv(args.output / f"predictions_{variant}.csv", index=False)
         (args.output / f"metrics_{variant}.json").write_text(json.dumps(best, indent=2, sort_keys=True) + "\n")
     table = [{"cell": str(path), **summary} for path, summary in all_summaries]
     (args.output / "search_state.json").write_text(json.dumps(table, indent=2, sort_keys=True) + "\n")

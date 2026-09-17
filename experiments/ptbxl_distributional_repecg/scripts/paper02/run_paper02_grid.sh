@@ -6,7 +6,7 @@ python=/home/mithunmanivannan/.venv/bin/python
 representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/development_representations
 output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/development_training
 ood_representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/ood_representations
-for variant in "full" "linear" "no_circular"; do
+for variant in "full" "linear_probe" "linear_kernel" "no_circular"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/variant_${variant}/done" ]; then
         echo "Variant $variant already completed. Skipping."

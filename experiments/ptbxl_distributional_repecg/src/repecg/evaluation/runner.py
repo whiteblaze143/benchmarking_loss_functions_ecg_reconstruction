@@ -30,6 +30,7 @@ def run_universal_battery(
     # We will expand the full suite (E0-E15) here in future steps.
     # For now, it runs the specified configuration and outputs to CSV.
     
+    torch.backends.cudnn.enabled = False
     model.eval()
     with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
         # 1. Apply Missingness (Z0, ZM, Native)

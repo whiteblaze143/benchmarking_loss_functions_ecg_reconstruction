@@ -10,7 +10,7 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper08_token_atten
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper08_token_attention: Training Grid ==="
-for variant in "full" "linear" "no_attention"; do
+for variant in "full" "linear_probe" "kmeans_tokens"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/variant_${variant}/done" ]; then
         echo "Variant $variant already completed. Skipping."

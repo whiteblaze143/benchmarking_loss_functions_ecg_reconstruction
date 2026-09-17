@@ -10,7 +10,7 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper07_operator_re
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper07_operator_reconstruction: Training Grid ==="
-for variant in "full" "linear" "no_circular"; do
+for variant in "full" "linear_probe" "learned_lead_id"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/variant_${variant}/done" ]; then
         echo "Variant $variant already completed. Skipping."

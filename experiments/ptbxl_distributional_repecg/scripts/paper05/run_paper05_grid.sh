@@ -10,7 +10,7 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper05_koopman_ope
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper05_koopman_operator: Training Grid ==="
-for variant in "full" "linear" "static_koopman"; do
+for variant in "full" "linear_probe" "occupancy_only"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/variant_${variant}/done" ]; then
         echo "Variant $variant already completed. Skipping."

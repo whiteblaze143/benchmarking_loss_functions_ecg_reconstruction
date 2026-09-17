@@ -10,7 +10,7 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper14_invariant_m
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper14_invariant_mechanism: Training Grid ==="
-for variant in "full" "linear" "no_circular"; do
+for variant in "full" "linear_probe" "mmd_penalty_only"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/variant_${variant}/done" ]; then
         echo "Variant $variant already completed. Skipping."

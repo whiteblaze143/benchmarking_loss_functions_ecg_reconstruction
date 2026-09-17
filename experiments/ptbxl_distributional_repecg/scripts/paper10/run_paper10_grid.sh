@@ -10,7 +10,7 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper10_interventio
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper10_interventional_repstat: Training Grid ==="
-for variant in "full" "linear" "no_circular"; do
+for variant in "full" "linear_probe" "erm" "irm" "coral" "causirl"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/variant_${variant}/done" ]; then
         echo "Variant $variant already completed. Skipping."

@@ -10,7 +10,7 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper03_signature_p
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper03_signature_path: Training Grid ==="
-for variant in "full" "linear_probe" "order_scrambled" "time_reversed" "monotone_warp_sham" "unordered_kme"; do
+for variant in "full" "linear_probe" "phase_signature_linear_probe" "order_scrambled" "time_reversed" "monotone_warp_sham" "unordered_kme"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/.done_${variant}" ]; then
         echo "Variant $variant already completed. Skipping."

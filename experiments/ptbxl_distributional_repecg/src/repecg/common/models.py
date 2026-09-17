@@ -180,54 +180,106 @@ class PathSignatureClassifier(nn.Module):
 # ============================================================================
 
 class HankelDynamicsModel(nn.Module):
-    def __init__(self, input_dim: int, proj_dim: int = 16, lag: int = 4, classes: int = 5, variant: ExperimentVariant | None = None):
+    def __init__(self, input_dim: int, proj_dim: int = 4, lag: int = 4, classes: int = 5, variant: ExperimentVariant | None = None):
         super().__init__()
         self.variant = variant if variant is not None else ExperimentVariant()
-        self.lag = lag
-        self.proj = nn.Linear(input_dim, proj_dim)
-        hankel_dim = proj_dim * lag
-        
-        if self.variant.head == "linear":
-            self.head = nn.Linear(input_dim, classes)
+        if self.variant.mechanism == "paper02_phasecnn":
+            self.phase_cnn = PhaseCNN(input_dim=input_dim, classes=classes)
+        elif self.variant.head == "flat_phase_mlp":
+            self.mlp_head = nn.Sequential(nn.Linear(16 * input_dim, 128), nn.GELU(), nn.Linear(128, classes))
+        elif self.variant.head == "phase_aware_linear":
+            self.linear_head = nn.Linear(16 * input_dim, classes)
+        elif self.variant.head == "linear":
+            self.linear_head = nn.Linear(input_dim, classes)
         else:
-            self.head = nn.Sequential(
-                nn.Linear(hankel_dim * hankel_dim, 128),
-                nn.GELU(),
-                nn.Linear(128, classes)
-            )
+            if self.variant.mechanism in ("lag1", "markovian_lag1"):
+                self.lag = 1
+            elif self.variant.mechanism == "lag2":
+                self.lag = 2
+            else:
+                self.lag = lag
+            self.proj_dim = proj_dim
+            self.proj = nn.Linear(input_dim, self.proj_dim)
+            hankel_dim = self.proj_dim * self.lag
+            if self.variant.head == "operator_summary_probe":
+                self.head = nn.Sequential(nn.Linear(8, 64), nn.GELU(), nn.Linear(64, classes))
+            else:
+                self.head = nn.Sequential(
+                    nn.Linear(hankel_dim * hankel_dim, 128),
+                    nn.GELU(),
+                    nn.Linear(128, classes),
+                )
 
     def forward(self, phase_features: torch.Tensor) -> torch.Tensor:
+        if self.variant.mechanism == "paper02_phasecnn":
+            return self.phase_cnn(phase_features)
+        if self.variant.head == "flat_phase_mlp":
+            return self.mlp_head(phase_features.flatten(1))
+        if self.variant.head == "phase_aware_linear":
+            return self.linear_head(phase_features.flatten(1))
         if self.variant.head == "linear":
-            return self.head(phase_features.mean(dim=1))
-            
+            return self.linear_head(phase_features.mean(dim=1))
+
         if self.variant.mechanism == "time_shuffle_local":
             idx = torch.randperm(phase_features.shape[1], device=phase_features.device)
             phase_features = phase_features[:, idx, :]
-            
+        elif self.variant.mechanism == "time_reversed":
+            phase_features = phase_features.flip(dims=[1])
+
         x = self.proj(phase_features)
         B, T, D = x.shape
-        if self.lag == 1:
-            M = T
-            H1 = x[:, :-1, :].transpose(1, 2)
-            H2 = x[:, 1:, :].transpose(1, 2)
-        else:
+        if self.variant.mechanism == "open_chain":
             M = T - self.lag + 1
-            hankel_blocks = []
-            for i in range(self.lag):
-                hankel_blocks.append(x[:, i : i + M, :].transpose(1, 2))
-            H = torch.cat(hankel_blocks, dim=1)
-            H1 = H[:, :, :-1]
-            H2 = H[:, :, 1:]
-        H1T = H1.transpose(1, 2)
-        C11 = torch.bmm(H1, H1T).float()
-        C21 = torch.bmm(H2, H1T).float()
-        scale = C11.diagonal(dim1=-2, dim2=-1).mean(dim=-1).clamp_min(1e-6)
-        identity = torch.eye(C11.shape[1], device=x.device, dtype=torch.float32).unsqueeze(0)
-        C11_reg = C11 + (1e-4 * scale)[:, None, None] * identity
-        
-        # torch.linalg.solve doesn't support bfloat16 on CUDA
-        A = torch.linalg.solve(C11_reg, C21).to(x.dtype)
-        
+            blocks = [x[:, i : i + M, :] for i in range(self.lag)]
+            H = torch.cat(blocks, dim=-1).transpose(1, 2)
+            X = H[:, :, :-1]
+            Y = H[:, :, 1:]
+        else:
+            blocks = [torch.roll(x, shifts=-l, dims=1) for l in range(self.lag)]
+            H = torch.cat(blocks, dim=-1)
+            X = H.transpose(1, 2)
+            Y = torch.roll(H, shifts=-1, dims=1).transpose(1, 2)
+
+        alpha = 1e-3 if self.variant.mechanism == "ridge_strength_sensitivity" else 1e-4
+        DH = X.shape[1]
+        M_col = X.shape[2]
+        if DH <= M_col:
+            C11 = torch.bmm(X, X.transpose(-1, -2)).float()
+            C21 = torch.bmm(Y, X.transpose(-1, -2)).float()
+            scale = C11.diagonal(dim1=-2, dim2=-1).mean(dim=-1)
+            reg_lambda = torch.clamp(alpha * scale, min=1e-6)
+            identity = torch.eye(DH, device=x.device, dtype=torch.float32).unsqueeze(0)
+            C11_reg = C11 + reg_lambda[:, None, None] * identity
+            A = torch.linalg.solve(C11_reg, C21.transpose(-1, -2)).transpose(-1, -2).to(x.dtype)
+        else:
+            G = torch.bmm(X.transpose(-1, -2), X).float()
+            scale = G.diagonal(dim1=-2, dim2=-1).mean(dim=-1)
+            reg_lambda = torch.clamp(alpha * scale, min=1e-6)
+            identity = torch.eye(M_col, device=x.device, dtype=torch.float32).unsqueeze(0)
+            G_reg = G + reg_lambda[:, None, None] * identity
+            Z = torch.linalg.solve(G_reg, X.transpose(-1, -2).float())
+            A = torch.bmm(Y.float(), Z).to(x.dtype)
+            C11_reg = torch.bmm(X, X.transpose(-1, -2)).float() + reg_lambda[:, None, None] * torch.eye(DH, device=x.device, dtype=torch.float32).unsqueeze(0)
+
+        if self.variant.head == "operator_summary_probe":
+            A_f = A.float()
+            X_f = X.float()
+            Y_f = Y.float()
+            frob = torch.norm(A_f, p="fro", dim=(-2, -1))
+            spec = torch.linalg.matrix_norm(A_f, ord=2)
+            tr = torch.diagonal(A_f, dim1=-2, dim2=-1).sum(dim=-1)
+            A2 = torch.bmm(A_f, A_f)
+            tr2 = torch.diagonal(A2, dim1=-2, dim2=-1).sum(dim=-1)
+            A3 = torch.bmm(A2, A_f)
+            tr3 = torch.diagonal(A3, dim1=-2, dim2=-1).sum(dim=-1)
+            res = torch.norm(Y_f - torch.bmm(A_f, X_f), p="fro", dim=(-2, -1)) / torch.norm(Y_f, p="fro", dim=(-2, -1)).clamp_min(1e-6)
+            comm = torch.bmm(A_f.transpose(-1, -2), A_f) - torch.bmm(A_f, A_f.transpose(-1, -2))
+            non_norm = torch.norm(comm, p="fro", dim=(-2, -1))
+            cond = torch.linalg.cond(C11_reg).clamp_max(1e6)
+            log_cond = torch.log(cond.clamp_min(1.0))
+            summary_vec = torch.stack([frob, spec, tr, tr2, tr3, res, non_norm, log_cond], dim=-1).to(x.dtype)
+            return self.head(summary_vec)
+
         return self.head(A.flatten(1))
 
 

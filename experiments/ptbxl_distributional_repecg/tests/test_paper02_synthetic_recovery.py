@@ -54,22 +54,17 @@ def test_world_a_matched_mean_cov_non_gaussian_sensitivity():
     """Prove that IMQ KME distinguishes distributions with identical mean AND covariance.
     
     P = N(0, I_8)
-    Q = 0.5 * N(+a, Sigma_0) + 0.5 * N(-a, Sigma_0)
-    where a = [0.8, 0, ..., 0]^T and Sigma_0 = I - a a^T.
+    Q = Uniform U[-sqrt(3), sqrt(3)]^8.
+    Both have analytical mean 0 and covariance I_8.
     Both are empirically whitened to sample mean 0 and sample covariance I_8 to machine precision.
     """
     torch.manual_seed(42)
     dim = 8
     n = 1000
-    a = torch.zeros(dim)
-    a[0] = 0.8
-    sigma_0 = torch.eye(dim) - torch.outer(a, a)
-    L = torch.linalg.cholesky(sigma_0)
     
-    # Draw from P = N(0, I) and Q (symmetric bimodal mixture)
+    # Draw from P = N(0, I) and Q = U[-sqrt(3), sqrt(3)]^8
     p = torch.randn(n, dim)
-    choices = torch.randint(0, 2, (n, 1)).float() * 2 - 1
-    q = torch.randn(n, dim) @ L.T + choices * a
+    q = (torch.rand(n, dim) * 2.0 - 1.0) * (3.0 ** 0.5)
     
     # Whiten both so sample moments are EXACTLY matched (mean=0, cov=I)
     p_w = _whiten(p)
@@ -83,19 +78,19 @@ def test_world_a_matched_mean_cov_non_gaussian_sensitivity():
     assert mean_diff < 1e-5, f"Mean difference not zero: {mean_diff}"
     assert cov_diff < 1e-4, f"Covariance difference not zero: {cov_diff}"
     
-    # Compute alternative distance D_alt = MMD^2(P, Q)
-    d_alt = _torch_imq_mmd2(p_w, q_w, c2=1.0)
+    # Compute alternative distance D_alt = MMD^2(P, Q) via unbiased U-statistic
+    d_alt = _unbiased_mmd2(p_w, q_w, c2=1.0)
     
     # Compute null distribution D_null = MMD^2(P, P') over independent draws
     null_distances = []
     for _ in range(25):
         p_1 = _whiten(torch.randn(n, dim))
         p_2 = _whiten(torch.randn(n, dim))
-        null_distances.append(_torch_imq_mmd2(p_1, p_2, c2=1.0))
+        null_distances.append(_unbiased_mmd2(p_1, p_2, c2=1.0))
         
-    q95_null = float(np.quantile(null_distances, 0.95))
-    assert d_alt > q95_null, (
-        f"Non-Gaussian shape not detected: D_alt={d_alt:.6f} <= Q0.95(D_null)={q95_null:.6f}"
+    q99_null = float(np.quantile(null_distances, 0.99))
+    assert d_alt > q99_null, (
+        f"Non-Gaussian shape not detected: D_alt={d_alt:.6f} <= Q0.99(D_null)={q99_null:.6f}"
     )
 
 

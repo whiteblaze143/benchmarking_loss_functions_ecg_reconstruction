@@ -33,6 +33,7 @@ PAPER02_VARIANTS = {
 PAPER03_VARIANTS = {
     "full": ExperimentVariant(),
     "linear_probe": ExperimentVariant(head="linear"),
+    "phase_signature_linear_probe": ExperimentVariant(head="phase_kme_linear"),
     "order_scrambled": ExperimentVariant(representation="order_scrambled"),
     "time_reversed": ExperimentVariant(representation="time_reversed"),
     "monotone_warp_sham": ExperimentVariant(representation="monotone_warp_sham"),
@@ -41,8 +42,17 @@ PAPER03_VARIANTS = {
 
 PAPER04_VARIANTS = {
     "full": ExperimentVariant(),
+    "paper02_phasecnn": ExperimentVariant(mechanism="paper02_phasecnn"),
+    "flat_phase_mlp": ExperimentVariant(head="flat_phase_mlp"),
+    "phase_aware_linear_probe": ExperimentVariant(head="phase_aware_linear"),
     "linear_probe": ExperimentVariant(head="linear"),
-    "time_shuffled": ExperimentVariant(mechanism="time_shuffle_local")
+    "lag1": ExperimentVariant(mechanism="lag1"),
+    "lag2": ExperimentVariant(mechanism="lag2"),
+    "open_chain": ExperimentVariant(mechanism="open_chain"),
+    "time_shuffled": ExperimentVariant(mechanism="time_shuffle_local"),
+    "time_reversed": ExperimentVariant(mechanism="time_reversed"),
+    "operator_summary_probe": ExperimentVariant(head="operator_summary_probe"),
+    "ridge_strength_sensitivity": ExperimentVariant(mechanism="ridge_strength_sensitivity"),
 }
 
 PAPER05_VARIANTS = {

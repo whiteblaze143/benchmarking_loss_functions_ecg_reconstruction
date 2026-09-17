@@ -19,6 +19,7 @@ from repecg.common.variants import get_variants_for_paper
 REPRESENTATION_BY_VARIANT = {
     "full": "signature",
     "linear_probe": "signature",
+    "phase_signature_linear_probe": "signature",
     "order_scrambled": "order_scrambled",
     "time_reversed": "time_reversed",
     "monotone_warp_sham": "monotone_warp_sham",

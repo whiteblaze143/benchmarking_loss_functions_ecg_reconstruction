@@ -29,3 +29,7 @@ PYTHONPATH=src /home/mithunmanivannan/.venv/bin/python \
   --representations /data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper02_kernel_mean/development_representations \
   --output scripts/paper08/inductive_bias/quick_bias_audit.json
 ```
+
+`pilot_artifact/` is an end-to-end 256-record engineering pilot. Its manifest
+must remain `status: pilot_only` with `audit.passed: false`; it cannot satisfy
+the production trainer's artifact gate.

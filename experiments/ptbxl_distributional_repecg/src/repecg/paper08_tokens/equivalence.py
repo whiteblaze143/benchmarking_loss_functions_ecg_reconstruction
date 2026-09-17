@@ -15,10 +15,18 @@ def simultaneous_upper_bounds(point: np.ndarray, bootstrap: np.ndarray, alpha: f
 
 
 def complete_linkage_merge(upper: np.ndarray, delta: float) -> list[tuple[int, ...]]:
+    clusters, _ = complete_linkage_merge_with_trace(upper, delta)
+    return clusters
+
+
+def complete_linkage_merge_with_trace(
+    upper: np.ndarray, delta: float
+) -> tuple[list[tuple[int, ...]], list[dict[str, object]]]:
     matrix = np.asarray(upper, dtype=np.float64)
     if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1]:
         raise ValueError("upper bounds must be square")
     clusters = [tuple([i]) for i in range(len(matrix))]
+    trace: list[dict[str, object]] = []
     while True:
         candidates = []
         for i in range(len(clusters)):
@@ -31,9 +39,13 @@ def complete_linkage_merge(upper: np.ndarray, delta: float) -> list[tuple[int, .
             break
         _, left, right, i, j = min(candidates, key=lambda item: (item[0], item[1], item[2]))
         merged = tuple(sorted(left + right))
+        trace.append({
+            "left": list(left), "right": list(right), "merged": list(merged),
+            "maximum_upper_bound": float(matrix[np.ix_(left, right)].max()),
+        })
         clusters = [c for k, c in enumerate(clusters) if k not in (i, j)] + [merged]
         clusters.sort()
-    return clusters
+    return clusters, trace
 
 
 def odd_even_agreement(odd_counts: np.ndarray, even_counts: np.ndarray) -> float:
@@ -98,4 +110,3 @@ def bootstrap_pairwise_phase_distances(
         bootstrap_pairs[b] = boot_mat[triu_idx]
         
     return point_pairs, bootstrap_pairs
-

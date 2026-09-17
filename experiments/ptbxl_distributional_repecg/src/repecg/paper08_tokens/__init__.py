@@ -1,6 +1,7 @@
 from .equivalence import (
     bootstrap_pairwise_phase_distances,
     complete_linkage_merge,
+    complete_linkage_merge_with_trace,
     odd_even_agreement,
     pairwise_phase_distances,
     simultaneous_upper_bounds,
@@ -11,6 +12,19 @@ from .model import (
     build_cyclic_banded_mask,
     deterministic_phase_permutations,
 )
+from .vocabulary import (
+    assign_certified_tokens,
+    assign_with_unknown,
+    certified_clusters,
+    cluster_map,
+    exact_size_random_partitions,
+    frequency_matched_random_partitions,
+    patient_block_simultaneous_bounds,
+    patient_construction_mask,
+    phase_balanced_indices,
+    squared_pair_distances,
+    unique_patient_support,
+)
 
 __all__ = [
     "PhaseTokenAttentionLayer",
@@ -18,8 +32,20 @@ __all__ = [
     "bootstrap_pairwise_phase_distances",
     "build_cyclic_banded_mask",
     "complete_linkage_merge",
+    "complete_linkage_merge_with_trace",
     "deterministic_phase_permutations",
     "odd_even_agreement",
     "pairwise_phase_distances",
     "simultaneous_upper_bounds",
+    "assign_with_unknown",
+    "assign_certified_tokens",
+    "certified_clusters",
+    "cluster_map",
+    "exact_size_random_partitions",
+    "frequency_matched_random_partitions",
+    "patient_block_simultaneous_bounds",
+    "patient_construction_mask",
+    "phase_balanced_indices",
+    "squared_pair_distances",
+    "unique_patient_support",
 ]

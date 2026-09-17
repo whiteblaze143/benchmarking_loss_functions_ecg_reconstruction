@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import os
 import random
@@ -10,17 +11,22 @@ from pathlib import Path
 import numpy as np
 import torch
 from torch import nn
-from sklearn.cluster import MiniBatchKMeans
 
 from repecg.common.metrics import multilabel_metrics
 from repecg.common.models import LocalTokenCrossAttention
-from repecg.common.variants import get_variants_for_paper
+from repecg.common.variants import ExperimentVariant
 from repecg.paper08_tokens import deterministic_phase_permutations
 
 
-REPRESENTATION_VARIANTS = ("kernel", "moments", "gaussian", "linear")
 LEARNING_RATES = (1e-4, 3e-4, 1e-3)
 WEIGHT_DECAYS = (1e-5, 1e-4, 1e-3)
+REPRESENTATIONS = (
+    "continuous", "fine_kmeans", "size_matched_kmeans", "equivalence",
+    "random_merge", "frequency_matched_random_merge", "unk_pattern_only",
+    "token_without_unk_signal",
+)
+ROUTINGS = ("dynamic_global", "static", "local_cyclic")
+ROUTING_CONTROLS = ("uniform_attention", "phase_agnostic_set", "scrambled_phases", "cnn_matched_control")
 
 
 def _seed(value: int) -> None:
@@ -34,6 +40,23 @@ def _atomic_json(path: Path, payload: object) -> None:
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     os.replace(temporary, path)
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _verify_artifact_lock(artifact: Path, lock: dict[str, object]) -> None:
+    expected = lock.get("sha256")
+    if not isinstance(expected, dict):
+        raise ValueError("Paper 8 artifact lock has no file digests")
+    actual = {name: _sha256(artifact / name) for name in expected}
+    if actual != expected:
+        raise RuntimeError("Paper 8 artifact bytes changed after its lock was created")
 
 
 def _cell_path(root: Path, variant: str, learning_rate: float, weight_decay: float) -> Path:
@@ -50,6 +73,8 @@ def _save_cell(
     ecg_ids: np.ndarray,
     patient_ids: np.ndarray,
     peak_vram_bytes: int,
+    design: dict[str, object],
+    parameter_count: int,
 ) -> None:
     path = cell["path"]
     assert isinstance(path, Path)
@@ -66,6 +91,8 @@ def _save_cell(
         "metrics": multilabel_metrics(val_y, best_probability),
         "peak_vram_bytes": peak_vram_bytes,
         "execution": "single_process_shared_tensor_cuda_streams",
+        "factorial_design": design,
+        "parameter_count": parameter_count,
         "history": cell["history"],
     }
     torch.save(
@@ -102,6 +129,9 @@ def _train_variant(
     patience: int,
     seed: int,
     codebook: np.ndarray | None,
+    design: dict[str, object],
+    artifact: Path,
+    artifact_lock: dict[str, object],
 ) -> None:
     run_seed = seed + variant_index * 100
     _seed(run_seed)
@@ -109,6 +139,7 @@ def _train_variant(
     if codebook is not None:
         template.set_codebook(torch.from_numpy(codebook).to(template.codebook.device))
     initial_state = copy.deepcopy(template.state_dict())
+    parameter_count = sum(parameter.numel() for parameter in template.parameters())
     del template
     prevalence = train_y.mean(dim=0)
     positive_weight = ((1.0 - prevalence) / prevalence.clamp_min(1e-8)).clamp_max(10.0)
@@ -147,6 +178,7 @@ def _train_variant(
 
     torch.cuda.reset_peak_memory_stats()
     for epoch in range(1, max_epochs + 1):
+        _verify_artifact_lock(artifact, artifact_lock)
         active = [cell for cell in cells if cell["active"]]
         if not active:
             break
@@ -234,6 +266,8 @@ def _train_variant(
                         ecg_ids=ecg_ids,
                         patient_ids=patient_ids,
                         peak_vram_bytes=int(torch.cuda.max_memory_allocated()),
+                        design=design,
+                        parameter_count=parameter_count,
                     )
                     cell["saved"] = True
         print(
@@ -262,7 +296,68 @@ def _train_variant(
             ecg_ids=ecg_ids,
             patient_ids=patient_ids,
             peak_vram_bytes=peak_vram_bytes,
+            design=design,
+            parameter_count=parameter_count,
         )
+
+
+def _categorical_features(token_ids: np.ndarray, token_count: int, *, hide_unknown: bool = False) -> np.ndarray:
+    values = np.asarray(token_ids, dtype=np.int64)
+    output = np.zeros((*values.shape, token_count), dtype=np.float32)
+    known = values >= 0
+    output[np.nonzero(known)[0], np.nonzero(known)[1], values[known]] = 1.0
+    if not hide_unknown:
+        output[~known, token_count - 1] = 1.0
+    return output
+
+
+def _routing_variant(routing: str) -> ExperimentVariant:
+    mechanisms = {
+        "dynamic_global": "global",
+        "static": "static_attention",
+        "local_cyclic": "local_banded",
+        "uniform_attention": "uniform_attention",
+        "phase_agnostic_set": "phase_agnostic",
+        "scrambled_phases": "scrambled_phases",
+        "cnn_matched_control": "cnn_matched",
+    }
+    return ExperimentVariant(mechanism=mechanisms[routing])
+
+
+def _representation_features(
+    payload: dict[str, np.ndarray], certificate: dict[str, np.ndarray], representation: str,
+    random_control: int,
+) -> tuple[np.ndarray, dict[str, object]]:
+    if representation == "continuous":
+        return payload["continuous"].astype(np.float32, copy=False), {"input": "continuous_phase_kme"}
+    if representation == "fine_kmeans":
+        return _categorical_features(payload["fine_kmeans_ids"], 257), {"token_count": 256}
+    if representation == "size_matched_kmeans":
+        count = len(certificate["token_prototypes"])
+        return _categorical_features(payload["size_kmeans_ids"], count + 1), {"token_count": count}
+    if representation in {"equivalence", "token_without_unk_signal", "unk_pattern_only"}:
+        tokens = payload["equivalence_token_ids"]
+        count = len(certificate["token_prototypes"])
+        if representation == "unk_pattern_only":
+            return (tokens < 0).astype(np.float32)[..., None], {"token_count": 0, "unknown_only": True}
+        return _categorical_features(
+            tokens, count + 1, hide_unknown=representation == "token_without_unk_signal"
+        ), {"token_count": count, "unknown_hidden": representation == "token_without_unk_signal"}
+    if representation in {"random_merge", "frequency_matched_random_merge"}:
+        maps_key = (
+            "random_merge_maps" if representation == "random_merge"
+            else "frequency_matched_random_merge_maps"
+        )
+        maps = certificate[maps_key]
+        if not 0 <= random_control < len(maps):
+            raise ValueError(f"random control must be in 0..{len(maps) - 1}")
+        mapped = maps[random_control][payload["fine_kmeans_ids"]]
+        count = len(certificate["token_prototypes"])
+        return _categorical_features(mapped, count + 1), {
+            "token_count": count, "random_control": random_control,
+            "random_control_family": representation,
+        }
+    raise ValueError(f"unsupported representation: {representation}")
 
 
 def main() -> None:
@@ -273,16 +368,24 @@ def main() -> None:
     parser.add_argument("--max-epochs", type=int, default=100)
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--variant", type=str, required=True)
+    parser.add_argument("--representation", choices=REPRESENTATIONS, required=True)
+    parser.add_argument("--routing", choices=(*ROUTINGS, *ROUTING_CONTROLS), required=True)
+    parser.add_argument("--random-control", type=int, default=0)
     parser.add_argument("--training-regime", type=str, default="full_only", choices=["full_only"])
 
     args = parser.parse_args()
 
     manifest = json.loads((args.representations / "manifest.json").read_text())
+    lock_path = args.representations / "artifact_lock.json"
+    if not lock_path.is_file():
+        raise ValueError("Paper 8 requires a mechanically audited artifact_lock.json before training")
+    artifact_lock = json.loads(lock_path.read_text())
+    _verify_artifact_lock(args.representations, artifact_lock)
     if (
         manifest.get("kind") != "paper08_equivalence_token_representations"
         or manifest.get("status") != "complete"
         or manifest.get("audit", {}).get("passed") is not True
+        or manifest.get("fold_firewall", {}).get("fold8_used_for_fit_or_selection") is not False
     ):
         raise ValueError("Paper 8 requires a complete audited equivalence-token artifact")
     args.output.mkdir(parents=True, exist_ok=True)
@@ -292,37 +395,41 @@ def main() -> None:
     torch.set_float32_matmul_precision("high")
     with np.load(args.representations / "representation_train.npz") as item:
         train = {name: np.asarray(item[name]) for name in item.files}
-    with np.load(args.representations / "representation_val.npz") as item:
+    with np.load(args.representations / "representation_selection.npz") as item:
         validation = {name: np.asarray(item[name]) for name in item.files}
+    with np.load(args.representations / "vocabulary_certificate.npz") as item:
+        certificate = {name: np.asarray(item[name]) for name in item.files}
     train_y = torch.from_numpy(train["labels"]).cuda()
     val_y = validation["labels"]
-    variant_registry = get_variants_for_paper(8)
-    if args.variant not in variant_registry:
-        raise ValueError(f"Variant {args.variant} not found.")
-    variant_obj = variant_registry[args.variant]
-    
-    rep_key = variant_obj.representation if variant_obj.representation != "full" else REPRESENTATION_VARIANTS[0]
-    if rep_key not in train:
-        rep_key = REPRESENTATION_VARIANTS[0]
-        
-    codebook = None
-    if variant_obj.mechanism == "kmeans_dictionary":
-        atoms = train[rep_key].reshape(-1, train[rep_key].shape[-1])
-        generator = np.random.default_rng(args.seed)
-        if len(atoms) > 20_000:
-            atoms = atoms[generator.choice(len(atoms), size=20_000, replace=False)]
-        codebook = MiniBatchKMeans(
-            n_clusters=64,
-            batch_size=2048,
-            n_init=3,
-            random_state=args.seed,
-        ).fit(atoms).cluster_centers_.astype(np.float32)
-    train_x = torch.from_numpy(train[rep_key]).cuda()
-    val_x = torch.from_numpy(validation[rep_key]).cuda()
-    
+    train_features, train_design = _representation_features(
+        train, certificate, args.representation, args.random_control
+    )
+    validation_features, validation_design = _representation_features(
+        validation, certificate, args.representation, args.random_control
+    )
+    if train_design != validation_design:
+        raise RuntimeError("representation construction differs between training and selection")
+    variant_obj = _routing_variant(args.routing)
+    variant = f"{args.representation}__{args.routing}"
+    if "random_control" in train_design:
+        variant += f"__control{args.random_control:02d}"
+    design = {
+        "representation": args.representation,
+        "routing": args.routing,
+        "selection_fold": 7,
+        "pseudo_test_touched": False,
+        "primary_factorial_cell": args.representation in {
+            "continuous", "fine_kmeans", "size_matched_kmeans", "equivalence",
+            "random_merge", "frequency_matched_random_merge",
+        } and args.routing in ROUTINGS,
+        **train_design,
+        "artifact_lock_sha256": artifact_lock["sha256"]["vocabulary_certificate.npz"],
+    }
+    train_x = torch.from_numpy(train_features).cuda()
+    val_x = torch.from_numpy(validation_features).cuda()
     _train_variant(
         variant_obj=variant_obj,
-        variant=args.variant,
+        variant=variant,
         training_regime=args.training_regime,
         variant_index=0,
         train_x=train_x,
@@ -337,7 +444,10 @@ def main() -> None:
         max_epochs=args.max_epochs,
         patience=args.patience,
         seed=args.seed,
-        codebook=codebook,
+        codebook=None,
+        design=design,
+        artifact=args.representations,
+        artifact_lock=artifact_lock,
     )
     del train_x, val_x
     torch.cuda.empty_cache()

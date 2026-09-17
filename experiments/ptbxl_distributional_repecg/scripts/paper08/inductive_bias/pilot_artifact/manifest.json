@@ -1,0 +1,76 @@
+{
+  "assignment_radius_quantile": 0.95,
+  "audit": {
+    "engineering_pipeline_passed": true,
+    "maximum_phase_nmi": 0.9,
+    "maximum_unknown_rate": 0.2,
+    "passed": false,
+    "patient_equal_odd_even_agreement": 0.8237382404776085,
+    "phase_nmi": 0.2774036262559901,
+    "safeguards_would_pass": true,
+    "validation_unknown_rate": 0.088134765625
+  },
+  "bootstrap": {
+    "alpha": 0.05,
+    "replicates": 20,
+    "seed": 42,
+    "unit": "patient"
+  },
+  "certified_merges": 0,
+  "cluster_size_histogram": [
+    0,
+    15
+  ],
+  "delta": {
+    "q90": 0.08129504323005676,
+    "q95": 0.10928869992494583,
+    "q99": 0.16121302545070648
+  },
+  "distance": "squared_euclidean_in_common_nystrom_phase_kme_coordinates",
+  "final_vocabulary_size": 15,
+  "folds": {
+    "fit": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "selection": [
+      8
+    ]
+  },
+  "k0": 16,
+  "k0_fallback_rule": {
+    "fallback": 256,
+    "maximum_unsupported_fraction": 0.2,
+    "minimum_unique_patients": 3,
+    "primary": 512
+  },
+  "kind": "paper08_equivalence_token_representations",
+  "patient_split": {
+    "calibration_fraction": 0.2,
+    "construction_fraction": 0.8
+  },
+  "phase_balanced_cells_per_record": 8,
+  "random_controls": {
+    "count": 10,
+    "exact_cluster_size_multiset": true
+  },
+  "records": {
+    "train": 256,
+    "validation": 256
+  },
+  "seed": 42,
+  "source": {
+    "phase_kme_manifest_sha256": "c18a72246fed50bad51fc77bdc8a1393d08d2ce7a5bb22c33b2a29eff9478f65",
+    "train_cache_manifest_sha256": "bd528cf78f689ba11ae0d167d91861b9beb5168119d380637efec7917b391a07",
+    "validation_cache_manifest_sha256": "e3a6ddac1f9546f26a5e3d7f9ea9a0d61ec9edb5a177be043f483eb05573dd56"
+  },
+  "status": "pilot_only",
+  "supported_base_codes": 15,
+  "unresolved_base_codes": 1,
+  "unsupported_fraction": 0.0625
+}

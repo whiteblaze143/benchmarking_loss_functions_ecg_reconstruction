@@ -295,12 +295,25 @@ observed leads, never new electrode locations.
 
 ## Paper 8 equivalence vocabulary
 
-Patient IDs are deterministically partitioned inside the allowed training folds
-into construction (80%) and equivalence-calibration (20%) subsets. K-means
-over-segmentation (`K0=512`) is fit on at most 200,000 construction beat-cells,
-at most eight per ECG. The calibration subset alone supplies 100
-patient-blocked within-candidate splits and
+The development firewall is fixed: folds 1--6 construct the vocabulary, fold
+7 alone calibrates and selects, and fold 8 is an untouched internal pseudo-test.
+K-means over-segmentation (`K0=512`), support qualification, simultaneous UCBs,
+prototypes, and radii are fit on at most 200,000 fold-1--6 construction
+beat-cells, at most eight per ECG. Fold 7 alone supplies odd/even calibration
+for
 `delta = quantile_0.95(D_within)`.
+
+Sampling is phase-balanced and never uses phase or diagnosis in clustering.
+For each calibration record-phase state, independently estimated odd- and
+even-beat Nyström means define
+`D_within = ||z_odd-z_even||^2`; the 0.90 and 0.99 quantiles are frozen
+sensitivities. Candidate distance is squared Euclidean distance between mean
+embeddings in the common Nyström coordinate system, hence an approximate
+MMD-squared. Every candidate requires at least 40 unique calibration patients.
+If more than 20 percent of `K0=512` candidates fail that support gate, repeat
+once with `K0=256`; failure there makes the vocabulary ineligible. Unsupported
+candidates remain unresolved and map to `<UNK>` rather than being declared
+different or equivalent.
 
 Freeze the candidate-pair family before uncertainty estimation. For every
 patient-clustered bootstrap replicate, compute all pair distances and the
@@ -314,8 +327,16 @@ lexicographic candidate ID. This is an effect-size equivalence construction;
 no failure-to-reject p-value enters merging. The separate source-faithful audit
 uses beat blocks, 4,999 final permutations, and BH q=0.05.
 
+The primary random-compression control comprises ten frozen partitions of the
+supported base codes, each preserving the exact final equivalence-cluster size
+multiset. A secondary control additionally balances base-code usage frequency.
+The ordinary quantization hierarchy includes the original fine K-means and a
+separately fit K-means with exactly the emergent final vocabulary size; delta
+is never tuned to target a vocabulary size.
+
 New occurrences map to the nearest final prototype and become `<UNK>` beyond
-the training 95th percentile of within-token distance. The mechanism-use
+the fold-1--6 95th percentile of within-token distance. Unsupported base codes
+also remain `<UNK>`; no nearest-cluster assimilation is permitted. The mechanism-use
 destroyer performs size-matched complete-linkage merges ordered by a frozen
 random permutation rather than UCB, retaining final vocabulary size and model
 capacity.
@@ -329,6 +350,19 @@ A_{oe}=1-\operatorname{JSD}(p_{odd},p_{even})/\log 2,
 where the probability vectors use the union of final tokens plus `<UNK>` and
 zero entries contribute zero. Record values are averaged within patient first,
 then patients are weighted equally.
+
+The certificate reports same-record odd/even agreement against a
+different-patient matched-phase reference and a marginal-frequency random-token
+reference, each with patient-bootstrap confidence intervals for the difference.
+It also reports per-token conditional phase entropy, phase support at
+`P(phase|token)>0.05`, non-adjacent phase support, and circular phase diameter.
+The primary downstream development grid crosses representations {continuous,
+fine K-means, size-matched K-means, equivalence, each frozen random merge} with
+routing {dynamic global, static, local cyclic}. `<UNK>` pattern-only,
+hidden-UNK token, uniform-attention, phase-agnostic, phase-scrambled, and
+cyclic-CNN controls are separate labelled analyses, never cells in the primary
+factorial contrasts. All HPO uses fold 7 only, and fold 8 cannot be read by the
+trainer.
 
 ## Paper 9 counterfactual measurement-operator
 

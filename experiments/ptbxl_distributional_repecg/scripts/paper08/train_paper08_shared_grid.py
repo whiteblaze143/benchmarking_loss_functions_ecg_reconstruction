@@ -42,7 +42,7 @@ def _save_cell(
     cell: dict[str, object],
     *,
     variant: str,
-    training_regime: str,
+    training_regime: str = "full_only",
     seed: int,
     val_y: np.ndarray,
     ecg_ids: np.ndarray,
@@ -85,7 +85,7 @@ def _train_variant(
     variant_obj,
 
     variant: str,
-    training_regime: str,
+    training_regime: str = "full_only",
     variant_index: int,
     train_x: torch.Tensor,
     train_y: torch.Tensor,
@@ -207,6 +207,7 @@ def _train_variant(
                     _save_cell(
                         cell,
                         variant=variant,
+                        training_regime=training_regime,
                         seed=seed,
                         val_y=val_y,
                         ecg_ids=ecg_ids,
@@ -234,6 +235,7 @@ def _train_variant(
         _save_cell(
             cell,
             variant=variant,
+                        training_regime=training_regime,
             seed=seed,
             val_y=val_y,
             ecg_ids=ecg_ids,

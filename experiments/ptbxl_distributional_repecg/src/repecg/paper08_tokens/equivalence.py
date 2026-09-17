@@ -46,3 +46,56 @@ def odd_even_agreement(odd_counts: np.ndarray, even_counts: np.ndarray) -> float
     odd /= odd.sum()
     even /= even.sum()
     return float(1.0 - jensenshannon(odd, even, base=np.e) ** 2 / np.log(2.0))
+
+
+def pairwise_phase_distances(representations: np.ndarray) -> np.ndarray:
+    """
+    Computes average pairwise Euclidean distances between phase cells across records.
+    Input shape: (N, num_phases, feature_dim).
+    Output shape: (num_phases, num_phases).
+    """
+    data = np.asarray(representations, dtype=np.float64)
+    if data.ndim != 3:
+        raise ValueError("representations must have shape (N, num_phases, feature_dim)")
+    N, P, D = data.shape
+    dist_matrix = np.zeros((P, P), dtype=np.float64)
+    for i in range(P):
+        for j in range(i + 1, P):
+            diff = data[:, i, :] - data[:, j, :]
+            dist = np.linalg.norm(diff, axis=-1).mean()
+            dist_matrix[i, j] = dist
+            dist_matrix[j, i] = dist
+    return dist_matrix
+
+
+def bootstrap_pairwise_phase_distances(
+    representations: np.ndarray,
+    n_bootstraps: int = 100,
+    seed: int = 42,
+) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Computes sample pairwise distances and bootstrap replicates for simultaneous bounds.
+    Returns:
+        point_pairs: (P*(P-1)//2,) vector of upper-triangular pairwise distances.
+        bootstrap_pairs: (n_bootstraps, P*(P-1)//2) matrix of bootstrap draws.
+    """
+    data = np.asarray(representations, dtype=np.float64)
+    N, P, D = data.shape
+    rng = np.random.default_rng(seed)
+    
+    triu_idx = np.triu_indices(P, k=1)
+    
+    # Point estimate
+    sample_mat = pairwise_phase_distances(data)
+    point_pairs = sample_mat[triu_idx]
+    
+    # Bootstrap replicates
+    bootstrap_pairs = np.zeros((n_bootstraps, len(point_pairs)), dtype=np.float64)
+    for b in range(n_bootstraps):
+        idx = rng.integers(0, N, size=N)
+        boot_sample = data[idx]
+        boot_mat = pairwise_phase_distances(boot_sample)
+        bootstrap_pairs[b] = boot_mat[triu_idx]
+        
+    return point_pairs, bootstrap_pairs
+

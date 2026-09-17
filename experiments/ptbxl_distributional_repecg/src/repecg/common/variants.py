@@ -121,9 +121,17 @@ PAPER07_VARIANTS = {
 
 PAPER08_VARIANTS = {
     "full": ExperimentVariant(),
+    "global_dynamic": ExperimentVariant(mechanism="global"),
+    "local_banded": ExperimentVariant(mechanism="local_banded"),
+    "static_attention": ExperimentVariant(mechanism="static_attention"),
+    "uniform_attention": ExperimentVariant(mechanism="uniform_attention"),
+    "phase_agnostic_set": ExperimentVariant(mechanism="phase_agnostic"),
+    "scrambled_phases": ExperimentVariant(mechanism="scrambled_phases"),
     "linear_probe": ExperimentVariant(head="linear"),
-    "kmeans_tokens": ExperimentVariant(mechanism="kmeans_dictionary")
+    "kmeans_tokens": ExperimentVariant(mechanism="kmeans_dictionary"),
+    "cnn_matched_control": ExperimentVariant(mechanism="cnn_matched"),
 }
+
 
 PAPER09_VARIANTS = {
     "full": ExperimentVariant(),

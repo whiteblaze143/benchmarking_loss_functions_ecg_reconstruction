@@ -397,52 +397,37 @@ class OperatorReconstructionAuxiliary(nn.Module):
 
 
 # ============================================================================
-# Paper 08: Local Token Cross-Attention
+# Paper 08: Local Token Cross-Attention / Phase-Token Transformer
 # ============================================================================
 
-class LocalTokenCrossAttention(nn.Module):
-    def __init__(self, input_dim: int, d_model: int = 128, nhead: int = 4, num_layers: int = 2, classes: int = 5, variant: ExperimentVariant | None = None):
-        super().__init__()
-        self.variant = variant if variant is not None else ExperimentVariant()
-        self.input_proj = nn.Linear(input_dim, d_model)
-        self.pos_embedding = nn.Parameter(torch.randn(1, 16, d_model) * 0.02)
-        encoder_layer = nn.TransformerEncoderLayer(
-            d_model=d_model, nhead=nhead, dim_feedforward=d_model * 2,
-            dropout=0.1, activation="gelu", batch_first=True
+from repecg.paper08_tokens.model import PhaseTokenTransformer
+
+
+class LocalTokenCrossAttention(PhaseTokenTransformer):
+    """
+    Backwards-compatible wrapper delegating to PhaseTokenTransformer.
+    Supports global, local banded, static, uniform, and phase-agnostic attention modes.
+    """
+    def __init__(
+        self,
+        input_dim: int,
+        d_model: int = 128,
+        nhead: int = 4,
+        num_layers: int = 2,
+        classes: int = 5,
+        variant: ExperimentVariant | None = None,
+        bandwidth: int = 2,
+    ):
+        super().__init__(
+            input_dim=input_dim,
+            d_model=d_model,
+            nhead=nhead,
+            num_layers=num_layers,
+            classes=classes,
+            variant=variant,
+            bandwidth=bandwidth,
         )
-        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
-        self.cls_token = nn.Parameter(torch.zeros(1, 1, d_model))
-        self.register_buffer("codebook", torch.zeros(64, input_dim), persistent=True)
-        self.register_buffer("codebook_ready", torch.tensor(False), persistent=True)
-        
-        if self.variant.head == "linear":
-            self.head = nn.Linear(input_dim, classes)
-        else:
-            self.head = nn.Linear(d_model, classes)
 
-    def forward(self, phase_features: torch.Tensor) -> torch.Tensor:
-        if self.variant.head == "linear":
-            return self.head(phase_features.mean(dim=1))
-            
-        if self.variant.mechanism == "kmeans_dictionary":
-            if not bool(self.codebook_ready):
-                raise RuntimeError("kmeans token variant requires a fitted train-only codebook")
-            distances = torch.cdist(phase_features.float(), self.codebook.float())
-            phase_features = self.codebook[distances.argmin(dim=-1)].to(phase_features.dtype)
-        B = phase_features.shape[0]
-        x = self.input_proj(phase_features) + self.pos_embedding
-        
-        cls = self.cls_token.expand(B, -1, -1)
-        tokens = torch.cat([cls, x], dim=1)
-        out = self.transformer(tokens)
-        return self.head(out[:, 0])
-
-    def set_codebook(self, centers: torch.Tensor) -> None:
-        values = torch.as_tensor(centers, dtype=self.codebook.dtype, device=self.codebook.device)
-        if values.shape != self.codebook.shape or not torch.isfinite(values).all():
-            raise ValueError(f"codebook must be finite with shape {tuple(self.codebook.shape)}")
-        self.codebook.copy_(values)
-        self.codebook_ready.fill_(True)
 
 
 # ============================================================================

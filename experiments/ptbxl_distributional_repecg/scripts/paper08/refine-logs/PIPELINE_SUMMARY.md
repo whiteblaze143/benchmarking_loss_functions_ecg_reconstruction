@@ -1,17 +1,13 @@
-# Pipeline Summary
+# Pipeline Summary: Paper 08 — Phase-Token Attention & Dynamic Routing vs Equivalence Clustering
 
-**Problem**: Self-supervised contrastive learning with physiological priors
-**Final Method Thesis**: Physiological augmentations preserve semantic identity.
-**Final Verdict**: READY
-**Date**: 2026-09-17
+## Executive Summary
+Paper 08 investigates the mechanisms of cross-phase information routing in the distributional repECG framework:
+1. **Dynamic vs Static Routing**: Quantifies whether patient-specific dynamic attention weights outperform static learned routing matrices.
+2. **Local vs Long-Range Cross-Phase Interaction**: Measures the contribution of long-range cardiac phase attention compared to local cyclic conduction neighborhoods ($w=2$ on $C_{16}$).
+3. **Phase-Order Sensitivity**: Evaluates positional embedding dependence through phase-scrambling and phase-agnostic set controls.
+4. **Continuous vs Discrete Representation**: Compares continuous RKHS embeddings against 64-cluster KMeans codebooks and statistically verified equivalence classes (`equivalence.py`).
 
-## Final Deliverables
-- Proposal: `refine-logs/FINAL_PROPOSAL.md`
-- Experiment plan: `refine-logs/EXPERIMENT_PLAN.md`
-
-## Must-Prove Claims
-- Contrastive pretraining improves downstream linear probe performance.
-
-## First Runs to Launch
-1. Smoke test verification (COMPLETED)
-2. Production run
+## Deliverables
+- `src/repecg/paper08_tokens/model.py`: Modular `PhaseTokenTransformer` with full mask, static routing, and attention extraction support.
+- `src/repecg/paper08_tokens/equivalence.py`: Statistical bootstrap bounds and complete-linkage clustering.
+- `tests/test_paper08_synthetic_recovery.py`: 8 mathematically verified synthetic proof worlds.

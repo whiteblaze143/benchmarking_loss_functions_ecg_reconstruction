@@ -150,6 +150,8 @@ def _train_variant(
         epoch_losses: dict[int, list[torch.Tensor]] = {id(cell): [] for cell in active}
         for start in range(0, len(train_x), batch):
             index = permutation[start : start + batch]
+            batch_operator = torch.cdist(train_x[index], train_x[index], p=2).pow(2)
+            batch_y = train_y[index]
             for cell in active:
                 stream = cell["stream"]
                 model = cell["model"]
@@ -161,9 +163,7 @@ def _train_variant(
                 assert isinstance(loss_fn, nn.Module)
                 with torch.cuda.stream(stream):
                     optimizer.zero_grad(set_to_none=True)
-                    with torch.autocast("cuda", dtype=torch.float16):
-                        operator = torch.cdist(train_x[index], train_x[index], p=2).pow(2)
-                        loss = loss_fn(model(operator), train_y[index])
+                    loss = loss_fn(model(batch_operator), batch_y)
                     loss.backward()
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                     optimizer.step()
@@ -171,6 +171,8 @@ def _train_variant(
             torch.cuda.synchronize()
 
         probabilities: dict[int, torch.Tensor] = {}
+        with torch.inference_mode():
+            val_operator = torch.cdist(val_x, val_x, p=2).pow(2)
         for cell in active:
             scheduler = cell["scheduler"]
             stream = cell["stream"]
@@ -179,10 +181,9 @@ def _train_variant(
             assert isinstance(stream, torch.cuda.Stream)
             assert isinstance(model, nn.Module)
             scheduler.step()
-            with torch.cuda.stream(stream), torch.inference_mode(), torch.autocast("cuda", dtype=torch.float16):
+            with torch.cuda.stream(stream), torch.inference_mode():
                 model.eval()
-                operator = torch.cdist(val_x, val_x, p=2).pow(2)
-                probabilities[id(cell)] = torch.sigmoid(model(operator)).float()
+                probabilities[id(cell)] = torch.sigmoid(model(val_operator)).float()
         torch.cuda.synchronize()
 
         for cell in active:

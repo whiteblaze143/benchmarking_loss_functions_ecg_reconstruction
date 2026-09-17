@@ -8,7 +8,15 @@ import pytest
 from repecg.common import load_config
 from repecg.common.beats import valid_rr_pairs
 from repecg.common.kernels import NystromMap, WhiteningTransform, biased_mmd2
+from repecg.common.metrics import expected_calibration_error, macro_f1, select_f1_thresholds
 from repecg.common.phase import phase_cells, phase_normalize
+from repecg.common.perturbations import (
+    add_noise_at_snr,
+    jitter_rpeaks,
+    resample_raw_waveform,
+    retain_random_beats,
+    scale_global_amplitude,
+)
 from repecg.common.preprocess import LeadScalerAccumulator, fit_lead_scaler
 from repecg.common.ptbxl import PTBXLStore
 from repecg.common.recurrence import recurrence_operator, upper_triangle
@@ -94,3 +102,32 @@ def test_streaming_scaler_matches_in_memory() -> None:
     combined = merged.finalize()
     assert np.allclose(combined.mean, expected.mean)
     assert np.allclose(combined.std, expected.std)
+
+
+def test_calibration_and_validation_f1_metrics() -> None:
+    target = np.asarray([[0, 1], [0, 1], [1, 0], [1, 0]], dtype=np.float64)
+    perfect = np.asarray([[0.0, 1.0], [0.1, 0.9], [0.9, 0.1], [1.0, 0.0]])
+    thresholds = select_f1_thresholds(target, perfect)
+    assert thresholds.shape == (2,)
+    assert macro_f1(target, perfect, thresholds) == 1.0
+    assert expected_calibration_error(target, target) == 0.0
+
+
+def test_raw_waveform_perturbation_contracts() -> None:
+    rng = np.random.default_rng(42)
+    signal = rng.normal(size=(5000, 8))
+    assert resample_raw_waveform(signal, 500, 250).shape == (2500, 8)
+    assert resample_raw_waveform(signal, 500, 100).shape == (1000, 8)
+    noisy = add_noise_at_snr(signal, 20.0, np.random.default_rng(1))
+    observed_snr = 20.0 * np.log10(
+        np.sqrt(np.mean(signal**2, axis=0)) / np.sqrt(np.mean((noisy - signal) ** 2, axis=0))
+    )
+    assert np.allclose(observed_snr, 20.0)
+    assert np.allclose(scale_global_amplitude(signal, 1.1), signal * 1.1)
+    peaks = np.arange(250, 4751, 500)
+    jittered = jitter_rpeaks(peaks, max_ms=20, sampling_hz=500, signal_length=5000, rng=np.random.default_rng(2))
+    assert np.max(np.abs(jittered - peaks)) <= 10
+    beats = np.arange(10 * 3).reshape(10, 3)
+    retained, indices = retain_random_beats(beats, removal_fraction=0.5, rng=np.random.default_rng(3))
+    assert len(retained) == 5
+    assert np.array_equal(retained, beats[indices])

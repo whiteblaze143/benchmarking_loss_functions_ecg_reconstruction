@@ -1,0 +1,23 @@
+paper: 2
+name: kernel_mean_ecg
+common_config: ../configs/common.yaml
+development:
+  train_split: development_train
+  selection_split: development_select
+  seed: 42
+representation:
+  phase_cells: 16
+  kernel: imq
+  c2: 1.0
+  landmarks: 256
+  matched_controls: [mean_full_covariance, exact_moment_matched_gaussian, linear_kernel_mean]
+model:
+  architecture: circular_phase_cnn
+  width: 128
+  residual_blocks: 3
+claim_gate:
+  mechanism: original_minus_destroyer_cosine
+  primary_comparator: mean_std
+  task_rope: 0.005
+  stability_metric: clipped_normalized_frobenius_similarity
+  stability_material_difference: 0.05

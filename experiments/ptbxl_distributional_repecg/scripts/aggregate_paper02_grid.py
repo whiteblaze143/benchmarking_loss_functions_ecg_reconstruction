@@ -22,9 +22,9 @@ def main() -> None:
     all_summaries = []
     for summary_path in sorted(args.cells.glob("*/summary.json")):
         all_summaries.append((summary_path.parent, json.loads(summary_path.read_text())))
-    if len(all_summaries) != 27:
-        raise RuntimeError(f"expected 27 completed cells, found {len(all_summaries)}")
-    for variant in ("kernel", "moments", "gaussian"):
+    if len(all_summaries) != 36:
+        raise RuntimeError(f"expected 36 completed cells, found {len(all_summaries)}")
+    for variant in ("kernel", "moments", "gaussian", "linear"):
         candidates = [(path, summary) for path, summary in all_summaries if summary["variant"] == variant]
         if len(candidates) != 9:
             raise RuntimeError(f"expected nine {variant} cells, found {len(candidates)}")
@@ -45,8 +45,8 @@ def main() -> None:
     manifest = {
         "kind": "paper02_development_hyperparameter_search",
         "seed": args.seed,
-        "cells": 27,
-        "workers": 4,
+        "cells": 36,
+        "execution": "single_process_shared_tensor_cuda_streams",
         "folds": {"train": [1, 2, 3, 4, 5, 6, 7], "validation": [8]},
         "selection_metric": "macro_auroc",
     }

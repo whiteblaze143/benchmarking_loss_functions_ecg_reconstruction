@@ -16,7 +16,7 @@ from repecg.common.metrics import multilabel_metrics
 from repecg.common.models import PhaseCNN
 
 
-VARIANTS = ("kernel", "moments", "gaussian")
+VARIANTS = ("kernel", "moments", "gaussian", "linear")
 
 
 def _seed(value: int) -> None:

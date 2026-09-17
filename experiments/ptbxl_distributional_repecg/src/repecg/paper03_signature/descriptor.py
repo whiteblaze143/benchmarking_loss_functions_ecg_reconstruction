@@ -1,6 +1,17 @@
 from __future__ import annotations
 
+from functools import lru_cache
+
 import numpy as np
+
+
+@lru_cache(maxsize=None)
+def _preparation(dimension: int, depth: int):
+    try:
+        import iisignature
+    except ImportError as exc:
+        raise RuntimeError("Paper 3 requires iisignature; install the frozen environment") from exc
+    return iisignature.prepare(dimension, depth)
 
 
 def logsignature_descriptor(cell: np.ndarray, *, depth: int = 3) -> np.ndarray:
@@ -11,7 +22,7 @@ def logsignature_descriptor(cell: np.ndarray, *, depth: int = 3) -> np.ndarray:
     values = np.asarray(cell, dtype=np.float64)
     if values.shape != (16, 8):
         raise ValueError(f"expected a (16,8) beat-cell, received {values.shape}")
-    preparation = iisignature.prepare(8, depth)
+    preparation = _preparation(8, depth)
     logsignature = np.asarray(iisignature.logsig(values, preparation), dtype=np.float64)
     return np.concatenate((values[0], values[-1], values.mean(axis=0), logsignature))
 

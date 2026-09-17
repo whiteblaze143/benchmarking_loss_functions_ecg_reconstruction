@@ -24,6 +24,7 @@ def main() -> None:
     parser.add_argument("--representations", type=Path, required=True)
     parser.add_argument("--training", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--stability", type=Path)
     parser.add_argument("--replicates", type=int, default=2_000)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
@@ -31,7 +32,7 @@ def main() -> None:
 
     predictions = {}
     reference: pd.DataFrame | None = None
-    for variant in ("kernel", "moments", "gaussian"):
+    for variant in ("kernel", "moments", "gaussian", "linear"):
         frame = pd.read_csv(args.training / f"predictions_{variant}.csv")
         if reference is None:
             reference = frame
@@ -51,7 +52,8 @@ def main() -> None:
         kernel = macro_auroc(target, predictions["kernel"], index)
         moments = macro_auroc(target, predictions["moments"], index)
         gaussian = macro_auroc(target, predictions["gaussian"], index)
-        return np.asarray((kernel - moments, kernel - gaussian))
+        linear = macro_auroc(target, predictions["linear"], index)
+        return np.asarray((kernel - moments, kernel - gaussian, kernel - linear))
 
     task_draws = clustered_paired_bootstrap(
         patient_ids,
@@ -83,11 +85,18 @@ def main() -> None:
     task_gaussian_ci = interval(task_draws[:, 1])
     mechanism_ci = interval(mechanism_draws)
     mechanism_pass = mechanism_ci[0] > 0.0
+    mechanism_fail = mechanism_ci[1] <= 0.0
     task_pass = task_moments_ci[0] > 0.005
     task_fail = task_moments_ci[1] < -0.005
-    if mechanism_pass and task_pass:
+    stability = None
+    stability_pass = False
+    if args.stability is not None:
+        stability = json.loads(args.stability.read_text())
+        stability_pass = float(stability["delta_ci95"][0]) > 0.05
+    task_noninferior = task_moments_ci[0] > -0.005
+    if mechanism_pass and (task_pass or (stability_pass and task_noninferior)):
         decision = "PASS"
-    elif not mechanism_pass or task_fail:
+    elif mechanism_fail or (task_fail and not stability_pass):
         decision = "FAIL"
     else:
         decision = "INCONCLUSIVE"
@@ -96,6 +105,7 @@ def main() -> None:
             "replicate": np.arange(args.replicates),
             "delta_kernel_minus_moments_macro_auroc": task_draws[:, 0],
             "delta_kernel_minus_gaussian_macro_auroc": task_draws[:, 1],
+            "delta_kernel_minus_linear_macro_auroc": task_draws[:, 2],
             "mechanism_one_minus_cosine": mechanism_draws,
         }
     )
@@ -111,11 +121,15 @@ def main() -> None:
             "point": float(task_statistic(np.arange(len(target)))[1]),
             "ci95": task_gaussian_ci,
         },
+        "safeguard_task_delta_kernel_minus_linear": {
+            "point": float(task_statistic(np.arange(len(target)))[2]),
+            "ci95": interval(task_draws[:, 2]),
+        },
         "mechanism_one_minus_cosine": {
             "point_patient_equal": float(patient_mechanism.mean()),
             "ci95": mechanism_ci,
         },
-        "stability": "not_yet_measured",
+        "stability": stability if stability is not None else "not_yet_measured",
         "replicates": args.replicates,
         "bootstrap_unit": "patient",
     }

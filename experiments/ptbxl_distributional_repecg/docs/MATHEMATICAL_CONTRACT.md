@@ -121,6 +121,21 @@ are reported separately. The fixed-window all-record sensitivity is frozen now
 as an unconditional secondary analysis; fold-10 exclusion cannot activate a
 new analysis.
 
+## Shared perturbation realization
+
+Sampling-rate, noise, and amplitude perturbations begin from the finite
+physical-mV waveform, before filtering, scaling, peak detection, phase
+normalization, and representation construction. Rates 250 and 100 Hz use
+polyphase antialiasing from 500 Hz. Additive Gaussian noise is independently
+realized per lead and rescaled to exact realized per-lead RMS SNR at 20 or 10
+dB. Global amplitude factors are 0.9 and 1.1. Peak jitter is applied after
+detection as independent integer offsets bounded by 10 or 20 ms, before valid
+RR pairs and phase interpolation are recomputed. Beat removal selects an exact
+rounded 25 or 50 percent subset without replacement and restores chronological
+order; endpoints that then violate their beat-count rule are explicitly
+ineligible. Every stochastic perturbation is keyed by record ID, condition,
+and frozen seed so model comparisons receive identical realizations.
+
 ## Paper 1 recurrence operator
 
 For the 16 phase-cell means, `d_gh = ||mu_g-mu_h||^2`. A single positive
@@ -149,6 +164,15 @@ below `1e-8`. Thus the realized destroyed cell, not merely its expectation,
 matches the original first two moments. The sham is a frozen permutation of the
 original atom rows, which preserves the complete empirical distribution as well
 as the exact moments.
+
+For the preregistered stability alternative, records require at least four
+cycles and are split by chronological odd/even beat index. For flattened
+representations `a,b`, stability is the zero-to-one normalized Frobenius score
+`clip(2<a,b>/(||a||^2+||b||^2), 0, 1)`. It is one for two zero vectors and zero
+when exactly one is zero. The Paper 2 stability delta is the patient-equal
+kernel-mean score minus the patient-equal mean-plus-full-covariance score; its
+interval resamples patients. This definition was fixed before computing the
+odd/even endpoint.
 
 ## Paper 3 path descriptor
 

@@ -4,6 +4,12 @@ import numpy as np
 import torch
 
 from repecg.common.models import PhaseCNN, RecurrenceCNN
+from repecg.paper02_kernel_mean.controls import (
+    exact_moment_matched_gaussian,
+    mean_covariance_features,
+    sample_covariance,
+)
+from repecg.paper03_signature import logsignature_descriptor
 from repecg.paper04_hankel import hankel_descriptor
 from repecg.paper05_koopman import koopman_operator, operator_descriptor, soft_observables
 from repecg.paper06_conditional import conditional_distance, decompose_macro_residual, soft_membership
@@ -18,6 +24,17 @@ def test_neural_shapes() -> None:
     assert model(torch.randn(2, 4, 8), torch.randn(2, 4, 16, 128)).shape == (2, 5)
 
 
+def test_paper02_destroyer_matches_realized_mean_and_covariance() -> None:
+    generator = torch.Generator().manual_seed(42)
+    values = torch.randn(7, 32, 8, generator=generator, dtype=torch.float64)
+    values = values @ torch.diag(torch.linspace(0.2, 2.0, 8, dtype=torch.float64)) + 3.0
+    matched = exact_moment_matched_gaussian(values, generator=generator)
+    assert torch.max(torch.abs(values.mean(1) - matched.mean(1))) < 1e-8
+    assert torch.max(torch.abs(sample_covariance(values) - sample_covariance(matched))) < 1e-8
+    features = mean_covariance_features(values)
+    assert features.shape == (7, 44)
+
+
 def test_hankel_descriptor_is_finite_and_order_sensitive() -> None:
     rng = np.random.default_rng(42)
     cell = np.cumsum(rng.normal(size=(32, 8)), axis=0)
@@ -26,6 +43,16 @@ def test_hankel_descriptor_is_finite_and_order_sensitive() -> None:
     assert original.shape == shuffled.shape
     assert np.isfinite(original).all()
     assert not np.allclose(original, shuffled)
+
+
+def test_signature_descriptor_uses_path_order() -> None:
+    phase = np.linspace(0.0, 1.0, 16)
+    cell = np.stack([np.sin((axis + 1) * phase) for axis in range(8)], axis=1)
+    forward = logsignature_descriptor(cell)
+    reversed_path = logsignature_descriptor(cell[::-1])
+    assert forward.shape == reversed_path.shape
+    assert np.isfinite(forward).all()
+    assert not np.allclose(forward, reversed_path)
 
 
 def test_koopman_occupancy_preserved_by_shuffle() -> None:

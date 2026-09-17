@@ -11,6 +11,7 @@ import pandas as pd
 import torch
 
 from repecg.common.kernels import NystromMap, WhiteningTransform, audit_nystrom, biased_mmd2
+from repecg.paper02_kernel_mean.controls import exact_moment_matched_gaussian, mean_covariance_features
 
 
 def _eligible(cache: Path) -> pd.DataFrame:
@@ -120,10 +121,13 @@ def _represent(
     inverse_root = torch.as_tensor(mapping.inverse_root, device=device, dtype=torch.float32)
     kernel = np.empty((len(frame), 16, len(mapping.landmarks)), dtype=np.float32)
     gaussian = np.empty_like(kernel)
-    moments = np.empty((len(frame), 16, 16), dtype=np.float32)
+    linear = np.empty((len(frame), 16, 8), dtype=np.float32)
+    moments = np.empty((len(frame), 16, 44), dtype=np.float32)
     labels = np.empty((len(frame), 5), dtype=np.float32)
     ecg_ids = frame.ecg_id.to_numpy(dtype=np.int64)
     patient_ids = frame.patient_id.to_numpy(dtype=np.int64)
+    generator = torch.Generator(device=device)
+    generator.manual_seed(seed)
     def load(index: int) -> tuple[int, np.ndarray, np.ndarray]:
         row = frame.iloc[index]
         with np.load(cache / str(row.artifact)) as item:
@@ -145,29 +149,27 @@ def _represent(
                     device=device,
                 )
                 with torch.inference_mode():
-                    centered = cells - cells.mean(dim=1, keepdim=True)
-                    covariance = centered.transpose(1, 2) @ centered / max(cells.shape[1] - 1, 1)
-                    eigenvalues, eigenvectors = torch.linalg.eigh(covariance)
-                    root = eigenvectors * torch.sqrt(eigenvalues.clamp_min(0.0)).unsqueeze(1)
-                    matched = cells.mean(dim=1, keepdim=True) + torch.randn_like(cells) @ root.transpose(1, 2)
+                    matched = exact_moment_matched_gaussian(cells, generator=generator)
 
                     def embed(values: torch.Tensor) -> torch.Tensor:
-                        white = (values - white_mean) @ components * scales
+                        white = (values.float() - white_mean) @ components * scales
                         anchor_batch = anchors.expand(len(values), -1, -1)
                         feature = torch.rsqrt(torch.cdist(white, anchor_batch).square() + mapping.c2)
                         return (feature @ inverse_root).mean(dim=1)
 
                     kernel[indices] = embed(cells).reshape(count, 16, -1).cpu().numpy()
                     gaussian[indices] = embed(matched).reshape(count, 16, -1).cpu().numpy()
-                    moments[indices] = (
-                        torch.cat((cells.mean(dim=1), cells.std(dim=1, correction=0)), dim=1)
-                        .reshape(count, 16, 16)
+                    linear[indices] = (
+                        ((cells - white_mean) @ components * scales).mean(dim=1)
+                        .reshape(count, 16, 8)
                         .cpu()
                         .numpy()
                     )
+                    moments[indices] = mean_covariance_features(cells.double()).reshape(count, 16, 44).float().cpu().numpy()
     return {
         "kernel": kernel,
         "gaussian": gaussian,
+        "linear": linear,
         "moments": moments,
         "labels": labels,
         "ecg_ids": ecg_ids,
@@ -233,6 +235,18 @@ def main() -> None:
         "validation_records": len(select),
         "landmarks": len(mapping.landmarks),
         "audit": audits[str(len(mapping.landmarks))],
+        "representations": {
+            "kernel": [16, len(mapping.landmarks)],
+            "linear": [16, 8],
+            "moments": [16, 44],
+            "gaussian": [16, len(mapping.landmarks)],
+        },
+        "controls": {
+            "moments": "mean_plus_lower_triangle_sample_covariance",
+            "gaussian": "realized_mean_and_sample_covariance_matched",
+            "moment_tolerance": 1e-8,
+            "linear": "mean_in_train_whitened_linear_kernel_space",
+        },
         "seed": args.seed,
     }
     (args.output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")

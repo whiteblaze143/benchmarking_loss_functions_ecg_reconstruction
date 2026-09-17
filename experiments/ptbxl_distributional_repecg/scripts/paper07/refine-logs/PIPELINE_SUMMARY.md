@@ -1,17 +1,6 @@
-# Pipeline Summary
+# Pipeline Summary: Paper 07 — Continuous Measurement-Operator ECG
 
-**Problem**: Operator-response architectures
-**Final Method Thesis**: Diagnostic information lies in how an operator transforms an input, rather than the raw input alone.
-**Final Verdict**: READY
+**Problem Anchor**: Continuous measurement-operator representation for multilead ECG.
+**Core Thesis**: An ECG recording is an unordered set of arbitrary linear projections $(q, r_q)$ on $\mathbb{S}^7$; continuous geometric operator embeddings strictly outperform discrete lead tokens on missing, displaced, and unseen lead geometries, while reconstructive inversion acts as an effective spatiotemporal regularizer.
+**Status**: PRODUCTION-LOCKED & IMPLEMENTATION-VERIFIED
 **Date**: 2026-09-17
-
-## Final Deliverables
-- Proposal: `refine-logs/FINAL_PROPOSAL.md`
-- Experiment plan: `refine-logs/EXPERIMENT_PLAN.md`
-
-## Must-Prove Claims
-- Operator responses are more sample-efficient than raw mappings.
-
-## First Runs to Launch
-1. Smoke test verification (COMPLETED)
-2. Production run

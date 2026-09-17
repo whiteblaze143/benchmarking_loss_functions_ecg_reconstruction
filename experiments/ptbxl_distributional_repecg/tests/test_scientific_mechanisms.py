@@ -8,6 +8,8 @@ from repecg.common.models import (
     CausalStateECGModel, StructuralInnovationModel, CounterfactualSurgeryModel,
     InvariantMechanismDiscoveryModel, CausalMechanismFactorizationModel
 )
+from repecg.paper07_operator import OperatorSetModel
+
 
 def test_paper01_mechanism():
     variants = get_variants_for_paper(1)
@@ -62,6 +64,38 @@ def test_paper05_mechanism():
     
     control = KoopmanOperatorModel(164, variant=variants["occupancy_only"])
     assert control(x).shape == (2, 5)
+
+def test_paper07_mechanism():
+    responses = torch.randn(2, 4, 16, 128)
+    operators = torch.randn(2, 4, 8)
+    operator_ids = torch.randint(0, 8, (2, 4))
+    target_operator = torch.randn(2, 8)
+    target_ids = torch.randint(0, 8, (2,))
+
+    # 1. Continuous Primary
+    cont_model = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous")
+    out_cont = cont_model(operators, responses)
+    assert out_cont.shape == (2, 5)
+
+    # 2. Categorical Primary
+    cat_model = OperatorSetModel(response_dim=128, classes=5, operator_mode="categorical", vocabulary_size=8)
+    out_cat = cat_model(None, responses, operator_ids=operator_ids)
+    assert out_cat.shape == (2, 5)
+
+    # 3. Continuous Auxiliary (Reconstruction)
+    logits_recon, recon = cont_model(
+        operators, responses, target_operator=target_operator, return_reconstruction=True
+    )
+    assert logits_recon.shape == (2, 5)
+    assert recon.shape == (2, 16, 128)
+
+    # 4. Categorical Auxiliary (Reconstruction)
+    logits_cat_recon, cat_recon = cat_model(
+        None, responses, operator_ids=operator_ids, target_operator_ids=target_ids, return_reconstruction=True
+    )
+    assert logits_cat_recon.shape == (2, 5)
+    assert cat_recon.shape == (2, 16, 128)
+
 
 def test_paper08_mechanism():
     variants = get_variants_for_paper(8)

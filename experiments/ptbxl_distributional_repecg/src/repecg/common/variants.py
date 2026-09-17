@@ -57,15 +57,39 @@ PAPER04_VARIANTS = {
 
 PAPER05_VARIANTS = {
     "full": ExperimentVariant(),
+    "full_dual_koopman": ExperimentVariant(),
     "linear_probe": ExperimentVariant(head="linear"),
+    "phase_aware_linear_probe": ExperimentVariant(head="phase_aware_linear"),
     "occupancy_only": ExperimentVariant(representation="occupancy_only", mechanism="occupancy_only"),
+    "phase_koopman_only": ExperimentVariant(mechanism="phase_koopman_only"),
+    "cycle_koopman_only": ExperimentVariant(mechanism="cycle_koopman_only"),
+    "linear_state_dmd": ExperimentVariant(mechanism="linear_state_dmd"),
+    "soft_markov": ExperimentVariant(mechanism="soft_markov"),
+    "phase_order_shuffled": ExperimentVariant(mechanism="phase_order_shuffled"),
+    "beat_order_shuffled": ExperimentVariant(mechanism="beat_order_shuffled"),
+    "global_shuffled": ExperimentVariant(representation="chronology_shuffled", mechanism="global_shuffled"),
     "chronology_shuffled": ExperimentVariant(representation="chronology_shuffled", mechanism="chronology_shuffle"),
+    "operator_only": ExperimentVariant(mechanism="operator_only"),
+    "spectral_only": ExperimentVariant(mechanism="spectral_only"),
     "identity_order_sham": ExperimentVariant(representation="identity_order_sham", control="identity_order_sham"),
 }
 
 PAPER06_VARIANTS = {
-    "full": ExperimentVariant(),
+    # Primary matched comparisons and scientific hierarchy
+    "macro_plus_conditional_residual": ExperimentVariant(representation="full", mechanism="anchor_conditioned_mmd"),
+    "macro_only": ExperimentVariant(representation="macro_component"),
+    "residual_marginal_only": ExperimentVariant(representation="residual_marginal"),
+    "macro_plus_marginal_residual": ExperimentVariant(representation="macro_residual_marginals"),
+    "conditional_residual_only": ExperimentVariant(representation="full"),
+    "vcg_plus_conditional_residual": ExperimentVariant(representation="macro_residual_marginals", control="vcg_control"),
+    "phase_shuffled_within_macro": ExperimentVariant(representation="shuffled_residual", mechanism="within_macro_phase_shuffle"),
+    "macro_overlap_only": ExperimentVariant(representation="macro_component", mechanism="overlap_channel"),
+    "all_pairs": ExperimentVariant(representation="full", mechanism="all_pairs_mask"),
+    "raw_affinity": ExperimentVariant(representation="full", mechanism="unnormalized_affinity"),
     "linear_probe": ExperimentVariant(head="linear"),
+    "phase_aware_linear_probe": ExperimentVariant(head="phase_aware_linear"),
+    # Backward compatibility aliases
+    "full": ExperimentVariant(),
     "full_signal": ExperimentVariant(representation="full_signal"),
     "macro_component": ExperimentVariant(representation="macro_component"),
     "residual_marginal": ExperimentVariant(representation="residual_marginal"),
@@ -73,6 +97,7 @@ PAPER06_VARIANTS = {
     "shuffled_residual": ExperimentVariant(representation="shuffled_residual", mechanism="shuffle_residual_given_z"),
     "joint_pair_sham": ExperimentVariant(representation="joint_pair_sham", control="joint_pair_sham"),
 }
+
 
 PAPER07_VARIANTS = {
     "continuous_primary": ExperimentVariant(mechanism="continuous_primary"),

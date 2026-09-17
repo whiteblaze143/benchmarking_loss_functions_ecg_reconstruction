@@ -20,7 +20,7 @@ payload = json.load(open(sys.argv[1]))
 if payload.get("kind") != "paper05_record_specific_koopman_representations" or payload.get("status") != "complete" or payload.get("audit", {}).get("passed") is not True:
     raise SystemExit("Paper 5 representation manifest is not production-compatible")
 PY
-for variant in "full" "linear_probe" "occupancy_only" "chronology_shuffled" "identity_order_sham"; do
+for variant in "full" "linear_probe" "phase_aware_linear_probe" "occupancy_only" "phase_koopman_only" "cycle_koopman_only" "linear_state_dmd" "soft_markov" "phase_order_shuffled" "beat_order_shuffled" "global_shuffled" "chronology_shuffled" "operator_only" "spectral_only" "identity_order_sham"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/.done_${variant}" ]; then
         echo "Variant $variant already completed. Skipping."

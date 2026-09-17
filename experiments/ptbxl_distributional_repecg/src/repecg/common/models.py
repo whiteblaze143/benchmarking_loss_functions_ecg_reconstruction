@@ -303,7 +303,24 @@ class KoopmanOperatorModel(nn.Module):
     def forward(self, descriptor: torch.Tensor) -> torch.Tensor:
         if descriptor.ndim != 2:
             raise ValueError("Paper 5 expects fixed record descriptors with shape (batch, feature)")
-        return self.linear_probe(descriptor) if self.variant.head == "linear" else self.network(descriptor)
+        x = descriptor
+        if self.variant.mechanism == "operator_only":
+            mask = torch.ones_like(x)
+            mask[:, :min(32, x.shape[1])] = 0.0
+            x = x * mask
+        elif self.variant.mechanism == "occupancy_only":
+            mask = torch.zeros_like(x)
+            mask[:, :min(32, x.shape[1])] = 1.0
+            x = x * mask
+        elif self.variant.mechanism == "spectral_only":
+            mask = torch.zeros_like(x)
+            if x.shape[1] >= 96:
+                mask[:, 96:] = 1.0
+            x = x * mask
+
+        if self.variant.head in ("linear", "phase_aware_linear"):
+            return self.linear_probe(x)
+        return self.network(x)
 
 
 # ============================================================================
@@ -311,25 +328,29 @@ class KoopmanOperatorModel(nn.Module):
 # ============================================================================
 
 class ConditionalRepStatModel(nn.Module):
-    def __init__(self, input_dim: int, width: int = 32, classes: int = 5, variant: ExperimentVariant | None = None):
+    def __init__(self, input_dim: int, width: int = 32, classes: int = 5, variant: ExperimentVariant | None = None, in_channels: int = 2):
         super().__init__()
         self.variant = variant if variant is not None else ExperimentVariant()
+        in_c = getattr(self.variant, "in_channels", in_channels)
+        self.in_channels = in_c
         self.encoder = nn.Sequential(
-            nn.Conv2d(2, 16, 3, padding=1),
+            nn.Conv2d(in_c, 16, 3, padding=1),
             nn.GELU(),
             nn.Conv2d(16, width, 3, padding=1),
             nn.GELU(),
             nn.AdaptiveAvgPool2d(1),
         )
-        if self.variant.head == "linear":
-            self.linear_probe = nn.Linear(240, classes)
+        if self.variant.head in ("linear", "phase_aware_linear"):
+            self.linear_probe = nn.Linear(120 * in_c, classes)
         else:
             self.head = nn.Linear(width, classes)
 
     def forward(self, recurrence: torch.Tensor) -> torch.Tensor:
-        if recurrence.ndim != 4 or recurrence.shape[1:] != (2, 16, 16):
-            raise ValueError("Paper 6 expects (batch,2,16,16) recurrence tensors")
-        if self.variant.head == "linear":
+        if recurrence.ndim != 4 or recurrence.shape[2:] != (16, 16):
+            raise ValueError("Paper 6 expects (batch, channels, 16, 16) recurrence tensors")
+        if recurrence.shape[1] != self.in_channels:
+            raise ValueError(f"Paper 6 expected {self.in_channels} channels, got {recurrence.shape[1]}")
+        if self.variant.head in ("linear", "phase_aware_linear"):
             upper = torch.triu_indices(16, 16, offset=1, device=recurrence.device)
             values = recurrence[:, :, upper[0], upper[1]].flatten(1)
             return self.linear_probe(values)

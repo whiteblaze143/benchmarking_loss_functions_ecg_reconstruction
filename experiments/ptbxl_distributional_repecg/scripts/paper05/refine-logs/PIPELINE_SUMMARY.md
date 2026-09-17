@@ -1,17 +1,12 @@
-# Pipeline Summary
+# Pipeline Summary: Paper 05
+## The Koopman Operator in Lifted RKHS
 
-**Problem**: Frequency-domain cross-spectral density
-**Final Method Thesis**: Cross-lead frequency coherence identifies structural heart abnormalities.
-**Final Verdict**: READY
-**Date**: 2026-09-17
-
-## Final Deliverables
-- Proposal: `refine-logs/FINAL_PROPOSAL.md`
-- Experiment plan: `refine-logs/EXPERIMENT_PLAN.md`
-
-## Must-Prove Claims
-- Cross-spectral matrices outperform spatial-only models.
-
-## First Runs to Launch
-1. Smoke test verification (COMPLETED)
-2. Production run
+### Executive Summary
+Paper 05 establishes an operator-theoretic formulation of cardiac electrophysiology:
+1. Cardiac states are distribution-valued representations $P_{b,g}$ in a reproducing kernel Hilbert space $\mathcal{H}_k$, approximated in finite KME coordinates $\hat{\mu}_{b,g} \in \mathbb{R}^{128}$.
+2. Observables $\psi(\hat{\mu}) \in \Delta^{31}$ define soft cluster memberships over global anchors.
+3. Decoupled Koopman operators capture:
+   - **Intra-cycle phase progression** ($K_{\text{phase}}$): how states evolve within a single cardiac cycle.
+   - **Beat-to-beat cycle dynamics** ($K_{\text{cycle}}$): how matched cardiac phases change across successive heartbeats.
+4. Estimators use normalized sample moments and scale-relative ridge penalties, ensuring mathematical invariance to record duration and beat counts.
+5. The model directly falsifies the static hypothesis: proving whether transition laws add diagnostic value beyond static distribution occupancy.\n

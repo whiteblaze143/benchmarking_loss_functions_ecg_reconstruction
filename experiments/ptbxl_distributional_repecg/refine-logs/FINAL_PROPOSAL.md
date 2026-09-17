@@ -5,7 +5,7 @@
 - **Bottom-line problem:** Determine whether a diagnostically useful PTB-XL ECG representation can be built from distributions of locally contiguous cardiac electrical states, rather than producing another feature-engineering pipeline whose apparent gain comes from architecture capacity or test-set selection.
 - **Must-solve bottleneck:** Prior repStat work showed that learned states were not reliably interpretable as P/QRS/T states, inferential non-rejection was conservative, and connected-component merging did not define a valid state ontology. The new program must preserve local structure and dependence without equating non-rejection with biological equivalence.
 - **Non-goals:** Do not force named cardiac-wave semantics; do not use clinical metadata; do not claim generic recurrence, MMD, DMD, Koopman analysis, or ECG tokenization is itself novel; do not select a winner by AUROC alone; do not share learned objects across papers.
-- **Constraints:** PTB-XL `records500` only; official folds; an additional fold-8 development firewall; one local A100 40 GB; physical-mV information must be preserved; fold 10 stays locked until configurations are frozen; all eight specified branches remain independently runnable.
+- **Constraints:** PTB-XL `records500` for training and validation; evaluation spans all 9 available datasets (EchoNext, LUDB, RDB, ISP, Kingston-ICU, Emory-MUSE, Sunnybrook, Zhejiang); official folds; an additional fold-8 development firewall; one local A100 40 GB; physical-mV information must be preserved; fold 10 stays locked until configurations are frozen; all fifteen specified branches remain independently runnable.
 - **Success condition:** Each branch is judged independently and survives only if it (1) beats or stabilizes against its strongest matched representation control, (2) responds to a mechanism-use falsification in the predicted direction, and (3) retains diagnostic information under paired patient-level evaluation. There is no post-hoc portfolio-winner claim; negative and inconclusive branches remain reportable outcomes.
 
 ## Technical Gap
@@ -42,7 +42,7 @@ measurement layer:
 ## System Overview
 
 ```text
-PTB-XL records500
+PTB-XL records500 (Training)
   -> canonical lead order + physical-mV copy
   -> 0.5--40 Hz zero-phase filter
   -> independent 8-lead basis
@@ -52,7 +52,7 @@ PTB-XL records500
   -> exact MMD audit + independently fitted Nyström kernel means
   -> one paper-specific mathematical object
   -> matched probe and mechanism-use control
-  -> validation selection -> frozen manifest -> locked fold-10 evaluation
+  -> validation selection -> frozen manifest -> locked fold-10 evaluation + Multi-Dataset OOD evaluation (9 datasets)
 ```
 
 ## Shared Data and Representation Contract
@@ -68,7 +68,7 @@ PTB-XL records500
 - Training: AdamW, cosine schedule, maximum 100 epochs, patience 10, five fixed seeds after gates.
 - Evaluation: paired patient bootstrap with 2,000 replicates; no test tuning.
 
-## Eight Independent Branches
+## Fifteen Independent Branches
 
 ### Paper 1: Distributional Recurrence Operator
 
@@ -134,6 +134,62 @@ PTB-XL records500
 - **Falsification:** Token quality must exceed equal-size quantization and not collapse to phase identity.
 - **Kill rule:** Stop general-purpose claims if fold-10 unknown rate exceeds 20 percent or phase nearly determines token identity.
 
+### Paper 9: Counterfactual Measurement-Operator ECG
+
+- **Object:** Continuous counterfactual states of measurement operators based on causal representation learning.
+- **Model:** Operator MLP plus causal-regularized response CNN.
+- **Matched controls:** Standard continuous measurement-operator ECG without counterfactual regularizers.
+- **Falsification:** Randomize the counterfactual intervention angle; must destroy the counterfactual prediction ability while maintaining observational prediction.
+- **Kill rule:** Stop if counterfactual regularizers offer no material stability gain over the baseline operator model under distribution shifts.
+
+### Paper 10: Interventional repStat ECG
+
+- **Object:** Stability of local distributional representations under direct intervention on phase cells.
+- **Model:** Phase CNN with intervention-aware stability training.
+- **Matched controls:** Observational repStat without interventional stability.
+- **Falsification:** Apply random non-causal perturbation (sham intervention) instead of the controlled intervention; stability should degrade.
+- **Kill rule:** Stop if interventional stability does not outperform observational models on out-of-distribution paired sets.
+
+### Paper 11: repStat Causal-State ECG
+
+- **Object:** Causal states defined via predictive future equivalence rather than historical correlation, mapped to RKHS.
+- **Model:** Predictive state RNN/CNN predicting future distribution embeddings.
+- **Matched controls:** Past-history predictive state (standard Koopman/DMD).
+- **Falsification:** Break the temporal link between past and future distributions (chronological shuffle); predictive state collapse required.
+- **Kill rule:** Stop if the forward predictive states collapse to simple occupancy or fail to predict future RKHS embeddings.
+
+### Paper 12: Structural-Innovation repECG
+
+- **Object:** The structural innovation (unpredictable residual) from the predictable cyclic component of the ECG.
+- **Model:** Cyclic-predictive model with innovation-extraction layer.
+- **Matched controls:** Raw residual prediction without causal ordering.
+- **Falsification:** Destroy the causal ordering of structural innovations; the predictive benefit of the innovation stream must vanish.
+- **Kill rule:** Stop if structural innovations are indistinguishable from standard unstructured residuals.
+
+### Paper 13: Counterfactual Distribution Surgery
+
+- **Object:** Splicing/surgery of local phase distributions across counterfactual states to isolate causal features.
+- **Model:** Distributional surgery module applied to phase-cell embeddings.
+- **Matched controls:** Standard feature masking or attention without surgical intervention.
+- **Falsification:** Apply mismatched/random distribution surgeries; must perform worse than causally aligned surgeries.
+- **Kill rule:** Stop if distribution surgery yields no improvement over standard masking in robustness or explainability.
+
+### Paper 14: Invariant-Mechanism Discovery with repStat
+
+- **Object:** Invariant risk minimization (IRM) applied across all available real-world dataset domains (e.g., PTB-XL, EchoNext, LUDB, Emory, Sunnybrook) rather than relying on synthetic shifts.
+- **Model:** IRM-regularized classification head over phase-cell KMEs.
+- **Matched controls:** Empirical Risk Minimization (ERM) pooling across domains.
+- **Falsification:** Shuffle domain assignments across the 9 available real-world datasets to destroy invariant structures; IRM advantage must disappear.
+- **Kill rule:** Stop if IRM provides no out-of-domain generalization benefit over ERM.
+
+### Paper 15: Causal Mechanism Factorization of the Cardiac Cycle
+
+- **Object:** Factorization of the ECG generative process into independent causal mechanisms (e.g., depolarization vs. repolarization).
+- **Model:** Independent-mechanism autoencoder with distributional disentanglement.
+- **Matched controls:** Entangled representation learning (standard VAE or KME).
+- **Falsification:** Force mechanism entanglement via random basis mixing; downstream causal queries must fail.
+- **Kill rule:** Stop if the factorized components do not exhibit statistical independence or fail to align with known physiological boundaries.
+
 ## Training and Inference Plan
 
 All preprocessing and train-fitted objects are materialized with provenance,
@@ -188,7 +244,7 @@ test; larger language models would confound token quality with scale.
 
 ### Portfolio branch claims
 
-Papers 3--8 proceed only after their mechanism-destroying smoke tests behave as
+Papers 3--15 proceed only after their mechanism-destroying smoke tests behave as
 specified. This gate does not remove any paper from the implementation scope;
 it determines whether expensive final-seed runs are scientifically warranted.
 
@@ -205,6 +261,7 @@ it determines whether expensive final-seed runs are scientifically warranted.
 - Shared raw baselines plus Papers 1--2 development: approximately 8--20 A100 GPU-hours after cached representations.
 - Papers 3--6 gated development: approximately 12--30 A100 GPU-hours total, excluding failed branches stopped at gates.
 - Paper 7 and Paper 8: highest cost, provisionally 20--50 A100 GPU-hours each if they reach full five-seed execution.
+- Papers 9--15 causal/interventional development: approximately 30--60 A100 GPU-hours total, contingent on passing causal mechanism gates.
 - Final five-seed portfolio cost is not committed until measured throughput from the first development runs replaces these estimates.
 
 

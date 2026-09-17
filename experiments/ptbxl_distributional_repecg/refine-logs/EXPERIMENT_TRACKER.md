@@ -16,6 +16,14 @@
 | R033 | M3 | conditional gate | Paper 6 | 1--7/8 seed 42 | MUST | TODO | four mandatory models |
 | R040 | M4 | operator cost/gate | Paper 7 | 1--7/8 seed 42 | MUST | TODO | separate task/auxiliary pairs |
 | R041 | M4 | token cost/gate | Paper 8 | 1--7/8 seed 42 | MUST | TODO | simultaneous pair bounds |
-| R050 | M5 | final training | gate-passing branches | 1--8/9 seeds 42--46 | MUST | BLOCKED | blocked on branch gate/freeze |
-| R060 | M6 | locked evaluation | frozen final models | fold 10 | MUST | BLOCKED | forbidden until freeze manifest |
+| R070 | M5_Causal | counterfactual cost/gate | Paper 9 | 1--7/8 seed 42 | MUST | TODO | randomized counterfactual angle |
+| R071 | M5_Causal | interventional gate | Paper 10 | 1--7/8 seed 42 | MUST | TODO | sham intervention stability |
+| R072 | M5_Causal | causal-state gate | Paper 11 | 1--7/8 seed 42 | MUST | TODO | forward temporal linkage |
+| R073 | M5_Causal | innovation gate | Paper 12 | 1--7/8 seed 42 | MUST | TODO | causal ordering vs residual |
+| R074 | M5_Causal | surgery cost/gate | Paper 13 | 1--7/8 seed 42 | MUST | TODO | surgical masking stability |
+| R075 | M5_Causal | IRM gate | Paper 14 | 1--7/8 seed 42 | MUST | TODO | out-of-domain alignment |
+| R076 | M5_Causal | factorization gate | Paper 15 | 1--7/8 seed 42 | MUST | TODO | independent mechanism query |
+| R080 | M5 | final training | gate-passing branches | 1--8/9 seeds 42--46 | MUST | BLOCKED | blocked on branch gate/freeze |
+| R090 | M6 | locked evaluation | frozen final models | fold 10 | MUST | BLOCKED | forbidden until freeze manifest |
+| R100 | M7 | multi-dataset OOD | frozen final models | 8 external datasets | MUST | BLOCKED | forbidden until freeze manifest |
 

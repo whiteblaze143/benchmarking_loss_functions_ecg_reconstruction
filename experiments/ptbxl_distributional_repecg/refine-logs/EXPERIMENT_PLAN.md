@@ -16,6 +16,7 @@ and mechanism-use falsification.
 | C1: nonlinear cell distributions add beyond moments | Paper 2 passes its scalar mechanism gate and task/stability gate | B2 |
 | C2: distant distributional recurrence adds beyond mean recurrence | Paper 1 direct operator passes matched mean control and phase destroyer | B3 |
 | C3--C8: each branch-specific object is actually used | branch-specific scalar mechanism CI above zero plus task/stability rule | B4--B9 |
+| C9--C15: each causal/interventional object is used under controlled shifts | causal branch-specific scalar mechanism CI above zero plus task/stability rule | B10--B16 |
 
 There is no umbrella claim that at least one branch succeeds. Outcomes are
 independent and failed/inconclusive branches are preserved.
@@ -33,7 +34,7 @@ independent and failed/inconclusive branches are preserved.
 
 ### B0: Data and estimator invariants
 
-- Dataset: PTB-XL `records500`; folds 1--7 only.
+- Dataset: PTB-XL `records500` (folds 1--7 only) for training; all 9 available datasets (EchoNext, LUDB, RDB, ISP, Kingston-ICU, Emory-MUSE, Sunnybrook, Zhejiang) prepared for OOD evaluation.
 - Runs: metadata/label audit, patient disjointness, lead order, preprocessing,
   beat/phase QC, exact MMD, Nyström fidelity, ineligibility reconciliation.
 - Success: every invariant test passes; 128 landmarks pass both approximation
@@ -102,6 +103,41 @@ independent and failed/inconclusive branches are preserved.
 - Gate: patient-equal odd/even JSD agreement plus task/stability rule.
 - Priority: MUST-RUN implementation; run after vocabulary cost smoke.
 
+### B10: Counterfactual Measurement-Operator
+- Systems: continuous causal operators versus standard operators.
+- Gate: randomized intervention angle destruction.
+- Priority: MUST-RUN implementation; run after B8.
+
+### B11: Interventional repStat
+- Systems: intervention-aware phase CNN versus observational repStat.
+- Gate: non-causal sham perturbation stability drop.
+- Priority: MUST-RUN implementation.
+
+### B12: Causal-State ECG
+- Systems: future predictive RKHS states versus past Koopman states.
+- Gate: chronological link breaking.
+- Priority: MUST-RUN implementation.
+
+### B13: Structural-Innovation
+- Systems: ordered structural innovation versus raw residual prediction.
+- Gate: innovation ordering destruction.
+- Priority: MUST-RUN implementation.
+
+### B14: Distribution Surgery
+- Systems: distributional surgery versus standard feature masking.
+- Gate: mismatched surgery destruction.
+- Priority: MUST-RUN implementation.
+
+### B15: Invariant-Mechanism Discovery
+- Systems: IRM pooling versus ERM pooling.
+- Gate: domain assignment shuffle.
+- Priority: MUST-RUN implementation.
+
+### B16: Causal Mechanism Factorization
+- Systems: independent-mechanism autoencoder versus standard VAE.
+- Gate: forced random basis entanglement.
+- Priority: MUST-RUN implementation.
+
 ## Run Order and Milestones
 
 | Milestone | Goal | Runs | Decision gate | Cost | Risk |
@@ -111,8 +147,10 @@ independent and failed/inconclusive branches are preserved.
 | M2 | foundational evidence | B1--B3 seed 42 on folds 1--7/8 | frozen numeric gates | 8--20 GPU hours provisional | weak distribution signal |
 | M3 | mechanism portfolio | B4--B7 smoke then seed 42 | branch gates | 12--30 GPU hours provisional | short-record sufficiency |
 | M4 | high-cost branches | B8--B9 cost and mechanism smokes | branch gates | 20--50 GPU hours each provisional | operator/token scalability |
+| M5_Causal | causal mechanisms | B10--B16 smokes | branch gates | 30--60 GPU hours provisional | intervention alignment |
 | M5 | final fitting | passing branches, seeds 42--46, folds 1--8/9 | config and denominators frozen | measured after M1--M4 | seed variance |
-| M6 | locked evaluation | one fold-10 pass | no refit or new analysis | evaluation only | selection leakage |
+| M6 | locked evaluation | one fold-10 pass on PTB-XL | no refit or new analysis | evaluation only | selection leakage |
+| M7 | multi-dataset OOD | pass on 8 external datasets | no refit or new analysis | evaluation only | adapter misalignment |
 
 ## Compute and Data Budget
 

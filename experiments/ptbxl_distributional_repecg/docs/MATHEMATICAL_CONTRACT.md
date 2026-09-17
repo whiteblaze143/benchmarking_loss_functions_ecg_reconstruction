@@ -107,6 +107,8 @@ Every input metadata row is retained with `eligible`, `reason`, detected beat
 count, and requested denominator. No eligible-only result may be reported
 without the full reconciliation table.
 
+For multi-dataset Out-of-Distribution (OOD) evaluation, the same representation and classification pipelines (Models 1-15 and baselines) are applied directly to the 8 external datasets (EchoNext, LUDB, RDB, ISP, Kingston-ICU, Emory-MUSE, Sunnybrook, Zhejiang) using their respective dataset adapters. No refitting of landmarks, whitening transforms, or model weights is permitted on the external test sets.
+
 | Endpoint | Additional requirement |
 |---|---|
 | Papers 1, 2, 6, 7, 8 primary representation | none beyond two cycles |
@@ -326,6 +328,34 @@ where the probability vectors use the union of final tokens plus `<UNK>` and
 zero entries contribute zero. Record values are averaged within patient first,
 then patients are weighted equally.
 
+## Paper 9 counterfactual measurement-operator
+
+Given the independent basis `B(t)`, the measurement operator is `q`, and the observed waveform is `X_q(t) = q^T B(t)`. The causal representation model learns `Z_S = f_\theta(\mathcal{C})` from context pairs `\mathcal{C} = \{(q_1, X_{q_1}), ..., (q_m, X_{q_m})\}` and predicts counterfactuals `\widehat X_{q_*} = g_\theta(Z_S, q_*)`. The representation `F(q)` is the sequence of kernel means `K_g(q)` computed over the phase cells of `[X_q(t), \dot X_q(t)]`. The model uses a counterfactual loss `\| \widehat F(q_*)-F(q_*) \|^2` alongside diagnosis and operator-invariance losses. The mechanism-use destroyer randomly mismatches `q` and the waveform during training.
+
+## Paper 10 interventional repStat
+
+Representations are split into `Z = (Z_S, Z_A)`, where `Z_A` predicts the specific intervention (sampling rate, gain, bandwidth, noise, lead subset) and `Z_S` is independent of the intervention. The invariance condition is defined via MMD equivalence: `MMD^2(P(Z_S | y, e), P(Z_S | y, e'))`. The loss combines diagnosis over `Z_S`, intervention prediction over `Z_A`, and an MMD penalty across environments. The destroyer is a random non-causal perturbation rather than the controlled intervention.
+
+## Paper 11 predictive causal states
+
+At phase `g`, define history `H_{b,g} = X_b[0:g]` and future `F_{b,g} = X_b[g+1:G]`. Histories are mapped to continuous embeddings `h_{b,g} = f(H_{b,g})`. Two histories belong to the same causal state if their future distributions are equivalent, tested via `MMD^2(P(F|h_i), P(F|h_j))` with upper confidence bound `U_{0.95} < \delta`. The ECG is represented as a minimal predictive-state machine with states `\epsilon_k`, yielding statistical complexity `C_\mu` and entropy rate `h_\mu`. The destroyer chronologically shuffles the temporal links to break future predictability.
+
+## Paper 12 structural innovations
+
+The within-beat phase process is modeled as `Z_g = f_g(Z_{<g}, U_g)`, where `U_g \sim \mathcal{N}(0, I)` is the structural innovation at phase `g`. The representation isolates `U_g = f_{\theta,g}^{-1}(Z_g; Z_{<g})` via a conditional normalizing flow. Mechanism interventions sample `U_k'` from a reference distribution and propagate downstream to compute `\tilde Z_{1:G}`. The falsification reverses the phase order to `Z_G, ..., Z_1` during training to destroy the causal directionality.
+
+## Paper 13 counterfactual distribution surgery
+
+Phase-cell states `P_g` are substituted via a matched normal reference `do(P_g = P_g^{ref})`, conditioned on `Z_{g-1}, Z_{g+1}` and `Y=\mathrm{NORM}`. The intervention is propagated forward through the structural model. Phase-wise necessity is defined as `N_g^{(c)} = f_c(X) - f_c(X^{do(g \rightarrow ref)})`, and phase-wise sufficiency as `S_g^{(c)} = f_c(X^{do(g \rightarrow c)}) - f_c(X)`. The destroyer applies mismatched or random distribution surgeries instead of context-aligned causal surgery.
+
+## Paper 14 invariant-mechanism discovery
+
+Candidate mechanisms `Z_j` are evaluated across known acquisition environments `e=1,...,E`. Statistical equivalence testing retains only components satisfying `U_{0.95}(\mathrm{MMD}^2(P(Z_j|Y,e), P(Z_j|Y,e'))) < \delta_j`. The stable representation `Z_{stable}` is the intersection of these invariant mechanisms. The destroyer shuffles domain assignments, removing the structured environmental interventions.
+
+## Paper 15 causal mechanism factorization
+
+The cardiac cycle is factorized into independent transition mechanisms `M_g: Z_g \rightarrow Z_{g+1}`. Each ECG produces a sequence of local mechanism representations `\Theta_i = [\theta_{i,1}, ..., \theta_{i,G}]`. Repeated mechanisms are identified by distributional equivalence `P_g^M \simeq P_h^M` via MMD. The representation disentangles the state `Z` from the transition mechanism `M`. The falsification forces mechanism entanglement by randomly mixing the basis before downstream queries.
+
 ## Statistical aggregation
 
 Predictions are record-level. Metrics are computed over records, while every
@@ -333,7 +363,7 @@ bootstrap samples patients and includes all of each sampled patient's records.
 Final primary predictions are the arithmetic mean of five fixed-seed
 probabilities; seed-level metrics and SD are also reported. Each paper has one
 locked primary comparison. If any umbrella claim is made, Holm correction is
-applied across the eight primary comparisons; otherwise each paper is reported
+applied across the fifteen primary comparisons; otherwise each paper is reported
 independently and BH is limited to declared secondary families.
 
 All representation mechanism statistics are computed per record, averaged

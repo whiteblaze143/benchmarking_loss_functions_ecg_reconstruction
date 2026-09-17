@@ -4,7 +4,7 @@
 
 ## Source precedence
 
-The two supplied documents describe the same eight-paper program but are not
+The two supplied documents describe the same fifteen-paper program but are not
 identical.  The second document explicitly calls itself the version to hand to
 an implementation agent and is therefore the normative contract.  The first
 document is retained as design history and supplies sensitivities where useful.
@@ -28,7 +28,7 @@ document is retained as design history and supplies sensitivities where useful.
 
 ## Non-negotiable invariants
 
-- PTB-XL `records500` is the sole primary source.
+- PTB-XL `records500` is the sole primary training source. Evaluation spans all 9 available external dataset adapters.
 - The primary task is five-superclass multilabel diagnosis.
 - No clinical metadata enters a model.
 - Physical-mV and train-standardized copies remain distinct.

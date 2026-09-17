@@ -9,14 +9,17 @@
   - Define cyclic banded attention mask on $C_{16}$.
   - Define static routing and uniform attention controls.
   - Define continuous vs discrete equivalence clustering.
-- [x] **Phase 3: Implementation & Module Refactoring**
+- [ ] **Phase 3: Implementation & Module Refactoring**
   - Implement `PhaseTokenTransformer` in `src/repecg/paper08_tokens/model.py`.
   - Export in `src/repecg/paper08_tokens/__init__.py`.
   - Update `src/repecg/common/models.py` and `variants.py`.
+  - Remaining blocker: build the patient-separated UCB-equivalence vocabulary
+    and size-matched random-merge control consumed by the production trainer.
 - [x] **Phase 4: Synthetic Proof Suite**
   - Build `tests/test_paper08_synthetic_recovery.py` with 8 proof worlds.
   - Run and verify 8/8 tests pass.
 - [x] **Phase 5: Cross-Paper Regression Verification**
   - Run full regression suite across Papers 01–08.
-- [x] **Phase 6: GPU Smoke Training Verification**
-  - Run 1-epoch smoke test in persistent `tmux` session.
+- [ ] **Phase 6: GPU Smoke Training Verification**
+  - The earlier Paper-2-input smoke is invalid for Paper 8. Run a new smoke
+    only after the audited equivalence-token artifact exists.

@@ -3,14 +3,13 @@ set -euo pipefail
 
 repo=/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction
 python=/home/mithunmanivannan/.venv/bin/python
-representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/development_representations
-ood_representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/ood_representations
+representations=/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper08_tokens/development_representations
 output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper08_token_attention
 
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper08_token_attention: Training Grid ==="
-for variant in "full" "linear_probe" "kmeans_tokens"; do
+for variant in "global_dynamic" "local_banded" "static_attention" "uniform_attention" "phase_agnostic_set" "scrambled_phases" "linear_probe" "kmeans_tokens" "cnn_matched_control"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/.done_${variant}" ]; then
         echo "Variant $variant already completed. Skipping."
@@ -33,10 +32,5 @@ echo "=== [AGGREGATING] paper08_token_attention ==="
     --output "$output" \
     --seed 42
 
-echo "=== [EVALUATING OOD] paper08_token_attention across 9 datasets ==="
-CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper08/evaluate_paper08_ood.py" \
-    --training "$output" \
-    --representations "$ood_representations" \
-    --output "$output/ood_evaluation"
-
-echo "=== [FINISHED] paper08_token_attention ==="
+echo "=== [FINISHED DEVELOPMENT] paper08_token_attention ==="
+echo "OOD evaluation remains fail-closed until dataset-specific token artifacts exist."

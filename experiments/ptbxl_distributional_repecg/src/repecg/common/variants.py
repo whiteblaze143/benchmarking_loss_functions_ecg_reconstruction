@@ -120,7 +120,6 @@ PAPER07_VARIANTS = {
 
 
 PAPER08_VARIANTS = {
-    "full": ExperimentVariant(),
     "global_dynamic": ExperimentVariant(mechanism="global"),
     "local_banded": ExperimentVariant(mechanism="local_banded"),
     "static_attention": ExperimentVariant(mechanism="static_attention"),

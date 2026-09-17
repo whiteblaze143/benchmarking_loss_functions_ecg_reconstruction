@@ -15,6 +15,7 @@ from sklearn.cluster import MiniBatchKMeans
 from repecg.common.metrics import multilabel_metrics
 from repecg.common.models import LocalTokenCrossAttention
 from repecg.common.variants import get_variants_for_paper
+from repecg.paper08_tokens import deterministic_phase_permutations
 
 
 REPRESENTATION_VARIANTS = ("kernel", "moments", "gaussian", "linear")
@@ -90,6 +91,7 @@ def _train_variant(
     variant_index: int,
     train_x: torch.Tensor,
     train_y: torch.Tensor,
+    train_ecg_ids: np.ndarray,
     val_x: torch.Tensor,
     val_y: np.ndarray,
     ecg_ids: np.ndarray,
@@ -154,6 +156,12 @@ def _train_variant(
         epoch_losses: dict[int, list[torch.Tensor]] = {id(cell): [] for cell in active}
         for start in range(0, len(train_x), batch):
             index = permutation[start : start + batch]
+            phase_permutation = None
+            if variant_obj.mechanism == "scrambled_phases":
+                ids = train_ecg_ids[index.cpu().numpy()]
+                phase_permutation = torch.from_numpy(
+                    deterministic_phase_permutations(ids, run_seed)
+                ).to(index.device)
             for cell in active:
                 stream = cell["stream"]
                 model = cell["model"]
@@ -166,7 +174,9 @@ def _train_variant(
                 with torch.cuda.stream(stream):
                     optimizer.zero_grad(set_to_none=True)
                     with torch.autocast("cuda", dtype=torch.bfloat16):
-                        loss = loss_fn(model(train_x[index]), train_y[index])
+                        loss = loss_fn(
+                            model(train_x[index], phase_permutation=phase_permutation), train_y[index]
+                        )
                     loss.backward()
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                     optimizer.step()
@@ -174,6 +184,11 @@ def _train_variant(
             torch.cuda.synchronize()
 
         probabilities: dict[int, torch.Tensor] = {}
+        val_phase_permutation = None
+        if variant_obj.mechanism == "scrambled_phases":
+            val_phase_permutation = torch.from_numpy(
+                deterministic_phase_permutations(ecg_ids, run_seed)
+            ).to(val_x.device)
         for cell in active:
             scheduler = cell["scheduler"]
             stream = cell["stream"]
@@ -184,7 +199,9 @@ def _train_variant(
             scheduler.step()
             with torch.cuda.stream(stream), torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
                 model.eval()
-                probabilities[id(cell)] = torch.sigmoid(model(val_x)).float()
+                probabilities[id(cell)] = torch.sigmoid(
+                    model(val_x, phase_permutation=val_phase_permutation)
+                ).float()
         torch.cuda.synchronize()
 
         for cell in active:
@@ -261,6 +278,13 @@ def main() -> None:
 
     args = parser.parse_args()
 
+    manifest = json.loads((args.representations / "manifest.json").read_text())
+    if (
+        manifest.get("kind") != "paper08_equivalence_token_representations"
+        or manifest.get("status") != "complete"
+        or manifest.get("audit", {}).get("passed") is not True
+    ):
+        raise ValueError("Paper 8 requires a complete audited equivalence-token artifact")
     args.output.mkdir(parents=True, exist_ok=True)
     cells_root = args.output / "cells"
     cells_root.mkdir(parents=True, exist_ok=True)
@@ -303,6 +327,7 @@ def main() -> None:
         variant_index=0,
         train_x=train_x,
         train_y=train_y,
+        train_ecg_ids=train["ecg_ids"],
         val_x=val_x,
         val_y=val_y,
         ecg_ids=validation["ecg_ids"],

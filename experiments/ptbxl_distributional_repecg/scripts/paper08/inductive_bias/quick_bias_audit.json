@@ -1,0 +1,36 @@
+{
+  "checks": {
+    "cnn_capacity_within_15pct": true,
+    "cnn_is_distinct_and_finite": true,
+    "dynamic_attention_record_dependent": true,
+    "finite_input": true,
+    "phase_agnostic_permutation_invariant": true,
+    "static_attention_input_independent": true,
+    "static_capacity_within_5pct": true
+  },
+  "equivalence_vocabulary": {
+    "ready": false,
+    "reason": "UCB equivalence distance and fitted vocabulary artifact remain unresolved"
+  },
+  "kind": "paper08_quick_inductive_bias_audit",
+  "measurements": {
+    "dynamic_attention_rms_shift_under_phase_reversal": 0.007729528937488794,
+    "dynamic_logit_rms_shift_under_phase_reversal": 0.01366346888244152,
+    "phase_agnostic_max_permutation_error": 7.450580596923828e-07,
+    "static_attention_max_shift_under_phase_reversal": 0.0,
+    "trainable_parameters": {
+      "cnn": 280197,
+      "dynamic": 301061,
+      "static": 305413
+    }
+  },
+  "passed": true,
+  "records": 128,
+  "scientific_status": "engineering_only_not_a_result",
+  "seed": 42,
+  "source": {
+    "manifest_sha256": "c18a72246fed50bad51fc77bdc8a1393d08d2ce7a5bb22c33b2a29eff9478f65",
+    "representation": "kernel",
+    "split": "development_selection_fold_8"
+  }
+}

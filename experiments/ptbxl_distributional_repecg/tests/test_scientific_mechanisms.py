@@ -101,7 +101,7 @@ def test_paper08_mechanism():
     variants = get_variants_for_paper(8)
     x = torch.randn(2, 16, 8)
     
-    full = LocalTokenCrossAttention(8, variant=variants["full"])
+    full = LocalTokenCrossAttention(8, variant=variants["global_dynamic"])
     assert full(x).shape == (2, 5)
     
     control = LocalTokenCrossAttention(8, variant=variants["kmeans_tokens"])

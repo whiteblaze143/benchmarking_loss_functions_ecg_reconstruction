@@ -28,9 +28,9 @@ def test_world_1_cyclic_banded_mask_correctness_and_sparsity():
     mask = build_cyclic_banded_mask(num_phases=num_phases, bandwidth=bandwidth)
     
     assert mask.shape == (17, 17)
-    # CLS bidirectional connectivity
+    # CLS pools globally; phase tokens cannot use CLS as a global bypass.
     assert torch.all(mask[0, :] == 0.0)
-    assert torch.all(mask[:, 0] == 0.0)
+    assert torch.all(mask[1:, 0] < -1e8)
 
     # Phase token cyclic distance checks
     # Phase 0 (token 1): neighbors are 15, 14, 1, 2 (tokens 16, 15, 2, 3)

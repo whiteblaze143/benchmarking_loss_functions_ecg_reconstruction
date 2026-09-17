@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import hashlib
 import numpy as np
 import torch
 from torch import nn
@@ -9,10 +10,21 @@ import torch.nn.functional as F
 from repecg.common.variants import ExperimentVariant
 
 
+def deterministic_phase_permutations(record_ids: np.ndarray, seed: int) -> np.ndarray:
+    """Frozen record-specific phase destroyer, independent of model inputs."""
+    result = np.empty((len(record_ids), 16), dtype=np.int64)
+    for index, record_id in enumerate(np.asarray(record_ids).reshape(-1)):
+        token = f"paper08-phase-permutation:{seed}:{int(record_id)}".encode()
+        record_seed = int.from_bytes(hashlib.sha256(token).digest()[:8], "little")
+        result[index] = np.random.default_rng(record_seed).permutation(16)
+    return result
+
+
 def build_cyclic_banded_mask(num_phases: int = 16, bandwidth: int = 2, device: torch.device | None = None) -> torch.Tensor:
     """
     Builds attention mask for 1 CLS token + num_phases tokens on cyclic torus C_{num_phases}.
-    CLS token (index 0) interacts bidirectionally with all tokens.
+    CLS token (index 0) pools from all tokens. Phase tokens cannot attend to CLS,
+    which prevents a two-layer global-information bypass around the local mask.
     Phase tokens i, j in {1, ..., num_phases} interact iff dist_C(i, j) <= bandwidth.
     Mask has 0.0 for allowed attention, -1e9 for disallowed attention.
     Shape: (1 + num_phases, 1 + num_phases).
@@ -20,9 +32,9 @@ def build_cyclic_banded_mask(num_phases: int = 16, bandwidth: int = 2, device: t
     total = 1 + num_phases
     mask = torch.full((total, total), -1e9, device=device)
     
-    # CLS token can attend to all and all can attend to CLS
+    # CLS pools globally, but phase tokens do not read the global CLS state.
     mask[0, :] = 0.0
-    mask[:, 0] = 0.0
+    mask[0, 0] = 0.0
     
     # Phase token cyclic distance
     for i in range(1, total):
@@ -66,15 +78,17 @@ class PhaseTokenAttentionLayer(nn.Module):
         self.out_proj = nn.Linear(d_model, d_model)
 
         if mode == "static":
-            # Learned static routing weights: [nhead, 17, 17]
-            self.static_weights = nn.Parameter(torch.randn(nhead, 17, 17) * 0.02)
-            self.q_proj.requires_grad_(False)
-            self.k_proj.requires_grad_(False)
+            # Input-independent learned routing, while retaining and using the
+            # same Q/K projections as dynamic attention for a matched control.
+            self.static_tokens = nn.Parameter(torch.randn(1, 17, d_model) * 0.02)
+            self.register_parameter("static_weights", None)
         elif mode == "uniform":
+            self.register_parameter("static_tokens", None)
             self.register_parameter("static_weights", None)
             self.q_proj.requires_grad_(False)
             self.k_proj.requires_grad_(False)
         else:
+            self.register_parameter("static_tokens", None)
             self.register_parameter("static_weights", None)
 
 
@@ -96,8 +110,11 @@ class PhaseTokenAttentionLayer(nn.Module):
         x_norm = self.norm1(x)
 
         if self.mode == "static":
-            attn_weights = F.softmax(self.static_weights, dim=-1)  # [H, N, N]
-            attn_weights = attn_weights.unsqueeze(0).expand(B, -1, -1, -1)  # [B, H, N, N]
+            routing = self.static_tokens[:, :N]
+            q_static = self.q_proj(routing).view(1, N, self.nhead, self.head_dim).transpose(1, 2)
+            k_static = self.k_proj(routing).view(1, N, self.nhead, self.head_dim).transpose(1, 2)
+            scores = torch.matmul(q_static, k_static.transpose(-2, -1)) / math.sqrt(self.head_dim)
+            attn_weights = F.softmax(scores, dim=-1).expand(B, -1, -1, -1)
             v = self.v_proj(x_norm).view(B, N, self.nhead, self.head_dim).transpose(1, 2)
             out = torch.matmul(attn_weights, v)  # [B, H, N, head_dim]
             out = out.transpose(1, 2).contiguous().view(B, N, C)
@@ -161,30 +178,36 @@ class PhaseTokenTransformer(nn.Module):
             self.mode = "uniform"
         elif self.variant.mechanism == "phase_agnostic":
             self.mode = "phase_agnostic"
+        elif self.variant.mechanism == "cnn_matched":
+            self.mode = "cnn_matched"
         else:
             self.mode = "global"
 
         self.input_proj = nn.Linear(input_dim, d_model)
-        self.cls_token = nn.Parameter(torch.zeros(1, 1, d_model))
-        nn.init.trunc_normal_(self.cls_token, std=0.02)
+        if self.mode == "cnn_matched":
+            self.register_parameter("cls_token", None)
+        else:
+            self.cls_token = nn.Parameter(torch.zeros(1, 1, d_model))
+            nn.init.trunc_normal_(self.cls_token, std=0.02)
 
         # Positional embedding for 1 CLS + 16 phase tokens
-        if self.mode == "phase_agnostic":
+        if self.mode in {"phase_agnostic", "cnn_matched"}:
             self.pos_embedding = None
         else:
             self.pos_embedding = nn.Parameter(torch.randn(1, 17, d_model) * 0.02)
 
         # Build attention layers
-        self.layers = nn.ModuleList([
+        self.layers = nn.ModuleList([] if self.mode == "cnn_matched" else [
             PhaseTokenAttentionLayer(
-                d_model=d_model,
-                nhead=nhead,
-                dim_feedforward=d_model * 2,
-                dropout=0.1,
-                mode=self.mode,
-                bandwidth=bandwidth,
-            )
-            for _ in range(num_layers)
+                d_model=d_model, nhead=nhead, dim_feedforward=d_model * 2,
+                dropout=0.1, mode=self.mode, bandwidth=bandwidth,
+            ) for _ in range(num_layers)
+        ])
+        self.cnn = None if self.mode != "cnn_matched" else nn.Sequential(*[
+            nn.Sequential(
+                nn.Conv1d(d_model, d_model, kernel_size=3, padding=1, padding_mode="circular"),
+                nn.GELU(),
+            ) for _ in range(5)
         ])
         self.norm = nn.LayerNorm(d_model)
 
@@ -209,6 +232,7 @@ class PhaseTokenTransformer(nn.Module):
         phase_features: torch.Tensor,
         return_attention: bool = False,
         scramble_phases: bool = False,
+        phase_permutation: torch.Tensor | None = None,
     ) -> torch.Tensor | tuple[torch.Tensor, list[torch.Tensor]]:
         # Fast path for linear probe
         if self.variant.head == "linear":
@@ -224,7 +248,12 @@ class PhaseTokenTransformer(nn.Module):
             phase_features = self.codebook[nearest].to(phase_features.dtype)
 
         # Optional phase scrambling stress test
-        if scramble_phases or getattr(self.variant, "mechanism", None) == "scrambled_phases":
+        if phase_permutation is not None:
+            if phase_permutation.shape != phase_features.shape[:2]:
+                raise ValueError("phase_permutation must have shape (batch,16)")
+            rows = torch.arange(len(phase_features), device=phase_features.device).unsqueeze(1)
+            phase_features = phase_features[rows, phase_permutation]
+        elif scramble_phases:
             perm = torch.randperm(phase_features.shape[1], device=phase_features.device)
             phase_features = phase_features[:, perm]
 
@@ -232,6 +261,13 @@ class PhaseTokenTransformer(nn.Module):
         assert P == 16, f"Expected 16 phase cells, got {P}"
 
         x_proj = self.input_proj(phase_features)  # [B, 16, d_model]
+        if self.mode == "cnn_matched":
+            assert self.cnn is not None
+            pooled = self.norm(self.cnn(x_proj.transpose(1, 2)).mean(dim=-1))
+            logits = self.head(pooled)
+            return (logits, []) if return_attention else logits
+
+        assert self.cls_token is not None
         cls = self.cls_token.expand(B, -1, -1)     # [B, 1, d_model]
         tokens = torch.cat([cls, x_proj], dim=1)  # [B, 17, d_model]
 

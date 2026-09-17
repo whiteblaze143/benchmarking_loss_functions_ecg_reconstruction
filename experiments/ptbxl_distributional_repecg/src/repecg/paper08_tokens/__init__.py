@@ -5,7 +5,12 @@ from .equivalence import (
     pairwise_phase_distances,
     simultaneous_upper_bounds,
 )
-from .model import PhaseTokenAttentionLayer, PhaseTokenTransformer, build_cyclic_banded_mask
+from .model import (
+    PhaseTokenAttentionLayer,
+    PhaseTokenTransformer,
+    build_cyclic_banded_mask,
+    deterministic_phase_permutations,
+)
 
 __all__ = [
     "PhaseTokenAttentionLayer",
@@ -13,8 +18,8 @@ __all__ = [
     "bootstrap_pairwise_phase_distances",
     "build_cyclic_banded_mask",
     "complete_linkage_merge",
+    "deterministic_phase_permutations",
     "odd_even_agreement",
     "pairwise_phase_distances",
     "simultaneous_upper_bounds",
 ]
-

@@ -18,8 +18,8 @@ class OperatorSetModel(nn.Module):
         vocabulary_size: int = 0,
     ):
         super().__init__()
-        if operator_mode not in {"continuous", "categorical"}:
-            raise ValueError("operator_mode must be continuous or categorical")
+        if operator_mode not in {"continuous", "categorical", "projective", "q_ablated"}:
+            raise ValueError("operator_mode must be continuous, categorical, projective, or q_ablated")
         if operator_mode == "categorical" and vocabulary_size < 1:
             raise ValueError("categorical models require a non-empty training vocabulary")
         self.operator_mode = operator_mode
@@ -39,10 +39,19 @@ class OperatorSetModel(nn.Module):
             nn.Linear(320, 256), nn.GELU(), nn.Linear(256, 16 * response_dim)
         )
 
-        if operator_mode == "continuous":
+        if operator_mode == "projective":
+            # Projective RP^7 encoder: takes flattened rank-1 matrix q q^T in R^64
+            self.operator = nn.Sequential(nn.Linear(64, 64), nn.GELU(), nn.Linear(64, 64))
+            self.known_operator = None
+            self.register_buffer("unknown_operator", torch.empty(0), persistent=False)
+        elif operator_mode == "continuous":
             self.operator = nn.Sequential(nn.Linear(8, 64), nn.GELU(), nn.Linear(64, 64))
             self.known_operator = None
             self.register_buffer("unknown_operator", torch.empty(0), persistent=False)
+        elif operator_mode == "q_ablated":
+            self.operator = None
+            self.known_operator = None
+            self.register_buffer("unknown_operator", torch.zeros(64), persistent=True)
         else:
             self.operator = None
             self.known_operator = nn.Embedding(vocabulary_size, 64)
@@ -51,11 +60,30 @@ class OperatorSetModel(nn.Module):
     def encode_operator(
         self, operators: torch.Tensor | None, operator_ids: torch.Tensor | None
     ) -> torch.Tensor:
+        if self.operator_mode == "projective":
+            if operators is None or operators.shape[-1] != 8:
+                raise ValueError("projective models require (...,8) operators")
+            assert self.operator is not None
+            # q q^T is identically invariant under q -> -q: (-q)(-q)^T = q q^T
+            q_outer = (operators.unsqueeze(-1) @ operators.unsqueeze(-2)).flatten(-2)
+            return self.operator(q_outer)
         if self.operator_mode == "continuous":
             if operators is None or operators.shape[-1] != 8:
                 raise ValueError("continuous models require (...,8) operators")
             assert self.operator is not None
             return self.operator(operators)
+        if self.operator_mode == "q_ablated":
+            if operators is not None:
+                shape = operators.shape[:-1]
+                device = operators.device
+                dtype = operators.dtype
+            elif operator_ids is not None:
+                shape = operator_ids.shape
+                device = operator_ids.device
+                dtype = torch.float32
+            else:
+                raise ValueError("q_ablated requires either operators or operator_ids for shape")
+            return self.unknown_operator.to(device=device, dtype=dtype).expand(*shape, 64)
         if operator_ids is None:
             raise ValueError("categorical models require operator_ids")
         assert self.known_operator is not None
@@ -63,6 +91,7 @@ class OperatorSetModel(nn.Module):
         return torch.where(
             (operator_ids >= 0).unsqueeze(-1), encoded, self.unknown_operator.to(encoded.dtype)
         )
+
 
     def forward(
         self,

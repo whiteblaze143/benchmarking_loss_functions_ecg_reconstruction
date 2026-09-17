@@ -1,6 +1,6 @@
-# Pipeline Summary: Paper 07 — Continuous Measurement-Operator ECG
+# Pipeline Summary: Paper 07 — Continuous Lead-Span Functional ECG
 
-**Problem Anchor**: Continuous measurement-operator representation for multilead ECG.
-**Core Thesis**: An ECG recording is an unordered set of arbitrary linear projections $(q, r_q)$ on $\mathbb{S}^7$; continuous geometric operator embeddings strictly outperform discrete lead tokens on missing, displaced, and unseen lead geometries, while reconstructive inversion acts as an effective spatiotemporal regularizer.
+**Problem Anchor**: Continuous measurement functionals over an 8-dimensional ECG lead span.
+**Defensible Thesis**: Treating multilead ECG acquisition as sampling a patient-specific continuous function defined on the dual of the 8-lead span, equipped with exact $\mathbb{Z}_2$ projective gauge symmetry, enables robust inference across variable subsets and out-of-distribution lead functionals where discrete/graph token models fail.
 **Status**: PRODUCTION-LOCKED & IMPLEMENTATION-VERIFIED
 **Date**: 2026-09-17

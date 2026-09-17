@@ -1,13 +1,18 @@
 from .measurements import (
     UNKNOWN_ID,
+    analytic_pinv_reconstruct,
     build_training_vocabulary,
     canonical_operators,
     derived_limb_operators,
     frozen_operator_banks,
     interpolation_operators,
+    lmmse_reconstruct,
     map_operator_ids,
+    nearest_known_operator,
     normalize_operator,
     operator_waveform,
+    projective_distance,
+    projective_response_atoms,
     record_training_operators,
     response_atoms,
     sample_context_target_indices,
@@ -17,14 +22,19 @@ from .model import OperatorSetModel, symmetric_bernoulli_kl
 
 __all__ = [
     "UNKNOWN_ID",
+    "analytic_pinv_reconstruct",
     "build_training_vocabulary",
     "canonical_operators",
     "derived_limb_operators",
     "frozen_operator_banks",
     "interpolation_operators",
+    "lmmse_reconstruct",
     "map_operator_ids",
+    "nearest_known_operator",
     "normalize_operator",
     "operator_waveform",
+    "projective_distance",
+    "projective_response_atoms",
     "record_training_operators",
     "response_atoms",
     "sample_context_target_indices",
@@ -32,4 +42,5 @@ __all__ = [
     "OperatorSetModel",
     "symmetric_bernoulli_kl",
 ]
+
 

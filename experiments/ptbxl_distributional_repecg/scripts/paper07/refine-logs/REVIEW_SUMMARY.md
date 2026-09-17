@@ -1,22 +1,26 @@
-# Review Summary: Paper 07 — Continuous Measurement-Operator ECG
+# Review Summary: Paper 07 — Continuous Lead-Span Functional ECG
 
-## Reviewer Dialogue & Critical Scrutiny
+## Adversarial Peer Review Dialogue
 
-### Question 1: "Is this just a standard Conditional Neural Process (CNP) applied to ECG?"
+### Reviewer Critique 1: "GraphECG and LAEF already solved flexible-lead ECG. Why do we need Paper 07?"
 **Response**:
-No. A vanilla CNP operates on point coordinates $(t, x)$ to predict scalar values $y(t)$. Paper 07 operates on **continuous measurement operators $q \in \mathbb{S}^7$** representing spatial projection directions of the cardiac bioelectric source field. The responses are not raw scalar time samples, but **phase-stratified kernel mean embeddings (Phase-KME)** in an RKHS. Furthermore, Paper 07 incorporates physical domain constraints:
-1. **Operator Linearity**: $x_{a q_1 + b q_2} = a x_{q_1} + b x_{q_2}$.
-2. **Orientation Law**: $a_{-q}(t) = -a_q(t)$ and diagnostic invariance $\mathcal{L}_{\text{orientation}} \to 0$.
+GraphECG and LAEF operate on fixed 3D electrode coordinates and discrete lead graphs. When given a novel, synthetic linear functional $q \in S^7$ (e.g. an interior interpolation between precordial and limb leads, or an oblique linear combination), discrete/graph models must either snap to nearest discrete nodes or fail. Paper 07 formulates the problem as sampling a patient-specific continuous function defined on the dual of the 8-dimensional ECG lead span, with exact $\mathbb{Z}_2$ projective gauge symmetry ($\mathbb{RP}^7 = S^7 / \{q \sim -q\}$).
 
-### Question 2: "Why is a continuous operator better than discrete lead embeddings?"
+### Reviewer Critique 2: "Is $S^7$ a physical lead-orientation sphere on the body?"
 **Response**:
-Discrete lead embeddings treat Lead I, Lead II, and V1 as independent, ungrounded tokens (e.g. `[LEAD_1]`, `[LEAD_2]`). When an electrode is displaced, or when evaluating on derived limb leads (III, aVR, aVL, aVF) or non-standard configurations (Frank XYZ, interpolations), a discrete model must assign them to `UNKNOWN_ID`, losing all spatial geometric relationships. In contrast, the continuous operator $q \in \mathbb{S}^7$ encodes the exact linear projection geometry, allowing zero-shot interpolation and smooth inductive transfer.
+No. We have explicitly corrected this. $q \in S^7$ is a **lead-span synthetic functional**, not an arbitrary physical electrode orientation. A physical lead corresponds to some $q$ if and only if $\ell_{\text{new}} \in \operatorname{span}\{\ell_1, \dots, \ell_8\}$. Large precordial displacements (> 2 cm) or posterior leads (V7–V9) do not lie strictly in this span and are categorized as $\mathcal{Q}_{\text{physical OOD}}$.
 
-### Question 3: "Does the auxiliary reconstruction task actually help diagnosis?"
+### Reviewer Critique 3: "Phase-KME breaks odd symmetry: $r_{-q} \neq -r_q$."
 **Response**:
-Yes. Pure classification gradients backpropagated through a Transformer can collapse the patient latent state $z$ onto a low-dimensional discriminant subspace, discarding subtle morphology that is predictive of minority classes. The auxiliary reconstructive task forces $z$ to preserve the full spatial geometry of the underlying cardiac dipole/multipolar field, acting as an inductive regularizer.
+Acknowledged and resolved. While raw atoms $a_q = [x_q, \dot{x}_q]$ are odd under sign reversal ($a_{-q} = -a_q$), nonlinear kernel feature maps $\psi(a)$ are not odd. We resolved this structurally by constructing the projective measurement atom:
+$$g_q(t) = [q x_q(t), \; q \dot{x}_q(t)] = [q q^\top x(t), \; q q^\top \dot{x}(t)] \in \mathbb{R}^{16}$$
+Under polarity reversal: $(-q) x_{-q} = (-q)(-x_q) = q x_q$, making $g_{-q} \equiv g_q$ identically invariant by construction.
+
+### Reviewer Critique 4: "Can $m \le 6$ measurements invert a generic 8-D ECG?"
+**Response**:
+No. For $m < 8$, $\operatorname{rank}(Q) \le m < 8$, so the nullspace is non-trivial. Exact reconstruction is only mathematically possible under a low-rank source model $x(t) = L s(t)$ ($r = 3$) when the observability condition $\operatorname{rank}(Q L) = 3$ is satisfied. We reformulated the reconstruction evaluation around this exact observability gate.
 
 ---
 
 ## Verdict
-Production-locked and scientifically fortified. The continuous measurement-operator formulation is physically grounded, mathematically rigorous, and provides clear out-of-distribution generalization over discrete lead tokens.
+**PRODUCTION-LOCKED**. Prior art collision resolved, mathematical terminology grounded in lead-span functionals, exact $\mathbb{Z}_2$ gauge symmetry implemented, and non-strawman benchmark hierarchy established.

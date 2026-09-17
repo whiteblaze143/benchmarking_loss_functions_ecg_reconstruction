@@ -100,11 +100,24 @@ PAPER06_VARIANTS = {
 
 
 PAPER07_VARIANTS = {
+    # Primary benchmark hierarchy
+    "projective_continuous": ExperimentVariant(mechanism="projective_continuous"),
+    "projective_continuous_aux": ExperimentVariant(mechanism="projective_continuous_aux"),
+    "continuous_mlp": ExperimentVariant(mechanism="continuous_mlp"),
+    "q_ablated_set": ExperimentVariant(mechanism="q_ablated_set"),
+    "categorical_ids": ExperimentVariant(mechanism="categorical_ids"),
+    "nearest_known_operator": ExperimentVariant(mechanism="nearest_known_operator"),
+    "linear_q_encoder": ExperimentVariant(mechanism="linear_q_encoder"),
+    "GraphECG_geometry": ExperimentVariant(mechanism="GraphECG_geometry", control="graphecg_baseline"),
+    "analytic_pinv": ExperimentVariant(mechanism="analytic_pinv", control="pinv_oracle"),
+    "LMMSE_operator": ExperimentVariant(mechanism="LMMSE_operator", control="lmmse_baseline"),
+    # Backward compatibility aliases
     "continuous_primary": ExperimentVariant(mechanism="continuous_primary"),
     "categorical_primary": ExperimentVariant(mechanism="categorical_primary"),
     "continuous_auxiliary": ExperimentVariant(mechanism="continuous_auxiliary"),
     "categorical_auxiliary": ExperimentVariant(mechanism="categorical_auxiliary"),
 }
+
 
 PAPER08_VARIANTS = {
     "full": ExperimentVariant(),

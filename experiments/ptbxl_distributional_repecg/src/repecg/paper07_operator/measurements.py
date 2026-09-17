@@ -32,6 +32,34 @@ def response_atoms(beats_mv: np.ndarray, q: np.ndarray, voltage_scale: float) ->
     return np.stack((waveform, derivative), axis=-1)
 
 
+def projective_distance(q1: np.ndarray, q2: np.ndarray) -> float:
+    """Compute projective distance on RP^7: d_RP(q1, q2) = arccos(|q1^T q2|)."""
+    v1 = normalize_operator(q1)
+    v2 = normalize_operator(q2)
+    inner = float(np.clip(np.abs(np.dot(v1, v2)), 0.0, 1.0))
+    return float(np.arccos(inner))
+
+
+def projective_response_atoms(beats_mv: np.ndarray, q: np.ndarray, voltage_scale: float) -> np.ndarray:
+    """Compute projective response atoms g_q(t) = [q * x_q(t), q * dx_q/dt(t)] in R^16.
+    
+    Identically invariant under (q, x_q) -> (-q, -x_q) by construction:
+      (-q) * x_{-q}(t) = (-q) * (-x_q(t)) = q * x_q(t).
+    """
+    if voltage_scale <= 0 or not np.isfinite(voltage_scale):
+        raise ValueError("voltage_scale must be positive and finite")
+    values = np.asarray(beats_mv, dtype=np.float64)
+    if values.ndim != 3 or values.shape[1:] != (256, 8):
+        raise ValueError(f"expected physical beats with shape (beat,256,8), got {values.shape}")
+    q_norm = normalize_operator(q)
+    waveform = values @ q_norm / voltage_scale
+    derivative = np.gradient(waveform, axis=1)
+    q_waveform = waveform[..., None] * q_norm[None, None, :]
+    q_derivative = derivative[..., None] * q_norm[None, None, :]
+    return np.concatenate((q_waveform, q_derivative), axis=-1)
+
+
+
 def sample_sparse_operators(count: int, rng: np.random.Generator) -> np.ndarray:
     result = []
     for _ in range(count):
@@ -126,4 +154,55 @@ def sample_context_target_indices(
     context_size = int(torch.randint(1, 7, (), generator=generator, device=device))
     order = torch.rand((batch_size, candidates), generator=generator, device=device).argsort(dim=1)
     return order[:, :context_size], order[:, context_size]
+
+
+def nearest_known_operator(q: np.ndarray, vocabulary: np.ndarray) -> tuple[int, np.ndarray]:
+    """Map unseen operator q to the nearest known operator in vocabulary by projective distance."""
+    q_norm = normalize_operator(q)
+    vocab_norm = np.stack([normalize_operator(v) for v in vocabulary])
+    projections = np.abs(vocab_norm @ q_norm)
+    best_idx = int(np.argmax(projections))
+    return best_idx, vocab_norm[best_idx]
+
+
+def analytic_pinv_reconstruct(
+    y_observed: np.ndarray,
+    q_context: np.ndarray,
+    q_target: np.ndarray,
+) -> np.ndarray:
+    """Reconstruct target operator signal via pseudo-inverse of context operators.
+    
+    y_observed: shape (..., T, m)
+    q_context: shape (m, 8)
+    q_target: shape (8,)
+    Returns:
+      y_reconstructed: shape (..., T)
+    """
+    Q = np.asarray(q_context, dtype=np.float64)
+    q_t = normalize_operator(q_target)
+    pinv_Q_T = np.linalg.pinv(Q.T)
+    x_reconstructed = y_observed @ pinv_Q_T  # (..., T, 8)
+    return x_reconstructed @ q_t
+
+
+def lmmse_reconstruct(
+    y_observed: np.ndarray,
+    q_context: np.ndarray,
+    q_target: np.ndarray,
+    sigma_x: np.ndarray,
+    noise_var: float = 1e-4,
+) -> np.ndarray:
+    """Reconstruct target operator signal via LMMSE estimator given signal covariance.
+    
+    x_hat = y @ (Q Sigma_x Q^T + noise_var I)^-1 Q Sigma_x
+    """
+    Q = np.asarray(q_context, dtype=np.float64)
+    q_t = normalize_operator(q_target)
+    m = len(Q)
+    sigma = np.asarray(sigma_x, dtype=np.float64)
+    q_sigma_qT = Q @ sigma @ Q.T + noise_var * np.eye(m)
+    weight = np.linalg.solve(q_sigma_qT, Q @ sigma)  # (m, 8)
+    x_hat = y_observed @ weight  # (..., T, 8)
+    return x_hat @ q_t
+
 

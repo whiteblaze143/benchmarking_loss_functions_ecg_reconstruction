@@ -1,35 +1,38 @@
-# Experiment Plan: Paper 07 — Continuous Measurement-Operator ECG
+# Experiment Plan: Paper 07 — Continuous Lead-Span Functional ECG
 
-## 1. Variant Matrix
+## 1. Variant Matrix & Comparators
 
-| Variant | Operator Representation | Auxiliary Task | Hypothesis Role |
+| Variant | Operator Knowledge | Reconstructive Task | Scientific Role |
 | :--- | :---: | :---: | :--- |
-| `continuous_primary` | Continuous $q \in \mathbb{S}^7$ | No | Core continuous operator baseline |
-| `categorical_primary` | Discrete Lead IDs | No | Discrete token control |
-| `continuous_auxiliary` | Continuous $q \in \mathbb{S}^7$ | Recon + Orient | **Primary full model** |
-| `categorical_auxiliary` | Discrete Lead IDs | Recon only | Categorical reconstructive control |
+| `projective_continuous` | Continuous $q$, exact $\mathbb{Z}_2$ symmetry ($g_q$) | No | **Primary model** |
+| `projective_continuous_aux` | Continuous $q$, exact $\mathbb{Z}_2$ symmetry | Yes | Auxiliary predictive model |
+| `continuous_mlp` | Raw $q$ MLP (unconstrained symmetry) | No | Symmetry ablation |
+| `q_ablated_set` | No operator geometry (signal-only) | No | Does $q$ matter beyond set pooling? |
+| `categorical_ids` | Discrete Lead IDs | No | Standard discrete token baseline |
+| `nearest_known_operator` | Unseen $q \to \arg\max_k |q^\top e_k|$ | No | Strong realistic discrete baseline |
+| `linear_q_encoder` | Fixed/linear $q$ mapping | No | MLP complexity control |
+| `GraphECG_geometry` | 3D electrode/edge geometry | Optional | Direct prior-art comparator |
+| `analytic_pinv` | $x_{\text{pinv}} = Q^\top (Q Q^\top)^\dagger y$ | Yes | Analytic reconstruction oracle |
+| `LMMSE_operator` | $\Sigma_x Q^\top (Q \Sigma_x Q^\top + \sigma^2 I)^{-1} y$ | Yes | Statistical linear reconstruction baseline |
 
 ---
 
-## 2. Core Hypotheses & Evaluation Protocol
+## 2. Core Hypotheses
 
-### Hypothesis 1 ($H_{\text{cont}}$: Continuous Geometric Generalization)
-$$\text{AUROC}_{\text{unseen}}(\text{continuous\_primary}) > \text{AUROC}_{\text{unseen}}(\text{categorical\_primary})$$
-On unseen operator projections (derived limb leads, interpolations, dense projections), continuous geometric embeddings maintain high diagnostic accuracy, whereas categorical embeddings collapse due to `UNKNOWN_ID` mapping.
-
-### Hypothesis 2 ($H_{\text{aux}}$: Reconstructive Regularization)
-$$\text{AUROC}(\text{continuous\_auxiliary}) > \text{AUROC}(\text{continuous\_primary})$$
-Reconstructing unseen target lead responses forces the patient representation $z$ to retain full spatiotemporal cardiac field geometry.
-
-### Hypothesis 3 ($H_{\text{orient}}$: Polarity Invariance)
-$$\mathcal{L}_{\text{orientation}}(\text{continuous\_auxiliary}) < 10^{-4}$$
-Flipping operator polarity $q \to -q$ leaves diagnostic predictions invariant.
+- **$H_1$ (Continuous Operator Relevance)**:
+  $$\text{AUROC}(\text{projective\_continuous}) > \text{AUROC}(\text{q\_ablated\_set})$$
+- **$H_2$ (Continuous Generalization vs Strong Discrete Baselines)**:
+  $$\text{AUROC}_{\text{unseen}}(\text{projective\_continuous}) > \text{AUROC}_{\text{unseen}}(\text{nearest\_known\_operator}) > \text{AUROC}_{\text{unseen}}(\text{categorical\_ids})$$
+- **$H_3$ (Structural Gauge Invariance)**:
+  $$\|\hat{y}(\mathcal{D}) - \hat{y}(T_{\pm}\mathcal{D})\|_\infty < 10^{-12}$$
+- **$H_{\text{aux-repr}}$ (Auxiliary Representation Benefit)**:
+  Auxiliary query prediction improves held-out operator prediction and sparse-context ($m \le 3$) calibration without degrading full-context diagnosis.
 
 ---
 
-## 3. Hyperparameter Grid
-- **Learning Rates**: $1 \times 10^{-4}, 3 \times 10^{-4}, 1 \times 10^{-3}$
-- **Weight Decays**: $1 \times 10^{-5}, 1 \times 10^{-4}, 1 \times 10^{-3}$
-- **Batch Size**: 64
-- **Max Epochs**: 100 with Early Stopping (patience = 10)
-- **Loss Weights**: $\lambda_{\text{recon}} = 0.1, \lambda_{\text{orient}} = 0.05$
+## 3. Observability Stratification Protocol
+Evaluate performance not just by context size $m$, but stratified by:
+1. Measurement rank: $\operatorname{rank}_\epsilon(Q)$
+2. Measurement coherence: $\mu(Q) = \max_{i \neq j} |q_i^\top q_j|$
+3. Minimum singular value of source projection: $\sigma_{\min}(Q L)$
+4. Projective distance to training bank: $d_{\pm}(q, \mathcal{Q}_{\text{train}}) = \min_{p \in \mathcal{Q}_{\text{train}}} \arccos |q^\top p|$ across bands $\delta \in \{5^\circ, 15^\circ, 30^\circ, 45^\circ\}$.

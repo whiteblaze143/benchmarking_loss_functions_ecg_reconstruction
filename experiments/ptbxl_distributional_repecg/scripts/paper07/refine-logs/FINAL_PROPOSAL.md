@@ -1,66 +1,72 @@
-# Final Proposal: Paper 07 — Continuous Measurement-Operator ECG
+# Final Proposal: Paper 07 — Continuous Lead-Span Functional ECG
 
-## 1. Problem Anchor & Clinical Motivation
-In conventional clinical practice, standard 12-lead electrocardiography treats multichannel voltage recordings as a static, ordered matrix $X \in \mathbb{R}^{T \times 12}$ (or 8 independent voltage channels: I, II, V1–V6). However, in realistic monitoring environments:
-1. **Missing or detached leads**: Telemetry in intensive care units, emergency ambulances, and wearable patches regularly observe only a sparse subset of leads ($m \in [1, 6]$).
-2. **Electrode displacement**: Misplacement of precordial leads V1–V6 by as little as 1.5 cm significantly alters the observed waveform morphologies.
-3. **Non-standard configurations**: Pediatric leads (V3R, V4R), posterior leads (V7–V9), Mason-Likar exercise placements, and Frank XYZ vectorcardiographic leads do not conform to the standard 12-lead coordinate system.
-4. **Physical Linearity of the Electrical Field**: Under quasi-static Maxwell equations in biological volume conductors, an electrode voltage is a linear functional of the cardiac current source density $\mathbf{J}(\mathbf{r}, t)$ projected along a lead vector $\mathbf{c}_i \in \mathbb{R}^3$:
-   $$v_i(t) = \mathbf{c}_i^\top \mathbf{p}(t)$$
-   In 8-lead physical voltage space, an arbitrary lead projection is an operator $q \in \mathbb{S}^7 \subset \mathbb{R}^8$:
-   $$x_q(t) = q^\top x(t)$$
+## 1. Problem Anchor & Prior Art Demarcation
 
-Paper 07 shifts the paradigm: instead of treating leads as fixed, discrete categorical channels, we represent the ECG as an **unordered set of continuous operator-response pairs**:
-$$\mathcal{D} = \big\{(q_1, r_{q_1}), (q_2, r_{q_2}), \dots, (q_m, r_{q_m})\big\}, \quad q_i \in \mathbb{S}^7, \; r_{q_i} \in \mathbb{R}^{16 \times 128}$$
+### 1.1 The Prior Art Landscape: GraphECG & LAEF
+A comprehensive audit against the literature and open-source repositories reveals that Paper 07 cannot claim novelty from generic flexible-lead modeling:
+- **GraphECG** (Sri et al., 2024–2025): Public repository and technical documentation explicitly model ECG leads as directed edges on an electrode graph, supporting variable-sized lead subgraphs, arbitrary custom electrode-pair measurements, bidirectional reversed leads carrying negated signals, spherical-harmonic geometric coordinate encoding, and coordinate-conditioned auxiliary lead reconstruction.
+- **LAEF** (August 2026 preprint): Implements lead-agnostic graph processing natively on variable-size lead subsets pre-trained with stochastic lead sampling, demonstrating strong 1- and 2-lead robustness.
 
----
-
-## 2. Core Inductive Biases and Formal Mathematics
-
-### 2.1 Continuous Operator Representation vs Categorical Lead Tokens
-- **Continuous Operator Embedding $E(q)$**:
-  $$E(q) = W_2 \, \text{GELU}(W_1 q), \quad W_1 \in \mathbb{R}^{64 \times 8}, \; W_2 \in \mathbb{R}^{64 \times 64}$$
-  Because $E$ is a continuous mapping on $\mathbb{S}^7$, it can interpolate smoothly across novel, unseen lead projections:
-  $$q_{\text{interp}} = \frac{(1-\alpha) I + \alpha V_2}{\|(1-\alpha) I + \alpha V_2\|}$$
-  and generalize out-of-distribution to derived limb leads (III, aVR, aVL, aVF) and dense random projections.
-- **Categorical Lead Embedding Control $E_{\text{cat}}(\text{id})$**:
-  Maps discrete lead indices $\{0, 1, \dots, 7\}$ to learned vectors via an embedding table. Any unseen lead orientation maps to `UNKNOWN_ID` ($-1$), producing a degenerate constant vector that is completely blind to spatial geometry.
-
-### 2.2 Response Atom Phase-Distribution Embedding
-For a unit measurement operator $q \in \mathbb{S}^7$, the projected waveform and its temporal derivative define the physical phase-space response atom:
-$$a_q(t) = \left[ \frac{q^\top x(t)}{V_{\text{scale}}}, \; \frac{d}{dt}\left(\frac{q^\top x(t)}{V_{\text{scale}}}\right) \right] \in \mathbb{R}^2$$
-These atoms are grouped across 16 circular cardiac phases and embedded into an RKHS via a frozen 128-landmark Nyström map:
-$$r_q \in \mathbb{R}^{16 \times 128}$$
-
-### 2.3 Set Transformer Context Aggregator
-Given an arbitrary observed context set $\{(q_1, r_{q_1}), \dots, (q_m, r_{q_m})\}$ of size $m \in [1, 6]$:
-1. Feature extraction: $h_i = \text{PhaseCNN}(r_{q_i}) \in \mathbb{R}^{128}$.
-2. Operator-response fusion: $u_i = [E(q_i); h_i] \in \mathbb{R}^{192}$.
-3. Permutation-equivariant set attention:
-   $$\{v_1, \dots, v_m\} = \text{TransformerEncoder}(\{u_1, \dots, u_m\})$$
-4. Permutation-invariant attention pooling with a learned query vector:
-   $$z = \text{MultiHeadAttention}(\text{query}, \{v_i\}, \{v_i\}) \in \mathbb{R}^{256}$$
-5. Multi-label diagnosis: $\hat{y} = \text{Head}(z) \in \mathbb{R}^5$.
-
-### 2.4 Physical Orientation Law & Polarity Invariance
-Linearity of volume conduction implies:
-$$x_{-q}(t) = -q^\top x(t) = -x_q(t) \implies a_{-q}(t) = -a_q(t)$$
-Reversing the polarity of an electrode ($q \to -q$) inverts the observed waveform, but the underlying patient pathology is physically invariant. We enforce this through explicit inverted training pairs and a symmetric Bernoulli KL loss:
-$$\mathcal{L}_{\text{orientation}} = \mathcal{D}_{\text{KL}}^{\text{sym}}\Big(\sigma(\hat{y}(q)), \sigma(\hat{y}(-q))\Big)$$
-
-### 2.5 Reconstructive Inversion (Auxiliary Task)
-To regularize the patient representation $z$, an auxiliary decoder predicts the unseen response $r_{q^*}$ along an arbitrary query operator $q^* \in \mathbb{S}^7$:
-$$\hat{r}_{q^*} = \text{Decoder}(z, E(q^*)) \in \mathbb{R}^{16 \times 128}$$
-$$\mathcal{L}_{\text{recon}} = \|\hat{r}_{q^*} - r_{q^*}\|^2$$
-$$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{bce}}(\hat{y}, y) + 0.1 \mathcal{L}_{\text{recon}} + 0.05 \mathcal{L}_{\text{orientation}}$$
+### 1.2 The Defensible Scientific Object: Continuous Lead-Span Functional ECG
+We reject the ungrounded claim that $q \in S^7$ represents an "arbitrary physical lead orientation on the human torso." Instead, the mathematical object of Paper 07 is:
+$$\boxed{ \text{Continuous lead-span measurement functionals over an 8-dimensional ECG basis} }$$
+Let $x(t) = [I, II, V_1, \dots, V_6]^\top \in \mathbb{R}^8$ be the standard 8-dimensional algebraically independent ECG physical voltage basis. We define a continuous linear functional:
+$$\ell_q(x) = q^\top x(t), \quad q \in \mathbb{R}^8$$
+The model observes finite, unordered samples of the patient-specific operator-response function:
+$$\boxed{ F_x: q \mapsto r_q = \mu_{P([q^\top x, q^\top \dot{x}] \mid \theta)} }$$
+$$\mathcal{D}_C = \big\{(q_1, F_x(q_1)), \dots, (q_m, F_x(q_m))\big\}, \quad m \in [1, 6]$$
+The core scientific question is:
+$$\boxed{ \text{Does explicit continuous measurement-functional information improve inference beyond signal-only set aggregation and strong discrete/geometric baselines?} }$$
 
 ---
 
-## 3. Prior Art & Defensible Novelty Boundary
+## 2. Mathematical Formalization & Physical Distinctions
 
-1. **Dower (1988) & Kors (1990) Transforms**:
-   Linear regression matrices mapping Frank XYZ $\leftrightarrow$ 12-lead. Paper 07 is not a static linear regression matrix; it operates dynamically on arbitrary variable-sized subsets $m \in [1, 6]$ in a continuous operator space.
-2. **Conditional Neural Processes (Garnelo et al., 2018)**:
-   CNPs define distributions over functions given context pairs $(x_c, y_c)$. Paper 07 grounds this in physical cardiac measurement operators $q \in \mathbb{S}^7$, where inputs are lead orientation vectors and responses are phase-stratified distribution embeddings (Phase-KME).
-3. **Flexible-Lead ECG Models**:
-   Recent deep learning models mask discrete lead tokens. Paper 07 demonstrates why **continuous geometric operators $q \in \mathbb{S}^7$ strictly outperform categorical lead embeddings**, especially on out-of-distribution lead geometries.
+### 2.1 $S^7$ is Coefficient Geometry, Not Thoracic Geometry
+A new physical body-surface electrode configuration is represented exactly by some $q \in S^7$ *if and only if*:
+$$\ell_{\text{new}} \in \operatorname{span}\{\ell_1, \dots, \ell_8\}$$
+Precordial displacements (> 1.5–2 cm), posterior leads (V7–V9), right-sided leads (V3R/V4R), or Mason-Likar placements do not lie strictly in the span of the standard 8-lead basis. We therefore partition evaluated operators into:
+1. $\mathcal{Q}_{\text{clinical}}$: canonical leads (I, II, V1–V6) and algebraically exact derived limb leads (III = II - I, aVR, aVL, aVF).
+2. $\mathcal{Q}_{\text{synthetic}}$: held-out lead-span functionals (interior interpolations $(1-\alpha)I + \alpha V_2$, dense random unit vectors).
+3. $\mathcal{Q}_{\text{physical OOD}}$: true non-standard body-surface configurations (reserved for external BSPM validation).
+
+Coefficient distance is defined on projective space $\mathbb{RP}^7$:
+$$d_{\mathbb{RP}}(q, p) = \arccos |q^\top p|$$
+and covariance-induced Mahalanobis distance:
+$$d_\Sigma^2(q_1, q_2) = (q_1 - q_2)^\top \Sigma_x (q_1 - q_2)$$
+
+### 2.2 Exact $\mathbb{Z}_2$ Gauge Symmetry on Projective Space $\mathbb{RP}^7$
+For any measurement pair $(q, x_q)$, reversing the electrode polarity yields:
+$$(q, x_q) \mapsto (-q, -x_q)$$
+These represent two coordinate descriptions of the same unoriented measurement axis. Diagnostic classification must satisfy:
+$$f\big(\dots, (q, x_q), \dots\big) = f\big(\dots, (-q, -x_q), \dots\big)$$
+The unoriented physical measurement space is $\mathbb{RP}^7 = S^7 / \{q \sim -q\}$.
+
+**Resolution of the Non-Odd Phase-KME Bug**:
+While raw atoms $a_q(t) = [x_q(t), \dot{x}_q(t)]$ satisfy $a_{-q}(t) = -a_q(t)$, a nonlinear Nyström/KME feature map $\psi(a)$ is generally **not** odd ($\psi(-a) \neq -\psi(a)$ for RBF/IMQ kernels). To eliminate approximate KL regularization and enforce exact $\mathbb{Z}_2$ gauge invariance by construction, we define the projective atom:
+$$g_q(t) = [q \, x_q(t), \; q \, \dot{x}_q(t)] = [q q^\top x(t), \; q q^\top \dot{x}(t)] \in \mathbb{R}^{16}$$
+Under polarity reversal:
+$$(-q) x_{-q} = (-q)(-x_q) = q x_q \implies g_{-q}(t) \equiv g_q(t)$$
+This guarantees $r(q, x_q) = r(-q, -x_q)$ to machine precision ($< 10^{-14}$) by architectural design.
+
+### 2.3 Observability-Governed Source Reconstructive Inversion
+For $m \in [1, 6]$ measurements $Q \in \mathbb{R}^{m \times 8}$, $\operatorname{rank}(Q) \le m < 8$, so the nullspace is non-trivial. Under a low-rank cardiac source model $x(t) = L s(t)$ with $s(t) \in \mathbb{R}^r$ ($r = 3$), the observed signal is $y(t) = Q L s(t)$. Exact recovery of any query operator $x_{q^*}(t) = q^{*\top} x(t)$ is mathematically solvable *if and only if*:
+$$\boxed{ \operatorname{rank}(Q L) = r = 3 }$$
+- Observable context ($\operatorname{rank}(Q L) = 3$): $s(t) = (Q L)^\dagger y(t)$, yielding exact recovery error $< 10^{-12}$.
+- Unobservable context ($\operatorname{rank}(Q L) < 3$): at least one source dimension is invisible to the lead set, and exact reconstruction must provably fail.
+
+---
+
+## 3. Benchmark Hierarchy & Strong Comparators
+
+We replace the binary `continuous_primary` vs strawman `categorical_primary` framing with the 10-variant benchmark hierarchy:
+1. `projective_continuous`: continuous $q$, exact structural $\mathbb{Z}_2$ symmetry ($g_q$), primary model.
+2. `projective_continuous_aux`: continuous $q$, exact polarity symmetry + auxiliary query-response prediction.
+3. `continuous_mlp`: raw continuous $q$ MLP, unconstrained symmetry ablation.
+4. `q_ablated_set`: set model with NO operator geometry (signal-only control).
+5. `categorical_ids`: standard discrete token baseline.
+6. `nearest_known_operator`: realistic discrete baseline mapping unseen $q$ to $\arg\max_k |q^\top e_k|$.
+7. `linear_q_encoder`: linear projection of $q$ (MLP complexity ablation).
+8. `GraphECG_geometry`: 3D electrode/edge geometry comparator.
+9. `analytic_pinv`: exact linear algebra pseudo-inverse reconstruction baseline.
+10. `LMMSE_operator`: train-covariance-aware linear reconstruction baseline.

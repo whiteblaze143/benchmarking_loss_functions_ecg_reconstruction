@@ -39,7 +39,12 @@ def create_paper_model(
         7: lambda: OperatorSetModel(
             response_dim=input_dim,
             classes=classes,
-            operator_mode="categorical" if "categorical" in variant.mechanism else "continuous",
+            operator_mode=(
+                "projective" if "projective" in variant.mechanism
+                else "q_ablated" if "q_ablated" in variant.mechanism
+                else "categorical" if "categorical" in variant.mechanism
+                else "continuous"
+            ),
             vocabulary_size=vocabulary_size,
         ),
         8: lambda: LocalTokenCrossAttention(input_dim=input_dim, classes=classes, variant=variant),

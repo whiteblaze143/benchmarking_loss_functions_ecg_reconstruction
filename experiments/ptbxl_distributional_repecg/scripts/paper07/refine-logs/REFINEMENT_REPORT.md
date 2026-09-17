@@ -1,12 +1,12 @@
-# Refinement Report: Paper 07 — Continuous Measurement-Operator ECG
+# Refinement Report: Paper 07 — Continuous Lead-Span Functional ECG
 
-## Audit Findings & Revisions Table
+## Systematic Modifications Table
 
 | Component | Pre-Refinement Status | Production-Locked Revision | Scientific Rationale |
 | :--- | :--- | :--- | :--- |
-| **Operator Space** | Ambiguous parameterization | Strict unit sphere $\mathbb{S}^7 \subset \mathbb{R}^8$ ($||q||_2 = 1$) | Enforces scale-invariant projection geometry. |
-| **Response Atom** | Raw voltages | Phase-space derivative atom $[x_q, \dot{x}_q]$ | Preserves velocity and phase trajectory geometry. |
-| **Orientation Law** | Implicit | Explicit paired negation training + symmetric KL loss | Enforces physical law $x_{-q} = -x_q$ without diagnostic disruption. |
-| **Target Holdout** | Unverified | Strict exclusion guarantee: target $t \notin C_{\text{context}}$ | Prevents label/response leakage during reconstructive inversion. |
-| **Categorical Control** | Separate script | Fully capacity-matched paired architecture | Ensures performance gap reflects operator inductive bias, not parameter count. |
-| **OOD Evaluation** | Unsafe runtime script | Fail-closed retirement with frozen test banks | Guarantees test bank integrity and leakage prevention. |
+| **Object Ontology** | Arbitrary physical lead on $S^7$ | Continuous lead-span measurement functional $\ell_q(x) = q^\top x$ | Acknowledges that physical leads outside the span require multi-position data. |
+| **Polarity Symmetry** | Approximate KL loss on $f(q)$ vs $f(-q)$ | Exact structural $\mathbb{Z}_2$ projective atom $g_q = [q x_q, q \dot{x}_q]$ | Resolves non-odd Phase-KME bug; enforces invariance by construction on $\mathbb{RP}^7$. |
+| **Benchmark Suite** | Binary `continuous` vs `categorical` (strawman UNK) | 10-variant hierarchy: `nearest_known_operator`, `q_ablated`, `analytic_pinv`, `LMMSE`, `GraphECG` | Prevents trivial victory over deliberately crippled baseline. |
+| **Reconstructive Claim** | "Reconstructive inversion of 8-D field" | "Auxiliary operator-response prediction" governed by $\operatorname{rank}(Q L) = 3$ | Prevents mathematically false claim that $m < 8$ inverts generic 8-D space. |
+| **Operator Separation** | Signed spherical distance | Projective distance $d_{\mathbb{RP}}(q, p) = \arccos |q^\top p| \ge \delta$ | Respects unoriented nature of measurement axes ($q \sim -q$). |
+| **Units** | Standardized per-lead voltages | Strict physical mV prior to projection $x_q = q^\top x$ | Prevents lead variance scaling from distorting spatial projection angles. |

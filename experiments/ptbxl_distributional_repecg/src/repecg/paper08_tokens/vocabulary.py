@@ -1,10 +1,26 @@
 from __future__ import annotations
 
 import hashlib
+from concurrent.futures import ProcessPoolExecutor
 
 import numpy as np
+import torch
 
 from .equivalence import complete_linkage_merge_with_trace, simultaneous_upper_bounds
+
+
+_BOOTSTRAP_CONTEXT: tuple[np.ndarray, np.ndarray, np.ndarray, int, np.ndarray, np.ndarray] | None = None
+
+
+def _bootstrap_draw_from_sample(sampled: np.ndarray) -> np.ndarray:
+    if _BOOTSTRAP_CONTEXT is None:
+        raise RuntimeError("bootstrap worker has no context")
+    features, codes, patient_inverse, code_count, left, right = _BOOTSTRAP_CONTEXT
+    patient_weights = np.bincount(sampled, minlength=int(patient_inverse.max()) + 1).astype(np.float64)
+    boot_means, _ = _weighted_code_means(
+        features, codes, patient_weights[patient_inverse], code_count
+    )
+    return squared_pair_distances(boot_means)[left, right]
 
 
 def patient_construction_mask(
@@ -77,6 +93,8 @@ def patient_block_simultaneous_bounds(
     bootstraps: int,
     alpha: float,
     seed: int,
+    device: str = "cpu",
+    workers: int = 1,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Patient-clustered basic-bootstrap simultaneous UCBs for all code pairs."""
     features = np.asarray(features, dtype=np.float64)
@@ -88,21 +106,75 @@ def patient_block_simultaneous_bounds(
     means, counts = _weighted_code_means(features, codes, np.ones(len(codes)), code_count)
     left, right = pair_indices(code_count)
     point = squared_pair_distances(means)[left, right]
-    draws = np.empty((bootstraps, len(point)), dtype=np.float64)
-    rng = np.random.default_rng(seed)
-    for replicate in range(bootstraps):
-        sampled = rng.integers(0, len(unique_patients), size=len(unique_patients))
-        patient_weights = np.bincount(sampled, minlength=len(unique_patients)).astype(np.float64)
-        boot_means, _ = _weighted_code_means(
-            features, codes, patient_weights[patient_inverse], code_count
+    if device == "cpu":
+        if workers < 1:
+            raise ValueError("workers must be positive")
+        rng = np.random.default_rng(seed)
+        samples = [
+            rng.integers(0, len(unique_patients), size=len(unique_patients))
+            for _ in range(bootstraps)
+        ]
+        global _BOOTSTRAP_CONTEXT
+        _BOOTSTRAP_CONTEXT = (features, codes, patient_inverse, code_count, left, right)
+        if workers == 1:
+            draws = np.asarray([_bootstrap_draw_from_sample(sample) for sample in samples])
+        else:
+            with ProcessPoolExecutor(max_workers=workers) as executor:
+                draws = np.asarray(list(executor.map(_bootstrap_draw_from_sample, samples, chunksize=1)))
+        _BOOTSTRAP_CONTEXT = None
+    elif device == "cuda":
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA bootstrap requested but CUDA is unavailable")
+        draws = _cuda_patient_block_draws(
+            features, codes, patient_inverse, code_count, bootstraps, seed, left, right
         )
-        draws[replicate] = squared_pair_distances(boot_means)[left, right]
+    else:
+        raise ValueError("device must be 'cpu' or 'cuda'")
     upper = simultaneous_upper_bounds(point, draws, alpha=alpha)
     matrix = np.full((code_count, code_count), np.inf, dtype=np.float64)
     np.fill_diagonal(matrix, 0.0)
     matrix[left, right] = upper
     matrix[right, left] = upper
     return point, draws, matrix
+
+
+def _cuda_patient_block_draws(
+    features: np.ndarray,
+    codes: np.ndarray,
+    patient_inverse: np.ndarray,
+    code_count: int,
+    bootstraps: int,
+    seed: int,
+    left: np.ndarray,
+    right: np.ndarray,
+) -> np.ndarray:
+    """GPU implementation of the same patient-weighted bootstrap statistic.
+
+    Double precision keeps the arithmetic comparable with the CPU certificate;
+    replicate sampling intentionally has its own recorded CUDA RNG stream.
+    """
+    cuda = torch.device("cuda")
+    values = torch.as_tensor(features, dtype=torch.float64, device=cuda)
+    code_ids = torch.as_tensor(codes, dtype=torch.int64, device=cuda)
+    patient_ids = torch.as_tensor(patient_inverse, dtype=torch.int64, device=cuda)
+    pair_left = torch.as_tensor(left, dtype=torch.int64, device=cuda)
+    pair_right = torch.as_tensor(right, dtype=torch.int64, device=cuda)
+    patients = int(patient_inverse.max()) + 1
+    generator = torch.Generator(device=cuda)
+    generator.manual_seed(seed)
+    draws = np.empty((bootstraps, len(left)), dtype=np.float64)
+    for replicate in range(bootstraps):
+        sampled = torch.randint(patients, (patients,), device=cuda, generator=generator)
+        patient_weights = torch.bincount(sampled, minlength=patients).to(torch.float64)
+        occurrence_weights = patient_weights[patient_ids]
+        sums = torch.zeros((code_count, values.shape[1]), dtype=torch.float64, device=cuda)
+        sums.index_add_(0, code_ids, values * occurrence_weights[:, None])
+        counts = torch.bincount(code_ids, weights=occurrence_weights, minlength=code_count)
+        means = sums / counts[:, None].clamp_min(1.0)
+        squared_norm = means.square().sum(1)
+        distances = (squared_norm[:, None] + squared_norm[None, :] - 2.0 * means @ means.T).clamp_min(0.0)
+        draws[replicate] = distances[pair_left, pair_right].cpu().numpy()
+    return draws
 
 
 def unique_patient_support(codes: np.ndarray, patient_ids: np.ndarray, code_count: int) -> np.ndarray:

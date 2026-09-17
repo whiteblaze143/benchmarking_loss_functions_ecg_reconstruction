@@ -19,8 +19,15 @@ class CounterfactualOperatorSetModel(nn.Module):
 
     def __init__(self, response_dim: int = 128, classes: int = 5):
         super().__init__()
+        self.response_dim = response_dim
         self.backbone = OperatorSetModel(
             response_dim=response_dim, classes=classes, operator_mode="continuous"
+        )
+        # A permutation-invariant q-response binding. This is not a linear
+        # response assumption: it gives the residual model an explicit
+        # cross-statistic rather than only concatenated pair embeddings.
+        self.pairing_summary = nn.Sequential(
+            nn.Linear(8 * 16 * response_dim, 256), nn.GELU(), nn.Linear(256, 256)
         )
 
     def forward(
@@ -33,6 +40,8 @@ class CounterfactualOperatorSetModel(nn.Module):
         return_state: bool = False,
     ) -> torch.Tensor | tuple[torch.Tensor, ...]:
         state = self.backbone.encode_context(operators, responses)
+        binding = torch.einsum("bse,bspd->bepd", operators, responses).flatten(1)
+        state = state + self.pairing_summary(binding)
         logits = self.backbone.head(state)
         outputs: list[torch.Tensor] = [logits]
         if return_counterfactual:

@@ -161,6 +161,8 @@ def _train_variant(
     max_epochs: int,
     patience: int,
     seed: int,
+    learning_rates: tuple[float, ...] = LEARNING_RATES,
+    weight_decays: tuple[float, ...] = WEIGHT_DECAYS,
 ) -> None:
     diagnosis_only = variant == "diagnosis_only"
     mismatch = variant == "mismatched_q"
@@ -172,8 +174,8 @@ def _train_variant(
     loss_fn = nn.BCEWithLogitsLoss(
         pos_weight=((1 - prevalence) / prevalence.clamp_min(1e-8)).clamp_max(10)
     )
-    for learning_rate in LEARNING_RATES:
-        for weight_decay in WEIGHT_DECAYS:
+    for learning_rate in learning_rates:
+        for weight_decay in weight_decays:
             path = cells_root / f"{variant}_lr{learning_rate:g}_wd{weight_decay:g}"
             if (path / "summary.json").exists():
                 continue
@@ -273,6 +275,7 @@ def main() -> None:
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--variant", choices=tuple(get_variants_for_paper(9)), required=True)
+    parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--training-regime", default="full_only", choices=["full_only"])
     args = parser.parse_args()
     manifest = json.loads((args.representations / "manifest.json").read_text())
@@ -288,6 +291,8 @@ def main() -> None:
     _train_variant(
         variant=args.variant, train=train, validation=validation, cells_root=cells,
         batch=args.batch, max_epochs=args.max_epochs, patience=args.patience, seed=args.seed,
+        learning_rates=(3e-4,) if args.smoke else LEARNING_RATES,
+        weight_decays=(1e-4,) if args.smoke else WEIGHT_DECAYS,
     )
 
 

@@ -3,7 +3,7 @@ set -euo pipefail
 
 repo=/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction
 python=/home/mithunmanivannan/.venv/bin/python
-representations=/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper08_tokens/development_representations_strict_b2000_v2
+representations=/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper08_tokens/development_representations_strict_b2000_cpu8
 output=/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper08_factorial_grid
 
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"

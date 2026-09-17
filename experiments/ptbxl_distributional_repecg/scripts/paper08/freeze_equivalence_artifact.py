@@ -38,9 +38,13 @@ def _audit(artifact: Path) -> dict[str, object]:
     _require(manifest.get("kind") == "paper08_equivalence_token_representations", "wrong artifact kind")
     _require(manifest.get("status") == "complete", "certificate is not complete")
     _require(manifest.get("audit", {}).get("passed") is True, "development safeguards did not pass")
-    _require(manifest.get("bootstrap") == {
-        "unit": "patient", "replicates": 2000, "alpha": 0.05, "seed": 42,
-    }, "bootstrap contract differs from the locked development specification")
+    bootstrap = manifest.get("bootstrap", {})
+    _require(
+        bootstrap.get("unit") == "patient" and bootstrap.get("replicates") == 2000
+        and bootstrap.get("alpha") == 0.05 and bootstrap.get("seed") == 42
+        and bootstrap.get("device") == "cpu" and bootstrap.get("workers") == 8,
+        "bootstrap contract differs from the locked development specification",
+    )
     firewall = manifest.get("fold_firewall", {})
     _require(firewall.get("fold8_used_for_fit_or_selection") is False, "fold 8 was used before pseudo-test")
     _require(firewall.get("support_and_ucb_construction_folds") == [1, 2, 3, 4, 5, 6], "UCB folds differ")

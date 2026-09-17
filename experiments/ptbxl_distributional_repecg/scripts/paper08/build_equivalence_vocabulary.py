@@ -274,6 +274,8 @@ def main() -> None:
     parser.add_argument("--pilot-bootstraps", type=int, default=20)
     parser.add_argument("--pilot-minimum-patients", type=int, default=3)
     parser.add_argument("--bootstraps", type=int, default=BOOTSTRAPS)
+    parser.add_argument("--bootstrap-device", choices=("cpu", "cuda"), default="cpu")
+    parser.add_argument("--bootstrap-workers", type=int, default=1)
     args = parser.parse_args()
 
     train = _eligible(args.train_cache)
@@ -352,7 +354,8 @@ def main() -> None:
     }
     point, draws, upper = patient_block_simultaneous_bounds(
         construction_features, construction_codes, construction_patients, k0,
-        bootstraps=bootstraps, alpha=ALPHA, seed=args.seed,
+        bootstraps=bootstraps, alpha=ALPHA, seed=args.seed, device=args.bootstrap_device,
+        workers=args.bootstrap_workers,
     )
     sensitivity_clusters = {}
     for name, threshold in delta_sensitivity.items():
@@ -578,7 +581,11 @@ def main() -> None:
         "delta": delta_sensitivity,
         "delta_sensitivity": sensitivity,
         "distance": "squared_euclidean_in_common_nystrom_phase_kme_coordinates",
-        "bootstrap": {"unit": "patient", "replicates": bootstraps, "alpha": ALPHA, "seed": args.seed},
+        "bootstrap": {
+            "unit": "patient", "replicates": bootstraps, "alpha": ALPHA,
+            "seed": args.seed, "device": args.bootstrap_device,
+            "workers": args.bootstrap_workers,
+        },
         "random_controls": {
             "count": RANDOM_CONTROLS,
             "exact_cluster_size_multiset": True,

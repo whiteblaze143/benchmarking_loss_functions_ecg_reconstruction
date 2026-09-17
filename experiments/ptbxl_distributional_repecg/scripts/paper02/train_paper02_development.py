@@ -29,7 +29,7 @@ def _seed(value: int) -> None:
 def _predict(model: nn.Module, features: torch.Tensor, batch: int) -> np.ndarray:
     model.eval()
     output = []
-    with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+    with torch.inference_mode(), torch.autocast("cuda", dtype=torch.float16):
         for start in range(0, len(features), batch):
             output.append(torch.sigmoid(model(features[start : start + batch])).float().cpu())
     return torch.cat(output).numpy()
@@ -69,7 +69,7 @@ def _train_one(
         for start in range(0, len(train_x), batch):
             index = permutation[start : start + batch]
             optimizer.zero_grad(set_to_none=True)
-            with torch.autocast("cuda", dtype=torch.bfloat16):
+            with torch.autocast("cuda", dtype=torch.float16):
                 logits = model(train_x[index])
                 loss = loss_fn(logits, train_y[index])
             loss.backward()

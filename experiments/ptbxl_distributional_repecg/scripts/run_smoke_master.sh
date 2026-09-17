@@ -46,7 +46,7 @@ for i in {1..15}; do
         --representations "$rep_dir" \
         --output "$out_dir" \
         --batch 2048 \
-        --max-epochs 1 \
+        --max-epochs 2 \
         --patience 1 \
         --seed 42 \
         --variant "full" || { echo "Paper $paper_id smoke test FAILED!"; exit 1; }

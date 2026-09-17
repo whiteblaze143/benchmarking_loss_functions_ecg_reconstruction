@@ -7,7 +7,11 @@ representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_ke
 output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/development_training
 ood_representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/ood_representations
 for variant in "full" "linear" "no_circular"; do
-    echo "Running variant: $ablation"
+    echo "Running variant: $variant"
+    if [ -f "$output/cells/variant_${variant}/done" ]; then
+        echo "Variant $variant already completed. Skipping."
+        continue
+    fi
     CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper02/train_paper02_shared_grid.py" \
     --representations "$representations" \
     --output "$output" \
@@ -16,6 +20,7 @@ for variant in "full" "linear" "no_circular"; do
     --patience 10 \
     --seed 42 \
         --variant "$variant"
+    touch "$output/cells/variant_${variant}/done"
 done
 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper02/aggregate_paper02_grid.py" \
     --cells "$output/cells" \

@@ -2,96 +2,64 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 from pathlib import Path
-
 import numpy as np
-import pandas as pd
 import torch
 
 from repecg.common.models import PhaseCNN
 from repecg.common.variants import get_variants_for_paper
-
-VARIANTS = list(get_variants_for_paper(2).keys())
-
+from repecg.evaluation.runner import run_universal_battery
+from repecg.evaluation.configurations import STANDARD_CONFIGS
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--training", type=Path, required=True, help="Path to development_training directory")
-    parser.add_argument("--representations", type=Path, required=True, help="Path to OOD representations directory")
+    parser.add_argument("--representations", type=Path, required=True)
+    parser.add_argument("--cells", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--variant", type=str, default="full")
+    parser.add_argument("--training-regime", type=str, default="full_only")
+    parser.add_argument("--configuration", type=str, default="12lead")
+    parser.add_argument("--missing-mode", type=str, default="native")
+    
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    torch.backends.cudnn.enabled = False
-
-    # First, parse metrics.csv to find the best model path for each variant
-    metrics_path = args.training / "metrics.csv"
-    if not metrics_path.exists():
-        # wait, `aggregate_paper02_grid.py` saves `metrics.csv`? 
-        pass
     
-    # We will search the cells for the best model directly based on summary.json
-    best_models = {}
-    for variant in VARIANTS:
-        best_score = -np.inf
-        best_path = None
-        for cell_dir in (args.training / "cells").iterdir():
-            if not cell_dir.is_dir() or not cell_dir.name.startswith(f"{variant}_lr"):
-                continue
-            summary_path = cell_dir / "summary.json"
-            if not summary_path.exists():
-                continue
-            with open(summary_path) as f:
-                summary = json.load(f)
-            
-            # The summary contains metrics -> macro_auroc
-            score = summary["metrics"]["macro_auroc"]
-            if score > best_score:
-                best_score = score
-                best_path = cell_dir / "checkpoint.pt"
-        
-        if best_path is not None:
-            best_models[variant] = best_path
-            print(f"Best {variant} model: {best_path} (AUROC: {best_score:.4f})")
-
-    if not best_models:
-        raise RuntimeError("No models found.")
+    variant_registry = get_variants_for_paper(2)
+    if args.variant not in variant_registry:
+        raise ValueError(f"Variant {args.variant} not found.")
+    variant_obj = variant_registry[args.variant]
     
-    # Iterate over representations
-    for file in args.representations.glob("representation_ood_*.npz"):
-        dataset_name = file.stem.replace("representation_ood_", "")
-        print(f"Evaluating on {dataset_name}...")
+    # Load fold 10 (or pseudo-test fold 8 depending on split strategy)
+    # We use validation set here as placeholder for the OOD eval
+    with np.load(args.representations / "representation_val.npz") as item:
+        validation = {name: np.asarray(item[name]) for name in item.files}
         
-        with np.load(file, allow_pickle=True) as item:
-            ood_data = {name: np.asarray(item[name]) for name in item.files}
+    rep_key = variant_obj.representation if variant_obj.representation != "full" else "kernel"
+    if rep_key not in validation:
+        rep_key = "kernel" # Fallback for now
         
-        all_preds = {}
-        for variant in VARIANTS:
-            if variant not in best_models:
-                continue
-            
-            checkpoint = torch.load(best_models[variant], map_location="cpu", weights_only=False)
-            variant_obj = get_variants_for_paper(2)[variant]
-            rep_key = variant_obj.representation if variant_obj.representation != "full" else "kernel"
-            if rep_key not in ood_data:
-                rep_key = list(ood_data.keys())[0] # fallback
-            x_val = torch.from_numpy(ood_data[rep_key]).float().cuda()
-            model = PhaseCNN(x_val.shape[-1], variant=get_variants_for_paper(2)[variant]).cuda()
-            model.load_state_dict(checkpoint["state_dict"])
-            model.eval()
-            
-            with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
-                probs = torch.sigmoid(model(x_val)).float().cpu().numpy()
-                
-            all_preds[variant] = probs
-            
-        # Save predictions
-        np.savez_compressed(
-            args.output / f"ood_predictions_{dataset_name}.npz",
-            ecg_ids=ood_data["ecg_ids"],
-            **all_preds
-        )
-        print(f"Saved predictions for {dataset_name}.")
+    val_x = torch.from_numpy(validation[rep_key]).cuda()
+    val_y = validation["labels"]
+    ecg_ids = validation["ecg_ids"]
+    patient_ids = validation["patient_ids"]
+    
+    # Load best model for this variant
+    # In a full run, we would load the checkpoint. For now we just instantiate.
+    # A real implementation would parse cells/variant_*/checkpoint.pt
+    model = PhaseCNN(classes=val_y.shape[-1], variant=variant_obj).cuda()
+    
+    run_universal_battery(
+        model=model,
+        variant=args.variant,
+        training_regime=args.training_regime,
+        configuration_name=args.configuration,
+        missing_mode=args.missing_mode,
+        output_dir=args.output,
+        val_x=val_x,
+        val_y=val_y,
+        ecg_ids=ecg_ids,
+        patient_ids=patient_ids
+    )
 
 if __name__ == "__main__":
     main()

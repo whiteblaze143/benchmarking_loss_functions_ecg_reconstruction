@@ -11,7 +11,11 @@ export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper12_structural_innovation: Training Grid ==="
 for variant in "full" "linear" "no_ar_filter"; do
-    echo "Running variant: $ablation"
+    echo "Running variant: $variant"
+    if [ -f "$output/cells/variant_${variant}/done" ]; then
+        echo "Variant $variant already completed. Skipping."
+        continue
+    fi
     CUDA_VISIBLE_DEVICES=0 "$python" -u "$repo/experiments/ptbxl_distributional_repecg/scripts/paper12/train_paper12_shared_grid.py" \
     --representations "$representations" \
     --output "$output" \
@@ -20,6 +24,7 @@ for variant in "full" "linear" "no_ar_filter"; do
     --patience 10 \
     --seed 42 \
         --variant "$variant"
+    touch "$output/cells/variant_${variant}/done"
 done
 
 echo "=== [AGGREGATING] paper12_structural_innovation ==="

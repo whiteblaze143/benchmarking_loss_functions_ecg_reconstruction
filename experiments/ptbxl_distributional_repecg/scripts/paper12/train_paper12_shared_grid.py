@@ -42,6 +42,7 @@ def _save_cell(
     cell: dict[str, object],
     *,
     variant: str,
+    training_regime: str,
     seed: int,
     val_y: np.ndarray,
     ecg_ids: np.ndarray,
@@ -84,6 +85,7 @@ def _train_variant(
     variant_obj,
 
     variant: str,
+    training_regime: str,
     variant_index: int,
     train_x: torch.Tensor,
     train_y: torch.Tensor,
@@ -159,7 +161,7 @@ def _train_variant(
                 assert isinstance(loss_fn, nn.Module)
                 with torch.cuda.stream(stream):
                     optimizer.zero_grad(set_to_none=True)
-                    with torch.autocast("cuda", dtype=torch.bfloat16):
+                    with torch.autocast("cuda", dtype=torch.float16):
                         loss = loss_fn(model(train_x[index]), train_y[index])
                     loss.backward()
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
@@ -176,7 +178,7 @@ def _train_variant(
             assert isinstance(stream, torch.cuda.Stream)
             assert isinstance(model, nn.Module)
             scheduler.step()
-            with torch.cuda.stream(stream), torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+            with torch.cuda.stream(stream), torch.inference_mode(), torch.autocast("cuda", dtype=torch.float16):
                 model.eval()
                 probabilities[id(cell)] = torch.sigmoid(model(val_x)).float()
         torch.cuda.synchronize()
@@ -249,6 +251,7 @@ def main() -> None:
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--variant", type=str, required=True)
+    parser.add_argument("--training-regime", type=str, default="full_only", choices=["full_only", "mask_aug", "finetune", "scratch"])
 
     args = parser.parse_args()
 
@@ -278,6 +281,7 @@ def main() -> None:
     _train_variant(
         variant_obj=variant_obj,
         variant=args.variant,
+        training_regime=args.training_regime,
         variant_index=0,
         train_x=train_x,
         train_y=train_y,

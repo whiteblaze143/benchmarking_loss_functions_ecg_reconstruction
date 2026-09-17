@@ -6,7 +6,15 @@ experiment=$repo/experiments/ptbxl_distributional_repecg
 python=/home/mithunmanivannan/.venv/bin/python
 representations=$experiment/outputs/paper02_kernel_mean/development_representations
 smoke_root=$experiment/outputs/smoke_test
+results_db=$experiment/outputs/results.sqlite3
 export PYTHONPATH="$experiment/src"
+
+"$python" "$experiment/scripts/register_results_plan.py" \
+    --database "$results_db" \
+    --run-type smoke \
+    --datasets ptbxl \
+    --split development_val_fold8 \
+    --seed 42
 
 if [[ ! -f "$representations/representation_train.npz" || ! -f "$representations/representation_val.npz" ]]; then
     echo "Development representations are incomplete: $representations" >&2
@@ -69,6 +77,13 @@ for variant in variants:
     assert (output / "development_evaluation" / f"metrics_{variant}.json").is_file()
 print(f"Paper {paper_id:02d}: verified {len(variants)} variants, {manifest['cells']} cells, all evaluations")
 PY
+    "$python" "$experiment/scripts/ingest_results_db.py" \
+        --database "$results_db" \
+        --paper-id "$number" \
+        --output "$output" \
+        --dataset ptbxl \
+        --split development_val_fold8 \
+        --run-type smoke
 done
 
 echo "All 15 paper smoke pipelines passed strict training, aggregation, and evaluation checks."

@@ -35,7 +35,11 @@ from scripts.paper07.train_paper07_shared_grid import (
     sample_context_target_indices,
 )
 from repecg.paper08_tokens import complete_linkage_merge, odd_even_agreement, simultaneous_upper_bounds
-from repecg.paper09_counterfactual import CounterfactualOperatorSetModel, mismatch_operators
+from repecg.paper09_counterfactual import (
+    CounterfactualOperatorSetModel,
+    mismatch_operators,
+    paired_measurement_statistics,
+)
 from scripts.paper09.train_paper09_shared_grid import normalized_state_mse, sample_disjoint_contexts
 
 
@@ -228,6 +232,20 @@ def test_paper09_mismatch_changes_q_but_not_responses() -> None:
     mismatched = mismatch_operators(operators, permutation)
     assert not torch.equal(mismatched, operators)
     assert torch.equal(responses, responses.clone())
+
+
+def test_paper09_paired_statistics_separate_geometry_from_pairing() -> None:
+    operators = torch.randn(2, 3, 8)
+    responses = torch.randn(2, 3, 16, 128)
+    joint = torch.tensor([2, 0, 1])
+    response_only = torch.tensor([1, 2, 0])
+    gram, cross = paired_measurement_statistics(operators, responses)
+    joint_gram, joint_cross = paired_measurement_statistics(operators[:, joint], responses[:, joint])
+    swapped_gram, swapped_cross = paired_measurement_statistics(operators, responses[:, response_only])
+    assert torch.allclose(gram, joint_gram, rtol=1e-5, atol=1e-6)
+    assert torch.allclose(cross, joint_cross, rtol=1e-5, atol=1e-6)
+    assert torch.allclose(gram, swapped_gram, rtol=1e-5, atol=1e-6)
+    assert not torch.allclose(cross, swapped_cross)
 
 
 def test_paper09_contexts_are_disjoint_and_target_is_held_out() -> None:

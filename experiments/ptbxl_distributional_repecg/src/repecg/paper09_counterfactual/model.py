@@ -14,6 +14,24 @@ def mismatch_operators(operators: torch.Tensor, permutation: torch.Tensor) -> to
     return operators[rows, permutation]
 
 
+def paired_measurement_statistics(
+    operators: torch.Tensor, responses: torch.Tensor
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Return the context Gram matrix and paired operator-response moment.
+
+    Both statistics are invariant to a joint permutation of context pairs.
+    The second changes when only responses are permuted, whereas the first
+    describes the coverage/conditioning of the observed measurement operators.
+    """
+    if operators.ndim != 3 or operators.shape[-1] != 8:
+        raise ValueError("operators must have shape (batch,set,8)")
+    if responses.ndim != 4 or responses.shape[:2] != operators.shape[:2]:
+        raise ValueError("responses must match operator batch and set dimensions")
+    gram = torch.einsum("bse,bsf->bef", operators, operators)
+    cross = torch.einsum("bse,bspd->bepd", operators, responses)
+    return gram, cross
+
+
 class CounterfactualOperatorSetModel(nn.Module):
     """Infer a record state from context pairs and synthesize F(q*)."""
 
@@ -26,8 +44,10 @@ class CounterfactualOperatorSetModel(nn.Module):
         # A permutation-invariant q-response binding. This is not a linear
         # response assumption: it gives the residual model an explicit
         # cross-statistic rather than only concatenated pair embeddings.
-        self.pairing_summary = nn.Sequential(
-            nn.Linear(8 * 16 * response_dim, 256), nn.GELU(), nn.Linear(256, 256)
+        self.measurement_geometry_summary = nn.Sequential(
+            nn.Linear(8 * 8 + 8 * 16 * response_dim, 256),
+            nn.GELU(),
+            nn.Linear(256, 256),
         )
 
     def forward(
@@ -40,8 +60,9 @@ class CounterfactualOperatorSetModel(nn.Module):
         return_state: bool = False,
     ) -> torch.Tensor | tuple[torch.Tensor, ...]:
         state = self.backbone.encode_context(operators, responses)
-        binding = torch.einsum("bse,bspd->bepd", operators, responses).flatten(1)
-        state = state + self.pairing_summary(binding)
+        gram, cross = paired_measurement_statistics(operators, responses)
+        geometry = torch.cat((gram.flatten(1), cross.flatten(1)), dim=-1)
+        state = state + self.measurement_geometry_summary(geometry)
         logits = self.backbone.head(state)
         outputs: list[torch.Tensor] = [logits]
         if return_counterfactual:

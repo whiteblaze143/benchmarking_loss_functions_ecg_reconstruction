@@ -1,3 +1,7 @@
-from .model import CounterfactualOperatorSetModel, mismatch_operators
+from .model import CounterfactualOperatorSetModel, mismatch_operators, paired_measurement_statistics
 
-__all__ = ["CounterfactualOperatorSetModel", "mismatch_operators"]
+__all__ = [
+    "CounterfactualOperatorSetModel",
+    "mismatch_operators",
+    "paired_measurement_statistics",
+]

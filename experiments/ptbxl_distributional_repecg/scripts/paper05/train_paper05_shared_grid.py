@@ -161,7 +161,7 @@ def _train_variant(
                 assert isinstance(loss_fn, nn.Module)
                 with torch.cuda.stream(stream):
                     optimizer.zero_grad(set_to_none=True)
-                    with torch.autocast("cuda", dtype=torch.float16):
+                    with torch.autocast("cuda", dtype=torch.bfloat16):
                         loss = loss_fn(model(train_x[index]), train_y[index])
                     loss.backward()
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
@@ -178,7 +178,7 @@ def _train_variant(
             assert isinstance(stream, torch.cuda.Stream)
             assert isinstance(model, nn.Module)
             scheduler.step()
-            with torch.cuda.stream(stream), torch.inference_mode(), torch.autocast("cuda", dtype=torch.float16):
+            with torch.cuda.stream(stream), torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
                 model.eval()
                 probabilities[id(cell)] = torch.sigmoid(model(val_x)).float()
         torch.cuda.synchronize()

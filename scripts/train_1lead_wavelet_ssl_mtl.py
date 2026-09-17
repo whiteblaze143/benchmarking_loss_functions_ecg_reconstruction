@@ -160,6 +160,13 @@ def input_fingerprints(a):
         result["nef_core_checkpoint_sha256"] = sha256_file(core_checkpoint)
         graft_source = _ROOT / "unified_latents/engineering/experimental/nef_latent_graft.py"
         result["nef_latent_graft_sha256"] = sha256_file(graft_source)
+    if getattr(a, "native_nef_mode", "none") != "none":
+        native_checkpoint = Path(a.native_nef_checkpoint)
+        if not native_checkpoint.is_file():
+            raise FileNotFoundError(f"native NEF checkpoint is missing: {native_checkpoint}")
+        result["native_nef_checkpoint_sha256"] = sha256_file(native_checkpoint)
+        native_source = _ROOT / "unified_latents/engineering/experimental/native_nef_ecg_aim.py"
+        result["native_nef_source_sha256"] = sha256_file(native_source)
     if getattr(a,"output_representation","standard")!="standard":
         manifest=Path(a.k_star_manifest)
         if not manifest.is_file():raise FileNotFoundError(f"K_STAR manifest is missing: {manifest}")
@@ -652,6 +659,12 @@ def train(a):
             model.pre_decoder_adapter = FrozenNEFPreDecoderGraft(
                 a.nef_core_mode, a.nef_core_checkpoint, model.width, model.num_patches
             ).to(device)
+        if getattr(a,"native_nef_mode","none") != "none":
+            from unified_latents.engineering.experimental.native_nef_ecg_aim import NativeNEFECGAIM
+            model.native_nef_adapter = NativeNEFECGAIM(
+                a.native_nef_mode, a.native_nef_checkpoint, model.width, model.num_patches,
+                a.native_nef_fusion_init
+            ).to(device)
         model.load_state_dict(resume["model_state_dict"],strict=True)
     else:
         load_init(model,a.init_checkpoint,a.init_strict)
@@ -659,6 +672,12 @@ def train(a):
             from unified_latents.engineering.experimental.nef_latent_graft import FrozenNEFPreDecoderGraft
             model.pre_decoder_adapter = FrozenNEFPreDecoderGraft(
                 a.nef_core_mode, a.nef_core_checkpoint, model.width, model.num_patches
+            ).to(device)
+        if getattr(a,"native_nef_mode","none") != "none":
+            from unified_latents.engineering.experimental.native_nef_ecg_aim import NativeNEFECGAIM
+            model.native_nef_adapter = NativeNEFECGAIM(
+                a.native_nef_mode, a.native_nef_checkpoint, model.width, model.num_patches,
+                a.native_nef_fusion_init
             ).to(device)
     # Core construction differs by arm; restore the shared training RNG state so
     # batch order and A0 artificial masks remain matched across all three cells.
@@ -1023,6 +1042,9 @@ def parser():
     p.add_argument("--init-checkpoint");add_bool(p,"init_strict",True)
     p.add_argument("--nef-core-mode",choices=["none","AE_VE","FULL"],default="none")
     p.add_argument("--nef-core-checkpoint")
+    p.add_argument("--native-nef-mode",choices=["none","AE_VE","FULL"],default="none")
+    p.add_argument("--native-nef-checkpoint")
+    p.add_argument("--native-nef-fusion-init",type=float,default=0.1)
     add_bool(p,"save_every_epoch",False)
     p.add_argument("--checkpoint-policy",choices=["none","best","last","all"],default="none")
     add_bool(p,"rolling_resume");p.add_argument("--resume-min-free-gib",type=float,default=3.)
@@ -1101,6 +1123,11 @@ def validate_train_args(a):
     if a.fiducial_weight and a.no_fiducial_head:
         raise ValueError("positive fiducial weight requires the fiducial head")
     if a.train_head_only and a.no_delineation_head:raise ValueError("head-only mode requires the delineation head")
+    if a.nef_core_mode != "none" and a.native_nef_mode != "none":
+        raise ValueError("frozen and native NEF integrations are mutually exclusive")
+    if a.native_nef_mode != "none":
+        if not a.native_nef_checkpoint:raise ValueError("native NEF mode requires --native-nef-checkpoint")
+        if a.observed_leads != [0]:raise ValueError("native NEF Stage-1 requires observed Lead I only")
     if a.resume_min_free_gib<=0:raise ValueError("--resume-min-free-gib must be positive")
     if a.output_representation!="standard":
         if a.observed_leads!=[0]:raise ValueError("residual output representations require observed Lead I")

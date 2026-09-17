@@ -1,0 +1,39 @@
+{
+  "base": "/home/mithunmanivannan/.venv Python 3.12 + torch 2.6.0+cu124",
+  "system_pkgs": ["tmux", "nvidia-smi"],
+  "pip_phases": [],
+  "env": {
+    "CUDA_VISIBLE_DEVICES": "0",
+    "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"
+  },
+  "run_commands": [
+    "PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True CUDA_VISIBLE_DEVICES=0 /home/mithunmanivannan/.venv/bin/python -u scripts/run_a0_nef_native_stage1.py --preflight-only"
+  ],
+  "weight_dirs": {
+    "a0": {
+      "path": "refine-logs/convergence_10e/runs/conv15e_A0_raw_s42_l0/best.pt",
+      "source": "strict historical A0 checkpoint",
+      "gated": true
+    },
+    "nef_full": {
+      "path": "/data/mithunmanivannan/nef-net-aim/02_nef_core/pretrained/nefcore_full.pt",
+      "source": "PanoBench FULL epoch 13",
+      "gated": true
+    }
+  },
+  "resources": {
+    "gpu": "one NVIDIA A100-PCIE-40GB",
+    "batch_size": 32,
+    "output_root": "/data/mithunmanivannan/nef-net-aim/08_runs/a0_nef_native_stage1"
+  },
+  "smoke": {
+    "import_names": ["torch", "numpy"],
+    "gpu_tests": [
+      {
+        "cmd": "PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True CUDA_VISIBLE_DEVICES=0 /home/mithunmanivannan/.venv/bin/python -u scripts/run_a0_nef_native_stage1.py --preflight-only",
+        "expect": "\"status\": \"PASS\""
+      }
+    ],
+    "cli_checks": ["nvidia-smi", "tmux -V"]
+  }
+}

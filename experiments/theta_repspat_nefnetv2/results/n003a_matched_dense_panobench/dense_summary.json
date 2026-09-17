@@ -1,0 +1,83 @@
+{
+  "protocol": {
+    "record_source": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/theta_repspat_nefnetv2/results/g002_eval/g002_panobench_records.json",
+    "record_source_sha256": "91c7490f59aad6402b854172e6404bdcd1557cfb24a7fcf63e1c1a7aff31c165",
+    "n_records": 100,
+    "sampling_reconstructed_from_g002_seed": 42,
+    "input_views": "I, II, and frozen third torso view",
+    "queries": "remaining 41 views",
+    "bootstrap_unit": "PanoBench record"
+  },
+  "checkpoints": {
+    "N002": "9174e0fef5fc9e446299944802bbc72f39da8a3cd54b632ac13e900d3625624c",
+    "N003a": "76fa796e63099dcdbde4e5b4c8b52c8ce16afe3f25806ddc7cac488582b84a19"
+  },
+  "arm_means": {
+    "N002": {
+      "spearman_rho_d": 0.8960844336061439,
+      "knn_jaccard_k10": 0.32901955214719925,
+      "knn_jaccard_k20": 0.38855973697261187,
+      "cahc_ari": 0.7226055539471784,
+      "eps_aligned": 0.22303708747029305,
+      "cka": 0.8963500755919515
+    },
+    "N003a": {
+      "spearman_rho_d": 0.8853661543224871,
+      "knn_jaccard_k10": 0.31457946360656885,
+      "knn_jaccard_k20": 0.3554314636659808,
+      "cahc_ari": 0.5798766338355023,
+      "eps_aligned": 0.3187914541363716,
+      "cka": 0.8716258884633096
+    }
+  },
+  "paired_n003a_minus_n002": {
+    "spearman_rho_d": {
+      "n_records": 100,
+      "mean": -0.010718279283656804,
+      "ci95": [
+        -0.018230904435216824,
+        -0.0025732302204448123
+      ]
+    },
+    "knn_jaccard_k10": {
+      "n_records": 100,
+      "mean": -0.014440088540630338,
+      "ci95": [
+        -0.020556942981854752,
+        -0.00845782646155015
+      ]
+    },
+    "knn_jaccard_k20": {
+      "n_records": 100,
+      "mean": -0.03312827330663122,
+      "ci95": [
+        -0.04084491607608511,
+        -0.025401452281625964
+      ]
+    },
+    "cahc_ari": {
+      "n_records": 100,
+      "mean": -0.14272892011167612,
+      "ci95": [
+        -0.20365395927956478,
+        -0.08332185283272513
+      ]
+    },
+    "eps_aligned": {
+      "n_records": 100,
+      "mean": 0.09575436666607856,
+      "ci95": [
+        0.07893730941973627,
+        0.11304651187360286
+      ]
+    },
+    "cka": {
+      "n_records": 100,
+      "mean": -0.024724187128641682,
+      "ci95": [
+        -0.032229254813655135,
+        -0.016994128677759433
+      ]
+    }
+  }
+}

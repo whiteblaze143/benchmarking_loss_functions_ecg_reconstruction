@@ -387,6 +387,7 @@ class AliTokECGAIMWaveletMTL(_PARENT):
         self.inference_view=inference_view
         self.mask_type_mode=mask_type_mode
         self.pre_decoder_adapter = None
+        self.native_nef_adapter = None
 
         if self.use_wavelet_branch:
             def make_bank(kind, asset):
@@ -519,6 +520,8 @@ class AliTokECGAIMWaveletMTL(_PARENT):
         available=~(inherited|artificial)
         try: cond=self._lead_condition(inherited)
         except TypeError: cond=self.lead_embedding[None].expand(normalized.shape[0],-1,-1)
+        if self.native_nef_adapter is not None:
+            cond = self.native_nef_adapter.augment_conditioning(cond, inherited)
         tokens=self.patch_projection(patches)+cond[:,:,None]+self.time_embedding[None,None]
         tokens=tokens+self.mask_type_embedding[0][None,None,None]
 
@@ -549,6 +552,10 @@ class AliTokECGAIMWaveletMTL(_PARENT):
         )
         baseline=self._limb_prior(patches,available)
         grid=grid+self.baseline_projection(baseline)
+        if self.native_nef_adapter is not None:
+            grid = self.native_nef_adapter.augment_grid(
+                grid, normalized, inherited, artificial
+            )
         if self.pre_decoder_adapter is not None:
             grid = self.pre_decoder_adapter(
                 grid, normalized, inherited, artificial

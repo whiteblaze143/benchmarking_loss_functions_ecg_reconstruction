@@ -1,5 +1,15 @@
 # Local Compute Environment Ledger
 
+### env: native-nef-a0@49c6ae5b
+
+- how: warm reuse of `/home/mithunmanivannan/.venv`; no environment rebuild
+- spec: `.aris/compute/native-nef-a0-env-spec.json`
+- tier: `{cpus: affinity-visible, mem_gib: host-available, gpus: 1 x A100-PCIE-40GB}`
+- versions: Python 3.12.3; torch 2.6.0+cu124; CUDA 12.4; numpy 2.3.5
+- weights: strict A0 SHA-256 `fdf6e997...a5acf`; FULL-e13 SHA-256 `d5d9197e...ef054`
+- validated: 2026-09-15 real fold-9 batch-32 BF16 forward/backward; identity, shared initialization, gradients, output shape, and hidden-target gates passed
+- gotcha: cuDNN 9 Conv1d raises `ptrDesc->finalize()`; production trainer disables cuDNN while retaining CUDA ATen execution. Exact batch-32 preflight requires BF16 autocast and `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`.
+
 ### env: ecgaim-rdb-oracle@d4f03f36
 
 - how: warm reuse of `/home/mithunmanivannan/.venv`; no environment rebuild performed

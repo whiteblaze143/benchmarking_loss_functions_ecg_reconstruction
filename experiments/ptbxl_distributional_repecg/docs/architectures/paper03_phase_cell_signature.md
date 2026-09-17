@@ -1,17 +1,23 @@
-# Paper 3: Phase-Cell Signature Path
+# Paper 03: Phase-Cell Signature Path
 
 ## The Core Question
-Cardiac rhythms often suffer from extreme time-warping (e.g., wildly varying heart rates, arrhythmias). How do we deal with the fact that different patients traverse the cardiac cycle at completely different speeds?
+Cardiac rhythms often suffer from extreme time-warping. A patient might have a wildly varying heart rate, arrhythmias, or ectopic beats. How do we deal with the fact that different patients traverse the physiological cardiac cycle at completely different speeds?
 
-## The Math
-Derived from **Rough Path Theory**. The signature of a path extracts geometric properties (like the total area enclosed by the trajectory) that are completely invariant to time re-parameterization (how fast the path is traversed).
+## The Mathematical Framework: Rough Path Theory
+We derive our solution from **Rough Path Theory**, a branch of stochastic analysis. The "signature" of a path is an infinite series of iterated integrals that extracts global geometric properties of the trajectory (like the total algebraic area enclosed by the path in the RKHS). 
+
+Crucially, path signatures are **completely invariant to time re-parameterization**. This means the signature of a path is identical regardless of how fast or slow the path is traversed.
 
 ## The Architecture
-We lift the sequence of phase-cell KMEs into a continuous geometric path. We use the `iisignature` library to compute the truncated signature features. These features are mathematically extracted without any learned neural network parameters, flattened, and then passed into a simple linear classification probe.
+1. We mathematically lift the discrete sequence of phase-cell KMEs into a continuous geometric path tracing through the RKHS.
+2. We use the `iisignature` mathematical library to compute the truncated signature features (up to a certain depth, e.g., depth 3 or 4).
+3. These highly complex geometric features are mathematically extracted *without any learned neural network parameters*.
+4. The deterministic signature vector is flattened and passed into a simple linear classification probe.
 
-## The Mechanism (Biological Context)
-Because path signatures inherently ignore time-warping, they focus purely on the structural, geometric shape of the cardiac cycle's trajectory in the RKHS. If an ischemic heart traces a different "shape" through electrical space than a healthy heart, the signature will catch it, regardless of whether the patient's heart rate was 60 BPM or 120 BPM.
+## The Biological Context
+Because path signatures inherently ignore time-warping, they focus purely on the structural, geometric "shape" of the cardiac cycle's trajectory in the electrical RKHS space. 
+If a diseased ischemic heart traces a distinctly different structural shape through electrical space compared to a healthy heart, the signature will flawlessly identify it, regardless of whether the patient's heart rate was 60 BPM or 120 BPM.
 
-## The Falsification & Control
-- **Matched Control**: Raw KME pooling.
-- **Falsification**: Time-warping the signal. Because signatures are invariant to time-warping, adding synthetic severe time-warps to the test set should not degrade the signature model's performance, but it *will* degrade standard models.
+## Rigorous Falsification & Controls
+- **Matched Control**: Raw temporal pooling of the KME vectors.
+- **Falsification (The Kill Test)**: We intentionally synthetically time-warp the signal (stretching and compressing random parts of the heartbeat) in the test set. Because signatures are mathematically invariant to time-warping, this manipulation should *not* degrade the signature model's performance. However, it must severely degrade the standard control models.

@@ -1,14 +1,15 @@
-# Paper 9: Counterfactual Measurement-Operator
+# Paper 09: Counterfactual Measurement-Operator
 
 ## The Core Question
-An ECG is just a 2D "shadow" of the heart's true 3D electrical activity. Can the model learn the true 3D physics of the heart, independent of where the doctor happened to place the physical electrodes?
+An ECG is just a 2D "shadow" (a projection) of the heart's true 3D electrical activity. Can the model learn the true 3D physics of the heart, independent of where the doctor happened to physically stick the electrodes on the patient's chest?
 
 ## The Architecture
-The model learns a causal representation $Z_S$ from context pairs (the waveform + the operator $q$ used to record it). We then attach a generative network $g_\theta(Z_S, q_*)$ and ask it a counterfactual question: "What would the waveform look like if we had placed the electrodes at angle $q_*$ instead of $q$?"
+The model learns a causal representation $Z_S$ from context pairs: (the recorded waveform + the spatial operator $q$ representing the physical lead vector used to record it). 
+We then attach a generative network $g_\theta(Z_S, q_*)$ and ask it a strict counterfactual question: *"What would the waveform look like if we had placed the electrodes at angle $q_*$ instead of $q$?"*
 
-## The Mechanism (Biological Context)
-This forces the representation to isolate the true biological state of the heart (the 3D dipole) from the artifactual measurement operator (the camera angle/lead vector). It separates the *heart* from the *camera*.
+## The Biological Context
+This forces the representation to isolate the true biological state of the heart (the 3D electrical dipole vector) from the artifactual measurement operator (the camera angle/lead vector). It cleanly separates the *heart* from the *camera*.
 
-## The Falsification & Control
-- **Matched Control**: Standard representation learning without operator prediction.
-- **Falsification**: Destroyed by randomly mismatching the operator $q$ and the waveform during training. If the model cannot predict the counterfactual lead, the causal claim fails.
+## Rigorous Falsification & Controls
+- **Matched Control**: Standard representation learning without spatial operator prediction.
+- **Falsification (The Kill Test)**: We randomly mismatch the operator $q$ and the waveform during training. If the model cannot predict the counterfactual lead when presented with a new camera angle, the causal claim fails entirely.

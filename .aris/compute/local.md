@@ -1,5 +1,15 @@
 # Local Compute Environment Ledger
 
+### env: ptbxl-distributional-repecg@fc49e470
+
+- how: warm reuse of `/home/mithunmanivannan/.venv`; added `iisignature==0.24` and editable project package with `--no-deps`
+- spec: `.aris/compute/ptbxl-distributional-repecg-env-spec.json`
+- tier: `{cpus: affinity-visible, mem_gib: host-available, gpus: 1 x A100-PCIE-40GB}`
+- versions: Python 3.12.3; torch 2.6.0+cu124; CUDA 12.4; numpy 2.3.5; iisignature 0.24
+- validated: 2026-09-16 tier-1 imports and seeded A100 kernel witness `WITNESS_REPECG (8, 8) NVIDIA A100-PCIE-40GB`; fresh agent-follows-doc passed (11 tests, exact documented invocation, no divergence)
+- gotcha: `iisignature` must build after NumPy with `--no-build-isolation`; editable install must use `--no-deps` or pip attempts to re-resolve the full CUDA wheel stack.
+- documented invocation: `cd /home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction && /home/mithunmanivannan/.venv/bin/python -m pytest -q experiments/ptbxl_distributional_repecg/tests && /home/mithunmanivannan/.venv/bin/python -c 'import torch;torch.manual_seed(0);x=torch.randn(8,8,device="cuda");print("WITNESS_REPECG",tuple((x@x).shape),torch.cuda.get_device_name())'`
+
 ### env: native-nef-a0@49c6ae5b
 
 - how: warm reuse of `/home/mithunmanivannan/.venv`; no environment rebuild

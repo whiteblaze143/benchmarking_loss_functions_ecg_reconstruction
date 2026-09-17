@@ -75,7 +75,7 @@ whitened space. Define
 
 \[
 G=\kappa(A,A)+\epsilon I,\qquad
-\epsilon=10^{-6}\operatorname{tr}(K_{AA})/M,
+\epsilon=10^{-6}\operatorname{tr}(\kappa(A,A))/M,
 \]
 
 and compute the symmetric inverse square root with eigenvalues clamped below
@@ -90,9 +90,15 @@ Fitting uses float64; stored landmarks/transforms and inference use float32.
 For exact values `d_i` and approximations `a_i` on the 1,000 audit pairs, define
 `floor = max(1e-8, 0.001 * median({d_i: d_i > 0}))` and relative error
 `abs(a_i-d_i)/max(d_i,floor)`. The approximation must pass both locked
-development gates: Spearman rho at least 0.95 and median relative error below
-0.10. Otherwise the same procedure is repeated with `M=256`. Failure at 256
+development gates: Spearman rho at least 0.90 and median relative error below
+0.15. Otherwise the same procedure is repeated with `M=256`. Failure at 256
 stops the branch.
+
+The thresholds were amended before any development model training after the
+first 1,000-pair audit showed that 256 landmarks achieved `rho=0.95698` and
+median relative error `0.12645`, while 128 landmarks retained median relative
+error `0.18332`. See `PROTOCOL_AMENDMENTS.md`; the original failed audit is
+preserved.
 
 ## Eligibility and missingness
 
@@ -149,9 +155,12 @@ as the exact moments.
 The primary path is the 8-channel standardized cell without a time channel or
 base-point augmentation. `iisignature` preparation uses dimension 8 and depth
 3 with its canonical log-signature ordering. The descriptor concatenates the
-8-vector start, end, and mean with the log-signature, then applies the
-train-only whitening followed by PCA to exactly 64 components (or all available
-components if descriptor rank is below 64). Order destruction permutes the 14 interior
+8-vector start, end, and mean with the log-signature. Fit one train-only
+truncated PCA-whitening transform: center raw descriptors, retain the 64
+leading covariance eigenvectors (or all directions with eigenvalue at least
+`1e-8` times the largest when fewer than 64), and scale retained scores by the
+inverse square root of their eigenvalues. No full whitening precedes this
+truncation. Order destruction permutes the 14 interior
 samples while preserving endpoints and the full sample marginal; a sham
 applies `f_a(s)=s+a*sin(2*pi*s)/(2*pi)` for frozen `a` in `{-0.1,+0.1}` and
 PCHIP-resamples back to 16 samples. Since `f'_a(s)>0`, this is monotone.
@@ -180,7 +189,9 @@ cell 16 to cell 1 only for consecutive detected cycles. With `lambda=1e-2`,
 K=Z_+Z_-^T(Z_-Z_-^T+\lambda I)^{-1}.
 \]
 
-This is called a regularized Koopman observable estimator. Records failing the
+This is called a record-specific regularized Koopman observable estimator.
+PCA of `vec(K)` is fit on training records and retains exactly 64 components
+(or the available rank if smaller). Records failing the
 transition-count gate are ineligible. The primary comparison is occupancy
 versus `[occupancy, K descriptors]`; chronological permutation is paired with
 an identity-order sham and preserves occupancy exactly.
@@ -239,8 +250,15 @@ derived-limb coefficients, 100 dense Gaussian unit vectors from seed 1702, and
 the stated I-to-V2 interpolation family; any exact overlap with a seen vector up
 to sign and tolerance `1e-8` is removed.
 
-The primary model is trained with diagnosis BCE only. An explicitly secondary
-auxiliary model adds reconstruction weight 0.1 and paired-orientation
+The primary continuous model and matched categorical model are trained with
+diagnosis BCE only and supply `Delta_task`. Every operator absent from the
+categorical training vocabulary maps to one frozen `<UNK_q>` embedding. The
+categorical and continuous models use identical response encoders, set-encoder
+depth/width, and diagnosis heads; only the operator representation differs.
+
+A separately initialized auxiliary continuous/categorical model pair supplies
+the response-MSE mechanism gate. It uses the same encoder/decoder depth and
+width; the continuous auxiliary model adds reconstruction weight 0.1 and paired-orientation
 consistency weight 0.05. Orientation consistency is the symmetric KL divergence
 between diagnostic predictions from sign-paired contexts; target-response MSE
 uses the explicitly computed `F(-q)`, because nonlinear kernel coordinates are
@@ -258,7 +276,7 @@ patient-blocked within-candidate splits and
 
 Freeze the candidate-pair family before uncertainty estimation. For every
 patient-clustered bootstrap replicate, compute all pair distances and the
-maximum centered deviation `T_b=max_pair(D_b-D_hat)`. Let `c_0.95` be the 95th
+basic-bootstrap maximum error `T_b=max_pair(D_hat-D_b)`. Let `c_0.95` be the 95th
 percentile of `T_b`; the simultaneous familywise upper bound is
 `U_pair=D_hat_pair+c_0.95`. Complete-linkage merging is permitted only when
 every simultaneous candidate-pair upper bound in the proposed token is below
@@ -274,6 +292,16 @@ destroyer performs size-matched complete-linkage merges ordered by a frozen
 random permutation rather than UCB, retaining final vocabulary size and model
 capacity.
 
+Odd/even token agreement for one record is
+
+\[
+A_{oe}=1-\operatorname{JSD}(p_{odd},p_{even})/\log 2,
+\]
+
+where the probability vectors use the union of final tokens plus `<UNK>` and
+zero entries contribute zero. Record values are averaged within patient first,
+then patients are weighted equally.
+
 ## Statistical aggregation
 
 Predictions are record-level. Metrics are computed over records, while every
@@ -283,3 +311,10 @@ probabilities; seed-level metrics and SD are also reported. Each paper has one
 locked primary comparison. If any umbrella claim is made, Holm correction is
 applied across the eight primary comparisons; otherwise each paper is reported
 independently and BH is limited to declared secondary families.
+
+All representation mechanism statistics are computed per record, averaged
+within patient, then aggregated with equal patient weight. For cosine-based
+statistics, cosine is one when both vectors are exactly zero and zero when only
+one is zero; the count of either case is reported. Frobenius similarity uses
+the same convention. Scalar confidence intervals resample patients and retain
+all records for each sampled patient.

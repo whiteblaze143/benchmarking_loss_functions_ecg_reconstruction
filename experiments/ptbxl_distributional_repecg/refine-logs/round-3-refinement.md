@@ -1,64 +1,30 @@
-# Round 2 Refinement
+# Round 3 Refinement
 
 ## Problem Anchor
 
-The full proposal below preserves the same anchor and now uses only the binding terms diagnostically useful on PTB-XL and mechanism-use falsification.
+The same anchor is preserved in the flattened full proposal below.
 
 ## Anchor Check
 
-- **Original bottleneck:** Test distribution-valued local ECG objects without importing invalid physiological labels, non-rejection equivalence, or architecture confounding.
-- **Alignment:** No branch, dataset, or target changed. Repairs are type, estimator, uncertainty, and gate definitions.
-- **Drift rejected:** Paper 7 remains within observed lead span; Paper 8 remains an equivalence-rule study rather than transformer scaling.
+- No dataset, branch, claim target, or evidence boundary changed.
+- Repairs affect stable dimension reduction, comparator definition, and uncertainty direction only.
+- There is no scientific drift.
 
 ## Simplicity Check
 
-- One whitened-space kernel notation now serves exact MMD and Nyström.
-- Each branch has exactly one scalar primary mechanism statistic.
-- INCONCLUSIVE is terminal, eliminating adaptive repeat decisions.
-- Paper 7 primary training is diagnosis-only; auxiliary objectives are secondary.
+- Paper 3 now uses one truncated PCA-whitening transform.
+- Paper 7 uses one frozen categorical unknown operator and separates diagnostic from auxiliary model pairs.
+- Paper 8 uses one explicit patient-equal JSD agreement statistic.
 
 ## Changes Made
 
-1. Removed double-whitening ambiguity and froze the near-zero MMD error denominator.
-2. Made Paper 2's finite destroyer exactly sample-moment matched.
-3. Centered Paper 6 and wrote its complete effective-mass-weighted distance and ineligibility rule.
-4. Assigned one scalar primary mechanism statistic to every paper.
-5. Added simultaneous max-deviation patient-bootstrap bounds for Paper 8's full frozen pair family.
-6. Froze Paper 7 train/seen/unseen operator banks and diagnosis-only primary loss.
-7. Froze PCA sizes and one shared monotone-warp family.
-8. Reconciled stale duplicated proposal prose.
-
-## Revised Proposal
-
-# Round 1 Refinement
-
-## Problem Anchor
-
-The Problem Anchor below is copied verbatim in the full revised proposal.
-
-## Anchor Check
-
-- **Original bottleneck:** Determine whether local empirical electrical processes form a diagnostically useful ECG object beyond architecture capacity and conventional summaries, without repeating repStat's non-rejection and connected-component errors.
-- **Why the revision remains aligned:** It changes no dataset, branch, or scientific target. It makes the shared primitive and branch estimators executable and the controls more specific.
-- **Reviewer suggestions rejected as drift:** No branch was removed, no foundation model was added, and Paper 7 remains within the observed eight-lead span rather than claiming new electrode geometry.
-
-## Simplicity Check
-
-- **Dominant contribution:** A typed, leakage-safe distribution-valued phase-cell measurement layer with one independently falsifiable mathematical object per paper.
-- **Components removed or demoted:** Paper 1 direct operator is the sole primary representation; its spectral and 2-D CNN forms are secondary. Paper 7 target reconstruction is secondary rather than co-primary.
-- **Complexity rejected:** No monolithic eight-branch model, no learned wave labels, no per-patient diffusion basis, and no foundation-model scaling.
-- **Why this is minimal:** The new documents add equations, eligibility, and matched shams, not additional trainable modules.
-
-## Changes Made
-
-1. Added a frozen mathematical/tensor contract defining atoms, distributions, whitening, Nyström regularization, missingness, and every branch estimator.
-2. Added paper-specific sufficiency rules and explicit `ineligible` outcomes instead of degenerate vectors.
-3. Resolved Paper 5 with the specified globally aligned 32-anchor ridge Koopman estimator.
-4. Named Paper 6 accurately as a soft-stratified conditional kernel mean and fixed its distance.
-5. Made Paper 7's observed context explicit and demoted reconstruction to secondary evidence.
-6. Separated Paper 8 construction and equivalence calibration by patient and defined deterministic UCB complete linkage.
-7. Added matched sham perturbations and an eight-row numeric claim gate matrix.
-8. Froze the fixed-window sensitivity unconditionally before fold 10.
+1. Replaced full whitening followed by arbitrary PCA with train-only truncated PCA whitening.
+2. Defined Paper 7's unseen categorical operator as one frozen UNK_q and separated BCE-only task models from auxiliary response models.
+3. Corrected Paper 8's basic simultaneous-bootstrap error direction.
+4. Defined odd/even token agreement exactly and patient-equal aggregation.
+5. Froze Paper 5 PCA at 64 and renamed it record-specific.
+6. Defined zero-vector behavior and patient aggregation for all mechanism statistics.
+7. Corrected the Nyström ridge notation and removed stale causal language.
 
 ## Revised Proposal
 
@@ -168,7 +134,7 @@ PTB-XL records500
 
 ### Paper 5: Recurrent-State Koopman ECG
 
-- **Object:** A patient-specific Koopman transition operator in a globally aligned 32-anchor soft-state coordinate system.
+- **Object:** A record-specific Koopman transition operator in a globally aligned 32-anchor soft-state coordinate system.
 - **Model:** PCA of vectorized transition operator plus spectral/error descriptors and a fixed MLP.
 - **Matched control:** State occupancy alone versus occupancy plus transition operator.
 - **Falsification:** Chronological shuffling preserves occupancy but must harm the transition representation.
@@ -272,12 +238,12 @@ it determines whether expensive final-seed runs are scientifically warranted.
 - Final five-seed portfolio cost is not committed until measured throughput from the first development runs replaces these estimates.
 
 
+
+
 ## Binding Implementation Annexes
 
-The following annexes are part of this revised proposal and override any less-specific prose above:
+- docs/MATHEMATICAL_CONTRACT.md
+- docs/CLAIM_GATE_MATRIX.md
+- docs/SPEC_RECONCILIATION.md
 
-- `docs/MATHEMATICAL_CONTRACT.md`: tensor interfaces, estimators, fit populations, eligibility, and aggregation.
-- `docs/CLAIM_GATE_MATRIX.md`: one claim, comparator, mechanism-use falsification, endpoint, and executable gate per paper.
-- `docs/SPEC_RECONCILIATION.md`: precedence for conflicts between the two source specifications.
-
-The phrase "clinically useful" is narrowed to "diagnostically useful on PTB-XL" unless later external evidence supports a clinical-use claim. Every branch outcome is interpreted independently. There is no post hoc "at least one branch succeeds" primary claim.
+These annexes are part of the proposal and are authoritative for estimator and gate details.

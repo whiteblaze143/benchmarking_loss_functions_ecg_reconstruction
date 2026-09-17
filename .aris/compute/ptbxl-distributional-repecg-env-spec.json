@@ -1,0 +1,25 @@
+{
+  "base": "cuda12.4 + python3.12",
+  "system_pkgs": ["git", "tmux"],
+  "pip_phases": [
+    ["torch==2.6.0"],
+    ["numpy==2.3.5", "pandas", "scipy", "scikit-learn", "wfdb", "pyyaml"],
+    ["iisignature", "--no-build-isolation"],
+    ["-e", "experiments/ptbxl_distributional_repecg", "--no-deps"]
+  ],
+  "env": {
+    "PYTHONPATH": "experiments/ptbxl_distributional_repecg/src"
+  },
+  "run_commands": [],
+  "weight_dirs": {},
+  "smoke": {
+    "import_names": ["torch", "numpy", "pandas", "scipy", "sklearn", "wfdb", "yaml", "iisignature", "repecg"],
+    "gpu_tests": [
+      {
+        "cmd": "python -c 'import torch;torch.manual_seed(0);x=torch.randn(8,8,device=\"cuda\");print(\"WITNESS_REPECG\",tuple((x@x).shape),torch.cuda.get_device_name())'",
+        "expect": "^WITNESS_REPECG (8, 8)"
+      }
+    ],
+    "cli_checks": ["nvidia-smi"]
+  }
+}

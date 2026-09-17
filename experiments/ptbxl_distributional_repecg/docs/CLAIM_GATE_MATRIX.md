@@ -32,11 +32,16 @@ but it does not advance to the five-seed claim run.
 | 4 | Local phase-conditioned dynamics matter | raw local waveform KME | endpoint-preserving temporal permutation / fixed monotone warp | original-to-sham Hankel-descriptor cosine minus original-to-destroyer cosine | raw-KME change and task AUROC drop | improvement is morphology or corruption sensitivity, not dynamics |
 | 5 | Transition dynamics add beyond state occupancy | occupancy-only vector with identical probe | chronological shuffle / identity order | destroyer minus sham normalized one-step prediction error | rollout error and task AUROC drop | state composition, not transitions, carries the signal |
 | 6 | Conditional residual structure adds beyond both marginals | concatenated macro and residual marginals | residual-within-cell permutation / joint-pair permutation | original-to-sham recurrence similarity minus original-to-destroyer similarity | task AUROC drop | conditional pairing is irrelevant |
-| 7 | Continuous operator coordinates improve unseen-operator behavior over lead IDs | categorical lead-ID set encoder matched in width/depth | continuous `q` / lead ID | lead-ID minus continuous-operator mean squared error on the frozen unseen response bank | diagnosis AUROC; sign consistency; interpolation curvature | model is disguised channel identification |
-| 8 | UCB-equivalence tokens outperform size-matched arbitrary merging | random complete-linkage vocabulary with identical size/transformer | random merge order / UCB merge order | UCB-vocabulary minus random-vocabulary odd/even token agreement | `<UNK>`, perplexity, phase NMI, task AUROC | performance comes from vocabulary size or transformer capacity |
+| 7 | Continuous operator coordinates improve unseen-operator behavior over lead IDs | categorical `<UNK_q>` set encoder matched in width/depth | continuous `q` / frozen unseen `<UNK_q>` | categorical-auxiliary minus continuous-auxiliary mean response MSE on the frozen unseen bank | BCE-only pair diagnosis AUROC; sign consistency; interpolation curvature | model is disguised channel identification |
+| 8 | UCB-equivalence tokens outperform size-matched arbitrary merging | random complete-linkage vocabulary with identical size/transformer | random merge order / UCB merge order | patient-equal difference in `1-JSD(p_odd,p_even)/log(2)` | `<UNK>`, perplexity, phase NMI, task AUROC | performance comes from vocabulary size or transformer capacity |
 
 Branch-specific hard gates remain binding: Nyström fidelity must pass; Paper
 5 must meet its transition-count rule; Paper 7 may claim only within-span
 operators; Paper 8 fails a general-purpose claim if locked-test `<UNK>` exceeds
 20 percent or phase nearly determines tokens. "Nearly determines" is fixed as
 normalized mutual information `NMI(token, phase) >= 0.90`.
+
+Every scalar representation statistic is computed per record, averaged within
+patient, and then patient-equal. Cosine and normalized Frobenius similarity are
+one for two zero vectors/matrices and zero when exactly one argument is zero;
+these cases are counted and reported. Bootstrap intervals resample patients.

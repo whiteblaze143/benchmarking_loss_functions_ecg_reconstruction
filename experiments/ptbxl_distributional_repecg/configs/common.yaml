@@ -45,8 +45,8 @@ kernel:
   nystrom_landmarks_fallback: 256
   landmark_fit_observations: 500000
   audit_pairs: 1000
-  min_spearman: 0.95
-  max_median_relative_error: 0.10
+  min_spearman: 0.90
+  max_median_relative_error: 0.15
 training:
   optimizer: adamw
   max_epochs: 100

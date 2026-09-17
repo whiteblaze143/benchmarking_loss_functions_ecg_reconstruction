@@ -19,7 +19,9 @@ def test_every_registered_variant_forward_and_backward() -> None:
                 features = torch.randn(
                     2, 16, 16 if paper_id == 1 else 128, requires_grad=True
                 )
-            model = create_paper_model(paper_id, features.shape[-1], 5, variant)
+            model = create_paper_model(
+                paper_id, features.shape[-1], 5, variant, vocabulary_size=64 if paper_id == 7 else 0
+            )
             if paper_id == 8 and variant.mechanism == "kmeans_dictionary":
                 model.set_codebook(torch.randn(64, features.shape[-1]))
             if paper_id == 7:

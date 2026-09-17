@@ -93,20 +93,33 @@ class PhaseCNN(nn.Module):
         else:
             self.blocks = nn.Sequential(*(CircularResidualBlock(width) for _ in range(blocks)))
             
-        if self.variant.head == "linear":
+        if self.variant.head == "phase_kme_linear":
+            self.head = nn.Linear(16 * input_dim, classes)
+        elif self.variant.head in ("linear", "global_kme_linear"):
             self.head = nn.Linear(input_dim, classes)
+        elif self.variant.head == "phase_aware":
+            self.head = nn.Linear(16 * width, classes)
         else:
             self.head = nn.Linear(width, classes)
 
     def forward(self, phase_features: torch.Tensor) -> torch.Tensor:
         if phase_features.ndim != 3:
             raise ValueError("expected (batch, phase, feature)")
-        if self.variant.head == "linear":
+            
+        if self.variant.mechanism == "global_kme":
+            # Pool across all 16 phase cells to remove phase conditioning, then broadcast back
+            phase_features = phase_features.mean(dim=1, keepdim=True).expand(-1, phase_features.shape[1], -1)
+            
+        if self.variant.head == "phase_kme_linear":
+            return self.head(phase_features.flatten(1))
+        if self.variant.head in ("linear", "global_kme_linear"):
             return self.head(phase_features.mean(dim=1))
         
         x = phase_features.transpose(1, 2)
-        x = self.blocks(self.input(x)).mean(dim=-1)
-        return self.head(x)
+        features = self.blocks(self.input(x))
+        if self.variant.head == "phase_aware":
+            return self.head(features.flatten(1))
+        return self.head(features.mean(dim=-1))
 
 
 # ============================================================================

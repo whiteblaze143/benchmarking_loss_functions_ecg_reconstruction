@@ -23,11 +23,11 @@
 ---
 
 ## Pre-Production Milestone Checklist
-- [ ] **Synthetic World Verification**:
-  - [ ] Synthetic A: Distributional separation under identical means.
-  - [ ] Synthetic B: Finite-sample MMD convergence rate.
-  - [ ] Synthetic C: Cyclic shift equivariance test ($\Delta_{\text{cyclic}} \le 0.01$).
-  - [ ] Synthetic D: Scale invariance and energy preservation.
+- [x] **Synthetic World Verification**:
+  - [x] Synthetic A: Distributional separation under identical means (`test_synthetic_a_same_means_distinct_distributions` passed).
+  - [x] Synthetic B: Finite-sample MMD convergence rate (`test_synthetic_b_finite_sample_convergence` passed).
+  - [x] Synthetic C: Cyclic shift equivariance test (`test_synthetic_c_cyclic_shift_equivariance` passed).
+  - [x] Synthetic D: Scale invariance and energy preservation (`test_synthetic_d_scale_disentanglement` passed).
 - [ ] **Representation Stability Analysis**:
   - [ ] Odd-even split-half stability (NFS score).
   - [ ] Eigenvalue spectral correlation ($\rho_{\text{spectral}}$).

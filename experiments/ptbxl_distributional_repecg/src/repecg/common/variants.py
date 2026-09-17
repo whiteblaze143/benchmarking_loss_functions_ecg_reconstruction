@@ -19,9 +19,15 @@ PAPER01_VARIANTS = {
 
 PAPER02_VARIANTS = {
     "full": ExperimentVariant(),
-    "linear_probe": ExperimentVariant(head="linear"),
+    "global_kme": ExperimentVariant(representation="kernel", mechanism="global_kme"),
+    "no_circular": ExperimentVariant(mechanism="no_circular"),
+    "moments_circular": ExperimentVariant(representation="moments"),
+    "moments_noncircular": ExperimentVariant(representation="moments", mechanism="no_circular"),
+    "gaussian_surrogate": ExperimentVariant(representation="gaussian"),
     "linear_kernel": ExperimentVariant(representation="linear"),
-    "no_circular": ExperimentVariant(mechanism="no_circular")
+    "phase_kme_linear_probe": ExperimentVariant(head="phase_kme_linear"),
+    "global_kme_linear_probe": ExperimentVariant(representation="kernel", mechanism="global_kme", head="global_kme_linear"),
+    "linear_probe": ExperimentVariant(head="linear"),
 }
 
 PAPER03_VARIANTS = {

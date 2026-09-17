@@ -273,7 +273,9 @@ The context size is sampled uniformly from one through six from these eight.
 A frozen seen-validation bank contains all canonical basis operators and 100
 sparse operators from seed 1701. Frozen unseen banks contain the normalized
 derived-limb coefficients, 100 dense Gaussian unit vectors from seed 1702, and
-the stated I-to-V2 interpolation family; any exact overlap with a seen vector up
+nine normalized interior I-to-V2 mixtures
+`q_alpha = normalize((1-alpha)e_I + alpha e_V2)` for
+`alpha in {0.1,0.2,...,0.9}`; any exact overlap with a seen vector up
 to sign and tolerance `1e-8` is removed.
 
 The primary continuous model and matched categorical model are trained with
@@ -330,7 +332,7 @@ then patients are weighted equally.
 
 ## Paper 9 counterfactual measurement-operator
 
-Given the independent basis `B(t)`, the measurement operator is `q`, and the observed waveform is `X_q(t) = q^T B(t)`. The causal representation model learns `Z_S = f_\theta(\mathcal{C})` from context pairs `\mathcal{C} = \{(q_1, X_{q_1}), ..., (q_m, X_{q_m})\}` and predicts counterfactuals `\widehat X_{q_*} = g_\theta(Z_S, q_*)`. The representation `F(q)` is the sequence of kernel means `K_g(q)` computed over the phase cells of `[X_q(t), \dot X_q(t)]`. The model uses a counterfactual loss `\| \widehat F(q_*)-F(q_*) \|^2` alongside diagnosis and operator-invariance losses. The mechanism-use destroyer randomly mismatches `q` and the waveform during training.
+Given the independent basis `B(t)`, the measurement operator is `q`, and the observed waveform is `X_q(t) = q^T B(t)`. The causal representation model learns `Z_S = f_\theta(\mathcal{C})` from context pairs `\mathcal{C} = \{(q_1, X_{q_1}), ..., (q_m, X_{q_m})\}` and predicts counterfactuals `\widehat X_{q_*} = g_\theta(Z_S, q_*)`. The representation `F(q)` is the sequence of kernel means `K_g(q)` computed over the phase cells of `[X_q(t), \dot X_q(t)]`. The counterfactual loss `\| \widehat F(q_*)-F(q_*) \|^2` has weight 0.1 alongside diagnosis BCE. Operator invariance has weight 0.05 and is the mean squared distance between L2-normalized states inferred from two disjoint context subsets from the same record. The diagnosis-only matched control receives BCE alone. The mechanism-use destroyer has identical capacity and loss weights but randomly mismatches `q` and the waveform during training; responses and diagnostic labels are not shuffled.
 
 ## Paper 10 interventional repStat
 

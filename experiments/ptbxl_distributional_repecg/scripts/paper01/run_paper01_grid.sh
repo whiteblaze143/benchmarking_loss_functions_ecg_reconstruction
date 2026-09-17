@@ -3,10 +3,10 @@ set -euo pipefail
 
 repo=/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction
 python=/home/mithunmanivannan/.venv/bin/python
-representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/development_representations
+representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper01_distributional_recurrence/development_representations
 ood_representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/ood_representations
 output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper01_distributional_recurrence
-for variant in "full" "linear_probe" "mean_distance_recurrence"; do
+for variant in "full" "linear_probe" "mean_distance_recurrence" "phase_content_permuted" "cyclic_relabel_sham"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/.done_${variant}" ]; then
         echo "Variant $variant already completed. Skipping."

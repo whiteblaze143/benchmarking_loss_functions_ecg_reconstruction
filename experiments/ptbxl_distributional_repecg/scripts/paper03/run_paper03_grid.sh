@@ -3,14 +3,14 @@ set -euo pipefail
 
 repo=/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction
 python=/home/mithunmanivannan/.venv/bin/python
-representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/development_representations
+representations=/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper03_path_signature/development_representations
 ood_representations=$repo/experiments/ptbxl_distributional_repecg/outputs/paper02_kernel_mean/ood_representations
 output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper03_signature_path
 
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper03_signature_path: Training Grid ==="
-for variant in "full" "linear_probe" "order_scrambled" "level1" "time_reversed"; do
+for variant in "full" "linear_probe" "order_scrambled" "time_reversed" "monotone_warp_sham" "unordered_kme"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/.done_${variant}" ]; then
         echo "Variant $variant already completed. Skipping."

@@ -17,12 +17,17 @@ CREATE TABLE IF NOT EXISTS runs (
     run_type TEXT NOT NULL,
     paper_id INTEGER NOT NULL,
     dataset TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    evaluation_role TEXT NOT NULL,
     split TEXT NOT NULL,
+    condition TEXT NOT NULL,
     variant TEXT NOT NULL,
+    training_regime TEXT NOT NULL,
     seed INTEGER NOT NULL,
     learning_rate REAL,
     weight_decay REAL,
     checkpoint_path TEXT,
+    checkpoint_sha256 TEXT,
     source_path TEXT NOT NULL,
     payload_sha256 TEXT NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('complete', 'failed', 'ineligible')),
@@ -32,20 +37,24 @@ CREATE TABLE IF NOT EXISTS metrics (
     run_key TEXT NOT NULL REFERENCES runs(run_key),
     metric_name TEXT NOT NULL,
     class_name TEXT NOT NULL DEFAULT '',
+    aggregation_unit TEXT NOT NULL,
     metric_value REAL NOT NULL,
-    PRIMARY KEY (run_key, metric_name, class_name)
+    PRIMARY KEY (run_key, metric_name, class_name, aggregation_unit)
 );
 CREATE INDEX IF NOT EXISTS metrics_lookup ON metrics(metric_name, class_name);
 CREATE TABLE IF NOT EXISTS expected_evaluations (
     run_type TEXT NOT NULL,
     paper_id INTEGER NOT NULL,
     dataset TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    evaluation_role TEXT NOT NULL,
     split TEXT NOT NULL,
+    condition TEXT NOT NULL,
     variant TEXT NOT NULL,
     seed INTEGER NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('pending', 'complete', 'failed', 'ineligible')),
     reason TEXT NOT NULL DEFAULT '',
-    PRIMARY KEY (run_type, paper_id, dataset, split, variant, seed)
+    PRIMARY KEY (run_type, paper_id, dataset, task_id, evaluation_role, split, condition, variant, seed)
 );
 """
 
@@ -80,19 +89,23 @@ def _insert_run(connection: sqlite3.Connection, row: dict[str, Any], metrics: di
         return
     connection.execute(
         """INSERT INTO runs (
-            run_key, run_type, paper_id, dataset, split, variant, seed,
-            learning_rate, weight_decay, checkpoint_path, source_path,
+            run_key, run_type, paper_id, dataset, task_id, evaluation_role,
+            split, condition, variant, training_regime, seed,
+            learning_rate, weight_decay, checkpoint_path, checkpoint_sha256, source_path,
             payload_sha256, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         tuple(row[column] for column in (
-            "run_key", "run_type", "paper_id", "dataset", "split", "variant", "seed",
-            "learning_rate", "weight_decay", "checkpoint_path", "source_path",
+            "run_key", "run_type", "paper_id", "dataset", "task_id", "evaluation_role",
+            "split", "condition", "variant", "training_regime", "seed",
+            "learning_rate", "weight_decay", "checkpoint_path", "checkpoint_sha256", "source_path",
             "payload_sha256", "status",
         )),
     )
     connection.executemany(
-        "INSERT INTO metrics (run_key, metric_name, class_name, metric_value) VALUES (?, ?, ?, ?)",
-        [(row["run_key"], name, class_name, value) for name, class_name, value in _metric_rows(metrics)],
+        """INSERT INTO metrics
+           (run_key, metric_name, class_name, aggregation_unit, metric_value)
+           VALUES (?, ?, ?, ?, ?)""",
+        [(row["run_key"], name, class_name, "record_equal", value) for name, class_name, value in _metric_rows(metrics)],
     )
 
 
@@ -122,20 +135,27 @@ def ingest_paper(
             learning_rate = float(payload["learning_rate"])
             weight_decay = float(payload["weight_decay"])
             run_key = (
-                f"{run_type}:paper{paper_id:02d}:{dataset}:{split}:{variant}:seed{seed}:"
+                f"{run_type}:paper{paper_id:02d}:{dataset}:ptbxl_superdiagnostic:development_selection:"
+                f"{split}:clean:{variant}:full_only:seed{seed}:"
                 f"lr{learning_rate:.17g}:wd{weight_decay:.17g}"
             )
+            checkpoint_path = path.parent / "checkpoint.pt"
             _insert_run(connection, {
                 "run_key": run_key,
                 "run_type": run_type + "_selection_cell",
                 "paper_id": paper_id,
                 "dataset": dataset,
+                "task_id": "ptbxl_superdiagnostic",
+                "evaluation_role": "development_selection",
                 "split": split,
+                "condition": "clean",
                 "variant": variant,
+                "training_regime": "full_only",
                 "seed": seed,
                 "learning_rate": learning_rate,
                 "weight_decay": weight_decay,
-                "checkpoint_path": str(path.parent / "checkpoint.pt"),
+                "checkpoint_path": str(checkpoint_path),
+                "checkpoint_sha256": hashlib.sha256(checkpoint_path.read_bytes()).hexdigest(),
                 "source_path": str(path),
                 "payload_sha256": hashlib.sha256(payload_bytes).hexdigest(),
                 "status": "complete",
@@ -144,25 +164,37 @@ def ingest_paper(
             payload_bytes = path.read_bytes()
             payload = json.loads(payload_bytes)
             variant = payload["variant"]
-            run_key = f"{run_type}:paper{paper_id:02d}:{dataset}:{split}:{variant}:seed{seed}:evaluation"
+            checkpoint_path = output / f"{variant}_best.pt"
+            run_key = (
+                f"{run_type}:paper{paper_id:02d}:{dataset}:ptbxl_superdiagnostic:development_selection:"
+                f"{split}:clean:{variant}:full_only:seed{seed}:evaluation"
+            )
             _insert_run(connection, {
                 "run_key": run_key,
                 "run_type": run_type + "_evaluation",
                 "paper_id": paper_id,
                 "dataset": dataset,
+                "task_id": "ptbxl_superdiagnostic",
+                "evaluation_role": "development_selection",
                 "split": split,
+                "condition": "clean",
                 "variant": variant,
+                "training_regime": "full_only",
                 "seed": seed,
                 "learning_rate": None,
                 "weight_decay": None,
-                "checkpoint_path": str(output / f"{variant}_best.pt"),
+                "checkpoint_path": str(checkpoint_path),
+                "checkpoint_sha256": hashlib.sha256(checkpoint_path.read_bytes()).hexdigest(),
                 "source_path": str(path),
                 "payload_sha256": hashlib.sha256(payload_bytes).hexdigest(),
                 "status": "complete",
             }, payload["metrics"])
             connection.execute(
                 """UPDATE expected_evaluations SET status = 'complete', reason = ''
-                   WHERE run_type = ? AND paper_id = ? AND dataset = ? AND split = ?
+                   WHERE run_type = ? AND paper_id = ? AND dataset = ?
+                     AND task_id = 'ptbxl_superdiagnostic'
+                     AND evaluation_role = 'development_selection'
+                     AND split = ? AND condition = 'clean'
                      AND variant = ? AND seed = ?""",
                 (run_type, paper_id, dataset, split, variant, seed),
             )
@@ -191,17 +223,21 @@ def register_expected_evaluations(
     split: str,
     variants: list[str],
     seed: int,
+    task_id: str = "ptbxl_superdiagnostic",
+    evaluation_role: str = "development_selection",
+    condition: str = "clean",
 ) -> int:
     rows = [
-        (run_type, paper_id, dataset, split, variant, seed, "pending", "")
+        (run_type, paper_id, dataset, task_id, evaluation_role, split, condition, variant, seed, "pending", "")
         for dataset in datasets
         for variant in variants
     ]
     with connect(database) as connection:
         connection.executemany(
             """INSERT OR IGNORE INTO expected_evaluations
-               (run_type, paper_id, dataset, split, variant, seed, status, reason)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+               (run_type, paper_id, dataset, task_id, evaluation_role, split, condition,
+                variant, seed, status, reason)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             rows,
         )
     return len(rows)

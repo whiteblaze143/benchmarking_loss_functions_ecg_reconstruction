@@ -1,3 +1,15 @@
-from .operator import koopman_operator, operator_descriptor, soft_observables
+from .operator import (
+    chronological_permutation,
+    koopman_operator,
+    median_anchor_bandwidth,
+    operator_descriptor,
+    soft_observables,
+)
 
-__all__ = ["koopman_operator", "operator_descriptor", "soft_observables"]
+__all__ = [
+    "chronological_permutation",
+    "koopman_operator",
+    "median_anchor_bandwidth",
+    "operator_descriptor",
+    "soft_observables",
+]

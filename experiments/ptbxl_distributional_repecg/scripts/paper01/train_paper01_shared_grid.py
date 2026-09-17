@@ -16,7 +16,13 @@ from repecg.common.models import RecurrenceCNN
 from repecg.common.variants import get_variants_for_paper
 
 
-REPRESENTATION_VARIANTS = ("kernel", "moments", "gaussian", "linear")
+REPRESENTATION_BY_VARIANT = {
+    "full": "kernel_recurrence",
+    "linear_probe": "kernel_recurrence",
+    "mean_distance_recurrence": "mean_recurrence",
+    "phase_content_permuted": "phase_content_permuted",
+    "cyclic_relabel_sham": "cyclic_relabel_sham",
+}
 LEARNING_RATES = (1e-4, 3e-4, 1e-3)
 WEIGHT_DECAYS = (1e-5, 1e-4, 1e-3)
 
@@ -256,7 +262,7 @@ def main() -> None:
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--variant", type=str, required=True)
-    parser.add_argument("--training-regime", type=str, default="full_only", choices=["full_only", "mask_aug", "finetune", "scratch"])
+    parser.add_argument("--training-regime", type=str, default="full_only", choices=["full_only"])
 
     args = parser.parse_args()
 
@@ -279,9 +285,9 @@ def main() -> None:
         raise ValueError(f"Variant {args.variant} not found.")
     variant_obj = variant_registry[args.variant]
     
-    rep_key = variant_obj.representation if variant_obj.representation != "full" else REPRESENTATION_VARIANTS[0]
-    if rep_key not in train:
-        rep_key = REPRESENTATION_VARIANTS[0]
+    rep_key = REPRESENTATION_BY_VARIANT[args.variant]
+    if rep_key not in train or rep_key not in validation:
+        raise ValueError(f"Paper 1 representation artifact lacks {rep_key}")
         
     train_x = torch.from_numpy(train[rep_key]).cuda()
     val_x = torch.from_numpy(validation[rep_key]).cuda()

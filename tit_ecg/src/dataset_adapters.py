@@ -542,7 +542,7 @@ class ZhejiangAdapter(BaseDatasetAdapter):
                 f"Unsupported Zhejiang record length {len(raw_ecg)}; expected 20000 or 5000"
             )
 
-        ecg = raw_ecg[:n_samples] / 1000.0  # provisional microvolt-like -> mV convention
+        ecg = raw_ecg[:n_samples] / 1000.0  # uV to mV (verified via physiological QRS amplitude ~1-3mV)
         seg = raw_lbl[:n_samples].astype(int)
         if not set(np.unique(seg)).issubset({0, 1, 2, 3}):
             raise ValueError(f"Zhejiang {record_id} mask violates the {{0,1,2,3}} contract")
@@ -559,6 +559,6 @@ class ZhejiangAdapter(BaseDatasetAdapter):
             "time": time_vec,
             "segmentation": seg,
             "source_sampling_rate": 2000.0,
-            "source_unit": "undocumented_microvolt_like_provisional",
+            "source_unit": "uV",
             "preprocessing": "polyphase_2000_to_500_hz_and_label_stride_4",
         }

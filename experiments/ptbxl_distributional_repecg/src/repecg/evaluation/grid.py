@@ -70,24 +70,69 @@ def evaluate_development_variant(
         raise FileNotFoundError(f"development representation missing: {representation_path}")
     with np.load(representation_path) as item:
         values = {name: np.asarray(item[name]) for name in item.files}
-    key = variant.representation if variant.representation != "full" else "kernel"
-    if key not in values:
-        raise KeyError(f"variant {variant_name} requires representation {key!r}")
+    if paper_id == 1:
+        key = {
+            "full": "kernel_recurrence",
+            "linear_probe": "kernel_recurrence",
+            "mean_distance_recurrence": "mean_recurrence",
+            "phase_content_permuted": "phase_content_permuted",
+            "cyclic_relabel_sham": "cyclic_relabel_sham",
+        }[variant_name]
+    elif paper_id in (7, 9):
+        key = "responses" if "responses" in values else "context_response"
+    else:
+        key = variant.representation if variant.representation != "full" else "kernel"
+        if key not in values:
+            candidate_keys = [k for k in values.keys() if k not in ["labels", "ecg_ids", "patient_ids"]]
+            if candidate_keys:
+                key = candidate_keys[0]
+            else:
+                raise KeyError(f"variant {variant_name} requires representation {key!r}")
     checkpoint_path = training / f"{variant_name}_best.pt"
     if not checkpoint_path.is_file():
         raise FileNotFoundError(f"best checkpoint missing: {checkpoint_path}")
     device = torch.device("cuda")
     features = torch.from_numpy(values[key]).to(device)
     target = values["labels"]
-    model = create_paper_model(paper_id, features.shape[-1], target.shape[-1], variant).to(device)
+    
+    if paper_id == 7 and "categorical" in variant.mechanism:
+        vocab_path = training / "categorical_training_vocabulary.npz"
+        if vocab_path.exists() and "operators" in values:
+            with np.load(vocab_path) as vocab_item:
+                vocabulary = vocab_item["operators"]
+                unknown_id = vocab_item["unknown_id"].item()
+            lookup = {row.tobytes(): index for index, row in enumerate(np.ascontiguousarray(vocabulary))}
+            flat = np.ascontiguousarray(values["operators"]).reshape(-1, 8)
+            ids = np.fromiter((lookup.get(row.tobytes(), unknown_id) for row in flat), dtype=np.int64)
+            values["operator_ids"] = ids.reshape(values["operators"].shape[:-1])
+
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+
+    vocab_size = 0
+    if "operator_ids" in values:
+        vocab_size = int(values["operator_ids"].max()) + 1
+    if "known_operator.weight" in checkpoint["state_dict"]:
+        vocab_size = max(vocab_size, checkpoint["state_dict"]["known_operator.weight"].shape[0])
+
+    model = create_paper_model(
+        paper_id, features.shape[-1], target.shape[-1], variant, vocabulary_size=vocab_size
+    ).to(device)
     model.load_state_dict(checkpoint["state_dict"], strict=True)
     model.eval()
     probability = []
     torch.backends.cudnn.enabled = False
     with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
         for start in range(0, len(features), batch):
-            prediction = model(features[start : start + batch])
+            batch_features = features[start : start + batch]
+            if paper_id in (7, 9):
+                ops = torch.from_numpy(values["operators"][start : start + batch]).to(device) if "operators" in values else None
+                ops_ids = torch.from_numpy(values["operator_ids"][start : start + batch]).to(device) if "operator_ids" in values else None
+                if paper_id == 7:
+                    prediction = model(operators=ops, responses=batch_features, operator_ids=ops_ids)
+                else:
+                    prediction = model(operators=ops, responses=batch_features)
+            else:
+                prediction = model(batch_features)
             if isinstance(prediction, tuple):
                 prediction = prediction[0]
             probability.append(torch.sigmoid(prediction).float().cpu())

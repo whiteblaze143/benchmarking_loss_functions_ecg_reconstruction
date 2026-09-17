@@ -50,44 +50,30 @@ class RecurrenceCNN(nn.Module):
         super().__init__()
         self.variant = variant if variant is not None else ExperimentVariant()
         
-        if self.variant.mechanism == "mean_distance":
-            # Parameter-matched classifier for kernel means directly
-            self.encoder = nn.Sequential(
-                nn.Conv1d(1, 16, 3, padding=1),
-                nn.GELU(),
-                nn.Conv1d(16, 32, 3, padding=1),
-                nn.GELU(),
-                nn.AdaptiveAvgPool1d(1),
-            )
-        else:
-            self.encoder = nn.Sequential(
-                nn.Conv2d(1, 16, 3, padding=1),
-                nn.GELU(),
-                nn.Conv2d(16, 32, 3, padding=1),
-                nn.GELU(),
-                nn.AdaptiveAvgPool2d(1),
-            )
+        self.encoder = nn.Sequential(
+            nn.Conv2d(1, 16, 3, padding=1),
+            nn.GELU(),
+            nn.Conv2d(16, 32, 3, padding=1),
+            nn.GELU(),
+            nn.AdaptiveAvgPool2d(1),
+        )
             
         self.projection = nn.Linear(32, 128)
         self.head = nn.Linear(128, classes)
+        if self.variant.head == "linear":
+            self.linear_probe = nn.Linear(120, classes)
 
     def forward(self, operator: torch.Tensor) -> torch.Tensor:
         if self.variant.head == "linear":
-            flat = operator.flatten(1)
-            w = torch.ones(flat.shape[1], 128, device=operator.device) / flat.shape[1]
-            return self.head(F.gelu(torch.matmul(flat, w)))
+            if operator.shape[1:] != (16, 16):
+                raise ValueError("Paper 1 linear probe expects a 16x16 recurrence operator")
+            upper = torch.triu_indices(16, 16, offset=1, device=operator.device)
+            return self.linear_probe(operator[:, upper[0], upper[1]])
             
-        if self.variant.mechanism == "mean_distance":
-            # operator is [B, G, D], we need [B, 1, G*D] or similar to match capacity
-            if operator.ndim == 3:
-                x = operator.flatten(1).unsqueeze(1) # [B, 1, G*D]
-            else:
-                x = operator.unsqueeze(1)
-            x = self.encoder(x).flatten(1)
-            return self.head(F.gelu(self.projection(x)))
-            
-        if operator.ndim == 3:
+        if operator.ndim == 3 and operator.shape[1:] == (16, 16):
             operator = operator[:, None]
+        if operator.ndim != 4 or operator.shape[1:] != (1, 16, 16):
+            raise ValueError("Paper 1 expects a 16x16 recurrence operator")
         x = self.encoder(operator).flatten(1)
         return self.head(F.gelu(self.projection(x)))
 
@@ -134,7 +120,7 @@ class PathSignatureClassifier(nn.Module):
         self.proj = nn.Linear(input_dim, proj_dim)
         
         sig_dim = proj_dim + (proj_dim * proj_dim)
-        if self.variant.representation == "signature_level1":
+        if self.variant.mechanism == "signature_level1":
             sig_dim = proj_dim
             
         if self.variant.head == "linear":
@@ -164,7 +150,7 @@ class PathSignatureClassifier(nn.Module):
         dx = x[:, 1:] - x[:, :-1]
         sig1 = dx.sum(dim=1)
         
-        if self.variant.representation == "signature_level1":
+        if self.variant.mechanism == "signature_level1":
             return self.classifier(sig1)
             
         cumsum_dx = torch.cumsum(dx, dim=1)
@@ -240,44 +226,19 @@ class KoopmanOperatorModel(nn.Module):
     def __init__(self, input_dim: int, width: int = 64, classes: int = 5, variant: ExperimentVariant | None = None):
         super().__init__()
         self.variant = variant if variant is not None else ExperimentVariant()
-        self.lift = nn.Sequential(
+        self.network = nn.Sequential(
             nn.Linear(input_dim, width),
             nn.GELU(),
-            nn.Linear(width, width)
+            nn.Linear(width, width),
+            nn.GELU(),
+            nn.Linear(width, classes),
         )
-        self.koopman_k = nn.Parameter(torch.eye(width) + 0.01 * torch.randn(width, width))
-        
-        if self.variant.head == "linear":
-            self.head = nn.Linear(input_dim, classes)
-        elif self.variant.mechanism == "occupancy_only":
-            # Just matching the signature of standard but destroying transition logic
-            self.head = nn.Sequential(nn.Linear(width * 2, 128), nn.GELU(), nn.Linear(128, classes))
-        else:
-            self.head = nn.Sequential(nn.Linear(width * 2, 128), nn.GELU(), nn.Linear(128, classes))
+        self.linear_probe = nn.Linear(input_dim, classes)
 
-    def forward(self, phase_features: torch.Tensor) -> torch.Tensor:
-        if self.variant.head == "linear":
-            return self.head(phase_features.mean(dim=1))
-            
-        z = self.lift(phase_features)
-        z_mean = z.mean(dim=1)
-        if self.variant.mechanism == "occupancy_only":
-            dyn_residual = torch.zeros_like(z_mean)
-        else:
-            z_pred = torch.matmul(z[:, :-1], self.koopman_k)
-            dyn_residual = (z[:, 1:] - z_pred).mean(dim=1)
-        return self.head(torch.cat([z_mean, dyn_residual], dim=-1))
-
-    def forward_koopman_loss(self, phase_features: torch.Tensor) -> torch.Tensor:
-        if self.variant.head == "linear":
-            return torch.tensor(0.0, device=phase_features.device, requires_grad=True)
-            
-        if self.variant.mechanism == "occupancy_only":
-            return torch.zeros((), device=phase_features.device, requires_grad=True)
-            
-        z = self.lift(phase_features)
-        z_pred = torch.matmul(z[:, :-1], self.koopman_k)
-        return F.mse_loss(z_pred, z[:, 1:])
+    def forward(self, descriptor: torch.Tensor) -> torch.Tensor:
+        if descriptor.ndim != 2:
+            raise ValueError("Paper 5 expects fixed record descriptors with shape (batch, feature)")
+        return self.linear_probe(descriptor) if self.variant.head == "linear" else self.network(descriptor)
 
 
 # ============================================================================
@@ -285,45 +246,29 @@ class KoopmanOperatorModel(nn.Module):
 # ============================================================================
 
 class ConditionalRepStatModel(nn.Module):
-    def __init__(self, input_dim: int, width: int = 64, classes: int = 5, variant: ExperimentVariant | None = None):
+    def __init__(self, input_dim: int, width: int = 32, classes: int = 5, variant: ExperimentVariant | None = None):
         super().__init__()
         self.variant = variant if variant is not None else ExperimentVariant()
-        self.encoder = nn.Sequential(nn.Linear(input_dim, width), nn.GELU())
-        self.circular_blocks = nn.Sequential(CircularResidualBlock(width), CircularResidualBlock(width))
-        
+        self.encoder = nn.Sequential(
+            nn.Conv2d(2, 16, 3, padding=1),
+            nn.GELU(),
+            nn.Conv2d(16, width, 3, padding=1),
+            nn.GELU(),
+            nn.AdaptiveAvgPool2d(1),
+        )
         if self.variant.head == "linear":
-            self.head = nn.Linear(input_dim, classes)
+            self.linear_probe = nn.Linear(240, classes)
         else:
             self.head = nn.Linear(width, classes)
 
-    def forward(self, phase_features: torch.Tensor) -> torch.Tensor:
+    def forward(self, recurrence: torch.Tensor) -> torch.Tensor:
+        if recurrence.ndim != 4 or recurrence.shape[1:] != (2, 16, 16):
+            raise ValueError("Paper 6 expects (batch,2,16,16) recurrence tensors")
         if self.variant.head == "linear":
-            return self.head(phase_features.mean(dim=1))
-            
-        z = self.encoder(phase_features)
-        ortho_innovations = [z[:, 0]]
-        subspace_basis = z[:, 0:1]
-        
-        # Compute residuals r
-        for t in range(1, z.shape[1]):
-            zt = z[:, t : t + 1]
-            gram = torch.bmm(subspace_basis, subspace_basis.transpose(1, 2))
-            reg = 1e-4 * torch.eye(gram.shape[1], device=z.device, dtype=z.dtype).unsqueeze(0)
-            proj_weights = torch.linalg.solve((gram + reg).float(), torch.bmm(subspace_basis, zt.transpose(1, 2)).float()).to(zt.dtype)
-            proj_zt = torch.bmm(proj_weights.transpose(1, 2), subspace_basis)
-            zt_perp = zt - proj_zt
-            ortho_innovations.append(zt_perp.squeeze(1))
-            subspace_basis = torch.cat([subspace_basis, zt_perp], dim=1)
-            
-        z_ortho = torch.stack(ortho_innovations, dim=1)
-        
-        if self.variant.mechanism == "shuffle_residual_given_z":
-            # Shuffle r relative to z to destroy P(r|z) while preserving P(r) and P(z) marginals
-            idx = torch.randperm(z_ortho.shape[1], device=z_ortho.device)
-            z_ortho = z_ortho[:, idx, :]
-            
-        x = z_ortho.transpose(1, 2)
-        return self.head(self.circular_blocks(x).mean(dim=-1))
+            upper = torch.triu_indices(16, 16, offset=1, device=recurrence.device)
+            values = recurrence[:, :, upper[0], upper[1]].flatten(1)
+            return self.linear_probe(values)
+        return self.head(self.encoder(recurrence).flatten(1))
 
 
 # ============================================================================
@@ -381,6 +326,8 @@ class LocalTokenCrossAttention(nn.Module):
         )
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
         self.cls_token = nn.Parameter(torch.zeros(1, 1, d_model))
+        self.register_buffer("codebook", torch.zeros(64, input_dim), persistent=True)
+        self.register_buffer("codebook_ready", torch.tensor(False), persistent=True)
         
         if self.variant.head == "linear":
             self.head = nn.Linear(input_dim, classes)
@@ -391,9 +338,11 @@ class LocalTokenCrossAttention(nn.Module):
         if self.variant.head == "linear":
             return self.head(phase_features.mean(dim=1))
             
-        # The switch between repStat dictionary and KMeans/VQ dictionary happens
-        # in the token extraction pipeline before this network, but this network
-        # remains identical in parameter size and architecture to process the tokens.
+        if self.variant.mechanism == "kmeans_dictionary":
+            if not bool(self.codebook_ready):
+                raise RuntimeError("kmeans token variant requires a fitted train-only codebook")
+            distances = torch.cdist(phase_features.float(), self.codebook.float())
+            phase_features = self.codebook[distances.argmin(dim=-1)].to(phase_features.dtype)
         B = phase_features.shape[0]
         x = self.input_proj(phase_features) + self.pos_embedding
         
@@ -401,6 +350,13 @@ class LocalTokenCrossAttention(nn.Module):
         tokens = torch.cat([cls, x], dim=1)
         out = self.transformer(tokens)
         return self.head(out[:, 0])
+
+    def set_codebook(self, centers: torch.Tensor) -> None:
+        values = torch.as_tensor(centers, dtype=self.codebook.dtype, device=self.codebook.device)
+        if values.shape != self.codebook.shape or not torch.isfinite(values).all():
+            raise ValueError(f"codebook must be finite with shape {tuple(self.codebook.shape)}")
+        self.codebook.copy_(values)
+        self.codebook_ready.fill_(True)
 
 
 # ============================================================================
@@ -620,9 +576,10 @@ class CausalMechanismFactorizationModel(nn.Module):
         self.init_proj = nn.Linear(input_dim, width)
         
         if self.variant.mechanism == "shared_mechanism":
-            # Capacity-matched shared model: N params matched to 15 different mechanisms
-            # roughly sqrt(15) times wider to match capacity.
-            matched_width = int(width * math.sqrt(15))
+            # Match the unique parameter count of fifteen width->width->width
+            # mechanisms with one wider mechanism reused at all fifteen phases.
+            target_parameters = 15 * (2 * width * width + 2 * width)
+            matched_width = round((target_parameters - width) / (2 * width + 1))
             shared_mech = nn.Sequential(
                 nn.Linear(width, matched_width), 
                 nn.GELU(), 

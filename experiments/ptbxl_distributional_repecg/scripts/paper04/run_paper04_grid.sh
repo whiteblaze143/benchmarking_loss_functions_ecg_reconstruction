@@ -9,6 +9,18 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper04_hankel_dyna
 
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
+manifest=/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper04_hankel_dynamics/development_representations/manifest.json
+if [[ -f "$manifest" ]] && "$python" - "$manifest" <<'PY'
+import json
+import sys
+payload = json.load(open(sys.argv[1]))
+raise SystemExit(0 if payload.get("status") == "ineligible_nystrom_fidelity" else 1)
+PY
+then
+    echo "Paper 4 is scientifically ineligible: the frozen 128/256-landmark Nyström fidelity gate failed." >&2
+    exit 2
+fi
+
 echo "=== [START] paper04_hankel_dynamics: Training Grid ==="
 for variant in "full" "linear_probe" "time_shuffled"; do
     echo "Running variant: $variant"

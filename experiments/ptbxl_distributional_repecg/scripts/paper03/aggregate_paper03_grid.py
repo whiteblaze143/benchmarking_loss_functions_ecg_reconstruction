@@ -53,6 +53,7 @@ def main() -> None:
     manifest = {
         "kind": "paper03_signature_path_development_hyperparameter_search",
         "seed": args.seed,
+        "variants": variants,
         "cells": len(all_summaries),
         "execution": "single_process_shared_tensor_cuda_streams",
         "selection_metric": "macro_auroc",

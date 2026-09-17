@@ -1,0 +1,26 @@
+{
+  "ptbxl": {"tasks": [{"task_id": "ptbxl_superdiagnostic", "task_type": "multilabel_classification", "labels": ["NORM", "MI", "STTC", "CD", "HYP"], "split_contract": "train_folds_1_7_selection_fold_8_final_train_1_8_validation_9_test_10"}]},
+  "echonext": {"tasks": [{"task_id": "echonext_shd_12", "task_type": "multilabel_classification", "labels": ["lvef_lte_45", "lvwt_gte_13", "aortic_stenosis_moderate_or_greater", "aortic_regurgitation_moderate_or_greater", "mitral_regurgitation_moderate_or_greater", "tricuspid_regurgitation_moderate_or_greater", "pulmonary_regurgitation_moderate_or_greater", "rv_systolic_dysfunction_moderate_or_greater", "pericardial_effusion_moderate_large", "pasp_gte_45", "tr_max_gte_32", "shd_moderate_or_greater"], "split_contract": "official_metadata_split_column"}]},
+  "kingston_icu": {"evaluation_role": "zero_padding_negative_control", "tasks": [{"task_id": "kingston_rhythm", "task_type": "binary_classification", "labels": ["SINUS", "AFIB_AFLT"], "split_contract": "official_TrainOrTest_column"}]},
+  "ludb": {"tasks": [
+    {"task_id": "ludb_rhythm", "task_type": "multiclass_classification", "label_source": "ludb.csv:Rhythms", "split_contract": "frozen_patient_stratified_five_fold_cross_validation"},
+    {"task_id": "ludb_diagnostic_categories", "task_type": "multilabel_classification", "labels": ["axis_abnormality", "conduction_abnormality", "extrasystole", "hypertrophy", "cardiac_pacing", "ischemia", "repolarization_abnormality", "other_state"], "split_contract": "same_frozen_patient_folds"},
+    {"task_id": "ludb_wave_delineation", "task_type": "sequence_classification", "labels": ["ISO", "P", "QRS", "T"], "split_contract": "same_frozen_patient_folds"}
+  ]},
+  "rdb": {"tasks": [
+    {"task_id": "rdb_canonical_rhythm", "task_type": "multiclass_classification", "labels": ["ST", "AF", "SA", "AFIB", "SR", "SB", "AT", "SVT"], "split_contract": "frozen_cache_train_val_test_directories"},
+    {"task_id": "rdb_wave_delineation", "task_type": "sequence_classification", "labels": ["ISO", "P", "QRS", "T"], "split_contract": "same_frozen_cache_directories"}
+  ]},
+  "isp": {"tasks": [
+    {"task_id": "isp_wave_delineation", "task_type": "sequence_classification", "labels": ["ISO", "P", "QRS", "T"], "split_contract": "official_train_and_test_csv_files"},
+    {"task_id": "isp_sex", "task_type": "binary_classification", "labels": ["female", "male"], "label_source": "train_isp_delineation_data.csv:sex and test_isp_delineation_data.csv:sex", "split_contract": "official_train_and_test_csv_files"},
+    {"task_id": "isp_age", "task_type": "regression", "labels": ["age_years"], "label_source": "train_isp_delineation_data.csv:age and test_isp_delineation_data.csv:age", "split_contract": "official_train_and_test_csv_files"}
+  ]},
+  "zhejiang": {"tasks": [
+    {"task_id": "zhejiang_otva_origin", "task_type": "binary_classification", "labels": ["RVOT", "LVOT"], "label_source": "Diagnosis.xlsx:LeftRight joined by HospitalID", "split_contract": "frozen_record_hash_five_fold_cross_validation_stratified_by_origin"},
+    {"task_id": "zhejiang_arrhythmia_type", "task_type": "binary_classification", "labels": ["PVC", "VT"], "label_source": "Diagnosis.xlsx:Type joined by HospitalID", "split_contract": "same_frozen_record_folds"},
+    {"task_id": "zhejiang_wave_delineation", "task_type": "sequence_classification", "labels": ["ISO", "P", "QRS", "T"], "split_contract": "same_frozen_record_folds"}
+  ]},
+  "emory_muse": {"tasks": [{"task_id": "emory_12sl_diagnoses", "task_type": "multilabel_classification", "label_source": "12SL_diagnoses/diagnoses_v24.csv joined by FileName; vocabulary from diagnoses_dictionary.csv", "split_contract": "patient_disjoint_hash_train_validation_test_using_BDSPPatientID"}]},
+  "sunnybrook": {"tasks": [{"task_id": "sunnybrook_statement_codes", "task_type": "multilabel_classification", "label_source": "Philips Sierra XML interpretation/statement/statementcode", "split_contract": "external_only_no_fitting_n20"}]}
+}

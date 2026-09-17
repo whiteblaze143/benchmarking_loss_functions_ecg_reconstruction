@@ -51,9 +51,10 @@ def main() -> None:
     table = [{"cell": str(path), **summary} for path, summary in all_summaries]
     (args.output / "search_state.json").write_text(json.dumps(table, indent=2, sort_keys=True) + "\n")
     manifest = {
-        "kind": "paper02_development_hyperparameter_search",
+        "kind": "paper01_development_hyperparameter_search",
         "seed": args.seed,
-        "cells": 36,
+        "variants": variants,
+        "cells": len(table),
         "execution": "single_process_shared_tensor_cuda_streams",
         "folds": {"train": [1, 2, 3, 4, 5, 6, 7], "validation": [8]},
         "selection_metric": "macro_auroc",

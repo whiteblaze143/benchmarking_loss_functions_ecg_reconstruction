@@ -10,6 +10,11 @@ SCRIPTS="$REPO/experiments/ptbxl_distributional_repecg/scripts"
 LOGS_DIR="$REPO/experiments/ptbxl_distributional_repecg/outputs/queue_logs"
 mkdir -p "$LOGS_DIR"
 
+if [[ ! -f "$REPO/experiments/ptbxl_distributional_repecg/outputs/PRODUCTION_READY" ]]; then
+    echo "Production blocked: strict smoke, mechanism coverage, dataset-label, and evaluation gates are not complete." >&2
+    exit 1
+fi
+
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOGS_DIR/master_queue.log"
 }
@@ -57,20 +62,17 @@ for paper in "${PAPERS[@]}"; do
     log "-----------------------------------------------------------------"
     
     if [ ! -f "$RUNNER" ]; then
-        log "ERROR: Runner script $RUNNER not found! Skipping..."
-        continue
+        log "ERROR: Runner script $RUNNER not found! Stopping."
+        exit 1
     fi
     
     START_TIME=$(date +%s)
     
     # Run pipeline and log output
-    if "$RUNNER" 2>&1 | tee "$LOGS_DIR/${paper}.log"; then
-        END_TIME=$(date +%s)
-        ELAPSED=$((END_TIME - START_TIME))
-        log "SUCCESS: $paper completed in ${ELAPSED}s"
-    else
-        log "FAILURE: $paper failed! Check log: $LOGS_DIR/${paper}.log"
-    fi
+    "$RUNNER" 2>&1 | tee "$LOGS_DIR/${paper}.log"
+    END_TIME=$(date +%s)
+    ELAPSED=$((END_TIME - START_TIME))
+    log "SUCCESS: $paper completed in ${ELAPSED}s"
     
     INDEX=$((INDEX + 1))
 done

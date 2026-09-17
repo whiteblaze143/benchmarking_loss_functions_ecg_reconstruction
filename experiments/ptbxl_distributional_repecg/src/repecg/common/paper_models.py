@@ -13,12 +13,12 @@ from .models import (
     InvariantMechanismDiscoveryModel,
     KoopmanOperatorModel,
     LocalTokenCrossAttention,
-    OperatorReconstructionAuxiliary,
-    PathSignatureClassifier,
     PhaseCNN,
     RecurrenceCNN,
     StructuralInnovationModel,
 )
+from repecg.paper07_operator import OperatorSetModel
+from repecg.paper09_counterfactual import CounterfactualOperatorSetModel
 from .variants import ExperimentVariant
 
 
@@ -27,17 +27,23 @@ def create_paper_model(
     input_dim: int,
     classes: int,
     variant: ExperimentVariant,
+    vocabulary_size: int = 0,
 ) -> nn.Module:
     constructors = {
         1: lambda: RecurrenceCNN(classes=classes, variant=variant),
         2: lambda: PhaseCNN(input_dim=input_dim, classes=classes, variant=variant),
-        3: lambda: PathSignatureClassifier(input_dim=input_dim, classes=classes, variant=variant),
+        3: lambda: PhaseCNN(input_dim=input_dim, classes=classes, variant=variant),
         4: lambda: HankelDynamicsModel(input_dim=input_dim, classes=classes, variant=variant),
         5: lambda: KoopmanOperatorModel(input_dim=input_dim, classes=classes, variant=variant),
         6: lambda: ConditionalRepStatModel(input_dim=input_dim, classes=classes, variant=variant),
-        7: lambda: OperatorReconstructionAuxiliary(input_dim=input_dim, classes=classes, variant=variant),
+        7: lambda: OperatorSetModel(
+            response_dim=input_dim,
+            classes=classes,
+            operator_mode="categorical" if "categorical" in variant.mechanism else "continuous",
+            vocabulary_size=vocabulary_size,
+        ),
         8: lambda: LocalTokenCrossAttention(input_dim=input_dim, classes=classes, variant=variant),
-        9: lambda: CounterfactualMeasurementOperator(input_dim=input_dim, classes=classes, variant=variant),
+        9: lambda: CounterfactualOperatorSetModel(response_dim=input_dim, classes=classes),
         10: lambda: InterventionalRepStatModel(input_dim=input_dim, classes=classes, variant=variant),
         11: lambda: CausalStateECGModel(input_dim=input_dim, classes=classes, variant=variant),
         12: lambda: StructuralInnovationModel(input_dim=input_dim, classes=classes, variant=variant),

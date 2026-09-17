@@ -1,6 +1,12 @@
 from __future__ import annotations
 
+import hashlib
+
 import numpy as np
+from scipy.interpolate import PchipInterpolator
+
+
+DESCRIPTOR_DIMENSION = 30
 
 
 def hankel_descriptor(cell: np.ndarray, *, delay: int = 6, max_rank: int = 8) -> np.ndarray:
@@ -43,4 +49,35 @@ def hankel_descriptor(cell: np.ndarray, *, delay: int = 6, max_rank: int = 8) ->
     )
     if not np.isfinite(descriptor).all():
         raise ValueError("non-finite Hankel descriptor")
+    if descriptor.shape != (DESCRIPTOR_DIMENSION,):
+        raise ValueError(f"unexpected Hankel descriptor shape: {descriptor.shape}")
     return descriptor
+
+
+def transform_cell(
+    cell: np.ndarray,
+    *,
+    kind: str,
+    record_id: int,
+    beat: int,
+    phase: int,
+    seed: int,
+) -> np.ndarray:
+    values = np.asarray(cell, dtype=np.float64)
+    if values.shape != (32, 8) or not np.isfinite(values).all():
+        raise ValueError("expected a finite (32,8) beat-cell")
+    if kind == "identity":
+        return values.copy()
+    token = f"paper04:{seed}:{record_id}:{beat}:{phase}:{kind}".encode()
+    record_seed = int.from_bytes(hashlib.sha256(token).digest()[:8], "little")
+    rng = np.random.default_rng(record_seed)
+    if kind == "time_shuffle":
+        order = np.arange(32)
+        order[1:-1] = rng.permutation(order[1:-1])
+        return values[order]
+    if kind == "monotone_warp_sham":
+        amplitude = (-0.1, 0.1)[int(rng.integers(0, 2))]
+        parameter = np.linspace(0.0, 1.0, 32)
+        warped = parameter + amplitude * np.sin(2.0 * np.pi * parameter) / (2.0 * np.pi)
+        return PchipInterpolator(parameter, values, axis=0)(warped)
+    raise ValueError(f"unsupported Paper 4 intervention: {kind}")

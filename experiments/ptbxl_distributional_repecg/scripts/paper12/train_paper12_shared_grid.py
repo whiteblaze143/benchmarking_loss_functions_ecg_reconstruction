@@ -253,7 +253,7 @@ def main() -> None:
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--variant", type=str, required=True)
-    parser.add_argument("--training-regime", type=str, default="full_only", choices=["full_only", "mask_aug", "finetune", "scratch"])
+    parser.add_argument("--training-regime", type=str, default="full_only", choices=["full_only"])
 
     args = parser.parse_args()
 

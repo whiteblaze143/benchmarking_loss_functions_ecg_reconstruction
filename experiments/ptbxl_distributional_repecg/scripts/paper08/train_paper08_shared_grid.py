@@ -10,6 +10,7 @@ from pathlib import Path
 import numpy as np
 import torch
 from torch import nn
+from sklearn.cluster import MiniBatchKMeans
 
 from repecg.common.metrics import multilabel_metrics
 from repecg.common.models import LocalTokenCrossAttention
@@ -98,10 +99,13 @@ def _train_variant(
     max_epochs: int,
     patience: int,
     seed: int,
+    codebook: np.ndarray | None,
 ) -> None:
     run_seed = seed + variant_index * 100
     _seed(run_seed)
     template = LocalTokenCrossAttention(input_dim=train_x.shape[-1], classes=train_y.shape[-1], variant=variant_obj).cuda()
+    if codebook is not None:
+        template.set_codebook(torch.from_numpy(codebook).to(template.codebook.device))
     initial_state = copy.deepcopy(template.state_dict())
     del template
     prevalence = train_y.mean(dim=0)
@@ -253,7 +257,7 @@ def main() -> None:
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--variant", type=str, required=True)
-    parser.add_argument("--training-regime", type=str, default="full_only", choices=["full_only", "mask_aug", "finetune", "scratch"])
+    parser.add_argument("--training-regime", type=str, default="full_only", choices=["full_only"])
 
     args = parser.parse_args()
 
@@ -277,6 +281,18 @@ def main() -> None:
     if rep_key not in train:
         rep_key = REPRESENTATION_VARIANTS[0]
         
+    codebook = None
+    if variant_obj.mechanism == "kmeans_dictionary":
+        atoms = train[rep_key].reshape(-1, train[rep_key].shape[-1])
+        generator = np.random.default_rng(args.seed)
+        if len(atoms) > 20_000:
+            atoms = atoms[generator.choice(len(atoms), size=20_000, replace=False)]
+        codebook = MiniBatchKMeans(
+            n_clusters=64,
+            batch_size=2048,
+            n_init=3,
+            random_state=args.seed,
+        ).fit(atoms).cluster_centers_.astype(np.float32)
     train_x = torch.from_numpy(train[rep_key]).cuda()
     val_x = torch.from_numpy(validation[rep_key]).cuda()
     
@@ -296,6 +312,7 @@ def main() -> None:
         max_epochs=args.max_epochs,
         patience=args.patience,
         seed=args.seed,
+        codebook=codebook,
     )
     del train_x, val_x
     torch.cuda.empty_cache()

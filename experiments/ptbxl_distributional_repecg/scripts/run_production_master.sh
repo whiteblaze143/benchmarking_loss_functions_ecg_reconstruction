@@ -2,6 +2,12 @@
 set -euo pipefail
 
 repo="/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction"
+experiment="$repo/experiments/ptbxl_distributional_repecg"
+
+if [[ ! -f "$experiment/outputs/PRODUCTION_READY" ]]; then
+    echo "Production blocked: strict smoke, mechanism coverage, dataset-label, and evaluation gates are not complete." >&2
+    exit 1
+fi
 
 echo "========================================"
 echo " Starting Master Production Queue v2"
@@ -22,8 +28,8 @@ for i in {1..15}; do
         continue
     fi
     if [ ! -f "$script" ]; then
-        echo "Missing $script, skipping."
-        continue
+        echo "Missing $script; stopping." >&2
+        exit 1
     fi
     
     # Run the grid search script (which handles representations, training, and evaluation)

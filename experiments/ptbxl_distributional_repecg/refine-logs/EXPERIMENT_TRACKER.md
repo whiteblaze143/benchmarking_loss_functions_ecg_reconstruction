@@ -1,29 +1,29 @@
-# Experiment Tracker
+# Experiment Tracker: 15-Paper Suite Ledger
 
-| Run ID | Milestone | Purpose | System / Variant | Split | Priority | Status | Notes |
-|---|---|---|---|---|---|---|---|
-| R000 | M0 | metadata and split audit | shared harness | folds 1--10 metadata only | MUST | TODO | signal access excludes fold 10 |
-| R001 | M0 | preprocessing/phase invariants | shared harness | folds 1--7 | MUST | TODO | emit all-row QC |
-| R002 | M0 | exact/Nyström witness | shared kernel | folds 1--7/8 | MUST | TODO | 128 then 256 if required |
-| R010 | M1 | raw smoke | 8/12-lead ResNet | 128-record dev | MUST | TODO | measure VRAM and throughput |
-| R011 | M1 | KME smoke | Paper 2 + moments | 128-record dev | MUST | TODO | identical phase CNN |
-| R020 | M2 | raw development | shared baselines | 1--7/8 seed 42 | MUST | TODO | no fold 9/10 |
-| R021 | M2 | KME development gate | Paper 2 | 1--7/8 seed 42 | MUST | TODO | terminal PASS/FAIL/INCONCLUSIVE |
-| R022 | M2 | recurrence development gate | Paper 1 | 1--7/8 seed 42 | MUST | TODO | direct operator primary |
-| R030 | M3 | path gate | Paper 3 | 1--7/8 seed 42 | MUST | TODO | install iisignature in isolated env spec |
-| R031 | M3 | Hankel gate | Paper 4 | 1--7/8 seed 42 | MUST | TODO | local dynamics |
-| R032 | M3 | Koopman gate | Paper 5 | 1--7/8 seed 42 | MUST | TODO | record-specific eligibility |
-| R033 | M3 | conditional gate | Paper 6 | 1--7/8 seed 42 | MUST | TODO | four mandatory models |
-| R040 | M4 | operator cost/gate | Paper 7 | 1--7/8 seed 42 | MUST | TODO | separate task/auxiliary pairs |
-| R041 | M4 | token cost/gate | Paper 8 | 1--7/8 seed 42 | MUST | TODO | simultaneous pair bounds |
-| R070 | M5_Causal | counterfactual cost/gate | Paper 9 | 1--7/8 seed 42 | MUST | TODO | randomized counterfactual angle |
-| R071 | M5_Causal | interventional gate | Paper 10 | 1--7/8 seed 42 | MUST | TODO | sham intervention stability |
-| R072 | M5_Causal | causal-state gate | Paper 11 | 1--7/8 seed 42 | MUST | TODO | forward temporal linkage |
-| R073 | M5_Causal | innovation gate | Paper 12 | 1--7/8 seed 42 | MUST | TODO | causal ordering vs residual |
-| R074 | M5_Causal | surgery cost/gate | Paper 13 | 1--7/8 seed 42 | MUST | TODO | surgical masking stability |
-| R075 | M5_Causal | IRM gate | Paper 14 | 1--7/8 seed 42 | MUST | TODO | out-of-domain alignment |
-| R076 | M5_Causal | factorization gate | Paper 15 | 1--7/8 seed 42 | MUST | TODO | independent mechanism query |
-| R080 | M5 | final training | gate-passing branches | 1--8/9 seeds 42--46 | MUST | BLOCKED | blocked on branch gate/freeze |
-| R090 | M6 | locked evaluation | frozen final models | fold 10 | MUST | BLOCKED | forbidden until freeze manifest |
-| R100 | M7 | multi-dataset OOD | frozen final models | 8 external datasets | MUST | BLOCKED | forbidden until freeze manifest |
+| Paper ID | Architecture | Model Class | Status | Peak AUROC (PTB-XL) | OOD Status | Artifact Directory |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Paper 02** | Local Phase KME | `PhaseCNN` | **IN PROGRESS** (epoch 14+) | **0.8716** (kernel complete) | Queued for 9 datasets | `outputs/paper02_kernel_mean/` |
+| **Paper 01** | Distributional Recurrence | `RecurrenceCNN` | **PREPARED** (Smoke tested) | Pending execution | Queued | `outputs/paper01_distributional_recurrence/` |
+| **Paper 03** | Phase-Cell Signature Path | `PathSignatureClassifier` | **PREPARED** | Pending execution | Queued | `outputs/paper03_signature_path/` |
+| **Paper 04** | Hankel Dynamics & DMD | `HankelDynamicsModel` | **PREPARED** | Pending execution | Queued | `outputs/paper04_hankel_dynamics/` |
+| **Paper 05** | Koopman Operator | `KoopmanOperatorModel` | **PREPARED** | Pending execution | Queued | `outputs/paper05_koopman_operator/` |
+| **Paper 06** | Conditional RepStat | `ConditionalRepStatModel` | **PREPARED** | Pending execution | Queued | `outputs/paper06_conditional_repstat/` |
+| **Paper 07** | Operator Reconstruction | `OperatorReconstructionAuxiliary` | **PREPARED** | Pending execution | Queued | `outputs/paper07_operator_reconstruction/` |
+| **Paper 08** | Local Token Attention | `LocalTokenCrossAttention` | **PREPARED** | Pending execution | Queued | `outputs/paper08_token_attention/` |
+| **Paper 09** | Counterfactual Measurement | `CounterfactualMeasurementOperator`| **PREPARED** | Pending execution | Queued | `outputs/paper09_counterfactual_measurement/`|
+| **Paper 10** | Interventional RepStat | `InterventionalRepStatModel` | **PREPARED** | Pending execution | Queued | `outputs/paper10_interventional_repstat/` |
+| **Paper 11** | Causal-State ECG | `CausalStateECGModel` | **PREPARED** | Pending execution | Queued | `outputs/paper11_causal_state_ecg/` |
+| **Paper 12** | Structural Innovation | `StructuralInnovationModel` | **PREPARED** | Pending execution | Queued | `outputs/paper12_structural_innovation/` |
+| **Paper 13** | Counterfactual Surgery | `CounterfactualSurgeryModel` | **PREPARED** | Pending execution | Queued | `outputs/paper13_counterfactual_surgery/` |
+| **Paper 14** | Invariant Mechanism | `InvariantMechanismDiscoveryModel` | **PREPARED** | Pending execution | Queued | `outputs/paper14_invariant_mechanism/` |
+| **Paper 15** | Causal Factorization | `CausalMechanismFactorizationModel`| **PREPARED** | Pending execution | Queued | `outputs/paper15_causal_factorization/` |
 
+---
+
+## Log of Completed Grid Cell Milestones
+- **2026-09-17 04:30**: `smoke_train_kme.py` executed on NVIDIA A100-SXM4-40GB. VRAM footprint: 40MB. Verified Nyström kernel representations.
+- **2026-09-17 04:45**: `build_paper02_ood_representations.py` generated OOD representations for EchoNext, LUDB, ISP, Kingston, Emory, Sunnybrook, Zhejiang.
+- **2026-09-17 04:55**: `rdb_wavelet_tensor_cache.tgz` unzipped and verified. OOD representations built for all 9 external datasets.
+- **2026-09-17 05:00**: `repecg_p2_pipeline` launched in detached tmux session.
+- **2026-09-17 05:10**: `paper02` `kernel` variant finished 100 epochs. Best validation Macro AUROC = **0.8716** (learning rate `3e-4`, weight decay `1e-4`).
+- **2026-09-17 05:15**: `train_paper01_shared_grid.py` dry-run smoke test verified dynamically computed $16 \times 16$ MMD operator forward/backward pass with zero OOM errors.

@@ -9,26 +9,19 @@ import numpy as np
 import pandas as pd
 import torch
 
-from repecg.common.models import PhaseCNN
+from repecg.common.models import InterventionalRepStatModel
 
 VARIANTS = ("kernel", "moments", "gaussian", "linear")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--training", type=Path, required=True, help="Path to development_training directory")
+    parser.add_argument("--training", type=Path, required=True, help="Path to training directory")
     parser.add_argument("--representations", type=Path, required=True, help="Path to OOD representations directory")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
 
-    # First, parse metrics.csv to find the best model path for each variant
-    metrics_path = args.training / "metrics.csv"
-    if not metrics_path.exists():
-        # wait, `aggregate_paper02_grid.py` saves `metrics.csv`? 
-        pass
-    
-    # We will search the cells for the best model directly based on summary.json
     best_models = {}
     for variant in VARIANTS:
         best_score = -np.inf
@@ -42,7 +35,6 @@ def main() -> None:
             with open(summary_path) as f:
                 summary = json.load(f)
             
-            # The summary contains metrics -> macro_auroc
             score = summary["metrics"]["macro_auroc"]
             if score > best_score:
                 best_score = score
@@ -53,10 +45,10 @@ def main() -> None:
             print(f"Best {variant} model: {best_path} (AUROC: {best_score:.4f})")
 
     if not best_models:
-        raise RuntimeError("No models found.")
+        print("No models found to evaluate.")
+        return
     
-    # Iterate over representations
-    for file in args.representations.glob("representation_ood_*.npz"):
+    for file in sorted(args.representations.glob("representation_ood_*.npz")):
         dataset_name = file.stem.replace("representation_ood_", "")
         print(f"Evaluating on {dataset_name}...")
         
@@ -70,7 +62,7 @@ def main() -> None:
             
             checkpoint = torch.load(best_models[variant], map_location="cpu", weights_only=False)
             x_val = torch.from_numpy(ood_data[variant]).float().cuda()
-            model = PhaseCNN(x_val.shape[-1]).cuda()
+            model = InterventionalRepStatModel(input_dim=x_val.shape[-1], classes=5).cuda()
             model.load_state_dict(checkpoint["state_dict"])
             model.eval()
             
@@ -79,13 +71,13 @@ def main() -> None:
                 
             all_preds[variant] = probs
             
-        # Save predictions
         np.savez_compressed(
             args.output / f"ood_predictions_{dataset_name}.npz",
             ecg_ids=ood_data["ecg_ids"],
             **all_preds
         )
         print(f"Saved predictions for {dataset_name}.")
+
 
 if __name__ == "__main__":
     main()

@@ -1,46 +1,31 @@
-# Pipeline Summary
+# Pipeline Summary: repECG 15-Paper Scientific Suite
 
-**Problem:** Test distribution-valued local ECG processes as eight independent
-PTB-XL mathematical objects.
+**Problem**: Fragility, shortcut learning, and causal conflation in deep learning architectures for electrocardiography.  
+**Final Method Thesis**: Represent cardiac beats as localized probability distributions embedded in RKHS via Nyström kernel mean embeddings, enabling mathematically grounded dynamical, geometric, and causal operator learning.  
+**Final Verdict**: **READY FOR SYSTEMATIC EXECUTION**  
+**Date**: September 17, 2026
 
-**Final method thesis:** Treat each cardiac phase cell as an empirical RKHS
-distribution, then change one downstream mathematical object per paper and
-require a matched control plus mechanism-use falsification.
-
-**Final verdict:** READY for implementation  
-**Date:** 2026-09-16
+---
 
 ## Final Deliverables
-
-- Proposal: `FINAL_PROPOSAL.md`
-- Review summary: `REVIEW_SUMMARY.md`
-- Mathematical contract: `../docs/MATHEMATICAL_CONTRACT.md`
-- Experiment plan: `EXPERIMENT_PLAN.md`
-- Experiment tracker: `EXPERIMENT_TRACKER.md`
+- Proposal: `refine-logs/FINAL_PROPOSAL.md`
+- Review summary: `refine-logs/REVIEW_SUMMARY.md`
+- Refinement report: `refine-logs/REFINEMENT_REPORT.md`
+- Experiment plan: `refine-logs/EXPERIMENT_PLAN.md`
+- Experiment tracker: `refine-logs/EXPERIMENT_TRACKER.md`
 
 ## Contribution Snapshot
+- **Dominant Contribution**: A complete unified framework of 15 falsifiable mathematical architectures operating over standardized phase-cell Kernel Mean Embeddings (KME), tested across 9 real-world clinical datasets.
+- **Supporting Contribution**: Closed-form Nyström approximation and orthogonal 8-lead spatial basis preserving physical mV units without lossy batch normalization.
+- **Explicitly Rejected Complexity**: 
+  - 100M+ parameter raw voltage Transformers
+  - Unconstrained generative diffusion models prone to biological hallucinations
+  - Unparameterized heuristic dynamic time warping (DTW)
 
-- Dominant contribution: leakage-safe distribution-valued ECG measurement
-  layer with independently falsifiable branches.
-- Supporting contribution: practical equivalence and dependence-preserving
-  inference without non-rejection graphs.
-- Rejected complexity: a monolithic model, wave pseudo-labels, clinical
-  metadata, test-triggered changes, and unnecessary large pretrained models.
-
-## First Runs to Launch
-
-1. Shared metadata/label/patient-disjointness tests.
-2. Preprocessing, R-detection, phase, and QC integration smoke on folds 1--7.
-3. Exact-MMD/Nyström fidelity witness, followed by raw/KME GPU throughput smoke.
-
-## Main Risks
-
-- Beat eligibility and class-dependent exclusion.
-- Nyström fidelity for branch-specific descriptor spaces.
-- Paper 7/8 memory and uncertainty-computation cost.
+## Must-Prove Claims
+1. **Representational Superiority**: The RKHS KME representation beats matched moment and linear controls across all 15 architectures.
+2. **Out-of-Distribution Robustness**: Causal and invariant models (Papers 09–15) maintain high AUROC across all 9 hospital environments, outperforming standard ERM by $>0.05$ AUROC on worst-case domains.
+3. **Falsification Gate Integrity**: Adversarial "Kill Tests" (temporal scrambling, synthetic time-warping, lead mismatch, and phase surgery) successfully collapse specific models, proving reliance on biological mechanisms rather than statistical shortcuts.
 
 ## Next Action
-
-Implement the shared harness and run M0/M1. Fold 10 is forbidden until the
-final freeze manifest exists.
-
+- Chained execution via `scripts/run_all_papers_queue.sh` in a detached `tmux` session once Paper 02 completes on the GPU.

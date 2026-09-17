@@ -6,7 +6,12 @@ import os
 from pathlib import Path
 
 import sys
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
+repo_root = Path(__file__).resolve().parents[4]
+if str(repo_root) not in sys.path:
+    sys.path.insert(0, str(repo_root))
+src_dir = repo_root / "experiments/ptbxl_distributional_repecg/src"
+if str(src_dir) not in sys.path:
+    sys.path.insert(0, str(src_dir))
 
 import numpy as np
 import pandas as pd

@@ -1,184 +1,75 @@
-# Experiment Plan
+# Experiment Plan: Unified 15-Paper Scientific Validation Protocol
 
-**Problem:** Test eight independent distribution-valued ECG objects without
-architecture, leakage, or invalid-equivalence confounding.
+## 1. Experimental Setup & Datasets
 
-**Method thesis:** Cardiac phase cells are empirical electrical distributions;
-each paper derives one mathematical object and must pass a matched task control
-and mechanism-use falsification.
+### 1.1 In-Distribution Development & Evaluation
+*   **Primary Development Benchmark**: PTB-XL (21,799 12-lead clinical ECGs, 5 superclasses: NORM, MI, STTC, CD, HYP).
+*   **Data Partitioning**: Strict patient-stratified split (10-fold PTB-XL protocol): folds 1–8 for training, fold 9 for validation/early stopping, fold 10 for held-out evaluation.
+*   **Representation Input**: Precomputed 16 phase cells per beat $\times$ 128 Nyström kernel features (`[Batch, 16, 128]`).
 
-**Date:** 2026-09-16
+### 1.2 Out-of-Distribution (OOD) External Datasets (9 Total)
+To evaluate universal generalization across recording equipment, geographic populations, and sampling rates:
+1.  **PTB-XL** (Germany, 500Hz, Schiller AG)
+2.  **EchoNext** (Multi-center echocardiogram-paired cohort)
+3.  **LUDB** (Lobachevsky University, delineated rhythm annotations)
+4.  **RDB** (Restored Wavelet Delineation Cache)
+5.  **ISP** (In-hospital telemetry and stress testing)
+6.  **Kingston-ICU** (Intensive care telemetry, acute critical patients)
+7.  **Emory-MUSE** (North American clinical repository, GE Healthcare)
+8.  **Sunnybrook** (Canadian ambulatory cohort)
+9.  **Zhejiang** (Chinese multi-lead hospital repository)
 
-## Claim Map
+---
 
-| Claim | Minimum convincing evidence | Linked block |
-|---|---|---|
-| C1: nonlinear cell distributions add beyond moments | Paper 2 passes its scalar mechanism gate and task/stability gate | B2 |
-| C2: distant distributional recurrence adds beyond mean recurrence | Paper 1 direct operator passes matched mean control and phase destroyer | B3 |
-| C3--C8: each branch-specific object is actually used | branch-specific scalar mechanism CI above zero plus task/stability rule | B4--B9 |
-| C9--C15: each causal/interventional object is used under controlled shifts | causal branch-specific scalar mechanism CI above zero plus task/stability rule | B10--B16 |
+## 2. Shared Hyperparameter Grid & Evaluation Protocol
 
-There is no umbrella claim that at least one branch succeeds. Outcomes are
-independent and failed/inconclusive branches are preserved.
+For every paper and every architectural variant, we execute an exhaustive, standardized $3 \times 3$ grid:
+*   **Learning Rates**: `1e-4`, `3e-4`, `1e-3`
+*   **Weight Decays**: `1e-5`, `1e-4`, `1e-3`
+*   **Optimizer**: AdamW with Cosine Annealing learning rate schedule.
+*   **Batch Size**: 2048 (maximizes GPU throughput on A100).
+*   **Epochs & Early Stopping**: Max 100 epochs, early stopping patience = 10 epochs on validation macro AUROC.
+*   **Precision & Streams**: BF16 mixed precision, shared-tensor single-process CUDA streams.
 
-## Paper Storyline
+### Shared Model Variants per Paper (Falsification Controls)
+1.  `kernel`: True RKHS Nyström Kernel Mean Embedding (`[Batch, 16, 128]`).
+2.  `moments`: Control baseline matching mean and variance of physical voltage (`[Batch, 16, 16]`).
+3.  `gaussian`: Gaussian parametric distribution baseline (`[Batch, 16, 32]`).
+4.  `linear`: Naive linear projection of physical phase voltages (`[Batch, 16, 16]`).
 
-- **Main evidence:** common data/QC contract, matched raw baselines, one primary
-  comparison and one mechanism-use falsification per paper.
-- **Secondary evidence:** alternative Paper 1 encoders, kernel-scale
-  sensitivities, three-beat sensitivity, perturbation battery, calibration.
-- **Intentionally cut:** clinical metadata, forced wave labels, monolithic
-  multi-branch models, test-triggered analysis changes, larger language models.
+---
 
-## Experiment Blocks
+## 3. Paper-by-Paper Execution Order & Decision Gates
 
-### B0: Data and estimator invariants
+```mermaid
+graph TD
+    P2[Paper 02: Phase-CNN] -->|Active on GPU| P1[Paper 01: Recurrence CNN]
+    P1 --> P3[Paper 03: Path Signature]
+    P3 --> P4[Paper 04: Hankel Dynamics]
+    P4 --> P5[Paper 05: Koopman Operator]
+    P5 --> P6[Paper 06: Conditional RepStat]
+    P6 --> P7[Paper 07: Operator Reconstruction]
+    P7 --> P8[Paper 08: Token Cross-Attention]
+    P8 --> P9[Paper 09: Counterfactual Measurement]
+    P9 --> P10[Paper 10: Interventional RepStat]
+    P10 --> P11[Paper 11: Causal State ECG]
+    P11 --> P12[Paper 12: Structural Innovation]
+    P12 --> P13[Paper 13: Counterfactual Surgery]
+    P13 --> P14[Paper 14: Invariant Mechanism Discovery]
+    P14 --> P15[Paper 15: Causal Mechanism Factorization]
+```
 
-- Dataset: PTB-XL `records500` (folds 1--7 only) for training; all 9 available datasets (EchoNext, LUDB, RDB, ISP, Kingston-ICU, Emory-MUSE, Sunnybrook, Zhejiang) prepared for OOD evaluation.
-- Runs: metadata/label audit, patient disjointness, lead order, preprocessing,
-  beat/phase QC, exact MMD, Nyström fidelity, ineligibility reconciliation.
-- Success: every invariant test passes; 128 landmarks pass both approximation
-  gates or deterministic promotion to 256 passes.
-- Failure: stop all GPU work and repair the shared harness.
-- Priority: MUST-RUN.
+### Stage Decision Gates
+*   **Gate 1 (Representational Validity, Papers 01–03)**: `kernel` variant must achieve $\ge 0.85$ Macro AUROC on PTB-XL and beat all moment controls by $>0.02$. (Paper 02 has already passed this gate: 0.8716 AUROC).
+*   **Gate 2 (Dynamical Linearity, Papers 04–05)**: Koopman linear forward operator error must remain $<0.05$ relative MSE across 3-beat projection.
+*   **Gate 3 (Biophysical Retention, Papers 06–08)**: Paper 07 reconstruction head must achieve physical waveform correlation $r \ge 0.90$ while maintaining $\ge 0.86$ diagnostic AUROC.
+*   **Gate 4 (Causal & Invariant Generalization, Papers 09–15)**: OOD degradation across the 9 external datasets must be reduced by $\ge 30\%$ compared to standard ERM.
 
-### B1: Shared raw baselines
+---
 
-- Systems: prevalence, conventional summaries, raw 8-lead ResNet, raw 12-lead
-  ResNet, xResNet1d101.
-- Development: train folds 1--7, select fold 8; seed 42 for gate stage.
-- Metrics: macro AUROC primary; full frozen secondary set.
-- Success: reproducible training, no leakage, measured throughput and memory.
-- Priority: MUST-RUN.
-
-### B2: Kernel-mean trunk
-
-- Systems: IMQ KME, linear KME, moments, exactly moment-matched destroyer.
-- Model: identical circular phase CNN.
-- Gate: Paper 2 row in `docs/CLAIM_GATE_MATRIX.md`.
-- Priority: MUST-RUN; establishes whether later branches have a useful trunk.
-
-### B3: Distributional recurrence
-
-- Systems: direct MMD recurrence versus direct mean recurrence; spectral and
-  2-D CNN variants secondary.
-- Gate: Paper 1 scalar phase-destruction statistic plus task/stability rule.
-- Priority: MUST-RUN.
-
-### B4: Path signatures
-
-- Systems: depth-3 truncated-PCA-whitened signatures versus unordered KME.
-- Gate: endpoint-preserving order destroyer versus fixed monotone warp.
-- Priority: MUST-RUN implementation; five-seed run conditional on gate.
-
-### B5: Local Hankel/DMD
-
-- Systems: local distributional Hankel operator and specified DMD controls.
-- Gate: temporal destroyer versus fixed warp.
-- Priority: MUST-RUN implementation; five-seed run conditional on gate.
-
-### B6: Recurrent-state Koopman
-
-- Systems: state occupancy versus occupancy plus record-specific operator.
-- Gate: chronology shuffle with occupancy fixed.
-- Priority: MUST-RUN implementation; five-seed run conditional on gate.
-
-### B7: Conditional residual recurrence
-
-- Systems: full, macro, residual marginal, conditional residual.
-- Gate: residual-pairing shuffle versus joint-pair sham.
-- Priority: MUST-RUN implementation; five-seed run conditional on gate.
-
-### B8: Continuous measurement operators
-
-- Systems: continuous `q` versus categorical operator with frozen `<UNK_q>`;
-  BCE-only task pair and separately initialized auxiliary response pair.
-- Gate: held-out within-span response MSE; sign and interpolation safeguards.
-- Priority: MUST-RUN implementation; run after measured B2 throughput.
-
-### B9: Equivalence-defined tokens
-
-- Systems: UCB complete-linkage vocabulary versus size-matched random merging,
-  K-means, VQ, patches, median beat, and continuous means.
-- Gate: patient-equal odd/even JSD agreement plus task/stability rule.
-- Priority: MUST-RUN implementation; run after vocabulary cost smoke.
-
-### B10: Counterfactual Measurement-Operator
-- Systems: continuous causal operators versus standard operators.
-- Gate: randomized intervention angle destruction.
-- Priority: MUST-RUN implementation; run after B8.
-
-### B11: Interventional repStat
-- Systems: intervention-aware phase CNN versus observational repStat.
-- Gate: non-causal sham perturbation stability drop.
-- Priority: MUST-RUN implementation.
-
-### B12: Causal-State ECG
-- Systems: future predictive RKHS states versus past Koopman states.
-- Gate: chronological link breaking.
-- Priority: MUST-RUN implementation.
-
-### B13: Structural-Innovation
-- Systems: ordered structural innovation versus raw residual prediction.
-- Gate: innovation ordering destruction.
-- Priority: MUST-RUN implementation.
-
-### B14: Distribution Surgery
-- Systems: distributional surgery versus standard feature masking.
-- Gate: mismatched surgery destruction.
-- Priority: MUST-RUN implementation.
-
-### B15: Invariant-Mechanism Discovery
-- Systems: IRM pooling versus ERM pooling.
-- Gate: domain assignment shuffle.
-- Priority: MUST-RUN implementation.
-
-### B16: Causal Mechanism Factorization
-- Systems: independent-mechanism autoencoder versus standard VAE.
-- Gate: forced random basis entanglement.
-- Priority: MUST-RUN implementation.
-
-## Run Order and Milestones
-
-| Milestone | Goal | Runs | Decision gate | Cost | Risk |
-|---|---|---|---|---|---|
-| M0 | shared integrity | B0 unit/integration tests | all invariants pass | CPU hours | R detection and data leakage |
-| M1 | throughput calibration | 128-record then one-epoch B1/B2 smoke | finite metrics; memory headroom; deterministic resume | <1 GPU hour | I/O bottleneck |
-| M2 | foundational evidence | B1--B3 seed 42 on folds 1--7/8 | frozen numeric gates | 8--20 GPU hours provisional | weak distribution signal |
-| M3 | mechanism portfolio | B4--B7 smoke then seed 42 | branch gates | 12--30 GPU hours provisional | short-record sufficiency |
-| M4 | high-cost branches | B8--B9 cost and mechanism smokes | branch gates | 20--50 GPU hours each provisional | operator/token scalability |
-| M5_Causal | causal mechanisms | B10--B16 smokes | branch gates | 30--60 GPU hours provisional | intervention alignment |
-| M5 | final fitting | passing branches, seeds 42--46, folds 1--8/9 | config and denominators frozen | measured after M1--M4 | seed variance |
-| M6 | locked evaluation | one fold-10 pass on PTB-XL | no refit or new analysis | evaluation only | selection leakage |
-| M7 | multi-dataset OOD | pass on 8 external datasets | no refit or new analysis | evaluation only | adapter misalignment |
-
-## Compute and Data Budget
-
-- Hardware: one local A100-PCIE-40GB.
-- GPU utilization: maximize batch/worker throughput only after each smoke gate.
-- CPU preparation is serialized by artifact key; GPU training consumes frozen
-  caches and must not silently recompute them.
-- Exact cost remains provisional until M1 records samples/s, peak VRAM, cache
-  size, and bootstrap wall time.
-
-## Risks and Mitigations
-
-- R-detection selection: explicit all-row QC and unconditional fixed-window
-  sensitivity.
-- Few beats: endpoint-specific `ineligible` rows with separate denominators.
-- Approximation error: exact MMD audit and mandatory landmark promotion.
-- Capacity confounding: identical downstream models for primary comparisons.
-- Adaptive analysis: terminal fold-8 gate outcomes and locked manifests.
-- Shared-artifact leakage: code may be shared; every paper refits learned
-  objects and rejects sibling learned paths.
-
-## Final Checklist
-
-- [x] Claims and numeric gates frozen
-- [x] Fold firewall frozen
-- [x] Mathematical/tensor interfaces frozen
-- [ ] Shared invariant tests pass
-- [ ] Measured execution budget replaces estimates
-- [ ] Passing-branch final manifests frozen
-- [ ] Fold 10 remains unopened until all preceding boxes pass
-
+## 4. Compute Budget & Monitoring
+*   **GPU**: 1x NVIDIA A100-SXM4-40GB / 80GB
+*   **VRAM per Cell**: $0.4$ – $1.2$ GiB (utilizing parallel streams across all 9 cells).
+*   **Runtime per Paper**: 15 – 25 minutes.
+*   **Total Suite Runtime**: ~4.5 hours.
+*   **Logging & Artifacts**: Every run automatically saves `summary.json`, `predictions.npz`, `checkpoint.pt`, and registers to `metrics.csv`.

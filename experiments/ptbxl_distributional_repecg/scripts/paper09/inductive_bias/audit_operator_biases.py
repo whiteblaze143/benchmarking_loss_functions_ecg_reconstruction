@@ -210,7 +210,10 @@ def main() -> None:
         response_permuted_relative = _relative_mse(response_permuted_prediction, test_response[:, 6])
         wrong_target_relative = _relative_mse(wrong_target_prediction, test_response[:, 6])
         independent_relative = _relative_mse(independent_prediction, independent_test_response[:, 6])
-        independent_sensitivity = _relative_mse(independent_prediction - independent_wrong, independent_test_response[:, 6])
+        independent_sensitivity = float(
+            nn.functional.mse_loss(independent_prediction, independent_wrong)
+            / independent_test_response[:, 6].square().mean().clamp_min(1e-12)
+        )
         blind_error = _relative_mse(torch.zeros_like(test_response[:, 6]), test_response[:, 6])
         oracle_error = _relative_mse(oracle_prediction, test_response[:, 6])
         oracle_gap_closed = (blind_error - paired_relative) / max(blind_error - oracle_error, 1e-12)
@@ -241,7 +244,10 @@ def main() -> None:
         bool(item.abs().max() > 0) for item in gradients
     )
 
-    response_only_change = _relative_mse(response_permuted_prediction - paired_prediction, test_response[:, 6])
+    response_only_change = float(
+        nn.functional.mse_loss(response_permuted_prediction, paired_prediction)
+        / test_response[:, 6].square().mean().clamp_min(1e-12)
+    )
     permutation_error = float((paired_prediction - joint_permuted_prediction).abs().max())
     rank_one_sigma = _sigma_min(duplicate_q, measurement_basis, CONTEXT)
     gates = {

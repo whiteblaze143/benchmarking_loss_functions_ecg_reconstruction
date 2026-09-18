@@ -4,10 +4,12 @@
 Causal feature disentanglement
 
 ## Core Thesis
-Disease factors can be disentangled into independent causal mechanisms.
+Phase-ordered conditional location-scale residuals may isolate diagnostically useful unpredictable variation beyond predictable phase state.
 
 ## Inductive Biases and Assumptions Embedded
-The model architecture assumes that `Disease factors can be disentangled into independent causal mechanisms.`. By explicitly structuring the network to reflect this bias, we restrict the hypothesis space to physiologically plausible functions.
+The representation assumes that phase history predicts a conditional mean and scale, and that standardized residuals are approximately history-independent within the tested probe family. This is predictive residualization, not identified causal-mechanism disentanglement.
 
 ## Rejected Complexity
-We reject over-parameterized black-box approaches in favor of a targeted inductive bias that can be validated via specific ablation variants.
+Conditional normalizing flows, invertibility claims, and causal-direction claims are removed until separately identified. The smallest adequate mechanism is a causal location-scale predictor with an explicit likelihood objective.
+
+**Verdict: RETHINK.** The legacy BCE-only grid does not execute this thesis and must not run.

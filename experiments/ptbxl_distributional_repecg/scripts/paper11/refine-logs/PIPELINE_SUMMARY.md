@@ -1,17 +1,5 @@
-# Pipeline Summary
+# Pipeline Summary: Paper 11
 
-**Problem**: Graph neural networks over leads
-**Final Method Thesis**: Spatial relationships between leads map to anatomical proximity.
-**Final Verdict**: READY
-**Date**: 2026-09-17
-
-## Final Deliverables
-- Proposal: `refine-logs/FINAL_PROPOSAL.md`
-- Experiment plan: `refine-logs/EXPERIMENT_PLAN.md`
-
-## Must-Prove Claims
-- GNNs exploit spatial lead correlations better than CNNs.
-
-## First Runs to Launch
-1. Smoke test verification (COMPLETED)
-2. Production run
+**Final thesis:** a low-dimensional continuous code from an ordered causal prefix can retain held-out future-predictive information beyond autocorrelation and unordered-history controls.
+**Final verdict:** REVISE — synthetic mechanism qualified; real-ECG provenance untested.
+**Next action:** G0 ordered-beat lineage and causal-mask audit; do not launch clinical training.

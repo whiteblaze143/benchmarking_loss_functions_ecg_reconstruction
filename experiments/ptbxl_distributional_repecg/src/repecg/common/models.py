@@ -471,7 +471,7 @@ class CounterfactualMeasurementOperator(nn.Module):
 # ============================================================================
 
 class InterventionalRepStatModel(nn.Module):
-    def __init__(self, input_dim: int, width: int = 128, classes: int = 5, variant: ExperimentVariant | None = None):
+    def __init__(self, input_dim: int, width: int = 128, classes: int = 5, environments: int = 9, variant: ExperimentVariant | None = None):
         super().__init__()
         self.variant = variant if variant is not None else ExperimentVariant()
         self.backbone = nn.Sequential(nn.Conv1d(input_dim, width, 1), CircularResidualBlock(width), CircularResidualBlock(width))
@@ -482,7 +482,7 @@ class InterventionalRepStatModel(nn.Module):
             self.diag_head = nn.Linear(input_dim, classes)
         else:
             self.diag_head = nn.Linear(width // 2, classes)
-        self.acq_head = nn.Linear(width // 2, 9)
+        self.acq_head = nn.Linear(width // 2, environments)
 
     def forward(self, phase_features: torch.Tensor) -> torch.Tensor:
         if self.variant.head == "linear":
@@ -490,7 +490,7 @@ class InterventionalRepStatModel(nn.Module):
         x = phase_features.transpose(1, 2)
         h = self.backbone(x).mean(dim=-1)
         z_s = self.zs_proj(h)
-        return self.diag_head(z_s)
+        return self.diag_head(F.normalize(z_s, dim=-1))
 
     def factorize(self, phase_features: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         x = phase_features.transpose(1, 2)

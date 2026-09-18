@@ -14,12 +14,15 @@ from repecg.common.kernels import NystromMap, WhiteningTransform, audit_nystrom,
 from repecg.paper02_kernel_mean.controls import exact_moment_matched_gaussian, mean_covariance_features
 
 
-def _eligible(cache: Path) -> pd.DataFrame:
+def _eligible(cache: Path, folds: tuple[int, ...] | None = None) -> pd.DataFrame:
     manifest = json.loads((cache / "manifest.json").read_text())
     if manifest["kind"] != "production_phase_cache":
         raise ValueError(f"not a production cache: {cache}")
     frame = pd.read_csv(cache / "qc.csv")
-    return frame[frame.eligible].reset_index(drop=True)
+    frame = frame[frame.eligible]
+    if folds is not None:
+        frame = frame[frame.fold.isin(folds)]
+    return frame.reset_index(drop=True)
 
 
 def _load_beats(cache: Path, artifact: str) -> np.ndarray:
@@ -101,7 +104,15 @@ def _audit(
             x_feature = torch.rsqrt(torch.cdist(x, anchors).square() + mapping.c2) @ inverse_root
             y_feature = torch.rsqrt(torch.cdist(y, anchors).square() + mapping.c2) @ inverse_root
             approximate[pair] = float(torch.square(x_feature.mean(0) - y_feature.mean(0)).sum())
-    return audit_nystrom(exact, approximate)
+    result = audit_nystrom(exact, approximate)
+    positive = exact[exact > 0]
+    relative_error_floor = max(1e-8, 0.001 * float(np.median(positive)))
+    relative_error = np.abs(approximate - exact) / np.maximum(np.abs(exact), relative_error_floor)
+    result["relative_error_floor"] = relative_error_floor
+    result["relative_error_q90"] = float(np.quantile(relative_error, 0.90))
+    result["relative_error_q95"] = float(np.quantile(relative_error, 0.95))
+    result["relative_error_q99"] = float(np.quantile(relative_error, 0.99))
+    return result
 
 
 def _represent(
@@ -191,19 +202,32 @@ def main() -> None:
     parser.add_argument("--reservoir", type=int, default=500_000)
     parser.add_argument("--audit-pairs", type=int, default=1_000)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--train-folds", type=int, nargs="+")
+    parser.add_argument("--select-folds", type=int, nargs="+")
+    parser.add_argument("--landmark-candidates", type=int, nargs="+", default=[128, 256])
+    parser.add_argument("--min-spearman", type=float, default=0.90)
+    parser.add_argument("--max-median-relative-error", type=float, default=0.15)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    train = _eligible(args.train_cache)
-    select = _eligible(args.select_cache)
+    train = _eligible(args.train_cache, None if args.train_folds is None else tuple(args.train_folds))
+    select = _eligible(args.select_cache, None if args.select_folds is None else tuple(args.select_folds))
+    if train.empty or select.empty:
+        raise ValueError("fold filtering produced an empty representation split")
     reservoir = _reservoir(args.train_cache, train, args.reservoir, args.seed)
     whitening = WhiteningTransform.fit(reservoir)
     whitened = whitening.transform(reservoir)
     cells = _audit_cells(args.train_cache, train, args.select_cache, select, args.audit_pairs, args.seed)
     audits: dict[str, dict[str, float | bool]] = {}
     mapping: NystromMap | None = None
-    for landmarks in (128, 256):
+    for landmarks in args.landmark_candidates:
         mapping = NystromMap.fit(whitened, landmarks=landmarks, c2=1.0, seed=args.seed)
         result = _audit(cells, whitening, mapping, args.audit_pairs, args.seed)
+        result["min_spearman"] = args.min_spearman
+        result["max_median_relative_error"] = args.max_median_relative_error
+        result["passed"] = bool(
+            result["spearman"] >= args.min_spearman
+            and result["median_relative_error"] < args.max_median_relative_error
+        )
         audits[str(landmarks)] = result
         if result["passed"]:
             break
@@ -248,6 +272,7 @@ def main() -> None:
             "linear": "mean_in_train_whitened_linear_kernel_space",
         },
         "seed": args.seed,
+        "folds": {"train": args.train_folds, "selection": args.select_folds},
     }
     (args.output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     print(json.dumps(manifest, sort_keys=True))

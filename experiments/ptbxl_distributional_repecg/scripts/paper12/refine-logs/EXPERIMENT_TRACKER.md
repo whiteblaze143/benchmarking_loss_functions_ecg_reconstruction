@@ -12,4 +12,4 @@
 | P12-LOC-SCALE-V2-G1 | scale-conditioned synthetic mechanism | affine scale stress, genuine history, IID, destroyers | recovery, NLL contrasts, false-positive control | PASS (all gates, fresh seeds 48/49/50) |
 | P12-LOC-SCALE-V2-G2 | V2 execution | train-only standardization and stagewise routes | exact fit scope, gradients, phase-0 exclusion | PASS (12 mechanism/routing tests) |
 | P12-LOC-SCALE-V2-G3 | real residual rescue | standardized Phase-KME folds 1–6/7 | patient-equal baseline and destroyer contrasts | PASS after corrected bijective donor rerun; all intervals decisive |
-| P12-LOC-SCALE-V2-G4 | diagnostic retention | matched probes across representation hierarchy | retained accessible diagnosis signal | PRE-LABEL CONTRACT PASS (18 tests); probe runner implementation pending |
+| P12-LOC-SCALE-V2-G4 | diagnostic retention | matched probes across representation hierarchy | retained accessible diagnosis signal | PRE-LABEL CONTRACT PASS (20 tests); fold-7 Z-only selection running |

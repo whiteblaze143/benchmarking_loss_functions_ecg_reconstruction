@@ -10,7 +10,9 @@ from repecg.paper12_innovations import (
     minibatch_order,
     patient_bootstrap_multiplicity,
     probe_features,
+    require_confirmatory_mode,
     record_weights,
+    valid_multilabel_weights,
 )
 
 
@@ -50,3 +52,15 @@ def test_patient_bootstrap_is_patient_equal_and_reusable():
     assert weights[patient_ids == 1].sum() == pytest.approx(1)
     assert weights[patient_ids == 2].sum() == pytest.approx(2)
     assert weights[patient_ids == 3].sum() == pytest.approx(1)
+
+
+def test_invalid_bootstrap_draw_is_detected_not_replaced_by_chance():
+    labels = np.array([[0, 1], [0, 0], [1, 1]], dtype=np.float32)
+    assert valid_multilabel_weights(labels, np.ones(3))
+    assert not valid_multilabel_weights(labels, np.array([1.0, 1.0, 0.0]))
+
+
+def test_fold8_mode_forbids_search():
+    require_confirmatory_mode("confirmatory")
+    with pytest.raises(ValueError, match="forbids hyperparameter search"):
+        require_confirmatory_mode("selection")

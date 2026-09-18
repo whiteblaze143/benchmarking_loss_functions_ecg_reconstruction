@@ -1,0 +1,49 @@
+{
+  "gate": {
+    "pivot_branch": "P13-REPLACEMENT-SENSITIVITY-V2",
+    "reasons": [
+      "World A: Feature-only replacement produces nonzero but wrong effect \u2014 it captures the direct X1\u2192Y path but leaves the mediated path stale. Counterfactual recovery error substantially exceeds the propagated baseline.",
+      "World B: Predictive sensitivity to proxy replacement is nonzero even when the structural do-effect is exactly zero. S_k(X) > 0 does not imply causality.",
+      "World C: On-support conditional replacement of a redundant cell produces negligible sensitivity. The mechanism does not manufacture importance from redundancy when the reference is correctly constrained to the training distribution.",
+      "World D: The cyclic phase architecture does not identify a forward causal order. Absolute phase identity is unavailable; a rotation-equivariant sensitivity field is a coherent and mathematically defensible alternative estimand."
+    ],
+    "status": "P13-CAUSAL-SURGERY_INELIGIBLE",
+    "world_a_gate_pass": true,
+    "world_b_gate_pass": true,
+    "world_c_gate_pass": true
+  },
+  "protocol": "P13-SURGERY-ELIGIBILITY-v1",
+  "samples": 200000,
+  "seed": 13001,
+  "worlds": {
+    "confounded_proxy": {
+      "demonstrates_prediction_sensitivity_is_not_causality": true,
+      "interpretation": "A predictor trained on a confounded proxy X can exhibit substantial replacement sensitivity even when do(X) has zero structural effect on Y. This confirms that S_k(X) > 0 does not imply a causal effect.",
+      "mean_absolute_predictor_sensitivity_to_replacement": 0.7836189146036872,
+      "true_structural_do_effect": 0.0
+    },
+    "cyclic_phase_graph": {
+      "has_unique_forward_intervention_order": false,
+      "pivot_note": "Rotation invariance is not a defect for the V2 estimand. An invariant classifier can support an equivariant sensitivity field: S_{k+s}(R_s X) = S_k(X), which is mathematically coherent. The V2 claim is local sensitivity, not absolute phase causality.",
+      "reason": "A directed cycle requires an explicit dynamic SCM or a cut-point. Phase order alone does not identify a forward causal direction. The rotation-invariant architecture makes this unavoidable: absolute phase identity is not available to the classifier, so phase-specific absolute causal claims cannot be grounded."
+    },
+    "directed_chain_with_mediation": {
+      "demonstrates_propagation_is_required": true,
+      "feature_only_counterfactual_recovery_error": 0.6517197183047694,
+      "feature_only_effect_on_observational_prediction": 0.3289367295822365,
+      "interpretation": "Feature-only replacement captures the direct X1\u2192Y path (nonzero effect) but leaves the mediated path X1\u2192X2\u2192X3\u2192Y stale. The counterfactual recovery error is large relative to the irreducible baseline.",
+      "propagated_counterfactual_recovery_error": 0.07970391275236954,
+      "ratio_feature_to_propagated_recovery_error": 8.176759406148404
+    },
+    "redundant_cell_on_support": {
+      "demonstrates_no_spurious_importance_from_redundant_cell": true,
+      "interpretation": "When Z_k carries no incremental predictive information (near-zero OLS coefficient), on-support conditional replacement produces negligible sensitivity.  Off-support replacement produces large sensitivity driven by distribution shift, not by the cell's information content. This validates that the on-support constraint is load-bearing.",
+      "off_support_replacement_sensitivity": 0.016621499356205657,
+      "ols_coefficient_z_k": -0.003326818613604343,
+      "ols_coefficient_z_left": 0.602174243047194,
+      "ols_coefficient_z_right": 0.4017896338732658,
+      "on_off_support_sensitivity_ratio": 88.41171097173108,
+      "on_support_replacement_sensitivity": 0.00018800110498393412
+    }
+  }
+}

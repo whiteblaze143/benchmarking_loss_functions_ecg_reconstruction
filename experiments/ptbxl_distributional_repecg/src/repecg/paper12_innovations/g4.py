@@ -54,3 +54,15 @@ def record_weights(patient_ids: np.ndarray, patient_multiplicity: np.ndarray) ->
     if len(patient_multiplicity) != len(patients):
         raise ValueError("one multiplicity required per unique patient")
     return patient_multiplicity[inverse] / counts[inverse]
+
+
+def valid_multilabel_weights(labels: np.ndarray, weights: np.ndarray) -> bool:
+    for column in range(labels.shape[1]):
+        if weights[labels[:, column] > 0.5].sum() <= 0 or weights[labels[:, column] <= 0.5].sum() <= 0:
+            return False
+    return True
+
+
+def require_confirmatory_mode(mode: str) -> None:
+    if mode != "confirmatory":
+        raise ValueError("fold-8 runner forbids hyperparameter search")

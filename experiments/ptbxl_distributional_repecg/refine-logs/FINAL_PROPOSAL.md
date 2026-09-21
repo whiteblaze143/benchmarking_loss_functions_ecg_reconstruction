@@ -85,8 +85,24 @@ To ensure complete fairness against GraphECG and tensor baselines:
 
 ---
 
-## 5. Explicitly Rejected Complexity & Scope Boundary
+## 5. Cross-Dataset Task-Native Decoupling & Multi-Domain Generalization
+
+To prevent representation overfitting to PTB-XL's specific label ontology, we institute **Task-Native Decoupling across four independent external medical datasets**:
+1. **LUDB** (200 records, 8 diagnostic categories)
+2. **Zhejiang** (334 records, RVOT vs LVOT ventricular tachycardia origin)
+3. **ISP** (475 records, biological sex classification)
+4. **Kingston-ICU** (581 records, AFIB/AFLT telemetry rhythm detection)
+5. **EchoNext** (5,442 records, 12 structural heart disease phenotypes, downloading on NFS)
+
+### Protocol (Interpretation B Across Datasets)
+$$\boxed{\text{Frozen pre-trained encoder } \theta \to \text{Train task head } \phi_{\text{task}} \text{ on full leads } (m=8/12) \to \text{Freeze everything} \to \text{Evaluate under } O_S}$$
+Zero supervised probes and zero gradient updates are permitted on target reduced lead configurations ($S_6, S_3, S_2, S_1, S_{\rm ICM}$).
+
+---
+
+## 6. Explicitly Rejected Complexity & Scope Boundary
 
 1. **Rejected Complex 3D Torso Meshes**: We do not require patient-specific CT-derived torso meshes or finite-element boundary element solvers; linear functionals $q \in \mathbb{RP}^7$ capture the effective dipole volume conductor span directly.
 2. **Rejected GNN Node Heuristics for Continuous Duals**: GraphECG snaps arbitrary measurements to nearest discrete electrode pairs; continuous set cross-attention natively accommodates any $q \in S^7$.
-3. **Scope Clarification**: We claim **ECG acquisition-configuration robustness** and **measurement-operator generalization**, *not* universal hardware-agnosticism. Hardware transfer functions (ADC gain, analog bandpass filters, electrode impedance) represent a separate domain-shift axis.
+3. **Rejected Scratch Training on Small Cohorts**: Small medical cohorts cannot train deep waveform encoders from scratch; pre-trained foundation encoders eliminate empirical floor artifacts.
+4. **Scope Clarification**: We claim **ECG acquisition-configuration robustness** and **measurement-operator generalization**, *not* universal hardware-agnosticism. Hardware transfer functions (ADC gain, analog bandpass filters, electrode impedance) represent a separate domain-shift axis.

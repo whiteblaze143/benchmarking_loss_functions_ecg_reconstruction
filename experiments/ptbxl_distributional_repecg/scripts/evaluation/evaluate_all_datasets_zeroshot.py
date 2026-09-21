@@ -119,12 +119,6 @@ def resolve_checkpoint(model_name: str) -> Tuple[Optional[Path], str, Optional[i
             for best_file in sorted(p_dir.glob("*_best.pt")):
                 return best_file, "ptbxl_trained", p_id
 
-        # Fallback to verified inductive bias smoke gate checkpoint
-        smoke_dir = OUTPUTS_DIR / f"smoke_test/paper{p_id:02d}"
-        if smoke_dir.exists():
-            for best_file in sorted(smoke_dir.glob("*_best.pt")):
-                return best_file, "inductive_bias_gate_smoke", p_id
-
         return None, "missing", p_id
 
     return None, "unknown_model", None
@@ -232,44 +226,39 @@ def extract_batch_representations(
     # For Paper Models (1-15, set_operator)
     _, _, p_id = resolve_checkpoint(model_name)
     if p_id == 7 or model_name == "set_operator":
-        # OperatorSetModel takes (B, 8, 16, 128) or responses + operators
-        # Downsample/bin each of the 8 leads into 16 phase/time segments
-        resp = torch.from_numpy(batch_wf[:, :8]).float().to(device)  # (B, 8, T)
-        # Resample T to 16 time-phase bins with 128 embedding features
-        resp_binned = torch.nn.functional.adaptive_avg_pool1d(resp, 16)  # (B, 8, 16)
-        # Expand to (B, 8, 16, 128) with repeated features or projection
-        resp_expanded = resp_binned.unsqueeze(-1).repeat(1, 1, 1, 128)
+        # OperatorSetModel takes (B, 8, 16, 128) whitened RKHS coordinates + operators
+        from scripts.task_native.run_task_native_queue import get_rkhs_extractor
+        rkhs = get_rkhs_extractor(device)
+        wf_tensor = torch.from_numpy(batch_wf[:, :8]).float().to(device)
+        resps = rkhs.compute_responses(wf_tensor)
         ops = torch.eye(8, device=device).unsqueeze(0).repeat(B, 1, 1)  # (B, 8, 8)
         with torch.no_grad():
-            latent = model.encode_context(ops, resp_expanded)
+            latent = model.encode_context(ops, resps)
             return latent.cpu().numpy()
 
-    if p_id in (2, 10, 13, 14):
-        # Models accepting (B, 16, 256) phase features
-        sig8 = torch.from_numpy(batch_wf[:, :8]).float().to(device)  # (B, 8, T)
-        sig_binned = torch.nn.functional.adaptive_avg_pool1d(sig8, 16)  # (B, 8, 16)
-        sig_perm = sig_binned.permute(0, 2, 1)  # (B, 16, 8)
-        sig_padded = torch.nn.functional.pad(sig_perm, (0, 248))  # (B, 16, 256)
-        with torch.no_grad():
-            if hasattr(model, "encode"):
-                z = model.encode(sig_padded)
-            elif hasattr(model, "forward_with_representation"):
-                _, z = model.forward_with_representation(sig_padded)
-            else:
-                x_in = sig_padded.transpose(1, 2)
-                z = model.blocks(model.input(x_in)).mean(dim=-1)
-            return z.cpu().numpy()
-
-    # Default general extractor for other paper models
-    sig8 = torch.from_numpy(batch_wf[:, :8]).float().to(device)
-    sig_binned = torch.nn.functional.adaptive_avg_pool1d(sig8, 16)
-    sig_perm = sig_binned.permute(0, 2, 1)
-    sig_padded = torch.nn.functional.pad(sig_perm, (0, 248))
+    target_dim = 128 if p_id == 3 else 256
+    if batch_wf.shape[1] == 12:
+        basis_idx = [0, 1, 6, 7, 8, 9, 10, 11]
+        sig8_arr = batch_wf[:, basis_idx]
+    elif batch_wf.shape[1] == 4:
+        sig8_arr = np.pad(batch_wf, ((0, 0), (0, 4), (0, 0)))
+    else:
+        sig8_arr = batch_wf[:, :8]
+    sig8 = torch.from_numpy(sig8_arr).float().to(device)  # (B, 8, T)
+    sig_binned = torch.nn.functional.adaptive_avg_pool1d(sig8, 16)  # (B, 8, 16)
+    sig_perm = sig_binned.permute(0, 2, 1)  # (B, 16, 8)
+    sig_padded = torch.nn.functional.pad(sig_perm, (0, target_dim - 8))  # (B, 16, target_dim)
     with torch.no_grad():
         if hasattr(model, "encode"):
             z = model.encode(sig_padded)
         elif hasattr(model, "forward_with_representation"):
             _, z = model.forward_with_representation(sig_padded)
+        elif hasattr(model, "backbone"):
+            x_in = sig_padded.transpose(1, 2)
+            z = model.backbone(x_in).mean(dim=-1)
+        elif hasattr(model, "blocks") and hasattr(model, "input"):
+            x_in = sig_padded.transpose(1, 2)
+            z = model.blocks(model.input(x_in)).mean(dim=-1)
         else:
             z = sig_padded.mean(dim=1)
         return z.cpu().numpy()

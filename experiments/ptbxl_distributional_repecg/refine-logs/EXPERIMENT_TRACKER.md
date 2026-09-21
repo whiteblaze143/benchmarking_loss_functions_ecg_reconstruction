@@ -47,10 +47,31 @@
 
 ## 3. Tier 4 Measured Metrics (Interpretation B: Zero Probes, Pre-Trained Diagnostic Head)
 
-| Model | Full $Q_8$ (8 Leads) | $S_6$ (Precordial) | $S_3$ (ICU Telemetry) | $S_2$ (Bipolar I, II) | $S_1$ (Smartwatch I) | $S_1$ (Lead II) | Retention $R_2$ | Retention $R_1$ |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **`FixedTensor_P02` ($Z_0$)** | 0.8716 | 0.8017 | 0.6987 | 0.6596 | 0.6118 | 0.6700 | 75.7% | 70.2% |
-| **`GraphECG` (Ansari et al.)** | 0.9127 | 0.8783 | 0.8737 | 0.8628 | 0.7675 | 0.8248 | 94.5% | 84.1% |
-| **`P07_ROBUSTNESS_TRAINED`** | 0.9309 | 0.9167 | 0.9028 | 0.8849 | 0.8425 | 0.8412 | **95.0%** | **90.5%** |
-| **`P07_ROBUSTNESS_TRAINED_AUX`** | **0.9322** | **0.9178** | **0.9058** | **0.8831** | **0.8420** | **0.8418** | **94.7%** | **90.3%** |
-| **`P07_FULLLEAD_ONLY`** | *Queued* | *Queued* | *Queued* | *Queued* | *Queued* | *Queued* | *Ablation arm* | *Ablation arm* |
+| Model | Full $Q_8$ (8 Leads) | $S_6$ (Precordial) | $S_6$ (Limb) | $S_3$ (ICU V1) | $S_3$ (ICU V5) | $S_2$ (Bipolar I, II) | $S_1$ (Smartwatch I) | $S_1$ (Lead II) | $S_{\rm ICM}$ ($V_3-V_2$) | Retention $R_2$ | Retention $R_1$ |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **`FixedTensor_P02` ($Z_0$)** | 0.8716 | 0.8017 | 0.6596 | 0.6987 | 0.6848 | 0.6596 | 0.6118 | 0.6700 | 0.6654 | 75.7% | 70.2% |
+| **`GraphECG` (Ansari et al.)** | 0.9127 | 0.8783 | 0.8800 | 0.8737 | 0.8719 | 0.8628 | 0.7675 | 0.8248 | **0.7197** | 94.5% | 84.1% |
+| **`P07_FULLLEAD_ONLY`** | **0.8786** | 0.8578 | 0.7710 | 0.8484 | 0.8463 | 0.8105 | 0.7550 | 0.7812 | 0.5152 | **92.2%** | **85.9%** |
+| **`P07_ROBUSTNESS_TRAINED`** | **0.9309** | 0.9167 | 0.8105 | 0.9028 | 0.9056 | **0.8849** | **0.8425** | **0.8412** | 0.4423 | **95.0%** | **90.5%** |
+| **`P07_ROBUSTNESS_TRAINED_AUX`** | **0.9322** | **0.9178** | 0.7633 | **0.9058** | **0.9050** | 0.8831 | 0.8420 | **0.8418** | 0.4379 | 94.7% | 90.3% |
+
+---
+
+## 4. Task-Native Decoupling Tracker (External Clinical Tasks - Foundation Encoders)
+
+**Protocol (Interpretation B)**: Foundation pre-trained encoders ($\theta$) frozen; task-native head $\phi_{\text{task}}$ trained strictly on full leads ($m=8/12$); evaluated across configuration shift battery ($Q_8 \to S_6 \to S_3 \to S_2 \to S_1 \to S_{\rm ICM}$) with **zero target configuration probes or gradient updates**.
+
+### Key Highlights Across 14 Models:
+- **LUDB (8 Diagnostic Categories)**: `graphecg` achieves **0.8161** full-lead AUROC, retaining **94.8%** on $S_2$ and **92.4%** on $S_1$. `paper14` achieves **0.6201** full-lead AUROC and retains **96.3%** on $S_1$.
+- **Zhejiang (RVOT vs LVOT Arrhythmia Origin)**: Reveals severe degradation for fixed-lead encoders under lead loss:
+  - `fixed_tensor`: drops from **0.9637** to **0.4487 (46.6% retention)** on single smartwatch lead $S_1$.
+  - `moments`: drops from **0.9444** to **0.5000 (52.9% retention)**.
+  - `paper14`: drops from **0.8483** to **0.4530 (53.4% retention)**.
+  - `paper03`: drops from **0.7842** to **0.4380 (55.9% retention)**.
+  - In contrast, `graphecg` retains **98.9% (0.7457 AUROC)** and `set_operator_robust` retains **93.0% (0.5662 AUROC)** on $S_1$.
+- **Kingston-ICU (AFIB/AFLT Telemetry Rhythm)**: `graphecg` achieves **0.7973** AUROC, retaining **94.5%** on $S_2$ and **91.7%** on $S_1$.
+- **EchoNext (12 SHD phenotypes, 5,442 records)**: Download progressing via persistent wget stream on NFS (~67%).
+
+Full results matrix available at [`outputs/task_native_evaluation/task_native_decoupling_matrix.md`](outputs/task_native_evaluation/task_native_decoupling_matrix.md) and `.json`.
+
+

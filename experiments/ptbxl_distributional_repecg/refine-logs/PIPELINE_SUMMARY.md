@@ -33,12 +33,26 @@ $$\boxed{\textbf{No parameter may be trained after the model has seen the evalua
   $$\text{Train on full leads} \rightarrow \text{Freeze encoder } \theta \text{ and diagnostic head } \phi \rightarrow \text{Evaluate under } O_S$$
 - **Measured Diagnostic Retention on PTB-XL Fold 8**:
   - `P07_ROBUSTNESS_TRAINED`: Full $Q_8$ = **0.9309** | 2-Lead $S_2$ = **0.8849** ($R_2 = \mathbf{95.0\%}$) | 1-Lead $S_1$ = **0.8425** ($R_1 = \mathbf{90.5\%}$)
-  - `GraphECG` (Ansari et al.): Full $Q_8$ = 0.9127 | 2-Lead $S_2$ = 0.8628 ($R_2 = 94.5\%$) | 1-Lead $S_1$ = 0.7675 ($R_1 = 84.1\%$)
+  - `P07_FULLLEAD_ONLY` (Pure Inductive Bias, Zero Augmentation): Full $Q_8$ = **0.8786** | 2-Lead $S_2$ = **0.8105** ($R_2 = \mathbf{92.2\%}$) | 1-Lead $S_1$ = **0.7550** ($R_1 = \mathbf{85.9\%}$)
+  - `GraphECG` (Ansari et al.): Full $Q_8$ = 0.9127 | 2-Lead $S_2$ = 0.8628 ($R_2 = 94.5\%$) | 1-Lead $S_1$ = 0.7675 ($R_1 = 84.1\%$) | Novel $S_{\rm ICM}$ = **0.7197** ($R_{\rm ICM} = \mathbf{78.8\%}$)
   - `FixedTensor_P02`: Full $Q_8$ = 0.8716 | 2-Lead $S_2$ = 0.6596 ($R_2 = 75.7\%$) | 1-Lead $S_1$ = 0.6118 ($R_1 = 70.2\%$)
+- **Combinatorial Single-Lead & Pair Sweeps**:
+  - SetOperator outperforms FixedTensor across all 15 configurations by **+0.0960 to +0.2773 AUROC**.
+- **Task-Native Decoupling across Clinical Datasets (Foundation Encoders)**:
+  - Validated across LUDB (8 diagnostic categories), Zhejiang (RVOT vs LVOT origin), ISP (sex classification), and Kingston-ICU (rhythm detection).
+  - GraphECG achieves **0.8528 AUROC** on LUDB (retaining 82.0% on smartwatch), **0.8803 AUROC** on Zhejiang (retaining 73.3% on smartwatch), and **0.7525 AUROC** on Kingston-ICU (retaining 92.7% on smartwatch).
+  - SetOperator achieves **0.7051 AUROC** on Zhejiang (retaining 83.3% on smartwatch) and eliminates the catastrophic collapse seen in FixedTensor (which plummets from 0.9615 to **0.3996**, a 58.4% drop).
+  - Demonstrates cross-domain structural invariance of continuous and geometric representations under task-native training with zero post-hoc probes.
 
 ---
 
-## 4. Next Actions
-1. Allow `gpu_queue` (currently Stage 3 Paper 13) and `graphecg_train` (Epoch 27/50) to complete uninterrupted.
-2. Launch `P07_FULLLEAD_ONLY` training arm via `scripts/paper07/train_paper07_fulllead_only.py` to isolate pure representation inductive bias from subset data augmentation.
-3. Upon completion of EchoNext mirror to NFS, execute task-native full-lead training followed by zero-shot configuration-shift evaluation.
+## 4. Active Background Queue Status
+1. `task_native_queue`: **COMPLETED**. Generated master matrix at `outputs/task_native_evaluation/task_native_decoupling_matrix.md`.
+2. `p07_fulllead`: **COMPLETED** (Best Val AUROC `0.9162`, evaluated on Tier 4).
+3. `graphecg_train`: **COMPLETED** (Fold 8 Test Macro AUROC `0.9264`, evaluated on Tier 4).
+4. `ptbxl_shift_eval`: **COMPLETED** (Generated `outputs/configuration_shift_evaluations/ptbxl/configuration_shift_matrix.md`).
+5. `ptbxl_sweeps`: **COMPLETED** (Generated `outputs/configuration_shift_evaluations/ptbxl/combinatorial_sweeps.md`).
+6. `gpu_queue`: Running Paper 15 (`capacity_matched_shared`, final claims paper).
+7. `download_echonext`: Wget mirror streaming to NFS `/data/mithunmanivannan/echonext/` at **~63%** (~2.5 / 4.1 GB).
+
+

@@ -46,21 +46,19 @@ def _build_split(
     field = np.empty((n, 16, len(query_ops)), np.float32)
     labels = np.empty((n, 5), np.float32)
 
-    for start in range(0, n, batch):
-        stop = min(start + batch, n)
-        physical, current_labels = [], []
-        for index in range(start, stop):
-            beats, y = _load_physical(cache, frame.iloc[index], mean, std)
-            physical.append(beats)
-            current_labels.append(y)
-        beats_t = torch.as_tensor(np.stack(physical), device=device)
+    # Beat counts vary between records, so process records independently.
+    # Do not np.stack record beat tensors: that silently assumes equal beat counts.
+    for index in range(n):
+        beats, y = _load_physical(cache, frame.iloc[index], mean, std)
+        beats_t = torch.as_tensor(beats[None], device=device)
         with torch.inference_mode():
-            responses[start:stop] = fmap.project_basis(beats_t, context_ops).cpu().numpy()
-            field[start:stop] = phase_scalar_field(
+            responses[index] = fmap.project_basis(beats_t, context_ops)[0].cpu().numpy()
+            field[index] = phase_scalar_field(
                 beats_t, query_ops, fmap.voltage_scale
-            ).cpu().numpy()
-        labels[start:stop] = np.stack(current_labels)
-        print(json.dumps({"split": cache.name, "built": stop, "total": n}), flush=True)
+            )[0].cpu().numpy()
+        labels[index] = y
+        if (index + 1) % max(1, batch) == 0 or index + 1 == n:
+            print(json.dumps({"split": cache.name, "built": index + 1, "total": n}), flush=True)
 
     return {
         "context_operators": context_ops.cpu().numpy().astype(np.float32),

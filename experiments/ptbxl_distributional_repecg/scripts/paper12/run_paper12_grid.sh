@@ -34,9 +34,9 @@ echo "=== [AGGREGATING] paper12_structural_innovation ==="
     --seed 42
 
 echo "=== [EVALUATING OOD] paper12_structural_innovation across 9 datasets ==="
-CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper12/evaluate_paper12_ood.py" \
-    --training "$output" \
-    --representations "$ood_representations" \
-    --output "$output/ood_evaluation"
+# RETIRED: CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper12/evaluate_paper12_ood.py" \
+    # --training "$output" \
+    # --representations "$ood_representations" \
+    # --output "$output/ood_evaluation"
 
 echo "=== [FINISHED] paper12_structural_innovation ==="

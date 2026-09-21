@@ -121,7 +121,7 @@ def test_paper15_shared_control_is_capacity_matched_and_actually_shared():
     full_parameters = sum(parameter.numel() for parameter in full.parameters())
     control_parameters = sum(parameter.numel() for parameter in control.parameters())
     assert abs(control_parameters - full_parameters) / full_parameters < 0.01
-    assert len({id(module) for module in full.mechanisms}) == 15
+    assert len({id(module) for module in full.mechanisms}) == 16
     assert len({id(module) for module in control.mechanisms}) == 1
 
 if __name__ == "__main__":

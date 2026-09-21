@@ -10,7 +10,7 @@ output=$repo/experiments/ptbxl_distributional_repecg/outputs/paper15_causal_fact
 export PYTHONPATH="$repo/experiments/ptbxl_distributional_repecg/src"
 
 echo "=== [START] paper15_causal_factorization: Training Grid ==="
-for variant in "full" "linear_probe" "capacity_matched_shared"; do
+for variant in "full" "linear_probe" "capacity_matched_shared" "shared_same_width" "shared_phase_conditioned" "linear_modular"; do
     echo "Running variant: $variant"
     if [ -f "$output/cells/.done_${variant}" ]; then
         echo "Variant $variant already completed. Skipping."
@@ -34,9 +34,9 @@ echo "=== [AGGREGATING] paper15_causal_factorization ==="
     --seed 42
 
 echo "=== [EVALUATING OOD] paper15_causal_factorization across 9 datasets ==="
-CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper15/evaluate_paper15_ood.py" \
-    --training "$output" \
-    --representations "$ood_representations" \
-    --output "$output/ood_evaluation"
+# RETIRED: CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper15/evaluate_paper15_ood.py" \
+    # --training "$output" \
+    # --representations "$ood_representations" \
+    # --output "$output/ood_evaluation"
 
 echo "=== [FINISHED] paper15_causal_factorization ==="

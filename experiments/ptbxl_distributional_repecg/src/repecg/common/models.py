@@ -609,28 +609,161 @@ class CounterfactualSurgeryModel(nn.Module):
 # Paper 14: Invariant Mechanism Discovery with repStat
 # ============================================================================
 
+def _pairwise_sq_dists(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+    if x.ndim != 2 or y.ndim != 2:
+        raise ValueError("MMD expects 2D tensors [samples, features]")
+    if x.shape[1] != y.shape[1]:
+        raise ValueError("MMD feature dimensions must match")
+
+    x2 = x.square().sum(dim=1, keepdim=True)
+    y2 = y.square().sum(dim=1, keepdim=True).T
+    d2 = x2 + y2 - 2.0 * (x @ y.T)
+    return d2.clamp_min(0.0)
+
+
+def _imq_kernel(
+    x: torch.Tensor,
+    y: torch.Tensor,
+    c2: float = 1.0,
+) -> torch.Tensor:
+    if c2 <= 0:
+        raise ValueError("c2 must be positive")
+    d2 = _pairwise_sq_dists(x, y)
+    return c2 / (c2 + d2)
+
+
+def biased_imq_mmd2(
+    x: torch.Tensor,
+    y: torch.Tensor,
+    c2: float = 1.0,
+) -> torch.Tensor:
+    """Exact biased MMD^2. Includes diagonal kernel entries."""
+    if len(x) == 0 or len(y) == 0:
+        raise ValueError("cannot compute MMD with an empty environment")
+
+    k_xx = _imq_kernel(x, x, c2=c2)
+    k_yy = _imq_kernel(y, y, c2=c2)
+    k_xy = _imq_kernel(x, y, c2=c2)
+
+    mmd2 = k_xx.mean() + k_yy.mean() - 2.0 * k_xy.mean()
+
+    # Only numerical protection. Analytic biased MMD^2 is nonnegative.
+    return mmd2.clamp_min(0.0)
+
+
+def multi_environment_mmd(
+    representation: torch.Tensor,
+    environment: torch.Tensor,
+    c2: float = 1.0,
+) -> torch.Tensor:
+    """
+    Mean pairwise MMD^2 across all distinct environments.
+
+    representation: [B, D]
+    environment:    [B]
+    """
+    if representation.ndim != 2:
+        raise ValueError("representation must have shape [batch, features]")
+    if environment.ndim != 1 or len(environment) != len(representation):
+        raise ValueError("environment must have one id per sample")
+
+    envs = torch.unique(environment, sorted=True)
+
+    if len(envs) < 2:
+        raise RuntimeError(
+            "MMD-enabled training requires at least two environments per batch"
+        )
+
+    groups = [representation[environment == env] for env in envs]
+
+    if any(len(group) < 2 for group in groups):
+        raise RuntimeError(
+            "each environment must contribute at least two samples to an MMD batch"
+        )
+
+    penalties = []
+    for i in range(len(groups)):
+        for j in range(i + 1, len(groups)):
+            penalties.append(
+                biased_imq_mmd2(groups[i], groups[j], c2=c2)
+            )
+
+    return torch.stack(penalties).mean()
+
+
+def effective_rank(z: torch.Tensor) -> float:
+    """Computes participation ratio / effective rank of Cov(Z):
+    r_eff = (sum_i lambda_i)^2 / sum_i lambda_i^2 = (Tr(C))^2 / Tr(C^2)
+    """
+    if z.ndim != 2 or z.shape[0] < 2:
+        return 0.0
+    centered = z - z.mean(dim=0, keepdim=True)
+    cov = (centered.T @ centered) / (z.shape[0] - 1)
+    tr_cov = torch.trace(cov)
+    tr_cov2 = torch.trace(cov @ cov)
+    if tr_cov2.item() <= 1e-12:
+        return 0.0
+    return float(((tr_cov.square()) / tr_cov2).item())
+
+
 class InvariantMechanismDiscoveryModel(nn.Module):
     def __init__(self, input_dim: int, width: int = 128, classes: int = 5, variant: ExperimentVariant | None = None):
         super().__init__()
         self.variant = variant if variant is not None else ExperimentVariant()
-        self.phi = nn.Sequential(nn.Conv1d(input_dim, width, 1), CircularResidualBlock(width), CircularResidualBlock(width))
+        self.encoder = nn.Sequential(
+            nn.Conv1d(input_dim, width, 1),
+            CircularResidualBlock(width),
+            CircularResidualBlock(width),
+        )
+        self.phi = self.encoder
         
-        if self.variant.head == "linear":
-            self.linear_head = nn.Linear(input_dim, classes, bias=False)
-        else:
-            self.linear_head = nn.Linear(width, classes, bias=False)
+        rep_dim = input_dim if self.variant.head == "linear" else width
+        self.norm = nn.LayerNorm(rep_dim, elementwise_affine=False)
+        self.classifier = nn.Linear(rep_dim, classes, bias=False)
+        self.linear_head = self.classifier
 
-    def forward(self, phase_features: torch.Tensor) -> torch.Tensor:
+    def encode(self, x: torch.Tensor) -> torch.Tensor:
+        """Expose the normalized latent representation Z = Norm(H) that feeds both classifier and MMD."""
         if self.variant.head == "linear":
-            return self.linear_head(phase_features.mean(dim=1))
-        x = phase_features.transpose(1, 2)
-        rep = self.phi(x).mean(dim=-1)
-        return self.linear_head(rep)
+            if x.ndim == 2:
+                h = x
+            else:
+                h = x.mean(dim=1)
+        else:
+            if x.ndim == 2:
+                x_in = x.unsqueeze(-1)
+            else:
+                x_in = x.transpose(1, 2)
+            h = self.encoder(x_in).mean(dim=-1)
+        return self.norm(h)
+
+    def forward_with_representation(
+        self,
+        x: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        z = self.encode(x)
+        logits = self.classifier(z)
+        return logits, z
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        logits, _ = self.forward_with_representation(x)
+        return logits
+
+    def get_representation(self, x: torch.Tensor) -> torch.Tensor:
+        return self.encode(x)
+
+    @staticmethod
+    def compute_mmd_penalty(
+        z: torch.Tensor,
+        environment: torch.Tensor,
+        c2: float = 1.0,
+    ) -> torch.Tensor:
+        return multi_environment_mmd(z, environment, c2=c2)
 
     def compute_irm_penalty(self, phase_features: torch.Tensor, labels: torch.Tensor, dummy_w: torch.Tensor) -> torch.Tensor:
-        x = phase_features.transpose(1, 2)
-        rep = self.phi(x).mean(dim=-1)
-        logits = self.linear_head(rep) * dummy_w
+        """Retained for legacy/shared compatibility only; not called by Paper 14."""
+        z = self.encode(phase_features)
+        logits = self.classifier(z) * dummy_w
         loss = F.binary_cross_entropy_with_logits(logits, labels)
         grad = torch.autograd.grad(loss, [dummy_w], create_graph=True)[0]
         return grad.pow(2).sum()
@@ -641,41 +774,227 @@ class InvariantMechanismDiscoveryModel(nn.Module):
 # ============================================================================
 
 class CausalMechanismFactorizationModel(nn.Module):
-    def __init__(self, input_dim: int, width: int = 64, classes: int = 5, variant: ExperimentVariant | None = None):
+    """Paper 15: Modular Phase-Transition Dynamics in ECG Representation Space (P15-V2).
+    
+    Models the 16 cyclic transitions of the periodic cardiac cycle:
+        Z_hat_{(g+1)%16} = Z_g + M_g(Z_g)
+    in a fixed coordinate system.
+    """
+    def __init__(
+        self,
+        input_dim: int,
+        width: int = 64,
+        classes: int = 5,
+        num_phases: int = 16,
+        variant: ExperimentVariant | None = None,
+        freeze_encoder: bool = False,
+    ):
         super().__init__()
         self.variant = variant if variant is not None else ExperimentVariant()
-        self.init_proj = nn.Linear(input_dim, width)
+        self.width = width
+        self.num_phases = num_phases
+        self.input_dim = input_dim
         
-        if self.variant.mechanism == "shared_mechanism":
-            # Match the unique parameter count of fifteen width->width->width
-            # mechanisms with one wider mechanism reused at all fifteen phases.
-            target_parameters = 15 * (2 * width * width + 2 * width)
+        # Latent projection / state grounding
+        self.init_proj = nn.Linear(input_dim, width)
+        self.norm = nn.LayerNorm(width, elementwise_affine=False)
+        if freeze_encoder:
+            for p in self.init_proj.parameters():
+                p.requires_grad = False
+                
+        # 16 Cyclic Transition Mechanisms (g -> (g+1)%16)
+        mech_type = self.variant.mechanism
+        if mech_type in ("shared_mechanism", "shared_capacity_matched"):
+            # Capacity-matched shared: matches total parameters of 16 width->width->width modules
+            target_parameters = num_phases * (2 * width * width + 2 * width)
             matched_width = round((target_parameters - width) / (2 * width + 1))
             shared_mech = nn.Sequential(
-                nn.Linear(width, matched_width), 
-                nn.GELU(), 
-                nn.Linear(matched_width, width)
+                nn.Linear(width, matched_width),
+                nn.GELU(),
+                nn.Linear(matched_width, width),
             )
-            self.mechanisms = nn.ModuleList([shared_mech for _ in range(15)])
-        else:
+            self.mechanisms = nn.ModuleList([shared_mech for _ in range(num_phases)])
+            self.is_phase_conditioned = False
+        elif mech_type == "shared_same_width":
+            # Same-width shared: 1 shared width->width->width module
+            shared_mech = nn.Sequential(
+                nn.Linear(width, width),
+                nn.GELU(),
+                nn.Linear(width, width),
+            )
+            self.mechanisms = nn.ModuleList([shared_mech for _ in range(num_phases)])
+            self.is_phase_conditioned = False
+        elif mech_type == "shared_phase_conditioned":
+            # Phase-conditioned shared: 1 shared module taking [Z_g, e_g] where e_g is one-hot phase indicator
+            shared_mech = nn.Sequential(
+                nn.Linear(width + num_phases, width),
+                nn.GELU(),
+                nn.Linear(width, width),
+            )
+            self.mechanisms = nn.ModuleList([shared_mech for _ in range(num_phases)])
+            self.is_phase_conditioned = True
+        elif mech_type == "linear_modular":
+            # Phase-specific linear transition maps: A_g Z_g + b_g
             self.mechanisms = nn.ModuleList([
-                nn.Sequential(nn.Linear(width, width), nn.GELU(), nn.Linear(width, width)) for _ in range(15)
+                nn.Linear(width, width) for _ in range(num_phases)
             ])
+            self.is_phase_conditioned = False
+        else:
+            # Default: Modular (16 distinct non-linear MLPs)
+            self.mechanisms = nn.ModuleList([
+                nn.Sequential(nn.Linear(width, width), nn.GELU(), nn.Linear(width, width))
+                for _ in range(num_phases)
+            ])
+            self.is_phase_conditioned = False
             
+        # Diagnostic head (for probing / legacy compatibility)
         if self.variant.head == "linear":
             self.head = nn.Linear(input_dim, classes)
         else:
-            self.head = nn.Linear(width * 16, classes)
+            self.head = nn.Linear(width * num_phases, classes)
+
+    def encode_states(self, phase_features: torch.Tensor) -> torch.Tensor:
+        """Ground states Z_g across all 16 observed cardiac phases."""
+        if phase_features.ndim == 2:
+            phase_features = phase_features.unsqueeze(1).expand(-1, self.num_phases, -1)
+        h = F.gelu(self.init_proj(phase_features))
+        return self.norm(h)
+
+    def predict_transitions(self, z: torch.Tensor) -> torch.Tensor:
+        """Apply transition mechanisms to predict Z_{(g+1)%16} from Z_g across all 16 cyclic transitions.
+        
+        Args:
+            z: Latent states of shape (B, 16, width)
+        Returns:
+            z_pred: Predicted next states of shape (B, 16, width)
+        """
+        B, T, D = z.shape
+        z_preds = []
+        device = z.device
+        for g in range(self.num_phases):
+            mech = self.mechanisms[g]
+            current_zg = z[:, g]
+            if getattr(self, "is_phase_conditioned", False):
+                e_g = torch.zeros(B, self.num_phases, device=device, dtype=current_zg.dtype)
+                e_g[:, g] = 1.0
+                inp = torch.cat([current_zg, e_g], dim=-1)
+                delta = mech(inp)
+            else:
+                delta = mech(current_zg)
+            next_zg_pred = current_zg + delta
+            z_preds.append(next_zg_pred)
+        return torch.stack(z_preds, dim=1)
+
+    def evaluate_permuted_transitions(
+        self,
+        z: torch.Tensor,
+        derangement: list[int] | None = None,
+    ) -> torch.Tensor:
+        """Post-training frozen Kill Test operator.
+        Evaluates transition prediction when mechanism assignments are permuted across mismatched phases.
+        
+        Args:
+            z: Latent states of shape (B, 16, width)
+            derangement: List of length 16 where derangement[g] != g.
+                         Defaults to cyclic half-shift pi(g) = (g + 8) % 16.
+        Returns:
+            z_pred_perm: Predicted next states of shape (B, 16, width) under permuted mechanisms
+        """
+        if derangement is None:
+            derangement = [(g + self.num_phases // 2) % self.num_phases for g in range(self.num_phases)]
+            
+        B, T, D = z.shape
+        z_preds = []
+        device = z.device
+        for g in range(self.num_phases):
+            perm_g = derangement[g]
+            mech = self.mechanisms[perm_g]
+            current_zg = z[:, g]
+            if getattr(self, "is_phase_conditioned", False):
+                e_g = torch.zeros(B, self.num_phases, device=device, dtype=current_zg.dtype)
+                e_g[:, perm_g] = 1.0
+                inp = torch.cat([current_zg, e_g], dim=-1)
+                delta = mech(inp)
+            else:
+                delta = mech(current_zg)
+            next_zg_pred = current_zg + delta
+            z_preds.append(next_zg_pred)
+        return torch.stack(z_preds, dim=1)
+
+    def compute_transition_loss(self, z: torch.Tensor, z_pred: torch.Tensor) -> torch.Tensor:
+        """Transition prediction fidelity loss on 16-phase cyclic ring:
+        L_trans = (1/16) * sum_{g=0}^{15} || Z_{(g+1)%16} - Z_pred_g ||^2.
+        Target states are detached to prevent degenerative moving target.
+        """
+        z_target = torch.roll(z, shifts=-1, dims=1).detach()
+        return F.mse_loss(z_pred, z_target)
+
+    def extract_representation_hierarchy(
+        self,
+        phase_features: torch.Tensor,
+    ) -> dict[str, torch.Tensor]:
+        """Extracts the 4-tier diagnostic representation hierarchy:
+        1. State: Z
+        2. Observed Dynamics: Delta = Z_{(g+1)%16} - Z_g
+        3. Predicted Transitions: Delta_hat = M_g(Z_g)
+        4. Transition Innovations: R = Delta - Delta_hat
+        """
+        z = self.encode_states(phase_features)
+        z_pred = self.predict_transitions(z)
+        z_target = torch.roll(z, shifts=-1, dims=1)
+        
+        delta_obs = z_target - z
+        delta_pred = z_pred - z
+        innovations = delta_obs - delta_pred
+        
+        return {
+            "state": z,
+            "observed_dynamics": delta_obs,
+            "predicted_transitions": delta_pred,
+            "innovations": innovations,
+        }
+
+    @staticmethod
+    def evaluate_identity_baseline(z: torch.Tensor) -> float:
+        """Identity baseline: Z_hat_{(g+1)%16} = Z_g."""
+        z_target = torch.roll(z, shifts=-1, dims=1)
+        return F.mse_loss(z, z_target).item()
+
+    @staticmethod
+    def evaluate_mean_residual_baseline(z_train: torch.Tensor, z_eval: torch.Tensor) -> float:
+        """Mean residual baseline: Z_hat_{(g+1)%16} = Z_g + E_train[Z_{(g+1)%16} - Z_g]."""
+        z_train_target = torch.roll(z_train, shifts=-1, dims=1)
+        mean_delta = (z_train_target - z_train).mean(dim=0, keepdim=True)
+        z_eval_target = torch.roll(z_eval, shifts=-1, dims=1)
+        pred = z_eval + mean_delta
+        return F.mse_loss(pred, z_eval_target).item()
+
+    @staticmethod
+    def evaluate_phase_mean_baseline(z_train: torch.Tensor, z_eval: torch.Tensor) -> float:
+        """Phase mean baseline: Z_hat_{(g+1)%16} = mu_{(g+1)%16}^{train}."""
+        z_train_target = torch.roll(z_train, shifts=-1, dims=1)
+        target_means = z_train_target.mean(dim=0, keepdim=True)
+        z_eval_target = torch.roll(z_eval, shifts=-1, dims=1)
+        pred = target_means.expand_as(z_eval_target)
+        return F.mse_loss(pred, z_eval_target).item()
+
+    def forward_with_transitions(
+        self,
+        phase_features: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        z = self.encode_states(phase_features)
+        z_pred = self.predict_transitions(z)
+        if self.variant.head == "linear":
+            mean_feats = phase_features.mean(dim=1) if phase_features.ndim == 3 else phase_features
+            logits = self.head(mean_feats)
+        else:
+            logits = self.head(z.flatten(1))
+        return logits, z, z_pred
 
     def forward(self, phase_features: torch.Tensor) -> torch.Tensor:
         if self.variant.head == "linear":
-            return self.head(phase_features.mean(dim=1))
-        z0 = F.gelu(self.init_proj(phase_features[:, 0]))
-        trajectory = [z0]
-        current_z = z0
-        for i, mech in enumerate(self.mechanisms):
-            next_z = current_z + mech(current_z)
-            trajectory.append(next_z)
-            current_z = next_z
-        traj_tensor = torch.stack(trajectory, dim=1)
-        return self.head(traj_tensor.flatten(1))
+            mean_feats = phase_features.mean(dim=1) if phase_features.ndim == 3 else phase_features
+            return self.head(mean_feats)
+        z = self.encode_states(phase_features)
+        return self.head(z.flatten(1))
+

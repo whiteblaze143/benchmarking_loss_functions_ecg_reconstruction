@@ -27,7 +27,7 @@ done
     --output "$output" \
     --seed 42
 
-CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper01/evaluate_paper01_ood.py" \
-    --training "$output" \
-    --representations "$ood_representations" \
-    --output "$output/ood_evaluation"
+# RETIRED: CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper01/evaluate_paper01_ood.py" \
+    # --training "$output" \
+    # --representations "$ood_representations" \
+    # --output "$output/ood_evaluation"

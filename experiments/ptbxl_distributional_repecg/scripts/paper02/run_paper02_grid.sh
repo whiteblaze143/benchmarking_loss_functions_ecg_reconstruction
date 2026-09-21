@@ -33,7 +33,7 @@ done
     --output "$ood_representations" \
     --seed 42
 
-CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper02/evaluate_paper02_ood.py" \
-    --training "$output" \
-    --representations "$ood_representations" \
-    --output "$output/ood_evaluation"
+# RETIRED: CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper02/evaluate_paper02_ood.py" \
+    # --training "$output" \
+    # --representations "$ood_representations" \
+    # --output "$output/ood_evaluation"

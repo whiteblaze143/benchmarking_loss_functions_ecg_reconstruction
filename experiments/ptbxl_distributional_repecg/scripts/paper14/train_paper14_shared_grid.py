@@ -48,6 +48,7 @@ def _save_cell(
     ecg_ids: np.ndarray,
     patient_ids: np.ndarray,
     peak_vram_bytes: int,
+    mmd_lambda: float = 0.0,
 ) -> None:
     path = cell["path"]
     assert isinstance(path, Path)
@@ -57,6 +58,7 @@ def _save_cell(
     assert isinstance(best_probability, np.ndarray) and isinstance(best_state, dict)
     summary = {
         "variant": variant,
+        "mmd_lambda": mmd_lambda,
         "learning_rate": cell["learning_rate"],
         "weight_decay": cell["weight_decay"],
         "best_epoch": cell["best_epoch"],
@@ -80,15 +82,48 @@ def _save_cell(
     _atomic_json(path / "summary.json", summary)
 
 
+def _generate_balanced_batches(
+    env: torch.Tensor,
+    batch_size: int,
+    generator: torch.Generator,
+) -> list[torch.Tensor]:
+    envs = torch.unique(env, sorted=True)
+    if len(envs) < 2:
+        raise RuntimeError(
+            "Paper 14 MMD training requires at least two environments per batch"
+        )
+    per_env = batch_size // len(envs)
+    if per_env < 2:
+        raise RuntimeError(
+            f"Batch size {batch_size} is too small for {len(envs)} environments (needs >= 2 samples per env)"
+        )
+
+    env_indices: dict[int, torch.Tensor] = {}
+    for e in envs:
+        idx = (env == e).nonzero(as_tuple=True)[0]
+        perm = torch.randperm(len(idx), generator=generator, device=env.device)
+        env_indices[e.item()] = idx[perm]
+
+    num_batches = min(len(idx) // per_env for idx in env_indices.values())
+    if num_batches == 0:
+        raise RuntimeError("Not enough samples per environment to form a single balanced batch")
+
+    batches = []
+    for b in range(num_batches):
+        parts = [env_indices[e.item()][b * per_env : (b + 1) * per_env] for e in envs]
+        batches.append(torch.cat(parts))
+    return batches
+
+
 def _train_variant(
     *,
     variant_obj,
-
     variant: str,
     training_regime: str = "full_only",
     variant_index: int,
     train_x: torch.Tensor,
     train_y: torch.Tensor,
+    train_env: torch.Tensor | None = None,
     val_x: torch.Tensor,
     val_y: np.ndarray,
     ecg_ids: np.ndarray,
@@ -98,8 +133,21 @@ def _train_variant(
     max_epochs: int,
     patience: int,
     seed: int,
+    mmd_lambda: float = 1.0,
+    mmd_c2: float = 1.0,
 ) -> None:
-    run_seed = seed + variant_index * 100
+    if variant_obj.use_mmd:
+        if train_env is None:
+            raise RuntimeError(
+                "Paper 14 MMD training requested, but no 'environment' was provided."
+            )
+        unique_envs = torch.unique(train_env)
+        if len(unique_envs) < 2:
+            raise RuntimeError(
+                f"Paper 14 MMD training requires at least two environments, found {len(unique_envs)}"
+            )
+
+    run_seed = seed
     _seed(run_seed)
     template = InvariantMechanismDiscoveryModel(input_dim=train_x.shape[-1], classes=train_y.shape[-1], variant=variant_obj).cuda()
     initial_state = copy.deepcopy(template.state_dict())
@@ -146,27 +194,62 @@ def _train_variant(
             break
         generator = torch.Generator(device="cuda")
         generator.manual_seed(run_seed * 1000 + epoch)
-        permutation = torch.randperm(len(train_x), generator=generator, device="cuda")
+
+        if train_env is not None:
+            batches = _generate_balanced_batches(train_env, batch, generator)
+        else:
+            permutation = torch.randperm(len(train_x), generator=generator, device="cuda")
+            batches = [permutation[start : start + batch] for start in range(0, len(train_x), batch)]
+
         epoch_losses: dict[int, list[torch.Tensor]] = {id(cell): [] for cell in active}
-        for start in range(0, len(train_x), batch):
-            index = permutation[start : start + batch]
+        epoch_bce: dict[int, list[torch.Tensor]] = {id(cell): [] for cell in active}
+        epoch_mmd: dict[int, list[torch.Tensor]] = {id(cell): [] for cell in active}
+        epoch_var_z: dict[int, list[float]] = {id(cell): [] for cell in active}
+
+        for batch_idx, index in enumerate(batches):
             for cell in active:
                 stream = cell["stream"]
                 model = cell["model"]
                 optimizer = cell["optimizer"]
                 loss_fn = cell["loss_fn"]
                 assert isinstance(stream, torch.cuda.Stream)
-                assert isinstance(model, nn.Module)
+                assert isinstance(model, InvariantMechanismDiscoveryModel)
                 assert isinstance(optimizer, torch.optim.Optimizer)
                 assert isinstance(loss_fn, nn.Module)
                 with torch.cuda.stream(stream):
                     optimizer.zero_grad(set_to_none=True)
                     with torch.autocast("cuda", dtype=torch.bfloat16):
-                        loss = loss_fn(model(train_x[index]), train_y[index])
+                        logits, z = model.forward_with_representation(train_x[index])
+                        bce_loss = loss_fn(logits, train_y[index])
+
+                        if variant_obj.use_mmd:
+                            assert train_env is not None
+                            batch_env = train_env[index]
+                            if torch.unique(batch_env).numel() < 2:
+                                raise RuntimeError("Paper 14 MMD batch contains fewer than two environments")
+                            mmd_loss = model.compute_mmd_penalty(z.float(), batch_env, c2=mmd_c2)
+                            loss = bce_loss + mmd_lambda * mmd_loss
+                        else:
+                            mmd_loss = z.new_zeros(())
+                            loss = bce_loss
+
+                    if epoch == 1 and batch_idx == 0 and variant_obj.use_mmd and float(mmd_loss.detach()) == 0.0:
+                        raise RuntimeError(
+                            "Paper 14 MMD is exactly zero on the first heterogeneous batch; "
+                            "check environment IDs and representation routing"
+                        )
+
                     loss.backward()
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                     optimizer.step()
+
+                    with torch.no_grad():
+                        vz = float(z.float().var(dim=0).mean().cpu())
+
                     epoch_losses[id(cell)].append(loss.detach())
+                    epoch_bce[id(cell)].append(bce_loss.detach())
+                    epoch_mmd[id(cell)].append(mmd_loss.detach())
+                    epoch_var_z[id(cell)].append(vz)
             torch.cuda.synchronize()
 
         probabilities: dict[int, torch.Tensor] = {}
@@ -186,10 +269,21 @@ def _train_variant(
         for cell in active:
             probability = probabilities[id(cell)].cpu().numpy()
             score = float(multilabel_metrics(val_y, probability)["macro_auroc"])
-            loss_value = float(torch.stack(epoch_losses[id(cell)]).mean().cpu())
+            loss_total_val = float(torch.stack(epoch_losses[id(cell)]).mean().cpu())
+            loss_bce_val = float(torch.stack(epoch_bce[id(cell)]).mean().cpu())
+            loss_mmd_val = float(torch.stack(epoch_mmd[id(cell)]).mean().cpu())
+            var_z_val = float(np.mean(epoch_var_z[id(cell)]))
             history = cell["history"]
             assert isinstance(history, list)
-            history.append({"epoch": epoch, "loss": loss_value, "val_macro_auroc": score})
+            history.append({
+                "epoch": epoch,
+                "loss_total": loss_total_val,
+                "loss_bce": loss_bce_val,
+                "loss_mmd": loss_mmd_val,
+                "weighted_mmd": mmd_lambda * loss_mmd_val,
+                "var_z": var_z_val,
+                "val_macro_auroc": score,
+            })
             if score > float(cell["best_score"]) + 1e-6:
                 model = cell["model"]
                 assert isinstance(model, nn.Module)
@@ -213,6 +307,7 @@ def _train_variant(
                         ecg_ids=ecg_ids,
                         patient_ids=patient_ids,
                         peak_vram_bytes=int(torch.cuda.max_memory_allocated()),
+                        mmd_lambda=mmd_lambda,
                     )
                     cell["saved"] = True
         print(
@@ -235,12 +330,13 @@ def _train_variant(
         _save_cell(
             cell,
             variant=variant,
-                        training_regime=training_regime,
+            training_regime=training_regime,
             seed=seed,
             val_y=val_y,
             ecg_ids=ecg_ids,
             patient_ids=patient_ids,
             peak_vram_bytes=peak_vram_bytes,
+            mmd_lambda=mmd_lambda,
         )
 
 
@@ -254,6 +350,8 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--variant", type=str, required=True)
     parser.add_argument("--training-regime", type=str, default="full_only", choices=["full_only"])
+    parser.add_argument("--mmd-lambda", type=float, default=1.0)
+    parser.add_argument("--mmd-c2", type=float, default=1.0)
 
     args = parser.parse_args()
 
@@ -273,13 +371,29 @@ def main() -> None:
         raise ValueError(f"Variant {args.variant} not found.")
     variant_obj = variant_registry[args.variant]
     
+    if "lambda_" in args.variant:
+        args.mmd_lambda = float(args.variant.split("lambda_")[1])
+    elif not variant_obj.use_mmd:
+        args.mmd_lambda = 0.0
+    
     rep_key = variant_obj.representation if variant_obj.representation != "full" else REPRESENTATION_VARIANTS[0]
     if rep_key not in train:
         rep_key = REPRESENTATION_VARIANTS[0]
         
     train_x = torch.from_numpy(train[rep_key]).cuda()
     val_x = torch.from_numpy(validation[rep_key]).cuda()
-    
+
+    train_env = None
+    for env_key in ("environment", "environments", "device"):
+        if env_key in train:
+            train_env = torch.from_numpy(train[env_key]).long().cuda()
+            break
+
+    if variant_obj.use_mmd and train_env is None:
+        raise RuntimeError(
+            "Paper 14 MMD training requested, but no 'environment' found in training representations."
+        )
+
     _train_variant(
         variant_obj=variant_obj,
         variant=args.variant,
@@ -287,6 +401,7 @@ def main() -> None:
         variant_index=0,
         train_x=train_x,
         train_y=train_y,
+        train_env=train_env,
         val_x=val_x,
         val_y=val_y,
         ecg_ids=validation["ecg_ids"],
@@ -296,6 +411,8 @@ def main() -> None:
         max_epochs=args.max_epochs,
         patience=args.patience,
         seed=args.seed,
+        mmd_lambda=args.mmd_lambda,
+        mmd_c2=args.mmd_c2,
     )
     del train_x, val_x
     torch.cuda.empty_cache()

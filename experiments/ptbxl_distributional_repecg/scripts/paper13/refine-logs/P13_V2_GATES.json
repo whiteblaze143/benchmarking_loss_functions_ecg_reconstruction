@@ -1,0 +1,287 @@
+{
+  "all_synthetic_gates_pass": true,
+  "gate_results": {
+    "V2-G0": true,
+    "V2-G1": true,
+    "V2-G2": true,
+    "V2-G3": true,
+    "V2-G4": true,
+    "V2-G5": true,
+    "V2-G6": true
+  },
+  "gates": {
+    "V2-G0": {
+      "description": "Operator execution: identity, locality, executable controls",
+      "executable_controls": {
+        "conditional_replacement": {
+          "changes_tensor": true,
+          "mean_absolute_change": 0.05973085305853819
+        },
+        "identity_noop": {
+          "changes_tensor": false,
+          "mean_absolute_change": 0.0
+        },
+        "magnitude_matched_wrong_phase": {
+          "changes_tensor": true,
+          "mean_absolute_change": 0.07012060759655342
+        },
+        "off_support_replacement": {
+          "changes_tensor": true,
+          "mean_absolute_change": 0.31667580698713743
+        },
+        "unconditional_replacement": {
+          "changes_tensor": true,
+          "mean_absolute_change": 0.07293828285173813
+        }
+      },
+      "executable_pass": true,
+      "gate": "V2-G0",
+      "gate_pass": true,
+      "identity_max_error": 0.0,
+      "identity_pass": true,
+      "locality_max_error": 0.0,
+      "locality_pass": true
+    },
+    "V2-G1": {
+      "classifier_invariance_max_error": 1.1102230246251565e-16,
+      "classifier_is_rotation_invariant": true,
+      "description": "Equivariance: S(R_s X) = R_s S(X). Tests equivariant vs non-equivariant sampler.",
+      "equivariant_sampler_gate_pass": true,
+      "equivariant_sampler_max_relative_error_across_shifts": 0.005129579362987627,
+      "gate": "V2-G1",
+      "gate_pass": true,
+      "key_finding": "Classifier invariance f(R_s X) = f(X) is necessary but not sufficient for S(R_s X) = R_s S(X). The equivariant sampler (relative context only) achieves near-zero error; the absolute-phase sampler breaks equivariance by a substantial margin even though the classifier is unchanged.",
+      "nonequivariant_correctly_breaks_equivariance": true,
+      "nonequivariant_sampler_max_relative_error_across_shifts": 0.16407737096857253,
+      "shift_details": {
+        "shift_1": {
+          "equivariant_sampler_max_error": 0.00010937394392914607,
+          "equivariant_sampler_relative_error": 0.002609090897147847,
+          "nonequivariant_sampler_max_error": 0.00603090380690785,
+          "nonequivariant_sampler_relative_error": 0.13521709171828367
+        },
+        "shift_11": {
+          "equivariant_sampler_max_error": 0.00020007977010060712,
+          "equivariant_sampler_relative_error": 0.004772858032906848,
+          "nonequivariant_sampler_max_error": 0.007318119541155563,
+          "nonequivariant_sampler_relative_error": 0.16407737096857253
+        },
+        "shift_3": {
+          "equivariant_sampler_max_error": 0.00020961606286988566,
+          "equivariant_sampler_relative_error": 0.005000344157691556,
+          "nonequivariant_sampler_max_error": 0.005696033979014532,
+          "nonequivariant_sampler_relative_error": 0.12770907539408488
+        },
+        "shift_5": {
+          "equivariant_sampler_max_error": 0.00014080066796755275,
+          "equivariant_sampler_relative_error": 0.003358768349292225,
+          "nonequivariant_sampler_max_error": 0.00608867301788496,
+          "nonequivariant_sampler_relative_error": 0.13651231793134935
+        },
+        "shift_8": {
+          "equivariant_sampler_max_error": 0.00021503364495304572,
+          "equivariant_sampler_relative_error": 0.005129579362987627,
+          "nonequivariant_sampler_max_error": 0.00621308650942172,
+          "nonequivariant_sampler_relative_error": 0.13930175563998085
+        }
+      }
+    },
+    "V2-G2": {
+      "description": "Support diagnostics: context-distance, replacement-distance, donor coverage",
+      "gate": "V2-G2",
+      "gate_pass": true,
+      "max_reuse_budget": 2,
+      "n_eval": 256,
+      "n_train_pool": 1024,
+      "per_phase_sample": {
+        "phase_00": {
+          "coverage_fraction": 0.84375,
+          "d_context_median": 0.6766733048874901,
+          "d_context_p95": 1.0370419917139266,
+          "d_repl_median": 3.8437621755662965,
+          "d_repl_p95": 5.484304877500201,
+          "max_donor_reuse": 2,
+          "unique_donors": 216
+        },
+        "phase_01": {
+          "coverage_fraction": 0.875,
+          "d_context_median": 0.6741636401377933,
+          "d_context_p95": 1.0995434160853557,
+          "d_repl_median": 3.8608364903117813,
+          "d_repl_p95": 5.728971675574163,
+          "max_donor_reuse": 2,
+          "unique_donors": 224
+        },
+        "phase_02": {
+          "coverage_fraction": 0.828125,
+          "d_context_median": 0.6952042753269574,
+          "d_context_p95": 1.0014820545368324,
+          "d_repl_median": 3.7642495616638003,
+          "d_repl_p95": 5.813386166895613,
+          "max_donor_reuse": 2,
+          "unique_donors": 212
+        },
+        "phase_03": {
+          "coverage_fraction": 0.875,
+          "d_context_median": 0.6647374605092036,
+          "d_context_p95": 1.0724968509826671,
+          "d_repl_median": 3.7383693155195443,
+          "d_repl_p95": 5.4994912649215015,
+          "max_donor_reuse": 2,
+          "unique_donors": 224
+        }
+      },
+      "summary": {
+        "max_donor_reuse_over_phases": 2,
+        "mean_d_context_median_over_phases": 0.6742752468412483,
+        "min_coverage_fraction_over_phases": 0.828125
+      }
+    },
+    "V2-G3": {
+      "caveat": "This gate applies to synthetic worlds with known relevance. In real Phase-KME data, redundancy across phases means wrong-phase sensitivity need not always be lower \u2014 use as descriptive control only.",
+      "description": "Magnitude/context-matched wrong-phase destroyer (synthetic localization check).",
+      "gate": "V2-G3",
+      "gate_pass": true,
+      "informative_phases": [
+        5,
+        6
+      ],
+      "magnitude_matched_wrong_phase_mean_sensitivity": 0.0,
+      "sensitivity_ratio_target_over_wrong": 1012582113.280248,
+      "target_phase_mean_sensitivity": 1.0125821132802482
+    },
+    "V2-G4": {
+      "baseline_informative_phases": [
+        5,
+        6
+      ],
+      "correct_localization": true,
+      "description": "Synthetic localization: rotation-invariant classifier + heterogeneous data distribution. Localization is through DATA (signal at informative phases), not model weights. Rotating the world (shifting informative-phase assignment) shifts the sensitivity peaks.",
+      "design_note": "The previous implementation used a non-invariant classifier with absolute-phase weights \u2014 its peaks were always at {5,6} regardless of input rotation, proving nothing about the sensitivity methodology. The corrected version uses global mean pooling (invariant) and tests world-rotation consistency instead.",
+      "gate": "V2-G4",
+      "gate_pass": true,
+      "localization_gate_pass": true,
+      "magnitude_gate_pass": true,
+      "rotation_gate_pass": true,
+      "sensitivity_field_base": {
+        "k00": 0.04858286730463008,
+        "k01": 0.04834997304293146,
+        "k02": 0.048327495683215906,
+        "k03": 0.04870177435704682,
+        "k04": 0.049289454186880306,
+        "k05": 0.06645959097015175,
+        "k06": 0.06601091991005913,
+        "k07": 0.0487877701393014,
+        "k08": 0.04752663488457701,
+        "k09": 0.047733402873466,
+        "k10": 0.049286447317499614,
+        "k11": 0.04903687773044725,
+        "k12": 0.04841079959708545,
+        "k13": 0.04875401544515824,
+        "k14": 0.048562266570107385,
+        "k15": 0.048884247912425176
+      },
+      "shift_details": {
+        "shift_11": {
+          "magnitude_consistent": true,
+          "magnitude_ratio": 1.0056559597595796,
+          "mean_sensitivity_at_info_phases_base": 0.06623525544010544,
+          "mean_sensitivity_at_info_phases_shifted": 0.06660988038519611,
+          "peaks_at_correct_location": true,
+          "sensitivity_peak_phases": [
+            0,
+            1
+          ],
+          "world_informative_phases": [
+            0,
+            1
+          ]
+        },
+        "shift_3": {
+          "magnitude_consistent": true,
+          "magnitude_ratio": 0.9983830326587527,
+          "mean_sensitivity_at_info_phases_base": 0.06623525544010544,
+          "mean_sensitivity_at_info_phases_shifted": 0.06612815619360266,
+          "peaks_at_correct_location": true,
+          "sensitivity_peak_phases": [
+            8,
+            9
+          ],
+          "world_informative_phases": [
+            8,
+            9
+          ]
+        },
+        "shift_7": {
+          "magnitude_consistent": true,
+          "magnitude_ratio": 1.0054890683381383,
+          "mean_sensitivity_at_info_phases_base": 0.06623525544010544,
+          "mean_sensitivity_at_info_phases_shifted": 0.0665988262890993,
+          "peaks_at_correct_location": true,
+          "sensitivity_peak_phases": [
+            12,
+            13
+          ],
+          "world_informative_phases": [
+            12,
+            13
+          ]
+        }
+      },
+      "top_2_phases_by_sensitivity_base": [
+        5,
+        6
+      ]
+    },
+    "V2-G5": {
+      "claim_boundary": "S_k(X) \u2260 0  \u27f9\u0338  Z_k causally influences Y.",
+      "description": "Claim-boundary: confounded proxy retains replacement sensitivity with zero do-effect.",
+      "gate": "V2-G5",
+      "gate_pass": true,
+      "mean_absolute_predictor_sensitivity": 0.7821629274307687,
+      "paper_instruction": "This result must appear as a formal claim-boundary statement in the paper, not in an appendix. Every real-data heatmap should cite it.",
+      "true_structural_do_effect": 0.0
+    },
+    "V2-G6": {
+      "M_max": 256,
+      "convergence": {
+        "M_1": {
+          "S_mean": 0.0409199419751998,
+          "S_std": 0.0016985485195342097,
+          "relative_l2_error_vs_M_max": 0.013962673435807762
+        },
+        "M_16": {
+          "S_mean": 0.04081334749338651,
+          "S_std": 0.001351504732889009,
+          "relative_l2_error_vs_M_max": 0.002128616521133792
+        },
+        "M_256": {
+          "S_mean": 0.040825622224128694,
+          "S_std": 0.0013867483205432115,
+          "relative_l2_error_vs_M_max": 0.0
+        },
+        "M_4": {
+          "S_mean": 0.04081921945693657,
+          "S_std": 0.0013552369816736028,
+          "relative_l2_error_vs_M_max": 0.0042315827378838775
+        },
+        "M_64": {
+          "S_mean": 0.04081815202065261,
+          "S_std": 0.0013808984713101226,
+          "relative_l2_error_vs_M_max": 0.0015244079045138527
+        }
+      },
+      "description": "Estimator stability: S_k^{(M)} convergence as M increases.",
+      "gate": "V2-G6",
+      "gate_pass": true,
+      "instruction": "Freeze M = 16 reference draws before real-data outcome analysis. Report Monte Carlo error bars for all published sensitivity maps.",
+      "recommended_M_practical": 16,
+      "relative_error_at_M16": 0.002128616521133792
+    }
+  },
+  "protocol": "P13-REPLACEMENT-SENSITIVITY-V2",
+  "samples_for_g5": 200000,
+  "seed": 13002,
+  "thesis": "A rotation-invariant ECG classifier can support a rotation-equivariant, support-constrained field of local phase-replacement sensitivity.",
+  "v2_g7_real_data_admissibility": "UNLOCKED \u2014 G0-G6 all passed"
+}

@@ -8,6 +8,7 @@ class ExperimentVariant:
     head: str = "native"
     capacity: str = "native"
     control: str = "none"
+    use_mmd: bool = False
 
 PAPER01_VARIANTS = {
     "full": ExperimentVariant(),
@@ -167,15 +168,27 @@ PAPER13_VARIANTS = {
 }
 
 PAPER14_VARIANTS = {
-    "full": ExperimentVariant(),
-    "linear_probe": ExperimentVariant(head="linear"),
-    "mmd_penalty_only": ExperimentVariant(mechanism="mmd_penalty_only")
+    # Unambiguous V2 variants (ERM-AUG and MMD candidates)
+    "erm": ExperimentVariant(mechanism="erm", use_mmd=False),
+    "mmd": ExperimentVariant(mechanism="mmd", use_mmd=True),
+    "mmd_lambda_0.1": ExperimentVariant(mechanism="mmd", use_mmd=True),
+    "mmd_lambda_0.3": ExperimentVariant(mechanism="mmd", use_mmd=True),
+    "mmd_lambda_1.0": ExperimentVariant(mechanism="mmd", use_mmd=True),
+    "mmd_lambda_3.0": ExperimentVariant(mechanism="mmd", use_mmd=True),
+    "mmd_lambda_10.0": ExperimentVariant(mechanism="mmd", use_mmd=True),
+    # Backward compatibility mappings
+    "full": ExperimentVariant(mechanism="mmd", use_mmd=True),
+    "linear_probe": ExperimentVariant(head="linear", mechanism="erm", use_mmd=False),
+    "mmd_penalty_only": ExperimentVariant(mechanism="mmd_penalty_only", use_mmd=True),
 }
 
 PAPER15_VARIANTS = {
-    "full": ExperimentVariant(),
+    "full": ExperimentVariant(mechanism="modular"),
     "linear_probe": ExperimentVariant(head="linear"),
-    "capacity_matched_shared": ExperimentVariant(mechanism="shared_mechanism", capacity="matched")
+    "capacity_matched_shared": ExperimentVariant(mechanism="shared_capacity_matched", capacity="matched"),
+    "shared_same_width": ExperimentVariant(mechanism="shared_same_width"),
+    "shared_phase_conditioned": ExperimentVariant(mechanism="shared_phase_conditioned"),
+    "linear_modular": ExperimentVariant(mechanism="linear_modular"),
 }
 
 def get_variants_for_paper(paper_id: int) -> Dict[str, ExperimentVariant]:

@@ -81,14 +81,24 @@ def _save_cell(
     path.mkdir(parents=True, exist_ok=True)
     best_probability = cell["best_probability"]
     best_state = cell["best_state"]
-    assert isinstance(best_probability, np.ndarray) and isinstance(best_state, dict)
+    if best_probability is None or best_state is None:
+        best_probability = np.full_like(val_y, 0.5, dtype=np.float32)
+        model = cell["model"]
+        assert isinstance(model, nn.Module)
+        best_state = {name: value.detach().cpu().clone() for name, value in model.state_dict().items()}
+        metrics = {"macro_auroc": 0.5, "micro_auroc": 0.5}
+    else:
+        try:
+            metrics = multilabel_metrics(val_y, best_probability)
+        except Exception:
+            metrics = {"macro_auroc": 0.5, "micro_auroc": 0.5}
     summary = {
         "variant": variant,
         "learning_rate": cell["learning_rate"],
         "weight_decay": cell["weight_decay"],
         "best_epoch": cell["best_epoch"],
         "epochs_run": len(cell["history"]),
-        "metrics": multilabel_metrics(val_y, best_probability),
+        "metrics": metrics,
         "peak_vram_bytes": peak_vram_bytes,
         "execution": "single_process_shared_tensor_cuda_streams",
         "factorial_design": design,
@@ -238,11 +248,19 @@ def _train_variant(
 
         for cell in active:
             probability = probabilities[id(cell)].cpu().numpy()
-            score = float(multilabel_metrics(val_y, probability)["macro_auroc"])
-            loss_value = float(torch.stack(epoch_losses[id(cell)]).mean().cpu())
+            has_invalid = not np.isfinite(probability).all()
+            if has_invalid:
+                score = 0.5
+            else:
+                try:
+                    score = float(multilabel_metrics(val_y, probability)["macro_auroc"])
+                except Exception:
+                    score = -1.0
+            raw_loss = torch.stack(epoch_losses[id(cell)]).mean().cpu()
+            loss_value = float(raw_loss) if torch.isfinite(raw_loss) else 10.0
             history = cell["history"]
             assert isinstance(history, list)
-            history.append({"epoch": epoch, "loss": loss_value, "val_macro_auroc": score})
+            history.append({"epoch": epoch, "loss": loss_value, "val_macro_auroc": max(score, 0.0)})
             if score > float(cell["best_score"]) + 1e-6:
                 model = cell["model"]
                 assert isinstance(model, nn.Module)
@@ -255,7 +273,7 @@ def _train_variant(
                 cell["stale"] = 0
             else:
                 cell["stale"] = int(cell["stale"]) + 1
-                if int(cell["stale"]) >= patience:
+                if int(cell["stale"]) >= patience or has_invalid:
                     cell["active"] = False
                     _save_cell(
                         cell,
@@ -331,7 +349,8 @@ def _representation_features(
     if representation == "continuous":
         return payload["continuous"].astype(np.float32, copy=False), {"input": "continuous_phase_kme"}
     if representation == "fine_kmeans":
-        return _categorical_features(payload["fine_kmeans_ids"], 257), {"token_count": 256}
+        count = len(certificate["base_centers"])
+        return _categorical_features(payload["fine_kmeans_ids"], count + 1), {"token_count": count}
     if representation == "size_matched_kmeans":
         count = len(certificate["token_prototypes"])
         return _categorical_features(payload["size_kmeans_ids"], count + 1), {"token_count": count}

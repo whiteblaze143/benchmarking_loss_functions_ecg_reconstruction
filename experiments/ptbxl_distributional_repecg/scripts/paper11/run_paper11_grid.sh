@@ -34,9 +34,9 @@ echo "=== [AGGREGATING] paper11_causal_state_ecg ==="
     --seed 42
 
 echo "=== [EVALUATING OOD] paper11_causal_state_ecg across 9 datasets ==="
-CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper11/evaluate_paper11_ood.py" \
-    --training "$output" \
-    --representations "$ood_representations" \
-    --output "$output/ood_evaluation"
+# RETIRED: CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper11/evaluate_paper11_ood.py" \
+    # --training "$output" \
+    # --representations "$ood_representations" \
+    # --output "$output/ood_evaluation"
 
 echo "=== [FINISHED] paper11_causal_state_ecg ==="

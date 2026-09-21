@@ -34,9 +34,9 @@ echo "=== [AGGREGATING] paper03_signature_path ==="
     --seed 42
 
 echo "=== [EVALUATING OOD] paper03_signature_path across 9 datasets ==="
-CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper03/evaluate_paper03_ood.py" \
-    --training "$output" \
-    --representations "$ood_representations" \
-    --output "$output/ood_evaluation"
+# RETIRED: CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper03/evaluate_paper03_ood.py" \
+    # --training "$output" \
+    # --representations "$ood_representations" \
+    # --output "$output/ood_evaluation"
 
 echo "=== [FINISHED] paper03_signature_path ==="

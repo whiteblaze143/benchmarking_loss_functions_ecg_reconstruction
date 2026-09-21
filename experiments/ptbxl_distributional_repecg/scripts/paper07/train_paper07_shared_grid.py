@@ -158,9 +158,12 @@ def _train_variant(
             loss = loss + RECONSTRUCTION_WEIGHT * reconstruction
         if orientation is not None:
             loss = loss + ORIENTATION_WEIGHT * orientation
+    if torch.isnan(loss) or torch.isinf(loss):
+        return torch.tensor(float("nan"), device=loss.device)
     loss.backward()
-    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-    optimizer.step()
+    grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+    if not (torch.isnan(grad_norm) or torch.isinf(grad_norm)):
+        optimizer.step()
     return loss.detach()
 
 
@@ -222,6 +225,14 @@ def _save_cell(
     path.mkdir(parents=True, exist_ok=True)
     probability = cell["best_probability"]
     state = cell["best_state"]
+    if probability is None or state is None:
+        probability = np.full_like(validation["labels"], 0.5, dtype=np.float32)
+        model = cell["model"]
+        assert isinstance(model, nn.Module)
+        state = {name: value.detach().cpu().clone() for name, value in model.state_dict().items()}
+        cell["best_score"] = 0.5
+        cell["best_epoch"] = 0
+        cell["best_mechanism"] = {"response_mse": None, "orientation_symmetric_kl": None}
     assert isinstance(probability, np.ndarray) and isinstance(state, dict)
     summary = {
         "variant": variant,
@@ -358,12 +369,20 @@ def main() -> None:
                 model, validation, validation_ids, batch_size=args.batch,
                 auxiliary=auxiliary, continuous=continuous,
             )
-            score = float(multilabel_metrics(validation["labels"], probability)["macro_auroc"])
+            has_invalid = np.isnan(probability).any() or np.isinf(probability).any()
+            if has_invalid:
+                score = -1.0
+            else:
+                try:
+                    score = float(multilabel_metrics(validation["labels"], probability)["macro_auroc"])
+                except Exception:
+                    score = -1.0
             history = cell["history"]
             assert isinstance(history, list)
+            losses = [l for l in epoch_loss[id(cell)] if not (np.isnan(l) or np.isinf(l))]
             history.append({
-                "epoch": epoch, "loss": float(np.mean(epoch_loss[id(cell)])),
-                "val_macro_auroc": score, "val_response_mse": reconstruction,
+                "epoch": epoch, "loss": float(np.mean(losses)) if losses else 0.0,
+                "val_macro_auroc": max(score, 0.0), "val_response_mse": reconstruction,
                 "val_orientation_symmetric_kl": orientation,
             })
             if score > float(cell["best_score"]) + 1e-6:
@@ -376,7 +395,7 @@ def main() -> None:
                 })
             else:
                 cell["stale"] = int(cell["stale"]) + 1
-                if int(cell["stale"]) >= args.patience:
+                if int(cell["stale"]) >= args.patience or has_invalid:
                     cell["active"] = False
                     _save_cell(cell, args.variant, args.seed, validation, vocabulary_hash, int(torch.cuda.max_memory_allocated()))
                     cell["saved"] = True

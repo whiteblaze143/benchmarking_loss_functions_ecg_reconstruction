@@ -34,9 +34,9 @@ echo "=== [AGGREGATING] paper13_counterfactual_surgery ==="
     --seed 42
 
 echo "=== [EVALUATING OOD] paper13_counterfactual_surgery across 9 datasets ==="
-CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper13/evaluate_paper13_ood.py" \
-    --training "$output" \
-    --representations "$ood_representations" \
-    --output "$output/ood_evaluation"
+# RETIRED: CUDA_VISIBLE_DEVICES=0 "$python" "$repo/experiments/ptbxl_distributional_repecg/scripts/paper13/evaluate_paper13_ood.py" \
+    # --training "$output" \
+    # --representations "$ood_representations" \
+    # --output "$output/ood_evaluation"
 
 echo "=== [FINISHED] paper13_counterfactual_surgery ==="

@@ -48,6 +48,8 @@ def _save_cell(
     ecg_ids: np.ndarray,
     patient_ids: np.ndarray,
     peak_vram_bytes: int,
+    val_x: torch.Tensor | None = None,
+    train_x: torch.Tensor | None = None,
 ) -> None:
     path = cell["path"]
     assert isinstance(path, Path)
@@ -55,13 +57,43 @@ def _save_cell(
     best_probability = cell["best_probability"]
     best_state = cell["best_state"]
     assert isinstance(best_probability, np.ndarray) and isinstance(best_state, dict)
+    
+    transition_eval: dict[str, float] = {}
+    model = cell.get("model")
+    if isinstance(model, nn.Module) and val_x is not None:
+        with torch.inference_mode():
+            current_state = {k: v.cpu().clone() for k, v in model.state_dict().items()}
+            model.load_state_dict(best_state)
+            model.eval()
+            val_z = model.encode_states(val_x)
+            val_zp = model.predict_transitions(val_z)
+            val_l_trans = float(model.compute_transition_loss(val_z, val_zp).cpu())
+            val_zp_perm = model.evaluate_permuted_transitions(val_z)
+            val_l_perm = float(model.compute_transition_loss(val_z, val_zp_perm).cpu())
+            id_mse = float(CausalMechanismFactorizationModel.evaluate_identity_baseline(val_z))
+            transition_eval = {
+                "val_trans_loss_ordered": val_l_trans,
+                "val_trans_loss_permuted": val_l_perm,
+                "kill_ratio": val_l_perm / (val_l_trans + 1e-8),
+                "identity_baseline_mse": id_mse,
+            }
+            if train_x is not None:
+                train_z = model.encode_states(train_x[:2000])
+                mean_res_mse = float(CausalMechanismFactorizationModel.evaluate_mean_residual_baseline(train_z, val_z))
+                phase_mean_mse = float(CausalMechanismFactorizationModel.evaluate_phase_mean_baseline(train_z, val_z))
+                transition_eval["mean_residual_baseline_mse"] = mean_res_mse
+                transition_eval["phase_mean_baseline_mse"] = phase_mean_mse
+            model.load_state_dict(current_state)
+
     summary = {
         "variant": variant,
         "learning_rate": cell["learning_rate"],
         "weight_decay": cell["weight_decay"],
+        "lambda_trans": cell.get("lambda_trans", 1.0),
         "best_epoch": cell["best_epoch"],
         "epochs_run": len(cell["history"]),
         "metrics": multilabel_metrics(val_y, best_probability),
+        "transition_evaluation": transition_eval,
         "peak_vram_bytes": peak_vram_bytes,
         "execution": "single_process_shared_tensor_cuda_streams",
         "history": cell["history"],
@@ -98,6 +130,7 @@ def _train_variant(
     max_epochs: int,
     patience: int,
     seed: int,
+    lambda_trans: float = 1.0,
 ) -> None:
     run_seed = seed + variant_index * 100
     _seed(run_seed)
@@ -120,6 +153,7 @@ def _train_variant(
                     "path": path,
                     "learning_rate": learning_rate,
                     "weight_decay": weight_decay,
+                    "lambda_trans": lambda_trans,
                     "model": model,
                     "optimizer": optimizer,
                     "scheduler": torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs),
@@ -162,7 +196,15 @@ def _train_variant(
                 with torch.cuda.stream(stream):
                     optimizer.zero_grad(set_to_none=True)
                     with torch.autocast("cuda", dtype=torch.bfloat16):
-                        loss = loss_fn(model(train_x[index]), train_y[index])
+                        logits, z, z_pred = model.forward_with_transitions(train_x[index])
+                        trans = model.compute_transition_loss(z, z_pred)
+                        if training_regime == "label_free":
+                            loss = trans
+                        elif variant_obj.head == "linear" and variant != "linear_modular":
+                            loss = loss_fn(logits, train_y[index])
+                        else:
+                            bce = loss_fn(logits, train_y[index])
+                            loss = bce + lambda_trans * trans
                     loss.backward()
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                     optimizer.step()
@@ -213,6 +255,8 @@ def _train_variant(
                         ecg_ids=ecg_ids,
                         patient_ids=patient_ids,
                         peak_vram_bytes=int(torch.cuda.max_memory_allocated()),
+                        val_x=val_x,
+                        train_x=train_x,
                     )
                     cell["saved"] = True
         print(
@@ -235,12 +279,14 @@ def _train_variant(
         _save_cell(
             cell,
             variant=variant,
-                        training_regime=training_regime,
+            training_regime=training_regime,
             seed=seed,
             val_y=val_y,
             ecg_ids=ecg_ids,
             patient_ids=patient_ids,
             peak_vram_bytes=peak_vram_bytes,
+            val_x=val_x,
+            train_x=train_x,
         )
 
 
@@ -253,7 +299,8 @@ def main() -> None:
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--variant", type=str, required=True)
-    parser.add_argument("--training-regime", type=str, default="full_only", choices=["full_only"])
+    parser.add_argument("--training-regime", type=str, default="full_only", choices=["full_only", "label_free", "stagewise"])
+    parser.add_argument("--lambda-trans", type=float, default=1.0)
 
     args = parser.parse_args()
 
@@ -296,6 +343,7 @@ def main() -> None:
         max_epochs=args.max_epochs,
         patience=args.patience,
         seed=args.seed,
+        lambda_trans=args.lambda_trans,
     )
     del train_x, val_x
     torch.cuda.empty_cache()

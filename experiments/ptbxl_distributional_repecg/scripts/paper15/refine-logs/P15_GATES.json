@@ -1,0 +1,151 @@
+{
+  "kind": "paper15_modular_transition_dynamics_gate_report",
+  "version": "P15-V2",
+  "status": "PASS",
+  "summary": {
+    "total_gates": 8,
+    "passed_gates": 8,
+    "failed_gates": 0
+  },
+  "gates": [
+    {
+      "gate": "P15-G0",
+      "name": "State Grounding & Cyclic Ring Contract",
+      "passed": true,
+      "details": {
+        "shape_ok": true,
+        "z_pred_shape": [
+          16,
+          16,
+          32
+        ],
+        "isolation_ok": true,
+        "delta_target_phase": 0.7958004474639893,
+        "delta_unperturbed_phases": 0.0,
+        "ring_closure_15_to_0_ok": true,
+        "all_16_mechanisms_have_active_gradients": true,
+        "min_mechanism_grad_norm": 0.040540347108617425,
+        "max_mechanism_grad_norm": 0.0524248038418591
+      }
+    },
+    {
+      "gate": "P15-G1",
+      "name": "Transition Law Recovery",
+      "passed": true,
+      "details": {
+        "test_mse": 0.1137099489569664,
+        "target_variance": 1.000010371208191,
+        "r2_score": 0.8862912314774327,
+        "verdict": "Modular mechanisms recovered true phase transitions with R^2=0.8863 and MSE=0.1137."
+      }
+    },
+    {
+      "gate": "P15-G2",
+      "name": "Input-Distribution Autonomy (State-Shift Transfer vs Mechanism-Shift Failure)",
+      "passed": true,
+      "details": {
+        "source_loss_env_A": 0.11717630177736282,
+        "transfer_loss_env_B_state_shifted": 0.08953378349542618,
+        "transfer_ratio": 0.7640945694343242,
+        "failure_loss_env_C_mech_shifted": 0.8969846963882446,
+        "mech_shift_ratio": 7.655000253741834,
+        "verdict": "Autonomy confirmed: state shift transferred (ratio=0.76) while mechanism shift failed (ratio=7.66)."
+      }
+    },
+    {
+      "gate": "P15-G3",
+      "name": "Post-Training Frozen Permutation Kill Test",
+      "passed": true,
+      "details": {
+        "loss_ordered": 0.12024950236082077,
+        "loss_permuted": 0.6081618666648865,
+        "kill_ratio": 5.057499649894925,
+        "absolute_delta": 0.4879123643040657,
+        "verdict": "Kill Test PASSED: Frozen mechanism derangement degraded transition loss by 5.06x."
+      }
+    },
+    {
+      "gate": "P15-G4",
+      "name": "Strong Shared Controls Benchmark",
+      "passed": true,
+      "details": {
+        "test_losses": {
+          "modular": 0.12302610278129578,
+          "shared_phase_conditioned": 0.2550736367702484,
+          "shared_same_width": 0.30432480573654175,
+          "shared_capacity_matched": 0.30156630277633667
+        },
+        "parameter_counts": {
+          "modular": 10261,
+          "shared_phase_conditioned": 2357,
+          "shared_same_width": 2101,
+          "shared_capacity_matched": 10252
+        },
+        "capacity_matched_param_delta_pct": 0.08771074943962577,
+        "capacity_matched_ok": true,
+        "modular_beats_shared_agnostic": true,
+        "ratio_modular_to_shared_same_width": 0.4042592009006364,
+        "verdict": "Modular benchmarks verified against strong shared controls."
+      }
+    },
+    {
+      "gate": "P15-G5",
+      "name": "Cyclic Origin Invariance",
+      "passed": true,
+      "details": {
+        "losses_by_origin": {
+          "origin_0": 1.9305566549301147,
+          "origin_4": 1.9310246706008911,
+          "origin_8": 1.9299607276916504,
+          "origin_12": 1.9342401027679443
+        },
+        "max_relative_deviation": 0.0022156333004131465,
+        "verdict": "Cyclic topology confirmed: max deviation across origins is 0.22% (<10%)."
+      }
+    },
+    {
+      "gate": "P15-G6",
+      "name": "Information Preservation & Non-Collapse Audit",
+      "passed": true,
+      "details": {
+        "min_phase_variance": 0.9827283620834351,
+        "phase_variances": [
+          0.9901193976402283,
+          0.988705039024353,
+          0.9827283620834351,
+          0.9893513321876526,
+          0.9872415661811829,
+          0.9901136159896851,
+          0.9880197644233704,
+          0.9892871379852295,
+          0.9884244799613953,
+          0.9891067743301392,
+          0.9849531054496765,
+          0.9882165193557739,
+          0.987264096736908,
+          0.9896094799041748,
+          0.9892616868019104,
+          0.9886298179626465
+        ],
+        "effective_rank": 26.93425393734213,
+        "effective_rank_threshold": 8.0,
+        "verdict": "Non-collapse confirmed: effective rank = 26.93 >= 8.0, min variance = 0.9827."
+      }
+    },
+    {
+      "gate": "P15-G7",
+      "name": "Simple-Transition Baselines Benchmark",
+      "passed": true,
+      "details": {
+        "loss_modular_nonlinear": 0.0919652059674263,
+        "loss_identity": 7.475272178649902,
+        "loss_phase_mean": 24.645185470581055,
+        "loss_mean_residual": 6.2347092628479,
+        "loss_linear_modular": 0.10242139548063278,
+        "improvement_over_identity_pct": 98.76974103725496,
+        "improvement_over_linear_pct": 10.208989502768173,
+        "verdict": "Modular nonlinear mechanism beats Identity, Phase Mean, Mean Residual, and Linear baselines."
+      }
+    }
+  ]
+}

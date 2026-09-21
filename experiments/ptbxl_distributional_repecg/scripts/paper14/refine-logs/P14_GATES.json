@@ -1,0 +1,172 @@
+{
+  "all_synthetic_gates_pass": true,
+  "gates": {
+    "G0": {
+      "gate": "P14-G0",
+      "description": "Numerical MMD contract & synthetic finite-sample null calibration",
+      "mmd_identical": 0.0,
+      "mmd_shifted": 0.06649604439735413,
+      "symmetry_diff": 7.450580596923828e-09,
+      "grad_norm": 0.005704579874873161,
+      "single_env_fails_closed": true,
+      "synthetic_null_calibration": {
+        "Q50": 0.015104331076145172,
+        "Q90": 0.015443293005228042,
+        "Q95": 0.015485826134681701,
+        "Q99": 0.0155797129124403,
+        "note": "Distribution-dependent synthetic null; real-data null uses matched permutation"
+      },
+      "gate_pass": true
+    },
+    "G1": {
+      "gate": "P14-G1",
+      "description": "Positive alignment world with environment probe",
+      "mmd_erm": 0.0016962289810180664,
+      "mmd_aligned": 0.0010458827018737793,
+      "auc_y_erm": 1.0,
+      "auc_y_aligned": 1.0,
+      "auc_e_erm": 0.7650750279426575,
+      "auc_e_aligned": 0.5382500290870667,
+      "var_aligned": 0.9850891828536987,
+      "gate_pass": true
+    },
+    "G2": {
+      "gate": "P14-G2",
+      "description": "Claim-boundary PASS: matched marginal distributions blind MMD to mechanism reversal",
+      "mmd_marginal": 0.00048100948333740234,
+      "corr_env0": 0.9950346350669861,
+      "corr_env1": -0.9952271580696106,
+      "claim_boundary_respected": true,
+      "gate_pass": true
+    },
+    "G3": {
+      "gate": "P14-G3",
+      "description": "Collapse world & representation geometry audit",
+      "final_var_mmd_only": 0.0029428419657051563,
+      "eff_rank_mmd_only": 1.0000005960464478,
+      "final_var_joint": 0.9998981952667236,
+      "eff_rank_joint": 1.012284278869629,
+      "mean_norm_joint": 1.9983110427856445,
+      "acc_joint": 1.0,
+      "gate_pass": true
+    },
+    "G4": {
+      "gate": "P14-G4",
+      "description": "Objective execution: nonzero gradient contrast between ERM and MMD",
+      "grad_diff": 4.727203845977783,
+      "gate_pass": true
+    },
+    "G5": {
+      "gate": "P14-G5",
+      "description": "Scale escape audit: proves norm inflation drives unconstrained MMD to diagonal floor 1/n+1/m",
+      "diagonal_floor": 0.02,
+      "unconstrained_mmd_by_scale": {
+        "0.1": 0.09998583793640137,
+        "1.0": 0.06284140795469284,
+        "10.0": 0.020510125905275345,
+        "100.0": 0.0199350044131279,
+        "1000.0": 0.017810050398111343
+      },
+      "layernorm_mmd_by_scale": {
+        "1.0": 0.01820552349090576,
+        "10.0": 0.01820552349090576,
+        "100.0": 0.018205538392066956
+      },
+      "scale_escape_to_floor_demonstrated": true,
+      "layernorm_eliminates_escape": true,
+      "gate_pass": true
+    },
+    "G5b": {
+      "gate": "P14-G5b",
+      "description": "Trainable-normalizer escape audit: elementwise_affine=False contract & scale/shift invariance",
+      "num_norm_parameters": 0,
+      "has_no_affine": true,
+      "scale_shift_invariant_across_grid": true,
+      "post_train_norm_parameters": 0,
+      "gate_pass": true
+    },
+    "G6": {
+      "gate": "P14-G6",
+      "description": "Claim-boundary PASS: marginal MMD penalizes unequal label mixtures without domain nuisance",
+      "mmd_label_shift": 0.9801368713378906,
+      "p_y1_env0": 0.9,
+      "p_y1_env1": 0.1,
+      "claim_boundary_respected": true,
+      "gate_pass": true
+    },
+    "G7": {
+      "gate": "P14-G7",
+      "description": "Environment provenance & label balance audit (controlled acquisition bank)",
+      "environment_bank": {
+        "clean": "Reference raw ECG waveform",
+        "gain_0.8": "Acquisition amplitude scaling 0.8x",
+        "gain_1.2": "Acquisition amplitude scaling 1.2x",
+        "noise_20db": "Additive sensor noise (20 dB SNR)",
+        "resample_250hz": "Bandwidth downsample/upsample 500->250->500 Hz"
+      },
+      "label_preserving_invariant": true,
+      "delta_y_max": 0.0,
+      "claim_scope": "acquisition-perturbation representation alignment (patient and label fixed)",
+      "disclaimed_scopes": [
+        "hospital generalization",
+        "cross-dataset domain generalization",
+        "causal invariant mechanism discovery"
+      ],
+      "gate_pass": true
+    },
+    "G7b": {
+      "gate": "P14-G7b",
+      "description": "Intervention-survival audit across preprocessing and encoding pipeline",
+      "survival_metrics": {
+        "gain_0.8": {
+          "d_raw": 0.19999997317790985,
+          "d_pre": 0.20026224851608276,
+          "d_input": 0.1260453313589096,
+          "survived": true
+        },
+        "gain_1.2": {
+          "d_raw": 0.20000003278255463,
+          "d_pre": 0.20026230812072754,
+          "d_input": 0.10344723612070084,
+          "survived": true
+        },
+        "noise_20db": {
+          "d_raw": 0.10004427284002304,
+          "d_pre": 0.10052338242530823,
+          "d_input": 0.06189601123332977,
+          "survived": true
+        },
+        "resample_250hz": {
+          "d_raw": 0.7405948638916016,
+          "d_pre": 0.7422896027565002,
+          "d_input": 0.2827945053577423,
+          "survived": true
+        }
+      },
+      "all_interventions_survived": true,
+      "gate_pass": true
+    },
+    "G8": {
+      "gate": "P14-G8",
+      "description": "Representation geometry contract & comparative relative-rank triad audit",
+      "rep_dim": 32,
+      "max_rank_d_minus_1": 31,
+      "var_z": 0.5836264491081238,
+      "mean_norm": 5.656840801239014,
+      "eff_rank_erm": 1.0010546445846558,
+      "eff_rank_mmd": 4.153995037078857,
+      "r_rel_erm": 0.03229208530918244,
+      "r_rel_mmd": 0.1339998399057696,
+      "triad": {
+        "mmd_erm": 1.678451418876648,
+        "mmd_aligned": 0.010330483317375183,
+        "auc_e_erm": 1.0,
+        "auc_e_aligned": 0.8392000198364258,
+        "r_rel_mmd": 0.1339998399057696,
+        "triad_valid": true
+      },
+      "geometry_interpretation": "exceeding the frozen minimum geometry threshold while indicating a substantially compressed representation",
+      "gate_pass": true
+    }
+  }
+}

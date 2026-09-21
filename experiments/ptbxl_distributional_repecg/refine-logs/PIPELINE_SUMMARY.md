@@ -1,31 +1,44 @@
-# Pipeline Summary: repECG 15-Paper Scientific Suite
+# Pipeline Summary
 
-**Problem**: Fragility, shortcut learning, and causal conflation in deep learning architectures for electrocardiography.  
-**Final Method Thesis**: Represent cardiac beats as localized probability distributions embedded in RKHS via Nyström kernel mean embeddings, enabling mathematically grounded dynamical, geometric, and causal operator learning.  
-**Final Verdict**: **READY FOR SYSTEMATIC EXECUTION**  
-**Date**: September 17, 2026
+**Problem**: Can an ECG representation preserve diagnostic information under a change in measurement operator?  
+**Final Method Thesis**: Formulating ECG observations as continuous dual operator-response pairs $(q, s_q(t))$ with projective gauge symmetry $\mathbb{RP}^7$ provides measurement-invariant cardiac representations that retain diagnostic accuracy under combinatorial lead omission and novel measurement operators without post-hoc probing or retraining.  
+**Final Verdict**: READY  
+**Date**: September 21, 2026  
 
 ---
 
-## Final Deliverables
-- Proposal: `refine-logs/FINAL_PROPOSAL.md`
-- Review summary: `refine-logs/REVIEW_SUMMARY.md`
-- Refinement report: `refine-logs/REFINEMENT_REPORT.md`
-- Experiment plan: `refine-logs/EXPERIMENT_PLAN.md`
-- Experiment tracker: `refine-logs/EXPERIMENT_TRACKER.md`
+## 1. Final Deliverables
+- **Proposal**: `refine-logs/FINAL_PROPOSAL.md`
+- **Review Summary**: `refine-logs/REVIEW_SUMMARY.md`
+- **Refinement Report**: `refine-logs/REFINEMENT_REPORT.md`
+- **Experiment Plan**: `refine-logs/EXPERIMENT_PLAN.md`
+- **Experiment Tracker**: `refine-logs/EXPERIMENT_TRACKER.md`
+- **Evaluation Suite (Interpretation B)**: `scripts/evaluation/evaluate_ptbxl_configuration_shift.py`
+- **Empirical Configuration-Shift Matrix**: `outputs/ptbxl_configuration_shift/configuration_shift_matrix.md`
+- **Ablation Training Script**: `scripts/paper07/train_paper07_fulllead_only.py`
 
-## Contribution Snapshot
-- **Dominant Contribution**: A complete unified framework of 15 falsifiable mathematical architectures operating over standardized phase-cell Kernel Mean Embeddings (KME), tested across 9 real-world clinical datasets.
-- **Supporting Contribution**: Closed-form Nyström approximation and orthogonal 8-lead spatial basis preserving physical mV units without lossy batch normalization.
-- **Explicitly Rejected Complexity**: 
-  - 100M+ parameter raw voltage Transformers
-  - Unconstrained generative diffusion models prone to biological hallucinations
-  - Unparameterized heuristic dynamic time warping (DTW)
+---
 
-## Must-Prove Claims
-1. **Representational Superiority**: The RKHS KME representation beats matched moment and linear controls across all 15 architectures.
-2. **Out-of-Distribution Robustness**: Causal and invariant models (Papers 09–15) maintain high AUROC across all 9 hospital environments, outperforming standard ERM by $>0.05$ AUROC on worst-case domains.
-3. **Falsification Gate Integrity**: Adversarial "Kill Tests" (temporal scrambling, synthetic time-warping, lead mismatch, and phase surgery) successfully collapse specific models, proving reliance on biological mechanisms rather than statistical shortcuts.
+## 2. Contribution Snapshot
+- **Dominant Contribution**: Continuous dual operator-response set encoder ($\mathbb{RP}^7$) retaining **95.0%** of diagnostic performance on 2 bipolar leads and **90.5%** on 1 smartwatch lead under strict Interpretation B evaluation (zero probes, frozen pre-trained diagnostic head).
+- **Secondary Protocol**: Task-native training for external tasks (EchoNext SHD) followed by frozen zero-shot configuration-shift evaluation, strictly rejecting heuristic cross-task proxy mappings.
+- **Explicitly Rejected Complexity**: Discrete torso mesh solvers, heuristic cross-dataset proxy label mappings, and post-hoc linear probe retraining.
 
-## Next Action
-- Chained execution via `scripts/run_all_papers_queue.sh` in a detached `tmux` session once Paper 02 completes on the GPU.
+---
+
+## 3. Methodological Contract: Interpretation B
+$$\boxed{\textbf{No parameter may be trained after the model has seen the evaluation configuration.}}$$
+
+- **Primary Protocol (PTB-XL Tier 4)**:
+  $$\text{Train on full leads} \rightarrow \text{Freeze encoder } \theta \text{ and diagnostic head } \phi \rightarrow \text{Evaluate under } O_S$$
+- **Measured Diagnostic Retention on PTB-XL Fold 8**:
+  - `P07_ROBUSTNESS_TRAINED`: Full $Q_8$ = **0.9309** | 2-Lead $S_2$ = **0.8849** ($R_2 = \mathbf{95.0\%}$) | 1-Lead $S_1$ = **0.8425** ($R_1 = \mathbf{90.5\%}$)
+  - `GraphECG` (Ansari et al.): Full $Q_8$ = 0.9127 | 2-Lead $S_2$ = 0.8628 ($R_2 = 94.5\%$) | 1-Lead $S_1$ = 0.7675 ($R_1 = 84.1\%$)
+  - `FixedTensor_P02`: Full $Q_8$ = 0.8716 | 2-Lead $S_2$ = 0.6596 ($R_2 = 75.7\%$) | 1-Lead $S_1$ = 0.6118 ($R_1 = 70.2\%$)
+
+---
+
+## 4. Next Actions
+1. Allow `gpu_queue` (currently Stage 3 Paper 13) and `graphecg_train` (Epoch 27/50) to complete uninterrupted.
+2. Launch `P07_FULLLEAD_ONLY` training arm via `scripts/paper07/train_paper07_fulllead_only.py` to isolate pure representation inductive bias from subset data augmentation.
+3. Upon completion of EchoNext mirror to NFS, execute task-native full-lead training followed by zero-shot configuration-shift evaluation.

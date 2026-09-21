@@ -1,175 +1,87 @@
-# Production-Readiness Experiment Plan
+# Experiment Plan: Acquisition-Configuration Robustness & Measurement-Operator Generalization
 
-**Problem**: Validate all 15 repECG pipelines without inert ablations, fabricated labels, missing datasets, or incomplete metric coverage.
-**Method thesis**: Phase-aligned distributional ECG representations should improve robust diagnosis only when their proposed mechanisms survive matched falsification controls.
-**Date**: 2026-09-17
-**Status**: Production blocked pending the gates below.
+**Document Version**: 2.0 (Reframed around Tier 4 Configuration Shift)  
+**Date**: September 21, 2026  
 
-## Claim map
+---
 
-| Claim | Minimum convincing evidence | Blocks |
-|---|---|---|
-| C1: each proposed mechanism is implemented and testable | Mechanism-specific unit test, one-batch gradient/effect test, complete 3x3 grid, and prespecified kill-test endpoint for every registered variant | B1-B3 |
-| C2: performance is measured on compatible real labels across environments | Label provenance, ontology mapping, denominators, checkpoint-only inference, and complete per-dataset metric rows | B4-B5 |
-| Supporting: missing-lead padding causes measurable degradation | Prespecified Kingston-ICU zero-padding negative control reported separately from primary OOD results | B6 |
-| Anti-claim: gains are not search, capacity, or initialization artifacts | Shared seeds/data realizations, capacity audit, paired patient-level contrasts, and three final seeds | B2-B5 |
+## 1. Experimental Objectives
 
-Kingston-ICU is **not** a ninth primary performance environment. The primary matrix is PTB-XL plus the seven external datasets with compatible verified labels. Kingston is a separate negative-control environment intended to show what happens when unavailable members of the canonical eight-lead basis are deterministically filled with zero after the frozen PTB-XL transform.
+1. **Quantify Configuration Degradation**: Measure the diagnostic retention $R_k = \bar{S}_k / S_8$ and degradation $\Delta_k = S_8 - \bar{S}_k$ across lead loss cardinalities $k \in \{1, \dots, 8\}$.
+2. **Benchmark Against GraphECG**: Conduct an exact head-to-head comparison against the original GraphECG architecture (Ansari et al., Stanford 2026) trained and evaluated on PTB-XL Fold 8.
+3. **Validate Continuous Dual Functionals**: Test whether parameterizing measurements as continuous linear functionals $q \in \mathbb{RP}^7$ enables zero-shot generalization to novel, non-standard lead combinations where discrete graph nodes fail.
+4. **Isolate Topological Value**: Determine whether dynamic persistent homology / braid invariants on reconstructed canonical fields yield measurable performance gain over the field alone.
 
-## Non-negotiable data contracts
+---
 
-1. PTB-XL development uses folds 1-7 for fitting and fold 8 for selection. Fold 10 remains locked until final promotion.
-2. Every external adapter emits a reconciliation manifest containing source records, eligible records, exclusions, patient IDs where available, sample rate, source lead names, mapped lead names, label source, ontology version, and hashes.
-3. No external label may be synthesized. The existing all-zero placeholder labels are invalid and must be removed. Each dataset uses its native task registry in `configs/dataset_tasks.json`.
-4. Heads, metrics, and splits are task-specific: EchoNext uses its 12 SHD labels; Kingston uses SINUS versus AFIB/AFLT; LUDB uses rhythm, diagnostic categories, and delineation; RDB uses its eight rhythm classes and delineation; ISP and Zhejiang use P-QRS-T delineation; Emory uses 12SL diagnosis codes; Sunnybrook uses embedded Philips statement codes.
-5. Frozen PTB-XL scaler, whitening transform, Nyström map, and trained checkpoint are reused externally without refitting.
-6. Stochastic perturbations and shuffles are keyed by record ID, condition, and seed so paired comparisons share realizations.
-7. Results are committed transactionally to `outputs/results.sqlite3`; completion is determined from the expected-evaluation table, not file counts.
+## 2. Evaluation Tiers Specification
 
-## Kingston-ICU zero-padding negative control
+### Tier 1: Engineering Plumbing Smokes
+*   **Purpose**: Rapid wiring verification (`max_epochs=1, patience=1`).
+*   **Output**: Stamped `engineering_only_not_a_result`. Verifies tensor shapes, forward/backward loops, and checkpoint saving.
 
-Kingston tests acquisition-interface failure, not clinical generalization.
+### Tier 2: Inductive Bias Pre-Clinical Gates
+*   **Purpose**: Synthetic mathematical tests verifying theoretical invariants before clinical exposure.
+*   **Protocol**:
+    *   *Linearity / Rank Tests*: Hankel DMD rank retention (falsified P04).
+    *   *Interventional Invariance*: Pearlian counterfactual surgery consistency (falsified P09).
+    *   *Gauge Invariance*: Antipodal symmetry $q \sim -q$ validation (passed P07).
 
-- The audited local release contains 596 ten-second records at 240 Hz, with
-  channels `[I, II, III, V]`; metadata has 497 `SINUS` and 99 `AFIB/AFLT`
-  records and a frozen 298/298 train/test field.
-- Map `I` and `II` by their explicit WFDB names. Exclude `III` because it is a
-  derived limb lead. Exclude generic `V` because the source does not identify
-  it as V1-V6; assigning it to a precordial position would invent geometry.
-- The canonical input is therefore `[I, II, 0, 0, 0, 0, 0, 0]` after the
-  frozen transform, with mask `[1, 1, 0, 0, 0, 0, 0, 0]`.
-- Apply physical preprocessing to observed channels, then the frozen PTB-XL per-lead transform.
-- Fill every unavailable transformed channel with exact `0.0`, representing the PTB-XL training mean in standardized coordinates. Do not fill raw mV channels with zero before filtering.
-- Persist an eight-element `observed_lead_mask`, `n_observed_leads`, and exact source-to-canonical map for every record.
-- Reject records missing the timing channel needed for R-peak/phase normalization; do not manufacture beats.
-- Evaluate three paired arms on identical eligible records:
-  - `K_native_zero_pad`: all genuinely available independent leads; missing leads filled with zero.
-  - `K_matched_ptbxl_mask`: PTB-XL records masked to each Kingston missingness pattern and zero-filled identically.
-  - `K_full_ptbxl_reference`: the same PTB-XL records with all eight independent leads.
-- Primary negative-control endpoint: patient-equal paired macro-AUROC change for `K_matched_ptbxl_mask - K_full_ptbxl_reference`, with patient-bootstrap CI.
-- Secondary endpoints: per-class AUROC/AUPRC where identifiable, Brier, ECE, validation-threshold macro-F1, prediction entropy, probability shift, representation norm/variance, and eligibility rate by observed-lead count.
-- Kingston uses its native SINUS-versus-AFIB/AFLT task with the official
-  298/298 Train/Test field. It does not use the five-class PTB-XL head, and its
-  AUROC is never pooled with PTB-XL superclass AUROC.
-- Exclude Kingston from model selection, IRM environments, pooled primary OOD means, and clinical-generalization claims.
+### Tier 3: Converged PTB-XL Clinical Trials
+*   **Purpose**: Full clinical benchmark training on PTB-XL (`max_epochs=100, patience=10`, 9 hyperparameter cells per variant).
+*   **Splits**: Folds 1–7 (Train, 15,258 records), Folds 9–10 (Validation, 4,368 records), Fold 8 (Held-out Test, 2,173 records).
+*   **Task**: 5-class superclass multilabel diagnosis (NORM, MI, STTC, CD, HYP).
 
-## Experiment blocks
+### Tier 4: Dedicated Acquisition-Configuration Shift Suite (The Empirical Core)
+Evaluates frozen Fold 8 checkpoints without retraining:
 
-### B0: Paper-specific input remediation
+#### Tier 4A: Structured Clinical Subsets
+*   $S_{12}$: Standard 12-lead ($I, II, III, aVR, aVL, aVF, V_1, \dots, V_6$)
+*   $S_6$: 6 limb leads ($I, II, III, aVR, aVL, aVF$)
+*   $S_3$: Einthoven triangle ($I, II, III$)
+*   $S_2$: Minimal limb basis ($I, II$)
+*   $S_{1,\text{I}}$ & $S_{1,\text{II}}$: Single wearable leads
+*   $S_{\rm ICM}$: Implantable cardiac monitor bipolar proxy ($V_3 - V_2$)
 
-The previous engineering smoke is invalid for every paper except Paper 2. Its
-launcher supplied `paper02_kernel_mean/development_representations` to all 15
-trainers, although the binding mathematical contract defines a different input
-object for each paper. `scripts/audit_paper_inputs.py` records this explicitly
-in `outputs/paper_input_reconciliation.json`, and the smoke now stops before
-deleting or creating the results database unless that artifact is complete.
+#### Tier 4B: Exhaustive $Q_8$ Combinatorial Battery
+*   All $\sum_{k=1}^8 \binom{8}{k} = 255$ non-empty subsets of independent leads $Q_8 = \{I, II, V_1, V_2, V_3, V_4, V_5, V_6\}$.
+*   For each cardinality $k \in \{1, \dots, 8\}$, compute:
+    $$\bar{S}_k = \mathbb{E}_{|S|=k}[\operatorname{score}(S)], \quad S_k^{\min} = \min_{|S|=k}\operatorname{score}(S), \quad \operatorname{Var}_{|S|=k}[\operatorname{score}(S)], \quad R_k = \frac{\bar{S}_k}{S_8}$$
 
-Repair in dependency order:
+#### Tier 4C: Continuous Held-Out Lead-Span Operators
+*   Sample 100 random unit vectors $q_{\rm new} \in S^7$ ($q_{\rm new} = \sum_{j=1}^8 \alpha_j e_j, \|q_{\rm new}\|_2 = 1$).
+*   Generate synthetic response $x_{q_{\rm new}}(t) = q_{\rm new}^\top X_{Q_8}(t)$.
+*   Evaluate zero-shot diagnostic inference for `SetOperator` vs nearest-known lead snapping for `GraphECG` and `FixedTensor`.
 
-1. Materialize Papers 1, 3, 4, 5, and 6 from the already frozen phase-cell
-   cache: recurrence operators; whitened depth-3 log-signatures; local
-   Hankel/DMD descriptors; record-specific regularized Koopman descriptors;
-   and conditional-residual recurrence operators.
-2. Rebuild Paper 7 from measurement-operator response sets, then use its
-   operator/context artifacts for Paper 9. Do not pass an eight-lead tensor to
-   either model.
-3. Replace Paper 8's simple K-means-only input with its frozen
-   equivalence-calibrated vocabulary and `<UNK>` contract.
-4. Materialize intervention/environment inputs for Papers 10 and 14,
-   predictive-state descriptors for Paper 11, conditional-flow innovations
-   for Paper 12, surgery inputs for Paper 13, and local transition-mechanism
-   representations for Paper 15.
-5. For every paper, persist a manifest containing the builder version, source
-   hashes, fitting-fold membership, tensor keys/shapes, learned-object hashes,
-   and variant-to-input routing. Only then change that paper's reconciliation
-   row to `complete`.
+#### Tier 4D: Protocol Bifurcation (P0 vs P1)
+*   **P0**: Strict zero-shot from 12-lead trained models.
+*   **P1**: Robustness-trained models with random subset augmentation.
 
-No placeholder adapter, reshaping shim, or use of the nearest existing tensor
-counts as remediation. The object supplied to the trainer must be the object
-named by `docs/MATHEMATICAL_CONTRACT.md`.
+---
 
-### B1: Pipeline and database integrity
+## 3. Model Architecture Battery
 
-- **Scope**: all 55 registered variants reconciled; nine LR/WD cells for each scientifically eligible variant, one-epoch smoke, aggregation, checkpoint reload, and metric ingestion.
-- **Metrics**: expected/complete/failed/ineligible counts, duplicate keys, payload hashes, finite predictions, and row counts.
-- **Success criterion**: 468/468 eligible smoke selection cells complete, 52/52 eligible evaluations complete, and all three Paper 4 variants explicitly recorded as `ineligible_nystrom_fidelity` without conflicting database payloads.
-- **Priority**: MUST-RUN.
+| Architecture | Paradigm | Mechanism Under Shift |
+| :--- | :--- | :--- |
+| **FixedTensor** | Standard 1D ResNet/ConvNet | Zero-imputation ($Z_0$) of unobserved channels |
+| **FixedTensor+Mask** | Channel-augmented ConvNet | Observation mask concatenated along channels ($Z_M$) |
+| **GraphECG** | Electrode GNN (Ansari et al., 2026) | Dynamic induced subgraph with message passing |
+| **SetOperator (P07)** | Continuous Dual $\mathbb{RP}^7$ Set Encoder | Variable set cross-attention over observed $(q_j, x_j(t))$ |
+| **Moments (P02)** | Spatial Dipole Statistics | Closed-form extraction of marginal covariance $\Sigma_{S \times S}$ |
+| **CanonicalField (P01)** | Field Reconstruction + Recurrence | Reconstructs canonical 3D dipole before downstream head |
 
-### B2: Mechanism implementation and kill tests
+---
 
-- **Scope**: exact mechanism tests for every registry entry. Tests compare matched initial states and fixed inputs; shape-only tests do not count.
-- **Known repairs required**:
-  - Paper 7 must optimize and report held-out-lead reconstruction loss.
-  - Paper 8 must build a frozen train-only KMeans/VQ dictionary for `kmeans_tokens`.
-  - Paper 9 must train/evaluate counterfactual synthesis so `mismatched_q` affects a measured endpoint.
-  - Paper 10 must implement and verify ERM, IRM, CORAL, and CausIRL objectives using real environment IDs.
-  - Paper 13 must route surgery controls through `do_surgery` and measure phase-targeted effects.
-  - Paper 14 must implement its invariant objective and `mmd_penalty_only` control using eligible environments.
-  - Every accepted `training_regime` must alter execution and be tested or be removed.
-- **Success criterion**: every variant has a non-inert effect test and its claimed endpoint appears in the database.
-- **Priority**: MUST-RUN.
+## 4. Execution Sequence on GPU
 
-### B3: Development selection
-
-- **Setup**: PTB-XL folds 1-7/8, 3x3 LR/WD grid, three seeds for promoted variants, shared representations and initial-state protocol.
-- **Metrics**: macro/micro AUROC, macro/per-class AUPRC, Brier, ECE, validation-threshold macro-F1, and each paper's mechanism endpoint.
-- **Success criterion**: exact reconciliation, finite checkpoints, prespecified selection, and no seed chosen using external data.
-- **Priority**: MUST-RUN.
-
-### B4: Native-task dataset and label audit
-
-- **Datasets**: EchoNext, LUDB, RDB, ISP, Emory-MUSE, Sunnybrook, Zhejiang, and the separate Kingston control.
-- **Setup**: dataset-specific frozen representations and task-specific heads. No forced common ontology. Use official splits where present, patient-disjoint folds otherwise, and external-only reporting for Sunnybrook (`n=20`).
-- **Verified label evidence**: EchoNext has 100,000 labeled metadata rows and 12 SHD flags; Kingston has 497 SINUS and 99 AFIB/AFLT records; LUDB has 200 records with rhythm and eight diagnostic-category fields plus delineations; RDB has 2,398 records across eight rhythm classes and frozen train/val/test caches; ISP has 403/72 train/test delineation records; Zhejiang has 334 delineation masks; Emory has 974,172 diagnosis rows matched to patient metadata and a 180-code dictionary; Sunnybrook embeds Philips statement codes in all 20 XML files.
-- **Success criterion**: record-level provenance, native label vocabulary, split membership, and per-class denominators for every task.
-- **Priority**: MUST-RUN.
-
-### B5: Frozen-representation native-task evaluation
-
-- **Setup**: freeze each paper representation, fit only the prespecified task head on the native training split, select on the native validation split, and evaluate once on native test. Random-model fallback and fitting on test are forbidden. EchoNext training waveforms must be located or restored before fitting its repECG head; the local release currently exposes only the 5,442 test waveforms despite metadata for all splits.
-- **Metrics**: task-appropriate AUROC/AUPRC/F1/calibration for classification; macro Dice/F1 and onset/offset error for delineation; perturbation deltas, patient-equal aggregation, bootstrap CIs, and eligibility safeguards.
-- **Success criterion**: every expected `(paper, variant, seed, dataset, condition, metric)` key is complete or explicitly ineligible.
-- **Priority**: MUST-RUN.
-
-### B6: Kingston missing-lead negative control
-
-- **Setup**: the three paired arms above, stratified by missingness pattern and observed-lead count.
-- **Success criterion**: complete paired denominators and CIs stored under `evaluation_role=negative_control`, never pooled with primary OOD.
-- **Failure interpretation**: no degradation may indicate padding robustness, insensitive endpoints, or collapse; distinguish these using representation variance and matched PTB-XL masking.
-- **Priority**: MUST-RUN.
-
-## Run order and gates
-
-| Milestone | Goal | Decision gate | Approximate cost |
-|---|---|---|---|
-| M0 | Finish strict smoke/database reconciliation | 468 eligible cells + 52 complete and 3 ineligible evaluations exact | <1 GPU-hour |
-| M1 | Repair/test all mechanisms | every variant has effect and endpoint tests | 1-2 GPU-hours plus implementation |
-| M2 | Audit eight external adapters/labels | provenance manifests; no placeholder labels | CPU/data work |
-| M3 | Validate Kingston control | channel map, masks, paired PTB-XL arm, smoke metrics | <1 GPU-hour |
-| M4 | Full PTB-XL development grids | exact grids and three-seed promotion | profile after M1 |
-| M5 | External and perturbation evaluation | all expected database rows resolved | profile after M2 |
-| M6 | Final integrity/promotion audit | all gates pass; create sentinel atomically | negligible |
-
-Production launch is forbidden before M0-M3 pass. `outputs/PRODUCTION_READY` is created only by a verifier checking tests, mechanism coverage, dataset manifests, label denominators, database expectations, and absence of placeholder/random-model fallbacks.
-
-## Results database contract
-
-The unique metric identity must include:
-
-`run_type, paper_id, dataset, evaluation_role, split, condition, variant, training_regime, seed, learning_rate, weight_decay, checkpoint_sha256, metric_name, class_name, aggregation_unit`.
-
-Required tables are `runs`, `metrics`, `expected_evaluations`, `datasets`, and `artifacts`. Conflicting writes fail; identical re-ingestion is idempotent. Aggregate queries state numerator and frozen denominator.
-
-## Final checklist
-
-- [ ] All 55 variants reconciled with implementation and endpoint tests.
-- [ ] 468 eligible smoke cells and 52 checkpoint-backed evaluations pass; all 3 Paper 4 variants are explicitly ineligible.
-- [ ] No inert ablation or unused training-regime argument remains.
-- [ ] No placeholder labels, forced shared ontology, or random-checkpoint fallback remains.
-- [ ] All eight external adapters have reconciliation manifests.
-- [ ] Every dataset uses its frozen native task(s), vocabulary, and split contract.
-- [x] Kingston has an explicit channel map, zero-padding mask, and paired PTB-XL control.
-- [ ] Every metric is stored in the canonical database with provenance.
-- [ ] Production stops on first error and resumes only exact completed keys.
-- [ ] Fold 10 remains untouched until final promotion.
-- [ ] Independent integrity audit passes before production readiness.
+1. **Current Running Tasks**:
+   - Stage 2: P08 final explicit controls concluding.
+   - Stage 3: P10, P11, P13, P15 claims papers.
+   - Stage 4: Post-queue Fold 8 standardized evaluation.
+2. **Appended Queue Tasks**:
+   - **Stage 5: GraphECG PTB-XL Full Training**:
+     - `train_graphecg_ptbxl.py` on Folds 1–7 (train) / Folds 9–10 (val), evaluated on Fold 8.
+     - Saves `outputs/graphecg/graphecg_ptbxl_best.pt` and `outputs/cross_paper_evaluation/graphecg_fold8.json`.
+   - **Stage 6: Tier 4 Acquisition-Configuration Shift Battery**:
+     - Executes `evaluate_tier4_shift.py` across all frozen models.
+     - Generates degradation curves, combinatorial retention profiles, and Table I/II outputs in `outputs/tier4_configuration_shift/`.

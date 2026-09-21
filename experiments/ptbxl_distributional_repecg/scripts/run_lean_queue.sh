@@ -64,5 +64,17 @@ for paper_id in 2 8 10 11 13 15; do
     log "  Paper $paper_id eval failed — check fold8_eval.log"
 done
 
+# ── Stage 5: GraphECG PTB-XL Training ──────────────────────────────────────────
+log "Stage 5: GraphECG (Ansari et al., 2026) PTB-XL training"
+run_paper "graphecg" "$SCRIPTS/graphecg/run_graphecg.sh"
+
+# ── Stage 6: Tier 4 Acquisition-Configuration Shift Evaluation ────────────────
+log "Stage 6: Tier 4 Acquisition-Configuration Shift Battery (Clinical + 255 Combinatorial Subsets)"
+$PYTHON "$SCRIPTS/evaluation/evaluate_tier4_shift.py" \
+    --model graphecg \
+    --checkpoint "$OUTPUTS/graphecg/graphecg_ptbxl_best.pt" \
+    --output-dir "$OUTPUTS/tier4_configuration_shift" 2>&1 | tee -a "$LOGDIR/tier4_eval.log" || \
+    log "  Tier 4 GraphECG eval failed — check tier4_eval.log"
+
 log "=== LEAN QUEUE COMPLETE ==="
-log "Results: $OUTPUTS/cross_paper_evaluation/"
+log "Results: $OUTPUTS/cross_paper_evaluation/ and $OUTPUTS/tier4_configuration_shift/"

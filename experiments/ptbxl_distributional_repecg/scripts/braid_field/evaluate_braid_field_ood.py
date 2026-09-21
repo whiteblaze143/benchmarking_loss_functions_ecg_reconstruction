@@ -32,18 +32,15 @@ def _cache_index(cache: Path) -> dict[int, str]:
     return {int(row.ecg_id): str(row.artifact) for _, row in frame.iterrows()}
 
 
-def _load_physical(
+def _load_physical_record(
     cache: Path,
-    names: list[str],
+    name: str,
     mean: np.ndarray,
     std: np.ndarray,
 ) -> np.ndarray:
-    values = []
-    for name in names:
-        with np.load(cache / name) as item:
-            beats = np.asarray(item["beats"], dtype=np.float32)
-        values.append(beats * std.astype(np.float32) + mean.astype(np.float32))
-    return np.stack(values)
+    with np.load(cache / name) as item:
+        beats = np.asarray(item["beats"], dtype=np.float32)
+    return beats * std.astype(np.float32) + mean.astype(np.float32)
 
 
 def _macro_auroc(labels: np.ndarray, probability: np.ndarray) -> float:
@@ -84,13 +81,14 @@ def main() -> None:
     model.eval()
     for operator_index, q in enumerate(bank):
         probabilities = []
-        for start in range(0, len(names), args.batch):
-            stop = min(start + args.batch, len(names))
+        # Beat counts vary by record; infer record-by-record rather than padding
+        # or stacking unequal beat tensors.
+        for index, name in enumerate(names):
             physical = torch.as_tensor(
-                _load_physical(args.phase_cache, names[start:stop], mean, std),
+                _load_physical_record(args.phase_cache, name, mean, std)[None],
                 device=device,
             )
-            q_batch = q.view(1, 1, 8).expand(stop - start, -1, -1)
+            q_batch = q.view(1, 1, 8)
             with torch.inference_mode():
                 response = fmap.project_basis(physical, q_batch)
                 out = model(q_batch, response, query_ops, query_coords)

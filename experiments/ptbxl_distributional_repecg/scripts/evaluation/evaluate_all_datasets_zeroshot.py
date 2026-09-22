@@ -65,6 +65,9 @@ ALL_MODELS = [
     "moments",
     "fixed_tensor",
     "graphecg",
+    "set_operator_robust",
+    "set_operator_aux",
+    "set_operator_fulllead",
     "set_operator",
 ] + [f"paper{p:02d}" for p in ALL_PAPER_IDS]
 
@@ -83,13 +86,25 @@ def resolve_checkpoint(model_name: str) -> Tuple[Optional[Path], str, Optional[i
             return ckpt, "ptbxl_trained", None
         return None, "missing", None
 
-    if model_name == "set_operator":
+    if model_name in ("set_operator", "set_operator_robust"):
         ckpt = OUTPUTS_DIR / "paper07_operator_reconstruction/continuous_primary_best.pt"
         if ckpt.exists():
             return ckpt, "ptbxl_trained", 7
         smoke = OUTPUTS_DIR / "smoke_test/paper07/continuous_primary_best.pt"
         if smoke.exists():
             return smoke, "inductive_bias_gate_smoke", 7
+        return None, "missing", 7
+
+    if model_name == "set_operator_aux":
+        ckpt = OUTPUTS_DIR / "paper07_operator_reconstruction/continuous_auxiliary_best.pt"
+        if ckpt.exists():
+            return ckpt, "ptbxl_trained", 7
+        return None, "missing", 7
+
+    if model_name == "set_operator_fulllead":
+        ckpt = OUTPUTS_DIR / "paper07_fulllead_only/continuous_primary_best.pt"
+        if ckpt.exists():
+            return ckpt, "ptbxl_trained", 7
         return None, "missing", 7
 
     # Parse paperXX
@@ -225,7 +240,7 @@ def extract_batch_representations(
 
     # For Paper Models (1-15, set_operator)
     _, _, p_id = resolve_checkpoint(model_name)
-    if p_id == 7 or model_name == "set_operator":
+    if p_id == 7 or model_name.startswith("set_operator"):
         # OperatorSetModel takes (B, 8, 16, 128) whitened RKHS coordinates + operators
         from scripts.task_native.run_task_native_queue import get_rkhs_extractor
         rkhs = get_rkhs_extractor(device)

@@ -38,12 +38,14 @@ Supported Datasets:
     - Zhejiang (334 records, RVOT vs LVOT ventricular arrhythmia origin)
     - ISP (475 records, sex classification)
     - Kingston-ICU (581 records, AFIB/AFLT rhythm detection)
+    - RDB (2,398 records, 8-class canonical rhythm; frozen cache split)
 """
 
 from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import os
 import pickle
@@ -65,6 +67,15 @@ REPO_ROOT = Path("/home/mithunmanivannan/projects/benchmarking_loss_functions_ec
 EXP_DIR = REPO_ROOT / "experiments/ptbxl_distributional_repecg"
 DATA_DIR = REPO_ROOT / "data"
 OUTPUTS_DIR = EXP_DIR / "outputs"
+BRAID_TRAINING_DIR = Path("/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/braid_field/training")
+BRAID_VARIANTS = (
+    "field",
+    "field_braid",
+    "field_braid_event",
+    "field_braid_inv",
+    "field_braid_prob",
+)
+RDB_RHYTHMS = ("ST", "AF", "SA", "AFIB", "SR", "SB", "AT", "SVT")
 sys.path.insert(0, str(EXP_DIR))
 sys.path.insert(0, str(EXP_DIR / "src"))
 sys.path.insert(0, str(REPO_ROOT / "tit_ecg/src"))
@@ -72,6 +83,8 @@ sys.path.insert(0, str(REPO_ROOT / "tit_ecg/src"))
 import wfdb
 from graphECG_author_code.graph import ECGGraphBuilder
 from graphECG_author_code.model import GraphECG
+from repecg.braid_field import BraidFieldClassifier, BraidFieldConfig
+from repecg.braid_field.geometry import make_interpolated_query_bank
 from repecg.evaluation.native_labels import LUDB_DIAGNOSTIC_COLUMNS, load_ludb_labels
 from repecg.paper07_operator import OperatorSetModel
 from torch_geometric.data import Batch
@@ -146,12 +159,13 @@ CONFIGURATIONS = {
 # Dataset Loaders (Z-score standardized, 12-lead & 8-lead formats)
 # ============================================================================
 
-def load_ludb_data() -> Tuple[np.ndarray, np.ndarray]:
+def load_ludb_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Load LUDB records, per-lead z-score normalize, return (200, 12, 1000) and 8-class multilabel."""
     ludb_dir = DATA_DIR / "ludb"
     df = load_ludb_labels(ludb_dir / "ludb.csv")
     signals = []
     labels = []
+    record_ids = []
 
     for _, row in df.iterrows():
         rec_id = row["record_id"]
@@ -164,11 +178,12 @@ def load_ludb_data() -> Tuple[np.ndarray, np.ndarray]:
 
         y = [1.0 if len(row[col]) > 0 else 0.0 for col in LUDB_DIAGNOSTIC_COLUMNS]
         labels.append(y)
+        record_ids.append(str(rec_id))
 
-    return np.stack(signals), np.array(labels, dtype=np.float32)
+    return np.stack(signals), np.array(labels, dtype=np.float32), np.asarray(record_ids)
 
 
-def load_zhejiang_data() -> Tuple[np.ndarray, np.ndarray]:
+def load_zhejiang_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Load Zhejiang records, per-lead z-score normalize, return (334, 12, 1000) and binary RVOT vs LVOT."""
     zh_dir = DATA_DIR / "zhejiang"
     df = pd.read_excel(zh_dir / "Diagnosis.xlsx")
@@ -176,6 +191,7 @@ def load_zhejiang_data() -> Tuple[np.ndarray, np.ndarray]:
 
     signals = []
     labels = []
+    record_ids = []
     for _, row in df.iterrows():
         hid = str(row["HospitalID"])
         sig_leads = []
@@ -194,18 +210,19 @@ def load_zhejiang_data() -> Tuple[np.ndarray, np.ndarray]:
             sig_norm = (sig_1000 - sig_1000.mean(axis=-1, keepdims=True)) / (sig_1000.std(axis=-1, keepdims=True) + 1e-6)
             signals.append(sig_norm)
             labels.append([1.0 if row["LeftRight"] == "Right" else 0.0])
+            record_ids.append(hid)
 
-    return np.stack(signals), np.array(labels, dtype=np.float32)
+    return np.stack(signals), np.array(labels, dtype=np.float32), np.asarray(record_ids)
 
 
-def load_isp_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def load_isp_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Load ISP official Train & Test records, per-lead z-score normalize, return 12-lead signals & binary sex."""
     isp_dir = DATA_DIR / "isp_delineation_dataset"
     tr_df = pd.read_csv(isp_dir / "train_isp_delineation_data.csv")
     te_df = pd.read_csv(isp_dir / "test_isp_delineation_data.csv")
 
     def _load_split(df_split, subfolder):
-        sigs, y = [], []
+        sigs, y, record_ids = [], [], []
         for _, row in df_split.iterrows():
             fname = row["file_name"]
             rec = wfdb.rdrecord(str(isp_dir / subfolder / str(fname)))
@@ -215,20 +232,21 @@ def load_isp_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
             sig_norm = (sig_1000 - sig_1000.mean(axis=-1, keepdims=True)) / (sig_1000.std(axis=-1, keepdims=True) + 1e-6)
             sigs.append(sig_norm)
             y.append([float(row["sex"])])
-        return np.stack(sigs), np.array(y, dtype=np.float32)
+            record_ids.append(str(fname))
+        return np.stack(sigs), np.array(y, dtype=np.float32), np.asarray(record_ids)
 
     x_tr, y_tr = _load_split(tr_df, "train_data")
     x_te, y_te = _load_split(te_df, "test_data")
     return x_tr, y_tr, x_te, y_te
 
 
-def load_kingston_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def load_kingston_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Load Kingston-ICU official Train & Test records (4-channel telemetry: I, II, III, V)."""
     k_dir = DATA_DIR / "kingston-icu-af-dataset-1.0.0"
     df = pd.read_csv(k_dir / "metadata.csv")
 
-    tr_sigs, tr_y = [], []
-    te_sigs, te_y = [], []
+    tr_sigs, tr_y, tr_ids = [], [], []
+    te_sigs, te_y, te_ids = [], [], []
 
     for _, row in df.iterrows():
         p = k_dir / row["ECG"]
@@ -245,11 +263,60 @@ def load_kingston_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray
         if row["TrainOrTest"] == "Train":
             tr_sigs.append(sig_norm)
             tr_y.append([label])
+            tr_ids.append(str(row["ECG"]))
         else:
             te_sigs.append(sig_norm)
             te_y.append([label])
+            te_ids.append(str(row["ECG"]))
 
-    return np.stack(tr_sigs), np.array(tr_y, dtype=np.float32), np.stack(te_sigs), np.array(te_y, dtype=np.float32)
+    return (
+        np.stack(tr_sigs), np.array(tr_y, dtype=np.float32), np.asarray(tr_ids),
+        np.stack(te_sigs), np.array(te_y, dtype=np.float32), np.asarray(te_ids),
+    )
+
+
+def load_rdb_data() -> Dict[str, Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]:
+    """Load the frozen RDB cache using payload rhythm, patient, and split fields."""
+    cache = DATA_DIR / "rdb_wavelet_delineation_cache/rdb_wavelet_delineation_cache"
+    rhythm_to_index = {rhythm: index for index, rhythm in enumerate(RDB_RHYTHMS)}
+    result = {}
+    for split in ("train", "val", "test"):
+        signals, labels, record_ids, patient_ids = [], [], [], []
+        files = sorted((cache / split).glob("*.pt"))
+        if not files:
+            raise FileNotFoundError(f"RDB frozen cache split is empty: {cache / split}")
+        for path in files:
+            payload = torch.load(path, map_location="cpu", weights_only=False)
+            if payload["split"] != split:
+                raise ValueError(f"RDB payload split mismatch: {path}")
+            rhythm = str(payload["canonical_rhythm"])
+            if rhythm not in rhythm_to_index:
+                raise ValueError(f"unknown RDB canonical rhythm {rhythm!r}: {path}")
+            waveform = torch.as_tensor(payload["waveform"], dtype=torch.float32)
+            if waveform.ndim != 2 or waveform.shape[0] != 12:
+                raise ValueError(f"RDB waveform must be [12,time]: {path}")
+            reduced = nn.functional.adaptive_avg_pool1d(waveform.unsqueeze(0), 1000).squeeze(0)
+            normalized = (reduced - reduced.mean(dim=-1, keepdim=True)) / (
+                reduced.std(dim=-1, keepdim=True) + 1e-6
+            )
+            label = np.zeros(len(RDB_RHYTHMS), dtype=np.float32)
+            label[rhythm_to_index[rhythm]] = 1.0
+            signals.append(normalized.numpy())
+            labels.append(label)
+            record_ids.append(str(payload["record_id"]))
+            patient_ids.append(str(payload["patient_id"]))
+        if len(set(record_ids)) != len(record_ids):
+            raise ValueError(f"RDB {split} has duplicate record IDs")
+        result[split] = (
+            np.stack(signals), np.stack(labels), np.asarray(record_ids), np.asarray(patient_ids)
+        )
+    patient_splits = {}
+    for split, (_, _, _, patient_ids) in result.items():
+        for patient_id in patient_ids:
+            if patient_id in patient_splits and patient_splits[patient_id] != split:
+                raise ValueError(f"RDB patient crosses frozen splits: {patient_id}")
+            patient_splits[patient_id] = split
+    return result
 
 
 # ============================================================================
@@ -465,6 +532,56 @@ def extract_setoperator_representation(
     return np.concatenate(embeddings)
 
 
+def extract_braid_field_representation(
+    model: BraidFieldClassifier,
+    signals_12: np.ndarray,
+    cfg_key: str,
+    device: torch.device,
+    rkhs_extractor: RKHSFeatureExtractor | None = None,
+    batch_size: int = 64,
+) -> np.ndarray:
+    """Extract Braid's fused representation under the SetOperator shift protocol."""
+    if rkhs_extractor is None:
+        rkhs_extractor = get_rkhs_extractor(device)
+    cfg = CONFIGURATIONS[cfg_key]
+    canonical_ops = torch.eye(8, dtype=torch.float32, device=device)
+    query_ops, query_coords = make_interpolated_query_bank(device=device)
+    embeddings = []
+
+    if signals_12.shape[1] == 12:
+        sig_8 = signals_12[:, [0, 1, 6, 7, 8, 9, 10, 11]]
+    elif signals_12.shape[1] == 4:
+        sig_8 = np.pad(signals_12, ((0, 0), (0, 4), (0, 0)))
+    else:
+        sig_8 = signals_12
+
+    for i in range(0, len(sig_8), batch_size):
+        waveform = torch.from_numpy(sig_8[i : i + batch_size]).float().to(device)
+        count = len(waveform)
+        if cfg.get("type") == "derived_limb":
+            e0, e1 = canonical_ops[0], canonical_ops[1]
+            operators = torch.stack((
+                e0, e1, (e1 - e0) / np.sqrt(2.0), (-e0 - e1) / np.sqrt(2.0),
+                (e0 - 0.5 * e1) / np.sqrt(1.25), (e1 - 0.5 * e0) / np.sqrt(1.25),
+            )).unsqueeze(0).expand(count, -1, -1)
+            w0, w1 = waveform[:, 0], waveform[:, 1]
+            waveform = torch.stack((
+                w0, w1, (w1 - w0) / np.sqrt(2.0), (-w0 - w1) / np.sqrt(2.0),
+                (w0 - 0.5 * w1) / np.sqrt(1.25), (w1 - 0.5 * w0) / np.sqrt(1.25),
+            ), dim=1)
+        elif cfg.get("type") == "oblique_icm":
+            operators = ((canonical_ops[4] - canonical_ops[3]) / np.sqrt(2.0)).view(1, 1, 8).expand(count, -1, -1)
+            waveform = ((waveform[:, 4] - waveform[:, 3]) / np.sqrt(2.0)).unsqueeze(1)
+        else:
+            operators = canonical_ops[cfg["so_indices"]].unsqueeze(0).expand(count, -1, -1)
+            waveform = waveform[:, cfg["so_indices"]]
+
+        with torch.no_grad():
+            responses = rkhs_extractor.compute_responses(waveform)
+            embeddings.append(model(operators, responses, query_ops, query_coords)["fused"].cpu().numpy())
+    return np.concatenate(embeddings)
+
+
 def extract_fixedtensor_representation(
     signals_12: np.ndarray,
     cfg_key: str,
@@ -553,8 +670,12 @@ def train_head_and_evaluate_shift(
     lr: float = 1e-2,
     weight_decay: float = 1e-3,
     batch_size: int = 32,
-) -> Dict[str, Any]:
+    return_predictions: bool = False,
+) -> Dict[str, Any] | tuple[Dict[str, Any], Dict[str, np.ndarray]]:
     """Train task-native linear head phi_task on full leads, freeze, and evaluate shift battery."""
+    torch.manual_seed(2026)
+    if device.type == "cuda":
+        torch.cuda.manual_seed_all(2026)
     n_classes = y_tr.shape[1]
     in_dim = Z_tr_full.shape[1]
 
@@ -612,6 +733,7 @@ def train_head_and_evaluate_shift(
 
     # Configuration Shift Battery on Held-Out Test Set
     results = {}
+    predictions = {}
     base_auroc = None
 
     for cfg_key, cfg in CONFIGURATIONS.items():
@@ -638,7 +760,10 @@ def train_head_and_evaluate_shift(
             "retention_ratio": round(retention, 4),
             "delta_auroc": round(delta, 4),
         }
+        predictions[cfg_key] = test_probs.astype(np.float32, copy=False)
 
+    if return_predictions:
+        return results, predictions
     return results
 
 
@@ -654,9 +779,16 @@ def main():
         default="all",
         help="Comma-separated model keys to run (e.g. 'set_operator_robust,set_operator_fulllead' or 'all')",
     )
+    parser.add_argument(
+        "--datasets",
+        type=str,
+        default="all",
+        help="Comma-separated dataset keys to run (e.g. 'RDB,LUDB' or 'all')",
+    )
     args = parser.parse_args()
 
     selected_models = [m.strip() for m in args.models.split(",") if m.strip()] if args.models != "all" else None
+    selected_datasets = [d.strip().upper() for d in args.datasets.split(",") if d.strip()] if args.datasets != "all" else None
 
     print("=================================================================")
     print("Task-Native Decoupled Queue & Multi-Dataset Shift Benchmark")
@@ -664,6 +796,8 @@ def main():
     print("Evaluating ALL Fully Trained Paper Models (P01-P15, Stanford GraphECG, Baselines)")
     if selected_models:
         print(f"Target Models Filter: {selected_models}")
+    if selected_datasets:
+        print(f"Target Datasets Filter: {selected_datasets}")
     print("=================================================================\n")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -692,6 +826,16 @@ def main():
         so_robust.eval()
         print("  [OK] Loaded SetOperator P07_ROBUSTNESS_TRAINED")
 
+    # SetOperator Robustness-Trained Aux
+    so_aux = None
+    if selected_models is None or "set_operator_aux" in selected_models:
+        so_aux_ckpt = OUTPUTS_DIR / "paper07_operator_reconstruction/continuous_auxiliary_best.pt"
+        so_aux = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous").to(device)
+        so_aux_state = torch.load(so_aux_ckpt, map_location=device, weights_only=False)
+        so_aux.load_state_dict(so_aux_state.get("state_dict", so_aux_state))
+        so_aux.eval()
+        print("  [OK] Loaded SetOperator P07_ROBUSTNESS_TRAINED_AUX")
+
     # SetOperator Full-Lead-Only
     so_full = None
     if selected_models is None or "set_operator_fulllead" in selected_models:
@@ -702,9 +846,24 @@ def main():
         so_full.eval()
         print("  [OK] Loaded SetOperator P07_FULLLEAD_ONLY")
 
+    braid_models = {}
+    for variant in BRAID_VARIANTS:
+        model_key = f"braid_{variant}"
+        if selected_models is not None and model_key not in selected_models:
+            continue
+        checkpoint = BRAID_TRAINING_DIR / f"{variant}_full_only_best.pt"
+        if not checkpoint.exists():
+            raise FileNotFoundError(f"Missing fully trained Braid checkpoint: {checkpoint}")
+        payload = torch.load(checkpoint, map_location=device, weights_only=False)
+        model = BraidFieldClassifier(BraidFieldConfig(**payload["config"])).to(device)
+        model.load_state_dict(payload["state_dict"])
+        model.eval()
+        braid_models[model_key] = model
+        print(f"  [OK] Loaded Braid {variant} ({checkpoint.name})")
+
     # RKHS Extractor for SetOperator
     rkhs_extractor = None
-    if selected_models is None or any("set_operator" in m for m in selected_models):
+    if selected_models is None or any("set_operator" in m or m.startswith("braid_") for m in selected_models):
         rkhs_extractor = get_rkhs_extractor(device)
         print("  [OK] Initialized Whitened RKHS Nystrom Feature Extractor")
 
@@ -736,7 +895,7 @@ def main():
 
     # Dataset 1: LUDB
     print(">>> Preparing LUDB...")
-    x_ludb, y_ludb = load_ludb_data()
+    x_ludb, y_ludb, ids_ludb = load_ludb_data()
     idx = np.arange(len(x_ludb))
     tr_idx, temp_idx = train_test_split(idx, test_size=0.3, random_state=42)
     val_idx, te_idx = train_test_split(temp_idx, test_size=0.5, random_state=42)
@@ -745,12 +904,13 @@ def main():
         "x_tr": x_ludb[tr_idx], "y_tr": y_ludb[tr_idx],
         "x_val": x_ludb[val_idx], "y_val": y_ludb[val_idx],
         "x_te": x_ludb[te_idx], "y_te": y_ludb[te_idx],
+        "test_record_ids": ids_ludb[te_idx],
     }
     print(f"    Split: Train={len(tr_idx)}, Val={len(val_idx)}, Test={len(te_idx)} | Classes=8")
 
     # Dataset 2: Zhejiang
     print(">>> Preparing ZHEJIANG...")
-    x_zh, y_zh = load_zhejiang_data()
+    x_zh, y_zh, ids_zh = load_zhejiang_data()
     idx = np.arange(len(x_zh))
     tr_idx, temp_idx = train_test_split(idx, test_size=0.3, random_state=42, stratify=y_zh)
     val_idx, te_idx = train_test_split(temp_idx, test_size=0.5, random_state=42, stratify=y_zh[temp_idx])
@@ -759,12 +919,13 @@ def main():
         "x_tr": x_zh[tr_idx], "y_tr": y_zh[tr_idx],
         "x_val": x_zh[val_idx], "y_val": y_zh[val_idx],
         "x_te": x_zh[te_idx], "y_te": y_zh[te_idx],
+        "test_record_ids": ids_zh[te_idx],
     }
     print(f"    Split: Train={len(tr_idx)}, Val={len(val_idx)}, Test={len(te_idx)} | Classes=1")
 
     # Dataset 3: ISP
     print(">>> Preparing ISP...")
-    x_isp_tr, y_isp_tr, x_isp_te, y_isp_te = load_isp_data()
+    x_isp_tr, y_isp_tr, ids_isp_tr, x_isp_te, y_isp_te, ids_isp_te = load_isp_data()
     idx = np.arange(len(x_isp_tr))
     tr_sub, val_sub = train_test_split(idx, test_size=0.2, random_state=42, stratify=y_isp_tr)
     datasets_to_run["ISP"] = {
@@ -772,12 +933,13 @@ def main():
         "x_tr": x_isp_tr[tr_sub], "y_tr": y_isp_tr[tr_sub],
         "x_val": x_isp_tr[val_sub], "y_val": y_isp_tr[val_sub],
         "x_te": x_isp_te, "y_te": y_isp_te,
+        "test_record_ids": ids_isp_te,
     }
     print(f"    Split: Train={len(tr_sub)}, Val={len(val_sub)}, Test={len(x_isp_te)} | Classes=1")
 
     # Dataset 4: Kingston-ICU
     print(">>> Preparing KINGSTON_ICU...")
-    x_k_tr, y_k_tr, x_k_te, y_k_te = load_kingston_data()
+    x_k_tr, y_k_tr, ids_k_tr, x_k_te, y_k_te, ids_k_te = load_kingston_data()
     idx = np.arange(len(x_k_tr))
     tr_sub, val_sub = train_test_split(idx, test_size=0.2, random_state=42, stratify=y_k_tr)
     datasets_to_run["KINGSTON_ICU"] = {
@@ -785,13 +947,41 @@ def main():
         "x_tr": x_k_tr[tr_sub], "y_tr": y_k_tr[tr_sub],
         "x_val": x_k_tr[val_sub], "y_val": y_k_tr[val_sub],
         "x_te": x_k_te, "y_te": y_k_te,
+        "test_record_ids": ids_k_te,
     }
     print(f"    Split: Train={len(tr_sub)}, Val={len(val_sub)}, Test={len(x_k_te)} | Classes=1\n")
+
+    # Dataset 5: RDB frozen rhythm cache
+    print(">>> Preparing RDB...")
+    rdb = load_rdb_data()
+    x_rdb_tr, y_rdb_tr, ids_rdb_tr, patients_rdb_tr = rdb["train"]
+    x_rdb_val, y_rdb_val, ids_rdb_val, patients_rdb_val = rdb["val"]
+    x_rdb_te, y_rdb_te, ids_rdb_te, patients_rdb_te = rdb["test"]
+    datasets_to_run["RDB"] = {
+        "task_name": "8-Class Canonical Rhythm",
+        "x_tr": x_rdb_tr, "y_tr": y_rdb_tr,
+        "x_val": x_rdb_val, "y_val": y_rdb_val,
+        "x_te": x_rdb_te, "y_te": y_rdb_te,
+        "test_record_ids": ids_rdb_te,
+        "test_patient_ids": patients_rdb_te,
+    }
+    print(
+        f"    Frozen split: Train={len(ids_rdb_tr)}, Val={len(ids_rdb_val)}, "
+        f"Test={len(ids_rdb_te)} | Classes={len(RDB_RHYTHMS)}\n"
+    )
+
+    if selected_datasets is not None:
+        missing_datasets = set(selected_datasets) - set(datasets_to_run)
+        if missing_datasets:
+            raise ValueError(f"unknown dataset keys: {sorted(missing_datasets)}")
+        datasets_to_run = {key: datasets_to_run[key] for key in selected_datasets}
 
     all_models = [
         ("graphecg", "GraphECG (Stanford 2026)"),
         ("set_operator_robust", "SetOperator (P07 Robustness-Trained)"),
+        ("set_operator_aux", "SetOperator (P07 Robustness-Trained + Aux Recon)"),
         ("set_operator_fulllead", "SetOperator (P07 Full-Lead-Only)"),
+        *[(f"braid_{variant}", f"Braid ({variant})") for variant in BRAID_VARIANTS],
         ("fixed_tensor", "FixedTensor (Zero-Imputed Baseline)"),
         ("moments", "Spatial Dipole Moments (Deterministic)"),
         ("paper01", "Paper 01: Distributional Recurrence"),
@@ -813,6 +1003,8 @@ def main():
 
     out_dir = OUTPUTS_DIR / "task_native_evaluation"
     out_dir.mkdir(parents=True, exist_ok=True)
+    prediction_dir = out_dir / "aligned_predictions"
+    prediction_dir.mkdir(parents=True, exist_ok=True)
     matrix_json_path = out_dir / "task_native_decoupling_matrix.json"
     if matrix_json_path.exists():
         with open(matrix_json_path, "r") as f:
@@ -846,10 +1038,21 @@ def main():
                 Z_val_full = extract_setoperator_representation(so_robust, x_val, "Q8_indep", device, rkhs_extractor)
                 test_fn = lambda cfg: extract_setoperator_representation(so_robust, x_te, cfg, device, rkhs_extractor)
 
+            elif m_key == "set_operator_aux":
+                Z_tr_full = extract_setoperator_representation(so_aux, x_tr, "Q8_indep", device, rkhs_extractor)
+                Z_val_full = extract_setoperator_representation(so_aux, x_val, "Q8_indep", device, rkhs_extractor)
+                test_fn = lambda cfg: extract_setoperator_representation(so_aux, x_te, cfg, device, rkhs_extractor)
+
             elif m_key == "set_operator_fulllead":
                 Z_tr_full = extract_setoperator_representation(so_full, x_tr, "Q8_indep", device, rkhs_extractor)
                 Z_val_full = extract_setoperator_representation(so_full, x_val, "Q8_indep", device, rkhs_extractor)
                 test_fn = lambda cfg: extract_setoperator_representation(so_full, x_te, cfg, device, rkhs_extractor)
+
+            elif m_key.startswith("braid_"):
+                braid_model = braid_models[m_key]
+                Z_tr_full = extract_braid_field_representation(braid_model, x_tr, "Q8_indep", device, rkhs_extractor)
+                Z_val_full = extract_braid_field_representation(braid_model, x_val, "Q8_indep", device, rkhs_extractor)
+                test_fn = lambda cfg, model=braid_model: extract_braid_field_representation(model, x_te, cfg, device, rkhs_extractor)
 
             elif m_key == "fixed_tensor":
                 Z_tr_full = extract_fixedtensor_representation(x_tr, "Q8_indep")
@@ -868,7 +1071,7 @@ def main():
                 test_fn = lambda cfg, m_k=m_key, inst=m_inst: extract_paper_representation(inst, x_te, m_k, cfg, device)
 
             # Train linear head on full leads & evaluate shift
-            res = train_head_and_evaluate_shift(
+            res, predictions = train_head_and_evaluate_shift(
                 model_name=m_key,
                 dataset_name=d_name,
                 Z_tr_full=Z_tr_full,
@@ -878,7 +1081,33 @@ def main():
                 test_repr_fn=test_fn,
                 y_te=y_te,
                 device=device,
+                return_predictions=True,
             )
+
+            record_ids = np.asarray(d_info["test_record_ids"], dtype=str)
+            if len(record_ids) != len(y_te) or len(np.unique(record_ids)) != len(record_ids):
+                raise ValueError(f"{d_name} requires unique test record IDs aligned to labels")
+            config_keys = tuple(CONFIGURATIONS)
+            probability_matrix = np.stack([predictions[key] for key in config_keys], axis=0)
+            output_path = prediction_dir / f"{d_name.lower()}__{m_key}.npz"
+            prediction_payload = {
+                "schema_version": np.asarray("task_native_aligned_predictions_v1"),
+                "dataset": np.asarray(d_name),
+                "model": np.asarray(m_key),
+                "task_name": np.asarray(d_info["task_name"]),
+                "configurations": np.asarray(config_keys),
+                "record_ids": record_ids,
+                "y_true": y_te.astype(np.float32, copy=False),
+                "probabilities": probability_matrix,
+            }
+            if "test_patient_ids" in d_info:
+                patient_ids = np.asarray(d_info["test_patient_ids"], dtype=str)
+                if len(patient_ids) != len(record_ids) or np.any(np.char.strip(patient_ids) == ""):
+                    raise ValueError(f"{d_name} requires nonempty patient IDs aligned to test records")
+                prediction_payload["patient_ids"] = patient_ids
+            np.savez_compressed(output_path, **prediction_payload)
+            payload_digest = hashlib.sha256(output_path.read_bytes()).hexdigest()
+            print(f"      [Saved] aligned predictions: {output_path.name} sha256={payload_digest}")
 
             master_results[d_name]["models"][m_key] = res
             q8_auc = res["Q8_indep"]["macro_auroc"]

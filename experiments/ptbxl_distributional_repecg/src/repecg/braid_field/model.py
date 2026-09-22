@@ -252,6 +252,7 @@ class BraidFieldClassifier(nn.Module):
             fused = self.fusion(latent)
             return {
                 "logits": self.head(fused),
+                "fused": fused,
                 "latent": latent,
                 "field": field,
                 "braid_embedding": torch.zeros(len(latent), 0, device=latent.device),
@@ -264,7 +265,7 @@ class BraidFieldClassifier(nn.Module):
         if self.config.variant in {"field_braid_event", "field_braid_inv", "field_braid_prob"}:
             pieces.append(topology["event_embedding"])
         fused = self.fusion(torch.cat(pieces, dim=-1))
-        return {"logits": self.head(fused), "latent": latent, "field": field, **topology}
+        return {"logits": self.head(fused), "fused": fused, "latent": latent, "field": field, **topology}
 
     def forward(
         self,

@@ -1,85 +1,56 @@
-# Experiment Plan
+# Braid Clinical Extension Experiment Plan
 
-**Problem**: Determine whether pretrained NEF mechanisms improve Lead-I-to-12-lead ECG-AIM reconstruction when incorporated as native, jointly trainable components.
-**Method Thesis**: PanoBench-pretrained Angle, query-conditioned View Encoder, and GeoVT modules can improve A0 only if they are transplanted into its latent computation and co-adapted end-to-end.
-**Date**: 2026-09-15
+**Problem:** determine whether PTB-XL-trained Braid representations match SetOperator and GraphECG under the same frozen-encoder clinical configuration-shift protocol.
+
+**Method thesis:** Braid is evaluated as a PTB-XL-trained encoder; each native cohort receives only a full/native-training-split task head, which is frozen before reduced-lead evaluation.
 
 ## Claim Map
 
-| Claim | Why It Matters | Minimum Convincing Evidence | Linked Blocks |
+| Claim | Minimum evidence | Block |
+|---|---|---|
+| Braid changes flexible-lead clinical representations relative to SetOperator and GraphECG | Same patient/split/configuration predictions with patient-level uncertainty | B1 |
+| Any temporal benefit is present on native annotated boundaries rather than inferred labels | Fixed native delineation splits, direct sequence head, per-class and boundary metrics | B2 |
+
+## Block B1: Cross-Dataset Task-Native Decoupling
+
+- **Systems:** GraphECG, three SetOperator checkpoints, five fully trained PTB-XL Braid checkpoints, and the existing fixed-tensor control.
+- **Cohorts:** LUDB, Zhejiang, ISP, Kingston-ICU, then RDB, HEEDB, and EchoNext.
+- **Protocol:** extract a frozen encoder representation under the shared Q8, S6, S3, S2, S1, and ICM configurations; fit a task head only on the cohort's full/native training split; select it only on that cohort's validation split; freeze both components for shift testing.
+- **Metrics:** task-appropriate AUROC/AUPRC; absolute full-to-shift delta; retention; class-wise denominators; patient-equal aggregation whenever patient IDs exist.
+- **EchoNext gate:** train/validation waveforms must be restored and verified against the official split before any head fitting. The local 5,442-record official test archive is evaluation-only.
+- **HEEDB-derived Emory-MUSE gate:** use the audited 12SL diagnosis table only after per-row WFDB materialization is reconciled, empty-code exclusions are frozen, the label vocabulary/support rule is fit on training patients only, and patient-disjoint hash splits are emitted. This is distinct from a claim about the full multi-site HEEDB corpus.
+- **RDB gate:** use the frozen cache train/validation/test directories and payload rhythm labels, never filename-derived labels.
+
+## Block B2: Native Delineation
+
+- **Cohorts:** ISP, LUDB, RDB, Zhejiang.
+- **Protocol:** direct sequence head over each frozen encoder's time-resolved representation. Do not score a generic NeuroKit delineator on reconstructed waveforms as an encoder comparison.
+- **Labels:** native P/QRS/T masks and six onset/offset fiducials; preserve each dataset's sampling rate and documented coordinate map.
+- **Metrics:** class Dice/IoU, per-fiducial event F1 at prespecified millisecond tolerances, absolute boundary error in milliseconds, and valid/ineligible sample counts.
+- **Splits:** ISP official train/test; LUDB frozen patient folds; RDB frozen cache splits; Zhejiang frozen record-hash folds. No test-derived normalization, thresholds, or early stopping.
+
+## Block B3: Statistical Inference and Ablations
+
+- **Bootstrap:** 2,000 paired resamples of test patients; use records only where patient IDs are unavailable and label that exception.
+- **Pairwise discrimination:** DeLong tests only for matched predictions on the same binary endpoint/test set; alpha 0.05 with a prespecified multiple-testing correction family.
+- **Shift comparison:** paired bootstrap on per-patient metric contributions and paired full-versus-reduced deltas; report 95% CIs and explicit denominators.
+- **Braid ablations:** field versus each topology variant under identical PTB-XL data, seed, optimizer, selection split, and parameter-budget disclosure. Do not rescue a negative field-richness result with post-hoc architecture changes.
+
+## Run Order
+
+| Milestone | Gate | Status | Next action |
 |---|---|---|---|
-| C1: Native Angle+View improves A0 | Tests the central target-conditioned mechanism | C1-C0 paired fold-9 gain near 0.003 or more in missing-11 Pearson, without meaningful chest or p05 deterioration | B1, B2 |
-| C2: GeoVT adds value beyond identical Angle+View initialization | Isolates the incremental geometric transformation | C2-C1 paired fold-9 improvement with exact shared initialization | B1, B2 |
+| M0 | Five Braid PTB-XL checkpoints | Running | Three-way GPU-saturated wave, then remaining two variants |
+| M1 | Existing four-cohort task-native comparison | Pending M0 | Run the shared registry only after every Braid checkpoint exists |
+| M2 | RDB rhythm/delineation adapter | Ready data, adapter pending | Implement/test frozen-cache native-label adapter |
+| M3 | ISP/LUDB/Zhejiang direct delineation heads | Labels audited, heads pending | Implement/test one common sequence-head contract without coordinate coercion |
+| M4 | HEEDB-derived Emory-MUSE admission | Complete | Frozen v1 admission has 941,679 records / 343,424 patients, zero split crossings, all 180 training-derived codes, and verified waveform pairs for every diagnosis-eligible row |
+| M5 | EchoNext task-native head | Blocked by missing train/validation waveforms | Restore and hash official training/validation inputs; retain test sealed |
+| M6 | Statistical report | Pending M1-M5 | Generate paired bootstrap/DeLong artifacts from frozen prediction tables |
 
-Anti-claims: gains arise from extra continuation, unequal shared initialization, frozen imported modules, hidden-target normalization, or waveform-level NEF addition.
+## Non-negotiable exclusions
 
-## Paper Storyline
-
-- Main paper: native end-to-end integration against matched A0, plus C2-C1.
-- Appendix: completed frozen-feature control and a later AE_VE-epoch-15 transfer control.
-- Cut: AE-only, AE_GVT, eight-way expansion, synthetic parents/data, and the invalidated Stage-14 registry.
-
-## Experiment Blocks
-
-### Block 1: Native A0 Three-Arm Screen
-
-- Claim tested: C1 and C2.
-- Dataset / split / task: PTB-XL folds 1-8 train; fold 9 selection; Lead I observed; fold 10 sealed.
-- Systems: C0 matched A0 continuation; C1 native Angle+View; C2 native Angle+View+GeoVT.
-- Metrics: missing-11 Pearson, V1-V6 Pearson, Lead-II Pearson, p05 Pearson, reconstruction loss, and retained delineation metrics.
-- Setup: same historical A0 epoch-15 checkpoint, seed, batch order, optimizer, schedule, and three epochs. C1/C2 share exact Angle+View initialization from FULL epoch 13. C2 alone receives FULL epoch-13 GeoVT. All modules are trainable. No NEF reconstruction head.
-- Success: approximately +0.003 missing-11 Pearson versus C0 without meaningful chest/p05 deterioration; paired record bootstrap required before promotion.
-- Failure: near-zero C1/C2 stops registry expansion.
-- Target: main mechanism table and paired-delta plot.
-- Priority: MUST-RUN.
-
-### Block 2: Initialization and Causal Integrity Gate
-
-- Claim tested: anti-claims.
-- Dataset: two real fold-9 records; no synthetic fallback.
-- Checks: disabled C1/C2 reconstruction, segmentation, and grid errors below 1e-6; exact C1/C2 Angle+View hashes; finite forward/backward; nonzero gradients in A0, Angle, View, and GeoVT; `[B,12,5000]` output; hidden-target invariance.
-- Success: every check passes before launch.
-- Failure: hard stop.
-- Target: machine-readable preflight JSON.
-- Priority: MUST-RUN.
-
-### Block 3: Frozen-versus-Native Transfer Diagnosis
-
-- Claim: whether co-adaptation is necessary.
-- Systems: completed frozen H0/H1/H2 versus native C0/C1/C2.
-- Rule: interpret only after the native screen; never select from the frozen run.
-- Priority: NICE-TO-HAVE.
-
-## Run Order and Milestones
-
-| Milestone | Goal | Runs | Decision Gate | Cost | Risk |
-|---|---|---|---|---|---|
-| M0 | Verify native causal contract | real-record preflight | all Block-2 checks pass | minutes | integration/gradient failure |
-| M1 | Matched baseline | C0 | success marker, three epochs | about 0.3 GPU-hour | storage interruption |
-| M2 | Native mechanisms | C1 then C2 | all arms complete | about 0.8-1.5 GPU-hours | added compute |
-| M3 | Promotion decision | paired analysis | practical, tail-safe gain | CPU | aggregate overinterpretation |
-| M4 | Broaden after promotion only | eligible family winners, three seeds | strict loader gate | deferred | registry provenance |
-
-## Compute and Data Budget
-
-- One local A100 40 GB, sequential queue, approximately 1.1-1.8 GPU-hours including validation.
-- NFS output; every epoch plus optimizer-complete rolling resume.
-- Existing immutable PTB-XL manifest and delineation cache.
-- Biggest bottleneck: C2 compute and paired per-record analysis.
-
-## Risks and Mitigations
-
-- Single-source GeoVT attention is degenerate: C2 tests its hierarchical transformation, not multi-source selection.
-- Extra parameters: use C2-C1 as the focused contrast; defer parameter-matched controls unless positive.
-- Initialization perturbation: mandatory disabled-path identity and matched C0.
-- Resume corruption: require full optimizer/scheduler/scaler/RNG state and hashes.
-- Registry contamination: no expansion without exact constructor/config/checkpoint, strict load, and real-record forward.
-
-## Final Checklist
-
-- [x] Main paper tables are covered
-- [x] Novelty is isolated
-- [x] Simplicity is defended
-- [x] No unrelated frontier contribution is claimed
-- [x] Nice-to-have runs are separated
-
+- No fitting on EchoNext's official test waveforms.
+- No fabricated PTB-XL labels for native cohorts.
+- No pooled-record inference when a patient-level analysis is possible.
+- No topology threshold, checkpoint, or hyperparameter selection from a reduced configuration or external test outcome.

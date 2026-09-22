@@ -189,6 +189,9 @@ def main() -> None:
 
     _seed(args.seed)
     device = torch.device(args.device)
+    if device.type == "cuda":
+        # cuDNN 9.2 fails to finalize Conv1d descriptors on this CUDA 12.4 host.
+        torch.backends.cudnn.enabled = False
     train = _load(args.dataset / "train.npz")
     val = _load(args.dataset / "val.npz")
     config = BraidFieldConfig(

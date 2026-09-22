@@ -1,11 +1,14 @@
-# Experiment Tracker
+# Braid Clinical Extension Tracker
 
-| Run ID | Milestone | Purpose | System / Variant | Split | Metrics | Priority | Status | Notes |
-|---|---|---|---|---|---|---|---|---|
-| NATIVE-PF | M0 | causal gate | A0/C1/C2 real-record preflight | fold 9, 32 records | identity, hashes, gradients, shape, target independence | MUST | PASS | Exact production batch; no synthetic fallback |
-| PANO-MAP | M0 | channel/query provenance | official PanoBench release and Nef-Net v2 code | 48 stored channels | channel identities, formulas, angle tables | MUST | PASS_WITH_QUALIFIER | Channels 0-43 are I, II, and 42 BSPM views; 44-47 are exact derived III/aVR/aVL/aVF. Standard V1-V6 are separate continuous query coordinates, not a 1:1 six-channel subset. Claim only continuous geometric transfer. |
-| C0 | M1 | matched continuation | `C0_A0_NATIVE_CONTROL` | folds 1-8 / fold 9 | missing11, chest, II, p05, loss | MUST | COMPLETE | Three epochs complete; fold-9 missing11 Pearson 0.746395, p05 0.403235 |
-| C1 | M2 | native Angle+View | `C1_A0_NATIVE_AE_VE` | folds 1-8 / fold 9 | same | MUST | HALTED_HARDWARE | CUDA peer-memory/hardware error at epoch 1 batch 155/545; no optimizer-complete checkpoint; tmux exited |
-| C2 | M2 | incremental GeoVT | `C2_A0_NATIVE_FULL` | folds 1-8 / fold 9 | same | MUST | BLOCKED_ON_C1 | Not started; do not relaunch until GPU ECC/hardware health is remediated |
-| PAIR | M3 | promotion decision | C1-C0, C2-C0, C2-C1 | fold 9 | paired bootstrap and tail safeguards | MUST | BLOCKED_ON_RUNS | Fold 10 sealed |
-| FROZEN-CONTROL | M3 | transfer diagnosis | completed H0/H1/H2 | fold 9 | compatible endpoints | NICE | COMPLETE | Preserve unchanged |
+| Run ID | Milestone | System / task | Split | Priority | Status | Notes |
+|---|---|---|---|---|---|---|
+| B01-B05 | M0 | Five Braid PTB-XL variants | PTB-XL development train/select | MUST | RUNNING | Three trainers active; remaining variants start after capacity frees. |
+| C01 | M1 | Existing four-cohort task-native comparison | Native frozen splits | MUST | PENDING | Depends on all five PTB-XL checkpoints. |
+| C02 | M2 | RDB canonical rhythm | Frozen cache train/val/test | MUST | QUEUED | Full 2,398-record loader validated; Braid cells run in catch-up evaluation, then the remaining model roster runs from `rdb_remaining_models_after_braid`. |
+| D01 | M3 | ISP delineation | Official train/test | MUST | PENDING | P/QRS/T intervals are present. |
+| D02 | M3 | LUDB delineation | Frozen patient folds | MUST | PENDING | Per-lead physician annotations. |
+| D03 | M3 | RDB delineation | Frozen cache train/val/test | MUST | PENDING | Native masks and fiducials available. |
+| D04 | M3 | Zhejiang delineation | Frozen record-hash folds | MUST | PENDING | Preserve 2,000 Hz to 500 Hz mapping. |
+| H01 | M4 | HEEDB-derived Emory-MUSE 12SL diagnoses | Patient-disjoint cohort | MUST | COMPLETE | Frozen admission: 941,679 records / 343,424 patients; all 968,680 coded rows have waveform pairs; 27,001 blank-patient and 5,492 empty-code rows explicitly excluded; 180-code training vocabulary. |
+| E01 | M5 | EchoNext SHD | Official split | MUST | BLOCKED | Only test waveforms are local; train/validation restoration required. |
+| S01 | M6 | Paired bootstrap/DeLong | Frozen prediction tables | MUST | PENDING | 2,000 paired patient bootstraps; DeLong only matched binary endpoints. |

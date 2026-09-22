@@ -19,6 +19,7 @@ import numpy as np
 import pandas as pd
 import torch
 from sklearn.metrics import average_precision_score, roc_auc_score
+import wfdb
 
 torch.backends.cudnn.enabled = False
 
@@ -174,6 +175,61 @@ def evaluate_fixed_tensor_sweeps(
     return results
 
 
+def evaluate_graphecg_sweeps(
+    checkpoint_path: Path,
+    device: torch.device,
+    batch_size: int = 64,
+) -> Dict[str, Any]:
+    from graphECG_author_code.graph import ECGGraphBuilder
+    from graphECG_author_code.model import GraphECG
+    from torch_geometric.data import Batch
+
+    db_path = DATA_DIR / "ptbxl/ptbxl_database.csv"
+    df = pd.read_csv(db_path)
+    test_df = df[df["strat_fold"] == 8].reset_index(drop=True)
+
+    LEAD_MAP = {0: 0, 1: 1, 2: 6, 3: 7, 4: 8, 5: 9, 6: 10, 7: 11}
+    labels_all = np.load(OUTPUTS_DIR / "ptbxl_masking_control/representation_ptbxl_full_fold8.npz")["labels"]
+
+    builder = ECGGraphBuilder()
+    model = GraphECG(node_dim=128, edge_dim=192, hidden_dim=192, num_layers=3, tabular_dim=0, num_classes=5).to(device)
+    state = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    model.load_state_dict(state.get("model_state_dict", state))
+    model.eval()
+
+    signals = []
+    for fn in test_df["filename_lr"]:
+        sig, _ = wfdb.rdsamp(str(DATA_DIR / "ptbxl" / fn))
+        sig = np.nan_to_num(sig, nan=0.0).astype(np.float32)
+        sig = (sig - sig.mean(axis=0, keepdims=True)) / (sig.std(axis=0, keepdims=True) + 1e-6)
+        signals.append(sig.T)
+
+    results = {}
+    for cfg_key, cfg in SWEEP_CONFIGS.items():
+        indices = cfg["indices"]
+        sub_indices = [LEAD_MAP[i] for i in indices]
+
+        probs_list = []
+        with torch.inference_mode():
+            for i in range(0, len(signals), batch_size):
+                batch_sigs = signals[i : i + batch_size]
+                graphs = [builder.build_from_array(s, lead_indices=sub_indices, bidirectional=True) for s in batch_sigs]
+                batch_graph = Batch.from_data_list(graphs).to(device)
+                out = model(batch_graph)
+                logits = out["logits"] if isinstance(out, dict) else out
+                probs_list.append(torch.sigmoid(logits).float().cpu().numpy())
+
+        probs = np.concatenate(probs_list)
+        metrics = compute_multilabel_metrics(labels_all[: len(probs)], probs)
+        results[cfg_key] = {
+            "name": cfg["name"],
+            "indices": indices,
+            "macro_auroc": round(metrics["macro_auroc"], 4),
+            "macro_auprc": round(metrics["macro_auprc"], 4),
+        }
+    return results
+
+
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     out_dir = OUTPUTS_DIR / "configuration_shift_evaluations/ptbxl"
@@ -188,9 +244,19 @@ def main():
 
     # P07 Robustness Trained
     p07_ckpt = out_dir / "checkpoints/P07_ROBUSTNESS_TRAINED.pt"
+    if not p07_ckpt.exists():
+        p07_ckpt = OUTPUTS_DIR / "paper07_operator_reconstruction/continuous_primary_best.pt"
     if p07_ckpt.exists():
         print("Evaluating P07_ROBUSTNESS_TRAINED sweeps...")
         sweeps_master["P07_ROBUSTNESS_TRAINED"] = evaluate_paper07_sweeps(p07_ckpt, device)
+
+    # P07 Robustness Trained + Aux Recon
+    p07_aux_ckpt = out_dir / "checkpoints/P07_ROBUSTNESS_TRAINED_AUX.pt"
+    if not p07_aux_ckpt.exists():
+        p07_aux_ckpt = OUTPUTS_DIR / "paper07_operator_reconstruction/continuous_auxiliary_best.pt"
+    if p07_aux_ckpt.exists():
+        print("Evaluating P07_ROBUSTNESS_TRAINED_AUX sweeps...")
+        sweeps_master["P07_ROBUSTNESS_TRAINED_AUX"] = evaluate_paper07_sweeps(p07_aux_ckpt, device)
 
     # P07 Full-Lead Only
     p07_full_ckpt = out_dir / "checkpoints/P07_FULLLEAD_ONLY.pt"
@@ -199,6 +265,14 @@ def main():
     if p07_full_ckpt.exists():
         print("Evaluating P07_FULLLEAD_ONLY sweeps...")
         sweeps_master["P07_FULLLEAD_ONLY"] = evaluate_paper07_sweeps(p07_full_ckpt, device)
+
+    # GraphECG
+    graphecg_ckpt = out_dir / "checkpoints/GraphECG.pt"
+    if not graphecg_ckpt.exists():
+        graphecg_ckpt = OUTPUTS_DIR / "graphecg/graphecg_ptbxl_best.pt"
+    if graphecg_ckpt.exists():
+        print("Evaluating GraphECG sweeps...")
+        sweeps_master["GraphECG"] = evaluate_graphecg_sweeps(graphecg_ckpt, device)
 
     # FixedTensor P02
     p02_ckpt = out_dir / "checkpoints/FixedTensor_P02.pt"
@@ -217,20 +291,23 @@ def main():
     md_lines = [
         "# PTB-XL Combinatorial Single-Lead and Pair Sweeps",
         "",
-        "| Configuration | SetOperator (Robust) | SetOperator (Full-Lead Only) | FixedTensor (P02) | Delta SetOp vs Fixed |",
-        "|---|---|---|---|---|",
+        "| Configuration | SetOperator (Robust) | SetOperator (Aux) | SetOperator (Full-Lead Only) | GraphECG (Stanford) | FixedTensor (P02) | Delta Robust vs GraphECG |",
+        "|---|---|---|---|---|---|---|",
     ]
 
     for cfg_key, cfg in SWEEP_CONFIGS.items():
         name = cfg["name"]
         auc_p07_rob = sweeps_master.get("P07_ROBUSTNESS_TRAINED", {}).get(cfg_key, {}).get("macro_auroc", "—")
+        auc_p07_aux = sweeps_master.get("P07_ROBUSTNESS_TRAINED_AUX", {}).get(cfg_key, {}).get("macro_auroc", "—")
         auc_p07_full = sweeps_master.get("P07_FULLLEAD_ONLY", {}).get(cfg_key, {}).get("macro_auroc", "—")
+        auc_ge = sweeps_master.get("GraphECG", {}).get(cfg_key, {}).get("macro_auroc", "—")
         auc_fixed = sweeps_master.get("FixedTensor_P02", {}).get(cfg_key, {}).get("macro_auroc", "—")
-        if isinstance(auc_p07_rob, float) and isinstance(auc_fixed, float):
-            delta = f"+{auc_p07_rob - auc_fixed:.4f}"
+        if isinstance(auc_p07_rob, float) and isinstance(auc_ge, float):
+            diff = auc_p07_rob - auc_ge
+            delta_ge = f"{'+' if diff >= 0 else ''}{diff:.4f}"
         else:
-            delta = "—"
-        md_lines.append(f"| {name} | **{auc_p07_rob}** | {auc_p07_full} | {auc_fixed} | **{delta}** |")
+            delta_ge = "—"
+        md_lines.append(f"| {name} | **{auc_p07_rob}** | {auc_p07_aux} | {auc_p07_full} | {auc_ge} | {auc_fixed} | **{delta_ge}** |")
 
     out_md = out_dir / "combinatorial_sweeps.md"
     with open(out_md, "w") as f:

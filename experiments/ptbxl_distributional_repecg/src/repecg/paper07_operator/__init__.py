@@ -15,6 +15,7 @@ from .measurements import (
     projective_response_atoms,
     record_training_operators,
     response_atoms,
+    time_indexed_response_atoms,
     sample_context_target_indices,
     sample_sparse_operators,
 )
@@ -38,6 +39,7 @@ __all__ = [
     "projective_response_atoms",
     "record_training_operators",
     "response_atoms",
+    "time_indexed_response_atoms",
     "sample_context_target_indices",
     "sample_sparse_operators",
     "Full12LeadWaveformDecoder",

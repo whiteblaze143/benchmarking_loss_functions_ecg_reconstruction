@@ -16,6 +16,7 @@ from repecg.paper07_operator import (
     frozen_operator_banks,
     record_training_operators,
     response_atoms,
+    time_indexed_response_atoms,
 )
 
 
@@ -75,6 +76,7 @@ def _response_reservoir(
     voltage_scale: float,
     count: int,
     seed: int,
+    atom_fn,
 ) -> np.ndarray:
     chunks = []
     observed = 0
@@ -82,7 +84,8 @@ def _response_reservoir(
         row = frame.iloc[index]
         beats, _ = _load(cache, row, mean, std)
         for q in record_training_operators(int(row.ecg_id), seed):
-            values = response_atoms(beats, q, voltage_scale).reshape(-1, 2)
+            atoms = atom_fn(beats, q, voltage_scale)
+            values = atoms.reshape(-1, atoms.shape[-1])
             take = min(len(values), count - observed)
             chunks.append(values[:take])
             observed += take
@@ -92,8 +95,9 @@ def _response_reservoir(
 
 
 def _phase_cells(atoms: np.ndarray) -> list[np.ndarray]:
-    cells = atoms.reshape(len(atoms), 16, 16, 2).transpose(1, 0, 2, 3)
-    return [cell.reshape(-1, 2) for cell in cells]
+    dimensions = atoms.shape[-1]
+    cells = atoms.reshape(len(atoms), 16, 16, dimensions).transpose(1, 0, 2, 3)
+    return [cell.reshape(-1, dimensions) for cell in cells]
 
 
 def _audit_cells(
@@ -105,6 +109,7 @@ def _audit_cells(
     std: np.ndarray,
     voltage_scale: float,
     seed: int,
+    atom_fn,
 ) -> list[np.ndarray]:
     cells = []
     for cache, frame in ((train_cache, train), (validation_cache, validation)):
@@ -112,7 +117,7 @@ def _audit_cells(
             row = frame.iloc[index]
             beats, _ = _load(cache, row, mean, std)
             q = record_training_operators(int(row.ecg_id), seed)[0]
-            cells.extend(_phase_cells(response_atoms(beats, q, voltage_scale)))
+            cells.extend(_phase_cells(atom_fn(beats, q, voltage_scale)))
     return cells
 
 
@@ -132,6 +137,36 @@ def _audit_map(
     return audit_nystrom(exact, approximate)
 
 
+def _temporal_permutation_gate(
+    whitening: WhiteningTransform, mapping: NystromMap,
+) -> dict[str, float | bool]:
+    """Exact null control for the time-indexed measurement contract."""
+    tau = np.linspace(-1.0, 1.0, 16, dtype=np.float64)
+    voltage = tau**3
+    derivative = np.gradient(voltage)
+    old = np.stack((voltage, derivative), axis=1)
+    permutation = np.asarray([3, 11, 0, 14, 6, 9, 1, 15, 7, 4, 13, 2, 10, 5, 12, 8])
+    old_permuted = old[permutation]
+    new = np.concatenate((tau[:, None], old), axis=1)
+    new_permuted = np.concatenate((tau[:, None], old_permuted), axis=1)
+    old_equal = bool(np.array_equal(old[np.lexsort(old.T[::-1])], old_permuted[np.lexsort(old_permuted.T[::-1])]))
+    new_equal = bool(np.array_equal(new[np.lexsort(new.T[::-1])], new_permuted[np.lexsort(new_permuted.T[::-1])]))
+    new_mmd2 = float(biased_mmd2(whitening.transform(new), whitening.transform(new_permuted)))
+    approximate_distance = float(np.square(
+        mapping.mean(whitening.transform(new)) - mapping.mean(whitening.transform(new_permuted))
+    ).sum())
+    passed = old_equal and not new_equal and new_mmd2 > 0.0
+    if not passed:
+        raise RuntimeError("time-indexed temporal-permutation falsification gate failed")
+    return {
+        "passed": passed,
+        "time_agnostic_old_atom_multiset_equal": old_equal,
+        "time_indexed_new_atom_multiset_equal": new_equal,
+        "time_indexed_exact_imq_mmd2": new_mmd2,
+        "time_indexed_nystrom_distance2": approximate_distance,
+    }
+
+
 class TorchResponseMap:
     def __init__(self, whitening: WhiteningTransform, mapping: NystromMap, device: torch.device):
         self.mean = torch.as_tensor(whitening.mean, device=device, dtype=torch.float32)
@@ -144,7 +179,8 @@ class TorchResponseMap:
         self.device = device
 
     def phase_means(self, atoms: np.ndarray) -> np.ndarray:
-        cells = atoms.reshape(len(atoms), 16, 16, 2).transpose(1, 0, 2, 3).reshape(16, -1, 2)
+        dimensions = atoms.shape[-1]
+        cells = atoms.reshape(len(atoms), 16, 16, dimensions).transpose(1, 0, 2, 3).reshape(16, -1, dimensions)
         values = torch.as_tensor(cells, device=self.device, dtype=torch.float32)
         with torch.inference_mode():
             white = (values - self.mean) @ self.components * self.scales
@@ -171,6 +207,7 @@ def _represent(
     seed: int,
     seen: np.ndarray,
     validation: bool,
+    atom_fn,
 ) -> dict[str, np.ndarray]:
     operators_per_record = 16 if validation else 8
     responses = np.empty((len(frame), operators_per_record, 16, mapping.landmark_count), dtype=np.float32)
@@ -186,10 +223,10 @@ def _represent(
         operators[index] = current
         for operator_index, q in enumerate(current):
             responses[index, operator_index] = mapping.phase_means(
-                response_atoms(beats, q, voltage_scale)
+                atom_fn(beats, q, voltage_scale)
             )
             negative_responses[index, operator_index] = mapping.phase_means(
-                response_atoms(beats, -q, voltage_scale)
+                atom_fn(beats, -q, voltage_scale)
             )
         if (index + 1) % 500 == 0:
             print(json.dumps({"split": cache.name, "represented": index + 1}), flush=True)
@@ -220,7 +257,9 @@ def main() -> None:
     parser.add_argument("--audit-pairs", type=int, default=1_000)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--time-indexed", action="store_true")
     args = parser.parse_args()
+    atom_fn = time_indexed_response_atoms if args.time_indexed else response_atoms
 
     train = _eligible(args.train_cache)
     validation = _eligible(args.validation_cache)
@@ -234,12 +273,14 @@ def main() -> None:
     reservoir = _response_reservoir(
         args.train_cache, train, physical_mean, physical_std, voltage_scale,
         args.response_reservoir, args.seed,
+        atom_fn,
     )
     whitening = WhiteningTransform.fit(reservoir)
     whitened = whitening.transform(reservoir)
     cells = _audit_cells(
         args.train_cache, train, args.validation_cache, validation,
         physical_mean, physical_std, voltage_scale, args.seed,
+        atom_fn,
     )
     audits = {}
     mapping = None
@@ -258,15 +299,18 @@ def main() -> None:
         }
         (args.output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
         raise RuntimeError(f"Paper 7 Nyström fidelity failed: {audits}")
+    temporal_gate = _temporal_permutation_gate(whitening, mapping) if args.time_indexed else None
     banks = frozen_operator_banks()
     device_map = TorchResponseMap(whitening, mapping, torch.device(args.device))
     train_output = _represent(
         args.train_cache, train, physical_mean, physical_std, voltage_scale,
         device_map, args.seed, banks["seen"], False,
+        atom_fn,
     )
     validation_output = _represent(
         args.validation_cache, validation, physical_mean, physical_std, voltage_scale,
         device_map, args.seed, banks["seen"], True,
+        atom_fn,
     )
     finite = all(
         np.isfinite(payload[key]).all()
@@ -302,7 +346,9 @@ def main() -> None:
         "training_pairs_per_record": 8,
         "validation_pairs_per_record": 16,
         "context_size": [1, 6],
-        "response_atom": "shared-scale_[x_q,dx_q/ds]",
+        "response_atom": "shared-scale_[tau,x_q,dx_q/dtau]" if args.time_indexed else "shared-scale_[x_q,dx_q/ds]",
+        "time_indexed": args.time_indexed,
+        "temporal_permutation_gate": temporal_gate,
         "voltage_scale": voltage_scale,
         "landmarks": len(mapping.landmarks),
         "audits": audits,

@@ -14,7 +14,12 @@ import pandas as pd
 import torch
 
 from repecg.common.kernels import NystromMap, WhiteningTransform
-from repecg.paper07_operator import canonical_operators, derived_limb_operators, response_atoms
+from repecg.paper07_operator import (
+    canonical_operators,
+    derived_limb_operators,
+    response_atoms,
+    time_indexed_response_atoms,
+)
 
 
 SCHEMA_VERSION = "paper07_frozen_full12_context_responses_v1"
@@ -79,11 +84,14 @@ class TorchResponseMap:
         self.landmarks = torch.as_tensor(mapping.landmarks, device=device, dtype=torch.float32)
         self.inverse_root = torch.as_tensor(mapping.inverse_root, device=device, dtype=torch.float32)
         self.c2 = mapping.c2
+        self.atom_dim = len(whitening.mean)
         self.landmark_count = len(mapping.landmarks)
         self.device = device
 
     def phase_means(self, atoms: np.ndarray) -> np.ndarray:
-        cells = atoms.reshape(len(atoms), 16, 16, 2).transpose(1, 0, 2, 3).reshape(16, -1, 2)
+        if atoms.ndim != 3 or atoms.shape[1] != 256:
+            raise ValueError("response atoms must have shape [beat,256,features]")
+        cells = atoms.reshape(len(atoms), 16, 16, atoms.shape[-1]).transpose(1, 0, 2, 3).reshape(16, -1, atoms.shape[-1])
         values = torch.as_tensor(cells, device=self.device, dtype=torch.float32)
         with torch.inference_mode():
             white = (values - self.mean) @ self.components * self.scales
@@ -102,6 +110,7 @@ def _standard_12_operators() -> np.ndarray:
 
 def _write_split(
     output: Path, split: str, cache: Path, base: dict[str, np.ndarray], response_map: TorchResponseMap, operators: np.ndarray,
+    atom_fn,
 ) -> None:
     frame = _eligible(cache)
     if not np.array_equal(frame.ecg_id.to_numpy(dtype=np.int64), base["ecg_ids"]) or not np.array_equal(frame.patient_id.to_numpy(dtype=np.int64), base["patient_ids"]):
@@ -117,7 +126,7 @@ def _write_split(
             raise ValueError(f"{split} phase cache payload disagrees at ECG {row.ecg_id}")
         physical_beats = beats * response_map.physical_std + response_map.physical_mean
         for lead_index, q in enumerate(operators):
-            values[index, lead_index] = response_map.phase_means(response_atoms(physical_beats, q, response_map.voltage_scale))
+            values[index, lead_index] = response_map.phase_means(atom_fn(physical_beats, q, response_map.voltage_scale))
         if (index + 1) % 500 == 0:
             print(json.dumps({"split": split, "materialized": index + 1}), flush=True)
     values.flush()
@@ -134,6 +143,7 @@ def main() -> None:
     parser.add_argument("--validation-cache", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--time-indexed", action="store_true")
     args = parser.parse_args()
     if args.output.exists() and any(args.output.iterdir()):
         raise FileExistsError(f"refusing to overwrite populated context artifact: {args.output}")
@@ -147,16 +157,21 @@ def main() -> None:
         raise ValueError("training and selection ECG IDs overlap")
     args.output.mkdir(parents=True, exist_ok=False)
     response_map = TorchResponseMap(response_fit, torch.device(args.device))
+    atom_fn = time_indexed_response_atoms if args.time_indexed else response_atoms
+    expected_features = 3 if args.time_indexed else 2
+    if response_map.atom_dim != expected_features:
+        raise ValueError("response-fit dimensionality does not match requested response atoms")
     operators = _standard_12_operators()
     np.save(args.output / "operators.npy", operators)
-    _write_split(args.output, "train", args.train_cache, train, response_map, operators)
-    _write_split(args.output, "validation", args.validation_cache, validation, response_map, operators)
+    _write_split(args.output, "train", args.train_cache, train, response_map, operators, atom_fn)
+    _write_split(args.output, "validation", args.validation_cache, validation, response_map, operators, atom_fn)
     manifest = {
         "schema_version": SCHEMA_VERSION,
         "status": "complete",
         "lead_order": list(LEAD_ORDER),
         "operators": "standard_12_lead_operator_bank_in_canonical_target_order",
-        "response_map": "frozen_shared_p07_response_fit_no_refit",
+        "response_map": "frozen_time_indexed_p07_response_fit_no_refit" if args.time_indexed else "frozen_shared_p07_response_fit_no_refit",
+        "time_indexed": bool(args.time_indexed),
         "folds": {"train": list(range(1, 8)), "selection": [8]},
         "shape": {"train": [len(train["labels"]), 12, 16, response_map.landmark_count], "validation": [len(validation["labels"]), 12, 16, response_map.landmark_count]},
         "source": {

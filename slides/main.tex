@@ -353,18 +353,21 @@
 \end{frame}
 
 % ------------------------------------------------------------------------------
-% Slide 8: Figure 2: ECG-AIM Multi-Task Training Pipeline
+% Slide 8: Figure 2: ECG-AIM Architecture
 % ------------------------------------------------------------------------------
-\begin{frame}{Figure 2: ECG-AIM Multi-Task Training Pipeline}{Single-lead simulation and objective functions}
+\begin{frame}{Figure 2: ECG-AIM Architecture}{From an observed lead subset to a reconstructed 12-lead ECG}
 \centering
-\includegraphics[width=\textwidth,height=0.76\textheight,keepaspectratio]{ecg_aim_training_pipeline.png}
+\includegraphics[width=0.985\textwidth,height=0.75\textheight,keepaspectratio]{ecg_aim_architecture_detailed_v5.png}
 \note{
-  This figure illustrates how we trained the ECG-AIM model before testing on single-lead signals.
-  First, on the left, we ingest full 12-lead hospital records from PTB-XL and MIMIC-IV. We simulate single-lead input by masking out the other 11 leads.
-  Second, the single-lead signal passes through our dual-branch wavelet transformer backbone to predict continuous 12-lead waveforms and P-QRS-T boundary delineations.
-  Third, looking at the loss formulation: we supervise waveform reconstruction with a composite loss (MSE, Pearson correlation, Wyatt ST-T phase loss, and spectral loss) plus Einthoven limb consistency, alongside multi-task cross-entropy and Dice loss on delineation.
-  Importantly, during training, the single lead is a synthetic proxy derived from hospital ECGs on supine patients. It lacks dry-electrode contact noise and wearable filtering.
-  This gap motivates the need for our Sunnybrook paired trial data to calibrate and validate the model on clinical hardware.
+  This figure shows the selected ECG-AIM reconstruction architecture.
+  The architecture can ingest any available subset of the 12 standard leads through its lead-availability mask. The selected experiment shown elsewhere in this deck used Lead I alone.
+  For every observed lead, the model divides a 10-second recording into 500 non-overlapping patches of 10 samples, or 20 milliseconds at 500 Hz.
+  Each patch is projected into a 512-dimensional token and combined with learned temporal and lead embeddings.
+  A four-layer transformer encoder processes the observed tokens. Learned mask tokens are introduced for the remaining $12-|\mathcal S|$ leads.
+  Four axial transformer decoder blocks alternate attention across time and across leads, allowing the model to learn both waveform dynamics and cross-lead spatial relationships.
+  Finally, a linear patch-reconstruction head maps the decoded tokens back into the complete 12-lead ECG.
+  During reconstruction updates, the objective combines normalized waveform MSE, one minus Pearson correlation, first-difference L1 loss, and a limb-law consistency penalty weighted by 0.05.
+  On alternating delineation batches, the auxiliary missing-lead objective adds cross-entropy plus 0.5 times Dice loss. This training-only supervision is not part of the inference pathway.
 }
 \end{frame}
 

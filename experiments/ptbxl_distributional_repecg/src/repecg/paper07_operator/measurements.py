@@ -32,6 +32,21 @@ def response_atoms(beats_mv: np.ndarray, q: np.ndarray, voltage_scale: float) ->
     return np.stack((waveform, derivative), axis=-1)
 
 
+def time_indexed_response_atoms(
+    beats_mv: np.ndarray, q: np.ndarray, voltage_scale: float,
+) -> np.ndarray:
+    """Return joint phase-voltage-slope atoms ``[tau, x_q, dx_q/dtau]``.
+
+    Unlike ``response_atoms``, the empirical distribution retains the joint
+    association between location within the normalized cardiac cycle and the
+    electrical response. ``tau`` is fixed and dimensionless on [-1, 1].
+    """
+    response = response_atoms(beats_mv, q, voltage_scale)
+    tau = np.linspace(-1.0, 1.0, response.shape[1], dtype=np.float64)
+    time = np.broadcast_to(tau[None, :, None], (*response.shape[:2], 1))
+    return np.concatenate((time, response), axis=-1)
+
+
 def projective_distance(q1: np.ndarray, q2: np.ndarray) -> float:
     """Compute projective distance on RP^7: d_RP(q1, q2) = arccos(|q1^T q2|)."""
     v1 = normalize_operator(q1)
@@ -204,5 +219,4 @@ def lmmse_reconstruct(
     weight = np.linalg.solve(q_sigma_qT, Q @ sigma)  # (m, 8)
     x_hat = y_observed @ weight  # (..., T, 8)
     return x_hat @ q_t
-
 

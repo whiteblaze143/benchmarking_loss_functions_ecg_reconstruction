@@ -266,6 +266,8 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--variant", choices=tuple(get_variants_for_paper(7)), required=True)
     parser.add_argument("--training-regime", default="full_only", choices=["full_only"])
+    parser.add_argument("--learning-rate", type=float, action="append")
+    parser.add_argument("--weight-decay", type=float, action="append")
     args = parser.parse_args()
 
     manifest = json.loads((args.representations / "manifest.json").read_text())
@@ -305,9 +307,13 @@ def main() -> None:
         "orientation_symmetric_kl": ORIENTATION_WEIGHT if auxiliary and continuous else 0.0,
         "explicit_negative_response": bool(auxiliary and continuous),
     }
+    learning_rates = tuple(args.learning_rate) if args.learning_rate else LEARNING_RATES
+    weight_decays = tuple(args.weight_decay) if args.weight_decay else WEIGHT_DECAYS
+    if any(value <= 0 for value in (*learning_rates, *weight_decays)):
+        raise ValueError("learning rates and weight decays must be positive")
     cells = []
-    for learning_rate in LEARNING_RATES:
-        for weight_decay in WEIGHT_DECAYS:
+    for learning_rate in learning_rates:
+        for weight_decay in weight_decays:
             path = _cell_path(cells_root, args.variant, learning_rate, weight_decay)
             if (path / "summary.json").exists():
                 continue

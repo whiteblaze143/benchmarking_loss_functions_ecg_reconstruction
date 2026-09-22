@@ -75,9 +75,16 @@ def main() -> None:
     parser.add_argument("--batch", type=int, default=64)
     parser.add_argument("--all-subsets", action="store_true")
     parser.add_argument("--device", default="cuda")
+    parser.add_argument(
+        "--disable-cudnn",
+        action="store_true",
+        help="Use PyTorch native convolution kernels when this host's cuDNN descriptor path fails.",
+    )
     args = parser.parse_args()
 
     device = torch.device(args.device)
+    if args.disable_cudnn:
+        torch.backends.cudnn.enabled = False
     data = _load(args.dataset / f"{args.split}.npz")
     model = _load_model(args.checkpoint, device)
     configs = dict(NAMED_CONFIGS)

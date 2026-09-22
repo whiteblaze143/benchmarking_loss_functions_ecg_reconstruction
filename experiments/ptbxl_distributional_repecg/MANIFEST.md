@@ -14,6 +14,15 @@ promoted by the claim gates.
 - `refine-logs/FINAL_PROPOSAL.md`: refined eight-paper proposal.
 - `refine-logs/EXPERIMENT_PLAN.md`: staged execution plan.
 - `refine-logs/EXPERIMENT_TRACKER.md`: run ledger.
+- `refine-logs/FOUNDATION_MODEL_COMPARISON_PLAN_20260922_001716.md`: provenance-gated ECGFounder comparator plan; the fixed-name copy records the latest plan.
+- `refine-logs/FOUNDATION_MODEL_COMPARISON_TRACKER_20260922_001716.md`: foundation-model run ledger; the fixed-name copy records the latest tracker.
+- `refine-logs/FOUNDATION_MODEL_PIPELINE_SUMMARY_20260922_001716.md`: compact execution summary for the foundation-model comparator extension.
+- `refine-logs/FOUNDATION_MODEL_INVENTORY_20260922_002216.md`: checkpoint and loader inventory; records the non-proxy eligibility gate before any foundation-model queue may be created.
+- `refine-logs/FOUNDATION_MODEL_COMPARISON_PLAN_20260922_003215.md`: dependency-gated EchoNext foundation-model plan and strict non-proxy admission criteria.
+- `refine-logs/FOUNDATION_MODEL_COMPARISON_TRACKER_20260922_003215.md`: executable foundation-model run ledger.
+- `scripts/evaluation/restore_ecgfounder_checkpoints.py`: checksum-verified, strict ECGFounder archive admission.
+- `scripts/evaluation/evaluate_ecgfounder_echonext.py`: full-12 and physical-Lead-I frozen ECGFounder EchoNext representation evaluation.
+- `scripts/evaluation/run_foundation_model_queue.sh`: GPU-idle dependency-gated execution queue.
 
 ## Executable source
 

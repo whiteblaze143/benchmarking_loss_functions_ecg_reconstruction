@@ -19,6 +19,7 @@ from .measurements import (
     sample_sparse_operators,
 )
 from .model import Full12LeadWaveformDecoder, OperatorSetModel, symmetric_bernoulli_kl
+from .patient_adaptation import configure_freeze_thaw, observed_lead_mse
 
 __all__ = [
     "UNKNOWN_ID",
@@ -41,6 +42,7 @@ __all__ = [
     "sample_sparse_operators",
     "Full12LeadWaveformDecoder",
     "OperatorSetModel",
+    "configure_freeze_thaw",
+    "observed_lead_mse",
     "symmetric_bernoulli_kl",
 ]
-

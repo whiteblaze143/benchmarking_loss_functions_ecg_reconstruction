@@ -79,6 +79,10 @@ RDB_RHYTHMS = ("ST", "AF", "SA", "AFIB", "SR", "SB", "AT", "SVT")
 sys.path.insert(0, str(EXP_DIR))
 sys.path.insert(0, str(EXP_DIR / "src"))
 sys.path.insert(0, str(REPO_ROOT / "tit_ecg/src"))
+# The repository root also contains a top-level ``scripts`` package.  Keep this
+# experiment root first so the task-native evaluator imports its sibling module.
+sys.path.insert(0, str(EXP_DIR))
+sys.path.insert(0, str(EXP_DIR / "scripts"))
 
 import wfdb
 from graphECG_author_code.graph import ECGGraphBuilder
@@ -89,7 +93,7 @@ from repecg.evaluation.native_labels import LUDB_DIAGNOSTIC_COLUMNS, load_ludb_l
 from repecg.paper07_operator import OperatorSetModel
 from torch_geometric.data import Batch
 
-from scripts.evaluation.evaluate_all_datasets_zeroshot import (
+from evaluation.evaluate_all_datasets_zeroshot import (
     resolve_checkpoint,
     load_model,
     extract_batch_representations,
@@ -159,13 +163,17 @@ CONFIGURATIONS = {
 # Dataset Loaders (Z-score standardized, 12-lead & 8-lead formats)
 # ============================================================================
 
-def load_ludb_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Load LUDB records, per-lead z-score normalize, return (200, 12, 1000) and 8-class multilabel."""
+def load_ludb_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Load LUDB records and released age/sex context aligned to each waveform."""
     ludb_dir = DATA_DIR / "ludb"
     df = load_ludb_labels(ludb_dir / "ludb.csv")
+    demographics = pd.read_csv(ludb_dir / "ludb.csv", dtype={"ID": str}).set_index("ID")
+    if demographics.index.has_duplicates or {"Sex", "Age"} - set(demographics.columns):
+        raise ValueError("LUDB released age/sex metadata is unavailable or non-unique")
     signals = []
     labels = []
     record_ids = []
+    context = []
 
     for _, row in df.iterrows():
         rec_id = row["record_id"]
@@ -179,12 +187,20 @@ def load_ludb_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         y = [1.0 if len(row[col]) > 0 else 0.0 for col in LUDB_DIAGNOSTIC_COLUMNS]
         labels.append(y)
         record_ids.append(str(rec_id))
+        demographic = demographics.loc[str(rec_id)]
+        sex = str(demographic["Sex"]).strip()
+        age_text = str(demographic["Age"]).strip()
+        age_censored = age_text == ">89"
+        age = 89.0 if age_censored else float(age_text)
+        if sex not in {"F", "M"} or not np.isfinite(age) or not 0 <= age <= 89:
+            raise ValueError(f"LUDB record {rec_id} has invalid released age/sex metadata")
+        context.append([(age - 59.72343063354492) / 16.843191146850586, float(age_censored), 1.0 if sex == "M" else 0.0])
 
-    return np.stack(signals), np.array(labels, dtype=np.float32), np.asarray(record_ids)
+    return np.stack(signals), np.array(labels, dtype=np.float32), np.asarray(record_ids), np.asarray(context, dtype=np.float32)
 
 
-def load_zhejiang_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Load Zhejiang records, per-lead z-score normalize, return (334, 12, 1000) and binary RVOT vs LVOT."""
+def load_zhejiang_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Load Zhejiang records plus the released binary sex field for conditioning."""
     zh_dir = DATA_DIR / "zhejiang"
     df = pd.read_excel(zh_dir / "Diagnosis.xlsx")
     leads = ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"]
@@ -192,6 +208,7 @@ def load_zhejiang_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     signals = []
     labels = []
     record_ids = []
+    sexes = []
     for _, row in df.iterrows():
         hid = str(row["HospitalID"])
         sig_leads = []
@@ -204,6 +221,8 @@ def load_zhejiang_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
             with open(p, "rb") as f:
                 sig_leads.append(pickle.load(f))
         if ok:
+            if row["Gender"] not in ("female", "male"):
+                raise ValueError(f"Zhejiang record {hid} has invalid Gender")
             sig = np.array(sig_leads, dtype=np.float32)[:, :5000]
             sig_tensor = torch.from_numpy(sig).unsqueeze(0)
             sig_1000 = nn.functional.adaptive_avg_pool1d(sig_tensor, 1000).squeeze(0).numpy()
@@ -211,8 +230,9 @@ def load_zhejiang_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
             signals.append(sig_norm)
             labels.append([1.0 if row["LeftRight"] == "Right" else 0.0])
             record_ids.append(hid)
+            sexes.append([1.0 if row["Gender"] == "male" else 0.0])
 
-    return np.stack(signals), np.array(labels, dtype=np.float32), np.asarray(record_ids)
+    return np.stack(signals), np.array(labels, dtype=np.float32), np.asarray(record_ids), np.asarray(sexes, dtype=np.float32)
 
 
 def load_isp_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -235,9 +255,9 @@ def load_isp_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.
             record_ids.append(str(fname))
         return np.stack(sigs), np.array(y, dtype=np.float32), np.asarray(record_ids)
 
-    x_tr, y_tr = _load_split(tr_df, "train_data")
-    x_te, y_te = _load_split(te_df, "test_data")
-    return x_tr, y_tr, x_te, y_te
+    x_tr, y_tr, ids_tr = _load_split(tr_df, "train_data")
+    x_te, y_te, ids_te = _load_split(te_df, "test_data")
+    return x_tr, y_tr, ids_tr, x_te, y_te, ids_te
 
 
 def load_kingston_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -501,6 +521,7 @@ def extract_setoperator_representation(
     batch_size: int = 64,
     *,
     full_12_context: bool = False,
+    patient_context: np.ndarray | None = None,
 ) -> np.ndarray:
     """Extract 256-d latent representations from SetOperator under a specific operator configuration using whitened RKHS coordinates."""
     if rkhs_extractor is None:
@@ -512,6 +533,8 @@ def extract_setoperator_representation(
 
     if full_12_context and signals_12.shape[1] != 12:
         raise ValueError("the full-12 auxiliary SetOperator is not comparable on a cohort without canonical 12 leads")
+    if patient_context is not None and (patient_context.ndim != 2 or len(patient_context) != len(signals_12) or not np.isfinite(patient_context).all()):
+        raise ValueError("patient context must be finite and aligned to every ECG")
     if signals_12.shape[1] == 12:
         basis_idx = [0, 1, 6, 7, 8, 9, 10, 11]
         sig_8 = signals_12[:, basis_idx]
@@ -525,6 +548,7 @@ def extract_setoperator_representation(
     for i in range(0, N, batch_size):
         b_sig = torch.from_numpy(sig_8[i : i + batch_size]).float().to(device)
         B_curr = len(b_sig)
+        b_context = None if patient_context is None else torch.from_numpy(patient_context[i : i + batch_size]).float().to(device)
 
         if full_12_context and cfg_key != "S_icm":
             full_ops, full_wf = standard_12_operator_waveforms(b_sig)
@@ -565,7 +589,7 @@ def extract_setoperator_representation(
 
         with torch.no_grad():
             resps = rkhs_extractor.compute_responses(wf)
-            latent = model.encode_context(ops, resps)
+            latent = model.encode_context(ops, resps, patient_context=b_context)
             embeddings.append(latent.cpu().numpy())
 
     return np.concatenate(embeddings)
@@ -888,6 +912,10 @@ def main():
     # SetOperator: frozen shared RKHS, random standard-12-lead subset auxiliary objective.
     so_full12_aux_mmd = None
     so_full12_aux_no_mmd = None
+    so_lead1_sex_unconditioned = None
+    so_lead1_sex_conditioned = None
+    so_lead1_unconditioned = None
+    so_lead1_age_sex_conditioned = None
     if selected_models is None or "set_operator_full12_aux_mmd" in selected_models:
         so_full12_ckpt = Path(
             "/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/"
@@ -917,6 +945,44 @@ def main():
         so_full12_aux_no_mmd.load_state_dict(so_full12_no_mmd_state["state_dict"])
         so_full12_aux_no_mmd.eval()
         print("  [OK] Loaded SetOperator P07_FULL12_AUX_NO_MMD")
+
+    for key in ("set_operator_lead1_sex_unconditioned", "set_operator_lead1_sex_conditioned"):
+        if selected_models is None or key not in selected_models:
+            continue
+        variant = key.removeprefix("set_operator_")
+        checkpoint = Path("/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper07_lead1_patient_context") / variant / f"{variant}_best.pt"
+        if not checkpoint.exists():
+            raise FileNotFoundError(f"Missing fully trained Lead-I sex checkpoint: {checkpoint}")
+        payload = torch.load(checkpoint, map_location=device, weights_only=False)
+        if payload.get("loss_contract", {}).get("conditioning") != "lead_I_only_with_sex_context":
+            raise ValueError(f"{key} does not carry the required Lead-I sex-conditioning contract")
+        model = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous", patient_context_dim=1).to(device)
+        model.load_state_dict(payload["state_dict"])
+        model.eval()
+        if key.endswith("unconditioned"):
+            so_lead1_sex_unconditioned = model
+        else:
+            so_lead1_sex_conditioned = model
+        print(f"  [OK] Loaded SetOperator {variant.upper()}")
+
+    for key in ("set_operator_lead1_unconditioned", "set_operator_lead1_age_sex_conditioned"):
+        if selected_models is None or key not in selected_models:
+            continue
+        variant = key.removeprefix("set_operator_")
+        checkpoint = Path("/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper07_lead1_patient_context") / variant / f"{variant}_best.pt"
+        if not checkpoint.exists():
+            raise FileNotFoundError(f"Missing fully trained Lead-I age/sex checkpoint: {checkpoint}")
+        payload = torch.load(checkpoint, map_location=device, weights_only=False)
+        if payload.get("loss_contract", {}).get("conditioning") != "lead_I_only_with_age_sex_context":
+            raise ValueError(f"{key} does not carry the required Lead-I age/sex-conditioning contract")
+        model = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous", patient_context_dim=3).to(device)
+        model.load_state_dict(payload["state_dict"])
+        model.eval()
+        if key.endswith("unconditioned"):
+            so_lead1_unconditioned = model
+        else:
+            so_lead1_age_sex_conditioned = model
+        print(f"  [OK] Loaded SetOperator {variant.upper()}")
 
     braid_models = {}
     for variant in BRAID_VARIANTS:
@@ -967,7 +1033,7 @@ def main():
 
     # Dataset 1: LUDB
     print(">>> Preparing LUDB...")
-    x_ludb, y_ludb, ids_ludb = load_ludb_data()
+    x_ludb, y_ludb, ids_ludb, context_ludb = load_ludb_data()
     idx = np.arange(len(x_ludb))
     tr_idx, temp_idx = train_test_split(idx, test_size=0.3, random_state=42)
     val_idx, te_idx = train_test_split(temp_idx, test_size=0.5, random_state=42)
@@ -976,13 +1042,14 @@ def main():
         "x_tr": x_ludb[tr_idx], "y_tr": y_ludb[tr_idx],
         "x_val": x_ludb[val_idx], "y_val": y_ludb[val_idx],
         "x_te": x_ludb[te_idx], "y_te": y_ludb[te_idx],
+        "context_tr": context_ludb[tr_idx], "context_val": context_ludb[val_idx], "context_te": context_ludb[te_idx],
         "test_record_ids": ids_ludb[te_idx],
     }
     print(f"    Split: Train={len(tr_idx)}, Val={len(val_idx)}, Test={len(te_idx)} | Classes=8")
 
     # Dataset 2: Zhejiang
     print(">>> Preparing ZHEJIANG...")
-    x_zh, y_zh, ids_zh = load_zhejiang_data()
+    x_zh, y_zh, ids_zh, sex_zh = load_zhejiang_data()
     idx = np.arange(len(x_zh))
     tr_idx, temp_idx = train_test_split(idx, test_size=0.3, random_state=42, stratify=y_zh)
     val_idx, te_idx = train_test_split(temp_idx, test_size=0.5, random_state=42, stratify=y_zh[temp_idx])
@@ -991,6 +1058,7 @@ def main():
         "x_tr": x_zh[tr_idx], "y_tr": y_zh[tr_idx],
         "x_val": x_zh[val_idx], "y_val": y_zh[val_idx],
         "x_te": x_zh[te_idx], "y_te": y_zh[te_idx],
+        "context_tr": sex_zh[tr_idx], "context_val": sex_zh[val_idx], "context_te": sex_zh[te_idx],
         "test_record_ids": ids_zh[te_idx],
     }
     print(f"    Split: Train={len(tr_idx)}, Val={len(val_idx)}, Test={len(te_idx)} | Classes=1")
@@ -1055,6 +1123,10 @@ def main():
         ("set_operator_fulllead", "SetOperator (P07 Full-Lead-Only)"),
         ("set_operator_full12_aux_mmd", "SetOperator (P07 Full-12 Aux + IMQ MMD)"),
         ("set_operator_full12_aux_no_mmd", "SetOperator (P07 Full-12 Aux, MMD Deleted)"),
+        ("set_operator_lead1_sex_unconditioned", "SetOperator (P07 Lead-I, Sex Zeroed Control)"),
+        ("set_operator_lead1_sex_conditioned", "SetOperator (P07 Lead-I + Sex Context)"),
+        ("set_operator_lead1_unconditioned", "SetOperator (P07 Lead-I, Age/Sex Zeroed Control)"),
+        ("set_operator_lead1_age_sex_conditioned", "SetOperator (P07 Lead-I + Age/Sex Context)"),
         *[(f"braid_{variant}", f"Braid ({variant})") for variant in BRAID_VARIANTS],
         ("fixed_tensor", "FixedTensor (Zero-Imputed Baseline)"),
         ("moments", "Spatial Dipole Moments (Deterministic)"),
@@ -1151,6 +1223,34 @@ def main():
                 test_fn = lambda cfg: extract_setoperator_representation(
                     so_full12_aux_no_mmd, x_te, cfg, device, rkhs_extractor, full_12_context=True,
                 )
+
+            elif m_key in {"set_operator_lead1_sex_unconditioned", "set_operator_lead1_sex_conditioned"}:
+                if d_name != "ZHEJIANG":
+                    raise ValueError(f"{m_key} is admitted only for Zhejiang's released sex schema")
+                model = so_lead1_sex_unconditioned if m_key.endswith("unconditioned") else so_lead1_sex_conditioned
+                if model is None:
+                    raise RuntimeError(f"{m_key} was not loaded")
+                context_tr = d_info["context_tr"]
+                context_val = d_info["context_val"]
+                context_te = d_info["context_te"]
+                if m_key.endswith("unconditioned"):
+                    context_tr, context_val, context_te = np.zeros_like(context_tr), np.zeros_like(context_val), np.zeros_like(context_te)
+                Z_tr_full = extract_setoperator_representation(model, x_tr, "Q8_indep", device, rkhs_extractor, patient_context=context_tr)
+                Z_val_full = extract_setoperator_representation(model, x_val, "Q8_indep", device, rkhs_extractor, patient_context=context_val)
+                test_fn = lambda cfg: extract_setoperator_representation(model, x_te, cfg, device, rkhs_extractor, patient_context=context_te)
+
+            elif m_key in {"set_operator_lead1_unconditioned", "set_operator_lead1_age_sex_conditioned"}:
+                if d_name != "LUDB":
+                    raise ValueError(f"{m_key} is admitted only for LUDB's released age/sex schema")
+                model = so_lead1_unconditioned if m_key.endswith("unconditioned") else so_lead1_age_sex_conditioned
+                if model is None:
+                    raise RuntimeError(f"{m_key} was not loaded")
+                context_tr, context_val, context_te = d_info["context_tr"], d_info["context_val"], d_info["context_te"]
+                if m_key.endswith("unconditioned"):
+                    context_tr, context_val, context_te = np.zeros_like(context_tr), np.zeros_like(context_val), np.zeros_like(context_te)
+                Z_tr_full = extract_setoperator_representation(model, x_tr, "Q8_indep", device, rkhs_extractor, patient_context=context_tr)
+                Z_val_full = extract_setoperator_representation(model, x_val, "Q8_indep", device, rkhs_extractor, patient_context=context_val)
+                test_fn = lambda cfg: extract_setoperator_representation(model, x_te, cfg, device, rkhs_extractor, patient_context=context_te)
 
             elif m_key.startswith("braid_"):
                 braid_model = braid_models[m_key]

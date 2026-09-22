@@ -22,12 +22,17 @@ from repecg.paper07_operator import Full12LeadWaveformDecoder, OperatorSetModel
 
 TARGET_SCHEMA = "paper07_full12_waveform_targets_v1"
 CONTEXT_SCHEMA = "paper07_frozen_full12_context_responses_v1"
-PATIENT_CONTEXT_SCHEMA = "paper07_ptbxl_patient_context_v1"
+PATIENT_CONTEXT_SCHEMAS = {
+    "paper07_ptbxl_patient_context_v1": 3,
+    "paper07_ptbxl_sex_context_v1": 1,
+}
 VARIANTS = {
     "continuous_full12_aux_mmd": 1.0,
     "continuous_full12_aux_no_mmd": 0.0,
     "lead1_unconditioned": 1.0,
     "lead1_age_sex_conditioned": 1.0,
+    "lead1_sex_unconditioned": 1.0,
+    "lead1_sex_conditioned": 1.0,
 }
 RECONSTRUCTION_WEIGHT = 0.1
 
@@ -81,14 +86,14 @@ def _load_targets(target_root: Path, split: str, expected: dict[str, np.ndarray]
     return waveforms
 
 
-def _load_patient_context(path: Path, split: str, expected: dict[str, np.ndarray]) -> np.ndarray:
+def _load_patient_context(path: Path, split: str, expected: dict[str, np.ndarray], expected_dim: int) -> np.ndarray:
     manifest = json.loads((path / "manifest.json").read_text())
-    if manifest.get("schema_version") != PATIENT_CONTEXT_SCHEMA or manifest.get("status") != "complete":
+    if manifest.get("schema_version") not in PATIENT_CONTEXT_SCHEMAS or manifest.get("status") != "complete":
         raise ValueError("requires complete PTB-XL patient context")
     values = np.load(path / f"{split}_context.npy", allow_pickle=False)
     ecg_ids = np.load(path / f"{split}_ecg_ids.npy", allow_pickle=False)
     patient_ids = np.load(path / f"{split}_patient_ids.npy", allow_pickle=False)
-    if values.shape != (len(expected["labels"]), 3) or not np.isfinite(values).all():
+    if values.shape != (len(expected["labels"]), expected_dim) or not np.isfinite(values).all():
         raise ValueError(f"invalid {split} patient context")
     if not np.array_equal(ecg_ids, expected["ecg_ids"]) or not np.array_equal(patient_ids, expected["patient_ids"]):
         raise ValueError(f"{split} patient context IDs do not match frozen representations")
@@ -127,7 +132,7 @@ def _save_checkpoint(
     output: Path, variant: str, model: OperatorSetModel, decoder: Full12LeadWaveformDecoder,
     optimizer: torch.optim.Optimizer, epoch: int, val_metrics: dict[str, object],
     history: list[dict[str, float]], target_manifest: Path, context_manifest: Path,
-    patient_context_manifest: Path | None, conditioning: str,
+    patient_context_manifest: Path | None, conditioning: str, forward_precision: str,
 ) -> None:
     payload = {
         "schema_version": "paper07_full12_aux_mmd_checkpoint_v2",
@@ -137,6 +142,7 @@ def _save_checkpoint(
         "optimizer_state_dict": copy.deepcopy(optimizer.state_dict()),
         "epoch": epoch,
         "val_metrics": val_metrics,
+        "forward_precision": forward_precision,
         "loss_contract": {
             "diagnosis_bce": 1.0,
             "view_imq_mmd2": VARIANTS[variant],
@@ -166,6 +172,12 @@ def main() -> None:
     parser.add_argument("--max-epochs", type=int, default=100)
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--precision",
+        choices=("bfloat16", "float32"),
+        default="bfloat16",
+        help="Forward-pass precision; float32 is for a numerically unstable objective retry.",
+    )
     args = parser.parse_args()
     if args.batch < 2 or args.max_epochs < 1 or args.patience < 1:
         raise ValueError("batch must be at least 2; epochs and patience must be positive")
@@ -174,6 +186,8 @@ def main() -> None:
     torch.backends.cudnn.enabled = False
     _seed(args.seed)
     lead1_mode = args.variant.startswith("lead1_")
+    context_dim = 1 if args.variant.startswith("lead1_sex_") else 3
+    unconditioned_mode = args.variant in {"lead1_unconditioned", "lead1_sex_unconditioned"}
     if lead1_mode != (args.patient_context is not None):
         raise ValueError("--patient-context is required exactly for the Lead-I variants")
     train = _load_representations(args.representations, "train")
@@ -181,12 +195,12 @@ def main() -> None:
     train_targets = _load_targets(args.targets, "train", train)
     validation_targets = _load_targets(args.targets, "validation", validation)
     del validation_targets  # Selection is diagnosis-only; targets were admission-validated above.
-    train_context = _load_patient_context(args.patient_context, "train", train) if lead1_mode else None
-    validation_context = _load_patient_context(args.patient_context, "validation", validation) if lead1_mode else None
+    train_context = _load_patient_context(args.patient_context, "train", train, context_dim) if lead1_mode else None
+    validation_context = _load_patient_context(args.patient_context, "validation", validation, context_dim) if lead1_mode else None
     args.output.mkdir(parents=True, exist_ok=False)
     device = torch.device("cuda")
     model = OperatorSetModel(
-        response_dim=128, classes=5, operator_mode="continuous", patient_context_dim=3 if lead1_mode else 0,
+        response_dim=128, classes=5, operator_mode="continuous", patient_context_dim=context_dim if lead1_mode else 0,
     ).to(device)
     for parameter in model.decoder.parameters():
         parameter.requires_grad_(False)
@@ -228,17 +242,25 @@ def main() -> None:
             patient_context = None
             if train_context_tensor is not None:
                 patient_context = train_context_tensor[index]
-                if args.variant == "lead1_unconditioned":
+                if unconditioned_mode:
                     patient_context = torch.zeros_like(patient_context)
             optimizer.zero_grad(set_to_none=True)
-            with torch.autocast("cuda", dtype=torch.bfloat16):
+            with torch.autocast(
+                "cuda", dtype=torch.bfloat16, enabled=args.precision == "bfloat16"
+            ):
                 h_subset = model.encode_context(subset_operators, subset_responses, subset_mask, patient_context=patient_context)
                 h_full = model.encode_context(operators, responses, patient_context=patient_context)
                 loss_bce = bce(model.head(h_subset), train_labels[index])
                 loss_reconstruction = heldout_waveform_mse(decoder(h_subset), target, heldout_leads)
             with torch.autocast("cuda", enabled=False):
-                loss_mmd = biased_imq_mmd2(view_normalizer(h_subset.float()), view_normalizer(h_full.float()), c2=1.0)
-                loss = loss_bce.float() + VARIANTS[args.variant] * loss_mmd + RECONSTRUCTION_WEIGHT * loss_reconstruction.float()
+                if args.variant == "continuous_full12_aux_no_mmd":
+                    # Do not evaluate MMD for the deletion control: zero times a
+                    # non-finite MMD is still non-finite.
+                    loss_mmd = torch.zeros((), device=device)
+                    loss = loss_bce.float() + RECONSTRUCTION_WEIGHT * loss_reconstruction.float()
+                else:
+                    loss_mmd = biased_imq_mmd2(view_normalizer(h_subset.float()), view_normalizer(h_full.float()), c2=1.0)
+                    loss = loss_bce.float() + VARIANTS[args.variant] * loss_mmd + RECONSTRUCTION_WEIGHT * loss_reconstruction.float()
             if not torch.isfinite(loss):
                 raise RuntimeError(f"non-finite loss at epoch {epoch}, batch {start}")
             loss.backward()
@@ -258,7 +280,7 @@ def main() -> None:
                 patient_context = None
                 if validation_context is not None:
                     patient_context = torch.as_tensor(validation_context[start:stop], device=device)
-                    if args.variant == "lead1_unconditioned":
+                    if unconditioned_mode:
                         patient_context = torch.zeros_like(patient_context)
                 if lead1_mode:
                     operators = operator_bank[:1].expand(stop - start, -1, -1)
@@ -276,7 +298,9 @@ def main() -> None:
                 args.output, args.variant, model, decoder, optimizer, epoch, metrics, history,
                 args.targets / "manifest.json", args.representations / "manifest.json",
                 args.patient_context / "manifest.json" if args.patient_context else None,
-                "lead_I_only_with_age_sex_context" if lead1_mode else "random_uniform_subset_size_1_through_11_of_standard_12_leads",
+                ("lead_I_only_with_sex_context" if args.variant.startswith("lead1_sex_") else "lead_I_only_with_age_sex_context")
+                if lead1_mode else "random_uniform_subset_size_1_through_11_of_standard_12_leads",
+                args.precision,
             )
         else:
             stale, marker = stale + 1, ""
@@ -289,6 +313,7 @@ def main() -> None:
         "selection_metric": "validation_macro_auroc",
         "target_manifest_sha256": _sha256(args.targets / "manifest.json"),
         "context_manifest_sha256": _sha256(args.representations / "manifest.json"), "history": history,
+        "forward_precision": args.precision,
         "patient_context_manifest_sha256": _sha256(args.patient_context / "manifest.json") if args.patient_context else None,
     }
     (args.output / "summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")

@@ -18,6 +18,7 @@ class OperatorSetModel(nn.Module):
         operator_mode: str = "continuous",
         vocabulary_size: int = 0,
         patient_context_dim: int = 0,
+        operator_dim: int = 8,
     ):
         super().__init__()
         if operator_mode not in {"continuous", "categorical", "projective", "q_ablated"}:
@@ -26,7 +27,10 @@ class OperatorSetModel(nn.Module):
             raise ValueError("categorical models require a non-empty training vocabulary")
         if patient_context_dim < 0:
             raise ValueError("patient_context_dim must be non-negative")
+        if operator_dim < 1:
+            raise ValueError("operator_dim must be positive")
         self.operator_mode = operator_mode
+        self.operator_dim = operator_dim
 
         # Matched modules are initialized before the mode-specific encoder, so
         # they have identical initial states under the same random seed.
@@ -49,12 +53,14 @@ class OperatorSetModel(nn.Module):
         )
 
         if operator_mode == "projective":
+            if operator_dim != 8:
+                raise ValueError("projective mode requires the clinical 8-D operator basis")
             # Projective RP^7 encoder: takes flattened rank-1 matrix q q^T in R^64
             self.operator = nn.Sequential(nn.Linear(64, 64), nn.GELU(), nn.Linear(64, 64))
             self.known_operator = None
             self.register_buffer("unknown_operator", torch.empty(0), persistent=False)
         elif operator_mode == "continuous":
-            self.operator = nn.Sequential(nn.Linear(8, 64), nn.GELU(), nn.Linear(64, 64))
+            self.operator = nn.Sequential(nn.Linear(operator_dim, 64), nn.GELU(), nn.Linear(64, 64))
             self.known_operator = None
             self.register_buffer("unknown_operator", torch.empty(0), persistent=False)
         elif operator_mode == "q_ablated":
@@ -77,8 +83,8 @@ class OperatorSetModel(nn.Module):
             q_outer = (operators.unsqueeze(-1) @ operators.unsqueeze(-2)).flatten(-2)
             return self.operator(q_outer)
         if self.operator_mode == "continuous":
-            if operators is None or operators.shape[-1] != 8:
-                raise ValueError("continuous models require (...,8) operators")
+            if operators is None or operators.shape[-1] != self.operator_dim:
+                raise ValueError(f"continuous models require (...,{self.operator_dim}) operators")
             assert self.operator is not None
             return self.operator(operators)
         if self.operator_mode == "q_ablated":

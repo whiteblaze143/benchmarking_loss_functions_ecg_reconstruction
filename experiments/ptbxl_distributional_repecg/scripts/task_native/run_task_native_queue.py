@@ -462,6 +462,36 @@ def get_rkhs_extractor(device: torch.device) -> RKHSFeatureExtractor:
     return _RKHS_EXTRACTOR_CACHE[dev_str]
 
 
+def standard_12_operator_waveforms(basis_8: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+    """Return normalized standard-lead operators and matching waveforms.
+
+    The input is the independent physical basis ``I, II, V1, ..., V6``.  Limb
+    derivations are recomputed from I/II at the same normalized operator scale
+    used to train P07, not copied from potentially differently scaled channels.
+    """
+    if basis_8.ndim != 3 or basis_8.shape[1] != 8:
+        raise ValueError("full-12 SetOperator extraction requires [batch,8,time] independent basis")
+    e = torch.eye(8, dtype=basis_8.dtype, device=basis_8.device)
+    operators = torch.stack((
+        e[0], e[1],
+        (e[1] - e[0]) / np.sqrt(2.0),
+        (-e[0] - e[1]) / np.sqrt(2.0),
+        (e[0] - 0.5 * e[1]) / np.sqrt(1.25),
+        (e[1] - 0.5 * e[0]) / np.sqrt(1.25),
+        *e[2:],
+    ))
+    i, ii = basis_8[:, 0], basis_8[:, 1]
+    waveforms = torch.cat((
+        i.unsqueeze(1), ii.unsqueeze(1),
+        ((ii - i) / np.sqrt(2.0)).unsqueeze(1),
+        ((-i - ii) / np.sqrt(2.0)).unsqueeze(1),
+        ((i - 0.5 * ii) / np.sqrt(1.25)).unsqueeze(1),
+        ((ii - 0.5 * i) / np.sqrt(1.25)).unsqueeze(1),
+        basis_8[:, 2:],
+    ), dim=1)
+    return operators.unsqueeze(0).expand(len(basis_8), -1, -1), waveforms
+
+
 def extract_setoperator_representation(
     model: OperatorSetModel,
     signals_12: np.ndarray,
@@ -469,6 +499,8 @@ def extract_setoperator_representation(
     device: torch.device,
     rkhs_extractor: RKHSFeatureExtractor | None = None,
     batch_size: int = 64,
+    *,
+    full_12_context: bool = False,
 ) -> np.ndarray:
     """Extract 256-d latent representations from SetOperator under a specific operator configuration using whitened RKHS coordinates."""
     if rkhs_extractor is None:
@@ -478,6 +510,8 @@ def extract_setoperator_representation(
     canonical_ops = torch.eye(8, dtype=torch.float32, device=device)
     embeddings = []
 
+    if full_12_context and signals_12.shape[1] != 12:
+        raise ValueError("the full-12 auxiliary SetOperator is not comparable on a cohort without canonical 12 leads")
     if signals_12.shape[1] == 12:
         basis_idx = [0, 1, 6, 7, 8, 9, 10, 11]
         sig_8 = signals_12[:, basis_idx]
@@ -492,7 +526,12 @@ def extract_setoperator_representation(
         b_sig = torch.from_numpy(sig_8[i : i + batch_size]).float().to(device)
         B_curr = len(b_sig)
 
-        if cfg.get("type") == "derived_limb":
+        if full_12_context and cfg_key != "S_icm":
+            full_ops, full_wf = standard_12_operator_waveforms(b_sig)
+            indices = cfg["ge_leads"]
+            ops = full_ops[:, indices]
+            wf = full_wf[:, indices]
+        elif cfg.get("type") == "derived_limb":
             e0 = canonical_ops[0]
             e1 = canonical_ops[1]
             ops = torch.stack([
@@ -846,6 +885,39 @@ def main():
         so_full.eval()
         print("  [OK] Loaded SetOperator P07_FULLLEAD_ONLY")
 
+    # SetOperator: frozen shared RKHS, random standard-12-lead subset auxiliary objective.
+    so_full12_aux_mmd = None
+    so_full12_aux_no_mmd = None
+    if selected_models is None or "set_operator_full12_aux_mmd" in selected_models:
+        so_full12_ckpt = Path(
+            "/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/"
+            "paper07_full12_aux_mmd/continuous_full12_aux_mmd/continuous_full12_aux_mmd_best.pt"
+        )
+        if not so_full12_ckpt.exists():
+            raise FileNotFoundError(f"Missing fully trained full-12 auxiliary checkpoint: {so_full12_ckpt}")
+        so_full12_aux_mmd = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous").to(device)
+        so_full12_state = torch.load(so_full12_ckpt, map_location=device, weights_only=False)
+        if so_full12_state.get("loss_contract", {}).get("conditioning") != "random_uniform_subset_size_1_through_11_of_standard_12_leads":
+            raise ValueError("full-12 auxiliary checkpoint does not carry the required random-subset contract")
+        so_full12_aux_mmd.load_state_dict(so_full12_state["state_dict"])
+        so_full12_aux_mmd.eval()
+        print("  [OK] Loaded SetOperator P07_FULL12_AUX_MMD")
+    if selected_models is None or "set_operator_full12_aux_no_mmd" in selected_models:
+        so_full12_no_mmd_ckpt = Path(
+            "/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/"
+            "paper07_full12_aux_mmd/continuous_full12_aux_no_mmd/continuous_full12_aux_no_mmd_best.pt"
+        )
+        if not so_full12_no_mmd_ckpt.exists():
+            raise FileNotFoundError(f"Missing fully trained full-12 no-MMD checkpoint: {so_full12_no_mmd_ckpt}")
+        so_full12_aux_no_mmd = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous").to(device)
+        so_full12_no_mmd_state = torch.load(so_full12_no_mmd_ckpt, map_location=device, weights_only=False)
+        contract = so_full12_no_mmd_state.get("loss_contract", {})
+        if contract.get("conditioning") != "random_uniform_subset_size_1_through_11_of_standard_12_leads" or contract.get("view_imq_mmd2") != 0.0:
+            raise ValueError("full-12 no-MMD checkpoint does not carry the required deletion contract")
+        so_full12_aux_no_mmd.load_state_dict(so_full12_no_mmd_state["state_dict"])
+        so_full12_aux_no_mmd.eval()
+        print("  [OK] Loaded SetOperator P07_FULL12_AUX_NO_MMD")
+
     braid_models = {}
     for variant in BRAID_VARIANTS:
         model_key = f"braid_{variant}"
@@ -981,6 +1053,8 @@ def main():
         ("set_operator_robust", "SetOperator (P07 Robustness-Trained)"),
         ("set_operator_aux", "SetOperator (P07 Robustness-Trained + Aux Recon)"),
         ("set_operator_fulllead", "SetOperator (P07 Full-Lead-Only)"),
+        ("set_operator_full12_aux_mmd", "SetOperator (P07 Full-12 Aux + IMQ MMD)"),
+        ("set_operator_full12_aux_no_mmd", "SetOperator (P07 Full-12 Aux, MMD Deleted)"),
         *[(f"braid_{variant}", f"Braid ({variant})") for variant in BRAID_VARIANTS],
         ("fixed_tensor", "FixedTensor (Zero-Imputed Baseline)"),
         ("moments", "Spatial Dipole Moments (Deterministic)"),
@@ -1047,6 +1121,36 @@ def main():
                 Z_tr_full = extract_setoperator_representation(so_full, x_tr, "Q8_indep", device, rkhs_extractor)
                 Z_val_full = extract_setoperator_representation(so_full, x_val, "Q8_indep", device, rkhs_extractor)
                 test_fn = lambda cfg: extract_setoperator_representation(so_full, x_te, cfg, device, rkhs_extractor)
+
+            elif m_key == "set_operator_full12_aux_mmd":
+                if d_name == "KINGSTON_ICU":
+                    raise ValueError(
+                        "set_operator_full12_aux_mmd is not comparable on Kingston: its fourth lead has no canonical precordial identity"
+                    )
+                Z_tr_full = extract_setoperator_representation(
+                    so_full12_aux_mmd, x_tr, "Q8_indep", device, rkhs_extractor, full_12_context=True,
+                )
+                Z_val_full = extract_setoperator_representation(
+                    so_full12_aux_mmd, x_val, "Q8_indep", device, rkhs_extractor, full_12_context=True,
+                )
+                test_fn = lambda cfg: extract_setoperator_representation(
+                    so_full12_aux_mmd, x_te, cfg, device, rkhs_extractor, full_12_context=True,
+                )
+
+            elif m_key == "set_operator_full12_aux_no_mmd":
+                if d_name == "KINGSTON_ICU":
+                    raise ValueError(
+                        "set_operator_full12_aux_no_mmd is not comparable on Kingston: its fourth lead has no canonical precordial identity"
+                    )
+                Z_tr_full = extract_setoperator_representation(
+                    so_full12_aux_no_mmd, x_tr, "Q8_indep", device, rkhs_extractor, full_12_context=True,
+                )
+                Z_val_full = extract_setoperator_representation(
+                    so_full12_aux_no_mmd, x_val, "Q8_indep", device, rkhs_extractor, full_12_context=True,
+                )
+                test_fn = lambda cfg: extract_setoperator_representation(
+                    so_full12_aux_no_mmd, x_te, cfg, device, rkhs_extractor, full_12_context=True,
+                )
 
             elif m_key.startswith("braid_"):
                 braid_model = braid_models[m_key]
@@ -1150,16 +1254,6 @@ def main():
                 else:
                     row.append(f"{auc:.4f} ({ret:.1f}%)")
             lines.append("| " + " | ".join(row) + " |")
-
-    lines.extend([
-        "",
-        "### Key Scientific Takeaways",
-        "1. **Pre-trained Foundation Encoders Eliminate Empirical Floor**: Using PTB-XL pre-trained representations raises baseline full-lead clinical AUROC across LUDB (0.81+), Zhejiang (0.76+), and Kingston (0.87+), resolving the small-cohort capacity bottleneck.",
-        "2. **GraphECG vs SetOperator vs Fixed-Lead Encoders Under Shift**:",
-        "   - On structured electrode configurations ($S_6, S_3, S_2$), GraphECG and SetOperator both retain >85–94% of full-lead capacity.",
-        "   - On single-lead and continuous/oblique vector projections ($S_1, S_{\\rm ICM} = V_3 - V_2$), SetOperator's continuous linear functional formulation maintains superior representation fidelity over discrete fixed-grid convolutional encoders and discrete graph message passing.",
-        "3. **Fixed-Lead Architectural Fragility**: Standard neural architectures (e.g. 1D CNNs, fixed-channel recurrent networks) drop precipitously by 25–45% when evaluated under zero-imputed missing leads, demonstrating that explicit geometric or operator encoding is essential for wearable and telemetry transfer.",
-    ])
 
     md_content = "\n".join(lines) + "\n"
     with open(out_dir / "task_native_decoupling_matrix.md", "w") as f:

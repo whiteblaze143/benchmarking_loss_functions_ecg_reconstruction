@@ -18,7 +18,7 @@ from .measurements import (
     sample_context_target_indices,
     sample_sparse_operators,
 )
-from .model import OperatorSetModel, symmetric_bernoulli_kl
+from .model import Full12LeadWaveformDecoder, OperatorSetModel, symmetric_bernoulli_kl
 
 __all__ = [
     "UNKNOWN_ID",
@@ -39,8 +39,8 @@ __all__ = [
     "response_atoms",
     "sample_context_target_indices",
     "sample_sparse_operators",
+    "Full12LeadWaveformDecoder",
     "OperatorSetModel",
     "symmetric_bernoulli_kl",
 ]
-
 

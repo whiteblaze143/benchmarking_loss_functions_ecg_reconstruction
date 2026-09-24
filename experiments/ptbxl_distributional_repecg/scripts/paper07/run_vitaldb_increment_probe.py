@@ -276,6 +276,13 @@ def main() -> None:
             predictions["imq_nystrom_ii_wrong_subject_ppg"] = kernel_ridge.predict(
                 mapping.transform(wrong_x)
             ).astype(np.float32)
+            shifted_x = np.concatenate(
+                (normalized[split["test"], 0], np.roll(normalized[split["test"], 2], args.samples // 2, axis=1)), axis=1,
+            )
+            predictions["ridge_ii_time_shifted_ppg"] = ridge.predict(shifted_x).astype(np.float32)
+            predictions["imq_nystrom_ii_time_shifted_ppg"] = kernel_ridge.predict(
+                mapping.transform(shifted_x)
+            ).astype(np.float32)
 
     # Convert normalized V5 predictions back to detrended ADC units before reporting.
     test_y_units = test_y * channel_std[1] + channel_mean[1]
@@ -297,12 +304,18 @@ def main() -> None:
         wrong = _record_metrics(
             test_y_units, predictions_units[f"{prefix}_ii_wrong_subject_ppg"],
         )["rmse"]
+        shifted = _record_metrics(
+            test_y_units, predictions_units[f"{prefix}_ii_time_shifted_ppg"],
+        )["rmse"]
         inference[kind] = {
             "real_ppg_increment_rmse": _paired_bootstrap(
                 errors["ii"], errors["ii_ppg"], test_subjects, args.seed + 100, args.bootstrap,
             ),
             "wrong_subject_specificity_rmse": _paired_bootstrap(
                 wrong, errors["ii_ppg"], test_subjects, args.seed + 101, args.bootstrap,
+            ),
+            "time_shifted_specificity_rmse": _paired_bootstrap(
+                shifted, errors["ii_ppg"], test_subjects, args.seed + 102, args.bootstrap,
             ),
         }
 
@@ -334,6 +347,7 @@ def main() -> None:
         "test_metrics": summaries,
         "paired_patient_bootstrap": inference,
         "wrong_subject_control": "same fitted II+PPG model; PPG permuted with exact subject mismatch",
+        "time_shifted_control": f"same fitted II+PPG model; within-window PPG circularly shifted by {args.samples // 2} samples",
         "seed": args.seed,
     }
     (args.output / "results.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")

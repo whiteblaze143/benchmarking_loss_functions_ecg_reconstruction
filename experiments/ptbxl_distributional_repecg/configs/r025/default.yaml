@@ -1,0 +1,45 @@
+milestone: R025
+description: "Observable-Subspace SetOperator (OS-SetOp) PRD Benchmark"
+
+data:
+  d: 8
+  T: 256
+  L: 24
+  frame_mode: "dct"
+  rcond: 1.0e-5
+  train_split: "folds_1_to_7"
+  val_split: "fold_8"
+  coordinate_leads: ["I", "II", "V1", "V2", "V3", "V4", "V5", "V6"]
+
+model:
+  hidden_dim: 256
+  latent_dim: 256
+  classes: 5
+  class_names: ["NORM", "MI", "STTC", "CD", "HYP"]
+
+training:
+  batch_size: 64
+  lr: 3.0e-4
+  weight_decay: 1.0e-4
+  max_epochs: 35
+  early_stopping_patience: 10
+  seeds: [42, 43, 44, 45, 46]
+  loss: "bce_with_logits"
+
+evaluation:
+  bootstrap_replicates: 2000
+  confidence_interval: 0.95
+  configurations:
+    Q8_full: [0, 1, 2, 3, 4, 5, 6, 7]
+    S6_precordial: [2, 3, 4, 5, 6, 7]
+    S6_limb: [0, 1, 8, 9, 10, 11]
+    Derived_limb_only: [8, 9, 10, 11]
+    Lead_III_single: [8]
+    aVF_single: [11]
+    S3_reduced: [0, 1, 3]
+    S2_reduced: [0, 1]
+    S1_smartwatch: [0]
+    S_icm: [12]
+    S_icm_plus_leadI: [0, 12]
+    Test_obliques_3: [13, 14, 15]
+    All_16_leads: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]

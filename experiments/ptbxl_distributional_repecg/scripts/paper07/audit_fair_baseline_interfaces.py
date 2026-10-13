@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 """Audit Fair Interface Comparison between SetOperator, GraphECG, and CSFM.
 
-Evaluates and structures a scientifically honest comparison across 3 regimes:
+Assembles and structures a scientifically honest comparison across 3 regimes:
 1. Regime 1: Standard & Missing Lead Subsets (Valid for all 3 model families)
 2. Regime 2: Derived & Augmented Limb Leads (Interface definitions differ)
 3. Regime 3: Continuous Oblique Combinations & Subcutaneous Vectors (Linear operator domain)
 
+Provenance Note:
+This comparison table is assembled from prior validated prediction artifacts:
+- SetOperator: decisive_2x2_results.json and r024_benchmark results on PTB-XL Fold 8.
+- GraphECG: evaluated on PTB-XL Fold 8 via r025_graph_adapter.py author pipeline.
+- CSFM Base: evaluated on PTB-XL Fold 8 via r025_csfm_adapter.py official release.
 Explicitly documents descriptive parity on V3-V2 (CI crosses zero) rather than claiming superiority.
 """
 
@@ -27,7 +32,7 @@ ARTIFACT_DIR = Path("/home/mithunmanivannan/.gemini/antigravity-ide/brain/ba9798
 
 
 def build_fair_baseline_comparison() -> Dict[str, Any]:
-    logger.info("=== Building Fair Baseline Interface Comparison ===")
+    logger.info("=== Building Fair Baseline Interface Comparison (Assembled from Prior Prediction Artifacts) ===")
 
     # Empirical values gathered from validated benchmark runs:
     # SetOperator (Operator-Span), GraphECG (192-D), CSFM Base (768-D)

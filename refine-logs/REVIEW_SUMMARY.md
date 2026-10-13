@@ -1,33 +1,51 @@
-# Review Summary: Temporal repSpat Method Qualification
+# Review Summary: Calibration-Efficient Patient-Specific Physiological Foundation Models
 
-**Date**: 2026-09-12  
-**Target Proposal**: `refine-logs/FINAL_PROPOSAL.md` (`temporal_rep_stat_ecg`)  
-**Verdict**: **READY** (Score: 9.5 / 10)  
-
----
-
-## 1. Multi-Dimensional Review Assessment
-
-| Dimension | Score (1-10) | Evaluation Comments |
-|---|:---:|---|
-| **Problem Anchor Fidelity** | 10 | The core bottleneck—over-segmentation of recurring physiological states by temporally constrained clustering—is preserved without drift. |
-| **Mathematical Soundness** | 10 | Complete, line-by-line translation of repSpat. Lance-Williams updates, IMQ MMD kernel, attribute block permutation, and maximal clique extraction are mathematically exact. |
-| **Simplicity & Parsimony** | 10 | Rejects unnecessary neural bloat; minimal adequate mechanism directly solves the problem non-parametrically. |
-| **Temporal Dependence Handling** | 9.5 | The $k$-means feature-space blocking ($b(g) = \max(1, \lfloor n_g/m \rfloor)$) directly preserves the temporal autocorrelation of consecutive heartbeats under the permutation null. |
-| **Reproducibility & Testability** | 10 | 100% test coverage with automated unit tests across distance, CAHC, silhouette, MMD, permutation, FDR, and cliques. |
+**Problem**: Population ECG models detect population abnormalities, but medicine requires detecting change relative to an individual patient's personal baseline. Conventional personalization fails due to calibration data bottlenecks.  
+**Revised Method**: Frame the project around the **calibration–utility frontier**: characterizing which representations convert personal history into clinical state-change sensitivity with minimal calibration ($K \in \{0, 1, 2, 3, 5\}$).  
+**Foundation Model Comparator Track**: Integrate **Cardiac Sensing Foundation Model (CSFM)** as a first-class frozen encoder comparator ($f_{\text{SO}}(x) \to z_{\text{SO}}$ vs $f_{\text{CSFM}}(x) \to z_{\text{CSFM}}$), with dimensionality-matched controls (PCA $d=128, 256$ fit on train patients only).  
+**Date**: 2026-09-30  
+**Verdict**: READY  
 
 ---
 
-## 2. Key Review Observations & Critical Checks
+## Critical Feedback & Refinement History
 
-1. **Lance-Williams Metric Equivalence**:
-   - Ward's minimum variance criterion (`ward.D2`) operates purely on Euclidean distances between feature centroids. Scikit-learn's `AgglomerativeClustering(linkage='ward', connectivity=L)` implements this exact update rule.
-2. **Heavy-Tailed IMQ Kernel**:
-   - The Inverse Multiquadratic kernel $k(x, y) = (\|x-y\|_2^2 + c^2)^{-1/2}$ ($c \ge 1$) maintains characteristic properties while ensuring tail sensitivity for subtle morphological variations.
-3. **Clique Size Threshold $\ge 3$**:
-   - Requiring a 3-clique ensures that at least 3 mutually indistinguishable temporal episodes exist before merging into an RTP. This provides robustness against spurious pairwise false discoveries.
+### Round 0 & 1: Problem Anchor & Set-Based Reference
+- **Initial Framing**: "Personalized ECG deep neural network."
+- **Critique**: Per-patient retraining or fine-tuning is clinically unfeasible and computationally prohibitive.
+- **Refinement**: Personalize the *reference frame* ($r_p$) over frozen universal representations rather than personalizing neural network weights.
+
+### Round 2: Calibration Burden as Central Constraint
+- **Core Constraint**: Clinicians require models that work immediately ($K=0$) and opportunistically improve as sparse history accumulates.
+- **Hypothesis**: Operational decomposition $z_t \approx s_p + \delta_t + \epsilon$.
+- **Validation**: Completed empirical runs R000–R010 across PTB-XL, MIMIC-III, Kingston, SJLIFE, and EchoNext.
+
+### Round 3 (Current): Scientific Nuance & Foundation-Model Benchmarking
+- **Conceptual Correction on Identity**:
+  - ECG is a known biometric modality; high patient verification AUROC (0.9412) does not by itself prove a "physiological coordinate manifold."
+  - *Correction*: Adopt conservative terminology: *"the latent contains strong, longitudinally persistent subject-specific structure."*
+- **Variance Partitioning Interpretation**:
+  - Patient $R^2$ (87.7%) vs Disease $R^2$ (16.4%) is a descriptive variance decomposition across repeated records, not a measure of representational priority.
+- **Temporal Stability**:
+  - AUROCs across time strata (~0.92–0.94) establish that *"no monotonic degradation was detected across tested time bins,"* not "zero temporal decay."
+- **Substrate Decomposition Nuances (Aim 3)**:
+  - Do *not* claim $z_t = s_p + \delta_t + \epsilon$ is "mathematically exact" or that $\delta_t$ is "pure state perturbation."
+  - Conduction defects and hypertrophy are *"relatively stable substrate-related attributes"* (which can fluctuate clinically), not "fixed anatomy."
+  - State the empirical result: static attributes remain linearly decodable from $s_p$ and weakly decodable from residual $\delta_t$.
+- **Statistical Wording**:
+  - Replace "97.9% confidence" with *"the same-patient reference outperformed the matched wrong-patient reference in 97.9% of donor permutations."*
+  - Replace "captures 100% of gain" with *"the largest observed gain occurred by $K=3-5$, with no additional improvement from using the full available history."*
+- **Audit Fidelity Nuances**:
+  - Aim 2 MIMIC: Clearly state that this was an event-level transition feasibility audit on 752 conversion events (376 SR $\to$ AF, 376 AF $\to$ SR), not full waveform feature validation.
+  - Aim 5: Refer to task evaluations as *frozen-feature transfer*, reserving "zero-shot" strictly for downstream heads evaluated without training.
+- **Foundation Model Benchmarking Requirement**:
+  - Include CSFM (Gu et al., *Nature Machine Intelligence* 2026, 1.7M patients) and ECG-LFM (Nature Communications 2026, 10M ECGs) as first-class frozen comparators.
+  - Dimensionality control is mandatory: evaluate both native embeddings and matched dimensionality (PCA $d=128, 256$ fit strictly on training splits).
+  - Explicit pretraining overlap accounting: flag MIMIC-III and MIMIC-IV as `CSFM_PRETRAIN_DOMAIN_OVERLAP = TRUE` and evaluate clean generalization on Kingston, SJLIFE, LUDB, and EchoNext.
 
 ---
 
-## 3. Decision Gate
-- All gate requirements met. Proceed directly to execution via `/run-experiment`.
+## Final Status & Dominant Contribution
+- **Anchor**: Characterizing the calibration–utility trade-off across foundation representations.
+- **Dominant Contribution**: Demonstrating whether patient-specific structure is unique to measurement-aware operators or emergent in large-scale cardiac foundation models, and evaluating which representation most efficiently converts sparse history into state-change detection.
+- **Immediate Execution Priority**: Milestone **M0-FM** (Head-to-head PTB-XL frozen CSFM audit on 1,693 patients / 4,087 ECGs with PCA dimensionality matching).

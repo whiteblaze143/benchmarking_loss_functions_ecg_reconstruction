@@ -53,14 +53,19 @@ def map_operator_ids(operators: np.ndarray, vocabulary: np.ndarray) -> np.ndarra
 
 
 def sample_context_target_indices(
-    batch_size: int, candidates: int, generator: torch.Generator, device: torch.device
+    batch_size: int, candidates: int, generator: torch.Generator, device: torch.device,
+    *, max_context_size: int | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor]:
-    """Uniformly sample m in [1,6], with a distinct held-out target per row."""
-    if candidates < 7:
-        raise ValueError("Paper 7 requires at least seven candidate pairs")
-    context_size = int(torch.randint(1, 7, (), generator=generator, device=device))
+    """Sample a context size; diagnosis-only training may use all pairs."""
+    if candidates < 1:
+        raise ValueError("Paper 7 requires at least one candidate pair")
+    maximum = candidates - 1 if max_context_size is None else min(max_context_size, candidates)
+    if maximum < 1:
+        raise ValueError("at least one context pair is required")
+    context_size = int(torch.randint(1, maximum + 1, (), generator=generator, device=device))
     order = torch.rand((batch_size, candidates), generator=generator, device=device).argsort(dim=1)
-    return order[:, :context_size], order[:, context_size]
+    target = order[:, context_size] if context_size < candidates else torch.zeros(batch_size, dtype=torch.long, device=device)
+    return order[:, :context_size], target
 
 
 def _gather(values: torch.Tensor, indices: torch.Tensor) -> torch.Tensor:
@@ -175,6 +180,7 @@ def _evaluate(
     batch_size: int,
     auxiliary: bool,
     continuous: bool,
+    evaluation_context_size: int = 6,
 ) -> tuple[np.ndarray, float | None, float | None]:
     model.eval()
     probabilities = []
@@ -193,7 +199,7 @@ def _evaluate(
                 torch.as_tensor(data["negative_responses"][start:stop], device="cuda")
                 if auxiliary and continuous else None
             )
-            context = torch.arange(6, device="cuda").expand(stop - start, -1)
+            context = torch.arange(evaluation_context_size, device="cuda").expand(stop - start, -1)
             target = torch.full((stop - start,), 6, device="cuda", dtype=torch.long)
             with torch.autocast("cuda", dtype=torch.bfloat16):
                 logits, reconstruction, orientation = _forward_batch(
@@ -268,13 +274,15 @@ def main() -> None:
     parser.add_argument("--training-regime", default="full_only", choices=["full_only"])
     parser.add_argument("--learning-rate", type=float, action="append")
     parser.add_argument("--weight-decay", type=float, action="append")
+    parser.add_argument("--init-checkpoint", type=Path)
     args = parser.parse_args()
 
     manifest = json.loads((args.representations / "manifest.json").read_text())
     if manifest.get("kind") != "paper07_measurement_operator_response_sets" or manifest.get("status") != "complete":
         raise ValueError("Paper 7 requires a complete measurement-operator response-set artifact")
     auxiliary = args.variant.endswith("auxiliary")
-    continuous = args.variant.startswith("continuous")
+    continuous = args.variant.startswith("continuous") or args.variant in {"linear_q_encoder", "faithful_operator"}
+    operator_mode = "raw_q" if args.variant == "linear_q_encoder" else ("faithful" if args.variant == "faithful_operator" else ("continuous" if continuous else "categorical"))
     train = _load(args.representations / "representation_train.npz", auxiliary=auxiliary)
     validation = _load(args.representations / "representation_val.npz", auxiliary=auxiliary)
 
@@ -293,9 +301,12 @@ def main() -> None:
     torch.set_float32_matmul_precision("high")
     _seed(args.seed)
     template = OperatorSetModel(
-        classes=train["labels"].shape[1], operator_mode="continuous" if continuous else "categorical",
+        classes=train["labels"].shape[1], operator_mode=operator_mode,
         vocabulary_size=len(vocabulary) if not continuous else 0,
     ).cuda()
+    if args.init_checkpoint is not None:
+        init_payload = torch.load(args.init_checkpoint, map_location="cpu", weights_only=False)
+        template.load_state_dict(init_payload["state_dict"], strict=True)
     initial_state = copy.deepcopy(template.state_dict())
     del template
     prevalence = torch.as_tensor(train["labels"].mean(axis=0), device="cuda")
@@ -306,6 +317,9 @@ def main() -> None:
         "response_mse": RECONSTRUCTION_WEIGHT if auxiliary else 0.0,
         "orientation_symmetric_kl": ORIENTATION_WEIGHT if auxiliary and continuous else 0.0,
         "explicit_negative_response": bool(auxiliary and continuous),
+        "operator_mode": operator_mode,
+        "context_size_train": [1, 6],
+        "context_size_validation": 6,
     }
     learning_rates = tuple(args.learning_rate) if args.learning_rate else LEARNING_RATES
     weight_decays = tuple(args.weight_decay) if args.weight_decay else WEIGHT_DECAYS
@@ -318,7 +332,7 @@ def main() -> None:
             if (path / "summary.json").exists():
                 continue
             model = OperatorSetModel(
-                classes=train["labels"].shape[1], operator_mode="continuous" if continuous else "categorical",
+                classes=train["labels"].shape[1], operator_mode=operator_mode,
                 vocabulary_size=len(vocabulary) if not continuous else 0,
             ).cuda()
             model.load_state_dict(initial_state)
@@ -355,7 +369,10 @@ def main() -> None:
             )
             generator = torch.Generator(device="cuda")
             generator.manual_seed(args.seed * 1_000_000 + epoch * 100_000 + start)
-            context, target = sample_context_target_indices(len(index), operators.shape[1], generator, operators.device)
+            context, target = sample_context_target_indices(
+                len(index), operators.shape[1], generator, operators.device,
+                max_context_size=6,
+            )
             for cell in active:
                 model = cell["model"]
                 optimizer = cell["optimizer"]
@@ -374,6 +391,7 @@ def main() -> None:
             probability, reconstruction, orientation = _evaluate(
                 model, validation, validation_ids, batch_size=args.batch,
                 auxiliary=auxiliary, continuous=continuous,
+                evaluation_context_size=6,
             )
             has_invalid = np.isnan(probability).any() or np.isinf(probability).any()
             if has_invalid:

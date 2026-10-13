@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -72,13 +73,20 @@ def main() -> None:
     for name, path in checkpoints.items():
         model, metadata = _load_checkpoint(path)
         model = model.cuda().eval()
-        train_features = {cfg: _extract(model, train["responses"], operators, indices, torch.device("cuda"), args.batch) for cfg, indices in CONFIGURATIONS.items()}
-        validation_features = {cfg: _extract(model, validation["responses"], operators, indices, torch.device("cuda"), args.batch) for cfg, indices in CONFIGURATIONS.items()}
-        model_result = {"checkpoint": metadata, "stages": {}}
-        for stage in train_features["Q8"]:
-            x_train = np.concatenate([train_features[cfg][stage][fit_mask] for cfg in CONFIGURATIONS])
-            x_select = np.concatenate([train_features[cfg][stage][select_mask] for cfg in CONFIGURATIONS])
-            x_test = np.concatenate([validation_features[cfg][stage] for cfg in CONFIGURATIONS])
+        # Keep only one configuration in RAM at a time.  The full design is
+        # written as temporary .npy arrays and each stage is fitted separately;
+        # retaining all stages/configurations caused an avoidable OOM.
+        with tempfile.TemporaryDirectory(prefix="p07_nuisance_") as temp_name:
+            temp = Path(temp_name)
+            for cfg, indices in CONFIGURATIONS.items():
+                train_features = _extract(model, train["responses"], operators, indices, torch.device("cuda"), args.batch)
+                validation_features = _extract(model, validation["responses"], operators, indices, torch.device("cuda"), args.batch)
+                for stage, values in train_features.items():
+                    np.save(temp / f"train_{cfg}_{stage}.npy", values)
+                    np.save(temp / f"validation_{cfg}_{stage}.npy", validation_features[stage])
+                del train_features, validation_features
+            model_result = {"checkpoint": metadata, "stages": {}}
+            stage_names = tuple(_stage_features(model, torch.zeros(1, 1, 8, device="cuda"), torch.zeros(1, 1, 16, 128, device="cuda")))
             cardinality = np.asarray([len(CONFIGURATIONS[cfg]) for cfg in CONFIGURATIONS], dtype=np.int64)
             config_y = np.eye(len(CONFIGURATIONS), dtype=np.float32)
             card_values = sorted(set(cardinality.tolist()))
@@ -89,9 +97,14 @@ def main() -> None:
             y_card_train = np.concatenate([np.repeat(card_y[i:i + 1], fit_mask.sum(), axis=0) for i in range(len(CONFIGURATIONS))])
             y_card_select = np.concatenate([np.repeat(card_y[i:i + 1], select_mask.sum(), axis=0) for i in range(len(CONFIGURATIONS))])
             y_card_test = np.concatenate([np.repeat(card_y[i:i + 1], len(validation["labels"]), axis=0) for i in range(len(CONFIGURATIONS))])
-            config_scores, config_alpha = _fit_predict(x_train, y_config_train, x_select, y_config_select, x_test)
-            card_scores, card_alpha = _fit_predict(x_train, y_card_train, x_select, y_card_select, x_test)
-            model_result["stages"][stage] = {"dimension": int(x_train.shape[1]), "configuration_accuracy": _accuracy(np.argmax(y_config_test, axis=1), config_scores), "cardinality_accuracy": _accuracy(np.argmax(y_card_test, axis=1), card_scores), "configuration_alpha": config_alpha, "cardinality_alpha": card_alpha, "chance_configuration": 1.0 / len(CONFIGURATIONS), "chance_cardinality": 1.0 / len(card_values)}
+            for stage in stage_names:
+                x_train = np.concatenate([np.load(temp / f"train_{cfg}_{stage}.npy", mmap_mode="r")[fit_mask] for cfg in CONFIGURATIONS])
+                x_select = np.concatenate([np.load(temp / f"train_{cfg}_{stage}.npy", mmap_mode="r")[select_mask] for cfg in CONFIGURATIONS])
+                x_test = np.concatenate([np.load(temp / f"validation_{cfg}_{stage}.npy", mmap_mode="r") for cfg in CONFIGURATIONS])
+                config_scores, config_alpha = _fit_predict(x_train, y_config_train, x_select, y_config_select, x_test)
+                card_scores, card_alpha = _fit_predict(x_train, y_card_train, x_select, y_card_select, x_test)
+                model_result["stages"][stage] = {"dimension": int(x_train.shape[1]), "configuration_accuracy": _accuracy(np.argmax(y_config_test, axis=1), config_scores), "cardinality_accuracy": _accuracy(np.argmax(y_card_test, axis=1), card_scores), "configuration_alpha": config_alpha, "cardinality_alpha": card_alpha, "chance_configuration": 1.0 / len(CONFIGURATIONS), "chance_cardinality": 1.0 / len(card_values)}
+            result["models"][name] = model_result
         result["models"][name] = model_result
         del model
         torch.cuda.empty_cache()

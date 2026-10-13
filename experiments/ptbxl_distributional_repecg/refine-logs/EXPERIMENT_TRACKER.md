@@ -74,4 +74,22 @@
 
 Full results matrix available at [`outputs/task_native_evaluation/task_native_decoupling_matrix.md`](outputs/task_native_evaluation/task_native_decoupling_matrix.md) and `.json`.
 
+---
+
+## 5. Foundation-Model Comparison Track (SetOperator vs CSFM Base)
+
+**Cohort**: PTB-XL Repeated Longitudinal Cohort ($1,693$ patients, $4,087$ records) + Kingston-ICU ($596$ records) + SJLIFE ($243$ paired records)  
+**Evaluator Backends**: SetOperator ($d=256$, frozen encoder) vs CSFM Base ($d=768$, frozen encoder, patch size 50)  
+**Pretraining Domain Accounting**: Kingston-ICU, SJLIFE, and EchoNext are clean external datasets. MIMIC-III/IV flagged as `CSFM_PRETRAIN_DOMAIN_OVERLAP = TRUE`.
+
+| Milestone / Run ID | Focus & Evaluation Contract | Status | Key Checkpoint & Measured Findings | Artifact Link |
+| :--- | :--- | :---: | :--- | :--- |
+| **M0-FM (R011)** | **Patient Geometry Benchmark** (Within-patient clustering, retrieval, and variance decomposition) | **COMPLETED** | SetOperator leads Euclidean AUROC (**0.9412** vs 0.8691, $\Delta = +0.0721$, $p < 0.0001$) and Top-1 retrieval (**27.9%** vs 18.7%, median rank 10 vs 23). CSFM exhibits emergent patient variance ($R^2 = 68.1\%$). | [`m0_fm_patient_geometry_report.md`](file:///home/mithunmanivannan/.gemini/antigravity-ide/brain/ba979872-97f8-4d89-9b0a-621cb4b9c051/m0_fm_patient_geometry_report.md) |
+| **M1-C (R012)** | **Calibration Efficiency Scaling** ($K \in \{0, 1, 2, 3, 5\}$ prior records) | **COMPLETED** | SetOperator delivers immediate positive calibration gain ($G = +0.0117$ at $K=1$, $+0.0194$ at $K=2$ under $d=128$), aligning with $100\%$ clinical coverage at $K=1$. CSFM gains are flat or negative ($G \le 0$). | [`m1_c_calibration_efficiency_report.md`](file:///home/mithunmanivannan/.gemini/antigravity-ide/brain/ba979872-97f8-4d89-9b0a-621cb4b9c051/m1_c_calibration_efficiency_report.md) |
+| **M1-S (R013)** | **Set Aggregator $2 \times 2$ Factorial** (Unlearned Mean vs Learned Set Attention) | **COMPLETED** | Representation main effect dominates ($\Delta = +0.0325$ favoring SetOperator). SetOperator reaches peak calibration with parameter-free mean (**0.6957**); CSFM requires learned set attention to partially recover (**0.7021**). | [`m1_s_set_aggregation_report.md`](file:///home/mithunmanivannan/.gemini/antigravity-ide/brain/ba979872-97f8-4d89-9b0a-621cb4b9c051/m1_s_set_aggregation_report.md) |
+| **Block 2 (R014)** | **Sparse-Lead Resilience Benchmark** ($12L \to \text{Lead II} \to I+II \to I+II+V1 \to I+II+V5$) | **COMPLETED** | SetOperator preserves **90.3%** geometry under Lead II alone (**0.8984** vs CSFM 0.7834, $\Delta = +0.1151$, $p < 0.0001$) and **99.3%** geometry (**0.9380**) with only 3 leads ($I+II+V1$). | [`r014_sparse_lead_resilience_report.md`](file:///home/mithunmanivannan/.gemini/antigravity-ide/brain/ba979872-97f8-4d89-9b0a-621cb4b9c051/r014_sparse_lead_resilience_report.md) |
+| **Block 3 (R015)** | **Disease-Preservation Triad Benchmark** (State Accessibility, Patient Preservation across Transitions, Relative Change) | **COMPLETED** | SetOperator leads diagnostic decodability (**0.9311** vs 0.8877 Macro AUROC; HYP 0.9289 vs 0.7873). Across $AF \leftrightarrow SR$ rhythm shifts, SetOperator preserves patient AUROC (**0.8755**), whereas CSFM Base collapses to random guessing (**0.5258**). | [`r015_disease_preservation_report.md`](file:///home/mithunmanivannan/.gemini/antigravity-ide/brain/ba979872-97f8-4d89-9b0a-621cb4b9c051/r015_disease_preservation_report.md) |
+| **Block 5/Ext (R016)** | **Clean External Benchmarks** (SJLIFE Watch-to-Clinical, Kingston-ICU AF, EchoNext SHD) | **COMPLETED** | SJLIFE cross-hardware uncalibrated matching fails across both architectures ($50-55\%$ AUROC, rank $\sim 50\%$), demonstrating that calibration is strictly necessary. Kingston-ICU shows CSFM excels at generic population rhythm (0.9512 AUROC) while failing on within-patient rhythm shifts. | [`r016_clean_external_benchmarks_report.md`](file:///home/mithunmanivannan/.gemini/antigravity-ide/brain/ba979872-97f8-4d89-9b0a-621cb4b9c051/r016_clean_external_benchmarks_report.md) |
+
+
 

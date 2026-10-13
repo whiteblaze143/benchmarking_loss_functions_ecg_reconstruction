@@ -109,6 +109,7 @@ PAPER07_VARIANTS = {
     "categorical_ids": ExperimentVariant(mechanism="categorical_ids"),
     "nearest_known_operator": ExperimentVariant(mechanism="nearest_known_operator"),
     "linear_q_encoder": ExperimentVariant(mechanism="linear_q_encoder"),
+    "faithful_operator": ExperimentVariant(mechanism="faithful_operator"),
     "GraphECG_geometry": ExperimentVariant(mechanism="GraphECG_geometry", control="graphecg_baseline"),
     "analytic_pinv": ExperimentVariant(mechanism="analytic_pinv", control="pinv_oracle"),
     "LMMSE_operator": ExperimentVariant(mechanism="LMMSE_operator", control="lmmse_baseline"),

@@ -19,10 +19,13 @@ class OperatorSetModel(nn.Module):
         vocabulary_size: int = 0,
         patient_context_dim: int = 0,
         operator_dim: int = 8,
+        response_mode: str = "phase_cnn",
     ):
         super().__init__()
-        if operator_mode not in {"continuous", "categorical", "projective", "q_ablated"}:
-            raise ValueError("operator_mode must be continuous, categorical, projective, or q_ablated")
+        if operator_mode not in {"continuous", "raw_q", "categorical", "projective", "q_ablated", "faithful"}:
+            raise ValueError("operator_mode must be continuous, raw_q, categorical, projective, q_ablated, or faithful")
+        if response_mode not in {"phase_cnn", "linear"}:
+            raise ValueError("response_mode must be phase_cnn or linear")
         if operator_mode == "categorical" and vocabulary_size < 1:
             raise ValueError("categorical models require a non-empty training vocabulary")
         if patient_context_dim < 0:
@@ -30,11 +33,18 @@ class OperatorSetModel(nn.Module):
         if operator_dim < 1:
             raise ValueError("operator_dim must be positive")
         self.operator_mode = operator_mode
+        self.response_mode = response_mode
         self.operator_dim = operator_dim
 
         # Matched modules are initialized before the mode-specific encoder, so
         # they have identical initial states under the same random seed.
-        self.response = PhaseCNN(response_dim, width=128, blocks=2, classes=128)
+        if response_mode == "phase_cnn":
+            self.response = PhaseCNN(response_dim, width=128, blocks=2, classes=128)
+        elif response_mode == "linear":
+            self.response = nn.Sequential(
+                nn.Flatten(1),
+                nn.Linear(16 * response_dim, 128),
+            )
         layer = nn.TransformerEncoderLayer(
             d_model=192, nhead=4, batch_first=True, dim_feedforward=384, activation="gelu"
         )
@@ -63,6 +73,20 @@ class OperatorSetModel(nn.Module):
             self.operator = nn.Sequential(nn.Linear(operator_dim, 64), nn.GELU(), nn.Linear(64, 64))
             self.known_operator = None
             self.register_buffer("unknown_operator", torch.empty(0), persistent=False)
+        elif operator_mode == "faithful":
+            if operator_dim != 8:
+                raise ValueError("faithful mode requires the clinical 8-D operator basis")
+            # Nonlinear residual g_theta: R^8 -> R^56 so that e_q = [q; g_theta(q)] in R^64
+            self.operator = nn.Sequential(nn.Linear(operator_dim, 56), nn.GELU(), nn.Linear(56, 56))
+            self.known_operator = None
+            self.register_buffer("unknown_operator", torch.empty(0), persistent=False)
+        elif operator_mode == "raw_q":
+            if operator_dim != 8:
+                raise ValueError("raw_q mode requires the clinical 8-D operator basis")
+            self.operator = None
+            self.raw_q_scale = nn.Parameter(torch.ones(()))
+            self.known_operator = None
+            self.register_buffer("unknown_operator", torch.empty(0), persistent=False)
         elif operator_mode == "q_ablated":
             self.operator = None
             self.known_operator = None
@@ -87,6 +111,17 @@ class OperatorSetModel(nn.Module):
                 raise ValueError(f"continuous models require (...,{self.operator_dim}) operators")
             assert self.operator is not None
             return self.operator(operators)
+        if self.operator_mode == "faithful":
+            if operators is None or operators.shape[-1] != self.operator_dim:
+                raise ValueError(f"faithful models require (...,{self.operator_dim}) operators")
+            assert self.operator is not None
+            residual = self.operator(operators)
+            return torch.cat((operators, residual), dim=-1)
+        if self.operator_mode == "raw_q":
+            if operators is None or operators.shape[-1] != 8:
+                raise ValueError("raw_q models require (...,8) operators")
+            padded = F.pad(operators, (0, 56))
+            return padded * self.raw_q_scale
         if self.operator_mode == "q_ablated":
             if operators is not None:
                 shape = operators.shape[:-1]

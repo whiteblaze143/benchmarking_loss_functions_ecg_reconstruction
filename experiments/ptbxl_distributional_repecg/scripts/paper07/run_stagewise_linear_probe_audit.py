@@ -72,10 +72,16 @@ def _patient_split(patient_ids: np.ndarray, seed: int) -> tuple[np.ndarray, np.n
 def _load_checkpoint(path: Path) -> tuple[OperatorSetModel, dict[str, object]]:
     payload = torch.load(path, map_location="cpu", weights_only=False)
     state = payload.get("state_dict", payload)
-    model = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous")
+    variant = str(payload.get("variant", ""))
+    response_mode = payload.get("response_mode", "linear" if "linear_response" in variant or "linear_bottleneck" in variant or "linear" == variant else "phase_cnn")
+    model = OperatorSetModel(
+        response_dim=128, classes=5,
+        operator_mode="raw_q" if variant in {"linear_q_encoder", "raw_q_from_set_operator_robust"} else "continuous",
+        response_mode=response_mode,
+    )
     model.load_state_dict(state, strict=True)
     model.eval()
-    return model, {"path": str(path), "sha256": _sha256(path), "variant": payload.get("variant")}
+    return model, {"path": str(path), "sha256": _sha256(path), "variant": payload.get("variant"), "response_mode": response_mode}
 
 
 def _stage_features(model: OperatorSetModel, operators: torch.Tensor, responses: torch.Tensor) -> dict[str, torch.Tensor]:

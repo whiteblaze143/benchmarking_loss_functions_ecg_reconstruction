@@ -44,6 +44,7 @@ REPO_DIR = Path(__file__).resolve().parents[4]
 EXPERIMENT_DIR = REPO_DIR / "experiments/ptbxl_distributional_repecg"
 OUTPUTS_DIR = EXPERIMENT_DIR / "outputs"
 DATA_DIR = Path("/home/mithunmanivannan/data")
+sys.path.insert(0, str(EXPERIMENT_DIR))
 sys.path.insert(0, str(EXPERIMENT_DIR / "src"))
 sys.path.insert(0, str(REPO_DIR / "tit_ecg/src"))
 

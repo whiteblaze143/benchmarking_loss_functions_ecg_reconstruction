@@ -28,6 +28,7 @@ PATIENT_CONTEXT_SCHEMAS = {
 }
 VARIANTS = {
     "continuous_full12_aux_mmd": 1.0,
+    "raw_q_full12_aux_mmd": 1.0,
     "continuous_full12_aux_no_mmd": 0.0,
     "lead1_unconditioned": 1.0,
     "lead1_age_sex_conditioned": 1.0,
@@ -199,8 +200,9 @@ def main() -> None:
     validation_context = _load_patient_context(args.patient_context, "validation", validation, context_dim) if lead1_mode else None
     args.output.mkdir(parents=True, exist_ok=False)
     device = torch.device("cuda")
+    operator_mode = "raw_q" if args.variant.startswith("raw_q_") else "continuous"
     model = OperatorSetModel(
-        response_dim=128, classes=5, operator_mode="continuous", patient_context_dim=context_dim if lead1_mode else 0,
+        response_dim=128, classes=5, operator_mode=operator_mode, patient_context_dim=context_dim if lead1_mode else 0,
     ).to(device)
     for parameter in model.decoder.parameters():
         parameter.requires_grad_(False)

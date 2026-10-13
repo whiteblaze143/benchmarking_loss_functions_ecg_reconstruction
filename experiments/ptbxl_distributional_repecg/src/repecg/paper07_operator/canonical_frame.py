@@ -197,3 +197,58 @@ def canonicalize_beats(
     """
     B, beats_canon, C = canonicalize_measurements(Q, beats_mv, tol=tol, tie_tol=tie_tol)
     return B, beats_canon, C
+
+
+def deployment_validity_condition(
+    Q: np.ndarray,
+    gamma_max: float = 10.0,
+    tol: float = 1e-7,
+) -> Tuple[bool, float, float]:
+    """Evaluate deterministic deployment validity condition g(Q) <= gamma_max.
+
+    Under independent isotropic channel noise E ~ N(0, sigma^2 I), the transformed
+    noise covariance satisfies:
+        Cov(E_tilde) = sigma^2 C_Q C_Q^T, where C_Q = B_Q Q^+.
+        lambda_max(Cov(E_tilde)) <= sigma^2 ||C_Q||_2^2 = sigma^2 sigma_min(Q)^{-2}.
+
+    For an allowable SNR loss budget of L dB (variance amplification A_max = 10^(L/10)):
+        gamma_max = sqrt(A_max) = 10^(L / 20).
+        Examples:
+          L = 6 dB  -> gamma_max = 2.0  (A_max = 4)
+          L = 12 dB -> gamma_max = 4.0  (A_max = 16)
+          L = 20 dB -> gamma_max = 10.0 (A_max = 100)
+
+    Mathematical distinction from condition number kappa(Q):
+        ||B_Q Q^+||_2 = 1 / sigma_min(Q), whereas kappa(Q) = sigma_max(Q) / sigma_min(Q).
+        These are NOT generally equivalent unless sigma_max(Q) = 1.
+        Therefore, ||B_Q Q^+||_2 <= gamma_max is the exact deployment gate, while kappa(Q)
+        serves as a scale-independent diagnostic condition number.
+
+    Args:
+        Q: Measurement matrix [m, d].
+        gamma_max: Maximum tolerated noise amplification factor (10^(L/20)).
+        tol: Rank cutoff tolerance for SVD.
+
+    Returns:
+        is_valid: True if g(Q) = ||B_Q Q^+||_2 <= gamma_max.
+        g_Q: Exact noise amplification norm ||B_Q Q^+||_2 = 1 / sigma_min(Q).
+        kappa_Q: Diagnostic condition number sigma_max(Q) / sigma_min(Q).
+    """
+    Q_64 = np.asarray(Q, dtype=np.float64)
+    _, s, _ = np.linalg.svd(Q_64, full_matrices=False)
+    if len(s) == 0 or s[0] <= 0.0:
+        return False, float("inf"), float("inf")
+
+    cutoff = tol * s[0]
+    pos_s = s[s > cutoff]
+    if len(pos_s) == 0:
+        return False, float("inf"), float("inf")
+
+    sigma_min = float(pos_s[-1])
+    sigma_max = float(pos_s[0])
+
+    g_Q = 1.0 / sigma_min
+    kappa_Q = sigma_max / sigma_min
+
+    is_valid = bool(g_Q <= gamma_max)
+    return is_valid, g_Q, kappa_Q

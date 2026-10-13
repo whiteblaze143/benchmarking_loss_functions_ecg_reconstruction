@@ -299,6 +299,12 @@ def main():
         json.dump({"summary": summary, "per_seed_results": all_seed_results}, f, indent=2)
     logger.info(f"Saved multi-seed statistics to {out_json}")
 
+    artifact_json = ARTIFACT_DIR / "r027_multiseed_evaluation.json"
+    with open(artifact_json, "w") as f:
+        json.dump({"summary": summary, "per_seed_results": all_seed_results}, f, indent=2)
+    logger.info(f"Saved copy to artifact directory: {artifact_json}")
+
+
 
 if __name__ == "__main__":
     main()

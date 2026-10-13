@@ -18,6 +18,8 @@ import copy
 import json
 import logging
 from pathlib import Path
+import shutil
+import time
 from typing import Any, Dict, List, Tuple
 
 import numpy as np
@@ -234,18 +236,33 @@ def main():
             continue
 
         train_path = DATA_DIR / f"representation_train_{arm}.npz"
-        logger.info(f"Loading {train_path} into memory for arm '{arm}' ({seeds_to_train})...")
+        logger.info(f"Loading training data from {train_path}...")
+        t0 = time.time()
         with np.load(train_path) as d_train:
             train_data = {
                 "operators": np.asarray(d_train["operators"]),
                 "responses": np.asarray(d_train["responses"]),
                 "labels": np.asarray(d_train["labels"]),
             }
-        logger.info(f"Loaded {len(train_data['operators'])} records ({train_data['responses'].nbytes / 1e6:.1f} MB).")
+        logger.info(f"Loaded {len(train_data['operators'])} records ({train_data['responses'].nbytes / 1e6:.1f} MB uncompressed) in {time.time() - t0:.2f}s.")
 
-        for seed in args.seeds:
+        for seed in seeds_to_train:
             train_single_arm_seed(arm, seed, train_data, val_data, device, args)
+
+        del train_data
+        import gc
+        gc.collect()
+
+    logger.info("\n=== All training complete. Triggering multi-seed evaluation across seeds 42, 43, 44 ===")
+    import subprocess
+    import sys
+    subprocess.run([
+        sys.executable,
+        str(Path(__file__).parent / "evaluate_r027_seeds.py"),
+        "--seeds", "42", "43", "44"
+    ], check=True)
 
 
 if __name__ == "__main__":
     main()
+

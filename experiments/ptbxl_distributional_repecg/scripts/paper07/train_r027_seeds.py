@@ -81,30 +81,12 @@ def evaluate_on_validation(
 def train_single_arm_seed(
     arm: str,
     seed: int,
-    train_npz_path: Path,
+    train_data: Dict[str, np.ndarray],
     val_data: Dict[str, np.ndarray],
     device: torch.device,
     args: argparse.Namespace,
 ) -> Dict[str, Any]:
     arm_tag = f"{arm}_seed{seed}"
-    logger.info(f"=== Starting Training for {arm_tag} (Seed={seed}) ===")
-    logger.info(f"Loading {train_npz_path} into RAM...")
-    with np.load(train_npz_path) as d_train:
-        train_ops = np.asarray(d_train["operators"])
-        train_resps = np.asarray(d_train["responses"])
-        train_labels = np.asarray(d_train["labels"])
-    n_records, n_candidates, _ = train_ops.shape
-    logger.info(f"Loaded {n_records} records ({train_resps.nbytes / 1e6:.1f} MB) into RAM.")
-
-    # Set seed for model initialization and data sampling
-    torch.manual_seed(seed)
-    rng = np.random.default_rng(seed)
-
-    model = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous").to(device)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.wd)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.max_epochs)
-    loss_fn = nn.BCEWithLogitsLoss()
-
     arm_dir = MODELS_DIR / arm_tag
     arm_dir.mkdir(parents=True, exist_ok=True)
 
@@ -113,6 +95,20 @@ def train_single_arm_seed(
         logger.info(f"Checkpoint already exists at {ckpt_path}. Skipping training (use --force to retrain).")
         with open(arm_dir / "summary.json") as f:
             return json.load(f)
+
+    logger.info(f"=== Starting Training for {arm_tag} (Seed={seed}) ===")
+    train_ops = train_data["operators"]
+    train_resps = train_data["responses"]
+    train_labels = train_data["labels"]
+    n_records, n_candidates, _ = train_ops.shape
+
+    torch.manual_seed(seed)
+    rng = np.random.default_rng(seed)
+
+    model = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous").to(device)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.wd)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.max_epochs)
+    loss_fn = nn.BCEWithLogitsLoss()
 
     best_score = -1.0
     best_epoch = 0
@@ -227,10 +223,28 @@ def main():
     d_val = np.load(val_path)
     val_data = {k: d_val[k] for k in d_val.files}
 
-    for seed in args.seeds:
-        for arm in args.arms:
-            train_path = DATA_DIR / f"representation_train_{arm}.npz"
-            train_single_arm_seed(arm, seed, train_path, val_data, device, args)
+    for arm in args.arms:
+        # Check if any seed needs training for this arm
+        seeds_to_train = [
+            s for s in args.seeds
+            if args.force or not (MODELS_DIR / f"{arm}_seed{s}/checkpoint.pt").exists()
+        ]
+        if not seeds_to_train:
+            logger.info(f"All requested seeds for arm '{arm}' already exist. Skipping data loading.")
+            continue
+
+        train_path = DATA_DIR / f"representation_train_{arm}.npz"
+        logger.info(f"Loading {train_path} into memory for arm '{arm}' ({seeds_to_train})...")
+        with np.load(train_path) as d_train:
+            train_data = {
+                "operators": np.asarray(d_train["operators"]),
+                "responses": np.asarray(d_train["responses"]),
+                "labels": np.asarray(d_train["labels"]),
+            }
+        logger.info(f"Loaded {len(train_data['operators'])} records ({train_data['responses'].nbytes / 1e6:.1f} MB).")
+
+        for seed in args.seeds:
+            train_single_arm_seed(arm, seed, train_data, val_data, device, args)
 
 
 if __name__ == "__main__":

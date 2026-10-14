@@ -261,7 +261,7 @@ def main():
 | Phase-KME + 4 R-R Variability Statistics | **0.8415** | -0.0689 |
 | Task-Adapted SetOperator + R-R Stats | **0.8650** | **-0.0454** |
 
-> **Conclusion:** SetOperator's gap to CSFM on Kingston is an artifact of beat-phase averaging discarding rhythm timing. Adding standard R-R variability statistics bridges 78% of the gap to CSFM Base.
+> **Conclusion:** SetOperator's gap to CSFM on Kingston is an artifact of beat-phase averaging discarding rhythm timing. Adding standard R-R variability statistics bridges 67.9% of the gap to CSFM Base (raising AUROC from 0.6960 to 0.8415), and task adaptation closes 78.8% of the gap (0.8650).
 """
 
     args.output_md.write_text(md_content)

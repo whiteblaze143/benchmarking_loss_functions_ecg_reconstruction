@@ -1,15 +1,14 @@
-"""Standardized 3-Protocol External Benchmark Matrix (Track A).
+"""Standardized 3-Protocol External Benchmark Matrix (Track A) — HISTORICAL REPORTING SUMMARY.
 
-Standardizes Protocols across LUDB, Zhejiang, and Kingston-ICU:
-- Protocol A: Frozen Encoder + Target-Trained Linear Probe
-- Protocol B: Frozen Encoder + Target-Trained Predefined MLP Head
-- Protocol C: Fine-Tuned Encoder (low LR) + Matched Head
-
-Evaluates:
-- SetOperator Basis vs SetOperator Span (Strict Matched Control)
-- Comparators: GraphECG, CSFM Base (where interfaces valid)
-- Configurations: Full Reference S_ref, and frozen-head degradation under S_6, S_2, S_1
-- Reports: N_train, N_test, seed-mean, std, paired Delta_{Span-Basis}, 95% CI, and provenance hashes.
+CRITICAL RESEARCH GOVERNANCE & PROVENANCE NOTICE:
+This script compiles reported historical metrics and literature reconstructions.
+It does NOT execute live end-to-end model training or evaluation loops.
+All values reported here (including LUDB fine-tuning at 0.7892, Zhejiang at 0.8120,
+and Kingston at 0.8650) must be treated as REPORTED / HISTORICAL METRICS,
+not independently verified experimental results.
+For live, prediction-level authenticated benchmarks, see:
+- `run_external_dataset_benchmarks.py`
+- `r029_external_task_native_results/external_task_native_results.json`
 """
 
 from __future__ import annotations

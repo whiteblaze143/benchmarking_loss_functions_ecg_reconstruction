@@ -103,7 +103,7 @@ class RepresentationDataset(Dataset):
         self.operators = torch.from_numpy(data["operators"]).float()  # (N, K, 8)
         self.responses = torch.from_numpy(data["responses"]).float()  # (N, K, 16, 128)
         self.labels = torch.from_numpy(data["labels"]).float()        # (N, 5)
-        self.record_ids = data["record_ids"]
+        self.record_ids = data["record_ids"] if "record_ids" in data else data.get("ecg_ids", data.get("patient_ids", None))
         self.mode = mode
         self.rng = np.random.default_rng(seed)
         self.k_available = self.operators.shape[1]
@@ -122,6 +122,56 @@ class RepresentationDataset(Dataset):
         perm = self.rng.permutation(self.k_available)
         context_idx = perm[:m]
 
+        ops = self.operators[idx, context_idx]  # (m, 8)
+        res = self.responses[idx, context_idx]  # (m, 16, 128)
+        label = self.labels[idx]                # (5,)
+
+        return {
+            "operators": ops,
+            "responses": res,
+            "label": label,
+            "m": torch.tensor(m, dtype=torch.long),
+        }
+
+
+class DeterministicValidationDataset(Dataset):
+    """Deterministic validation dataset with a frozen context bank on Fold 9.
+
+    Guarantees that every epoch, every seed, and every model architecture
+    evaluates against the exact same context cardinalities m_i and operator subsets.
+    Eliminates stochastic validation sampling variance during checkpoint selection.
+    """
+
+    def __init__(self, npz_path: Path, seed: int = 42):
+        if not npz_path.exists():
+            raise FileNotFoundError(f"Missing representation file: {npz_path}")
+        logger.info("Loading deterministic validation representations from %s", npz_path)
+        data = np.load(npz_path)
+        self.operators = torch.from_numpy(data["operators"]).float()  # (N, K, 8)
+        self.responses = torch.from_numpy(data["responses"]).float()  # (N, K, 16, 128)
+        self.labels = torch.from_numpy(data["labels"]).float()        # (N, 5)
+        self.record_ids = data["record_ids"] if "record_ids" in data else data.get("ecg_ids", data.get("patient_ids", None))
+        self.k_available = self.operators.shape[1]
+
+        # Freeze the deterministic validation context bank
+        val_rng = np.random.default_rng(seed)
+        self.frozen_contexts: list[tuple[int, np.ndarray]] = []
+        for _ in range(len(self.labels)):
+            m = int(val_rng.integers(1, 8))
+            perm = val_rng.permutation(self.k_available)
+            context_idx = perm[:m]
+            self.frozen_contexts.append((m, context_idx))
+
+        logger.info(
+            "Initialized frozen validation bank: %d records, deterministic across all epochs & seeds",
+            len(self.labels),
+        )
+
+    def __len__(self) -> int:
+        return len(self.labels)
+
+    def __getitem__(self, idx: int) -> dict[str, torch.Tensor]:
+        m, context_idx = self.frozen_contexts[idx]
         ops = self.operators[idx, context_idx]  # (m, 8)
         res = self.responses[idx, context_idx]  # (m, 16, 128)
         label = self.labels[idx]                # (5,)
@@ -203,7 +253,7 @@ def train_single_seed(
         num_workers=2,
     )
 
-    val_ds = RepresentationDataset(val_npz, mode="basis", seed=seed + 1000)
+    val_ds = DeterministicValidationDataset(val_npz, seed=42)
     val_loader = DataLoader(
         val_ds,
         batch_size=batch_size,

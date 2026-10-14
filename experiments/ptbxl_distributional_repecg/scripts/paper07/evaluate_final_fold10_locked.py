@@ -217,16 +217,176 @@ def run_preflight_suite(manifest_path: Path, repo_dir: Path) -> dict[str, Any]:
     verify_benchmark_coverage(manifest)
     verify_no_uncommitted_changes(repo_dir)
     logger.info("ALL PREFLIGHT CHECKS PASSED SUCCESSFULLY.")
-    return manifest
+def execute_locked_evaluation(
+    manifest: dict[str, Any],
+    lockbox_dir: Path,
+    device_name: str = "cpu",
+    checkpoints_dir: Path | None = None,
+    grassmann_bank_path: Path | None = None,
+) -> Path:
+    """Execute complete confirmatory evaluation across all 10 configurations and 10 models."""
+    device = torch.device(device_name)
+    logger.info("Executing confirmatory locked evaluation on %s", device)
+
+    seeds = [42, 43, 44, 45, 46]
+    models: dict[str, dict[int, torch.nn.Module]] = {"basis": {}, "span": {}}
+
+    for mode in ["basis", "span"]:
+        for seed in seeds:
+            chk_name = f"{mode}_s{seed}"
+            chk_meta = manifest["checkpoints"][chk_name]
+            chk_path = Path(chk_meta["path"])
+            if checkpoints_dir:
+                alt_path = checkpoints_dir / f"{chk_name}.pt"
+                if alt_path.is_file():
+                    chk_path = alt_path
+
+            logger.info("Loading %s seed %d from %s", mode, seed, chk_path)
+            chk = torch.load(chk_path, map_location="cpu")
+            m = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous")
+            m.load_state_dict(chk["state_dict"], strict=True)
+            m.to(device)
+            m.eval()
+            models[mode][seed] = m
+
+    basis_vectors = np.eye(8, dtype=np.float32)  # [I, II, V1-V6]
+    e1, e2, e3, e4, e5, e6, e7, e8 = basis_vectors
+    q_III = (e2 - e1) / np.sqrt(2.0)
+    q_aVR = -(e1 + e2) / 2.0
+    q_aVR = q_aVR / np.linalg.norm(q_aVR)
+    q_aVL = (e1 - 0.5 * e2)
+    q_aVL = q_aVL / np.linalg.norm(q_aVL)
+    q_aVF = (e2 - 0.5 * e1)
+    q_aVF = q_aVF / np.linalg.norm(q_aVF)
+    q_icm = (e5 - e4) / np.sqrt(2.0)
+
+    config_defs = {
+        "Q_8": {"m": 8, "ops": basis_vectors},
+        "S_6": {"m": 6, "ops": basis_vectors[2:]},
+        "S_2": {"m": 2, "ops": basis_vectors[:2]},
+        "S_1": {"m": 1, "ops": basis_vectors[:1]},
+        "S_6_limb": {"m": 6, "ops": np.stack([e1, e2, q_III, q_aVR, q_aVL, q_aVF])},
+        "derived_limb_only": {"m": 4, "ops": np.stack([q_III, q_aVR, q_aVL, q_aVF])},
+        "lead_III_single": {"m": 1, "ops": q_III[np.newaxis, :]},
+        "aVF_single": {"m": 1, "ops": q_aVF[np.newaxis, :]},
+        "S_icm": {"m": 1, "ops": q_icm[np.newaxis, :]},
+        "grassmann_bank_350": {"m": 8, "ops": None},
+    }
+
+    test_rep_path = lockbox_dir / "representation_final_test_locked.npz"
+    if not test_rep_path.is_file():
+        alt = Path("/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper07_operator/final_representations/representation_final_test_locked.npz")
+        if alt.is_file():
+            test_rep_path = alt
+        else:
+            raise FileNotFoundError(
+                f"LOCKED TEST DATA MISSING: Cannot locate Fold 10 test representation at {test_rep_path} or {alt}!\n"
+                "Inference cannot execute without verified locked test representations."
+            )
+
+    logger.info("Loading locked test representations from %s", test_rep_path)
+    test_data = np.load(test_rep_path)
+    raw_ops = torch.from_numpy(test_data["operators"]).float()
+    raw_res = torch.from_numpy(test_data["responses"]).float()
+    targets = test_data["labels"]
+    n_records = len(targets)
+
+    if grassmann_bank_path is None or not grassmann_bank_path.is_file():
+        g_meta = manifest.get("grassmann_bank", {})
+        grassmann_bank_path = Path(g_meta.get("path", "/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper07_operator/final_representations/expanded_grassmann_subspace_bank.npz"))
+
+    grassmann_bank = None
+    if grassmann_bank_path.is_file():
+        grassmann_bank = np.load(grassmann_bank_path)
+
+    config_names = list(config_defs.keys())
+    n_configs = len(config_names)
+    n_seeds = len(seeds)
+
+    span_preds_arr = np.zeros((n_configs, n_seeds, n_records, 5), dtype=np.float32)
+    basis_preds_arr = np.zeros((n_configs, n_seeds, n_records, 5), dtype=np.float32)
+
+    for c_idx, cname in enumerate(config_names):
+        logger.info("Evaluating locked configuration %d/%d: %s", c_idx + 1, n_configs, cname)
+
+        if cname == "grassmann_bank_350" and grassmann_bank is not None:
+            subspace_keys = [k for k in grassmann_bank.keys() if k.startswith("subspace_")]
+            n_sub = min(350, len(subspace_keys))
+            logger.info("Evaluating across %d frozen Grassmann subspaces...", n_sub)
+
+            for s_idx, s in enumerate(seeds):
+                m_span = models["span"][s]
+                m_basis = models["basis"][s]
+                sub_span_preds = []
+                sub_basis_preds = []
+
+                for k in subspace_keys[:n_sub]:
+                    sub_ops = torch.from_numpy(grassmann_bank[k]).float().to(device)
+                    r = sub_ops.shape[0]
+                    with torch.no_grad():
+                        sub_ops_batch = sub_ops.unsqueeze(0).expand(n_records, -1, -1)
+                        res_sub = raw_res[:, :r].to(device)
+                        p_sp = torch.sigmoid(m_span(sub_ops_batch, res_sub)).cpu().numpy()
+                        p_ba = torch.sigmoid(m_basis(sub_ops_batch, res_sub)).cpu().numpy()
+                        sub_span_preds.append(p_sp)
+                        sub_basis_preds.append(p_ba)
+
+                span_preds_arr[c_idx, s_idx] = np.mean(sub_span_preds, axis=0)
+                basis_preds_arr[c_idx, s_idx] = np.mean(sub_basis_preds, axis=0)
+        else:
+            ops_np = config_defs[cname]["ops"]
+            m_leads = config_defs[cname]["m"]
+            ops_t = torch.from_numpy(ops_np).unsqueeze(0).expand(n_records, -1, -1).float().to(device)
+            res_t = raw_res[:, :m_leads].to(device)
+
+            for s_idx, s in enumerate(seeds):
+                m_span = models["span"][s]
+                m_basis = models["basis"][s]
+                with torch.no_grad():
+                    span_preds_arr[c_idx, s_idx] = torch.sigmoid(m_span(ops_t, res_t)).cpu().numpy()
+                    basis_preds_arr[c_idx, s_idx] = torch.sigmoid(m_basis(ops_t, res_t)).cpu().numpy()
+
+    predictions_archive_path = lockbox_dir / "fold10_locked_predictions.npz"
+    np.savez_compressed(
+        predictions_archive_path,
+        targets=targets,
+        span_preds=span_preds_arr,
+        basis_preds=basis_preds_arr,
+        configurations=np.array(config_names),
+        seeds=np.array(seeds),
+    )
+    pred_sha = compute_sha256(predictions_archive_path)
+    logger.info("Saved locked predictions archive to %s (SHA-256: %s)", predictions_archive_path, pred_sha)
+
+    lock_path = lockbox_dir / "fold10_access.lock"
+    if lock_path.is_file():
+        lock_meta = json.loads(lock_path.read_text())
+        lock_meta["status"] = "EVALUATION_COMPLETED_SEALED"
+        lock_meta["predictions_sha256"] = pred_sha
+        lock_meta["completed_timestamp_utc"] = subprocess.check_output(["date", "-u", "+%Y-%m-%dT%H:%M:%SZ"], text=True).strip()
+        lock_path.write_text(json.dumps(lock_meta, indent=2))
+
+    return predictions_archive_path
 
 
 def main():
     parser = argparse.ArgumentParser(description="Fold 10 Locked Evaluation Entry Point.")
-    parser.add_argument("--manifest", type=Path, required=True)
-    parser.add_argument("--repo-dir", type=Path, default=Path("."))
-    parser.add_argument("--lockbox-dir", type=Path, required=True)
-    parser.add_argument("--unseal-authorization-token", type=str, default=None,
+    parser.add_argument("--manifest", "--manifest-path", dest="manifest", type=Path, required=True,
+                        help="Signed submission manifest.")
+    parser.add_argument("--repo-dir", type=Path, default=Path("."),
+                        help="Repository directory root.")
+    parser.add_argument("--lockbox-dir", "--output-dir", "--fold10-results-dir", dest="lockbox_dir",
+                        type=Path, required=True,
+                        help="Directory to record locked evaluation and acquire persistent lock.")
+    parser.add_argument("--unseal-authorization-token", "--auth-token", dest="unseal_authorization_token",
+                        type=str, default=None,
                         help="Cryptographic authorization token required to unseal Fold 10.")
+    parser.add_argument("--checkpoints-dir", type=Path, default=None,
+                        help="Optional directory containing trained model checkpoints.")
+    parser.add_argument("--grassmann-bank-path", type=Path, default=None,
+                        help="Optional path to 350-subspace Grassmann benchmark bank.")
+    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu",
+                        help="Compute device for locked evaluation.")
     parser.add_argument("--verify-only", action="store_true",
                         help="Verify manifest and stored prediction artifacts without accessing raw waveforms.")
     args = parser.parse_args()
@@ -254,7 +414,14 @@ def main():
     lock_file = acquire_atomic_fold10_lock(args.lockbox_dir, manifest_sha)
 
     logger.info("Proceeding to locked evaluation under authorization token: %s", args.unseal_authorization_token)
-    # Locked inference implementation...
+    pred_path = execute_locked_evaluation(
+        manifest=manifest,
+        lockbox_dir=args.lockbox_dir,
+        device_name=args.device,
+        checkpoints_dir=args.checkpoints_dir,
+        grassmann_bank_path=args.grassmann_bank_path,
+    )
+    logger.info("Locked Fold 10 evaluation successfully completed. Predictions: %s", pred_path)
 
 
 if __name__ == "__main__":

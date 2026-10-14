@@ -92,10 +92,11 @@ class RepresentationDataset(Dataset):
 
     def __init__(
         self,
-        npz_path: Path,
+        npz_path: Path | str,
         mode: str,
         seed: int,
     ):
+        npz_path = Path(npz_path)
         if not npz_path.exists():
             raise FileNotFoundError(f"Missing representation file: {npz_path}")
         logger.info("Loading representations from %s", npz_path)
@@ -142,7 +143,8 @@ class DeterministicValidationDataset(Dataset):
     Eliminates stochastic validation sampling variance during checkpoint selection.
     """
 
-    def __init__(self, npz_path: Path, seed: int = 42):
+    def __init__(self, npz_path: Path | str, seed: int = 42):
+        npz_path = Path(npz_path)
         if not npz_path.exists():
             raise FileNotFoundError(f"Missing representation file: {npz_path}")
         logger.info("Loading deterministic validation representations from %s", npz_path)
@@ -199,7 +201,7 @@ def collate_variable_m(batch: list[dict[str, Any]]) -> dict[str, torch.Tensor]:
         m = b["m"].item()
         padded_ops[i, :m] = b["operators"]
         padded_res[i, :m] = b["responses"]
-        mask[i, :m] = True
+        mask[i, m:] = True  # PyTorch key_padding_mask: True indicates position should be ignored (padding)
 
     return {
         "operators": padded_ops,

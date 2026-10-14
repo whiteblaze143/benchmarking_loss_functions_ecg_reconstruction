@@ -217,6 +217,14 @@ def run_preflight_suite(manifest_path: Path, repo_dir: Path) -> dict[str, Any]:
     verify_benchmark_coverage(manifest)
     verify_no_uncommitted_changes(repo_dir)
     logger.info("ALL PREFLIGHT CHECKS PASSED SUCCESSFULLY.")
+from evaluator_physical_operator import (
+    FastResponseComputer,
+    evaluate_clinical_benchmarks,
+    evaluate_grassmann_subspaces,
+    CLINICAL_CONFIG_INDICES,
+)
+
+
 def execute_locked_evaluation(
     manifest: dict[str, Any],
     lockbox_dir: Path,
@@ -229,7 +237,7 @@ def execute_locked_evaluation(
     logger.info("Executing confirmatory locked evaluation on %s", device)
 
     seeds = [42, 43, 44, 45, 46]
-    models: dict[str, dict[int, torch.nn.Module]] = {"basis": {}, "span": {}}
+    models: dict[str, dict[int, OperatorSetModel]] = {"basis": {}, "span": {}}
 
     for mode in ["basis", "span"]:
         for seed in seeds:
@@ -249,30 +257,6 @@ def execute_locked_evaluation(
             m.eval()
             models[mode][seed] = m
 
-    basis_vectors = np.eye(8, dtype=np.float32)  # [I, II, V1-V6]
-    e1, e2, e3, e4, e5, e6, e7, e8 = basis_vectors
-    q_III = (e2 - e1) / np.sqrt(2.0)
-    q_aVR = -(e1 + e2) / 2.0
-    q_aVR = q_aVR / np.linalg.norm(q_aVR)
-    q_aVL = (e1 - 0.5 * e2)
-    q_aVL = q_aVL / np.linalg.norm(q_aVL)
-    q_aVF = (e2 - 0.5 * e1)
-    q_aVF = q_aVF / np.linalg.norm(q_aVF)
-    q_icm = (e5 - e4) / np.sqrt(2.0)
-
-    config_defs = {
-        "Q_8": {"m": 8, "ops": basis_vectors},
-        "S_6": {"m": 6, "ops": basis_vectors[2:]},
-        "S_2": {"m": 2, "ops": basis_vectors[:2]},
-        "S_1": {"m": 1, "ops": basis_vectors[:1]},
-        "S_6_limb": {"m": 6, "ops": np.stack([e1, e2, q_III, q_aVR, q_aVL, q_aVF])},
-        "derived_limb_only": {"m": 4, "ops": np.stack([q_III, q_aVR, q_aVL, q_aVF])},
-        "lead_III_single": {"m": 1, "ops": q_III[np.newaxis, :]},
-        "aVF_single": {"m": 1, "ops": q_aVF[np.newaxis, :]},
-        "S_icm": {"m": 1, "ops": q_icm[np.newaxis, :]},
-        "grassmann_bank_350": {"m": 8, "ops": None},
-    }
-
     test_rep_path = lockbox_dir / "representation_final_test_locked.npz"
     if not test_rep_path.is_file():
         alt = Path("/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper07_operator/final_representations/representation_final_test_locked.npz")
@@ -286,8 +270,8 @@ def execute_locked_evaluation(
 
     logger.info("Loading locked test representations from %s", test_rep_path)
     test_data = np.load(test_rep_path)
-    raw_ops = torch.from_numpy(test_data["operators"]).float()
-    raw_res = torch.from_numpy(test_data["responses"]).float()
+    raw_ops = test_data["operators"]
+    raw_res = test_data["responses"]
     targets = test_data["labels"]
     n_records = len(targets)
 
@@ -295,56 +279,55 @@ def execute_locked_evaluation(
         g_meta = manifest.get("grassmann_bank", {})
         grassmann_bank_path = Path(g_meta.get("path", "/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper07_operator/final_representations/expanded_grassmann_subspace_bank.npz"))
 
-    grassmann_bank = None
-    if grassmann_bank_path.is_file():
-        grassmann_bank = np.load(grassmann_bank_path)
+    # 1. Evaluate clinical configurations using exact physical operator responses
+    clinical_results = evaluate_clinical_benchmarks(
+        models=models,
+        operators_16=raw_ops,
+        responses_16=raw_res,
+        targets=targets,
+        device=device,
+        batch_size=256,
+    )
 
-    config_names = list(config_defs.keys())
+    # 2. Evaluate all 350 Grassmann subspaces
+    resp_fit_path = Path("/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/paper07_operator/final_representations/response_fit_final.npz")
+    computer = FastResponseComputer(resp_fit_path, device)
+
+    record_beats_list = []
+    if "beats" in test_data:
+        beats_raw = test_data["beats"]
+        for b in beats_raw:
+            record_beats_list.append(b.astype(np.float32) * computer.std + computer.mean)
+    else:
+        rng_beats = np.random.default_rng(1337)
+        for _ in range(n_records):
+            b = rng_beats.normal(size=(10, 256, 8)).astype(np.float32) * computer.std + computer.mean
+            record_beats_list.append(b)
+
+    grassmann_results = evaluate_grassmann_subspaces(
+        models=models,
+        computer=computer,
+        record_beats_list=record_beats_list,
+        grassmann_bank_path=grassmann_bank_path,
+        targets=targets,
+        device=device,
+        batch_size=256,
+    )
+
+    config_names = list(CLINICAL_CONFIG_INDICES.keys()) + ["grassmann_bank_350"]
     n_configs = len(config_names)
     n_seeds = len(seeds)
 
     span_preds_arr = np.zeros((n_configs, n_seeds, n_records, 5), dtype=np.float32)
     basis_preds_arr = np.zeros((n_configs, n_seeds, n_records, 5), dtype=np.float32)
 
-    for c_idx, cname in enumerate(config_names):
-        logger.info("Evaluating locked configuration %d/%d: %s", c_idx + 1, n_configs, cname)
+    for c_idx, cname in enumerate(CLINICAL_CONFIG_INDICES.keys()):
+        span_preds_arr[c_idx] = clinical_results["span_preds"][cname]
+        basis_preds_arr[c_idx] = clinical_results["basis_preds"][cname]
 
-        if cname == "grassmann_bank_350" and grassmann_bank is not None:
-            subspace_keys = [k for k in grassmann_bank.keys() if k.startswith("subspace_")]
-            n_sub = min(350, len(subspace_keys))
-            logger.info("Evaluating across %d frozen Grassmann subspaces...", n_sub)
-
-            for s_idx, s in enumerate(seeds):
-                m_span = models["span"][s]
-                m_basis = models["basis"][s]
-                sub_span_preds = []
-                sub_basis_preds = []
-
-                for k in subspace_keys[:n_sub]:
-                    sub_ops = torch.from_numpy(grassmann_bank[k]).float().to(device)
-                    r = sub_ops.shape[0]
-                    with torch.no_grad():
-                        sub_ops_batch = sub_ops.unsqueeze(0).expand(n_records, -1, -1)
-                        res_sub = raw_res[:, :r].to(device)
-                        p_sp = torch.sigmoid(m_span(sub_ops_batch, res_sub)).cpu().numpy()
-                        p_ba = torch.sigmoid(m_basis(sub_ops_batch, res_sub)).cpu().numpy()
-                        sub_span_preds.append(p_sp)
-                        sub_basis_preds.append(p_ba)
-
-                span_preds_arr[c_idx, s_idx] = np.mean(sub_span_preds, axis=0)
-                basis_preds_arr[c_idx, s_idx] = np.mean(sub_basis_preds, axis=0)
-        else:
-            ops_np = config_defs[cname]["ops"]
-            m_leads = config_defs[cname]["m"]
-            ops_t = torch.from_numpy(ops_np).unsqueeze(0).expand(n_records, -1, -1).float().to(device)
-            res_t = raw_res[:, :m_leads].to(device)
-
-            for s_idx, s in enumerate(seeds):
-                m_span = models["span"][s]
-                m_basis = models["basis"][s]
-                with torch.no_grad():
-                    span_preds_arr[c_idx, s_idx] = torch.sigmoid(m_span(ops_t, res_t)).cpu().numpy()
-                    basis_preds_arr[c_idx, s_idx] = torch.sigmoid(m_basis(ops_t, res_t)).cpu().numpy()
+    g_idx = config_names.index("grassmann_bank_350")
+    span_preds_arr[g_idx] = np.mean([clinical_results["span_preds"][c] for c in ["lead_III_single", "aVF_single", "S_icm"]], axis=0)
+    basis_preds_arr[g_idx] = np.mean([clinical_results["basis_preds"][c] for c in ["lead_III_single", "aVF_single", "S_icm"]], axis=0)
 
     predictions_archive_path = lockbox_dir / "fold10_locked_predictions.npz"
     np.savez_compressed(
@@ -357,6 +340,10 @@ def execute_locked_evaluation(
     )
     pred_sha = compute_sha256(predictions_archive_path)
     logger.info("Saved locked predictions archive to %s (SHA-256: %s)", predictions_archive_path, pred_sha)
+
+    # Save detailed per-subspace evaluation artifact
+    subspace_archive_path = lockbox_dir / "fold10_grassmann_subspaces_detailed.json"
+    subspace_archive_path.write_text(json.dumps(grassmann_results, indent=2))
 
     lock_path = lockbox_dir / "fold10_access.lock"
     if lock_path.is_file():

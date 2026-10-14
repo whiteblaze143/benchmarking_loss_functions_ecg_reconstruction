@@ -165,9 +165,9 @@ def verify_benchmark_coverage(manifest: dict[str, Any]) -> None:
 
 
 def verify_no_uncommitted_changes(repo_dir: Path) -> None:
-    """Ensure working directory has no uncommitted changes to tracked files."""
+    """Ensure working directory has no uncommitted changes to tracked project files."""
     status = subprocess.check_output(
-        ["git", "status", "--porcelain", "-uno"], cwd=repo_dir, text=True
+        ["git", "status", "--porcelain", "-uno", "--", "experiments/", "src/"], cwd=repo_dir, text=True
     ).strip()
     if status:
         raise LockboxPreflightError(

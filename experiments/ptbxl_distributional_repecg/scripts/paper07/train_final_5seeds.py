@@ -230,6 +230,8 @@ def train_single_seed(
     batch_size: int = 64,
     lr: float = 3e-4,
     device_str: str = "cuda",
+    train_ds: RepresentationDataset | None = None,
+    val_ds: DeterministicValidationDataset | None = None,
 ) -> Path:
     """Train a single seed model and select best checkpoint on Fold 9."""
     logger.info("=== Starting Training: Seed %d | Intervention: %s ===", seed, intervention)
@@ -244,7 +246,11 @@ def train_single_seed(
     # Instantiate model with exact verified constructor
     model = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous").to(device)
 
-    train_ds = RepresentationDataset(train_npz, mode=intervention, seed=seed)
+    if train_ds is None:
+        train_ds = RepresentationDataset(train_npz, mode=intervention, seed=seed)
+    else:
+        train_ds.rng = np.random.default_rng(seed)
+
     train_loader = DataLoader(
         train_ds,
         batch_size=batch_size,
@@ -253,7 +259,9 @@ def train_single_seed(
         num_workers=0,
     )
 
-    val_ds = DeterministicValidationDataset(val_npz, seed=42)
+    if val_ds is None:
+        val_ds = DeterministicValidationDataset(val_npz, seed=42)
+
     val_loader = DataLoader(
         val_ds,
         batch_size=batch_size,
@@ -385,8 +393,14 @@ def main():
     modes = ["basis", "span"] if args.mode == "both" else [args.mode]
     checkpoints = {}
 
+    logger.info("Preloading deterministic validation representations from %s...", args.val_npz)
+    val_ds = DeterministicValidationDataset(args.val_npz, seed=42)
+
     for mode in modes:
         train_npz = args.train_basis_npz if mode == "basis" else args.train_span_npz
+        logger.info("Preloading %s training representations from %s...", mode.upper(), train_npz)
+        train_ds = RepresentationDataset(train_npz, mode=mode, seed=args.seeds[0])
+
         for seed in args.seeds:
             chk_path = train_single_seed(
                 seed=seed,
@@ -396,6 +410,8 @@ def main():
                 output_dir=args.output_dir,
                 epochs=args.epochs,
                 device_str=args.device,
+                train_ds=train_ds,
+                val_ds=val_ds,
             )
             sha = hashlib.sha256(chk_path.read_bytes()).hexdigest()
             checkpoints[f"{mode}_s{seed}"] = {

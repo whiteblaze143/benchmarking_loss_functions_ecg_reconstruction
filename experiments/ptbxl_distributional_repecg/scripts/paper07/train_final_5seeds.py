@@ -250,7 +250,7 @@ def train_single_seed(
         batch_size=batch_size,
         shuffle=True,
         collate_fn=collate_variable_m,
-        num_workers=2,
+        num_workers=0,
     )
 
     val_ds = DeterministicValidationDataset(val_npz, seed=42)
@@ -259,7 +259,7 @@ def train_single_seed(
         batch_size=batch_size,
         shuffle=False,
         collate_fn=collate_variable_m,
-        num_workers=2,
+        num_workers=0,
     )
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-3)

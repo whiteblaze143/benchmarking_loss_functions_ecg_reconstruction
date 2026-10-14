@@ -43,6 +43,7 @@ import subprocess
 import sys
 import time
 from typing import Any, Dict, List
+import zipfile
 
 import numpy as np
 import torch
@@ -81,6 +82,19 @@ def compute_sha256(path: Path) -> str:
         while chunk := f.read(1024 * 1024):
             h.update(chunk)
     return h.hexdigest()
+
+
+def get_npz_array_header(npz_path: Path, array_name: str) -> tuple[tuple[int, ...], np.dtype]:
+    """Inspect array shape and dtype directly from zip member header without decompressing data."""
+    with zipfile.ZipFile(npz_path, "r") as z:
+        with z.open(f"{array_name}.npy") as f:
+            version = np.lib.format.read_magic(f)
+            shape, fortran, dtype = (
+                np.lib.format.read_array_header_1_0(f)
+                if version == (1, 0)
+                else np.lib.format.read_array_header_2_0(f)
+            )
+            return shape, dtype
 
 
 # ==============================================================================
@@ -126,21 +140,24 @@ def wait_and_verify_stage1_datasets(poll_interval: int = 60) -> Dict[str, Any]:
         logger.info("File %s -> %s (%d bytes)", p.name, hashes[name], p.stat().st_size)
 
     # 1. Verify train datasets (Folds 1-8)
+    basis_shape, basis_dtype = get_npz_array_header(required_files["basis_train"], "responses")
+    assert basis_shape == (17417, 8, 16, 128), f"Basis shape mismatch: {basis_shape}"
     with np.load(required_files["basis_train"]) as d_b:
         n_train = len(d_b["labels"])
         assert n_train == 17417, f"Basis train count mismatch: {n_train} != 17417"
-        assert d_b["responses"].shape == (17417, 8, 16, 128), f"Basis shape mismatch: {d_b['responses'].shape}"
         train_ecg_ids = set(d_b["ecg_ids"].tolist()) if "ecg_ids" in d_b else set()
 
+    span_shape, span_dtype = get_npz_array_header(required_files["span_train"], "responses")
+    assert span_shape == (17417, 16, 16, 128), f"Span shape mismatch: {span_shape}"
     with np.load(required_files["span_train"]) as d_s:
         assert len(d_s["labels"]) == 17417, f"Span train count mismatch: {len(d_s['labels'])} != 17417"
-        assert d_s["responses"].shape == (17417, 16, 16, 128), f"Span shape mismatch: {d_s['responses'].shape}"
 
     # 2. Verify validation dataset (Fold 9)
+    val_shape, val_dtype = get_npz_array_header(required_files["select_val"], "responses")
+    assert val_shape == (2183, 16, 16, 128), f"Val responses shape mismatch: {val_shape}"
     with np.load(required_files["select_val"]) as d_v:
         n_val = len(d_v["labels"])
-        assert n_val == 2183, f"Validation count mismatch: {len(d_v['labels'])} != 2183"
-        assert d_v["responses"].shape == (2183, 16, 16, 128), f"Val responses shape mismatch: {d_v['responses'].shape}"
+        assert n_val == 2183, f"Validation count mismatch: {n_val} != 2183"
         val_ecg_ids = set(d_v["ecg_ids"].tolist()) if "ecg_ids" in d_v else set()
 
     if train_ecg_ids and val_ecg_ids:

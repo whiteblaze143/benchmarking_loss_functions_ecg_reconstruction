@@ -58,14 +58,12 @@ def stream_dataset(target: dict):
     total_out_bytes = n_samples * bytes_per_sample_out
     total_in_bytes = n_samples * bytes_per_sample_in
 
-    print(f"\n[STREAM] Streaming {name} ({total_out_bytes / (1024**3):.2f} GB float32) sequentially via 16MB-aligned reads...")
+    print(f"\n[STREAM] Streaming {name} ({total_out_bytes / (1024**3):.2f} GB float32) sequentially via 8-record chunks (1.92 MB)...")
     sys.stdout.flush()
     t0 = time.time()
 
-    read_block = 16 * 1024 * 1024  # 16 MB block-aligned
+    records_per_chunk = 8
     samples_written = 0
-    leftover = b""
-    first_read = True
     last_log = t0
 
     with open(dst_tmp, "wb") as f_out:
@@ -75,26 +73,16 @@ def stream_dataset(target: dict):
         )
 
         with open(src, "rb") as f_in:
-            while True:
-                chunk = f_in.read(read_block)
-                if not chunk:
+            f_in.seek(128)  # skip 128-byte npy header
+            while samples_written < n_samples:
+                rem_samples = n_samples - samples_written
+                n_to_read = min(records_per_chunk, rem_samples)
+                raw = f_in.read(n_to_read * bytes_per_sample_in)
+                if not raw:
                     break
-                if first_read:
-                    chunk = chunk[128:]  # strip 128-byte header from first 16MB block
-                    first_read = False
-
-                buf = leftover + chunk
-                n_avail = len(buf) // bytes_per_sample_in
-                if n_avail > 0:
-                    usable = n_avail * bytes_per_sample_in
-                    raw_data = buf[:usable]
-                    leftover = buf[usable:]
-
-                    f32 = np.frombuffer(raw_data, dtype="<f8").astype(np.float32).reshape(n_avail, c, length, leads)
-                    f_out.write(f32.tobytes())
-                    samples_written += n_avail
-                else:
-                    leftover = buf
+                f32 = np.frombuffer(raw, dtype="<f8").astype(np.float32).reshape(-1, c, length, leads)
+                f_out.write(f32.tobytes())
+                samples_written += len(f32)
 
                 now = time.time()
                 if now - last_log >= 5.0 or samples_written == n_samples:
@@ -106,12 +94,6 @@ def stream_dataset(target: dict):
                     print(f"  -> {gb_done:.2f} / {gb_tot:.2f} GB ({pct:.1f}%) | {mb_s:.1f} MB/s | Elapsed: {now - t0:.1f}s | ETA: {eta_s:.1f}s")
                     sys.stdout.flush()
                     last_log = now
-
-            if len(leftover) >= bytes_per_sample_in:
-                n_rem = len(leftover) // bytes_per_sample_in
-                f32 = np.frombuffer(leftover[: n_rem * bytes_per_sample_in], dtype="<f8").astype(np.float32).reshape(n_rem, c, length, leads)
-                f_out.write(f32.tobytes())
-                samples_written += n_rem
 
         f_out.flush()
         os.fsync(f_out.fileno())

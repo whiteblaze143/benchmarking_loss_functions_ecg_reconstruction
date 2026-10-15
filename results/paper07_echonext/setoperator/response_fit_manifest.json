@@ -1,0 +1,19 @@
+{
+  "status": "FITTED_AND_VERIFIED",
+  "dataset": "EchoNext",
+  "training_records_sampled": 500,
+  "sample_seed": 42,
+  "voltage_scale": 0.9471806283089217,
+  "mean_voltage": 0.0009536729836381884,
+  "n_landmarks": 128,
+  "imq_c2": 1.0,
+  "audit": {
+    "spearman": 0.9995440474482974,
+    "median_relative_error": 8.119190188000685e-05,
+    "min_spearman": 0.9,
+    "max_median_relative_error": 0.15,
+    "passed": true
+  },
+  "total_fit_time_seconds": 7.55,
+  "fit_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/results/paper07_echonext/setoperator/response_fit_echonext.npz"
+}

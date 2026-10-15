@@ -1,29 +1,37 @@
-"""Final Five-Seed SetOperator Training Script (Folds 1-8).
+"""Authoritative Five-Seed SetOperator Training Script (Folds 1-8).
 
-Fail-Closed Architecture:
+Restores the exact Paper 07 shared-grid and development training protocol:
 1. Exact Constructor: OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous")
 2. Source SHA-256 Verification & Golden Regression Test on initialization.
-3. Frozen Context Law: m = rng.integers(1, 8) strictly in {1, ..., 7}; m=8 NEVER occurs.
-4. Frozen Exposure Law: 1/2 basis + 1/4 dense + 1/4 sparse for Span; pure basis for Basis.
-5. Strict Fold Isolation: Trained exclusively on Folds 1-8; checkpoint selection on Fold 9;
+3. Class-Weighted BCEWithLogitsLoss:
+     prevalence = train_labels.mean(axis=0)
+     positive_weight = ((1 - prevalence) / prevalence.clamp_min(1e-8)).clamp_max(10)
+     loss_fn = BCEWithLogitsLoss(pos_weight=positive_weight)
+4. AdamW Optimizer with gradient norm clipping (1.0).
+5. CosineAnnealingLR scheduler with T_max=epochs.
+6. Max epochs (default 80) with patience-based early stopping (default 10) on Fold 9 macro AUROC.
+7. Frozen Context Law: m = rng.integers(1, min(8, K)) strictly in {1, ..., 7}; m=8 NEVER occurs.
+8. Paired Initialization: For each seed, Basis and Span start from the IDENTICAL initial weights.
+9. Strict Fold Isolation: Trained exclusively on Folds 1-8; checkpoint selection on Fold 9;
    Fold 10 strictly SEALED.
 """
 
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import logging
 from pathlib import Path
 import random
-import sys
-from typing import Any
+import time
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import torch
 from torch import nn
-from torch.utils.data import DataLoader, Dataset
+from sklearn.metrics import average_precision_score, roc_auc_score
 
 # Set up logging
 logging.basicConfig(
@@ -33,8 +41,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger("train_final_5seeds")
 
-# Ensure cudnn disabled for deterministic reproduction if required
+# Disable cudnn 1D conv bug on this environment
 torch.backends.cudnn.enabled = False
+torch.set_float32_matmul_precision("high")
 
 from repecg.paper07_operator.model import OperatorSetModel
 
@@ -79,312 +88,238 @@ def verify_architecture_contract() -> None:
     logger.info("Passed golden logit regression test (max deviation: %.2e)", max_diff)
 
 
-def sample_context_m(rng: np.random.Generator) -> int:
-    """Sample context size m in exactly {1, 2, 3, 4, 5, 6, 7}. Cardinality 8 NEVER occurs."""
-    m = int(rng.integers(1, 8))
-    if m < 1 or m > 7:
-        raise ValueError(f"CRITICAL VIOLATION: Sampled m={m} outside [1, 7]")
-    return m
-
-
-class RepresentationDataset(Dataset):
-    """Dataset serving precomputed Phase-KME response features and operator vectors."""
-
-    def __init__(
-        self,
-        npz_path: Path | str,
-        mode: str,
-        seed: int,
-    ):
-        npz_path = Path(npz_path)
-        if not npz_path.exists():
-            raise FileNotFoundError(f"Missing representation file: {npz_path}")
-        logger.info("Loading representations from %s", npz_path)
-        data = np.load(npz_path)
-        self.operators = torch.from_numpy(data["operators"]).float()  # (N, K, 8)
-        self.responses = torch.from_numpy(data["responses"]).float()  # (N, K, 16, 128)
-        self.labels = torch.from_numpy(data["labels"]).float()        # (N, 5)
-        self.record_ids = data["record_ids"] if "record_ids" in data else data.get("ecg_ids", data.get("patient_ids", None))
-        self.mode = mode
-        self.rng = np.random.default_rng(seed)
-        self.k_available = self.operators.shape[1]
-        logger.info(
-            "Loaded dataset: %d records, %d available operators per record",
-            len(self.labels),
-            self.k_available,
-        )
-
-    def __len__(self) -> int:
-        return len(self.labels)
-
-    def __getitem__(self, idx: int) -> dict[str, torch.Tensor]:
-        m = sample_context_m(self.rng)
-        # Randomly choose m indices out of k_available
-        perm = self.rng.permutation(self.k_available)
-        context_idx = perm[:m]
-
-        ops = self.operators[idx, context_idx]  # (m, 8)
-        res = self.responses[idx, context_idx]  # (m, 16, 128)
-        label = self.labels[idx]                # (5,)
-
-        return {
-            "operators": ops,
-            "responses": res,
-            "label": label,
-            "m": torch.tensor(m, dtype=torch.long),
-        }
-
-
-class DeterministicValidationDataset(Dataset):
-    """Deterministic validation dataset with a frozen context bank on Fold 9.
-
-    Guarantees that every epoch, every seed, and every model architecture
-    evaluates against the exact same context cardinalities m_i and operator subsets.
-    Eliminates stochastic validation sampling variance during checkpoint selection.
-    """
-
-    def __init__(self, npz_path: Path | str, seed: int = 42):
-        npz_path = Path(npz_path)
-        if not npz_path.exists():
-            raise FileNotFoundError(f"Missing representation file: {npz_path}")
-        logger.info("Loading deterministic validation representations from %s", npz_path)
-        data = np.load(npz_path)
-        self.operators = torch.from_numpy(data["operators"]).float()  # (N, K, 8)
-        self.responses = torch.from_numpy(data["responses"]).float()  # (N, K, 16, 128)
-        self.labels = torch.from_numpy(data["labels"]).float()        # (N, 5)
-        self.record_ids = data["record_ids"] if "record_ids" in data else data.get("ecg_ids", data.get("patient_ids", None))
-        self.k_available = self.operators.shape[1]
-
-        # Freeze the deterministic validation context bank
-        val_rng = np.random.default_rng(seed)
-        self.frozen_contexts: list[tuple[int, np.ndarray]] = []
-        for _ in range(len(self.labels)):
-            m = int(val_rng.integers(1, 8))
-            perm = val_rng.permutation(self.k_available)
-            context_idx = perm[:m]
-            self.frozen_contexts.append((m, context_idx))
-
-        logger.info(
-            "Initialized frozen validation bank: %d records, deterministic across all epochs & seeds",
-            len(self.labels),
-        )
-
-    def __len__(self) -> int:
-        return len(self.labels)
-
-    def __getitem__(self, idx: int) -> dict[str, torch.Tensor]:
-        m, context_idx = self.frozen_contexts[idx]
-        ops = self.operators[idx, context_idx]  # (m, 8)
-        res = self.responses[idx, context_idx]  # (m, 16, 128)
-        label = self.labels[idx]                # (5,)
-
-        return {
-            "operators": ops,
-            "responses": res,
-            "label": label,
-            "m": torch.tensor(m, dtype=torch.long),
-        }
-
-
-def collate_variable_m(batch: list[dict[str, Any]]) -> dict[str, torch.Tensor]:
-    """Collate batch with variable context cardinalities m_i."""
-    batch_size = len(batch)
-    m_values = [b["m"].item() for b in batch]
-    max_m = max(m_values)
-
-    padded_ops = torch.zeros(batch_size, max_m, 8, dtype=torch.float32)
-    padded_res = torch.zeros(batch_size, max_m, 16, 128, dtype=torch.float32)
-    mask = torch.zeros(batch_size, max_m, dtype=torch.bool)
-    labels = torch.stack([b["label"] for b in batch])
-
-    for i, b in enumerate(batch):
-        m = b["m"].item()
-        padded_ops[i, :m] = b["operators"]
-        padded_res[i, :m] = b["responses"]
-        mask[i, m:] = True  # PyTorch key_padding_mask: True indicates position should be ignored (padding)
-
+def compute_metrics(y_true: np.ndarray, y_prob: np.ndarray) -> Dict[str, float]:
+    """Compute multilabel classification metrics."""
+    class_aurocs = []
+    class_auprcs = []
+    for c in range(y_true.shape[1]):
+        if len(np.unique(y_true[:, c])) > 1:
+            class_aurocs.append(float(roc_auc_score(y_true[:, c], y_prob[:, c])))
+            class_auprcs.append(float(average_precision_score(y_true[:, c], y_prob[:, c])))
+        else:
+            class_aurocs.append(0.5)
+            class_auprcs.append(0.0)
     return {
-        "operators": padded_ops,
-        "responses": padded_res,
-        "mask": mask,
-        "labels": labels,
-        "m_values": torch.tensor(m_values, dtype=torch.long),
+        "macro_auroc": float(np.mean(class_aurocs)),
+        "micro_auroc": float(roc_auc_score(y_true.ravel(), y_prob.ravel())),
+        "macro_auprc": float(np.mean(class_auprcs)),
     }
 
 
-def compute_auroc_macro(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    """Compute macro AUROC across classes."""
-    from sklearn.metrics import roc_auc_score
-    aurocs = []
-    for c in range(y_true.shape[1]):
-        if len(np.unique(y_true[:, c])) > 1:
-            aurocs.append(roc_auc_score(y_true[:, c], y_pred[:, c]))
-    return float(np.mean(aurocs)) if aurocs else 0.5
+def evaluate_on_fold9(
+    model: OperatorSetModel,
+    val_data: Dict[str, np.ndarray],
+    device: torch.device,
+    batch_size: int = 64,
+) -> Dict[str, float]:
+    """Evaluate on Fold 9 standard 8 basis leads for checkpoint selection."""
+    model.eval()
+    ops = val_data["operators"][:, :8]
+    resps = val_data["responses"][:, :8]
+    labels = val_data["labels"]
+
+    probs = []
+    with torch.inference_mode():
+        for i in range(0, len(labels), batch_size):
+            o_b = torch.as_tensor(ops[i : i + batch_size], dtype=torch.float32, device=device)
+            r_b = torch.as_tensor(resps[i : i + batch_size], dtype=torch.float32, device=device)
+            with torch.autocast("cuda", dtype=torch.bfloat16):
+                logits = model(o_b, r_b, return_reconstruction=False)
+            probs.append(torch.sigmoid(logits).float().cpu().numpy())
+    probs = np.concatenate(probs, axis=0)
+    return compute_metrics(labels, probs)
 
 
 def train_single_seed(
     seed: int,
     intervention: str,
-    train_npz: Path,
-    val_npz: Path,
+    initial_state: Dict[str, torch.Tensor],
+    train_data: Dict[str, np.ndarray],
+    val_data: Dict[str, np.ndarray],
     output_dir: Path,
-    epochs: int = 25,
+    epochs: int = 80,
+    patience: int = 10,
     batch_size: int = 64,
     lr: float = 3e-4,
+    wd: float = 1e-3,
     device_str: str = "cuda",
-    train_ds: RepresentationDataset | None = None,
-    val_ds: DeterministicValidationDataset | None = None,
 ) -> Path:
-    """Train a single seed model and select best checkpoint on Fold 9."""
+    """Train a single seed model using the restored Paper 07 shared-grid protocol."""
     logger.info("=== Starting Training: Seed %d | Intervention: %s ===", seed, intervention)
+    device = torch.device(device_str if torch.cuda.is_available() and device_str == "cuda" else "cpu")
+
+    train_ops = train_data["operators"]
+    train_resps = train_data["responses"]
+    train_labels = train_data["labels"]
+    n_records, n_candidates, _ = train_ops.shape
+
+    # Set random seed
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+    rng = np.random.default_rng(seed)
 
-    device = torch.device(device_str if torch.cuda.is_available() and device_str == "cuda" else "cpu")
-
-    # Instantiate model with exact verified constructor
+    # Instantiate model and load exact matched initial state
     model = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous").to(device)
+    model.load_state_dict(initial_state)
 
-    if train_ds is None:
-        train_ds = RepresentationDataset(train_npz, mode=intervention, seed=seed)
-    else:
-        train_ds.rng = np.random.default_rng(seed)
-
-    train_loader = DataLoader(
-        train_ds,
-        batch_size=batch_size,
-        shuffle=True,
-        collate_fn=collate_variable_m,
-        num_workers=0,
+    # Restored class-weighted BCE loss
+    prevalence = torch.as_tensor(train_labels.mean(axis=0), dtype=torch.float32, device=device)
+    positive_weight = ((1.0 - prevalence) / prevalence.clamp_min(1e-8)).clamp_max(10.0)
+    criterion = nn.BCEWithLogitsLoss(pos_weight=positive_weight)
+    logger.info(
+        "[%s_s%d] Positive class weights: %s",
+        intervention, seed, [round(w, 4) for w in positive_weight.tolist()]
     )
 
-    if val_ds is None:
-        val_ds = DeterministicValidationDataset(val_npz, seed=42)
-
-    val_loader = DataLoader(
-        val_ds,
-        batch_size=batch_size,
-        shuffle=False,
-        collate_fn=collate_variable_m,
-        num_workers=0,
-    )
-
-    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-3)
-    criterion = nn.BCEWithLogitsLoss()
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=wd)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
 
     best_val_auroc = -1.0
-    best_checkpoint_path = output_dir / f"{intervention}_s{seed}.pt"
-    best_metrics = {}
-
+    best_epoch = 0
+    best_state = None
+    stale = 0
+    history: List[Dict[str, Any]] = []
     cardinality_histogram = {m: 0 for m in range(1, 9)}
+
+    best_checkpoint_path = output_dir / f"{intervention}_s{seed}.pt"
 
     for epoch in range(1, epochs + 1):
         model.train()
-        train_loss = 0.0
-        n_batches = 0
+        perm = rng.permutation(n_records)
+        epoch_losses: List[float] = []
 
-        for batch in train_loader:
-            ops = batch["operators"].to(device)
-            res = batch["responses"].to(device)
-            mask = batch["mask"].to(device)
-            targets = batch["labels"].to(device)
+        for start in range(0, n_records, batch_size):
+            idx = perm[start : start + batch_size]
+            b_len = len(idx)
 
-            # Audit training context cardinalities
-            for m_val in batch["m_values"].tolist():
-                cardinality_histogram[m_val] = cardinality_histogram.get(m_val, 0) + 1
-                if m_val == 8:
-                    raise RuntimeError("CRITICAL INTEGRITY FAILURE: Context cardinality m=8 encountered in training!")
+            # Sample m strictly in [1, 7]
+            m = int(rng.integers(1, min(8, n_candidates)))
+            cardinality_histogram[m] += b_len
+            if m == 8:
+                raise RuntimeError("CRITICAL INTEGRITY FAILURE: Context cardinality m=8 encountered in training!")
 
-            optimizer.zero_grad()
-            logits = model(ops, res, mask=mask)
-            loss = criterion(logits, targets)
+            # Uniform random choice of m distinct candidates per sample
+            sub_indices = np.stack([rng.choice(n_candidates, size=m, replace=False) for _ in range(b_len)])
+            c_ops = torch.as_tensor(train_ops[idx[:, None], sub_indices], dtype=torch.float32, device=device)
+            c_resps = torch.as_tensor(train_resps[idx[:, None], sub_indices], dtype=torch.float32, device=device)
+            batch_y = torch.as_tensor(train_labels[idx], dtype=torch.float32, device=device)
+
+            optimizer.zero_grad(set_to_none=True)
+            with torch.autocast("cuda", dtype=torch.bfloat16):
+                logits = model(c_ops, c_resps, return_reconstruction=False)
+                loss = criterion(logits, batch_y)
+
+            if torch.isnan(loss) or torch.isinf(loss):
+                logger.warning("[%s_s%d] Non-finite loss at epoch %d batch %d", intervention, seed, epoch, start)
+                continue
+
             loss.backward()
-            optimizer.step()
+            grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            if not (torch.isnan(grad_norm) or torch.isinf(grad_norm)):
+                optimizer.step()
 
-            train_loss += loss.item()
-            n_batches += 1
+            epoch_losses.append(float(loss.detach().cpu()))
 
-        # Validation on Fold 9 (Exclusive selection)
-        model.eval()
-        val_preds = []
-        val_targets = []
-        with torch.no_grad():
-            for batch in val_loader:
-                ops = batch["operators"].to(device)
-                res = batch["responses"].to(device)
-                mask = batch["mask"].to(device)
-                logits = model(ops, res, mask=mask)
-                probs = torch.sigmoid(logits)
-                val_preds.append(probs.cpu().numpy())
-                val_targets.append(batch["labels"].numpy())
+        scheduler.step()
+        mean_loss = float(np.mean(epoch_losses)) if epoch_losses else 0.0
 
-        y_val_pred = np.concatenate(val_preds, axis=0)
-        y_val_true = np.concatenate(val_targets, axis=0)
-        val_auroc = compute_auroc_macro(y_val_true, y_val_pred)
+        # Evaluate on Fold 9 standard 8 basis leads
+        val_metrics = evaluate_on_fold9(model, val_data, device, batch_size=batch_size)
+        val_auroc = val_metrics["macro_auroc"]
 
-        logger.info(
-            "Epoch %d/%d | Train Loss: %.4f | Fold-9 Val Macro AUROC: %.4f",
-            epoch,
-            epochs,
-            train_loss / max(1, n_batches),
-            val_auroc,
-        )
+        history.append({
+            "epoch": epoch,
+            "loss": mean_loss,
+            "val_macro_auroc": val_auroc,
+            "val_micro_auroc": val_metrics["micro_auroc"],
+            "val_macro_auprc": val_metrics["macro_auprc"],
+            "lr": float(optimizer.param_groups[0]["lr"]),
+        })
 
-        if val_auroc > best_val_auroc:
+        if val_auroc > best_val_auroc + 1e-5:
             best_val_auroc = val_auroc
-            best_metrics = {
-                "epoch": epoch,
-                "val_auroc": float(val_auroc),
-                "train_loss": float(train_loss / max(1, n_batches)),
-            }
-            # Save strict state dict
-            torch.save(
-                {
-                    "state_dict": model.state_dict(),
-                    "seed": seed,
-                    "intervention": intervention,
-                    "epoch": epoch,
-                    "val_auroc": float(val_auroc),
-                    "model_source_sha256": EXPECTED_MODEL_SHA256,
-                    "constructor": "OperatorSetModel(response_dim=128, classes=5, operator_mode='continuous')",
-                },
-                best_checkpoint_path,
+            best_epoch = epoch
+            best_state = copy.deepcopy(model.state_dict())
+            stale = 0
+            logger.info(
+                "[%s_s%d] Epoch %2d/%d | Train Loss: %.4f | Fold-9 Val Macro AUROC: %.4f (*) BEST",
+                intervention, seed, epoch, epochs, mean_loss, val_auroc,
             )
+        else:
+            stale += 1
+            if epoch % 5 == 0 or stale >= patience:
+                logger.info(
+                    "[%s_s%d] Epoch %2d/%d | Train Loss: %.4f | Fold-9 Val Macro AUROC: %.4f (stale %d/%d)",
+                    intervention, seed, epoch, epochs, mean_loss, val_auroc, stale, patience,
+                )
 
-    # Post-training batch audit verification
-    logger.info("Context Cardinality Distribution during Training: %s", cardinality_histogram)
+        if stale >= patience:
+            logger.info("[%s_s%d] Early stopping patience (%d) reached at epoch %d.", intervention, seed, patience, epoch)
+            break
+
+    # Cardinality audit check
+    logger.info("[%s_s%d] Training context cardinality distribution: %s", intervention, seed, cardinality_histogram)
     if cardinality_histogram[8] > 0:
         raise RuntimeError("Integrity violation: m=8 was observed during training!")
-    for m in range(1, 8):
-        if cardinality_histogram[m] == 0:
-            raise RuntimeError(f"Integrity violation: Cardinality m={m} was never observed during training!")
+    if epochs >= 10:
+        for m in range(1, 8):
+            if cardinality_histogram[m] == 0:
+                raise RuntimeError(f"Integrity violation: Cardinality m={m} was never observed during training!")
+
+    assert best_state is not None, "Training failed to produce a valid model state"
+    checkpoint_payload = {
+        "state_dict": best_state,
+        "seed": seed,
+        "intervention": intervention,
+        "best_epoch": best_epoch,
+        "best_val_auroc": float(best_val_auroc),
+        "history": history,
+        "hyperparameters": {
+            "lr": lr,
+            "wd": wd,
+            "batch_size": batch_size,
+            "epochs": epochs,
+            "patience": patience,
+            "seed": seed,
+            "positive_weights": positive_weight.cpu().tolist(),
+        },
+        "model_source_sha256": EXPECTED_MODEL_SHA256,
+        "constructor": "OperatorSetModel(response_dim=128, classes=5, operator_mode='continuous')",
+    }
+    torch.save(checkpoint_payload, best_checkpoint_path)
 
     # Verify strict checkpoint load
-    chk = torch.load(best_checkpoint_path, map_location="cpu")
+    chk = torch.load(best_checkpoint_path, map_location="cpu", weights_only=False)
     verify_model = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous")
     verify_model.load_state_dict(chk["state_dict"], strict=True)
     logger.info(
-        "Saved and strictly verified checkpoint %s (Best Fold-9 AUROC: %.4f)",
+        "Saved and strictly verified checkpoint %s (Best Fold-9 AUROC: %.4f at epoch %d)",
         best_checkpoint_path,
         best_val_auroc,
+        best_epoch,
     )
 
     return best_checkpoint_path
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Train 5-seed matched Basis vs Span models.")
+    parser = argparse.ArgumentParser(description="Train 5-seed matched Basis vs Span models using shared-grid protocol.")
     parser.add_argument("--mode", choices=["basis", "span", "both"], default="both")
     parser.add_argument("--seeds", nargs="+", type=int, default=[42, 43, 44, 45, 46])
     parser.add_argument("--train-basis-npz", type=Path, required=True)
     parser.add_argument("--train-span-npz", type=Path, required=True)
     parser.add_argument("--val-npz", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--epochs", type=int, default=25)
+    parser.add_argument("--epochs", type=int, default=80)
+    parser.add_argument("--patience", type=int, default=10)
+    parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--wd", type=float, default=1e-3)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--smoke-test", action="store_true", help="Run 1 epoch smoke test on small subset")
     args = parser.parse_args()
 
     # Pre-flight architecture and golden test check
@@ -392,28 +327,70 @@ def main():
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
-    modes = ["basis", "span"] if args.mode == "both" else [args.mode]
-    checkpoints = {}
+    val_limit = 64 if args.smoke_test else None
+    train_limit = 128 if args.smoke_test else None
+    if args.smoke_test:
+        args.epochs = 2
+        args.patience = 2
+        logger.info("SMOKE TEST MODE: Loading small slices (128 train, 64 val records)")
 
-    logger.info("Preloading deterministic validation representations from %s...", args.val_npz)
-    val_ds = DeterministicValidationDataset(args.val_npz, seed=42)
+    logger.info("Preloading Fold-9 validation representations from %s...", args.val_npz)
+    t0 = time.time()
+    with np.load(args.val_npz) as d_val:
+        val_data = {
+            "operators": np.asarray(d_val["operators"][:val_limit]),
+            "responses": np.asarray(d_val["responses"][:val_limit]),
+            "labels": np.asarray(d_val["labels"][:val_limit]),
+        }
+    logger.info("Loaded %d validation records in %.2fs", len(val_data["labels"]), time.time() - t0)
+
+    # Preload training representations for requested modes
+    modes = ["basis", "span"] if args.mode == "both" else [args.mode]
+    train_datasets: Dict[str, Dict[str, np.ndarray]] = {}
 
     for mode in modes:
-        train_npz = args.train_basis_npz if mode == "basis" else args.train_span_npz
-        logger.info("Preloading %s training representations from %s...", mode.upper(), train_npz)
-        train_ds = RepresentationDataset(train_npz, mode=mode, seed=args.seeds[0])
+        train_path = args.train_basis_npz if mode == "basis" else args.train_span_npz
+        logger.info("Preloading %s training representations from %s...", mode.upper(), train_path)
+        t0 = time.time()
+        with np.load(train_path) as d_train:
+            train_datasets[mode] = {
+                "operators": np.asarray(d_train["operators"][:train_limit]),
+                "responses": np.asarray(d_train["responses"][:train_limit]),
+                "labels": np.asarray(d_train["labels"][:train_limit]),
+            }
+        logger.info(
+            "Loaded %d %s records (%d candidates) in %.2fs",
+            len(train_datasets[mode]["labels"]),
+            mode.upper(),
+            train_datasets[mode]["operators"].shape[1],
+            time.time() - t0,
+        )
 
-        for seed in args.seeds:
+    # Matched seed training: generate paired initializations for each seed
+    checkpoints: Dict[str, Any] = {}
+    device = torch.device(args.device if torch.cuda.is_available() and args.device == "cuda" else "cpu")
+
+    for seed in args.seeds:
+        # Generate paired initial state for this seed
+        torch.manual_seed(seed)
+        template_model = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous").to(device)
+        initial_state = copy.deepcopy(template_model.state_dict())
+        del template_model
+
+        for mode in modes:
             chk_path = train_single_seed(
                 seed=seed,
                 intervention=mode,
-                train_npz=train_npz,
-                val_npz=args.val_npz,
+                initial_state=initial_state,
+                train_data=train_datasets[mode],
+                val_data=val_data,
                 output_dir=args.output_dir,
                 epochs=args.epochs,
+                patience=args.patience,
+                batch_size=args.batch_size,
+                lr=args.lr,
+                wd=args.wd,
                 device_str=args.device,
-                train_ds=train_ds,
-                val_ds=val_ds,
             )
             sha = hashlib.sha256(chk_path.read_bytes()).hexdigest()
             checkpoints[f"{mode}_s{seed}"] = {
@@ -423,7 +400,7 @@ def main():
 
     ledger_path = args.output_dir / "checkpoints_selection_ledger.json"
     ledger_path.write_text(json.dumps(checkpoints, indent=2) + "\n")
-    logger.info("Training complete. Checkpoint ledger written to %s", ledger_path)
+    logger.info("All training complete. Checkpoint ledger written to %s", ledger_path)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,140 @@
+{
+  "status": "PASSED",
+  "elapsed_seconds": 97.09851598739624,
+  "metadata": {
+    "metadata_rows": 100000,
+    "split_counts": {
+      "train": 72475,
+      "no_split": 17457,
+      "test": 5442,
+      "val": 4626
+    },
+    "patient_counts": {
+      "train": 26218,
+      "val": 4626,
+      "test": 5442
+    },
+    "patient_disjoint": true,
+    "shd_prevalence": {
+      "train": 0.5237392204208348,
+      "val": 0.4301772589710333,
+      "test": 0.4259463432561558,
+      "no_split": 0.5683679899180845
+    },
+    "tabular_columns": [
+      "sex",
+      "ventricular_rate",
+      "atrial_rate",
+      "pr_interval",
+      "qrs_duration",
+      "qt_corrected",
+      "age_at_ecg"
+    ]
+  },
+  "arrays": {
+    "train": {
+      "waveform_shape": [
+        72475,
+        1,
+        2500,
+        12
+      ],
+      "waveform_dtype": "float64",
+      "tabular_shape": [
+        72475,
+        7
+      ],
+      "tabular_dtype": "float64",
+      "file_size_bytes_waveform": 17394000128,
+      "file_size_bytes_tabular": 4058728
+    },
+    "val": {
+      "waveform_shape": [
+        4626,
+        1,
+        2500,
+        12
+      ],
+      "waveform_dtype": "float64",
+      "tabular_shape": [
+        4626,
+        7
+      ],
+      "tabular_dtype": "float64",
+      "file_size_bytes_waveform": 1110240128,
+      "file_size_bytes_tabular": 259184
+    },
+    "test": {
+      "waveform_shape": [
+        5442,
+        1,
+        2500,
+        12
+      ],
+      "waveform_dtype": "float64",
+      "tabular_shape": [
+        5442,
+        7
+      ],
+      "tabular_dtype": "float64",
+      "file_size_bytes_waveform": 1306080128,
+      "file_size_bytes_tabular": 304880
+    },
+    "no_split": {
+      "waveform_shape": [
+        17457,
+        1,
+        2500,
+        12
+      ],
+      "waveform_dtype": "float64",
+      "tabular_shape": [
+        17457,
+        7
+      ],
+      "tabular_dtype": "float64",
+      "file_size_bytes_waveform": 4189680128,
+      "file_size_bytes_tabular": 977720
+    }
+  },
+  "checksums": {
+    "verified_files": {
+      "EchoNext_no_split_tabular_features.npy": {
+        "expected": "0520cd3c6d0378058870918e75e903b778945083dfb21899426ec9e2ac33e8f2",
+        "actual": "0520cd3c6d0378058870918e75e903b778945083dfb21899426ec9e2ac33e8f2",
+        "verified": true
+      },
+      "EchoNext_test_tabular_features.npy": {
+        "expected": "e52cd7e64941c349f8e13da6b404897c386be4330fc3876b1889ff993984ac60",
+        "actual": "e52cd7e64941c349f8e13da6b404897c386be4330fc3876b1889ff993984ac60",
+        "verified": true
+      },
+      "EchoNext_train_tabular_features.npy": {
+        "expected": "44ddda0ffea3113143fbb7854156ea2b93ca5a2b1f13f3edcd83d5206cfe722e",
+        "actual": "44ddda0ffea3113143fbb7854156ea2b93ca5a2b1f13f3edcd83d5206cfe722e",
+        "verified": true
+      },
+      "EchoNext_val_tabular_features.npy": {
+        "expected": "92e0d971bcc05e7247f700ad461d0fd13adf3667cdb69d25c626290978769608",
+        "actual": "92e0d971bcc05e7247f700ad461d0fd13adf3667cdb69d25c626290978769608",
+        "verified": true
+      },
+      "LICENSE.txt": {
+        "expected": "f2d5724230f469968b3b204bc7e7aa5743bb98ce9a209823134f99ba8ccfccde",
+        "actual": "f2d5724230f469968b3b204bc7e7aa5743bb98ce9a209823134f99ba8ccfccde",
+        "verified": true
+      },
+      "README.md": {
+        "expected": "eba68f28e3f2c80eef817675a75c465036bfed1088ceb0a767bf578f0a26ee68",
+        "actual": "eba68f28e3f2c80eef817675a75c465036bfed1088ceb0a767bf578f0a26ee68",
+        "verified": true
+      },
+      "echonext_metadata_100k.csv": {
+        "expected": "a1fb9f1a4d5fa2ea7238fe70247a2b8ad8a13d7b3ed9ee3685dd40871fac3c1f",
+        "actual": "a1fb9f1a4d5fa2ea7238fe70247a2b8ad8a13d7b3ed9ee3685dd40871fac3c1f",
+        "verified": true
+      }
+    },
+    "all_manifest_entries": 11
+  }
+}

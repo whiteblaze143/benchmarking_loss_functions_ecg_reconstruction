@@ -48,7 +48,7 @@ CANONICAL_LEAD_NAMES = ["I", "II", "V1", "V2", "V3", "V4", "V5", "V6"]
 
 
 @dataclass(frozen=True)
-def ConceptMetadata:
+class ConceptMetadata:
     name: str
     symbol: str
     unit: str

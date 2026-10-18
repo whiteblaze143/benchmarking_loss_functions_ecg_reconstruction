@@ -96,6 +96,7 @@ def main():
     parser.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44, 45, 46])
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--patience", type=int, default=10)
+    parser.add_argument("--representation", type=str, default="phase_kme", choices=["phase_kme", "raw_block"], help="Representation: authentic phase_kme or raw_block")
     parser.add_argument("--graphecg-only", action="store_true")
     parser.add_argument("--setoperator-only", action="store_true")
     parser.add_argument("--setonet-only", action="store_true")
@@ -103,7 +104,7 @@ def main():
 
     logger.info("==================================================")
     logger.info("ECHONEXT REPRODUCTION & OPERATOR BENCHMARK QUEUE")
-    logger.info("Seeds: %s | Epochs: %d | Patience: %d", args.seeds, args.epochs, args.patience)
+    logger.info("Seeds: %s | Epochs: %d | Patience: %d | Rep: %s", args.seeds, args.epochs, args.patience, args.representation)
     logger.info("Queue Log: %s", QUEUE_LOG)
     logger.info("==================================================")
 
@@ -137,11 +138,12 @@ def main():
                     logger.info("SetOperator %s Seed %d already complete. Skipping.", regime, seed)
                     continue
 
-                desc = f"SetOperator (Raw-Block Baseline) EchoNext {regime} | Seed {seed}"
+                desc = f"SetOperator ({args.representation}) EchoNext {regime} | Seed {seed}"
                 cmd = [
                     PYTHON_EXEC,
                     str(BENCHMARK_DIR / "train_setoperator_echonext.py"),
                     "--regime", regime,
+                    "--representation", args.representation,
                     "--tabular-condition", tabular,
                     "--seed", str(seed),
                     "--epochs", str(args.epochs),
@@ -162,11 +164,12 @@ def main():
                     logger.info("SetONet %s Seed %d already complete. Skipping.", regime, seed)
                     continue
 
-                desc = f"SetONet (Raw-Block Baseline) EchoNext {regime} | Seed {seed}"
+                desc = f"SetONet ({args.representation}) EchoNext {regime} | Seed {seed}"
                 cmd = [
                     PYTHON_EXEC,
                     str(BENCHMARK_DIR / "train_setonet_echonext.py"),
                     "--regime", regime,
+                    "--representation", args.representation,
                     "--tabular-condition", tabular,
                     "--seed", str(seed),
                     "--epochs", str(args.epochs),

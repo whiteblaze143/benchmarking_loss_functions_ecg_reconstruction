@@ -78,6 +78,9 @@ def set_seed(seed: int):
         torch.cuda.manual_seed_all(seed)
 
 
+from phase_kme_representation import EchoNextPhaseKMEExtractor, DEFAULT_FIT_PATH
+
+
 class EchoNextSetOperatorDataset(Dataset):
     """Dataset for SetOperator on EchoNext waveforms and tabular features."""
 
@@ -87,18 +90,25 @@ class EchoNextSetOperatorDataset(Dataset):
         tabular: np.ndarray,
         labels: np.ndarray,
         regime: str = "SO-Span",
+        representation: str = "phase_kme",
         seed: int = 42,
         is_train: bool = True,
         limit_samples: Optional[int] = None,
+        fit_path: Path = DEFAULT_FIT_PATH,
     ):
         self.waveforms = waveforms  # (N, 1, 2500, 12)
         self.tabular = tabular.astype(np.float32)  # (N, 7)
         self.labels = labels.astype(np.float32)  # (N,)
         self.regime = regime
+        self.representation = representation
         self.is_train = is_train
         self.rng = np.random.default_rng(seed)
         self.basis_operators = np.eye(8, dtype=np.float32)
         self.length = len(labels) if limit_samples is None else min(limit_samples, len(labels))
+        if self.representation == "phase_kme":
+            self.kme_extractor = EchoNextPhaseKMEExtractor(fit_path=fit_path, device="cpu")
+        else:
+            self.kme_extractor = None
 
     def __len__(self) -> int:
         return self.length
@@ -135,14 +145,21 @@ class EchoNextSetOperatorDataset(Dataset):
             # Default evaluation: full canonical basis
             ops = self.basis_operators
 
-        # Compute projected lead signals: (set_size, 2500)
-        lead_signals = wf_8 @ ops.T  # (2500, set_size)
-        lead_signals = lead_signals.T  # (set_size, 2500)
-
-        # Segment into 16 slices of length 128 (16 * 128 = 2048 samples, center window)
-        start_samp = (2500 - 2048) // 2
-        signals_windowed = lead_signals[:, start_samp : start_samp + 2048]
-        responses = signals_windowed.reshape(len(ops), 16, 128).astype(np.float32)
+        if self.representation == "phase_kme":
+            beats = self.kme_extractor.extract_beats(wf_8)
+            with torch.no_grad():
+                resps = self.kme_extractor.compute_phase_kme(
+                    torch.from_numpy(beats), torch.from_numpy(ops)
+                )
+            responses = resps.numpy().astype(np.float32)
+        else:
+            # Compute projected lead signals: (set_size, 2500)
+            lead_signals = wf_8 @ ops.T  # (2500, set_size)
+            lead_signals = lead_signals.T  # (set_size, 2500)
+            # Segment into 16 slices of length 128 (16 * 128 = 2048 samples, center window)
+            start_samp = (2500 - 2048) // 2
+            signals_windowed = lead_signals[:, start_samp : start_samp + 2048]
+            responses = signals_windowed.reshape(len(ops), 16, 128).astype(np.float32)
 
         return {
             "operators": torch.from_numpy(ops.astype(np.float32)),
@@ -212,6 +229,7 @@ def evaluate_setoperator(
 def train_setoperator_seed(
     regime: str = "SO-Span",
     tabular_condition: str = "SO-ECG+Tab-Native",
+    representation: str = "phase_kme",
     seed: int = 42,
     batch_size: int = 64,
     epochs: int = 50,
@@ -224,12 +242,13 @@ def train_setoperator_seed(
     set_seed(seed)
     device = torch.device(device_str if torch.cuda.is_available() else "cpu")
 
-    out_dir = CHECKPOINT_BASE / f"{regime}_{tabular_condition}_s{seed}"
+    dir_prefix = "" if representation == "phase_kme" else f"{representation}_"
+    out_dir = CHECKPOINT_BASE / f"{dir_prefix}{regime}_{tabular_condition}_s{seed}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     logger.info("==================================================")
     logger.info("Training SetOperator on EchoNext (SHD Binary Detection)")
-    logger.info("Regime: %s | Tabular: %s | Seed: %d | Device: %s", regime, tabular_condition, seed, device)
+    logger.info("Regime: %s | Representation: %s | Tabular: %s | Seed: %d | Device: %s", regime, representation, tabular_condition, seed, device)
     logger.info("Output dir: %s", out_dir)
     logger.info("==================================================")
 
@@ -251,8 +270,8 @@ def train_setoperator_seed(
     logger.info("Dataset loaded: Train=%d, Val=%d", len(y_train), len(y_val))
 
     limit = 64 if dry_run else None
-    train_ds = EchoNextSetOperatorDataset(train_w, train_t, y_train, regime=regime, seed=seed, is_train=True, limit_samples=limit)
-    val_ds = EchoNextSetOperatorDataset(val_w, val_t, y_val, regime="SO-12", seed=seed, is_train=False, limit_samples=limit)
+    train_ds = EchoNextSetOperatorDataset(train_w, train_t, y_train, regime=regime, representation=representation, seed=seed, is_train=True, limit_samples=limit)
+    val_ds = EchoNextSetOperatorDataset(val_w, val_t, y_val, regime="SO-12", representation=representation, seed=seed, is_train=False, limit_samples=limit)
 
     train_loader = DataLoader(
         train_ds,
@@ -393,6 +412,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--regime", type=str, default="SO-Span", choices=["SO-12", "SO-Basis", "SO-Span"])
     parser.add_argument("--tabular-condition", type=str, default="SO-ECG+Tab-Native", choices=["SO-ECG", "SO-ECG+Tab-Native", "SO-ECG+Tab-Concat"])
+    parser.add_argument("--representation", type=str, default="phase_kme", choices=["phase_kme", "raw_block"], help="Input representation: authentic Phase-KME or raw-block baseline")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--epochs", type=int, default=50)
@@ -406,6 +426,7 @@ def main():
     train_setoperator_seed(
         regime=args.regime,
         tabular_condition=args.tabular_condition,
+        representation=args.representation,
         seed=args.seed,
         batch_size=args.batch_size,
         epochs=args.epochs,

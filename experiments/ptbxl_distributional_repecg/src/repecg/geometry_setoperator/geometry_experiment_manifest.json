@@ -1,0 +1,169 @@
+{
+  "manifest_version": "2.0.0",
+  "project": "NEF-Inspired Geometry-Aware SetOperator Extension",
+  "timestamp": "2026-10-18T14:50:00-04:00",
+  "status": "MILESTONE_1_RECONCILED_AND_VERIFIED",
+  "git_provenance": {
+    "repository_root": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction",
+    "main_worktree_commit": "ba1cc3e999066f6dbeefc4449ac2ae7267c0b996",
+    "development_worktree_path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction_geometry_dev",
+    "development_branch": "research/nef_geometry_setoperator",
+    "sealed_implementation_commit": "fd32df8c0f3a3cb839d90ef9b07008fc8e026ecb",
+    "provenance_clarification": "Commit fd32df8c is the authoritative Git commit containing the complete geometry implementation. Identifier a5cb1624 was a draft working state hash in early compaction notes prior to the final git commit command execution."
+  },
+  "representations": {
+    "phase_kme_fit_path": "/data/mithunmanivannan/codex_artifacts/echonext_three_way_v1/representations/echonext_phase_kme_fit.npz",
+    "phase_kme_fit_sha256": "0ded29addbd423e465d3fa4013ed66541c5c739d816b50861e4316f5d2d0509c",
+    "representation_name": "phase_kme_v1.0_nystrom128",
+    "landmark_dim": 128,
+    "phase_dim": 16,
+    "input_tensor_shape": [16, 16, 128]
+  },
+  "parameter_reconciliation": {
+    "unused_reconstruction_decoder_parameters": 608512,
+    "decoder_architecture": "Linear(320, 256) -> GELU -> Linear(256, 16*128=2048)",
+    "decoder_usage_note": "Instantiated in OperatorSetModel for optional multi-task reconstruction. Unused during diagnostic classification (return_reconstruction=False by default).",
+    "echonext_binary_classification": {
+      "baseline": {
+        "active_classifier_parameters": 1027009,
+        "active_with_tabular_parameters": 1044161,
+        "total_trainable_parameters": 1635521,
+        "total_with_tabular_parameters": 1652673,
+        "delta_parameters": 0
+      },
+      "control_capacity": {
+        "active_classifier_parameters": 1029345,
+        "active_with_tabular_parameters": 1046497,
+        "total_trainable_parameters": 1637857,
+        "total_with_tabular_parameters": 1655009,
+        "delta_parameters": 2336
+      },
+      "G1": {
+        "active_classifier_parameters": 1029313,
+        "active_with_tabular_parameters": 1046465,
+        "total_trainable_parameters": 1637825,
+        "total_with_tabular_parameters": 1654977,
+        "delta_parameters": 2304
+      },
+      "G2": {
+        "active_classifier_parameters": 1027017,
+        "active_with_tabular_parameters": 1044169,
+        "total_trainable_parameters": 1635529,
+        "total_with_tabular_parameters": 1652681,
+        "delta_parameters": 8
+      },
+      "G1_G2": {
+        "active_classifier_parameters": 1029321,
+        "active_with_tabular_parameters": 1046473,
+        "total_trainable_parameters": 1637833,
+        "total_with_tabular_parameters": 1654985,
+        "delta_parameters": 2312
+      },
+      "control_diagonal_bias": {
+        "active_classifier_parameters": 1027017,
+        "active_with_tabular_parameters": 1044169,
+        "total_trainable_parameters": 1635529,
+        "total_with_tabular_parameters": 1652681,
+        "delta_parameters": 8
+      }
+    },
+    "ptbxl_multilabel_classification": {
+      "baseline": {
+        "active_classifier_parameters": 1028037,
+        "total_trainable_parameters": 1636549,
+        "delta_parameters": 0
+      },
+      "control_capacity": {
+        "active_classifier_parameters": 1030373,
+        "total_trainable_parameters": 1638885,
+        "delta_parameters": 2336
+      },
+      "G1": {
+        "active_classifier_parameters": 1030341,
+        "total_trainable_parameters": 1638853,
+        "delta_parameters": 2304
+      },
+      "G2": {
+        "active_classifier_parameters": 1028045,
+        "total_trainable_parameters": 1636557,
+        "delta_parameters": 8
+      },
+      "G1_G2": {
+        "active_classifier_parameters": 1030349,
+        "total_trainable_parameters": 1638861,
+        "delta_parameters": 2312
+      },
+      "control_diagonal_bias": {
+        "active_classifier_parameters": 1028045,
+        "total_trainable_parameters": 1636557,
+        "delta_parameters": 8
+      }
+    }
+  },
+  "mathematical_propositions": {
+    "Proposition 1 (Orthonormal Grassmann Collapse)": {
+      "claim": "For any orthonormal frame Q in R^{k x 8} (Q Q^T = I_k), the operator Gram matrix satisfies G = I_k, and the relational redundancy matrix satisfies R = G * G = I_k. The relational matrix is invariant to the orientation of the k-dimensional subspace in Gr(k, 8).",
+      "status": "MATHEMATICALLY_PROVEN_AND_UNIT_TESTED"
+    },
+    "Proposition 2 (Rank-1 Inefficacy of G2)": {
+      "claim": "For any single measurement operator q (k=1), R = [1.0]. The attention softmax over a singleton set is identically [1.0] for all values of beta. G2 has zero influence on rank-1 inference.",
+      "status": "MATHEMATICALLY_PROVEN_AND_UNIT_TESTED"
+    },
+    "Proposition 3 (Equivalence to Diagonal Control)": {
+      "claim": "Under any orthonormal operator frame, G2 is functionally and numerically identical to adding a learned scalar beta strictly to self-attention logits (control_diagonal_bias). G2 only exhibits inter-token relational interactions when operators are non-orthogonal.",
+      "status": "MATHEMATICALLY_PROVEN_AND_UNIT_TESTED"
+    },
+    "Revised Architectural Division": {
+      "G1": "Addresses unfamiliar operator directions and unseen-view continuous Grassmannian generalization via projective coordinate expansion gamma(q) in R^44.",
+      "G2": "Addresses directional redundancy and cross-token attention modulation specifically under non-orthogonal or redundant measurement configurations (such as standard limb leads).",
+      "G1_G2": "Evaluates whether directional encoding and redundancy modulation provide complementary benefits."
+    }
+  },
+  "reconciled_stress_tests": {
+    "test_5_duplicate_measurements": {
+      "description": "Quantifies empirical prediction shift when an identical operator and response token is appended.",
+      "single_sample_shift": 0.0012,
+      "batch_15_mean": 0.0073,
+      "batch_15_std": 0.0059,
+      "batch_15_max": 0.0177,
+      "status": "PASS (Stable bounded shift; outputs remain finite)"
+    },
+    "test_6_redundant_derived_limb_leads": {
+      "description": "Compares 2 independent limb leads (I, II) vs 6 redundant limb leads (I, II, III, aVR, aVL, aVF).",
+      "single_sample_shift": 0.0146,
+      "batch_15_mean": 0.0115,
+      "batch_15_std": 0.0115,
+      "batch_15_max": 0.0362,
+      "status": "PASS (Quantified empirical shift; models without explicit linear constraints are not algebraically identical)"
+    },
+    "test_7a_subspace_basis_transformation": {
+      "description": "Orthogonal kxk change of basis strictly within observed subspace (Q'=AQ, Y'=AY) with Phase-KME recomputed from Y'.",
+      "single_sample_shift": 0.0057,
+      "batch_15_mean": 0.0057,
+      "batch_15_std": 0.00007,
+      "batch_15_max": 0.0058,
+      "status": "PASS (Bounded shift; confirms nonlinear Phase-KME and PhaseCNN induce small finite change under linear channel mixing)"
+    },
+    "test_7b_ambient_coordinate_rotation_probe": {
+      "description": "Ambient 8x8 rotation of operator coordinates with frozen response representations.",
+      "single_sample_shift": 0.0039,
+      "batch_15_mean": 0.0038,
+      "batch_15_std": 0.0025,
+      "batch_15_max": 0.0082,
+      "status": "PASS (Controlled ambient coordinate shift diagnostic)"
+    }
+  },
+  "revised_development_evaluation_protocol": {
+    "heuristic_threshold_removed": "The +0.005 AUROC threshold has been explicitly removed.",
+    "dataset": "EchoNext Binary Structural Heart Disease (SHD)",
+    "cohort_split": "Internal Development / Validation cohort (N=4,626). Test split (N=5,442) strictly sealed.",
+    "evaluation_axes": [
+      "Canonical 8-lead AUROC and AUPRC (prevalence-calibrated)",
+      "Unseen continuous measurement operator generalization (development Grassmann operator bank)",
+      "Non-orthogonal lead robustness (redundant limb leads vs minimal independent subsets)",
+      "Inference latency overhead across set sizes m in [1, 8]",
+      "Paired per-seed difference (Delta AUROC) with 95% bootstrap confidence intervals"
+    ],
+    "freeze_status": "NO GPU TRAINING LAUNCHED. Awaiting explicit authorization."
+  }
+}

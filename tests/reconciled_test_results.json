@@ -1,0 +1,34 @@
+{
+  "Test 5 (Duplicate Measurements Stress)": {
+    "single_sample_shift": 0.0011564232409000397,
+    "batch_50_mean": 0.007285735507806142,
+    "batch_50_std": 0.005852721942685782,
+    "batch_50_max": 0.017701134085655212,
+    "batch_50_min": 0.0002914741635322571,
+    "note": "Quantifies empirical shift under redundant measurement token. Logits remain finite and bounded."
+  },
+  "Test 6 (Redundant Derived Limb Leads)": {
+    "single_sample_shift": 0.014613475650548935,
+    "batch_50_mean": 0.011516864970326423,
+    "batch_50_std": 0.011529881537081652,
+    "batch_50_max": 0.03617273271083832,
+    "batch_50_min": 0.00020027905702590942,
+    "note": "Comparing 2 independent leads (I, II) vs 6 redundant limb leads (I, II, III, aVR, aVL, aVF)."
+  },
+  "Test 7a (Intrinsic Subspace Basis Rotation O(2) with Recomputed Phase-KME)": {
+    "single_sample_shift": 0.005739130079746246,
+    "batch_50_mean": 0.0056787654757499695,
+    "batch_50_std": 7.107501849925648e-05,
+    "batch_50_max": 0.0058158934116363525,
+    "batch_50_min": 0.005587629973888397,
+    "note": "Orthogonal kxk basis change within observed subspace (Q'=AQ, Y'=AY) with Phase-KME recomputed from Y'. Non-zero due to nonlinear Phase-KME and PhaseCNN."
+  },
+  "Test 7b (Ambient 8x8 Coordinate Rotation with Frozen Responses)": {
+    "single_sample_shift": 0.003869369626045227,
+    "batch_50_mean": 0.003815073271592458,
+    "batch_50_std": 0.002466946303159594,
+    "batch_50_max": 0.00824669748544693,
+    "batch_50_min": 4.379451274871826e-05,
+    "note": "Ambient 8x8 rotation of operator coordinates with fixed responses (legacy probe)."
+  }
+}

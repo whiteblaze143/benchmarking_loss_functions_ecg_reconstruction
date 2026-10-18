@@ -46,7 +46,7 @@ class GeometryOperatorSetModel(nn.Module):
         operator_dim: int = 8,
     ):
         super().__init__()
-        valid_modes = {"baseline", "control_capacity", "G1", "G2", "G1_G2"}
+        valid_modes = {"baseline", "control_capacity", "G1", "G2", "G1_G2", "control_diagonal_bias"}
         if geometry_mode not in valid_modes:
             raise ValueError(f"geometry_mode must be one of {valid_modes}, got {geometry_mode}")
 
@@ -60,7 +60,7 @@ class GeometryOperatorSetModel(nn.Module):
         self.response = PhaseCNN(response_dim, width=128, blocks=2, classes=128)
 
         # 2. Continuous Operator MLP based on geometry_mode
-        if geometry_mode in {"baseline", "G2"}:
+        if geometry_mode in {"baseline", "G2", "control_diagonal_bias"}:
             # Original 8 -> 64 -> 64 (4,736 params)
             self.operator = nn.Sequential(nn.Linear(operator_dim, 64), nn.GELU(), nn.Linear(64, 64))
         elif geometry_mode == "control_capacity":
@@ -71,7 +71,7 @@ class GeometryOperatorSetModel(nn.Module):
             self.operator = nn.Sequential(nn.Linear(44, 64), nn.GELU(), nn.Linear(64, 64))
 
         # 3. Transformer Set Encoder (2 layers, 4 heads, d_model=192, d_ff=384)
-        if geometry_mode in {"G2", "G1_G2"}:
+        if geometry_mode in {"G2", "G1_G2", "control_diagonal_bias"}:
             encoder_layer = GeometryTransformerEncoderLayer(
                 d_model=192, nhead=4, dim_feedforward=384, activation="gelu"
             )
@@ -148,6 +148,11 @@ class GeometryOperatorSetModel(nn.Module):
             # Compute operator Gram matrix and relational alignment R
             _, R = compute_operator_gram(operators, mask=mask)
             encoded = self.set_encoder(tokens, src_key_padding_mask=mask, R=R)
+        elif self.geometry_mode == "control_diagonal_bias":
+            # Diagonal self-attention bias control: R is the identity matrix I_k
+            B, S = operators.shape[:2]
+            R_diag = torch.eye(S, dtype=operators.dtype, device=operators.device).unsqueeze(0).expand(B, -1, -1)
+            encoded = self.set_encoder(tokens, src_key_padding_mask=mask, R=R_diag)
         else:
             encoded = self.set_encoder(tokens, src_key_padding_mask=mask)
 

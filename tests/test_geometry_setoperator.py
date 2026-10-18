@@ -144,14 +144,71 @@ def test_test6_redundant_derived_measurements():
     print(f"Redundant limb lead logit shift (2 leads vs 6 leads): {diff:.4f}")
 
 
-def test_test7_equivalent_measurement_bases():
-    """Test 7: Orthogonal coordinate rotation of operator basis."""
+def test_test7a_equivalent_subspace_basis_transformation():
+    """Test 7a: Orthogonal change of basis strictly within the observed subspace (Q'=AQ, Y'=AY).
+    
+    Recomputes Phase-KME from the transformed channel waveforms Y'.
+    Note: Because Phase-KME uses nonlinear Nystrom kernel maps on phase-space atoms (y, dy),
+    the Phase-KME of a linear combination is not a linear combination of Phase-KMEs.
+    This test verifies numerical stability and measures the empirical shift under subspace re-orientation.
+    """
     torch.manual_seed(42)
     model = GeometryOperatorSetModel(classes=1, geometry_mode="G1")
     model.eval()
 
-    # Generate 2D rotation for Lead I and Lead II subspace
-    theta = math.pi / 4.0  # 45 degrees
+    # 1. Synthesize multi-lead beats: shape (n_beats=8, 256 samples, 8 leads)
+    beats_raw = torch.randn(8, 256, 8)
+
+    # 2. Subspace basis (k=2): Lead I and Lead II
+    Q_k = torch.zeros(2, 8)
+    Q_k[0, 0] = 1.0  # Lead I
+    Q_k[1, 1] = 1.0  # Lead II
+
+    # 3. Orthogonal rotation within the 2D subspace: A in O(2) (45 degrees)
+    theta = math.pi / 4.0
+    c, s = math.cos(theta), math.sin(theta)
+    A_rot = torch.tensor([[c, -s], [s, c]], dtype=torch.float32)
+
+    # Transformed operators in the same subspace: span(Q_k_rot) == span(Q_k)
+    Q_k_rot = A_rot @ Q_k  # (2, 8)
+
+    # 4. Projected channel waveforms: Y = X Q^T and Y' = X (Q')^T = Y A^T
+    Y_orig = torch.einsum("bij,kj->kbi", beats_raw, Q_k)      # (2, 8, 256)
+    Y_rot = torch.einsum("bij,kj->kbi", beats_raw, Q_k_rot)   # (2, 8, 256)
+    assert torch.allclose(Y_rot, torch.einsum("kbi,jk->jbi", Y_orig, A_rot), atol=1e-5)
+
+    # 5. Extract nonlinear Phase-KME:
+    # Phase derivatives
+    dY_orig = torch.gradient(Y_orig, dim=-1)[0]
+    dY_rot = torch.gradient(Y_rot, dim=-1)[0]
+
+    # Partition into 16 phase cells: (k, 16, n_beats * 16, 2)
+    atoms_orig = torch.stack([Y_orig, dY_orig], dim=-1).reshape(2, 8, 16, 16, 2).permute(0, 2, 1, 3, 4).reshape(2, 16, -1, 2)
+    atoms_rot = torch.stack([Y_rot, dY_rot], dim=-1).reshape(2, 8, 16, 16, 2).permute(0, 2, 1, 3, 4).reshape(2, 16, -1, 2)
+
+    # Random fixed landmarks for Nystrom kernel feature extraction
+    torch.manual_seed(101)
+    landmarks = torch.randn(128, 2)
+    kme_orig = torch.rsqrt(torch.cdist(atoms_orig, landmarks).square() + 1.0).mean(dim=2)  # (2, 16, 128)
+    kme_rot = torch.rsqrt(torch.cdist(atoms_rot, landmarks).square() + 1.0).mean(dim=2)    # (2, 16, 128)
+
+    # 6. Evaluate model on (Q_k, kme_orig) vs (Q_k_rot, kme_rot)
+    with torch.no_grad():
+        out_orig = model(Q_k.unsqueeze(0), kme_orig.unsqueeze(0))
+        out_rot = model(Q_k_rot.unsqueeze(0), kme_rot.unsqueeze(0))
+
+    shift = (out_orig - out_rot).abs().item()
+    assert torch.isfinite(out_rot).all()
+    print(f"Intrinsic subspace change-of-basis logit shift (Q'=AQ, Y'=AY): {shift:.4f}")
+
+
+def test_test7b_ambient_coordinate_rotation_probe():
+    """Test 7b: Ambient 8x8 coordinate rotation with frozen response representations."""
+    torch.manual_seed(42)
+    model = GeometryOperatorSetModel(classes=1, geometry_mode="G1")
+    model.eval()
+
+    theta = math.pi / 4.0
     c, s = math.cos(theta), math.sin(theta)
     R_rot = torch.eye(8)
     R_rot[0, 0] = c
@@ -169,7 +226,7 @@ def test_test7_equivalent_measurement_bases():
 
     diff = (out_orig - out_rot).abs().item()
     assert torch.isfinite(out_rot).all()
-    print(f"Orthogonal coordinate rotation logit shift: {diff:.4f}")
+    print(f"Ambient coordinate rotation logit shift: {diff:.4f}")
 
 
 def test_test8_end_to_end_gradient_flow():

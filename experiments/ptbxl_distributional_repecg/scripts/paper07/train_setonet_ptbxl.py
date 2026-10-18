@@ -34,6 +34,7 @@ import random
 import sys
 import time
 from typing import Any, Dict, List, Tuple
+import zipfile
 
 import numpy as np
 import torch
@@ -316,6 +317,40 @@ def train_single_seed(
     return best_checkpoint_path
 
 
+def load_cached_npz(npz_path: Path, cache_dir: Path | None = None) -> Dict[str, np.ndarray]:
+    """Efficient array loader with automatic uncompressed caching to prevent NFS seek latency."""
+    if cache_dir is None:
+        cache_dir = Path("/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/uncompressed_cache")
+    
+    stem = npz_path.stem
+    target_dir = cache_dir / stem
+    keys = ["operators", "responses", "labels"]
+
+    # Check if uncompressed .npy arrays exist
+    if target_dir.exists() and all((target_dir / f"{k}.npy").exists() for k in keys):
+        logger.info("Fast-loading uncompressed arrays from cache: %s", target_dir)
+        return {
+            "operators": np.load(target_dir / "operators.npy", mmap_mode="r"),
+            "responses": np.load(target_dir / "responses.npy", mmap_mode="r"),
+            "labels": np.load(target_dir / "labels.npy", mmap_mode="r"),
+        }
+
+    target_dir.mkdir(parents=True, exist_ok=True)
+    logger.info("Extracting %s to uncompressed cache at %s...", npz_path.name, target_dir)
+    with zipfile.ZipFile(npz_path, "r") as z:
+        for k in keys:
+            target_file = target_dir / f"{k}.npy"
+            if not target_file.exists():
+                z.extract(f"{k}.npy", target_dir)
+
+    logger.info("Successfully extracted uncompressed cache: %s", target_dir)
+    return {
+        "operators": np.load(target_dir / "operators.npy", mmap_mode="r"),
+        "responses": np.load(target_dir / "responses.npy", mmap_mode="r"),
+        "labels": np.load(target_dir / "labels.npy", mmap_mode="r"),
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description="Train 5-seed SetONet models on PTB-XL.")
     parser.add_argument("--mode", choices=["basis", "span", "both"], default="both")
@@ -325,6 +360,7 @@ def main():
     parser.add_argument("--train-span-npz", type=Path, required=True)
     parser.add_argument("--val-npz", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--cache-dir", type=Path, default=Path("/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/uncompressed_cache"))
     parser.add_argument("--epochs", type=int, default=80)
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=64)
@@ -337,24 +373,14 @@ def main():
     device = torch.device(args.device if torch.cuda.is_available() and args.device == "cuda" else "cpu")
 
     logger.info("Loading Fold-9 validation representations...")
-    with np.load(args.val_npz) as d_val:
-        val_data = {
-            "operators": np.asarray(d_val["operators"]),
-            "responses": np.asarray(d_val["responses"]),
-            "labels": np.asarray(d_val["labels"]),
-        }
+    val_data = load_cached_npz(args.val_npz, args.cache_dir)
 
     modes = ["basis", "span"] if args.mode == "both" else [args.mode]
     train_datasets = {}
     for mode in modes:
         p = args.train_basis_npz if mode == "basis" else args.train_span_npz
         logger.info("Loading %s training representations from %s...", mode.upper(), p)
-        with np.load(p) as d_train:
-            train_datasets[mode] = {
-                "operators": np.asarray(d_train["operators"]),
-                "responses": np.asarray(d_train["responses"]),
-                "labels": np.asarray(d_train["labels"]),
-            }
+        train_datasets[mode] = load_cached_npz(p, args.cache_dir)
 
     checkpoints = {}
     for seed in args.seeds:

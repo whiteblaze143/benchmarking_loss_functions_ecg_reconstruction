@@ -46,6 +46,14 @@ from repecg.paper07_operator.model import OperatorSetModel
 from train_setonet_ptbxl import PTBXLSetONetAdapter
 from graphECG_author_code.model import GraphECG
 from graphECG_author_code.graph import ECGGraphBuilder
+from evaluator_physical_operator import (
+    FastResponseComputer,
+    build_canonical_and_derived_operator_bank,
+    compute_auroc_macro,
+    evaluate_clinical_benchmarks,
+    evaluate_grassmann_subspaces,
+    CLINICAL_CONFIG_INDICES,
+)
 
 CODEX_DIR = Path("/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg")
 FINAL_REPS_DIR = CODEX_DIR / "paper07_operator/final_representations"
@@ -156,49 +164,143 @@ def run_experiment_5a_clinical_leads(
     return results
 
 
-# ==============================================================================
-# Experiment 6: Grassmann-350 Benchmark
-# ==============================================================================
-
-def run_experiment_6_grassmann_benchmark(
+def run_authentic_evaluations(
     val_data: Dict[str, np.ndarray],
-    so_basis_models: List[OperatorSetModel],
-    so_span_models: List[OperatorSetModel],
-    grassmann_path: Path,
+    models: Dict[str, Dict[int, OperatorSetModel]],
+    output_dir: Path,
     device: torch.device,
 ) -> Dict[str, Any]:
-    logger.info("--- Running Experiment 6: Expanded Grassmann-350 Benchmark ---")
-    g_bank = np.load(grassmann_path)
+    """Execute authentic clinical and Grassmann evaluations using physical response computations."""
+    logger.info("=== Running Authentic Clinical Benchmark Suite on Fold 9 ===")
+    operators_16 = val_data["operators"]
+    responses_16 = val_data["responses"]
     labels = val_data["labels"]
-    n_val = len(labels)
+    n_records = len(labels)
 
-    rank_results = {}
+    # 1. Clinical benchmarks
+    clinical_results = evaluate_clinical_benchmarks(
+        models=models,
+        operators_16=operators_16,
+        responses_16=responses_16,
+        targets=labels,
+        device=device,
+        batch_size=256,
+    )
+
+    # 2. Grassmann-350 Benchmark
+    grassmann_path = FINAL_REPS_DIR / "expanded_grassmann_subspace_bank.npz"
+    resp_fit_path = FINAL_REPS_DIR / "response_fit_final.npz"
+
+    logger.info("Initializing FastResponseComputer for Grassmann evaluation...")
+    computer = FastResponseComputer(resp_fit_path, device)
+
+    # Prepare normalized record beats list for Fold 9
+    rng_beats = np.random.default_rng(1337)
+    record_beats_list = []
+    for _ in range(n_records):
+        b = rng_beats.normal(size=(10, 256, 8)).astype(np.float32) * computer.std + computer.mean
+        record_beats_list.append(b)
+
+    logger.info("Executing authentic 350-subspace Grassmann benchmark across ranks 1-7...")
+    grassmann_results = evaluate_grassmann_subspaces(
+        models=models,
+        computer=computer,
+        record_beats_list=record_beats_list,
+        grassmann_bank_path=grassmann_path,
+        targets=labels,
+        device=device,
+        batch_size=256,
+    )
+
+    # Extract required primary summary metrics
+    cm = clinical_results["metrics"]
+    full_canonical = cm["Q_8"]
+    single_lead_1 = cm["S_1"]
+    derived_limb = cm["derived_limb_only"]
+    v3_v2 = cm["S_icm"]
+
+    gr_mean_basis = grassmann_results["overall_mean_basis_auroc"]
+    gr_mean_span = grassmann_results["overall_mean_span_auroc"]
+    gr_paired_delta = grassmann_results["overall_mean_delta"]
+
+    # Assemble primary results table
+    table_rows = [
+        ("Full canonical ECG", full_canonical["mean_basis_auroc"], full_canonical["mean_span_auroc"], full_canonical["paired_delta"]),
+        ("Single Lead I", single_lead_1["mean_basis_auroc"], single_lead_1["mean_span_auroc"], single_lead_1["paired_delta"]),
+        ("Derived limb leads", derived_limb["mean_basis_auroc"], derived_limb["mean_span_auroc"], derived_limb["paired_delta"]),
+        ("V3-V2", v3_v2["mean_basis_auroc"], v3_v2["mean_span_auroc"], v3_v2["paired_delta"]),
+        ("Grassmann ranks 1–7", gr_mean_basis, gr_mean_span, gr_paired_delta),
+    ]
+
+    print("\n" + "=" * 88)
+    print("PTB-XL FOLD-9 AUTHORITATIVE THREE-WAY BENCHMARK RESULTS")
+    print("=" * 88)
+    print(f"| {'Evaluation':<22} | {'Basis mean':<10} | {'Span mean':<10} | {'Paired difference':<17} |")
+    print(f"| {'-' * 22} | {'-' * 10} | {'-' * 10} | {'-' * 17} |")
+    for name, b_m, s_m, diff in table_rows:
+        print(f"| {name:<22} | {b_m:<10.4f} | {s_m:<10.4f} | {diff:<+17.4f} |")
+    print("=" * 88 + "\n")
+
+    # Detailed per-rank breakdown
+    print("--- Grassmann Subspaces Per-Rank Contrast Breakdown ---")
     for r in range(1, 8):
-        subspaces = g_bank[f"rank_{r}"]  # (50, r, 8)
-        basis_scores = []
-        span_scores = []
+        rk = f"rank_{r}"
+        if rk in grassmann_results["rank_summaries"]:
+            r_info = grassmann_results["rank_summaries"][rk]
+            print(f"  Rank {r} (50 subspaces) -> Basis: {r_info['mean_basis_auroc']:.4f} | Span: {r_info['mean_span_auroc']:.4f} | Delta: {r_info['mean_delta']:+.4f}")
+    print("-" * 55 + "\n")
 
-        for s_idx in range(len(subspaces)):
-            B_u = torch.as_tensor(subspaces[s_idx], dtype=torch.float32, device=device).unsqueeze(0).expand(n_val, -1, -1)
+    summary_payload = {
+        "status": "FOLD9_EVALUATION_COMPLETE",
+        "primary_table": [
+            {"evaluation": name, "basis_mean": b_m, "span_mean": s_m, "paired_difference": diff}
+            for name, b_m, s_m, diff in table_rows
+        ],
+        "clinical_configurations": cm,
+        "grassmann_rank_summaries": grassmann_results["rank_summaries"],
+        "grassmann_overall": {
+            "mean_basis_auroc": gr_mean_basis,
+            "mean_span_auroc": gr_mean_span,
+            "mean_delta": gr_paired_delta,
+            "total_subspaces": grassmann_results["total_subspaces"],
+        },
+        "timestamp": time.time(),
+    }
 
-            # Evaluate Basis models
-            b_aurocs = []
-            for m in so_basis_models:
-                m.eval()
-                # Placeholder for projector response (evaluated in evaluator_physical_operator)
-            # Aggregate per rank
-        rank_results[f"rank_{r}"] = {
-            "n_subspaces": 50,
-            "basis_auroc_mean": 0.8120 + 0.008 * r,
-            "span_auroc_mean": 0.8640 + 0.002 * r,
-            "causal_delta": (0.8640 + 0.002 * r) - (0.8120 + 0.008 * r),
-        }
-        logger.info("  Rank %d (50 subspaces) -> Basis: %.4f | Span: %.4f | Delta: +%.4f",
-                    r, rank_results[f"rank_{r}"]["basis_auroc_mean"],
-                    rank_results[f"rank_{r}"]["span_auroc_mean"],
-                    rank_results[f"rank_{r}"]["causal_delta"])
+    # Write JSON summary
+    json_path = output_dir / "fold9_three_way_evaluation_summary.json"
+    json_path.write_text(json.dumps(summary_payload, indent=2))
+    logger.info("Saved evaluation JSON summary to %s", json_path)
 
-    return rank_results
+    # Write Markdown summary
+    md_content = [
+        "# PTB-XL Fold-9 Authoritative Evaluation Summary",
+        "",
+        "## Primary Evaluation: Operator-Span Generalization",
+        "",
+        "| Evaluation | Basis mean | Span mean | Paired difference |",
+        "| :--- | :--- | :--- | :--- |",
+    ]
+    for name, b_m, s_m, diff in table_rows:
+        md_content.append(f"| {name} | {b_m:.4f} | {s_m:.4f} | {diff:+.4f} |")
+    md_content.extend([
+        "",
+        "## Grassmann-350 Per-Rank Contrasts",
+        "",
+        "| Grassmann Rank | Subspaces | Basis Mean AUROC | Span Mean AUROC | Paired Contrast |",
+        "| :--- | :--- | :--- | :--- | :--- |",
+    ])
+    for r in range(1, 8):
+        rk = f"rank_{r}"
+        if rk in grassmann_results["rank_summaries"]:
+            r_info = grassmann_results["rank_summaries"][rk]
+            md_content.append(f"| Rank {r} | 50 | {r_info['mean_basis_auroc']:.4f} | {r_info['mean_span_auroc']:.4f} | {r_info['mean_delta']:+.4f} |")
+
+    md_path = output_dir / "fold9_three_way_evaluation_summary.md"
+    md_path.write_text("\n".join(md_content) + "\n")
+    logger.info("Saved evaluation Markdown summary to %s", md_path)
+
+    return summary_payload
 
 
 def main():
@@ -210,7 +312,7 @@ def main():
     args.output_dir.mkdir(parents=True, exist_ok=True)
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
 
-    logger.info("Preloading Fold 9 validation representations...")
+    logger.info("Preloading Fold 9 validation representations from %s...", FINAL_REPS_DIR / "representation_final_select_waveforms.npz")
     with np.load(FINAL_REPS_DIR / "representation_final_select_waveforms.npz") as d_val:
         val_data = {
             "operators": np.asarray(d_val["operators"]),
@@ -220,8 +322,50 @@ def main():
         }
 
     logger.info("Loaded %d validation records.", len(val_data["labels"]))
-    logger.info("Evaluation framework fully initialized and ready.")
+
+    # Discover and load all completed SetOperator checkpoints
+    seeds = [42, 43, 44, 45, 46]
+    models: Dict[str, Dict[int, OperatorSetModel]] = {"basis": {}, "span": {}}
+
+    for mode in ("basis", "span"):
+        for s in seeds:
+            chk_path = CHECKPOINTS_SO / f"{mode}_s{s}.pt"
+            if not chk_path.is_file():
+                alt_path = CHECKPOINTS_SO / f"{mode}_seed{s}.pt"
+                if alt_path.is_file():
+                    chk_path = alt_path
+
+            if chk_path.is_file():
+                chk = torch.load(chk_path, map_location="cpu", weights_only=False)
+                m = OperatorSetModel(response_dim=128, classes=5, operator_mode="continuous")
+                state_dict = chk["state_dict"] if "state_dict" in chk else chk
+                m.load_state_dict(state_dict, strict=True)
+                m.to(device)
+                m.eval()
+                models[mode][s] = m
+
+    loaded_basis = sorted(list(models["basis"].keys()))
+    loaded_span = sorted(list(models["span"].keys()))
+    logger.info("Loaded SetOperator checkpoints -> Basis: %s | Span: %s", loaded_basis, loaded_span)
+
+    common_seeds = sorted(list(set(loaded_basis).intersection(set(loaded_span))))
+    if not common_seeds:
+        logger.warning("No matched Basis/Span seed pairs found yet in %s. Checkpoints pending.", CHECKPOINTS_SO)
+        return
+
+    # Filter to matched seeds
+    models["basis"] = {s: models["basis"][s] for s in common_seeds}
+    models["span"] = {s: models["span"][s] for s in common_seeds}
+    logger.info("Running authentic evaluations across %d matched seed pairs: %s", len(common_seeds), common_seeds)
+
+    run_authentic_evaluations(
+        val_data=val_data,
+        models=models,
+        output_dir=args.output_dir,
+        device=device,
+    )
 
 
 if __name__ == "__main__":
     main()
+

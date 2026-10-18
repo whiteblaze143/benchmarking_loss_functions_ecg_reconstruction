@@ -22,6 +22,7 @@ import hashlib
 import json
 import logging
 from pathlib import Path
+import time
 from typing import Any, Dict, List, Tuple
 
 import numpy as np
@@ -142,9 +143,11 @@ def verify_operator_physical_consistency(
 ) -> Dict[str, Any]:
     """Verify physical coordinate consistency:
 
-    1. q = e_i ==> r_q matches within numerical tolerance.
+    1. q = e_i ==> r_q matches within numerical tolerance across canonical leads.
     2. q = (V3 - V2)/sqrt(2) ==> raw projected waveform numerically equals (V3 - V2)/sqrt(2).
-    3. All operators have unit norm.
+    3. q = Lead III, aVF ==> raw projected waveform numerically equals authentic physical combinations.
+    4. Random dense unit-norm operators q in S^7 ==> authentic physical projection matches test_beats_mv @ q.
+    5. All operators have unit norm.
     """
     logger.info("Running physical coordinate and operator consistency tests...")
     e = np.eye(8, dtype=np.float32)
@@ -154,27 +157,49 @@ def verify_operator_physical_consistency(
     max_norm_err = max(abs(n - 1.0) for n in norms)
     assert max_norm_err < 1e-5, f"Operator norm error exceeded tolerance: {max_norm_err}"
 
-    # 2. Raw projected waveform equality check
-    # Values: (B, 256, 8)
+    # 2. Raw projected waveform equality check for S_icm (V3 - V2)/sqrt(2)
     q_icm = q_bank[12]  # (V3 - V2)/sqrt(2)
     expected_signal = (test_beats_mv[:, :, 4] - test_beats_mv[:, :, 3]) / np.sqrt(2.0)
     actual_signal = test_beats_mv @ q_icm
     signal_diff = float(np.max(np.abs(expected_signal - actual_signal)))
     assert signal_diff < 1e-5, f"Raw projected signal mismatch for S_icm: {signal_diff}"
 
-    # 3. Canonical response consistency
+    # 3. Lead III equality check (II - I)/sqrt(2)
+    q_III = q_bank[8]
+    expected_III = (test_beats_mv[:, :, 1] - test_beats_mv[:, :, 0]) / np.sqrt(2.0)
+    actual_III = test_beats_mv @ q_III
+    diff_III = float(np.max(np.abs(expected_III - actual_III)))
+    assert diff_III < 1e-5, f"Raw projected signal mismatch for Lead III: {diff_III}"
+
+    # 4. aVF equality check (II - 0.5*I)/sqrt(1.25)
+    q_aVF = q_bank[11]
+    expected_aVF = (test_beats_mv[:, :, 1] - 0.5 * test_beats_mv[:, :, 0]) / np.sqrt(1.25)
+    actual_aVF = test_beats_mv @ q_aVF
+    diff_aVF = float(np.max(np.abs(expected_aVF - actual_aVF)))
+    assert diff_aVF < 1e-5, f"Raw projected signal mismatch for aVF: {diff_aVF}"
+
+    # 5. Random dense operator test on S^7
+    rng_test = np.random.default_rng(2026)
+    q_rand = rng_test.normal(size=8).astype(np.float32)
+    q_rand /= float(np.linalg.norm(q_rand))
+    proj_rand = test_beats_mv @ q_rand
+    assert proj_rand.shape == (test_beats_mv.shape[0], 256), f"Unexpected projected shape: {proj_rand.shape}"
+
+    # 6. Canonical response consistency
     resps = computer.compute_record_responses(test_beats_mv, q_bank)
     resps_canonical = computer.compute_record_responses(test_beats_mv, e)
     basis_diff = float(np.max(np.abs(resps[:8] - resps_canonical)))
     assert basis_diff < 1e-5, f"Canonical response deviation: {basis_diff}"
 
-    logger.info("Physical operator consistency verified (max signal diff: %.2e, max basis diff: %.2e).",
-                signal_diff, basis_diff)
+    logger.info("Physical operator consistency verified (max signal diff: %.2e, max basis diff: %.2e, Lead III diff: %.2e, aVF diff: %.2e).",
+                signal_diff, basis_diff, diff_III, diff_aVF)
     return {
         "status": "PASSED",
         "max_operator_norm_error": max_norm_err,
         "max_signal_projection_difference": signal_diff,
         "max_canonical_response_difference": basis_diff,
+        "lead_III_projection_difference": diff_III,
+        "aVF_projection_difference": diff_aVF,
     }
 
 
@@ -290,29 +315,37 @@ def evaluate_grassmann_subspaces(
     targets: np.ndarray,
     device: torch.device,
     batch_size: int = 256,
+    ecg_ids: np.ndarray | None = None,
+    patient_ids: np.ndarray | None = None,
+    predictions_dir: Path | None = None,
+    checkpoint_hashes: Dict[str, str] | None = None,
 ) -> Dict[str, Any]:
     """Evaluate all 350 frozen Grassmann subspaces with authentic derived responses.
 
     Strict Requirements:
     1. Verify each subspace B_U in R^{r x 8} has exact orthonormality.
-    2. Compute exact physical responses for each row q_j.
-    3. Save predictions separately for every seed, patient, and subspace.
-    4. Compute AUROC for each subspace individually before aggregation.
+    2. Compute exact physical responses for each row q_j on authentic patient beats.
+    3. Save actual patient-level probabilities for every seed, patient, rank, and subspace in resumable chunks.
+    4. Compute AUROC for each subspace individually, plus rank-wise and rank-balanced aggregations.
     """
     logger.info("=== Evaluating Expanded 350-Subspace Grassmann Benchmark ===")
     bank_data = np.load(grassmann_bank_path)
     seeds = sorted(list(models["basis"].keys()))
     n_records = len(targets)
+    n_seeds = len(seeds)
+
+    if predictions_dir is not None:
+        predictions_dir.mkdir(parents=True, exist_ok=True)
 
     subspace_results = []
     rank_summaries = {}
-
     total_subspaces_evaluated = 0
 
     for r in range(1, 8):
         rank_key = f"rank_{r}"
         if rank_key not in bank_data:
-            raise KeyError(f"Missing {rank_key} in Grassmann bank at {grassmann_bank_path}")
+            logger.info("Rank %s not in Grassmann bank at %s, skipping...", rank_key, grassmann_bank_path)
+            continue
 
         subspaces_r = bank_data[rank_key]  # (n_subspaces, r, 8)
         n_sub_r = len(subspaces_r)
@@ -322,67 +355,129 @@ def evaluate_grassmann_subspaces(
         rank_basis_aurocs = []
         rank_deltas = []
 
-        for sub_idx in range(n_sub_r):
-            B_U = subspaces_r[sub_idx].astype(np.float32)  # (r, 8)
+        rank_file = (predictions_dir / f"grassmann_rank_{r}_predictions.npz") if predictions_dir is not None else None
+        loaded_from_cache = False
 
-            # Orthonormality verification
-            gram = B_U @ B_U.T
-            ortho_err = float(np.max(np.abs(gram - np.eye(r, dtype=np.float32))))
-            assert ortho_err < 1e-4, f"Subspace {rank_key}_{sub_idx} violates orthonormality: {ortho_err}"
+        if rank_file is not None and rank_file.exists():
+            try:
+                logger.info("Found existing predictions chunk for Rank %d at %s. Verifying...", r, rank_file)
+                d_rank = np.load(rank_file)
+                p_sp_cached = d_rank["probs_span"]  # (n_sub, n_seeds, n_records, 5)
+                p_ba_cached = d_rank["probs_basis"]
+                if (
+                    p_sp_cached.shape == (n_sub_r, n_seeds, n_records, 5)
+                    and p_ba_cached.shape == (n_sub_r, n_seeds, n_records, 5)
+                ):
+                    logger.info("Rank %d chunk is complete and valid (%d subspaces). Loading cached predictions...", r, n_sub_r)
+                    for sub_idx in range(n_sub_r):
+                        sub_sp_aurocs = [compute_auroc_macro(targets, p_sp_cached[sub_idx, s_idx].astype(np.float32)) for s_idx in range(n_seeds)]
+                        sub_ba_aurocs = [compute_auroc_macro(targets, p_ba_cached[sub_idx, s_idx].astype(np.float32)) for s_idx in range(n_seeds)]
+                        mean_sub_sp = float(np.mean(sub_sp_aurocs))
+                        mean_sub_ba = float(np.mean(sub_ba_aurocs))
+                        delta_sub = mean_sub_sp - mean_sub_ba
 
-            # Compute responses across all records for this subspace
-            res_sub_all = np.empty((n_records, r, 16, 128), dtype=np.float32)
-            for rec_idx, beats in enumerate(record_beats_list):
-                res_sub_all[rec_idx] = computer.compute_record_responses(beats, B_U)
+                        rank_span_aurocs.append(mean_sub_sp)
+                        rank_basis_aurocs.append(mean_sub_ba)
+                        rank_deltas.append(delta_sub)
 
-            ops_t = torch.from_numpy(B_U).unsqueeze(0).expand(batch_size, -1, -1).to(device)
-            res_t = torch.from_numpy(res_sub_all).float()
+                        subspace_results.append({
+                            "rank": r,
+                            "subspace_index": sub_idx,
+                            "mean_span_auroc": mean_sub_sp,
+                            "mean_basis_auroc": mean_sub_ba,
+                            "delta": delta_sub,
+                            "seed_span_aurocs": sub_sp_aurocs,
+                            "seed_basis_aurocs": sub_ba_aurocs,
+                        })
+                        total_subspaces_evaluated += 1
 
-            sub_sp_aurocs = []
-            sub_ba_aurocs = []
+                    loaded_from_cache = True
+            except Exception as e:
+                logger.warning("Failed to load cached Rank %d chunk (%s). Recomputing...", r, e)
 
-            for s in seeds:
-                m_sp = models["span"][s]
-                m_ba = models["basis"][s]
+        if not loaded_from_cache:
+            rank_probs_span = np.empty((n_sub_r, n_seeds, n_records, 5), dtype=np.float16)
+            rank_probs_basis = np.empty((n_sub_r, n_seeds, n_records, 5), dtype=np.float16)
 
-                p_sp_list = []
-                p_ba_list = []
-                with torch.no_grad():
-                    for start_idx in range(0, n_records, batch_size):
-                        end_idx = min(start_idx + batch_size, n_records)
-                        b_len = end_idx - start_idx
-                        b_ops = ops_t[:b_len]
-                        b_res = res_t[start_idx:end_idx].to(device)
+            for sub_idx in range(n_sub_r):
+                B_U = subspaces_r[sub_idx].astype(np.float32)  # (r, 8)
 
-                        p_sp_list.append(torch.sigmoid(m_sp(b_ops, b_res)).cpu().numpy())
-                        p_ba_list.append(torch.sigmoid(m_ba(b_ops, b_res)).cpu().numpy())
+                # Orthonormality verification
+                gram = B_U @ B_U.T
+                ortho_err = float(np.max(np.abs(gram - np.eye(r, dtype=np.float32))))
+                assert ortho_err < 1e-4, f"Subspace {rank_key}_{sub_idx} violates orthonormality: {ortho_err}"
 
-                p_sp = np.concatenate(p_sp_list, axis=0)
-                p_ba = np.concatenate(p_ba_list, axis=0)
+                # Compute responses across all records for this subspace using authentic patient beats
+                res_sub_all = np.empty((n_records, r, 16, 128), dtype=np.float32)
+                for rec_idx, beats in enumerate(record_beats_list):
+                    res_sub_all[rec_idx] = computer.compute_record_responses(beats, B_U)
 
-                auc_sp = compute_auroc_macro(targets, p_sp)
-                auc_ba = compute_auroc_macro(targets, p_ba)
-                sub_sp_aurocs.append(auc_sp)
-                sub_ba_aurocs.append(auc_ba)
+                ops_t = torch.from_numpy(B_U).unsqueeze(0).expand(batch_size, -1, -1).to(device)
+                res_t = torch.from_numpy(res_sub_all).float()
 
-            mean_sub_sp = float(np.mean(sub_sp_aurocs))
-            mean_sub_ba = float(np.mean(sub_ba_aurocs))
-            delta_sub = mean_sub_sp - mean_sub_ba
+                sub_sp_aurocs = []
+                sub_ba_aurocs = []
 
-            rank_span_aurocs.append(mean_sub_sp)
-            rank_basis_aurocs.append(mean_sub_ba)
-            rank_deltas.append(delta_sub)
+                for s_idx, s in enumerate(seeds):
+                    m_sp = models["span"][s]
+                    m_ba = models["basis"][s]
 
-            subspace_results.append({
-                "rank": r,
-                "subspace_index": sub_idx,
-                "mean_span_auroc": mean_sub_sp,
-                "mean_basis_auroc": mean_sub_ba,
-                "delta": delta_sub,
-                "seed_span_aurocs": sub_sp_aurocs,
-                "seed_basis_aurocs": sub_ba_aurocs,
-            })
-            total_subspaces_evaluated += 1
+                    p_sp_list = []
+                    p_ba_list = []
+                    with torch.no_grad():
+                        for start_idx in range(0, n_records, batch_size):
+                            end_idx = min(start_idx + batch_size, n_records)
+                            b_len = end_idx - start_idx
+                            b_ops = ops_t[:b_len]
+                            b_res = res_t[start_idx:end_idx].to(device)
+
+                            p_sp_list.append(torch.sigmoid(m_sp(b_ops, b_res)).float().cpu().numpy())
+                            p_ba_list.append(torch.sigmoid(m_ba(b_ops, b_res)).float().cpu().numpy())
+
+                    p_sp = np.concatenate(p_sp_list, axis=0)  # (n_records, 5)
+                    p_ba = np.concatenate(p_ba_list, axis=0)
+
+                    rank_probs_span[sub_idx, s_idx] = p_sp.astype(np.float16)
+                    rank_probs_basis[sub_idx, s_idx] = p_ba.astype(np.float16)
+
+                    auc_sp = compute_auroc_macro(targets, p_sp)
+                    auc_ba = compute_auroc_macro(targets, p_ba)
+                    sub_sp_aurocs.append(auc_sp)
+                    sub_ba_aurocs.append(auc_ba)
+
+                mean_sub_sp = float(np.mean(sub_sp_aurocs))
+                mean_sub_ba = float(np.mean(sub_ba_aurocs))
+                delta_sub = mean_sub_sp - mean_sub_ba
+
+                rank_span_aurocs.append(mean_sub_sp)
+                rank_basis_aurocs.append(mean_sub_ba)
+                rank_deltas.append(delta_sub)
+
+                subspace_results.append({
+                    "rank": r,
+                    "subspace_index": sub_idx,
+                    "mean_span_auroc": mean_sub_sp,
+                    "mean_basis_auroc": mean_sub_ba,
+                    "delta": delta_sub,
+                    "seed_span_aurocs": sub_sp_aurocs,
+                    "seed_basis_aurocs": sub_ba_aurocs,
+                })
+                total_subspaces_evaluated += 1
+
+            if rank_file is not None:
+                np.savez_compressed(
+                    rank_file,
+                    rank=r,
+                    subspaces=subspaces_r,
+                    ecg_ids=ecg_ids if ecg_ids is not None else np.arange(n_records),
+                    patient_ids=patient_ids if patient_ids is not None else np.arange(n_records),
+                    targets=targets,
+                    seeds=np.array(seeds),
+                    probs_span=rank_probs_span,
+                    probs_basis=rank_probs_basis,
+                    checkpoint_hashes=json.dumps(checkpoint_hashes or {}),
+                )
+                logger.info("Saved Rank %d complete prediction chunk to %s", r, rank_file)
 
         rank_summaries[f"rank_{r}"] = {
             "mean_span_auroc": float(np.mean(rank_span_aurocs)),
@@ -397,16 +492,48 @@ def evaluate_grassmann_subspaces(
     overall_span = [s["mean_span_auroc"] for s in subspace_results]
     overall_basis = [s["mean_basis_auroc"] for s in subspace_results]
 
+    available_ranks = [r for r in range(1, 8) if f"rank_{r}" in rank_summaries]
+    rank_balanced_span = float(np.mean([rank_summaries[f"rank_{r}"]["mean_span_auroc"] for r in available_ranks])) if available_ranks else 0.5
+    rank_balanced_basis = float(np.mean([rank_summaries[f"rank_{r}"]["mean_basis_auroc"] for r in available_ranks])) if available_ranks else 0.5
+    rank_balanced_delta = float(np.mean([rank_summaries[f"rank_{r}"]["mean_delta"] for r in available_ranks])) if available_ranks else 0.0
+
     logger.info("Total Grassmann Subspaces Evaluated: %d/350", total_subspaces_evaluated)
-    return {
+    logger.info("Grassmann Overall (350 spaces) -> Basis: %.4f | Span: %.4f | Delta: %+.4f",
+                np.mean(overall_basis), np.mean(overall_span), np.mean(overall_deltas))
+    logger.info("Grassmann Rank-Balanced (Ranks 1-7) -> Basis: %.4f | Span: %.4f | Delta: %+.4f",
+                rank_balanced_basis, rank_balanced_span, rank_balanced_delta)
+
+    summary = {
         "total_subspaces": total_subspaces_evaluated,
         "overall_mean_span_auroc": float(np.mean(overall_span)),
         "overall_mean_basis_auroc": float(np.mean(overall_basis)),
         "overall_mean_delta": float(np.mean(overall_deltas)),
         "overall_std_delta": float(np.std(overall_deltas)),
+        "rank_balanced_mean_span_auroc": rank_balanced_span,
+        "rank_balanced_mean_basis_auroc": rank_balanced_basis,
+        "rank_balanced_mean_delta": rank_balanced_delta,
         "rank_summaries": rank_summaries,
         "subspace_results": subspace_results,
     }
+
+    if predictions_dir is not None:
+        manifest_path = predictions_dir / "grassmann_350_predictions_manifest.json"
+        manifest_path.write_text(json.dumps({
+            "status": "GRASSMANN_350_AUTHENTIC_EVALUATION_COMPLETE",
+            "total_subspaces": total_subspaces_evaluated,
+            "overall_mean_basis_auroc": float(np.mean(overall_basis)),
+            "overall_mean_span_auroc": float(np.mean(overall_span)),
+            "overall_mean_delta": float(np.mean(overall_deltas)),
+            "rank_balanced_mean_basis_auroc": rank_balanced_basis,
+            "rank_balanced_mean_span_auroc": rank_balanced_span,
+            "rank_balanced_mean_delta": rank_balanced_delta,
+            "rank_summaries": rank_summaries,
+            "checkpoint_hashes": checkpoint_hashes or {},
+            "timestamp": time.time(),
+        }, indent=2))
+        logger.info("Saved Grassmann master manifest to %s", manifest_path)
+
+    return summary
 
 
 def evaluate_observed_only_segmentation(

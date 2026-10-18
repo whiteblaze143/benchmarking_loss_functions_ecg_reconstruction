@@ -52,6 +52,7 @@ from evaluator_physical_operator import (
     compute_auroc_macro,
     evaluate_clinical_benchmarks,
     evaluate_grassmann_subspaces,
+    verify_operator_physical_consistency,
     CLINICAL_CONFIG_INDICES,
 )
 
@@ -169,15 +170,44 @@ def run_authentic_evaluations(
     models: Dict[str, Dict[int, OperatorSetModel]],
     output_dir: Path,
     device: torch.device,
+    checkpoint_hashes: Dict[str, str] | None = None,
 ) -> Dict[str, Any]:
     """Execute authentic clinical and Grassmann evaluations using physical response computations."""
     logger.info("=== Running Authentic Clinical Benchmark Suite on Fold 9 ===")
     operators_16 = val_data["operators"]
     responses_16 = val_data["responses"]
     labels = val_data["labels"]
+    ecg_ids = val_data["ecg_ids"]
+    patient_ids = val_data["patient_ids"]
     n_records = len(labels)
 
-    # 1. Clinical benchmarks
+    # 1. Recover Authentic Fold-9 ECG Beats
+    beats_npz_path = FINAL_REPS_DIR / "fold9_authentic_beats.npz"
+    if not beats_npz_path.exists():
+        raise FileNotFoundError(
+            f"FATAL: Authentic Fold-9 beats not found at {beats_npz_path}. "
+            "Synthetic inputs are strictly forbidden. Run extract_and_audit_fold9_authentic_beats.py first."
+        )
+
+    logger.info("Loading verified authentic Fold-9 beats from %s...", beats_npz_path)
+    d_beats = np.load(beats_npz_path, allow_pickle=True)
+    record_beats_list = list(d_beats["beats"])
+    assert len(record_beats_list) == n_records, f"Record count mismatch: {len(record_beats_list)} vs {n_records}"
+    assert np.array_equal(d_beats["ecg_ids"], ecg_ids), "Beat ECG IDs do not match validation representations!"
+
+    resp_fit_path = FINAL_REPS_DIR / "response_fit_final.npz"
+    logger.info("Initializing FastResponseComputer on %s...", device)
+    computer = FastResponseComputer(resp_fit_path, device)
+
+    # 2. Run Physical Coordinate & Operator Consistency Tests on Authentic Patient Beats
+    logger.info("Running physical operator consistency audit on authentic patient beats...")
+    test_beats_mv = record_beats_list[0]  # Full authentic beats from patient 0
+    q_bank_canonical = build_canonical_and_derived_operator_bank()
+    assert np.allclose(operators_16[0], q_bank_canonical, atol=1e-5), "Operator bank mismatch between cached representations and canonical bank!"
+    consistency_result = verify_operator_physical_consistency(computer, test_beats_mv, q_bank_canonical)
+    logger.info("Physical consistency audit status: %s", consistency_result["status"])
+
+    # 3. Clinical Benchmarks
     clinical_results = evaluate_clinical_benchmarks(
         models=models,
         operators_16=operators_16,
@@ -187,21 +217,11 @@ def run_authentic_evaluations(
         batch_size=256,
     )
 
-    # 2. Grassmann-350 Benchmark
+    # 4. Authentic Grassmann-350 Benchmark
     grassmann_path = FINAL_REPS_DIR / "expanded_grassmann_subspace_bank.npz"
-    resp_fit_path = FINAL_REPS_DIR / "response_fit_final.npz"
+    preds_dir = output_dir / "predictions/grassmann"
 
-    logger.info("Initializing FastResponseComputer for Grassmann evaluation...")
-    computer = FastResponseComputer(resp_fit_path, device)
-
-    # Prepare normalized record beats list for Fold 9
-    rng_beats = np.random.default_rng(1337)
-    record_beats_list = []
-    for _ in range(n_records):
-        b = rng_beats.normal(size=(10, 256, 8)).astype(np.float32) * computer.std + computer.mean
-        record_beats_list.append(b)
-
-    logger.info("Executing authentic 350-subspace Grassmann benchmark across ranks 1-7...")
+    logger.info("Executing authentic 350-subspace Grassmann benchmark across ranks 1-7 on REAL patient beats...")
     grassmann_results = evaluate_grassmann_subspaces(
         models=models,
         computer=computer,
@@ -210,36 +230,55 @@ def run_authentic_evaluations(
         targets=labels,
         device=device,
         batch_size=256,
+        ecg_ids=ecg_ids,
+        patient_ids=patient_ids,
+        predictions_dir=preds_dir,
+        checkpoint_hashes=checkpoint_hashes,
     )
 
     # Extract required primary summary metrics
     cm = clinical_results["metrics"]
     full_canonical = cm["Q_8"]
+    s_6_precordial = cm["S_6"]
+    s_2_leads = cm["S_2"]
     single_lead_1 = cm["S_1"]
+    s_6_limb = cm["S_6_limb"]
     derived_limb = cm["derived_limb_only"]
+    lead_III = cm["lead_III_single"]
     v3_v2 = cm["S_icm"]
+    aVF_lead = cm["aVF_single"]
 
     gr_mean_basis = grassmann_results["overall_mean_basis_auroc"]
     gr_mean_span = grassmann_results["overall_mean_span_auroc"]
     gr_paired_delta = grassmann_results["overall_mean_delta"]
 
-    # Assemble primary results table
+    gr_bal_basis = grassmann_results["rank_balanced_mean_basis_auroc"]
+    gr_bal_span = grassmann_results["rank_balanced_mean_span_auroc"]
+    gr_bal_delta = grassmann_results["rank_balanced_mean_delta"]
+
+    # Assemble comprehensive results table
     table_rows = [
         ("Full canonical ECG", full_canonical["mean_basis_auroc"], full_canonical["mean_span_auroc"], full_canonical["paired_delta"]),
+        ("Six precordial leads", s_6_precordial["mean_basis_auroc"], s_6_precordial["mean_span_auroc"], s_6_precordial["paired_delta"]),
+        ("Leads I and II", s_2_leads["mean_basis_auroc"], s_2_leads["mean_span_auroc"], s_2_leads["paired_delta"]),
         ("Single Lead I", single_lead_1["mean_basis_auroc"], single_lead_1["mean_span_auroc"], single_lead_1["paired_delta"]),
-        ("Derived limb leads", derived_limb["mean_basis_auroc"], derived_limb["mean_span_auroc"], derived_limb["paired_delta"]),
-        ("V3-V2", v3_v2["mean_basis_auroc"], v3_v2["mean_span_auroc"], v3_v2["paired_delta"]),
-        ("Grassmann ranks 1–7", gr_mean_basis, gr_mean_span, gr_paired_delta),
+        ("Six limb leads", s_6_limb["mean_basis_auroc"], s_6_limb["mean_span_auroc"], s_6_limb["paired_delta"]),
+        ("Derived limb leads only", derived_limb["mean_basis_auroc"], derived_limb["mean_span_auroc"], derived_limb["paired_delta"]),
+        ("Single Lead III", lead_III["mean_basis_auroc"], lead_III["mean_span_auroc"], lead_III["paired_delta"]),
+        ("V3-V2 differential", v3_v2["mean_basis_auroc"], v3_v2["mean_span_auroc"], v3_v2["paired_delta"]),
+        ("Single aVF", aVF_lead["mean_basis_auroc"], aVF_lead["mean_span_auroc"], aVF_lead["paired_delta"]),
+        ("Grassmann Rank-Balanced (1–7)", gr_bal_basis, gr_bal_span, gr_bal_delta),
+        ("Grassmann Overall (350 spaces)", gr_mean_basis, gr_mean_span, gr_paired_delta),
     ]
 
-    print("\n" + "=" * 88)
-    print("PTB-XL FOLD-9 AUTHORITATIVE THREE-WAY BENCHMARK RESULTS")
-    print("=" * 88)
-    print(f"| {'Evaluation':<22} | {'Basis mean':<10} | {'Span mean':<10} | {'Paired difference':<17} |")
-    print(f"| {'-' * 22} | {'-' * 10} | {'-' * 10} | {'-' * 17} |")
+    print("\n" + "=" * 92)
+    print("PTB-XL FOLD-9 AUTHORITATIVE THREE-WAY BENCHMARK RESULTS (AUTHENTIC EVALUATION)")
+    print("=" * 92)
+    print(f"| {'Evaluation':<30} | {'Basis mean':<10} | {'Span mean':<10} | {'Paired difference':<17} |")
+    print(f"| {'-' * 30} | {'-' * 10} | {'-' * 10} | {'-' * 17} |")
     for name, b_m, s_m, diff in table_rows:
-        print(f"| {name:<22} | {b_m:<10.4f} | {s_m:<10.4f} | {diff:<+17.4f} |")
-    print("=" * 88 + "\n")
+        print(f"| {name:<30} | {b_m:<10.4f} | {s_m:<10.4f} | {diff:<+17.4f} |")
+    print("=" * 92 + "\n")
 
     # Detailed per-rank breakdown
     print("--- Grassmann Subspaces Per-Rank Contrast Breakdown ---")
@@ -251,19 +290,29 @@ def run_authentic_evaluations(
     print("-" * 55 + "\n")
 
     summary_payload = {
-        "status": "FOLD9_EVALUATION_COMPLETE",
+        "status": "FOLD9_AUTHENTIC_EVALUATION_COMPLETE",
+        "dataset": "PTB-XL Fold 9 validation (N=2,183)",
+        "input_beats_source": str(beats_npz_path),
+        "input_beats_sha256": d_beats["sha256"] if "sha256" in d_beats else None,
+        "physical_consistency_audit": consistency_result,
         "primary_table": [
             {"evaluation": name, "basis_mean": b_m, "span_mean": s_m, "paired_difference": diff}
             for name, b_m, s_m, diff in table_rows
         ],
         "clinical_configurations": cm,
         "grassmann_rank_summaries": grassmann_results["rank_summaries"],
+        "grassmann_rank_balanced": {
+            "mean_basis_auroc": gr_bal_basis,
+            "mean_span_auroc": gr_bal_span,
+            "mean_delta": gr_bal_delta,
+        },
         "grassmann_overall": {
             "mean_basis_auroc": gr_mean_basis,
             "mean_span_auroc": gr_mean_span,
             "mean_delta": gr_paired_delta,
             "total_subspaces": grassmann_results["total_subspaces"],
         },
+        "checkpoint_hashes": checkpoint_hashes or {},
         "timestamp": time.time(),
     }
 
@@ -274,7 +323,7 @@ def run_authentic_evaluations(
 
     # Write Markdown summary
     md_content = [
-        "# PTB-XL Fold-9 Authoritative Evaluation Summary",
+        "# PTB-XL Fold-9 Authoritative Evaluation Summary (Authentic Data)",
         "",
         "## Primary Evaluation: Operator-Span Generalization",
         "",
@@ -285,7 +334,7 @@ def run_authentic_evaluations(
         md_content.append(f"| {name} | {b_m:.4f} | {s_m:.4f} | {diff:+.4f} |")
     md_content.extend([
         "",
-        "## Grassmann-350 Per-Rank Contrasts",
+        "## Grassmann-350 Per-Rank Contrasts (Authentic Patient Beats)",
         "",
         "| Grassmann Rank | Subspaces | Basis Mean AUROC | Span Mean AUROC | Paired Contrast |",
         "| :--- | :--- | :--- | :--- | :--- |",
@@ -318,10 +367,23 @@ def main():
             "operators": np.asarray(d_val["operators"]),
             "responses": np.asarray(d_val["responses"]),
             "labels": np.asarray(d_val["labels"]),
+            "ecg_ids": np.asarray(d_val["ecg_ids"]),
             "patient_ids": np.asarray(d_val["patient_ids"]),
         }
 
     logger.info("Loaded %d validation records.", len(val_data["labels"]))
+
+    # Load checkpoint selection ledger
+    ledger_path = CHECKPOINTS_SO / "checkpoints_selection_ledger.json"
+    checkpoint_hashes = {}
+    if ledger_path.exists():
+        try:
+            chk_ledger = json.loads(ledger_path.read_text())
+            for k, v in chk_ledger.items():
+                if isinstance(v, dict) and "sha256" in v:
+                    checkpoint_hashes[k] = v["sha256"]
+        except Exception as e:
+            logger.warning("Could not parse checkpoint ledger: %s", e)
 
     # Discover and load all completed SetOperator checkpoints
     seeds = [42, 43, 44, 45, 46]
@@ -363,9 +425,11 @@ def main():
         models=models,
         output_dir=args.output_dir,
         device=device,
+        checkpoint_hashes=checkpoint_hashes,
     )
 
 
 if __name__ == "__main__":
     main()
+
 

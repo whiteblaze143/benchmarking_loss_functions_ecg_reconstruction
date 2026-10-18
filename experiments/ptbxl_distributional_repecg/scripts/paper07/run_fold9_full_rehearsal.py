@@ -125,23 +125,19 @@ def run_authentic_fold9_rehearsal(
         batch_size=256,
     )
 
-    # 5. Evaluate all 350 Grassmann subspaces
-    # Prepare beats list for Fold 9 records
-    # For Fold 9, we generate record beats in physical units
-    logger.info("Preparing record beats for 350-subspace Grassmann evaluation...")
-    record_beats_list = []
-    # If beats are stored in npz, load them; otherwise create normalized beat representations
-    if "beats" in val_data:
-        beats_raw = val_data["beats"]
-        for b in beats_raw:
-            record_beats_list.append(b.astype(np.float32) * computer.std + computer.mean)
-    else:
-        # Use canonical lead responses to create consistent reference beats
-        rng_beats = np.random.default_rng(1337)
-        for _ in range(n_records):
-            b = rng_beats.normal(size=(10, 256, 8)).astype(np.float32) * computer.std + computer.mean
-            record_beats_list.append(b)
+    # 5. Evaluate all 350 Grassmann subspaces using Authentic Fold-9 Patient Beats
+    beats_npz_path = FINAL_REPS_DIR / "fold9_authentic_beats.npz"
+    if not beats_npz_path.exists():
+        raise FileNotFoundError(
+            f"FATAL: Authentic Fold-9 beats not found at {beats_npz_path}. "
+            "Synthetic fallbacks are strictly forbidden. Run extract_and_audit_fold9_authentic_beats.py first."
+        )
+    logger.info("Loading verified authentic Fold-9 patient beats from %s...", beats_npz_path)
+    d_beats = np.load(beats_npz_path, allow_pickle=True)
+    record_beats_list = list(d_beats["beats"])
+    assert len(record_beats_list) == n_records, f"Record count mismatch: {len(record_beats_list)} vs {n_records}"
 
+    grassmann_preds_dir = output_predictions_path.parent / "grassmann_rehearsal"
     grassmann_results = evaluate_grassmann_subspaces(
         models=models,
         computer=computer,
@@ -150,12 +146,13 @@ def run_authentic_fold9_rehearsal(
         targets=targets,
         device=device,
         batch_size=256,
+        ecg_ids=val_data["ecg_ids"] if "ecg_ids" in val_data else None,
+        patient_ids=val_data["patient_ids"] if "patient_ids" in val_data else None,
+        predictions_dir=grassmann_preds_dir,
     )
 
-    # 6. Evaluate observed-only segmentation vs oracle
-    # Use single lead I waveform (N, 5000) for S_1 evaluation
-    rng_wf = np.random.default_rng(42)
-    single_lead_waveforms = rng_wf.normal(size=(n_records, 5000)).astype(np.float32)
+    # 6. Evaluate observed-only segmentation vs oracle using authentic single-lead waveforms
+    single_lead_waveforms = d_beats["lead_I_waveforms"]  # Authentic (N, 5000) patient Lead I waveforms
     q_lead1 = np.array([1.0, 0, 0, 0, 0, 0, 0, 0], dtype=np.float32)
     segmentation_audit = evaluate_observed_only_segmentation(
         models=models,
@@ -170,7 +167,7 @@ def run_authentic_fold9_rehearsal(
     )
 
     # 7. Assemble predictions array matching publication table compiler contract
-    config_names = list(CLINICAL_CONFIG_INDICES.keys()) + ["grassmann_bank_350"]
+    config_names = list(CLINICAL_CONFIG_INDICES.keys())
     n_configs = len(config_names)
     n_seeds = len(seeds)
 
@@ -180,13 +177,6 @@ def run_authentic_fold9_rehearsal(
     for c_idx, cname in enumerate(CLINICAL_CONFIG_INDICES.keys()):
         span_preds_arr[c_idx] = clinical_results["span_preds"][cname]
         basis_preds_arr[c_idx] = clinical_results["basis_preds"][cname]
-
-    # For grassmann_bank_350 row, store mean predictions across subspaces
-    # (Compiler computes seed-averaged AUROC and hierarchical bootstrap)
-    # Individual per-subspace AUROCs are saved in report
-    g_idx = config_names.index("grassmann_bank_350")
-    span_preds_arr[g_idx] = np.mean([clinical_results["span_preds"][c] for c in ["lead_III_single", "aVF_single", "S_icm"]], axis=0)
-    basis_preds_arr[g_idx] = np.mean([clinical_results["basis_preds"][c] for c in ["lead_III_single", "aVF_single", "S_icm"]], axis=0)
 
     output_predictions_path.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
@@ -198,7 +188,7 @@ def run_authentic_fold9_rehearsal(
         seeds=np.array(seeds),
     )
     pred_sha = compute_sha256(output_predictions_path)
-    logger.info("Saved Fold-9 predictions archive to %s (SHA-256: %s)", output_predictions_path, pred_sha)
+    logger.info("Saved Fold-9 clinical predictions archive to %s (SHA-256: %s)", output_predictions_path, pred_sha)
 
     # 8. Compile structured rehearsal report
     report = {

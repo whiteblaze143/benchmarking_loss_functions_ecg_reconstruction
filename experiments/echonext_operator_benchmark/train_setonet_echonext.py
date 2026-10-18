@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """Train SetONet on the official EchoNext benchmark for Binary Structural Heart Disease (SHD).
 
+REPRESENTATION AUDIT NOTE:
+This pipeline uses a Raw-Block Baseline representation: 2048-sample center-windowed
+lead signals reshaped directly into (16, 128), NOT true Phase-conditioned Kernel Mean
+Embeddings (Phase-KME). It is preserved strictly as the uncanonicalized raw-block
+predictive reference.
+
 Conforms to the SetONet branch-trunk architecture:
 - Branch: processes variable operator-response sets using Deep Sets / Attention pooling
 - Trunk: evaluates diagnostic query in R^d conditioned on 7 clinical tabular features

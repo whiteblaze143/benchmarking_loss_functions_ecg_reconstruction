@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 """Train SetOperator on the official EchoNext benchmark for Binary Structural Heart Disease (SHD).
 
-Conforms strictly to the established SetOperator architecture:
-- OperatorSetModel with PhaseCNN response encoder (16x128 -> 128-D)
+REPRESENTATION AUDIT NOTE:
+This pipeline uses a Raw-Block Baseline representation: 2048-sample center-windowed
+lead signals reshaped directly into (16, 128), NOT true Phase-conditioned Kernel Mean
+Embeddings (Phase-KME). It is preserved strictly as the uncanonicalized raw-block
+predictive reference.
+
+Architecture:
+- OperatorSetModel with 1D-CNN response encoder on raw 16x128 blocks -> 128-D
 - Continuous operator encoder (8-D cardiac coordinate basis -> 64-D)
 - Transformer Set Encoder (d_model=192, 2 layers) + Cross-Attention Set Pooling (192-D) -> Latent (256-D)
 - Binary classification head (Linear(256, 1) -> BCEWithLogitsLoss)

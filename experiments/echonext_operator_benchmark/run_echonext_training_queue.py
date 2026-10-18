@@ -137,7 +137,7 @@ def main():
                     logger.info("SetOperator %s Seed %d already complete. Skipping.", regime, seed)
                     continue
 
-                desc = f"SetOperator EchoNext {regime} | Seed {seed}"
+                desc = f"SetOperator (Raw-Block Baseline) EchoNext {regime} | Seed {seed}"
                 cmd = [
                     PYTHON_EXEC,
                     str(BENCHMARK_DIR / "train_setoperator_echonext.py"),
@@ -162,7 +162,7 @@ def main():
                     logger.info("SetONet %s Seed %d already complete. Skipping.", regime, seed)
                     continue
 
-                desc = f"SetONet EchoNext {regime} | Seed {seed}"
+                desc = f"SetONet (Raw-Block Baseline) EchoNext {regime} | Seed {seed}"
                 cmd = [
                     PYTHON_EXEC,
                     str(BENCHMARK_DIR / "train_setonet_echonext.py"),

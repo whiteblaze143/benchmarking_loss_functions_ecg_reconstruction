@@ -26,6 +26,7 @@ import copy
 import json
 import logging
 import math
+import hashlib
 import os
 from pathlib import Path
 import random
@@ -42,6 +43,18 @@ from torch.utils.data import Dataset, DataLoader
 
 # Disable cuDNN Conv1d descriptor bug on CUDA 12
 torch.backends.cudnn.enabled = False
+
+
+def get_file_sha256(path: Path) -> str:
+    """Compute SHA256 digest of a file for immutable artifact provenance."""
+    if not path.exists():
+        return "not_found"
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
+
 
 REPO_ROOT = Path("/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction")
 SRC_DIR = REPO_ROOT / "experiments/ptbxl_distributional_repecg/src"
@@ -101,11 +114,24 @@ class EchoNextSetONetDataset(Dataset):
         self.regime = regime
         self.representation = representation
         self.is_train = is_train
+        self.base_seed = seed
         self.rng = np.random.default_rng(seed)
         self.basis_operators = np.eye(8, dtype=np.float32)
         self.length = len(labels) if limit_samples is None else min(limit_samples, len(labels))
+        self.beats_memmap = None
+        self.beats_index = None
+
         if self.representation == "phase_kme":
             self.kme_extractor = EchoNextPhaseKMEExtractor(fit_path=fit_path, device="cpu")
+            # Transparently load pre-cached beats if available
+            cache_dir = Path("/data/mithunmanivannan/echonext/cache_beats")
+            split_name = "train" if is_train else "val"
+            beats_path = cache_dir / f"echonext_{split_name}_beats.dat"
+            idx_path = cache_dir / f"echonext_{split_name}_beats_index.npy"
+            if beats_path.exists() and idx_path.exists() and limit_samples is None:
+                self.beats_index = np.load(idx_path)
+                total_beats = int(self.beats_index[-1, 0] + self.beats_index[-1, 1])
+                self.beats_memmap = np.memmap(beats_path, dtype=np.float32, mode="r", shape=(total_beats, 256, 8))
         else:
             self.kme_extractor = None
 
@@ -142,12 +168,17 @@ class EchoNextSetONetDataset(Dataset):
             ops = self.basis_operators
 
         if self.representation == "phase_kme":
-            beats = self.kme_extractor.extract_beats(wf_8)
+            if self.beats_memmap is not None:
+                start, count = self.beats_index[idx]
+                beats = np.array(self.beats_memmap[start : start + count], copy=True)
+            else:
+                beats = self.kme_extractor.extract_beats(wf_8)
             with torch.no_grad():
                 resps = self.kme_extractor.compute_phase_kme(
                     torch.from_numpy(beats), torch.from_numpy(ops)
                 )
             responses = resps.numpy().astype(np.float32)
+
         else:
             lead_signals = wf_8 @ ops.T  # (2500, set_size)
             lead_signals = lead_signals.T  # (set_size, 2500)
@@ -187,6 +218,17 @@ def collate_setonet_fn(batch: List[Dict[str, Any]]) -> Dict[str, torch.Tensor]:
         "sensor_mask": sensor_mask,
         "labels": labels,
     }
+
+
+def seed_worker(worker_id: int) -> None:
+    """Ensure unique, deterministic RNG stream per DataLoader worker to prevent operator duplication."""
+    worker_info = torch.utils.data.get_worker_info()
+    if worker_info is not None:
+        dataset = worker_info.dataset
+        base_seed = getattr(dataset, "base_seed", 42)
+        worker_seed = (int(base_seed) * 10007 + int(worker_id) * 1009) % (2**32 - 1)
+        dataset.rng = np.random.default_rng(worker_seed)
+        torch.manual_seed(worker_seed)
 
 
 def evaluate_setonet(
@@ -266,22 +308,31 @@ def train_setonet_seed(
     train_ds = EchoNextSetONetDataset(train_w, train_t, y_train, regime=regime, representation=representation, seed=seed, is_train=True, limit_samples=limit)
     val_ds = EchoNextSetONetDataset(val_w, val_t, y_val, regime="SetONet-12", representation=representation, seed=seed, is_train=False, limit_samples=limit)
 
+    g_train = torch.Generator()
+    g_train.manual_seed(seed)
     train_loader = DataLoader(
         train_ds,
         batch_size=batch_size,
         shuffle=True,
         num_workers=4 if not dry_run else 0,
+        worker_init_fn=seed_worker,
+        generator=g_train,
         collate_fn=collate_setonet_fn,
         pin_memory=True if torch.cuda.is_available() else False,
     )
+    g_val = torch.Generator()
+    g_val.manual_seed(seed + 999)
     val_loader = DataLoader(
         val_ds,
         batch_size=batch_size,
         shuffle=False,
         num_workers=2 if not dry_run else 0,
+        worker_init_fn=seed_worker,
+        generator=g_val,
         collate_fn=collate_setonet_fn,
         pin_memory=True if torch.cuda.is_available() else False,
     )
+
 
     model = build_setonet_echonext(tabular_condition).to(device)
     total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -334,6 +385,9 @@ def train_setonet_seed(
         ep_time = time.time() - t0_ep
 
         is_best = val_auroc > best_val_auroc
+        fit_sha = get_file_sha256(DEFAULT_FIT_PATH) if representation == "phase_kme" else None
+        script_sha = get_file_sha256(Path(__file__).resolve())
+
         if is_best:
             best_val_auroc = val_auroc
             best_epoch = epoch
@@ -345,6 +399,11 @@ def train_setonet_seed(
                         "seed": seed,
                         "regime": regime,
                         "tabular_condition": tabular_condition,
+                        "representation": representation,
+                        "representation_version": "phase_kme_v1.0_nystrom128" if representation == "phase_kme" else "raw_block_v1.0",
+                        "fit_artifact_path": str(DEFAULT_FIT_PATH) if representation == "phase_kme" else None,
+                        "fit_artifact_sha256": fit_sha,
+                        "script_sha256": script_sha,
                         "model_state_dict": best_model_weights,
                         "val_auroc": val_auroc,
                         "val_auprc": val_auprc,
@@ -384,6 +443,11 @@ def train_setonet_seed(
         "model": "SetONet",
         "regime": regime,
         "tabular_condition": tabular_condition,
+        "representation": representation,
+        "representation_version": "phase_kme_v1.0_nystrom128" if representation == "phase_kme" else "raw_block_v1.0",
+        "fit_artifact_path": str(DEFAULT_FIT_PATH) if representation == "phase_kme" else None,
+        "fit_artifact_sha256": fit_sha,
+        "script_sha256": script_sha,
         "seed": seed,
         "best_epoch": best_epoch,
         "best_val_auroc": float(best_val_auroc),
@@ -392,6 +456,7 @@ def train_setonet_seed(
         "dry_run": dry_run,
         "history": history,
     }
+
 
     if not dry_run:
         with open(out_dir / "train_summary.json", "w") as f:

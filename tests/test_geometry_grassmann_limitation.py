@@ -177,3 +177,77 @@ def test_proposition5_g2_distinct_on_nonorthogonal_sets():
     # On non-orthogonal sets, G2 has non-zero off-diagonal R_ij terms, so out_g2 != out_diag
     assert diff > 1e-4, f"G2 and diagonal control did not diverge on non-orthogonal set: diff={diff}"
     print(f"G2 vs Diagonal Control divergence on non-orthogonal limb leads: {diff:.4f}")
+
+
+def test_proposition6_higher_order_redundancy_limitation():
+    """Proposition 6: Squared Gram features cannot distinguish higher-order redundancy or rank.
+    
+    Construct two valid 3-operator Gram matrices:
+    G_A with pairwise correlations -1/2 (coplanar, 120-degree unit vectors, rank 2, linearly dependent)
+    G_B with pairwise correlations +1/2 (tetrahedral/spherical triangle unit vectors, rank 3, linearly independent)
+    
+    Both satisfy:
+    G_A * G_A = G_B * G_B = [[1, 1/4, 1/4], [1/4, 1, 1/4], [1/4, 1/4, 1]]
+    
+    Thus, R_A == R_B despite rank(G_A) = 2 and rank(G_B) = 3.
+    """
+    G_A = torch.tensor([
+        [1.0, -0.5, -0.5],
+        [-0.5, 1.0, -0.5],
+        [-0.5, -0.5, 1.0]
+    ])
+    G_B = torch.tensor([
+        [1.0, 0.5, 0.5],
+        [0.5, 1.0, 0.5],
+        [0.5, 0.5, 1.0]
+    ])
+
+    # 1. Verify PSD
+    eig_A = torch.linalg.eigvalsh(G_A)
+    eig_B = torch.linalg.eigvalsh(G_B)
+    assert (eig_A >= -1e-6).all(), "G_A is not positive semi-definite"
+    assert (eig_B >= -1e-6).all(), "G_B is not positive semi-definite"
+
+    # 2. Verify rank difference: rank(G_A) = 2, rank(G_B) = 3
+    rank_A = torch.linalg.matrix_rank(G_A).item()
+    rank_B = torch.linalg.matrix_rank(G_B).item()
+    assert rank_A == 2, f"Expected rank(G_A)=2, got {rank_A}"
+    assert rank_B == 3, f"Expected rank(G_B)=3, got {rank_B}"
+
+    # 3. Compute relational redundancy matrices R = G * G
+    R_A = G_A.square()
+    R_B = G_B.square()
+    assert torch.allclose(R_A, R_B, atol=1e-7)
+
+    expected_R = torch.tensor([
+        [1.0, 0.25, 0.25],
+        [0.25, 1.0, 0.25],
+        [0.25, 0.25, 1.0]
+    ])
+    assert torch.allclose(R_A, expected_R, atol=1e-7)
+
+    # 4. Construct unit vectors in R^8 whose Gram matrices are G_A and G_B
+    # For G_A: 3 coplanar vectors at 120 degrees in the (e1, e2) plane
+    qA_1 = torch.tensor([1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    qA_2 = torch.tensor([-0.5, math.sqrt(3)/2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    qA_3 = torch.tensor([-0.5, -math.sqrt(3)/2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    Q_A = torch.stack([qA_1, qA_2, qA_3], dim=0)
+    assert torch.allclose(Q_A @ Q_A.T, G_A, atol=1e-5)
+
+    # For G_B: 3 vectors in (e1, e2, e3) with mutual dot products +0.5
+    # qB_1 = [1, 0, 0]
+    # qB_2 = [1/2, sqrt(3)/2, 0]
+    # qB_3 = [1/2, 1/(2*sqrt(3)), sqrt(2/3)]
+    qB_1 = torch.tensor([1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    qB_2 = torch.tensor([0.5, math.sqrt(3)/2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    qB_3 = torch.tensor([0.5, 1.0/(2.0*math.sqrt(3)), math.sqrt(2.0/3.0), 0.0, 0.0, 0.0, 0.0, 0.0])
+    Q_B = torch.stack([qB_1, qB_2, qB_3], dim=0)
+    assert torch.allclose(Q_B @ Q_B.T, G_B, atol=1e-5)
+
+    # 5. Verify that compute_operator_gram yields bitwise identical R
+    _, R_model_A = compute_operator_gram(Q_A.unsqueeze(0))
+    _, R_model_B = compute_operator_gram(Q_B.unsqueeze(0))
+    diff_R = (R_model_A - R_model_B).abs().max().item()
+    assert diff_R < 1e-6, f"R matrices differed in model extractor: diff={diff_R}"
+    print(f"Proposition 6 verified: G2 receives identical R matrix despite rank 2 vs 3: max diff={diff_R:.2e}")
+

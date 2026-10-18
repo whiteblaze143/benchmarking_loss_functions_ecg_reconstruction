@@ -64,15 +64,28 @@ class FastResponseComputer:
         Returns:
             shape (K, 16, 128) float32
         """
-        n_ops = len(q_bank)
-        atoms = [response_atoms(beats_mv.astype(np.float64), q, self.v_scale) for q in q_bank]
-        atoms = np.stack(atoms, axis=0)  # (K, beat, 256, 2)
-        cells = atoms.reshape(n_ops, len(beats_mv), 16, 16, 2).transpose(0, 2, 1, 3, 4).reshape(n_ops, 16, -1, 2)
-        t_cells = torch.as_tensor(cells, device=self.device, dtype=torch.float32)
-        white = (t_cells - self.w_mean) @ self.w_comp * self.w_scale
-        d2 = torch.cdist(white, self.landmarks.expand(n_ops, 16, -1, -1)).square() + self.c2
-        feat = torch.rsqrt(d2) @ self.inv_root
-        return feat.mean(dim=2).cpu().numpy().astype(np.float32)  # (K, 16, 128)
+        prev_precision = torch.get_float32_matmul_precision() if hasattr(torch, "get_float32_matmul_precision") else None
+        prev_allow_tf32 = torch.backends.cuda.matmul.allow_tf32
+        prev_cudnn_tf32 = torch.backends.cudnn.allow_tf32
+        if hasattr(torch, "set_float32_matmul_precision"):
+            torch.set_float32_matmul_precision("highest")
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
+        try:
+            n_ops = len(q_bank)
+            atoms = [response_atoms(beats_mv.astype(np.float64), q, self.v_scale) for q in q_bank]
+            atoms = np.stack(atoms, axis=0)  # (K, beat, 256, 2)
+            cells = atoms.reshape(n_ops, len(beats_mv), 16, 16, 2).transpose(0, 2, 1, 3, 4).reshape(n_ops, 16, -1, 2)
+            t_cells = torch.as_tensor(cells, device=self.device, dtype=torch.float32)
+            white = (t_cells - self.w_mean) @ self.w_comp * self.w_scale
+            d2 = torch.cdist(white, self.landmarks.expand(n_ops, 16, -1, -1)).square() + self.c2
+            feat = torch.rsqrt(d2) @ self.inv_root
+            return feat.mean(dim=2).cpu().numpy().astype(np.float32)  # (K, 16, 128)
+        finally:
+            if hasattr(torch, "set_float32_matmul_precision") and prev_precision is not None:
+                torch.set_float32_matmul_precision(prev_precision)
+            torch.backends.cuda.matmul.allow_tf32 = prev_allow_tf32
+            torch.backends.cudnn.allow_tf32 = prev_cudnn_tf32
 
 
 def compute_auroc_macro(y_true: np.ndarray, y_pred: np.ndarray) -> float:
@@ -189,6 +202,13 @@ def verify_operator_physical_consistency(
     resps = computer.compute_record_responses(test_beats_mv, q_bank)
     resps_canonical = computer.compute_record_responses(test_beats_mv, e)
     basis_diff = float(np.max(np.abs(resps[:8] - resps_canonical)))
+    logger.info("TEST_DEBUG: test_beats_mv shape=%s dtype=%s q_bank shape=%s e shape=%s",
+                test_beats_mv.shape, test_beats_mv.dtype, q_bank.shape, e.shape)
+    logger.info("TEST_DEBUG: q_bank[:8] vs e diff: %.2e", float(np.max(np.abs(q_bank[:8] - e))))
+    logger.info("TEST_DEBUG: resps shape=%s resps_canonical shape=%s", resps.shape, resps_canonical.shape)
+    logger.info("TEST_DEBUG: basis_diff=%.6f", basis_diff)
+    for i in range(8):
+        logger.info("TEST_DEBUG: lead %d diff = %.6f", i, float(np.max(np.abs(resps[i] - resps_canonical[i]))))
     assert basis_diff < 1e-5, f"Canonical response deviation: {basis_diff}"
 
     logger.info("Physical operator consistency verified (max signal diff: %.2e, max basis diff: %.2e, Lead III diff: %.2e, aVF diff: %.2e).",
@@ -260,8 +280,8 @@ def evaluate_clinical_benchmarks(
                     b_ops = ops_t[start_idx:end_idx].to(device)
                     b_res = res_t[start_idx:end_idx].to(device)
 
-                    p_sp_list.append(torch.sigmoid(m_sp(b_ops, b_res)).cpu().numpy())
-                    p_ba_list.append(torch.sigmoid(m_ba(b_ops, b_res)).cpu().numpy())
+                    p_sp_list.append(torch.sigmoid(m_sp(b_ops, b_res)).float().cpu().numpy())
+                    p_ba_list.append(torch.sigmoid(m_ba(b_ops, b_res)).float().cpu().numpy())
 
             p_sp_arr = np.concatenate(p_sp_list, axis=0)
             p_ba_arr = np.concatenate(p_ba_list, axis=0)
@@ -319,6 +339,7 @@ def evaluate_grassmann_subspaces(
     patient_ids: np.ndarray | None = None,
     predictions_dir: Path | None = None,
     checkpoint_hashes: Dict[str, str] | None = None,
+    smoke_test: bool = False,
 ) -> Dict[str, Any]:
     """Evaluate all 350 frozen Grassmann subspaces with authentic derived responses.
 
@@ -328,7 +349,10 @@ def evaluate_grassmann_subspaces(
     3. Save actual patient-level probabilities for every seed, patient, rank, and subspace in resumable chunks.
     4. Compute AUROC for each subspace individually, plus rank-wise and rank-balanced aggregations.
     """
-    logger.info("=== Evaluating Expanded 350-Subspace Grassmann Benchmark ===")
+    if smoke_test:
+        logger.info("=== Evaluating Grassmann Benchmark [SMOKE TEST RESTRICTED MODE] ===")
+    else:
+        logger.info("=== Evaluating Expanded 350-Subspace Grassmann Benchmark (Production Mode) ===")
     bank_data = np.load(grassmann_bank_path)
     seeds = sorted(list(models["basis"].keys()))
     n_records = len(targets)
@@ -344,8 +368,14 @@ def evaluate_grassmann_subspaces(
     for r in range(1, 8):
         rank_key = f"rank_{r}"
         if rank_key not in bank_data:
-            logger.info("Rank %s not in Grassmann bank at %s, skipping...", rank_key, grassmann_bank_path)
-            continue
+            if smoke_test:
+                logger.info("[SMOKE TEST RESTRICTED MODE] Rank %s not in Grassmann bank at %s, skipping...", rank_key, grassmann_bank_path)
+                continue
+            else:
+                raise KeyError(
+                    f"Missing {rank_key} in Grassmann bank at {grassmann_bank_path}. "
+                    "Production evaluation requires all 7 ranks (350 frozen subspaces)."
+                )
 
         subspaces_r = bank_data[rank_key]  # (n_subspaces, r, 8)
         n_sub_r = len(subspaces_r)
@@ -498,6 +528,11 @@ def evaluate_grassmann_subspaces(
     rank_balanced_delta = float(np.mean([rank_summaries[f"rank_{r}"]["mean_delta"] for r in available_ranks])) if available_ranks else 0.0
 
     logger.info("Total Grassmann Subspaces Evaluated: %d/350", total_subspaces_evaluated)
+    if not smoke_test:
+        assert total_subspaces_evaluated == 350, (
+            f"Production Grassmann evaluation contract violated! "
+            f"Expected 350 subspaces across ranks 1-7, but evaluated {total_subspaces_evaluated}."
+        )
     logger.info("Grassmann Overall (350 spaces) -> Basis: %.4f | Span: %.4f | Delta: %+.4f",
                 np.mean(overall_basis), np.mean(overall_span), np.mean(overall_deltas))
     logger.info("Grassmann Rank-Balanced (Ranks 1-7) -> Basis: %.4f | Span: %.4f | Delta: %+.4f",

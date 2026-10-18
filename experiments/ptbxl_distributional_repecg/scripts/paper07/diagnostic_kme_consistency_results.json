@@ -1,0 +1,15 @@
+{
+  "diff_16_vs_8_gpu": 0.0,
+  "diff_16_vs_8_cpu": 0.0,
+  "diff_ref_vs_gpu": 0.00017739087343215942,
+  "diff_cached_vs_gpu16": 1.0162591934204102e-05,
+  "diff_11beats_vs_10beats": 0.005350619554519653,
+  "consistency_result": {
+    "status": "PASSED",
+    "max_operator_norm_error": 5.960464477539063e-08,
+    "max_signal_projection_difference": 1.0640599218403324e-07,
+    "max_canonical_response_difference": 0.0,
+    "lead_III_projection_difference": 5.6030384221195106e-08,
+    "aVF_projection_difference": 2.4220073717440282e-08
+  }
+}

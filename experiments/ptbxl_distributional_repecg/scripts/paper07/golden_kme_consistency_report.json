@@ -1,0 +1,34 @@
+{
+  "status": "PASSED",
+  "ecg_id": 8,
+  "patient_id": 11275,
+  "root_cause": "TensorFloat-32 (TF32) cuBLAS kernel tile variation on ill-conditioned Gram inverse root (torch.rsqrt(d2) @ self.inv_root) when torch.set_float32_matmul_precision('high') was enabled.",
+  "before_tf32_diff": 0.02971135824918747,
+  "after_fp32_diff": 0.0,
+  "bank_size_invariance": {
+    "diff_16_vs_8": 0.0,
+    "diff_8_vs_singles": 0.0,
+    "diff_16_vs_singles": 0.0,
+    "diff_16_vs_shuffled": 0.0,
+    "diff_16_vs_duplicated": 0.0
+  },
+  "float64_reference_agreement": {
+    "max_atom_diff": 0.0,
+    "max_whitened_diff": 1.44106252975007e-06,
+    "max_d2_diff": 9.702918708853758e-05,
+    "max_feat_diff": 0.0006345184312337993,
+    "max_resp_diff": 0.00017738974185489698
+  },
+  "cached_representation_agreement": {
+    "max_operator_diff": 0.0,
+    "max_response_diff": 1.0162591934204102e-05
+  },
+  "official_audit_result": {
+    "status": "PASSED",
+    "max_operator_norm_error": 5.960464477539063e-08,
+    "max_signal_projection_difference": 1.0640599218403324e-07,
+    "max_canonical_response_difference": 0.0,
+    "lead_III_projection_difference": 5.6030384221195106e-08,
+    "aVF_projection_difference": 2.4220073717440282e-08
+  }
+}

@@ -113,7 +113,8 @@ def evaluate_dataset(model: GraphECG, loader: DataLoader, device: torch.device) 
     with torch.no_grad():
         for batch_graph, labels, _ in loader:
             batch_graph = batch_graph.to(device)
-            logits = model(batch_graph)
+            out = model(batch_graph)
+            logits = out["logits"] if isinstance(out, dict) else out
             probs = torch.sigmoid(logits).cpu().numpy()
             all_probs.append(probs)
             all_targets.append(labels.numpy())
@@ -185,7 +186,8 @@ def train_single_seed(
             labels = labels.to(device)
 
             optimizer.zero_grad()
-            logits = model(batch_graph)
+            out = model(batch_graph)
+            logits = out["logits"] if isinstance(out, dict) else out
             loss = criterion(logits, labels)
             loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), 1.0)

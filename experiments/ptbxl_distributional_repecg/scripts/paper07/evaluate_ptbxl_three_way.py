@@ -34,7 +34,10 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("evaluate_three_way")
 
 torch.backends.cudnn.enabled = False
-torch.set_float32_matmul_precision("high")
+torch.backends.cuda.matmul.allow_tf32 = False
+torch.backends.cudnn.allow_tf32 = False
+if hasattr(torch, "set_float32_matmul_precision"):
+    torch.set_float32_matmul_precision("highest")
 
 REPO_DIR = Path(__file__).resolve().parents[4]
 EXPERIMENT_DIR = REPO_DIR / "experiments/ptbxl_distributional_repecg"

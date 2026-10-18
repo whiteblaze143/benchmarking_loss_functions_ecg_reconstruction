@@ -336,6 +336,8 @@ def train_setonet_seed(
             "Epoch %02d/%02d | Train Loss: %.4f | Val AUROC: %.4f | Val AUPRC: %.4f | LR: %.2e | Time: %.1fs%s",
             epoch, actual_epochs, avg_loss, val_auroc, val_auprc, scheduler.get_last_lr()[0], ep_time, best_mark
         )
+        sys.stdout.flush()
+        sys.stderr.flush()
 
         history.append({
             "epoch": epoch,

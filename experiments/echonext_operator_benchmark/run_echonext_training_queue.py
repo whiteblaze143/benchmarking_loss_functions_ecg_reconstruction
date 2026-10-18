@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -62,6 +63,7 @@ def run_command(cmd: list[str], desc: str) -> bool:
     logger.info("Command: %s", " ".join(cmd))
     t0 = time.time()
 
+    env = dict(os.environ, PYTHONUNBUFFERED="1")
     with open(QUEUE_LOG, "a") as f_log:
         f_log.write(f"\n{'='*80}\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] START: {desc}\n{'='*80}\n")
         proc = subprocess.Popen(
@@ -70,6 +72,7 @@ def run_command(cmd: list[str], desc: str) -> bool:
             stderr=subprocess.STDOUT,
             text=True,
             bufsize=1,
+            env=env,
         )
         for line in proc.stdout:
             sys.stdout.write(line)

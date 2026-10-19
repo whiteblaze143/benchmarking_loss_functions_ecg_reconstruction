@@ -1,33 +1,20 @@
-# Review Summary: Temporal repSpat Method Qualification
+# Review Summary: SetOperator Continuous Measurement Operator Research
 
-**Date**: 2026-09-12  
-**Target Proposal**: `refine-logs/FINAL_PROPOSAL.md` (`temporal_rep_stat_ecg`)  
-**Verdict**: **READY** (Score: 9.5 / 10)  
+## 1. Core Research Thesis Evaluation
+The research program investigates continuous measurement operator generalization in ECG representation learning. Specifically, the model observes an arbitrary subset of linear combinations of cardiac dipole coordinates and must perform clinical diagnosis while generalising to unseen measurement frames.
 
----
+## 2. Critical Methodological Strengths
+1. **Authentic RKHS Phase-KME**: The representation grounds continuous ECG signals in a reproducing kernel Hilbert space via Nyström kernel mean embeddings, preserving distributional phase dynamics without ad-hoc signal interpolation.
+2. **True Set Invariance**: Cross-attention pooling and Transformer self-attention ensure permutation invariance over the observed measurement set.
+3. **Paired Patient Evaluation**: Comparisons are computed on identical patient records and fixed continuous operator subspaces, eliminating split variance.
 
-## 1. Multi-Dimensional Review Assessment
-
-| Dimension | Score (1-10) | Evaluation Comments |
-|---|:---:|---|
-| **Problem Anchor Fidelity** | 10 | The core bottleneck—over-segmentation of recurring physiological states by temporally constrained clustering—is preserved without drift. |
-| **Mathematical Soundness** | 10 | Complete, line-by-line translation of repSpat. Lance-Williams updates, IMQ MMD kernel, attribute block permutation, and maximal clique extraction are mathematically exact. |
-| **Simplicity & Parsimony** | 10 | Rejects unnecessary neural bloat; minimal adequate mechanism directly solves the problem non-parametrically. |
-| **Temporal Dependence Handling** | 9.5 | The $k$-means feature-space blocking ($b(g) = \max(1, \lfloor n_g/m \rfloor)$) directly preserves the temporal autocorrelation of consecutive heartbeats under the permutation null. |
-| **Reproducibility & Testability** | 10 | 100% test coverage with automated unit tests across distance, CAHC, silhouette, MMD, permutation, FDR, and cliques. |
-
----
-
-## 2. Key Review Observations & Critical Checks
-
-1. **Lance-Williams Metric Equivalence**:
-   - Ward's minimum variance criterion (`ward.D2`) operates purely on Euclidean distances between feature centroids. Scikit-learn's `AgglomerativeClustering(linkage='ward', connectivity=L)` implements this exact update rule.
-2. **Heavy-Tailed IMQ Kernel**:
-   - The Inverse Multiquadratic kernel $k(x, y) = (\|x-y\|_2^2 + c^2)^{-1/2}$ ($c \ge 1$) maintains characteristic properties while ensuring tail sensitivity for subtle morphological variations.
-3. **Clique Size Threshold $\ge 3$**:
-   - Requiring a 3-clique ensures that at least 3 mutually indistinguishable temporal episodes exist before merging into an RTP. This provides robustness against spurious pairwise false discoveries.
-
----
-
-## 3. Decision Gate
-- All gate requirements met. Proceed directly to execution via `/run-experiment`.
+## 3. Key Vulnerabilities Identified & Resolved
+1. **PhaseCNN Cyclic-Shift Invariance**:
+   - *Issue*: Circular convolutions followed by global mean pooling across the 16 phase cells make PhaseCNN strictly invariant to cyclic phase rolls ($\Delta < 6 \times 10^{-8}$).
+   - *Resolution*: Ablation B2 introduces a learned softmax phase weighting $\sum_{p=1}^{16} \alpha_p \cdot \text{conv\_feature}_p$ to evaluate whether an absolute phase reference relative to the R-peak improves performance.
+2. **Explicit Geometry vs Encoder Capacity**:
+   - *Issue*: G1's 2nd-order projective features ($\mathbb{R}^{44}$) increase operator MLP parameters by 2,304.
+   - *Resolution*: Mandatory capacity control A2 (`Linear(8,96) -> GELU -> Linear(96,64)`, +2,336 parameters) isolates the geometric inductive bias from increased network capacity.
+3. **Modality Confounding**:
+   - *Issue*: A model could achieve high canonical AUROC using the 7 clinical tabular covariates while failing to extract diagnostic information from ECG waveforms.
+   - *Resolution*: Ablations D1 (ECG-Only) and D2 (Tabular-Only) quantify the independent diagnostic capacity of each modality.

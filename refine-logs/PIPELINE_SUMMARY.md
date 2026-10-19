@@ -1,9 +1,9 @@
-# Pipeline Summary: Temporal repSpat for ECG Signal Analysis
+# Pipeline Summary: Paper 07 — 168 GPU-Hour SetOperator Architectural Ablation Campaign
 
-**Problem**: Over-segmentation of recurring physiological states by temporally constrained clustering versus unconstrained noise contamination in electrocardiograms.  
-**Final Method Thesis**: Nonparametric pairing of Constrained Agglomerative Hierarchical Clustering with Inverse Multiquadratic Maximum Mean Discrepancy, attribute-based block permutation, and maximal clique graph reassignment faithfully isolates Repeated Temporal Patterns (RTPs) in ECGs.  
-**Final Verdict**: **READY**  
-**Date**: 2026-09-12  
+**Problem**: Determining what architectural mechanisms enable continuous RKHS Phase-KME SetOperator to generalize to unfamiliar, continuous ECG measurement operators without sacrificing canonical clinical diagnosis.
+**Final Method Thesis**: Explicit second-order operator measurement geometry ($\gamma(q) \in \mathbb{R}^{44}$) combined with phase-position-aware cardiac readout and cross-view Transformer interaction provides the optimal inductive bias for continuous measurement operator generalization on EchoNext.
+**Final Verdict**: **READY**
+**Date**: 2026-10-18
 
 ## Final Deliverables
 - Proposal: `refine-logs/FINAL_PROPOSAL.md`
@@ -11,17 +11,34 @@
 - Refinement report: `refine-logs/REFINEMENT_REPORT.md`
 - Experiment plan: `refine-logs/EXPERIMENT_PLAN.md`
 - Experiment tracker: `refine-logs/EXPERIMENT_TRACKER.md`
-- Core Package: `temporal_rep_stat_ecg/`
-- Authors' Original Code Preserved: `temporal_rep_stat_ecg/repspat/` and `temporal_rep_stat_ecg/author_repspat/`
+- Implementation plan: `<Artifact Directory>/setoperator_168h_ablation_campaign_plan.md`
+- Supervisor Script: `scripts/run_paper07_ablation_week.py` (in dev worktree)
+- Manifest: `experiments/echonext_operator_benchmark/ablation_week_manifest.json`
 
 ## Contribution Snapshot
-- **Dominant contribution**: The exact mathematical translation of repSpat to 1D temporal biomedical signals, establishing nonparametric discovery of Repeated Temporal Patterns (RTPs).
-- **Supporting contribution**: Dual continuous (Euclidean) and binary clinical marker (Jaccard) representations for multi-lead ECGs.
-- **Explicitly rejected complexity**: Stochastic black-box neural clusterers and uncalibrated heuristic thresholds.
+- **Dominant contribution**: Dissecting continuous operator representation, phase morphology, and set aggregation mechanisms on EchoNext SHD detection under authentic RKHS Phase-KME.
+- **Supporting contribution**: Resolving PhaseCNN cyclic-shift invariance via learned phase-position readout ($\Delta < 6 \times 10^{-8}$ proved).
+- **Explicitly rejected complexity**: Speculative multi-seed sweeps prior to single-seed screening; heavy diffusion, VAE, or flow decoders; five-seed sweeps before identifying the winning architecture.
 
 ## Must-Prove Claims
-1. **Simulation Superiority**: Under temporal autoregression ($\eta \in \{0.3, 0.8\}$), Temporal repSpat achieves higher ARI ($\approx 0.95\text{--}1.00$) than CAHC alone ($\le 0.60$) and unconstrained clustering.
-2. **Clinical Utility**: Discovers valid recurring rhythm and repolarization patterns across PTB-XL records under both Euclidean and Jaccard metrics.
+1. **Geometry vs Capacity**: G1's 2nd-order projective geometry ($\mathbb{R}^{44}$) outperforms the capacity-matched raw-$q$ MLP control (`8 -> 96 -> 64`), confirming explicit geometry provides useful inductive bias rather than mere parameter expansion.
+2. **Phase Readout Utility**: Breaking PhaseCNN's exact cyclic-shift invariance via learned phase-position readout improves SHD classification and out-of-distribution operator generalization.
+3. **Cross-View Interaction**: Multi-head self-attention across observed lead tokens yields superior generalization compared to independent per-view encoding and pooling.
+4. **Modality Attribution**: True ECG waveform morphology provides genuine diagnostic value beyond the 7 clinical tabular covariates.
+
+## First Runs to Launch
+1. `A0_baseline`: Original SetOperator SO-Span seed 42 (active in `train_so_span_s42`, PID 3937990).
+2. `A1_g1_from_scratch`: G1 SetOperator SO-Span seed 42 (queued in `g1_launch_controller`).
+3. `A2_capacity_control`: Capacity-matched raw-$q$ SetOperator (`Linear(8,96)->GELU->Linear(96,64)`).
+4. `D2_tabular_only`: 7-covariate clinical MLP baseline.
+5. `D1_ecg_only`: Pure ECG morphology SetOperator (`patient_context_dim = 0`).
+6. `B2_phase_position_aware`: SetOperator with learned softmax phase weighting.
+
+## Main Risks & Mitigations
+- **Risk**: Baseline or G1 job interrupted or fails.
+  - **Mitigation**: Dedicated launch controllers check exit codes, verify file hashes, and quarantine failures with `BLOCKER.json`.
+- **Risk**: Exceeding 168 GPU-hours.
+  - **Mitigation**: Dynamic early-stopping (~12 epochs per job ≈ 3.0 h), per-job duration caps, and strict priority ordering.
 
 ## Next Action
-- Launch full benchmark suite inside detached `tmux` session via `/run-experiment`.
+- Launch week-long supervisor in detached tmux session `paper07_ablation_week` with preflight validation gate.

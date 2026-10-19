@@ -1,56 +1,65 @@
-# Braid Clinical Extension Experiment Plan
+# Experiment Plan: Paper 07 — 168 GPU-Hour SetOperator Architectural Ablation Campaign
 
-**Problem:** determine whether PTB-XL-trained Braid representations match SetOperator and GraphECG under the same frozen-encoder clinical configuration-shift protocol.
+## 1. Experimental Setup & Protocol
+- **Dataset**: EchoNext ($N_{\text{train}} = 72,475$, $N_{\text{val}} = 4,626$, $N_{\text{test}} = 24,000$ sealed).
+- **Task**: Binary Structural Heart Disease (`shd_moderate_or_greater_flag`).
+- **Hardware**: Dedicated NVIDIA A100-PCIE-40GB (168 GPU-hour cap).
+- **Primary Seed**: 42.
+- **Training Protocol**:
+  - Regime: `SO-Span` (50% basis subsets, 25% continuous Gaussian frames, 25% sparse linear frames, set size $k \in [1, 8]$).
+  - Optimizer: AdamW ($\text{lr} = 10^{-4}$, $\text{weight\_decay} = 0.01$).
+  - Scheduler: CosineAnnealingLR to $10^{-6}$ over 50 epochs.
+  - Early-stopping patience: 10 epochs on official validation AUROC.
+  - Batch size: 64 with gradient norm clipping at 1.0.
 
-**Method thesis:** Braid is evaluated as a PTB-XL-trained encoder; each native cohort receives only a full/native-training-split task head, which is frozen before reduced-lead evaluation.
+## 2. Evaluation Suite & Metrics
+All models are evaluated on identical validation records:
+1. **Canonical Clinical Configurations**:
+   - R01: Full 12-lead (8 canonical basis leads)
+   - R02: Six limb leads (2D Einthoven subspace)
+   - R03: Leads I, II, III
+   - R04: Leads I, II (basis of limb plane)
+   - R05: Lead I
+   - R06: Lead II
+   - R07: Precordial differential ($V_3 - V_2$)
+2. **Development Grassmann Bank**:
+   - 21 continuous random orthonormal subspaces (ranks 1 through 7, 3 per rank).
+   - Report mean macro AUROC and per-rank AUROC.
+3. **Calibration & Reliability**: ECE and Brier score.
+4. **Basis-Change Rotation Stability**: $\Delta p = \frac{1}{N} \sum |p(Q) - p(UQ)|$ for $U \in O(r)$.
+5. **Redundant-Lead Sensitivity**: Prediction shift $|p_{R02} - p_{R04}|$.
+6. **Inference Latency & Parameter Counts**: Milliseconds per patient, active classification params vs total instantiated.
 
-## Claim Map
+## 3. Prioritized Execution Order & Run Budget
 
-| Claim | Minimum evidence | Block |
-|---|---|---|
-| Braid changes flexible-lead clinical representations relative to SetOperator and GraphECG | Same patient/split/configuration predictions with patient-level uncertainty | B1 |
-| Any temporal benefit is present on native annotated boundaries rather than inferred labels | Fixed native delineation splits, direct sequence head, per-class and boundary metrics | B2 |
+### Phase 1: High-Priority Core Hypotheses (Hours 0 – 30)
+1. `A0_baseline`: Original SetOperator SO-Span (reused baseline checkpoint).
+2. `A1_g1_scratch`: G1 SetOperator SO-Span (currently queued).
+3. `A2_capacity_control`: Capacity-matched raw-$q$ MLP (`8 -> 96 -> 64`).
+4. `D2_tabular_only`: 7-covariate clinical MLP baseline.
+5. `D1_ecg_only`: Pure ECG morphology SetOperator.
+6. `B2_phase_position_aware`: Softmax learned phase-cell weighting.
 
-## Block B1: Cross-Dataset Task-Native Decoupling
+### Phase 2: Representation & Morphology Ablations (Hours 30 – 80)
+7. `A3_no_q`: Constant/ablated operator token.
+8. `B1_global_kme`: Global mean pooling over phase cells.
+9. `C1_no_transformer`: Independent per-measurement MLP + attention pooling.
+10. `C2_mean_pooling`: Masked mean pooling instead of learned-query pooling.
+11. `B3_noncircular_conv`: Standard zero-padded Conv1d blocks.
+12. `A4_projective_only`: Unsigned projective features ($\mathbb{R}^{36}$).
+13. `A5_diagonal_quadratic`: Coordinate magnitude features ($\mathbb{R}^{16}$).
 
-- **Systems:** GraphECG, three SetOperator checkpoints, five fully trained PTB-XL Braid checkpoints, and the existing fixed-tensor control.
-- **Cohorts:** LUDB, Zhejiang, ISP, Kingston-ICU, then RDB, HEEDB, and EchoNext.
-- **Protocol:** extract a frozen encoder representation under the shared Q8, S6, S3, S2, S1, and ICM configurations; fit a task head only on the cohort's full/native training split; select it only on that cohort's validation split; freeze both components for shift testing.
-- **Metrics:** task-appropriate AUROC/AUPRC; absolute full-to-shift delta; retention; class-wise denominators; patient-equal aggregation whenever patient IDs exist.
-- **EchoNext gate:** train/validation waveforms must be restored and verified against the official split before any head fitting. The local 5,442-record official test archive is evaluation-only.
-- **HEEDB-derived Emory-MUSE gate:** use the audited 12SL diagnosis table only after per-row WFDB materialization is reconciled, empty-code exclusions are frozen, the label vocabulary/support rule is fit on training patients only, and patient-disjoint hash splits are emitted. This is distinct from a claim about the full multi-site HEEDB corpus.
-- **RDB gate:** use the frozen cache train/validation/test directories and payload rhythm labels, never filename-derived labels.
+### Phase 3: Relational Attention & Set Structure (Hours 80 – 130)
+14. `A6_g2_relational`: Squared-Gram relational attention bias $\beta (q_i^\top q_j)^2$.
+15. `A7_diagonal_attention`: Diagonal attention bias control.
+16. `B4_no_local_conv`: Parameter-matched per-phase MLP.
+17. `B5_phase_disorder`: Controlled permutation of phase cells.
+18. `C3_one_layer_transformer`: Depth = 1 Transformer.
+19. `C4_single_head_attention`: Single-head attention ($n_{\text{head}} = 1$).
+20. `D3_late_fusion`: Late concatenation of tabular covariates.
 
-## Block B2: Native Delineation
-
-- **Cohorts:** ISP, LUDB, RDB, Zhejiang.
-- **Protocol:** direct sequence head over each frozen encoder's time-resolved representation. Do not score a generic NeuroKit delineator on reconstructed waveforms as an encoder comparison.
-- **Labels:** native P/QRS/T masks and six onset/offset fiducials; preserve each dataset's sampling rate and documented coordinate map.
-- **Metrics:** class Dice/IoU, per-fiducial event F1 at prespecified millisecond tolerances, absolute boundary error in milliseconds, and valid/ineligible sample counts.
-- **Splits:** ISP official train/test; LUDB frozen patient folds; RDB frozen cache splits; Zhejiang frozen record-hash folds. No test-derived normalization, thresholds, or early stopping.
-
-## Block B3: Statistical Inference and Ablations
-
-- **Bootstrap:** 2,000 paired resamples of test patients; use records only where patient IDs are unavailable and label that exception.
-- **Pairwise discrimination:** DeLong tests only for matched predictions on the same binary endpoint/test set; alpha 0.05 with a prespecified multiple-testing correction family.
-- **Shift comparison:** paired bootstrap on per-patient metric contributions and paired full-versus-reduced deltas; report 95% CIs and explicit denominators.
-- **Braid ablations:** field versus each topology variant under identical PTB-XL data, seed, optimizer, selection split, and parameter-budget disclosure. Do not rescue a negative field-richness result with post-hoc architecture changes.
-
-## Run Order
-
-| Milestone | Gate | Status | Next action |
-|---|---|---|---|
-| M0 | Five Braid PTB-XL checkpoints | Running | Three-way GPU-saturated wave, then remaining two variants |
-| M1 | Existing four-cohort task-native comparison | Pending M0 | Run the shared registry only after every Braid checkpoint exists |
-| M2 | RDB rhythm/delineation adapter | Ready data, adapter pending | Implement/test frozen-cache native-label adapter |
-| M3 | ISP/LUDB/Zhejiang direct delineation heads | Labels audited, heads pending | Implement/test one common sequence-head contract without coordinate coercion |
-| M4 | HEEDB-derived Emory-MUSE admission | Complete | Frozen v1 admission has 941,679 records / 343,424 patients, zero split crossings, all 180 training-derived codes, and verified waveform pairs for every diagnosis-eligible row |
-| M5 | EchoNext task-native head | Blocked by missing train/validation waveforms | Restore and hash official training/validation inputs; retain test sealed |
-| M6 | Statistical report | Pending M1-M5 | Generate paired bootstrap/DeLong artifacts from frozen prediction tables |
-
-## Non-negotiable exclusions
-
-- No fitting on EchoNext's official test waveforms.
-- No fabricated PTB-XL labels for native cohorts.
-- No pooled-record inference when a patient-level analysis is possible.
-- No topology threshold, checkpoint, or hyperparameter selection from a reduced configuration or external test outcome.
+### Phase 4: Constructive Interactions & Synthesis (Hours 130 – 168)
+21. `B6_raw_block_control`: SetOperator trained on raw waveform chunks.
+22. `E1_g1_plus_phase_aware`: G1 operator MLP + learned phase weighting.
+23. `E2_best_geometry_best_phase`: Best of Group A + Best of Group B.
+24. `final_evaluation_and_synthesis`: Master leaderboard generation and decision memo.

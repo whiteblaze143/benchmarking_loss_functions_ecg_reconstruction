@@ -67,11 +67,11 @@ def gamma(q: torch.Tensor, eps: float = 1e-8) -> torch.Tensor:
         raise ValueError("Operator contains NaN or infinite values")
 
     norm = torch.norm(q, p=2, dim=-1, keepdim=True)
-    if (norm < eps).any():
-        raise ValueError("Operator contains zero or near-zero norm vectors")
+    valid_mask = norm >= eps
+    safe_norm = torch.clamp(norm, min=eps)
 
     # Unit-normalize operator
-    q_unit = q / norm
+    q_unit = q / safe_norm
 
     # Rank-1 outer product: q_unit q_unit^T in R^(..., 8, 8)
     q_outer = q_unit.unsqueeze(-1) @ q_unit.unsqueeze(-2)
@@ -79,7 +79,9 @@ def gamma(q: torch.Tensor, eps: float = 1e-8) -> torch.Tensor:
     # Isometric vectorization preserving Frobenius norm
     q_vech = vech_sqrt2(q_outer)  # (..., 36)
 
-    return torch.cat([q_unit, q_vech], dim=-1)  # (..., 44)
+    gamma_out = torch.cat([q_unit, q_vech], dim=-1)  # (..., 44)
+    # Zero out padded elements
+    return torch.where(valid_mask, gamma_out, torch.zeros_like(gamma_out))
 
 
 def compute_operator_gram(

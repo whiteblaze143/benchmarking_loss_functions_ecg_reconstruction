@@ -55,6 +55,16 @@ BASELINE_CKPT = Path("/data/mithunmanivannan/codex_artifacts/echonext_three_way_
 DEV_BANK_PATH = Path("/data/mithunmanivannan/codex_artifacts/echonext_geometry_setoperator_v1/echonext_dev_operator_bank.npz")
 
 
+def sha256_file(path: Path) -> str:
+    if not path.exists():
+        return "not_found"
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def compute_ece(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
     bin_edges = np.linspace(0.0, 1.0, n_bins + 1)
     ece = 0.0
@@ -459,6 +469,21 @@ def main():
             "overall_dev_bank_auprc_delta": overall_dev_a_prc - overall_dev_b_prc,
         },
         "training_history": train_history,
+        "provenance_verification": {
+            "evaluation_script": str(Path(__file__).resolve()),
+            "evaluation_script_sha256": sha256_file(Path(__file__).resolve()),
+            "baseline_checkpoint": str(base_ckpt_path.resolve()),
+            "baseline_checkpoint_sha256": sha256_file(base_ckpt_path),
+            "ablation_checkpoint": str(abl_ckpt_path.resolve()),
+            "ablation_checkpoint_sha256": sha256_file(abl_ckpt_path),
+            "operator_bank_path": str(DEV_BANK_PATH.resolve()),
+            "operator_bank_sha256": sha256_file(DEV_BANK_PATH),
+            "operator_bank_subspaces_count": len(all_dev_b_aurocs),
+            "validation_cohort_count": len(val_cohort),
+            "phase_kme_fit_path": str(DEFAULT_FIT_PATH.resolve()),
+            "phase_kme_fit_sha256": sha256_file(DEFAULT_FIT_PATH),
+            "evaluation_timestamp": time.time(),
+        },
         "timestamp": time.time(),
     }
 
@@ -476,6 +501,7 @@ def main():
         "redundant_lead_analysis": redundant_lead_analysis,
         "development_grassmann_bank": grassmann_results,
         "rotated_basis_stability": basis_rotation_results,
+        "provenance_verification": result_data["provenance_verification"],
         "timestamp": time.time(),
     }
     with open(report_path, "w") as f:

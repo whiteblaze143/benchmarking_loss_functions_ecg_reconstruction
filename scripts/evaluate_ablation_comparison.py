@@ -76,7 +76,8 @@ class EchoNextPreloadedCohort:
         self.tabular = torch.as_tensor(val_tabular[:n], dtype=torch.float32)
         self.labels = np.array(val_labels[:n], dtype=np.float32)
 
-        cache_path = Path("/data/mithunmanivannan/codex_artifacts/echonext_geometry_setoperator_v1/cache/val_beats_cached.pt")
+        local_cache = Path("/tmp/val_beats_cached.pt")
+        cache_path = local_cache if local_cache.exists() else Path("/data/mithunmanivannan/codex_artifacts/echonext_geometry_setoperator_v1/cache/val_beats_cached.pt")
         cache_path.parent.mkdir(parents=True, exist_ok=True)
 
         if cache_path.exists() and limit is None:

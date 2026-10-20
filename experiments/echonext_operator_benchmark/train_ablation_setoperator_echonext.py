@@ -114,11 +114,12 @@ def train_ablation_experiment(
     val_t = np.load(DATA_DIR / "EchoNext_val_tabular_features.npy")
 
     limit = 64 if dry_run else None
+    is_tab_only = (tabular_mode == "tabular_only")
     train_ds = EchoNextSetOperatorDataset(
-        train_w, train_t, y_train, regime=regime, representation=representation, seed=seed, is_train=True, limit_samples=limit
+        train_w, train_t, y_train, regime=regime, representation=representation, seed=seed, is_train=True, limit_samples=limit, tabular_only=is_tab_only
     )
     val_ds = EchoNextSetOperatorDataset(
-        val_w, val_t, y_val, regime="SO-12", representation=representation, seed=seed, is_train=False, limit_samples=limit
+        val_w, val_t, y_val, regime="SO-12", representation=representation, seed=seed, is_train=False, limit_samples=limit, tabular_only=is_tab_only
     )
 
     g_train = torch.Generator().manual_seed(seed)
@@ -283,9 +284,29 @@ def train_ablation_experiment(
     }
 
     if not dry_run:
+        torch.save(
+            {
+                "experiment_id": exp_id,
+                "epoch": len(history),
+                "seed": seed,
+                "geometry_mode": geometry_mode,
+                "phase_mode": phase_mode,
+                "set_encoder_mode": set_encoder_mode,
+                "pooling_mode": pooling_mode,
+                "tabular_mode": tabular_mode,
+                "active_parameters": total_params,
+                "representation": representation,
+                "fit_artifact_path": str(DEFAULT_FIT_PATH) if representation == "phase_kme" else None,
+                "fit_artifact_sha256": fit_sha,
+                "model_state_dict": model.state_dict(),
+                "val_auroc": history[-1]["val_auroc"] if history else 0.0,
+                "val_auprc": history[-1]["val_auprc"] if history else 0.0,
+            },
+            out_dir / "final_model.pt"
+        )
         with open(out_dir / "train_summary.json", "w") as f:
             json.dump(summary, f, indent=2)
-        logger.info("Saved summary to %s", out_dir / "train_summary.json")
+        logger.info("Saved summary and final_model.pt to %s", out_dir)
 
     return summary
 

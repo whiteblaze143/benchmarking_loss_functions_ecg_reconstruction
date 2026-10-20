@@ -108,6 +108,7 @@ class EchoNextSetOperatorDataset(Dataset):
         is_train: bool = True,
         limit_samples: Optional[int] = None,
         fit_path: Path = DEFAULT_FIT_PATH,
+        tabular_only: bool = False,
     ):
         self.waveforms = waveforms  # (N, 1, 2500, 12)
         self.tabular = tabular.astype(np.float32)  # (N, 7)
@@ -121,15 +122,22 @@ class EchoNextSetOperatorDataset(Dataset):
         self.length = len(labels) if limit_samples is None else min(limit_samples, len(labels))
         self.beats_memmap = None
         self.beats_index = None
+        self.tabular_only = tabular_only
+
+        if self.tabular_only:
+            self.kme_extractor = None
+            return
 
         if self.representation == "phase_kme":
             self.kme_extractor = EchoNextPhaseKMEExtractor(fit_path=fit_path, device="cpu")
-            # Transparently load pre-cached beats if available
+            # Only use memmap cache if explicitly enabled via USE_BEAT_CACHE=1
+            # (NFS memmap random seeks stall in folio_wait_bit_common, taking ~5s/rec vs 16.8ms CPU extract from local SSD)
+            enable_memmap_cache = os.environ.get("USE_BEAT_CACHE", "0") == "1"
             cache_dir = Path("/data/mithunmanivannan/echonext/cache_beats")
             split_name = "train" if is_train else "val"
             beats_path = cache_dir / f"echonext_{split_name}_beats.dat"
             idx_path = cache_dir / f"echonext_{split_name}_beats_index.npy"
-            if beats_path.exists() and idx_path.exists() and limit_samples is None:
+            if enable_memmap_cache and beats_path.exists() and idx_path.exists() and limit_samples is None:
                 self.beats_index = np.load(idx_path)
                 total_beats = int(self.beats_index[-1, 0] + self.beats_index[-1, 1])
                 self.beats_memmap = np.memmap(beats_path, dtype=np.float32, mode="r", shape=(total_beats, 256, 8))
@@ -140,9 +148,18 @@ class EchoNextSetOperatorDataset(Dataset):
         return self.length
 
     def __getitem__(self, idx: int) -> Dict[str, Any]:
-        wf_12 = self.waveforms[idx, 0]  # (2500, 12)
         tab = self.tabular[idx]
         y = self.labels[idx]
+
+        if self.tabular_only:
+            return {
+                "operators": torch.zeros((1, 8), dtype=torch.float32),
+                "responses": torch.zeros((1, 16, 128), dtype=torch.float32),
+                "tabular": torch.from_numpy(tab),
+                "label": torch.tensor(y, dtype=torch.float32),
+            }
+
+        wf_12 = self.waveforms[idx, 0]  # (2500, 12)
 
         # Extract the 8 canonical leads: I, II, V1-V6
         wf_8 = wf_12[:, CANONICAL_8_LEADS]  # (2500, 8)

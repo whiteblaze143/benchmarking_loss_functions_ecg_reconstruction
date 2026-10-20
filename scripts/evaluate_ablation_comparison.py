@@ -52,7 +52,7 @@ logger = logging.getLogger("eval_ablation")
 
 CANONICAL_8_LEADS = [0, 1, 6, 7, 8, 9, 10, 11]
 BASELINE_CKPT = Path("/data/mithunmanivannan/codex_artifacts/echonext_three_way_v1/checkpoints/setoperator/SO-Span_SO-ECG+Tab-Native_s42/best_model.pt")
-DEV_BANK_PATH = Path("/data/mithunmanivannan/codex_artifacts/echonext_geometry_setoperator_v1/runs/g1_checkpoint_adapted_s42/dev_bank/ptbxl_dev_operator_bank.npz")
+DEV_BANK_PATH = Path("/data/mithunmanivannan/codex_artifacts/echonext_geometry_setoperator_v1/echonext_dev_operator_bank.npz")
 
 
 def compute_ece(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
@@ -290,9 +290,9 @@ def main():
         "ablation_mean_abs_prediction_shift": abl_redundant_diff,
     }
 
-    # 2. Development Grassmann Subspace Bank Evaluation
-    logger.info("--- 2. Evaluating Development Grassmann Operator Bank (21 Subspaces) ---")
     dev_bank_data = np.load(DEV_BANK_PATH)
+    total_subspaces = sum(len(dev_bank_data[f"rank_{r}"]) for r in range(1, 8))
+    logger.info("--- 2. Evaluating Frozen EchoNext Development Grassmann Bank (%d Subspaces) ---", total_subspaces)
     grassmann_results = {}
     all_dev_b_aurocs = []
     all_dev_a_aurocs = []
@@ -359,6 +359,50 @@ def main():
                 overall_dev_b_auc, overall_dev_a_auc, overall_dev_a_auc - overall_dev_b_auc,
                 overall_dev_a_prc - overall_dev_b_prc)
 
+    # 2b. Rotated-Basis Stability (Within-subspace orthonormal basis changes: Q_rot = U @ Q, U in O(r))
+    logger.info("--- 2b. Evaluating Rotated-Basis Invariance across Multi-Lead Subspaces ---")
+    basis_rotation_results = {}
+    rng_rot = np.random.default_rng(2026)
+    all_shifts_b = []
+    all_shifts_a = []
+    for r in range(2, 8):
+        rank_key = f"rank_{r}"
+        subspaces = dev_bank_data[rank_key]
+        n_test = min(3, len(subspaces))
+        r_shifts_b = []
+        r_shifts_a = []
+        for s_idx in range(n_test):
+            Q = subspaces[s_idx].astype(np.float32)
+            A = rng_rot.normal(size=(r, r))
+            U, _ = np.linalg.qr(A)
+            Q_rot = (U @ Q).astype(np.float32)
+
+            res_orig = evaluate_both_models_on_operators(base_model, abl_model, Q, extractor, val_cohort, device)
+            res_rot = evaluate_both_models_on_operators(base_model, abl_model, Q_rot, extractor, val_cohort, device)
+
+            p_b_orig = res_orig["base_probs"]
+            p_b_rot = res_rot["base_probs"]
+            p_a_orig = res_orig["abl_probs"]
+            p_a_rot = res_rot["abl_probs"]
+
+            r_shifts_b.append(float(np.mean(np.abs(p_b_orig - p_b_rot))))
+            r_shifts_a.append(float(np.mean(np.abs(p_a_orig - p_a_rot))))
+
+        m_shift_b = float(np.mean(r_shifts_b))
+        m_shift_a = float(np.mean(r_shifts_a))
+        all_shifts_b.extend(r_shifts_b)
+        all_shifts_a.extend(r_shifts_a)
+        basis_rotation_results[rank_key] = {
+            "baseline_mean_abs_shift": m_shift_b,
+            "ablation_mean_abs_shift": m_shift_a,
+        }
+        logger.info("  Rank %d Rotated-Basis Shift: Baseline=%.4f | Ablation=%.4f", r, m_shift_b, m_shift_a)
+
+    basis_rotation_results["overall"] = {
+        "baseline_mean_abs_shift": float(np.mean(all_shifts_b)),
+        "ablation_mean_abs_shift": float(np.mean(all_shifts_a)),
+    }
+
     # 3. Read train summary if exists
     train_sum_path = out_dir / "train_summary.json"
     train_history = []
@@ -394,6 +438,7 @@ def main():
         },
         "canonical_evaluation": clinical_results["R01_full12"],
         "development_grassmann_bank": grassmann_results,
+        "rotated_basis_stability": basis_rotation_results,
         "calibration_and_reliability": {
             "canonical_ece": clinical_results["R01_full12"]["ablation_ece"],
             "canonical_brier": clinical_results["R01_full12"]["ablation_brier"],
@@ -426,6 +471,7 @@ def main():
         "canonical_clinical_configurations": clinical_results,
         "redundant_lead_analysis": redundant_lead_analysis,
         "development_grassmann_bank": grassmann_results,
+        "rotated_basis_stability": basis_rotation_results,
         "timestamp": time.time(),
     }
     with open(report_path, "w") as f:

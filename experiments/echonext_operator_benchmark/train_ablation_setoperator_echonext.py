@@ -38,6 +38,12 @@ for p in [SRC_DIR, BENCHMARK_DIR]:
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
+import math
+from module_aware_init import (
+    init_module_aware_deterministic,
+    get_model_parameter_hashes,
+    verify_layernorm_ones,
+)
 from repecg.ablation_setoperator.ablation_models import (
     AblationSetOperatorEchoNext,
     TabularMLPEchoNext,
@@ -56,6 +62,79 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("train_ablation")
 
 ABLATION_BASE = Path("/data/mithunmanivannan/codex_artifacts/echonext_geometry_setoperator_v1/checkpoints/ablations")
+
+
+def evaluate_setoperator_with_decomposition(
+    model: nn.Module,
+    val_loader: DataLoader,
+    device: torch.device,
+    tabular_mode: str,
+) -> Dict[str, Any]:
+    """Evaluate validation AUROC/AUPRC and compute exact logit decomposition metrics."""
+    model.eval()
+    all_preds, all_labels = [], []
+    all_ell_ecg, all_ell_tab = [], []
+
+    has_additive_tab = (tabular_mode == "native_additive" and isinstance(model, AblationSetOperatorEchoNext))
+    w_head = model.head.weight.squeeze(0) if has_additive_tab else None
+    b_head = float(model.head.bias.item()) if (has_additive_tab and model.head.bias is not None) else 0.0
+
+    with torch.no_grad():
+        for batch in val_loader:
+            ops = batch["operators"].to(device)
+            resp = batch["responses"].to(device)
+            tab = batch["tabular"].to(device)
+            mask = batch["mask"].to(device)
+            y = batch["labels"].numpy()
+
+            if has_additive_tab:
+                batch_size, count = resp.shape[:2]
+                q = model.encode_operator(ops)
+                resp_flat = resp.reshape(batch_size * count, resp.shape[2], resp.shape[3])
+                r = model.response(resp_flat).reshape(batch_size, count, 128)
+                tokens = torch.cat([q, r], dim=-1)
+                encoded = model.set_encoder(tokens, src_key_padding_mask=mask)
+                query = model.pool_query.expand(batch_size, -1, -1)
+                pooled, _ = model.pool(query, encoded, encoded, key_padding_mask=mask)
+                h_ecg = model.latent(pooled[:, 0])
+                h_tab = model.patient_context(tab)
+                ell_ecg = (h_ecg @ w_head).cpu().numpy()
+                ell_tab = (h_tab @ w_head).cpu().numpy()
+                logits = ell_ecg + ell_tab + b_head
+                prob = 1.0 / (1.0 + np.exp(-logits))
+                all_ell_ecg.extend(ell_ecg)
+                all_ell_tab.extend(ell_tab)
+            else:
+                out = model(operators=ops, responses=resp, tabular=tab if tabular_mode != "none" else None, mask=mask)
+                prob = torch.sigmoid(out["logits"]).squeeze(-1).cpu().numpy()
+
+            all_preds.extend(prob)
+            all_labels.extend(y)
+
+    all_preds = np.array(all_preds)
+    all_labels = np.array(all_labels)
+
+    auroc = float(roc_auc_score(all_labels, all_preds))
+    auprc = float(average_precision_score(all_labels, all_preds))
+
+    metrics = {
+        "val_auroc": auroc,
+        "val_auprc": auprc,
+    }
+
+    if has_additive_tab and len(all_ell_ecg) > 0:
+        arr_ecg = np.array(all_ell_ecg)
+        arr_tab = np.array(all_ell_tab)
+        metrics["ecg_logit_std"] = float(np.std(arr_ecg))
+        metrics["tab_logit_std"] = float(np.std(arr_tab))
+        try:
+            metrics["ecg_component_auroc"] = float(roc_auc_score(all_labels, arr_ecg))
+            metrics["tab_component_auroc"] = float(roc_auc_score(all_labels, arr_tab))
+        except Exception:
+            metrics["ecg_component_auroc"] = None
+            metrics["tab_component_auroc"] = None
+
+    return metrics
 
 
 def set_seed(seed: int):

@@ -104,9 +104,13 @@ class EchoNextPreloadedCohort:
 def load_model_from_checkpoint(ckpt_path: Path, device: torch.device) -> Tuple[nn.Module, Dict[str, Any], int]:
     chk = torch.load(ckpt_path, map_location="cpu")
     tab_mode = chk.get("tabular_mode")
+    model_class = chk.get("model_class")
 
     if tab_mode == "tabular_only":
         model = TabularMLPEchoNext(tabular_dim=7, classes=1).to(device)
+    elif model_class == "production_setoperator" or any(k.startswith("core.") for k in chk.get("model_state_dict", {}).keys()):
+        tab_cond = "SO-ECG" if tab_mode == "none" else ("SO-ECG+Tab-Concat" if tab_mode == "late_concat" else "SO-ECG+Tab-Native")
+        model = build_setoperator_echonext(tab_cond).to(device)
     elif "geometry_mode" in chk or "set_encoder_mode" in chk or "phase_mode" in chk:
         model = AblationSetOperatorEchoNext(
             operator_mode=chk.get("operator_mode", "continuous"),

@@ -265,6 +265,8 @@ def run_experiment(exp_cfg: Dict[str, Any], state: Dict[str, Any]) -> None:
         "--epochs", str(exp_cfg.get("max_epochs", 50)),
         "--patience", str(exp_cfg.get("patience", 10)),
         "--batch-size", str(exp_cfg.get("batch_size", 64)),
+        "--init-mode", exp_cfg.get("init_mode", "native_pytorch"),
+        "--model-class", exp_cfg.get("model_class", "unified_ablation"),
         "--seed", "42",
         "--device", "cuda:0",
     ]
@@ -345,6 +347,7 @@ def main():
     parser.add_argument("--single-gpu", type=str, default="cuda:0", help="Target single GPU device")
     parser.add_argument("--stop-after-current", action="store_true", help="Gracefully stop after active job")
     parser.add_argument("--preflight-only", action="store_true", help="Run only the P1 scientific preflight gate")
+    parser.add_argument("--single-experiment", type=str, default=None, help="Run ONLY this specific authorized experiment ID and halt.")
     args = parser.parse_args()
 
     if args.validate_manifest:
@@ -404,6 +407,22 @@ def main():
 
         # 4. Process Pending Ablations
         logger.info("Primary pipeline complete. Beginning Ablation Matrix...")
+
+        if args.single_experiment:
+            target_cfg = next((exp for exp in manifest["experiments"] if exp["id"] == args.single_experiment), None)
+            if not target_cfg:
+                raise ValueError(f"Requested single-experiment {args.single_experiment} not found in manifest.")
+            cur_status = state["experiments"][args.single_experiment]["status"]
+            if cur_status == "COMPLETE":
+                logger.info("Authorized single-experiment %s is ALREADY COMPLETE. Exiting cleanly without duplicate execution.", args.single_experiment)
+                return
+
+            logger.info("Executing ONLY single authorized experiment: %s", args.single_experiment)
+            run_experiment(target_cfg, state)
+            print_status_table(state)
+            logger.info("Single authorized experiment %s completed. Queue halted safely.", args.single_experiment)
+            return
+
         for exp_cfg in manifest["experiments"]:
             eid = exp_cfg["id"]
             if eid in {"A0_baseline", "A1_g1_scratch"}:

@@ -75,9 +75,17 @@ def evaluate_setoperator_with_decomposition(
     all_preds, all_labels = [], []
     all_ell_ecg, all_ell_tab = [], []
 
-    has_additive_tab = (tabular_mode == "native_additive" and isinstance(model, AblationSetOperatorEchoNext))
-    w_head = model.head.weight.squeeze(0) if has_additive_tab else None
-    b_head = float(model.head.bias.item()) if (has_additive_tab and model.head.bias is not None) else 0.0
+    has_additive_tab = (tabular_mode == "native_additive" and (isinstance(model, AblationSetOperatorEchoNext) or hasattr(model, "core")))
+    if has_additive_tab:
+        if hasattr(model, "core"):
+            w_head = model.core.head.weight.squeeze(0)
+            b_head = float(model.core.head.bias.item()) if model.core.head.bias is not None else 0.0
+        else:
+            w_head = model.head.weight.squeeze(0)
+            b_head = float(model.head.bias.item()) if model.head.bias is not None else 0.0
+    else:
+        w_head = None
+        b_head = 0.0
 
     with torch.no_grad():
         for batch in val_loader:
@@ -89,15 +97,27 @@ def evaluate_setoperator_with_decomposition(
 
             if has_additive_tab:
                 batch_size, count = resp.shape[:2]
-                q = model.encode_operator(ops)
-                resp_flat = resp.reshape(batch_size * count, resp.shape[2], resp.shape[3])
-                r = model.response(resp_flat).reshape(batch_size, count, 128)
-                tokens = torch.cat([q, r], dim=-1)
-                encoded = model.set_encoder(tokens, src_key_padding_mask=mask)
-                query = model.pool_query.expand(batch_size, -1, -1)
-                pooled, _ = model.pool(query, encoded, encoded, key_padding_mask=mask)
-                h_ecg = model.latent(pooled[:, 0])
-                h_tab = model.patient_context(tab)
+                if hasattr(model, "core"):
+                    core = model.core
+                    q = core.encode_operator(ops, None)
+                    resp_flat = resp.reshape(batch_size * count, resp.shape[2], resp.shape[3])
+                    r = core.response(resp_flat).reshape(batch_size, count, 128)
+                    tokens = torch.cat([q, r], dim=-1)
+                    encoded = core.set_encoder(tokens, src_key_padding_mask=mask)
+                    query = core.pool_query.expand(batch_size, -1, -1)
+                    pooled, _ = core.pool(query, encoded, encoded, key_padding_mask=mask)
+                    h_ecg = core.latent(pooled[:, 0])
+                    h_tab = core.patient_context(tab)
+                else:
+                    q = model.encode_operator(ops)
+                    resp_flat = resp.reshape(batch_size * count, resp.shape[2], resp.shape[3])
+                    r = model.response(resp_flat).reshape(batch_size, count, 128)
+                    tokens = torch.cat([q, r], dim=-1)
+                    encoded = model.set_encoder(tokens, src_key_padding_mask=mask)
+                    query = model.pool_query.expand(batch_size, -1, -1)
+                    pooled, _ = model.pool(query, encoded, encoded, key_padding_mask=mask)
+                    h_ecg = model.latent(pooled[:, 0])
+                    h_tab = model.patient_context(tab)
                 ell_ecg = (h_ecg @ w_head).cpu().numpy()
                 ell_tab = (h_tab @ w_head).cpu().numpy()
                 logits = ell_ecg + ell_tab + b_head
@@ -155,6 +175,9 @@ def train_ablation_experiment(
     tabular_mode: str = "native_additive",
     representation: str = "phase_kme",
     regime: str = "SO-Span",
+    init_mode: str = "native_pytorch",
+    model_class: str = "unified_ablation",
+    record_decomposition: bool = True,
     seed: int = 42,
     epochs: int = 50,
     patience: int = 10,
@@ -171,12 +194,32 @@ def train_ablation_experiment(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     logger.info("==================================================")
-    logger.info("Training SetOperator Ablation: %s", exp_id)
+    logger.info("Training SetOperator Ablation: %s (Class: %s)", exp_id, model_class)
     logger.info("Geometry: %s | Phase: %s | Set: %s | Pooling: %s | Tabular: %s",
                 geometry_mode, phase_mode, set_encoder_mode, pooling_mode, tabular_mode)
-    logger.info("Regime: %s | Rep: %s | Seed: %d | Device: %s", regime, representation, seed, device)
+    logger.info("Regime: %s | Rep: %s | Seed: %d | Init Mode: %s | Device: %s", regime, representation, seed, init_mode, device)
     logger.info("Output dir: %s", out_dir)
     logger.info("==================================================")
+
+    exact_cfg = {
+        "exp_id": exp_id,
+        "model_class": model_class,
+        "geometry_mode": geometry_mode,
+        "operator_mode": operator_mode,
+        "phase_mode": phase_mode,
+        "set_encoder_mode": set_encoder_mode,
+        "pooling_mode": pooling_mode,
+        "tabular_mode": tabular_mode,
+        "representation": representation,
+        "regime": regime,
+        "init_mode": init_mode,
+        "seed": seed,
+        "epochs": epochs,
+        "patience": patience,
+        "batch_size": batch_size,
+        "lr": lr,
+        "weight_decay": weight_decay,
+    }
 
     # Load metadata splits
     df = pd.read_csv(DATA_DIR / "echonext_metadata_100k.csv")
@@ -225,7 +268,12 @@ def train_ablation_experiment(
     )
 
     # Build Model
-    if tabular_mode == "tabular_only":
+    if model_class == "production_setoperator":
+        from setoperator_echonext import build_setoperator_echonext
+        tab_cond = "SO-ECG" if tabular_mode == "none" else ("SO-ECG+Tab-Concat" if tabular_mode == "late_concat" else "SO-ECG+Tab-Native")
+        model = build_setoperator_echonext(tab_cond).to(device)
+        logger.info("Instantiated original production SetOperatorEchoNext (%s) preserving original module order and decoder RNG stream.", tab_cond)
+    elif tabular_mode == "tabular_only":
         model = TabularMLPEchoNext(tabular_dim=7, classes=1).to(device)
     else:
         model = AblationSetOperatorEchoNext(
@@ -238,8 +286,24 @@ def train_ablation_experiment(
             classes=1,
         ).to(device)
 
+    if init_mode == "matched_deterministic":
+        init_module_aware_deterministic(model, seed=seed)
+        ln_ok, ln_errs = verify_layernorm_ones(model)
+        if not ln_ok:
+            raise RuntimeError(f"LayerNorm scale verification failed: {ln_errs}")
+        logger.info("Module-aware deterministic initialization applied. LayerNorm scale=1.0 verified.")
+    else:
+        logger.info("Native PyTorch initialization retained (protocol replication mode).")
+
+    init_param_hashes = get_model_parameter_hashes(model)
+
+    active_params = sum(
+        p.numel() for n, p in model.named_parameters()
+        if not n.startswith("decoder") and not n.startswith("core.decoder") and p.requires_grad
+    )
     total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    logger.info("Ablation Model Built. Active Trainable Parameters: %s", f"{total_params:,}")
+    logger.info("Model Built (%s). Active Trainable: %s | Total Instantiated: %s",
+                model_class, f"{active_params:,}", f"{total_params:,}")
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs, eta_min=1e-6)
@@ -259,6 +323,7 @@ def train_ablation_experiment(
         model.train()
         total_loss = 0.0
         n_batches = 0
+        last_grad_norms = {}
 
         for batch in train_loader:
             ops = batch["operators"].to(device)
@@ -272,6 +337,18 @@ def train_ablation_experiment(
             loss = criterion(out["logits"].squeeze(-1), y)
             loss.backward()
 
+            # Record branch gradient norms on batch
+            for b_name, b_mod in [
+                ("PhaseCNN", getattr(model, "response", None) or getattr(getattr(model, "core", None), "response", None)),
+                ("operator_encoder", getattr(model, "operator", None) or getattr(getattr(model, "core", None), "operator", None)),
+                ("Transformer", getattr(model, "set_encoder", None) or getattr(getattr(model, "core", None), "set_encoder", None)),
+                ("attention_pooling", getattr(model, "pool", None) or getattr(getattr(model, "core", None), "pool", None)),
+                ("diagnostic_head", getattr(model, "head", None) or getattr(getattr(model, "core", None), "head", None)),
+            ]:
+                if b_mod is not None:
+                    sq = sum(p.grad.norm(2).item() ** 2 for p in b_mod.parameters() if p.grad is not None)
+                    last_grad_norms[b_name] = math.sqrt(sq)
+
             nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()
 
@@ -284,7 +361,9 @@ def train_ablation_experiment(
         scheduler.step()
         avg_loss = total_loss / max(n_batches, 1)
 
-        val_auroc, val_auprc = evaluate_setoperator(model, val_loader, device)
+        eval_metrics = evaluate_setoperator_with_decomposition(model, val_loader, device, tabular_mode)
+        val_auroc = eval_metrics["val_auroc"]
+        val_auprc = eval_metrics["val_auprc"]
         ep_time = time.time() - t0_ep
 
         is_best = val_auroc > best_val_auroc
@@ -300,12 +379,17 @@ def train_ablation_experiment(
                         "experiment_id": exp_id,
                         "epoch": epoch,
                         "seed": seed,
+                        "init_mode": init_mode,
+                        "init_parameter_hashes": init_param_hashes,
+                        "exact_training_configuration": exact_cfg,
                         "geometry_mode": geometry_mode,
                         "phase_mode": phase_mode,
                         "set_encoder_mode": set_encoder_mode,
                         "pooling_mode": pooling_mode,
                         "tabular_mode": tabular_mode,
-                        "active_parameters": total_params,
+                        "model_class": model_class,
+                        "active_parameters": active_params,
+                        "total_parameters": total_params,
                         "representation": representation,
                         "fit_artifact_path": str(DEFAULT_FIT_PATH) if representation == "phase_kme" else None,
                         "fit_artifact_sha256": fit_sha,
@@ -321,13 +405,14 @@ def train_ablation_experiment(
             no_improve += 1
             best_mark = ""
 
+        ecg_std_str = f" | ECG Std: {eval_metrics['ecg_logit_std']:.3f} | Tab Std: {eval_metrics['tab_logit_std']:.3f}" if "ecg_logit_std" in eval_metrics else ""
         logger.info(
-            "Epoch %02d/%02d | Train Loss: %.4f | Val AUROC: %.4f | Val AUPRC: %.4f | LR: %.2e | Time: %.1fs%s",
-            epoch, actual_epochs, avg_loss, val_auroc, val_auprc, scheduler.get_last_lr()[0], ep_time, best_mark
+            "Epoch %02d/%02d | Train Loss: %.4f | Val AUROC: %.4f | Val AUPRC: %.4f%s | LR: %.2e | Time: %.1fs%s",
+            epoch, actual_epochs, avg_loss, val_auroc, val_auprc, ecg_std_str, scheduler.get_last_lr()[0], ep_time, best_mark
         )
         sys.stdout.flush()
 
-        history.append({
+        hist_entry = {
             "epoch": epoch,
             "train_loss": avg_loss,
             "val_auroc": val_auroc,
@@ -335,7 +420,14 @@ def train_ablation_experiment(
             "lr": scheduler.get_last_lr()[0],
             "epoch_time_seconds": ep_time,
             "is_best": is_best,
-        })
+            "grad_norms": last_grad_norms,
+        }
+        if "ecg_logit_std" in eval_metrics:
+            hist_entry["ecg_logit_std"] = eval_metrics["ecg_logit_std"]
+            hist_entry["tab_logit_std"] = eval_metrics["tab_logit_std"]
+            hist_entry["ecg_component_auroc"] = eval_metrics.get("ecg_component_auroc")
+            hist_entry["tab_component_auroc"] = eval_metrics.get("tab_component_auroc")
+        history.append(hist_entry)
 
         if not dry_run and no_improve >= patience:
             logger.info("Early stopping triggered at epoch %d (patience=%d).", epoch, patience)
@@ -345,6 +437,9 @@ def train_ablation_experiment(
     summary = {
         "status": "COMPLETED",
         "experiment_id": exp_id,
+        "init_mode": init_mode,
+        "init_parameter_hashes": init_param_hashes,
+        "exact_training_configuration": exact_cfg,
         "geometry_mode": geometry_mode,
         "phase_mode": phase_mode,
         "set_encoder_mode": set_encoder_mode,
@@ -352,7 +447,9 @@ def train_ablation_experiment(
         "tabular_mode": tabular_mode,
         "representation": representation,
         "seed": seed,
-        "active_parameters": total_params,
+        "model_class": model_class,
+        "active_parameters": active_params,
+        "total_parameters": total_params,
         "best_epoch": best_epoch,
         "best_val_auroc": best_val_auroc,
         "val_auprc_at_best_epoch": history[best_epoch - 1]["val_auprc"] if best_epoch > 0 else 0.0,
@@ -368,12 +465,17 @@ def train_ablation_experiment(
                 "experiment_id": exp_id,
                 "epoch": len(history),
                 "seed": seed,
+                "init_mode": init_mode,
+                "init_parameter_hashes": init_param_hashes,
+                "exact_training_configuration": exact_cfg,
                 "geometry_mode": geometry_mode,
                 "phase_mode": phase_mode,
                 "set_encoder_mode": set_encoder_mode,
                 "pooling_mode": pooling_mode,
                 "tabular_mode": tabular_mode,
-                "active_parameters": total_params,
+                "model_class": model_class,
+                "active_parameters": active_params,
+                "total_parameters": total_params,
                 "representation": representation,
                 "fit_artifact_path": str(DEFAULT_FIT_PATH) if representation == "phase_kme" else None,
                 "fit_artifact_sha256": fit_sha,
@@ -385,7 +487,7 @@ def train_ablation_experiment(
         )
         with open(out_dir / "train_summary.json", "w") as f:
             json.dump(summary, f, indent=2)
-        logger.info("Saved summary and final_model.pt to %s", out_dir)
+        logger.info("Saved summary, best_model.pt, and final_model.pt to %s", out_dir)
 
     return summary
 
@@ -401,6 +503,9 @@ def main():
     parser.add_argument("--tabular-mode", type=str, default="native_additive")
     parser.add_argument("--representation", type=str, default="phase_kme")
     parser.add_argument("--regime", type=str, default="SO-Span")
+    parser.add_argument("--init-mode", type=str, default="native_pytorch", choices=["native_pytorch", "matched_deterministic"])
+    parser.add_argument("--model-class", type=str, default="unified_ablation", choices=["unified_ablation", "production_setoperator"])
+    parser.add_argument("--record-decomposition", action="store_true", default=True)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--patience", type=int, default=10)
@@ -421,6 +526,9 @@ def main():
         tabular_mode=args.tabular_mode,
         representation=args.representation,
         regime=args.regime,
+        init_mode=args.init_mode,
+        model_class=args.model_class,
+        record_decomposition=args.record_decomposition,
         seed=args.seed,
         epochs=args.epochs,
         patience=args.patience,

@@ -516,6 +516,20 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
+    stop_signal = Path("/data/mithunmanivannan/codex_artifacts/echonext_geometry_setoperator_v1/supervisor_state/STOP_QUEUE_AFTER_A3")
+    if stop_signal.exists() and args.experiment_id not in {"A3_no_q", "A0_native_init_no_earlystop_50ep_s42"}:
+        logger.warning(
+            "STOP_QUEUE_AFTER_A3 sentinel active. Halting supervisor PID %d before launching unauthorized experiment %s.",
+            os.getppid(),
+            args.experiment_id,
+        )
+        import signal
+        try:
+            os.kill(os.getppid(), signal.SIGINT)
+        except OSError:
+            pass
+        sys.exit(0)
+
     train_ablation_experiment(
         exp_id=args.experiment_id,
         geometry_mode=args.geometry_mode,

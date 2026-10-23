@@ -438,6 +438,15 @@ def main():
                 save_state(state)
                 continue
 
+            if STATE_FILE.exists():
+                try:
+                    with open(STATE_FILE, "r") as f:
+                        disk_state = json.load(f)
+                    if disk_state.get("stop_after_current", False):
+                        state["stop_after_current"] = True
+                except Exception as e:
+                    logger.warning("Failed to check disk state: %s", e)
+
             if state.get("stop_after_current", False):
                 logger.info("Stop-after-current requested. Halting queue.")
                 break

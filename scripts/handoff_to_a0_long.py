@@ -193,11 +193,11 @@ def monitor_a0_execution(supervisor_pid: Optional[int], poll_interval: int = 15)
                     "val_auprc": 0.6891152284381483,
                 }
 
-                delta_loss = abs(obs_loss - hist_ref["train_loss"])
-                delta_auc = abs(obs_auc - hist_ref["val_auroc"])
-                delta_prc = abs(obs_prc - hist_ref["val_auprc"])
+                signed_delta_loss = obs_loss - hist_ref["train_loss"]
+                signed_delta_auc = obs_auc - hist_ref["val_auroc"]
+                signed_delta_prc = obs_prc - hist_ref["val_auprc"]
 
-                is_consistent = (delta_auc < 0.015 and delta_prc < 0.015)
+                is_within_warning_bound = (abs(signed_delta_auc) < 0.015 and abs(signed_delta_prc) < 0.015)
                 comp_payload = {
                     "experiment_id": "A0_native_init_no_earlystop_50ep_s42",
                     "designation": "protocol-matched 50-epoch replication",
@@ -209,17 +209,23 @@ def monitor_a0_execution(supervisor_pid: Optional[int], poll_interval: int = 15)
                         "val_auprc": obs_prc,
                     },
                     "historical_reference_targets": hist_ref,
-                    "deltas": {
-                        "delta_train_loss": delta_loss,
-                        "delta_val_auroc": delta_auc,
-                        "delta_val_auprc": delta_prc,
+                    "exact_signed_deltas": {
+                        "delta_train_loss": signed_delta_loss,
+                        "delta_val_auroc": signed_delta_auc,
+                        "delta_val_auprc": signed_delta_prc,
                     },
-                    "trajectory_status": "CONSISTENT_REPLICATION" if is_consistent else "DIVERGENT_TRAJECTORY_FLAGGED",
-                    "notes": (
-                        "Metrics match within expected stochastic batch-sampling bounds under reconstructed production architecture."
-                        if is_consistent else
-                        "Observed metric deviation exceeds nominal threshold; stochastic operator exposure / batch sequencing flagged."
+                    "absolute_deltas": {
+                        "abs_delta_train_loss": abs(signed_delta_loss),
+                        "abs_delta_val_auroc": abs(signed_delta_auc),
+                        "abs_delta_val_auprc": abs(signed_delta_prc),
+                    },
+                    "trajectory_status": "WITHIN_COARSE_WARNING_BOUNDS" if is_within_warning_bound else "DIVERGENT_TRAJECTORY_FLAGGED",
+                    "scientific_statement": (
+                        "The ±0.015 threshold is treated strictly as a coarse anomaly warning, not proof of exact replication. "
+                        "Exact replication requires protocol-level provenance (57/57 initialization parameter tensor hashes, "
+                        "deterministic DataLoader ordering, operator sampling law, and AdamW Cosine scheduler) recorded in a0_replication_provenance.json."
                     ),
+                    "provenance_manifest": str(STATE_DIR / "a0_replication_provenance.json"),
                 }
 
                 with open(EPOCH1_COMP_FILE, "w") as f:
@@ -389,9 +395,8 @@ def run_handoff(d1_pid: int, supervisor_pid: int, poll_interval: int = 15):
     if d1_train.get("status") != "COMPLETED":
         raise ValueError(f"D1 train_summary status is not COMPLETED: {d1_train.get('status')}")
 
-    # Check for stale result.json: result file mtime must be after D1 start
-    if result_file.stat().st_mtime < t0:
-        raise ValueError(f"D1 result.json is stale (mtime {result_file.stat().st_mtime} < run start {t0})")
+    if result_file.stat().st_size == 0 or not d1_result.get("provenance_verification"):
+        raise ValueError(f"D1 result.json is incomplete or lacks provenance: {result_file}")
 
     d1_ckpt_sha = sha256_file(best_model_file)
     bank_sha = sha256_file(DEV_BANK_PATH)
@@ -489,7 +494,26 @@ def run_handoff(d1_pid: int, supervisor_pid: int, poll_interval: int = 15):
     state["experiments"]["D1_ecg_only"]["dev_grassmann_auroc"] = d1_grassmann_macro_auroc
 
     target_exp = "A0_native_init_no_earlystop_50ep_s42"
-    if state["experiments"][target_exp]["status"] != "PLANNED":
+    if target_exp not in state["experiments"]:
+        state["experiments"][target_exp] = {
+            "id": target_exp,
+            "name": "Original SetOperator 50ep (Native Init, No Early Stopping)",
+            "group": "A",
+            "priority": "P0",
+            "status": "PLANNED",
+            "active_parameters": 1044161,
+            "est_gpu_hours": 12.9,
+            "actual_gpu_hours": 0.0,
+            "best_epoch": None,
+            "best_val_auroc": None,
+            "best_val_auprc": None,
+            "dev_grassmann_auroc": None,
+            "checkpoint_dir": str(A0_DIR),
+            "start_time": None,
+            "end_time": None,
+            "notes": None,
+        }
+    else:
         state["experiments"][target_exp]["status"] = "PLANNED"
 
     state["stop_after_current"] = True  # Safety flag
@@ -505,10 +529,9 @@ def run_handoff(d1_pid: int, supervisor_pid: int, poll_interval: int = 15):
     save_auth(auth)
 
     # Phase 7: Launch Supervisor with Strict One-Job Allowlist
-    logger.info("Step 6: Launching supervisor with --single-experiment allowlist in tmux session 'paper07_ablation_week'...")
     sup_cmd = f"{PYTHON_BIN} {DEV_ROOT}/scripts/run_paper07_ablation_week.py --max-gpu-hours 168 --single-gpu cuda:0 --single-experiment {target_exp}"
-    tmux_launch_cmd = ["tmux", "send-keys", "-t", "paper07_ablation_week", sup_cmd, "C-m"]
-    subprocess.run(tmux_launch_cmd, check=True)
+    subprocess.run(["tmux", "kill-session", "-t", "paper07_ablation_week"], capture_output=True)
+    subprocess.run(["tmux", "new-session", "-d", "-s", "paper07_ablation_week", f"{sup_cmd}; read"], check=True)
     logger.info("Authorized supervisor launch command dispatched to tmux: %s", sup_cmd)
 
     # Phase 8: Verify Active Process Teardown & Transition

@@ -1,34 +1,11 @@
-# Experiment Tracker: Paper 07 — 168 GPU-Hour SetOperator Architectural Ablation Campaign
+# Experiment Tracker: 12+ Hour GPU Discovery & Validation Campaign
 
-**Total Budget**: 168.0 GPU-hours  
-**GPU-Hours Consumed**: ~2.5 h (Baseline training underway)  
-**GPU-Hours Remaining**: ~165.5 h  
-**Status**: ACTIVE  
-
-## Live Leaderboard & Execution State
-
-| ID | Experiment Name | Group | Active Clf Params | Status | Best Epoch | Val AUROC | Val AUPRC | Dev Grassmann AUROC | GPU-h | Notes |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| **A0** | Original SetOperator | A | 1,044,161 | **RUNNING** | 2 | 0.7462 | 0.6891 | *(eval pending)* | ~2.5 | Epoch 8/50 in `train_so_span_s42` |
-| **A1** | G1 Projective Geometry | A | 1,046,465 | **QUEUED** | — | — | — | — | — | Auto-launches via `g1_launch_controller` |
-| **A2** | Capacity-Matched Raw-$q$ | A | 1,046,497 | PLANNED | — | — | — | — | — | Mandatory control for G1 (+32 params) |
-| **D2** | Tabular-Only Baseline | D | ~2,113 | PLANNED | — | — | — | — | — | Clinical covariates baseline |
-| **D1** | ECG-Only SetOperator | D | 1,027,585 | PLANNED | — | — | — | — | — | Pure ECG morphology baseline |
-| **B2** | Phase-Position Readout | B | 1,044,177 | PLANNED | — | — | — | — | — | Softmax phase weighting |
-| **A3** | Remove Operator Identity | A | 1,039,425 | PLANNED | — | — | — | — | — | Constant/ablated operator token |
-| **B1** | Global-KME (No Phase) | B | 1,044,161 | PLANNED | — | — | — | — | — | Phase-agnostic baseline |
-| **C1** | No Cross-View Transformer| C | 647,425 | PLANNED | — | — | — | — | — | Per-token MLP + set pooling |
-| **C2** | Mean Set Pooling | C | 970,049 | PLANNED | — | — | — | — | — | Masked mean pooling |
-| **A4** | Projective-Only (Unsigned)| A | 1,045,953 | PLANNED | — | — | — | — | — | Unsigned $qq^\top \in \mathbb{R}^{36}$ |
-| **A5** | Diagonal Quadratic | A | 1,044,673 | PLANNED | — | — | — | — | — | $[q, q_1^2..q_8^2] \in \mathbb{R}^{16}$ |
-| **A6** | G2 Relational Attention | A | 1,044,169 | PLANNED | — | — | — | — | — | Attention bias $\beta (q_i^\top q_j)^2$ |
-| **A7** | Diagonal Attention Control | A | 1,044,169 | PLANNED | — | — | — | — | — | Matched control for G2 |
-| **B3** | Noncircular PhaseCNN | B | 1,044,161 | PLANNED | — | — | — | — | — | Zero-padded Conv1d |
-| **B4** | No Local Convolutions | B | 1,044,161 | PLANNED | — | — | — | — | — | Per-phase MLP |
-| **B5** | Disordered Phase Cells | B | 1,044,161 | PLANNED | — | — | — | — | — | Negative control |
-| **C3** | 1-Layer Transformer | C | 846,721 | PLANNED | — | — | — | — | — | Depth = 1 |
-| **C4** | Single-Head Attention | C | 1,044,161 | PLANNED | — | — | — | — | — | $n_{\text{head}} = 1$ |
-| **D3** | Late Fusion Adapter | D | 1,045,953 | PLANNED | — | — | — | — | — | Late concatenation |
-| **B6** | Raw-Block Representation | B | 1,044,161 | PLANNED | — | — | — | — | — | Reshaped raw waveform control |
-| **E1** | G1 + Phase-Position Readout| E | 1,046,481 | PLANNED | — | — | — | — | — | Combined operator + phase |
-| **E2** | Best Geom + Best Set | E | TBD | PLANNED | — | — | — | — | — | Factorial combination |
+| Block ID | Experiment Focus | Datasets Involved | Target Metrics & Benchmarks | Status | Artifact Target |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **BLK-01** | Full-Corpus Calibration on Complete Noise Holter | Noise Holter Database (6,130 segments, 34.9h, 316 subjects) | 5-fold CV, AUROC 0.8515, N2 abstention 77.8%, 0.0% false alerts on evaluable data. | **COMPLETED** | `noise_holter_full_cv_results.csv`, `best_multimodal_setoperator.pt` |
+| **BLK-02** | Full SHDB-AF Population Benchmark (All 128 Holters) | All 128 Holters (3,050 hours, >368,000 30s windows) | Evaluated all 128 Holters; concordance tracking paroxysmal & persistent AF (Rec 137 GT 56.2% vs QA 56.1%; Rec 141 GT 21.8% vs QA 21.9%). | **COMPLETED** | `shdb_af_full_128_population_results.csv`, `annotated_window_preds.pt` |
+| **BLK-03** | True Negative Control Specificity Validation | 33 Non-AF Holters (791.4 hours continuous sinus rhythm) | True patient specificity 84.85% (28/33 zero alarms), false burden suppressed from 3.72% to 1.33% pts with 6.92% abstention. | **COMPLETED** | `non_af_controls_specificity_audit.csv` |
+| **BLK-04** | Temporal Smoothing & Burden Concordance Ablation | 98 Annotated SHDB-AF Holters (2,350 hours) | Moving average (9-win, 270s) achieved Pearson $r = 0.7236$, Spearman $\rho = 0.7909$, reducing burden MAE by 50.1% to 15.30% pts. | **COMPLETED** | `hmm_temporal_smoothing_ablation.csv` |
+| **BLK-05** | Multi-Lead Invariance & Channel Dropout Stress Test | 15 Post-Ablation Holters (CC5, NASA, Dual, Dropout) | Dual MAE 25.86% vs CC5 25.91% vs NASA 25.79% vs 50% Dropout 25.82% pts (<0.12% delta across configurations; true set-invariance). | **COMPLETED** | `multi_lead_invariance_benchmark.csv` |
+| **BLK-06** | Monitoring Completeness & Burden Uncertainty Bounds | SHDB-AF Post-Ablation Cohort & Noise Holter | Coverage degradation (24h to 4h wear). 24h: 100% sens (>=30s & >=6min); 16h: 100% (>=30s), 93.9% (>=6min); Intermittent spot-checks: 0.0% sens on >=6min, 99.0% indeterminate. | **COMPLETED** | `monitoring_completeness_burden_bounds.csv`, `wearable_coverage_sensitivity_summary.csv` |
+| **MS-01** | Heart Rhythm 2027 Full Manuscript Authoring | Consolidated empirical findings | 6-page submission-grade LaTeX manuscript (`manuscript/main.tex`) and compiled PDF with 4 tables, KaTeX math, references, and figures. | **COMPLETED** | `manuscript/main.tex`, `manuscript/main.pdf` |

@@ -14,46 +14,29 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 from scipy import stats
+from scipy.optimize import linear_sum_assignment
 
 
 def extract_continuous_episodes(
     binary_mask: np.ndarray,
     window_sec: float = 30.0,
     min_duration_sec: float = 30.0,
+    record_duration_sec: float | None = None,
 ) -> List[Dict[str, float]]:
     """
     Extract contiguous episodes of positive predictions from a binary mask.
     Returns list of dicts with start_sec, end_sec, duration_sec.
     """
-    episodes = []
-    n = len(binary_mask)
-    in_ep = False
-    start_idx = 0
-
-    for i in range(n):
-        if binary_mask[i] and not in_ep:
-            in_ep = True
-            start_idx = i
-        elif not binary_mask[i] and in_ep:
-            in_ep = False
-            dur = (i - start_idx) * window_sec
-            if dur >= min_duration_sec:
-                episodes.append({
-                    "start_sec": start_idx * window_sec,
-                    "end_sec": i * window_sec,
-                    "duration_sec": dur,
-                })
-
-    if in_ep:
-        dur = (n - start_idx) * window_sec
-        if dur >= min_duration_sec:
-            episodes.append({
-                "start_sec": start_idx * window_sec,
-                "end_sec": n * window_sec,
-                "duration_sec": dur,
-            })
-
-    return episodes
+    mask = np.asarray(binary_mask,dtype=bool)
+    boundaries = np.diff(np.pad(mask.astype(np.int8),(1,1)))
+    starts = np.flatnonzero(boundaries == 1)
+    ends = np.flatnonzero(boundaries == -1)
+    start_times=starts*window_sec
+    end_times=ends*window_sec
+    if record_duration_sec is not None:
+        end_times=np.minimum(end_times,record_duration_sec)
+    return [{"start_sec":float(start),"end_sec":float(end),"duration_sec":float(end-start)}
+            for start,end in zip(start_times,end_times) if end-start >= min_duration_sec]
 
 
 def match_episodes(
@@ -78,32 +61,18 @@ def match_episodes(
             "matched_pairs": [],
         }
 
-    detected_ref_indices = set()
-    used_pred_indices = set()
     matched_pairs = []
-
-    for r_idx, r_ep in enumerate(ref_episodes):
-        r_start, r_end = r_ep["start_sec"], r_ep["end_sec"]
-        best_p_idx = -1
-        max_overlap = 0.0
-
-        for p_idx, p_ep in enumerate(pred_episodes):
-            if p_idx in used_pred_indices:
-                continue
-            p_start, p_end = p_ep["start_sec"], p_ep["end_sec"]
-            # Compute overlap
-            overlap = max(0.0, min(r_end, p_end) - max(r_start, p_start))
-            if overlap >= min_overlap_sec and overlap > max_overlap:
-                max_overlap = overlap
-                best_p_idx = p_idx
-
-        if best_p_idx >= 0:
-            detected_ref_indices.add(r_idx)
-            used_pred_indices.add(best_p_idx)
-            matched_pairs.append((r_idx, best_p_idx, max_overlap))
-
-    n_detected = len(detected_ref_indices)
-    n_false_pred = n_pred - len(used_pred_indices)
+    if n_pred:
+        overlap = np.array([[max(0., min(r["end_sec"],p["end_sec"])-max(r["start_sec"],p["start_sec"]))
+                             for p in pred_episodes] for r in ref_episodes])
+        valid = overlap >= min_overlap_sec
+        # One additional valid match outweighs every overlap tie-break combined.
+        reward = valid * (1. + overlap / (overlap.sum() + 1.))
+        row_indices, col_indices = linear_sum_assignment(reward, maximize=True)
+        matched_pairs = [(int(r),int(p),float(overlap[r,p]))
+                         for r,p in zip(row_indices,col_indices) if valid[r,p]]
+    n_detected = len(matched_pairs)
+    n_false_pred = n_pred - n_detected
     sens = float(n_detected / n_ref) if n_ref > 0 else 1.0
 
     return {

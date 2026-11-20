@@ -12,7 +12,7 @@ Standardized across:
 Evaluates:
 - All 98 rhythm-annotated recordings in SHDB-AF (2,350+ continuous hours)
 - All 33 non-AF controls in SHDB-AF (Tier A: 20 beat-annotated, Tier B: 13 report-only)
-- Noise Holter Database (Clean, N1, N2 tiers)
+- Noise Holter results imported from record-group-disjoint OOF predictions; patient independence is unverified
 - Full threshold sweep tau in [0.10, ..., 0.90] for complete FROC curves
 - Quality threshold sweep tau_qual in [0.10, ..., 0.90] for Risk-Coverage curves
 - Generates paired_episode_predictions.parquet for all reference episodes
@@ -20,32 +20,28 @@ Evaluates:
 from __future__ import annotations
 
 import os
+import argparse
+import hashlib
+import json
 import sys
 import time
 import glob
 from pathlib import Path
 from collections import defaultdict
+from concurrent.futures import ProcessPoolExecutor
+import multiprocessing
 from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
 from scipy import stats, signal
-import tensorflow as tf
-import torch
-import torch.nn as nn
 import wfdb
-
-# Suppress TF logging
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-tf.get_logger().setLevel("ERROR")
 
 # Add workspace and prototype to path
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT_DIR = SCRIPT_DIR.parent
 sys.path.insert(0, str(ROOT_DIR))
 sys.path.insert(0, str(ROOT_DIR / "prototype"))
-sys.path.insert(0, "/data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence")
-sys.path.insert(0, "/data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence/prototype")
 
 from prototype.metrics_engine import (
     extract_continuous_episodes,
@@ -53,9 +49,11 @@ from prototype.metrics_engine import (
     compute_clinical_false_alerts_per_24h,
     compute_burden_metrics,
 )
-from prototype.models import SetOperatorPlusRR
-from data_loader import compute_hrv_features
-from run_gpu_discovery_campaign_12h import fast_compute_phase_kme, fast_compute_sqi
+from scripts.hrs2027_protocol import (
+    add_ablation_dates, extract_features, quality_mask,
+    parse_atr_gold_standard_episodes,
+)
+from scripts.hrs2027_cpu_features import initialize,prepare_window
 
 
 def causal_moving_average(probs: np.ndarray, kernel_size: int = 9) -> np.ndarray:
@@ -72,39 +70,33 @@ def causal_moving_average(probs: np.ndarray, kernel_size: int = 9) -> np.ndarray
     return smoothed
 
 
-def parse_atr_gold_standard_episodes(atr: wfdb.Annotation, sig_len: int, fs: float = 200.0) -> List[Dict[str, Any]]:
-    """Extract reference rhythm episodes from .atr file."""
-    rhythms = [(s, note.strip("(\x00")) for s, note in zip(atr.sample, atr.aux_note) if note.startswith("(")]
-    if not rhythms:
-        return []
-
-    episodes = []
-    total_samples = sig_len
-
-    for i in range(len(rhythms)):
-        s_start, r_type = rhythms[i]
-        s_end = rhythms[i + 1][0] if i + 1 < len(rhythms) else total_samples
-        dur_sec = (s_end - s_start) / fs
-        is_af = r_type in ("AFIB", "AFL", "AT")
-        episodes.append({
-            "rhythm": r_type,
-            "start_sec": s_start / fs,
-            "end_sec": s_end / fs,
-            "start_sample": s_start,
-            "end_sample": s_end,
-            "duration_sec": dur_sec,
-            "is_af": is_af,
-        })
-    return episodes
-
-
 def run_corrected_benchmark(
     shdb_dir: str = "/data/mithunmanivannan/datasets/shdb_af",
     shdb_metadata: str = "/data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence/AdditionalData.csv",
     output_dir: str = "/data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence/corrected_package",
-    device: str = "cuda" if torch.cuda.is_available() else "cpu",
+    device: str = "cuda",
+    checkpoint: str | None = None,
+    prepare_only: bool = False,
+    shard_index: int = 0,
+    shard_count: int = 1,
+    start_index: int = 0,
 ):
+    import tensorflow as tf
+    import torch
+    from prototype.models import SetOperatorPlusRR
+    from scripts.hrs2027_gpu_features import batch_phase_kme
+    tf.get_logger().setLevel("ERROR")
+    for gpu in tf.config.list_physical_devices("GPU"):
+        tf.config.experimental.set_memory_growth(gpu,True)
+    tf.config.threading.set_intra_op_parallelism_threads(2)
+    tf.config.threading.set_inter_op_parallelism_threads(1)
+    torch.set_num_threads(2)
+    torch.backends.cudnn.enabled=True
+    if (shard_count > 1 or start_index > 0) and not prepare_only:
+        raise ValueError('Only input preparation may be sharded; clinical scoring requires the complete cohort')
     os.makedirs(output_dir, exist_ok=True)
+    if not torch.cuda.is_available() or not tf.config.list_physical_devices('GPU'):
+        raise RuntimeError('A100 evaluation requires both framework GPU runtimes; use the documented CUDA library path')
     print(f"=== Starting Corrected Benchmark Evaluation (PyTorch Device: {device}) ===")
 
     # 1. Load Pretrained Author Baselines using predict_fixed
@@ -120,23 +112,34 @@ def run_corrected_benchmark(
     print("Author baselines loaded with predict_fixed signature.")
 
     # 2. Load Multimodal SetOperator Checkpoint
-    setop_pt_path = "/data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence/results_12h/best_multimodal_setoperator.pt"
-    if os.path.exists(setop_pt_path):
-        print(f"Loading Quality-Aware SetOperator checkpoint: {setop_pt_path}")
+    if not prepare_only:
+        if checkpoint is None:
+            raise ValueError("Explicit full-corpus checkpoint required")
+        checkpoint_hash=hashlib.file_digest(open(checkpoint,'rb'),'sha256').hexdigest()
+        training=json.loads((Path(output_dir)/'training_provenance.json').read_text())
+        if checkpoint_hash!=training['checkpoint_sha256'] or training['n_segments']!=6130:
+            raise ValueError('Checkpoint does not match the full-corpus training provenance')
         setop_model = SetOperatorPlusRR()
-        state = torch.load(setop_pt_path, map_location=device, weights_only=True)
+        state = torch.load(checkpoint, map_location=device, weights_only=True)
         setop_model.load_state_dict(state)
         setop_model.to(device)
         setop_model.eval()
-    else:
-        setop_model = None
-        print("Warning: SetOperator checkpoint not found.")
-
-    rng = np.random.default_rng(42)
-    anchors = rng.normal(0.0, 1.0, size=(128, 16)).astype(np.float32)
+    
+    anchors = np.load(Path(output_dir)/'anchors.npy')
+    if anchors.shape!=(128,16):
+        raise ValueError('Invalid training anchors')
+    cpu_executor=ProcessPoolExecutor(max_workers=2,mp_context=multiprocessing.get_context('spawn'),
+                                     initializer=initialize,initargs=(anchors,))
 
     # 3. Read SHDB-AF Manifest
-    df_meta = pd.read_csv(shdb_metadata)
+    df_meta = add_ablation_dates(pd.read_csv(shdb_metadata))
+    df_meta.to_csv(Path(output_dir) / "shdb_cohort_manifest.csv", index=False)
+    prediction_dir = Path(output_dir) / "window_predictions"
+    prediction_dir.mkdir(exist_ok=True)
+    prepared_dir = Path(output_dir) / "prepared_inputs"
+    prepared_dir.mkdir(exist_ok=True)
+    protocol_hash = hashlib.file_digest(open(ROOT_DIR / "scripts/hrs2027_protocol.py","rb"),"sha256").hexdigest()
+    reference_rows = []
     print(f"Loaded SHDB-AF metadata: {len(df_meta)} recordings across {df_meta['Subject_ID'].nunique()} patients.")
 
     # Models to benchmark
@@ -167,22 +170,23 @@ def run_corrected_benchmark(
     t_start = time.time()
 
     for idx, row in df_meta.iterrows():
+        if idx < start_index:
+            continue
+        if idx % shard_count != shard_index:
+            continue
         did = int(row["Data_ID"])
         rec_id = f"{did:03d}"
         subj_id = int(row["Subject_ID"])
         is_ann = bool(row["Annotated"])
         is_ablation = bool(row["Previous_AF_Ablation"])
         af_type = str(row["AF_Type"])
-        days_from_ablation = row.get("days_from_1st", np.nan)
-        is_post_blanking = bool(days_from_ablation > 90) if pd.notna(days_from_ablation) else False
+        is_post_blanking = bool(row["post_blanking"])
 
         rec_path = os.path.join(shdb_dir, rec_id)
         if not os.path.exists(f"{rec_path}.hea") or not os.path.exists(f"{rec_path}.dat"):
-            print(f"Skipping {rec_id}: missing .hea or .dat")
-            continue
+            raise FileNotFoundError(f"Missing .hea or .dat: {rec_id}")
 
         header = wfdb.rdheader(rec_path)
-        rec = wfdb.rdrecord(rec_path)
         fs = float(header.fs)
         sig_len = header.sig_len
         dur_hrs = (sig_len / fs) / 3600.0
@@ -190,13 +194,15 @@ def run_corrected_benchmark(
         qrs = wfdb.rdann(rec_path, "qrs") if os.path.exists(f"{rec_path}.qrs") else None
         atr = wfdb.rdann(rec_path, "atr") if (is_ann and os.path.exists(f"{rec_path}.atr")) else None
 
-        sig_ecg = rec.p_signal[:, 0].astype(np.float32)  # Lead 1 (CC5)
         all_qrs = np.asarray(qrs.sample, dtype=int) if qrs else np.array([], dtype=int)
 
         # Ground truth episodes and sample mask
         gt_episodes = parse_atr_gold_standard_episodes(atr, sig_len=sig_len, fs=fs) if atr else []
         gt_af_episodes_30s = [ep for ep in gt_episodes if ep["is_af"] and ep["duration_sec"] >= 30.0]
         gt_af_episodes_6min = [ep for ep in gt_episodes if ep["is_af"] and ep["duration_sec"] >= 360.0]
+        for episode_id, ep in enumerate(gt_af_episodes_30s):
+            reference_rows.append(dict(record_id=rec_id, subject_id=subj_id, episode_id=episode_id,
+                                       previous_af_ablation=is_ablation, post_blanking=is_post_blanking, **ep))
 
         gt_sample_mask = np.zeros(sig_len, dtype=bool)
         if atr:
@@ -210,81 +216,117 @@ def run_corrected_benchmark(
         # Segment into 30-second windows
         window_sec = 30.0
         win_samples = int(fs * window_sec)
-        n_windows = sig_len // win_samples
+        n_windows = int(np.ceil(sig_len / win_samples))
+        window_durations = np.minimum(win_samples, sig_len - np.arange(n_windows) * win_samples) / fs
+        gt_window_af_sec = np.array([gt_sample_mask[w*win_samples:min(sig_len,(w+1)*win_samples)].sum()/fs
+                                     for w in range(n_windows)], dtype=np.float32)
 
-        raw_windows = np.zeros((n_windows, 6000), dtype=np.float32)
-        rr_windows = np.zeros((n_windows, 60), dtype=np.float32)
-        hrv_windows = np.zeros((n_windows, 8), dtype=np.float32)
-        kme_windows = np.zeros((n_windows, 16, 128), dtype=np.float32)
-        sqi_scores = np.zeros(n_windows, dtype=np.float32)
-
-        for w in range(n_windows):
-            s_idx = w * win_samples
-            e_idx = s_idx + win_samples
-            w_sig = sig_ecg[s_idx:e_idx]
-            if len(w_sig) == 6000:
-                raw_windows[w] = w_sig
-            else:
-                raw_windows[w] = np.pad(w_sig, (0, 6000 - len(w_sig)), mode="edge")
-
-            p_mask = (all_qrs >= s_idx) & (all_qrs < e_idx)
-            w_peaks = all_qrs[p_mask] - s_idx
-            sqi_scores[w] = fast_compute_sqi(raw_windows[w], w_peaks, fs=fs)
-            kme_windows[w] = fast_compute_phase_kme(raw_windows[w], w_peaks, anchors, fs=fs)
-
-            ctx_mask = (all_qrs >= max(0, s_idx - int(fs * 60))) & (all_qrs < e_idx)
-            ctx_peaks = all_qrs[ctx_mask]
-            if len(ctx_peaks) > 1:
-                rrs = np.diff(ctx_peaks) / fs
-                rrs_clipped = rrs[-60:]
-                if len(rrs_clipped) < 60:
-                    pad_v = float(np.mean(rrs_clipped)) if len(rrs_clipped) > 0 else 0.8
-                    rrs_clipped = np.pad(rrs_clipped, (0, 60 - len(rrs_clipped)), constant_values=pad_v)
-                rr_windows[w] = rrs_clipped
-                hrv_windows[w] = compute_hrv_features(rrs)
-            else:
-                rr_windows[w] = np.full(60, 0.8, dtype=np.float32)
-                hrv_windows[w] = np.zeros(8, dtype=np.float32)
-
-        # Batch Neural Inference
-        prec = np.arange(n_windows, dtype=np.int32)
-        succ = (n_windows - 1 - np.arange(n_windows)).astype(np.int32)
-        glob = np.zeros(n_windows, dtype=np.float32)
-        ids = np.array([f"{rec_id}_{i}" for i in range(n_windows)], dtype=object)
-
-        out_raw = infer_rawecg(
-            x=tf.constant(raw_windows),
-            prec_windows=tf.constant(prec),
-            succ_windows=tf.constant(succ),
-            glob_lab=tf.constant(glob),
-            ids=tf.constant(ids, dtype=tf.string),
-        )
-        probs_rawecg = out_raw["probs"].numpy()
-
-        out_rr = infer_arnet2(
-            x=tf.constant(rr_windows),
-            prec_windows=tf.constant(prec),
-            glob_lab=tf.constant(glob),
-            ids=tf.constant(ids, dtype=tf.string),
-        )
-        probs_arnet2 = out_rr["probs"].numpy()
-
-        if setop_model is not None:
-            with torch.no_grad():
-                kme_t = torch.from_numpy(kme_windows).to(device)
-                rr_t = torch.from_numpy(rr_windows).to(device)
-                hrv_t = torch.from_numpy(hrv_windows).to(device)
-                probs_setop = setop_model.predict_proba(kme_t, rr_t, hrv_t).squeeze().cpu().numpy()
+        cache_path = prepared_dir / f"{rec_id}.npz"
+        if cache_path.exists():
+            cached = np.load(cache_path)
+            if str(cached["protocol_sha256"]) != protocol_hash:
+                raise ValueError(f"Feature protocol changed: {cache_path}")
+            if prepare_only:
+                print(f"PREPARED {idx+1}/{total_recs} record={rec_id} cached",flush=True)
+                continue
+            kme_windows = cached["kme"]
+            setop_rr_windows = cached["rr"]
+            hrv_windows = cached["hrv"]
+            sqi_scores = cached["sqi"]
+            probs_rawecg = cached["rawecg"]
+            probs_arnet2 = cached["arnet2"]
         else:
-            probs_setop = 0.5 * probs_rawecg + 0.5 * probs_arnet2
+            stage_start = time.perf_counter()
+            rec = wfdb.rdrecord(rec_path)
+            sig_ecg = rec.p_signal[:,0].astype(np.float32)
+            raw_windows = np.zeros((n_windows, 6000), dtype=np.float32)
+            hrv_windows = np.zeros((n_windows, 8), dtype=np.float32)
+            kme_windows = np.zeros((n_windows, 16, 128), dtype=np.float32)
+            sqi_scores = np.zeros(n_windows, dtype=np.float32)
+            setop_rr_windows = np.zeros((n_windows, 60), dtype=np.float32)
+    
+            payloads=((sig_ecg[w*win_samples:min((w+1)*win_samples,sig_len)],fs) for w in range(n_windows))
+            feature_results = list(cpu_executor.map(prepare_window,payloads,chunksize=32))
+            kme_windows = batch_phase_kme([result[5] for result in feature_results],anchors)
+    
+            for w in range(n_windows):
+                s_idx = w * win_samples
+                e_idx = min(s_idx + win_samples, sig_len)
+                w_sig = sig_ecg[s_idx:e_idx]
+                if len(w_sig) == 6000:
+                    raw_windows[w] = w_sig
+                else:
+                    raw_windows[w] = np.pad(w_sig, (0, 6000 - len(w_sig)), mode="edge")
+    
+                _, setop_rr, hrv, sqi, _, _ = feature_results[w]
+                sqi_scores[w] = sqi
+                hrv_windows[w] = hrv
+    
+                # Match the training signal-only feature path for SetOperator.
+                setop_rr_windows[w] = setop_rr
+    
+            # Batch Neural Inference
+            print(f"FEATURE_TIMING record={rec_id} windows={n_windows} seconds={time.perf_counter()-stage_start:.2f}",flush=True)
+            stage_start = time.perf_counter()
+            prec = np.arange(n_windows, dtype=np.int32)
+            succ = (n_windows - 1 - np.arange(n_windows)).astype(np.int32)
+            glob = np.ones(n_windows, dtype=np.float32)
+            ids = np.repeat(rec_id,n_windows)
+    
+            out_raw = infer_rawecg(
+                x=tf.constant(raw_windows),
+                prec_windows=tf.constant(prec),
+                succ_windows=tf.constant(succ),
+                glob_lab=tf.constant(glob),
+                ids=tf.constant(ids, dtype=tf.string),
+            )
+            probs_rawecg = out_raw["probs"].numpy()
+    
+            # Author protocol: consecutive, non-overlapping 60-RR sequences.
+            # Score on the common grid by overlap duration; unscored edge time remains unavailable.
+            rr_count = (len(all_qrs)-1)//60
+            if rr_count < 1:
+                raise ValueError(f"Insufficient beat detections for ArNet2: {rec_id}")
+            rr_sequence = (np.diff(all_qrs)/fs)[:rr_count*60].reshape(rr_count,60).astype(np.float32)
+            out_rr = infer_arnet2(
+                x=tf.constant(rr_sequence),
+                prec_windows=tf.constant(np.arange(rr_count,dtype=np.int32)),
+                glob_lab=tf.constant(np.ones(rr_count,dtype=np.float32)),
+                ids=tf.constant(np.repeat(rec_id,rr_count), dtype=tf.string),
+            )
+            native_rr_probs = out_rr["probs"].numpy().ravel()
+            rr_starts = all_qrs[np.arange(rr_count)*60]/fs
+            rr_ends = all_qrs[(np.arange(rr_count)+1)*60]/fs
+            window_starts = np.arange(n_windows)*30
+            overlap = np.maximum(0,np.minimum(window_starts[:,None]+window_durations[:,None],rr_ends[None,:])
+                                   -np.maximum(window_starts[:,None],rr_starts[None,:]))
+            overlap_total = overlap.sum(1)
+            probs_arnet2 = np.divide(overlap@native_rr_probs,overlap_total,
+                                     out=np.full(n_windows,np.nan),where=overlap_total>0)
+            print(f"BASELINE_TIMING record={rec_id} seconds={time.perf_counter()-stage_start:.2f}",flush=True)
+    
+            cache_temp = cache_path.with_name(f"{rec_id}.{os.getpid()}.tmp.npz")
+            np.savez_compressed(cache_temp,kme=kme_windows,rr=setop_rr_windows,hrv=hrv_windows,
+                                sqi=sqi_scores,rawecg=probs_rawecg,arnet2=probs_arnet2,
+                                protocol_sha256=protocol_hash)
+            os.replace(cache_temp,cache_path)
+        if prepare_only:
+            print(f"PREPARED {idx+1}/{total_recs} record={rec_id}",flush=True)
+            continue
+
+        with torch.no_grad():
+            probs_setop = np.concatenate([
+                setop_model.predict_proba(torch.from_numpy(kme_windows[s:s+1024]).to(device),
+                                          torch.from_numpy(setop_rr_windows[s:s+1024]).to(device),
+                                          torch.from_numpy(hrv_windows[s:s+1024]).to(device)).cpu().numpy().ravel()
+                for s in range(0,n_windows,1024)])
 
         # Quality Abstention: Chow's Rule (SQI < 0.55 or high predictive entropy)
-        unc_setop = 1.0 - np.maximum(probs_setop, 1.0 - probs_setop)
-        abstain_mask = (sqi_scores < 0.55) | (unc_setop > 0.35)
+        abstain_mask = quality_mask(probs_setop,sqi_scores)
         probs_setop_qa = np.where(abstain_mask, np.nan, probs_setop)
 
-        # Baseline SQI filter (SQI < 0.50)
-        baseline_sqi_abstain = sqi_scores < 0.50
+        # Apply the same SQI threshold to all baselines.
+        baseline_sqi_abstain = sqi_scores < 0.55
         probs_arnet2_sqi = np.where(baseline_sqi_abstain, np.nan, probs_arnet2)
         probs_rawecg_sqi = np.where(baseline_sqi_abstain, np.nan, probs_rawecg)
 
@@ -292,7 +334,7 @@ def run_corrected_benchmark(
         probs_arnet2_ma9 = causal_moving_average(probs_arnet2, kernel_size=9)
         probs_rawecg_ma9 = causal_moving_average(probs_rawecg, kernel_size=9)
         probs_setop_ma9 = causal_moving_average(probs_setop, kernel_size=9)
-        probs_setop_qa_ma9 = causal_moving_average(np.nan_to_num(probs_setop_qa, nan=0.0), kernel_size=9)
+        probs_setop_qa_ma9 = causal_moving_average(probs_setop_qa, kernel_size=9)
         probs_setop_qa_ma9 = np.where(abstain_mask, np.nan, probs_setop_qa_ma9)
 
         model_probs = {
@@ -306,6 +348,10 @@ def run_corrected_benchmark(
             "SetOperator_MA9": probs_setop_ma9,
             "QualityAware_SetOperator": probs_setop_qa_ma9,
         }
+        np.savez_compressed(prediction_dir / f"{rec_id}.npz", **model_probs,
+                            duration_sec=window_durations,gt_af_sec=gt_window_af_sec,
+                            annotated=is_ann,sqi=sqi_scores,subject_id=subj_id,
+                            checkpoint_sha256=checkpoint_hash,protocol_sha256=protocol_hash)
 
         # Negative Control classifications
         is_tier_a = (af_type == "non-AF") and is_ann  # Beat-annotated pure sinus (20 Holters, 480h)
@@ -318,16 +364,17 @@ def run_corrected_benchmark(
         if is_ann:
             for m_name, m_p in model_probs.items():
                 bin_mask = (m_p >= 0.50) & (~np.isnan(m_p))
-                pred_eps_30s = extract_continuous_episodes(bin_mask, window_sec=30.0, min_duration_sec=30.0)
-                pred_eps_6min = extract_continuous_episodes(bin_mask, window_sec=30.0, min_duration_sec=360.0)
+                pred_eps_30s = extract_continuous_episodes(bin_mask, window_sec=30.0, min_duration_sec=30.0,record_duration_sec=sig_len/fs)
+                pred_eps_6min = extract_continuous_episodes(bin_mask, window_sec=30.0, min_duration_sec=360.0,record_duration_sec=sig_len/fs)
 
                 match_30s = match_episodes(gt_af_episodes_30s, pred_eps_30s, min_overlap_sec=15.0)
                 match_6min = match_episodes(gt_af_episodes_6min, pred_eps_6min, min_overlap_sec=60.0)
 
-                valid_p = m_p[~np.isnan(m_p)]
-                pred_af_sec = float(np.sum(valid_p >= 0.50)) * window_sec
-                eval_dur_sec = float(len(valid_p)) * window_sec
-                pred_burden_pct = (pred_af_sec / eval_dur_sec) * 100.0 if eval_dur_sec > 0 else 0.0
+                accepted = ~np.isnan(m_p)
+                pred_af_sec = float(np.sum(window_durations[(m_p >= .5) & accepted]))
+                eval_dur_sec = float(window_durations.sum())
+                pred_burden_pct = pred_af_sec / eval_dur_sec * 100
+                accepted_sec = float(window_durations[accepted].sum())
 
                 rhythm_burden_rows.append({
                     "record_id": rec_id,
@@ -337,13 +384,18 @@ def run_corrected_benchmark(
                     "model": m_name,
                     "gt_burden_pct": round(gt_burden_pct, 2),
                     "pred_burden_pct": round(pred_burden_pct, 2),
+                    "burden_estimand": "detected AF seconds / total recording seconds; abstention counted as no detection",
+                    "accepted_seconds": accepted_sec,
+                    "total_seconds": eval_dur_sec,
+                    "accepted_gt_burden_pct": 100*gt_window_af_sec[accepted].sum()/accepted_sec if accepted_sec else np.nan,
+                    "accepted_pred_burden_pct": 100*pred_af_sec/accepted_sec if accepted_sec else np.nan,
                     "burden_error_pts": round(abs(pred_burden_pct - gt_burden_pct), 2),
                     "episodes_ge_30s_total": len(gt_af_episodes_30s),
                     "episodes_ge_30s_detected": match_30s["detected_ref"],
                     "episodes_ge_6min_total": len(gt_af_episodes_6min),
                     "episodes_ge_6min_detected": match_6min["detected_ref"],
                     "false_episode_alerts": match_30s["false_pred"],
-                    "abstention_rate_pct": round(100.0 * float(np.mean(np.isnan(m_p))), 2),
+                    "abstention_rate_pct": round(100.0 * (1-accepted_sec/eval_dur_sec), 2),
                 })
 
                 # Build Paired Episode Predictions for Parquet Export
@@ -359,6 +411,8 @@ def run_corrected_benchmark(
                     paired_episode_records.append({
                         "record_id": rec_id,
                         "subject_id": subj_id,
+                        "previous_af_ablation": is_ablation,
+                        "post_blanking": is_post_blanking,
                         "ref_episode_id": ref_idx,
                         "ref_start_sec": ref_ep["start_sec"],
                         "ref_end_sec": ref_ep["end_sec"],
@@ -367,6 +421,9 @@ def run_corrected_benchmark(
                         "ref_is_ge_6min": (ref_ep["duration_sec"] >= 360.0),
                         "model": m_name,
                         "detected": is_det,
+                        "detected_ge_6min": any(pair[0] == next((j for j, e in enumerate(gt_af_episodes_6min)
+                                                                 if e["start_sec"] == ref_ep["start_sec"]), -1)
+                                                    for pair in match_6min["matched_pairs"]),
                         "pred_start_sec": p_start,
                         "pred_end_sec": p_end,
                         "pred_duration_sec": p_dur,
@@ -390,12 +447,15 @@ def run_corrected_benchmark(
                     "af_type": af_type,
                     "is_tier_a_annotated": is_tier_a,
                     "is_tier_b_report_only": is_tier_b,
-                    "monitored_hours": round(dur_hrs, 2),
+                    "monitored_hours": dur_hrs,
+                    "accepted_hours": float(window_durations[~np.isnan(m_p)].sum())/3600,
                     "model": m_name,
                     "raw_false_alarms": alert_dict["raw_fa"],
                     "raw_fa_per_24h": alert_dict["raw_fa_per_24h"],
                     "clinical_alerts_1h_refractory": alert_dict["clinical_alerts"],
                     "clinical_alerts_per_24h": alert_dict["alerts_per_24h"],
+                    "clinical_alerts_per_24h_accepted": 24*alert_dict["clinical_alerts"]/(window_durations[~np.isnan(m_p)].sum()/3600)
+                    if (~np.isnan(m_p)).any() else np.nan,
                     "zero_false_alert_patient": (alert_dict["clinical_alerts"] == 0),
                     "abstention_rate_pct": round(100.0 * float(np.mean(np.isnan(m_p))), 2),
                 })
@@ -408,8 +468,8 @@ def run_corrected_benchmark(
                 b_mask = (m_p >= tau) & (~np.isnan(m_p))
                 
                 if is_ann:
-                    p_eps_30s = extract_continuous_episodes(b_mask, window_sec=30.0, min_duration_sec=30.0)
-                    p_eps_6m = extract_continuous_episodes(b_mask, window_sec=30.0, min_duration_sec=360.0)
+                    p_eps_30s = extract_continuous_episodes(b_mask, window_sec=30.0, min_duration_sec=30.0,record_duration_sec=sig_len/fs)
+                    p_eps_6m = extract_continuous_episodes(b_mask, window_sec=30.0, min_duration_sec=360.0,record_duration_sec=sig_len/fs)
                     
                     m30 = match_episodes(gt_af_episodes_30s, p_eps_30s, min_overlap_sec=15.0)
                     m6m = match_episodes(gt_af_episodes_6min, p_eps_6m, min_overlap_sec=60.0)
@@ -419,9 +479,8 @@ def run_corrected_benchmark(
                     sweep_data[tau][m_name]["ep6m_tot"] += len(gt_af_episodes_6min)
                     sweep_data[tau][m_name]["ep6m_det"] += m6m["detected_ref"]
 
-                    valid_p = m_p[~np.isnan(m_p)]
-                    p_sec = float(np.sum(valid_p >= tau)) * window_sec
-                    t_sec = float(len(valid_p)) * window_sec
+                    p_sec = float(window_durations[(m_p >= tau) & ~np.isnan(m_p)].sum())
+                    t_sec = float(window_durations.sum())
                     p_burd = (p_sec / t_sec) * 100.0 if t_sec > 0 else 0.0
                     sweep_data[tau][m_name]["burden_diffs"].append(abs(p_burd - gt_burden_pct))
 
@@ -438,9 +497,14 @@ def run_corrected_benchmark(
     # -------------------------------------------------------------------------
     # 4. SAVE AUDITED RESULTS & COMPUTATIONS
     # -------------------------------------------------------------------------
+    cpu_executor.shutdown()
+    if prepare_only:
+        print("PREPARATION_COMPLETE",flush=True)
+        return
     df_burden = pd.DataFrame(rhythm_burden_rows)
     df_alerts = pd.DataFrame(patient_alert_stats)
     df_paired_episodes = pd.DataFrame(paired_episode_records)
+    pd.DataFrame(reference_rows).to_csv(Path(output_dir) / "reference_episodes.csv",index=False)
 
     burden_csv_path = os.path.join(output_dir, "rhythm_burden_comparison.csv")
     df_burden.to_csv(burden_csv_path, index=False)
@@ -497,9 +561,11 @@ def run_corrected_benchmark(
         b_metrics = compute_burden_metrics(sub["gt_burden_pct"].values, sub["pred_burden_pct"].values)
 
         sub_a = df_alerts[(df_alerts["model"] == m) & (df_alerts["is_tier_a_annotated"] == True)]
-        mean_alerts_24h = sub_a["clinical_alerts_per_24h"].mean() if len(sub_a) > 0 else 0.0
-        patient_spec = (sub_a["zero_false_alert_patient"].mean() * 100.0) if len(sub_a) > 0 else 0.0
-        mean_abstain = sub["abstention_rate_pct"].mean()
+        mean_alerts_24h = 24*sub_a["clinical_alerts_1h_refractory"].sum()/sub_a["monitored_hours"].sum()
+        patient_counts=sub_a.groupby('subject_id').clinical_alerts_1h_refractory.sum()
+        patient_spec = 100*patient_counts.eq(0).mean()
+        recording_spec=100*sub_a.zero_false_alert_patient.mean()
+        mean_abstain = 100*(1-sub.accepted_seconds.sum()/sub.total_seconds.sum())
 
         summary_rows.append({
             "Model Architecture": m,
@@ -512,6 +578,9 @@ def run_corrected_benchmark(
             "Spearman rho": b_metrics["spearman_rho"],
             "False Alerts / 24h (Tier A)": round(mean_alerts_24h, 2),
             "Patient Specificity % (Tier A)": round(patient_spec, 2),
+            "Recording Specificity % (Tier A)": round(recording_spec, 2),
+            "Tier A Patients": len(patient_counts),
+            "Tier A Recordings": len(sub_a),
             "Diagnostic Abstention %": round(mean_abstain, 2),
         })
 
@@ -522,109 +591,33 @@ def run_corrected_benchmark(
     df_summary.to_csv(summary_csv_path, index=False)
     print(f"Saved: {summary_csv_path}")
 
-    # -------------------------------------------------------------------------
-    # 5. RISK-COVERAGE ACROSS NOISE TIERS (Noise Holter 600 Balanced Segments)
-    # -------------------------------------------------------------------------
-    print("\n=== Computing Risk-Coverage Stratified by Quality Tier (Noise Holter) ===")
-    nh_wfdb = sorted(glob.glob("/data/mithunmanivannan/datasets/noise-holter-database-a-multi-device-multi-arrhythmia-real-world-clinical-ecg-signal-quality-benchmark-1.0.0/wfdb_files/*.hea"))
-
-    tier_records = defaultdict(list)
-    for h_path in nh_wfdb:
-        base = h_path.replace(".hea", "")
-        header = wfdb.rdheader(base)
-        q_class = None
-        is_af = False
-        for c in header.comments:
-            if "CLASS:Clean" in c: q_class = "Clean"
-            elif "CLASS:N1" in c: q_class = "N1"
-            elif "CLASS:N2" in c: q_class = "N2"
-            if "EVENTS:A. Fib." in c or "EVENTS:A. Flutter" in c: is_af = True
-
-        if q_class and len(tier_records[q_class]) < 200:
-            rec = wfdb.rdrecord(base)
-            sig = rec.p_signal[:6000, 0].astype(np.float32)
-            if len(sig) < 6000:
-                sig = np.pad(sig, (0, 6000 - len(sig)), mode="edge")
-            qrs = wfdb.rdann(base, "qrs") if os.path.exists(f"{base}.qrs") else None
-            p_peaks = qrs.sample if qrs else np.array([])
-            sqi = fast_compute_sqi(sig, p_peaks, fs=header.fs)
-            tier_records[q_class].append({
-                "base": base,
-                "sig": sig,
-                "is_af": int(is_af),
-                "sqi": sqi,
-                "peaks": p_peaks,
-            })
-
-    # Predict RawECGNet and SetOperator on Noise Holter segments
-    qual_thresholds = [0.10, 0.20, 0.30, 0.40, 0.50, 0.55, 0.60, 0.70, 0.80, 0.90]
-    sweep_rc_rows = []
-
-    for tier in ["Clean", "N1", "N2"]:
-        segs = tier_records[tier]
-        if not segs:
-            continue
-        n_segs = len(segs)
-        sigs_arr = np.array([s["sig"] for s in segs], dtype=np.float32)
-        sqis_arr = np.array([s["sqi"] for s in segs], dtype=np.float32)
-        y_true = np.array([s["is_af"] for s in segs], dtype=int)
-
-        # Batch inference RawECGNet
-        prec_nh = np.zeros(n_segs, dtype=np.int32)
-        succ_nh = np.zeros(n_segs, dtype=np.int32)
-        glob_nh = np.zeros(n_segs, dtype=np.float32)
-        ids_nh = np.array([f"nh_{i}" for i in range(n_segs)], dtype=object)
-
-        out_nh_raw = infer_rawecg(
-            x=tf.constant(sigs_arr),
-            prec_windows=tf.constant(prec_nh),
-            succ_windows=tf.constant(succ_nh),
-            glob_lab=tf.constant(glob_nh),
-            ids=tf.constant(ids_nh, dtype=tf.string),
-        )
-        p_raw_nh = out_nh_raw["probs"].numpy()
-
-        for q_th in qual_thresholds:
-            abs_mask = sqis_arr < q_th
-            acc_mask = ~abs_mask
-            cov = float(np.mean(acc_mask) * 100.0)
-            
-            if np.sum(acc_mask) > 0:
-                y_acc = y_true[acc_mask]
-                p_acc = p_raw_nh[acc_mask] >= 0.50
-                sens = float(np.mean(p_acc[y_acc == 1]) * 100.0) if np.sum(y_acc == 1) > 0 else 100.0
-                fpr = float(np.mean(p_acc[y_acc == 0]) * 100.0) if np.sum(y_acc == 0) > 0 else 0.0
-                err_rate = float(np.mean(p_acc != y_acc) * 100.0)
-            else:
-                sens, fpr, err_rate = np.nan, np.nan, np.nan
-
-            missed_af = int(np.sum((y_true == 1) & abs_mask))
-
-            sweep_rc_rows.append({
-                "Noise Quality Tier": tier,
-                "tau_qual": q_th,
-                "Diagnostic Coverage %": round(cov, 2),
-                "Abstention Rate %": round(100.0 - cov, 2),
-                "Accepted Sensitivity %": round(sens, 2) if not np.isnan(sens) else np.nan,
-                "Accepted False Positive Rate %": round(fpr, 2) if not np.isnan(fpr) else np.nan,
-                "Accepted Error Rate %": round(err_rate, 2) if not np.isnan(err_rate) else np.nan,
-                "Missed AF During Abstention": missed_af,
-            })
-
-    df_sweep_rc = pd.DataFrame(sweep_rc_rows)
-    sweep_rc_path = os.path.join(output_dir, "noise_risk_coverage_sweep.csv")
-    df_sweep_rc.to_csv(sweep_rc_path, index=False)
-    print(f"Saved: {sweep_rc_path}")
-
-    # Standard operating point tau_qual = 0.55 table
-    df_rc_std = df_sweep_rc[df_sweep_rc["tau_qual"] == 0.55].copy()
-    rc_csv_path = os.path.join(output_dir, "risk_coverage_by_quality.csv")
-    df_rc_std.to_csv(rc_csv_path, index=False)
-    print(f"Saved: {rc_csv_path}")
-    print(df_rc_std.to_string(index=False))
+    # Use recording-group OOF predictions; daily-record prefixes do not verify patient independence.
+    df_sweep_rc = pd.read_csv(Path(output_dir) / "noise_risk_coverage_sweep.csv")
+    df_sweep_rc[df_sweep_rc.quality_threshold == .55].to_csv(
+        Path(output_dir) / "risk_coverage_by_quality.csv",index=False)
+    evaluation_sources=[Path(__file__),ROOT_DIR/'scripts/hrs2027_protocol.py',
+                        ROOT_DIR/'scripts/hrs2027_gpu_features.py',ROOT_DIR/'scripts/hrs2027_cpu_features.py',
+                        ROOT_DIR/'prototype/metrics_engine.py']
+    provenance=dict(checkpoint_sha256=checkpoint_hash,feature_protocol_sha256=protocol_hash,
+                    tensorflow_version=tf.__version__,torch_version=torch.__version__,
+                    cudnn_version=torch.backends.cudnn.version(),device=torch.cuda.get_device_name(),
+                    n_recordings=len(df_meta),n_annotated_recordings=int(df_meta.Annotated.sum()),
+                    metadata_sha256=hashlib.file_digest(open(shdb_metadata,'rb'),'sha256').hexdigest(),
+                    code_sha256={str(p.relative_to(ROOT_DIR)):hashlib.file_digest(open(p,'rb'),'sha256').hexdigest()
+                                 for p in evaluation_sources})
+    (Path(output_dir)/'evaluation_provenance.json').write_text(json.dumps(provenance,indent=2)+'\n')
 
     print("\n=== Corrected Benchmark Evaluation Successfully Completed! ===")
 
 
 if __name__ == "__main__":
-    run_corrected_benchmark()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--output-dir', required=True)
+    parser.add_argument('--checkpoint')
+    parser.add_argument('--prepare-only',action='store_true')
+    parser.add_argument('--shard-index',type=int,default=0)
+    parser.add_argument('--shard-count',type=int,default=1)
+    parser.add_argument('--start-index',type=int,default=0)
+    args = parser.parse_args()
+    run_corrected_benchmark(output_dir=args.output_dir,checkpoint=args.checkpoint,prepare_only=args.prepare_only,
+                            shard_index=args.shard_index,shard_count=args.shard_count,start_index=args.start_index)

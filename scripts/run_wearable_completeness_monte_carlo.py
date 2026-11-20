@@ -1,236 +1,127 @@
 #!/usr/bin/env python3
-"""
-Monte Carlo Wearable Completeness and Burden Uncertainty Bounds Analysis.
-Decouples physical wear-time coverage from model classification errors.
-Simulates 1,000 independent wear schedule realizations across post-ablation Holters.
-Produces: wear_schedule_sensitivity_analysis.csv
-"""
+"""Wear simulation using archived measured predictions and the canonical reference episodes."""
 from __future__ import annotations
 
-import os
-import glob
+import argparse
+from pathlib import Path
+import sys
+
 import numpy as np
 import pandas as pd
-import wfdb
 
-def run_monte_carlo_wearable_analysis(
-    shdb_dir: str = "/data/mithunmanivannan/datasets/shdb_af",
-    shdb_metadata: str = "/data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence/AdditionalData.csv",
-    output_path: str = "/data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence/corrected_package/wear_schedule_sensitivity_analysis.csv",
-    n_monte_carlo: int = 1000,
-    seed: int = 42,
-):
-    print("=== [P6] Running Monte Carlo Wearable Completeness Analysis ===")
-    rng = np.random.RandomState(seed)
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from prototype.metrics_engine import extract_continuous_episodes, match_episodes
+from scripts.hrs2027_protocol import quality_mask
 
-    df_meta = pd.read_csv(shdb_metadata)
-    ablation_annotated = df_meta[(df_meta["Previous_AF_Ablation"] == True) & (df_meta["Annotated"] == True)]
-    print(f"Auditing {len(ablation_annotated)} annotated post-ablation Holter recordings...")
 
-    # Load gold-standard episodes and second-level masks for each post-ablation Holter
-    holter_records = []
-    for idx, row in ablation_annotated.iterrows():
-        did = int(row["Data_ID"])
-        rec_path = os.path.join(shdb_dir, f"{did:03d}")
-        if not os.path.exists(f"{rec_path}.atr"):
-            continue
+def causal_average(probs, wear, k=9):
+    finite=np.isfinite(probs)
+    sums=np.r_[0,np.cumsum(np.where(finite,probs,0),dtype=np.float64)]
+    counts=np.r_[0,np.cumsum(finite)]
+    ends=np.arange(1,len(probs)+1)
+    starts=np.maximum(0,ends-k)
+    n=counts[ends]-counts[starts]
+    result=np.divide(sums[ends]-sums[starts],n,out=np.full(len(probs),np.nan),where=n>0)
+    result[~wear]=np.nan
+    return result
 
-        header = wfdb.rdheader(rec_path)
-        ann = wfdb.rdann(rec_path, "atr")
-        fs = float(header.fs)
-        sig_len = header.sig_len
-        dur_sec = sig_len / fs
 
-        # Parse ATR episodes
-        episodes_30s = []
-        episodes_6min = []
-        sample_mask = np.zeros(int(dur_sec), dtype=bool)
-
-        in_af = False
-        start_s = 0
-        for s, a in zip(ann.sample, ann.aux_note):
-            a_clean = a.strip()
-            if "(AFIB" in a_clean or "(AFL" in a_clean or "(AT" in a_clean:
-                if not in_af:
-                    in_af = True
-                    start_s = s
-            elif in_af and a_clean.startswith("("):
-                dur_s = (s - start_s) / fs
-                s_sec = int(start_s / fs)
-                e_sec = min(int(s / fs), int(dur_sec))
-                sample_mask[s_sec:e_sec] = True
-                if dur_s >= 30.0:
-                    episodes_30s.append((s_sec, e_sec, dur_s))
-                if dur_s >= 360.0:
-                    episodes_6min.append((s_sec, e_sec, dur_s))
-                in_af = False
-        if in_af:
-            dur_s = (sig_len - start_s) / fs
-            s_sec = int(start_s / fs)
-            e_sec = int(dur_sec)
-            sample_mask[s_sec:e_sec] = True
-            if dur_s >= 30.0:
-                episodes_30s.append((s_sec, e_sec, dur_s))
-            if dur_s >= 360.0:
-                episodes_6min.append((s_sec, e_sec, dur_s))
-
-        true_burden_pct = (np.sum(sample_mask) / dur_sec) * 100.0 if dur_sec > 0 else 0.0
-
-        holter_records.append({
-            "did": did,
-            "dur_sec": dur_sec,
-            "sample_mask": sample_mask,
-            "true_burden_pct": true_burden_pct,
-            "episodes_30s": episodes_30s,
-            "episodes_6min": episodes_6min,
-        })
-
-    print(f"Loaded {len(holter_records)} post-ablation Holters with exact second-level ground truth.")
-
-    # Define Wear Schedules
-    # Each schedule defined by target duration and circadian offset variability
-    schedules = [
-        {"name": "Continuous 24h Wear", "nominal_hours": 24.0, "is_spot_check": False},
-        {"name": "Daytime 16h Wear (Active)", "nominal_hours": 16.0, "is_spot_check": False},
-        {"name": "Workday 12h Wear", "nominal_hours": 12.0, "is_spot_check": False},
-        {"name": "Sleep/Morning 8h Wear", "nominal_hours": 8.0, "is_spot_check": False},
-        {"name": "Casual 4h Wear", "nominal_hours": 4.0, "is_spot_check": False},
-        {"name": "Intermittent Spot-Checks (2x30s/d)", "nominal_hours": 60.0 / 3600.0, "is_spot_check": True},
-    ]
-
-    results = []
-
-    for sched in schedules:
-        s_name = sched["name"]
-        nom_hrs = sched["nominal_hours"]
-        is_spot = sched["is_spot_check"]
-
-        # Track metrics across Monte Carlo iterations
-        mc_coverage_pcts = []
-        mc_sens_30s = []
-        mc_sens_6min = []
-        mc_physically_observable_30s = []
-        mc_physically_observable_6min = []
-        mc_detected_of_observable_30s = []
-        mc_detected_of_observable_6min = []
-        mc_bound_widths = []
-        mc_bound_coverages = []
-        mc_indeterminate_rates = []
-
-        for mc_i in range(n_monte_carlo):
-            tot_ref_30s = 0
-            tot_obs_30s = 0
-            tot_det_30s = 0
-
-            tot_ref_6m = 0
-            tot_obs_6m = 0
-            tot_det_6m = 0
-
-            bound_widths_rec = []
-            bound_coverages_rec = []
-            indeterminate_rec = []
-            effective_wear_sec = []
-
-            for rec in holter_records:
-                dur_s = rec["dur_sec"]
-                mask = rec["sample_mask"]
-                tb = rec["true_burden_pct"]
-                eps30 = rec["episodes_30s"]
-                eps6m = rec["episodes_6min"]
-
-                # Generate Wear Mask
-                wear_mask = np.zeros(int(dur_s), dtype=bool)
-                if nom_hrs >= 24.0:
-                    wear_mask[:] = True
-                elif is_spot:
-                    # 2 spot checks of 30 seconds each, placed randomly in morning and evening
-                    t1 = rng.randint(0, max(1, int(dur_s * 0.5) - 30))
-                    t2 = rng.randint(int(dur_s * 0.5), max(int(dur_s * 0.5) + 1, int(dur_s) - 30))
-                    wear_mask[t1 : t1 + 30] = True
-                    wear_mask[t2 : t2 + 30] = True
+def evaluate_schedule(prediction_dir, output_dir, iterations=1000, seed=42):
+    out = Path(output_dir)
+    manifest = pd.read_csv(out/'shdb_cohort_manifest.csv')
+    references = pd.read_csv(out/'reference_episodes.csv')
+    rng = np.random.default_rng(seed)
+    records = []
+    for row in manifest[manifest.Annotated & manifest.Previous_AF_Ablation].itertuples():
+        rec_id = int(row.Data_ID)
+        archive = np.load(Path(prediction_dir)/f'{rec_id:03d}.npz')
+        refs = references[references.record_id == rec_id].to_dict('records')
+        records.append((row, archive, refs))
+    rows = []
+    schedules = [('Continuous 24h',24),('Random contiguous 16h',16),
+                 ('Random contiguous 12h',12),('Random contiguous 8h',8),
+                 ('Random contiguous 4h',4),('Two random 30s checks',0)]
+    for name, hours in schedules:
+        for iteration in range(1 if hours==24 else iterations):
+            for row, archive, refs in records:
+                duration = archive['duration_sec']
+                n = len(duration)
+                wear = np.zeros(n,dtype=bool)
+                if hours==24:
+                    wear[:] = True
+                elif hours==0:
+                    indices = rng.choice(n,size=2,replace=False)
+                    wear[indices] = True
                 else:
-                    wear_sec = int(nom_hrs * 3600)
-                    # Random jitter on wear start time (circadian offset)
-                    max_start = max(1, int(dur_s) - wear_sec)
-                    start_t = rng.randint(0, max_start)
-                    wear_mask[start_t : start_t + wear_sec] = True
+                    count = min(n,int(hours*120))
+                    start = rng.integers(0,n-count+1)
+                    wear[start:start+count] = True
+                raw, sqi = archive['SetOperator_Raw'], archive['sqi']
+                abstain = quality_mask(raw,sqi) | ~wear
+                selected = np.where(abstain,np.nan,raw)
+                probs = causal_average(selected,wear)
+                probs[abstain] = np.nan
+                if hours==24:
+                    probs=archive['QualityAware_SetOperator']
+                detected = (probs>=.5) & np.isfinite(probs)
+                accepted = np.isfinite(probs)
+                total = duration.sum()
+                unknown = duration[~accepted].sum()
+                # Valid partial-identification bounds use reference truth in accepted time.
+                # Model outputs alone cannot guarantee bounds in the presence of classification error.
+                reference_observed = archive['gt_af_sec'][accepted].sum()
+                b_min = 100*reference_observed/total
+                b_max = 100*(reference_observed+unknown)/total
+                row_out = dict(protocol=name,iteration=iteration,record_id=int(row.Data_ID),
+                               subject_id=int(row.Subject_ID),post_blanking=bool(row.post_blanking),
+                               wear_pct=100*duration[wear].sum()/total,
+                               diagnostic_coverage_pct=100*duration[accepted].sum()/total,
+                               reference_burden_min_pct=b_min,reference_burden_max_pct=b_max,
+                               reference_burden_pct=100*archive['gt_af_sec'].sum()/total,
+                               indeterminate_no_detected_af=bool(not detected.any() and unknown>0))
+                starts = np.arange(n)*30
+                for endpoint,minimum,overlap in [('30s',30,15),('6min',360,60)]:
+                    eligible = [r for r in refs if r['duration_sec']>=minimum]
+                    pred_eps = extract_continuous_episodes(detected,window_sec=30,min_duration_sec=minimum,record_duration_sec=total)
+                    match = match_episodes(eligible,pred_eps,min_overlap_sec=overlap)
+                    observable = 0
+                    for ref in eligible:
+                        overlap_seconds = np.maximum(0, np.minimum(starts+duration,ref['end_sec'])
+                                                      - np.maximum(starts,ref['start_sec']))
+                        observable += overlap_seconds[wear].sum() >= (15 if endpoint=='30s' else 180)
+                    row_out[f'reference_{endpoint}'] = len(eligible)
+                    row_out[f'detected_{endpoint}'] = match['detected_ref']
+                    row_out[f'observable_{endpoint}'] = observable
+                rows.append(row_out)
+        print(f'WEAR {name} complete',flush=True)
+    detail = pd.DataFrame(rows)
+    detail.to_parquet(out/'wear_schedule_record_predictions.parquet',index=False)
+    summaries=[]
+    for (protocol,iteration),sub in detail.groupby(['protocol','iteration']):
+        entry=dict(protocol=protocol,iteration=iteration,n_records=len(sub),n_subjects=sub.subject_id.nunique(),
+                   wear_pct=sub.wear_pct.mean(),diagnostic_coverage_pct=sub.diagnostic_coverage_pct.mean(),
+                   reference_bound_width_pct=(sub.reference_burden_max_pct-sub.reference_burden_min_pct).mean(),
+                   indeterminate_pct=100*sub.indeterminate_no_detected_af.mean())
+        for endpoint in ['30s','6min']:
+            total=sub[f'reference_{endpoint}'].sum()
+            entry[f'sensitivity_{endpoint}_pct']=100*sub[f'detected_{endpoint}'].sum()/total if total else np.nan
+            entry[f'observable_{endpoint}_pct']=100*sub[f'observable_{endpoint}'].sum()/total if total else np.nan
+        summaries.append(entry)
+    per_iteration=pd.DataFrame(summaries)
+    per_iteration.to_csv(out/'wear_schedule_iterations.csv',index=False)
+    grouped=per_iteration.groupby('protocol')
+    mean=grouped.mean(numeric_only=True).drop(columns='iteration')
+    for metric in ['sensitivity_30s_pct','sensitivity_6min_pct']:
+        mean[f'{metric}_simulation_p025']=grouped[metric].quantile(.025)
+        mean[f'{metric}_simulation_p975']=grouped[metric].quantile(.975)
+    mean.to_csv(out/'wear_schedule_sensitivity_analysis.csv')
+    print(mean.to_string(),flush=True)
 
-                eff_sec = int(np.sum(wear_mask))
-                effective_wear_sec.append(eff_sec / dur_s * 100.0)
 
-                # Assume realistic classifier operating point on observed data:
-                # 95% per-episode detection sensitivity on observable episodes
-                det_prob = 0.95
-
-                # Evaluate >= 30s episodes
-                for s_e, e_e, d_e in eps30:
-                    tot_ref_30s += 1
-                    # Observable if at least 50% or 30s of episode is within wear_mask
-                    ep_observed_sec = np.sum(wear_mask[s_e:e_e])
-                    if ep_observed_sec >= min(d_e * 0.5, 30.0):
-                        tot_obs_30s += 1
-                        if rng.rand() < det_prob:
-                            tot_det_30s += 1
-
-                # Evaluate >= 6min episodes
-                for s_e, e_e, d_e in eps6m:
-                    tot_ref_6m += 1
-                    ep_observed_sec = np.sum(wear_mask[s_e:e_e])
-                    if ep_observed_sec >= 180.0:  # At least 3 minutes observed
-                        tot_obs_6m += 1
-                        if rng.rand() < det_prob:
-                            tot_det_6m += 1
-
-                # Partial Identification Bounds [B_min, B_max]
-                # T_detected_af: AF seconds during wear_mask correctly detected
-                af_observed_sec = np.sum(mask & wear_mask)
-                # Model detection on observed AF (with slight classifier sensitivity factor)
-                detected_af_sec = af_observed_sec * 0.95
-                unobserved_sec = dur_s - eff_sec
-
-                b_min = (detected_af_sec / dur_s) * 100.0
-                b_max = ((detected_af_sec + unobserved_sec) / dur_s) * 100.0
-                b_width = b_max - b_min
-
-                bound_widths_rec.append(b_width)
-                # Does true burden fall within [b_min, b_max]?
-                bound_coverages_rec.append(b_min <= tb <= b_max)
-                # Indeterminate: no AF detected, but unobserved time allows possible recurrence
-                is_indet = (detected_af_sec == 0) and (unobserved_sec > 0) and (tb > 0)
-                indeterminate_rec.append(is_indet)
-
-            mc_coverage_pcts.append(np.mean(effective_wear_sec))
-            mc_sens_30s.append((tot_det_30s / tot_ref_30s * 100.0) if tot_ref_30s > 0 else 100.0)
-            mc_sens_6min.append((tot_det_6m / tot_ref_6m * 100.0) if tot_ref_6m > 0 else 100.0)
-            mc_physically_observable_30s.append((tot_obs_30s / tot_ref_30s * 100.0) if tot_ref_30s > 0 else 100.0)
-            mc_physically_observable_6min.append((tot_obs_6m / tot_ref_6m * 100.0) if tot_ref_6m > 0 else 100.0)
-            mc_detected_of_observable_30s.append((tot_det_30s / tot_obs_30s * 100.0) if tot_obs_30s > 0 else 100.0)
-            mc_detected_of_observable_6min.append((tot_det_6m / tot_obs_6m * 100.0) if tot_obs_6m > 0 else 100.0)
-            mc_bound_widths.append(np.mean(bound_widths_rec))
-            mc_bound_coverages.append(np.mean(bound_coverages_rec) * 100.0)
-            mc_indeterminate_rates.append(np.mean(indeterminate_rec) * 100.0)
-
-        results.append({
-            "Wearable Monitoring Protocol": s_name,
-            "Nominal Scheduled Hours": nom_hrs if nom_hrs >= 1.0 else round(nom_hrs, 4),
-            "Mean Effective Completeness (%)": round(float(np.mean(mc_coverage_pcts)), 2),
-            "Overall Recurrence Sens (>=30s) %": round(float(np.mean(mc_sens_30s)), 2),
-            "Overall Recurrence Sens (>=30s) 95% CI": f"[{np.percentile(mc_sens_30s, 2.5):.1f}, {np.percentile(mc_sens_30s, 97.5):.1f}]",
-            "Overall Recurrence Sens (>=6min) %": round(float(np.mean(mc_sens_6min)), 2),
-            "Overall Recurrence Sens (>=6min) 95% CI": f"[{np.percentile(mc_sens_6min, 2.5):.1f}, {np.percentile(mc_sens_6min, 97.5):.1f}]",
-            "Physically Observable (>=6min) %": round(float(np.mean(mc_physically_observable_6min)), 2),
-            "Model Sens on Observable (>=6min) %": round(float(np.mean(mc_detected_of_observable_6min)), 2),
-            "Mean Burden Bound Width [B_min, B_max] (% pts)": round(float(np.mean(mc_bound_widths)), 2),
-            "Bound Empirical Coverage (%)": round(float(np.mean(mc_bound_coverages)), 2),
-            "Indeterminate Recurrence Rate (%)": round(float(np.mean(mc_indeterminate_rates)), 2),
-        })
-
-    df_out = pd.DataFrame(results)
-    print("\n=== MONTE CARLO WEARABLE COMPLETENESS RESULTS (1,000 ITERATIONS) ===")
-    print(df_out[["Wearable Monitoring Protocol", "Mean Effective Completeness (%)", "Overall Recurrence Sens (>=30s) %", "Overall Recurrence Sens (>=6min) %", "Physically Observable (>=6min) %", "Mean Burden Bound Width [B_min, B_max] (% pts)", "Indeterminate Recurrence Rate (%)"]].to_string(index=False))
-
-    df_out.to_csv(output_path, index=False)
-    print(f"\nSaved Monte Carlo results to: {output_path}")
-
-if __name__ == "__main__":
-    run_monte_carlo_wearable_analysis()
+if __name__=='__main__':
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--output-dir',required=True)
+    parser.add_argument('--iterations',type=int,default=1000)
+    args=parser.parse_args()
+    evaluate_schedule(Path(args.output_dir)/'window_predictions',args.output_dir,args.iterations)

@@ -1,5 +1,14 @@
 # Local Compute Environment Ledger
 
+### env: hrs2027-a100-cudnn93
+
+- how: existing `/home/mithunmanivannan/.venv`; isolated `nvidia-cudnn-cu12==9.3.0.75` under `/data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence/runtime_cudnn93`; shared packages unchanged
+- spec: `.aris/compute/hrs2027-a100-env-spec.json`
+- tier: `{cpus: 8 available, mem_gib: 15, gpus: 1 x A100-PCIE-40GB}`
+- gotcha: shared cuDNN 9.20 raises `ptrDesc->finalize()` for both frameworks; prefer isolated cuDNN 9.3 through the loader path. pip temporary files must use `/data` because the root filesystem has limited space.
+- validated: seeded PyTorch Conv1d forward/backward and TensorFlow Conv1D on A100 passed; fresh agent ran documented invocation verbatim, exit 0, including official RawECGNet real ECG inference witness (64 predictions, 2.65 seconds); no divergence
+- documented invocation: `hrs_cuda_libs=$(find /home/mithunmanivannan/.venv/lib/python3.12/site-packages/nvidia -maxdepth 2 -type d -name lib -printf '%p:'); LD_LIBRARY_PATH="/data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence/runtime_cudnn93/nvidia/cudnn/lib:$hrs_cuda_libs" OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 /home/mithunmanivannan/.venv/bin/python scripts/verify_hrs2027_a100.py`
+
 ### env: ptbxl-distributional-repecg@fc49e470
 
 - how: warm reuse of `/home/mithunmanivannan/.venv`; added `iisignature==0.24` and editable project package with `--no-deps`

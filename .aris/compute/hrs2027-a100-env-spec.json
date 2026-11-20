@@ -1,0 +1,8 @@
+{
+  "base": "existing /home/mithunmanivannan/.venv Python 3.12; torch 2.6.0+cu124; TensorFlow 2.21.0",
+  "provider": "local NVIDIA A100-PCIE-40GB",
+  "pip_phases": [["nvidia-cudnn-cu12==9.3.0.75 --no-deps --target /data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence/runtime_cudnn93"]],
+  "env": {"LD_LIBRARY_PATH": "runtime_cudnn93/nvidia/cudnn/lib before existing venv nvidia library directories", "OMP_NUM_THREADS": "2", "OPENBLAS_NUM_THREADS": "2"},
+  "reason": "Shared cuDNN 9.20 fails tensor descriptor finalization in both PyTorch and TensorFlow; isolate a compatible cuDNN without changing shared packages",
+  "smoke": {"gpu_tests": ["seeded PyTorch Conv1d forward/backward", "seeded TensorFlow Conv1D", "official RawECGNet SavedModel real ECG inference"]}
+}

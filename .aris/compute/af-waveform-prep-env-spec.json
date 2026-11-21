@@ -1,0 +1,26 @@
+{
+  "base": "unchanged /home/mithunmanivannan/.venv Python 3.12.3",
+  "pip_phases": [],
+  "reuse_pins": {
+    "numpy": "2.3.5",
+    "scipy": "1.16.3",
+    "h5py": "3.14.0",
+    "wfdb": "4.3.0",
+    "scikit-learn": "1.8.0"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1"
+  },
+  "tier": {
+    "processes": 6,
+    "threads_per_process": 1,
+    "gpu": 0
+  },
+  "smoke": {
+    "command": "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 /home/mithunmanivannan/.venv/bin/python experiments/af_density/extract_observed_waveforms.py --smoke",
+    "expect": "WITNESS_AF_OBSERVED_QRS"
+  }
+}

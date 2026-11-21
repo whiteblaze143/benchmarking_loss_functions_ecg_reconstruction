@@ -1,0 +1,8 @@
+{
+  "base": "unchanged /home/mithunmanivannan/.venv Python 3.12.3",
+  "pip_phases": [],
+  "reuse_pins": {"numpy": "2.3.5", "scipy": "1.16.3"},
+  "env": {"OPENBLAS_NUM_THREADS": "1", "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "NUMEXPR_NUM_THREADS": "1"},
+  "tier": {"processes": 1, "threads_per_process": 1, "gpu": 0},
+  "smoke": {"command": "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 /home/mithunmanivannan/.venv/bin/python experiments/af_density/fit_waveform_durations.py --smoke", "expect": "WITNESS_AF_DURATION_FIT"}
+}

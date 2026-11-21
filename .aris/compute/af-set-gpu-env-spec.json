@@ -1,0 +1,9 @@
+{
+  "base": "unchanged /home/mithunmanivannan/.venv Python3.12.3",
+  "pip_phases": [],
+  "reuse_pins": {"numpy": "2.3.5", "torch": "2.6.0+cu124", "scipy": "1.16.3"},
+  "cudnn_override": "/data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence/runtime_cudnn93/nvidia/cudnn/lib",
+  "env": {"OPENBLAS_NUM_THREADS": "1", "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "NUMEXPR_NUM_THREADS": "1", "CUBLAS_WORKSPACE_CONFIG": ":4096:8"},
+  "tier": {"processes": 1, "cpu_threads": 1, "gpu": "one local A10040GB", "production_free_gpu_gib_required": 14},
+  "smoke": {"entrypoint": "experiments/af_density/train_set_waveform.py --smoke", "expect": "WITNESS_AF_SET_TRAINER"}
+}

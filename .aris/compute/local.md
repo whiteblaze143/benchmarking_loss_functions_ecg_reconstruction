@@ -76,3 +76,75 @@
 - checkpoint: validation-selected `best-MeanIoU.pth:model_ema`, SHA-256 `b404e0dbe198b7f5d4961b7a5fe04a2bd16d281a9a030a3db2ba4996ce696fb4`
 - validated: 2026-08-22 13 tests, test-only two-record/one-model execution smoke, compact SQLite integrity, and fresh agent-follows-doc launch audit passed
 - gotcha: CPU affinity is not exclusive; the active spatial trainer and its workers retain affinity to all eight cores.
+
+### env: af-density-rr-cpu@e1907214
+
+- how: unchanged /home/mithunmanivannan/.venv; no installations or GPU use
+- spec: .aris/compute/af-density-rr-cpu-env-spec.json
+- tier: CPU 2 threads, GPU 0
+- validated: seeded HGB deterministic fit/predict and actual eight-window source-RR feature witness passed; fresh documented-invocation witness pending
+- documented invocation: `OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 /home/mithunmanivannan/.venv/bin/python experiments/af_density/verify_rr_cpu.py`
+
+### env: af-waveform-prep@49e86c3f
+
+- how: unchanged /home/mithunmanivannan/.venv; no package installation
+- spec: .aris/compute/af-waveform-prep-env-spec.json
+- tier: six CPU processes, one numerical thread each, no GPU
+- witness: actual eight-window/sixteen-channel training-only XQRS preflight executed; fresh documented-invocation validation recorded separately
+- documentation: /data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/RUN_PREPROCESSING.md
+- documented invocation: `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 /home/mithunmanivannan/.venv/bin/python experiments/af_density/extract_observed_waveforms.py --smoke`
+
+### env: af-duration@e41cac93
+
+- how: unchanged /home/mithunmanivannan/.venv, no installs
+- spec: .aris/compute/af-duration-env-spec.json
+- tier: one CPU process, one numerical thread, GPU 0
+- witness: seeded synthetic discrete-lognormal fit passed; fresh documented-command witness pending
+- documentation: /data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/RUN_DURATION_FIT.md
+- validated: seeded synthetic witness and fresh /root/af_duration_doc_witness command passed without divergence; real annotation fit and independent replay passed, outputs duration_model_v1/verification.json
+
+### env: af-phase-kernel@acfa0a54
+
+- how: unchanged /home/mithunmanivannan/.venv; no installations
+- spec: .aris/compute/af-phase-kernel-env-spec.json
+- tier: one CPU process/thread, GPU 0
+- documentation: /data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/RUN_PHASE_KERNEL.md
+- validated: seeded actual-training feature-equivalence witness passed; fresh documented-command witness pending
+- fresh documented-command validation: /root/af_phase_kernel_doc_witness passed, four training-channel examples,16x128, maximum float32 discrepancy0.0; production fit awaits complete extraction
+
+### env: af-raw-gpu@3d18ce1a
+
+- how: unchanged venv with existing isolated cuDNN9.3 override; no installs
+- spec: .aris/compute/af-raw-gpu-env-spec.json
+- tier: CPU1, A10040GB,29.988GiB development cache
+- documentation: /data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/RUN_RAW_BASELINE.md
+- seeded witness: finite BF16 gradients, FP32 unobserved-channel isolation, batch256 with full-cache reservation, peak31.18GiB; fresh documented-command witness pending
+- fresh documented-command witness: /root/af_raw_doc_witness passed, batch256/full-cache reservation,31.184GiB peak; raw train/validation process launched, no test inference
+
+### env: af-observed-rr@c9def370
+
+- how: unchanged venv; no installs
+- spec: .aris/compute/af-observed-rr-env-spec.json
+- tier: CPU1/thread1, GPU0
+- documentation: /data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/RUN_OBSERVED_RR.md
+- seeded witness:32 actual training windows/96 examples,36 float32 features, synthetic labels only; fresh documented-command witness pending
+- fresh documented-command witness: /root/af_observed_rr_doc_witness passed,32 training windows/96 acquisition examples,36 float32 columns; production preparation waits for complete extraction
+
+### env: af-phase-cache@584e3f04
+
+- how: unchanged venv and existing isolated cuDNN9.3; no installs
+- spec: .aris/compute/af-phase-cache-env-spec.json
+- tier:4 spawned CPU prep workers plus1 controller, each numerical thread1; one CUDA float64 feature evaluator,16 channel representations per batch,8 queued chunks
+- documentation: /data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/RUN_PHASE_FEATURES.md
+- seeded witness:256 actual training windows, original NumPy agreement0.0, exact commit roundtrip; final fresh documented-command witness pending
+- fresh documented-command witness: /root/af_phase_cache_doc_witness passed256 actual training windows, NumPy discrepancy0.0, exact cache replay/commit roundtrip; warm2.0453s under concurrent jobs; production run awaits dependency gates
+
+### env: af-set-gpu@a6046ce7
+
+- how: unchanged venv with existing cuDNN9.3 override, no installs
+- spec: .aris/compute/af-set-gpu-env-spec.json
+- tier:CPU1/A10040GB; production requires14GiB free GPU
+- documentation: /data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/RUN_SET_TRAINING.md
+- seeded witness:categorical/q-ablated/hybrid BF16 finite gradients and bitwise repeated FP32 logits; fresh documentation witness pending
+- fresh documented-command witness: /root/af_set_training_doc_witness passed categorical/q-ablated/hybrid BF16 gradients and repeated FP32 logits; production models await complete phase cache
+- raw independent replay: /root/af_raw_replay_doc_witness exact documented full run passed166047 validation windows/498141 predictions, bitwise logits/scores, strict best-checkpoint history minimum and exact threshold reselection; no test waveform

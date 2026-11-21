@@ -1,0 +1,20 @@
+{
+  "base": "existing /home/mithunmanivannan/.venv Python 3.12.3",
+  "pip_phases": [],
+  "reuse_pins": {
+    "numpy": "2.3.5",
+    "scikit-learn": "1.8.0"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2"
+  },
+  "tier": {
+    "cpus": 2,
+    "gpus": 0
+  },
+  "smoke": {
+    "command": "OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 /home/mithunmanivannan/.venv/bin/python experiments/af_density/verify_rr_cpu.py",
+    "expect": "WITNESS_AF_RR_CPU"
+  }
+}

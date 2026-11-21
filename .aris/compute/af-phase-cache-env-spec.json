@@ -1,0 +1,9 @@
+{
+  "base": "unchanged /home/mithunmanivannan/.venv Python 3.12.3",
+  "pip_phases": [],
+  "reuse_pins": {"numpy": "2.3.5", "torch": "2.6.0+cu124", "scipy": "1.16.3", "h5py": "3.14.0", "scikit-learn": "1.8.0"},
+  "cudnn_override": "/data/mithunmanivannan/codex_artifacts/hrs2027_af_recurrence/runtime_cudnn93/nvidia/cudnn/lib",
+  "env": {"OPENBLAS_NUM_THREADS": "1", "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "NUMEXPR_NUM_THREADS": "1", "CUBLAS_WORKSPACE_CONFIG": ":4096:8"},
+  "tier": {"cpu_preparation_workers": 4, "controller_cpu_threads": 1, "threads_per_worker": 1, "gpu": "one local A100, fixed float64 feature computation", "max_queued_chunks": 8, "windows_per_chunk": 8},
+  "smoke": {"entrypoint": "experiments/af_density/generate_phase_features.py --smoke", "expect": "WITNESS_AF_PHASE_CACHE"}
+}

@@ -1,0 +1,116 @@
+{
+  "audit_timestamp": "2026-11-22T20:36:32.832672+00:00",
+  "status": "ALL_TESTS_PASSED",
+  "tests": {
+    "test_1_strongly_af_positive": {
+      "decoded_af_fraction": 1.0,
+      "num_episodes": 1,
+      "episodes": [
+        [
+          0,
+          720
+        ]
+      ],
+      "num_transitions": 0,
+      "state_occupancy": {
+        "non_af_windows": 0,
+        "af_windows": 720,
+        "total_windows": 720
+      },
+      "emission_log_prob": 998.7385,
+      "duration_log_prob": -1.7455,
+      "total_log_score": 996.993,
+      "test_name": "1_strongly_af_positive",
+      "description": "Constant p=0.95 emissions across all 720 windows",
+      "passed": true
+    },
+    "test_2_strongly_af_negative": {
+      "decoded_af_fraction": 0.0,
+      "num_episodes": 0,
+      "episodes": [],
+      "num_transitions": 0,
+      "state_occupancy": {
+        "non_af_windows": 720,
+        "af_windows": 0,
+        "total_windows": 720
+      },
+      "emission_log_prob": 187.8049,
+      "duration_log_prob": -0.5369,
+      "total_log_score": 187.2681,
+      "test_name": "2_strongly_af_negative",
+      "description": "Constant p=0.01 emissions across all 720 windows",
+      "passed": true
+    },
+    "test_3_alternating_blocks": {
+      "decoded_af_fraction": 0.3333333333333333,
+      "num_episodes": 1,
+      "episodes": [
+        [
+          240,
+          480
+        ]
+      ],
+      "num_transitions": 2,
+      "state_occupancy": {
+        "non_af_windows": 480,
+        "af_windows": 240,
+        "total_windows": 720
+      },
+      "emission_log_prob": 438.3195,
+      "duration_log_prob": -16.5191,
+      "total_log_score": 421.8004,
+      "test_name": "3_alternating_blocks",
+      "description": "2h non-AF (p=0.05) -> 2h AF (p=0.95) -> 2h non-AF (p=0.05)",
+      "tracking_accuracy": 1.0,
+      "passed": true
+    },
+    "test_4_stage1b_degeneracy_reproduction": {
+      "decoded_af_fraction": 1.0,
+      "num_episodes": 1,
+      "episodes": [
+        [
+          0,
+          720
+        ]
+      ],
+      "num_transitions": 0,
+      "state_occupancy": {
+        "non_af_windows": 0,
+        "af_windows": 720,
+        "total_windows": 720
+      },
+      "emission_log_prob": 281.6101,
+      "duration_log_prob": -1.7455,
+      "total_log_score": 279.8646,
+      "test_name": "4_stage1b_degeneracy_reproduction",
+      "description": "Uncalibrated probabilities strictly > 0.2373 force all-AF Viterbi path",
+      "is_degenerate_constant_af": true,
+      "passed": true
+    },
+    "test_5_platt_calibration_resolution": {
+      "decoded_af_fraction": 0.3333333333333333,
+      "num_episodes": 1,
+      "episodes": [
+        [
+          240,
+          480
+        ]
+      ],
+      "num_transitions": 2,
+      "state_occupancy": {
+        "non_af_windows": 480,
+        "af_windows": 240,
+        "total_windows": 720
+      },
+      "emission_log_prob": 185.814,
+      "duration_log_prob": -16.5191,
+      "total_log_score": 169.2949,
+      "test_name": "5_platt_calibration_resolution",
+      "description": "Platt scaling centers scores to population prevalence, restoring transition fidelity",
+      "calibrated_tracking_accuracy": 1.0,
+      "is_degenerate_constant_af": false,
+      "passed": true
+    }
+  },
+  "scientific_summary": "Degeneracy proved: when uncalibrated scores strictly exceed posterior_prior, emission log-ratios are strictly positive everywhere, causing cumulative positive log likelihoods that dominate duration priors and force 100% AF. Platt calibration maps scores to true population probability space, allowing non-AF regions to emit negative log-ratios, perfectly restoring transition detection."
+}

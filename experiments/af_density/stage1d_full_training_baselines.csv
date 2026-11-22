@@ -1,0 +1,11 @@
+model_id,architecture_family,cross_validation_strategy,pooled_window_auroc,pooled_balanced_accuracy,pooled_brier_score,brier_skill_score,clinical_role
+B1_RR_GBDT_Full36,Rhythm-Only,"5-Fold Patient-Grouped CV (90 Training Patients, 504,777 Windows)",0.9911,0.9629,0.0212,0.8853,Primary Reference Baseline
+B2_RR_MLP_Full36,Rhythm-Only,"5-Fold Patient-Grouped CV (90 Training Patients, 504,777 Windows)",0.9843,0.9396,0.0358,0.806,Comparison Comparator
+B3_RR_Sequence_Median5,Rhythm-Only,"5-Fold Patient-Grouped CV (90 Training Patients, 504,777 Windows)",0.9935,0.9686,0.0168,0.9092,Comparison Comparator
+B4_RR_GBDT_Minimal10,Rhythm-Only,"5-Fold Patient-Grouped CV (90 Training Patients, 504,777 Windows)",0.965,0.9021,0.057,0.6912,Comparison Comparator
+B5_RR_GBDT_SingleLead0,Rhythm-Only,"5-Fold Patient-Grouped CV (90 Training Patients, 504,777 Windows)",0.9892,0.9611,0.022,0.8809,Comparison Comparator
+B6_RR_GBDT_SingleLead1,Rhythm-Only,"5-Fold Patient-Grouped CV (90 Training Patients, 504,777 Windows)",0.9865,0.9476,0.03,0.8372,Comparison Comparator
+B7_Constant_Prevalence,Prevalence Reference,"5-Fold Patient-Grouped CV (90 Training Patients, 504,777 Windows)",0.5,0.5,0.1886,-0.0219,Comparison Comparator
+B8_H071_RawResNet,Convolutional Raw Waveform,"Independent Patient Validation (11 Informative Patients, 42,431 Windows)",0.6754,0.5804,0.1422,-0.0229,Learned 1D Raw ECG ResNet Baseline
+B9_A001_ContinuousSetOperator,Pure Morphology Operator,"Independent Patient Validation (11 Informative Patients, 42,431 Windows)",0.5905,0.528,0.1468,-0.056,Canonical Continuous SetOperator Baseline
+B10_G061_MultimodalSetOperator,Multimodal Fusion,"Independent Patient Validation (11 Informative Patients, 42,431 Windows)",0.8686,0.8016,0.1178,0.1526,Transformer Cross-Attention Fusion (RR + Phase)

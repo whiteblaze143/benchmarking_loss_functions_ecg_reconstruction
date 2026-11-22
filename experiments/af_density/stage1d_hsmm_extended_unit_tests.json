@@ -1,0 +1,479 @@
+{
+  "synthetic_16_scenarios": {
+    "scenario_01_all_sinus": {
+      "name": "24h Normal Sinus Rhythm",
+      "total_windows": 2880,
+      "decoded_af_fraction": 0.0,
+      "detected_episodes": 0,
+      "expected_episodes": 0,
+      "clinical_assessment": "PASS"
+    },
+    "scenario_02_all_af": {
+      "name": "24h Continuous Atrial Fibrillation",
+      "total_windows": 2880,
+      "decoded_af_fraction": 1.0,
+      "detected_episodes": 1,
+      "expected_episodes": 1,
+      "clinical_assessment": "PASS"
+    },
+    "scenario_03_single_30s_episode": {
+      "name": "Isolated 30s AF Transient (1 window)",
+      "total_windows": 2880,
+      "decoded_af_fraction": 0.0,
+      "detected_episodes": 0,
+      "suppressed_as_transient": true,
+      "clinical_assessment": "INFORMATIONAL: Filtered by duration prior"
+    },
+    "scenario_04_single_60s_episode": {
+      "name": "Single 60s AF Episode (2 windows)",
+      "total_windows": 2880,
+      "decoded_af_fraction": 0.0,
+      "detected_episodes": 0,
+      "clinical_assessment": "FILTERED"
+    },
+    "scenario_05_single_6min_episode": {
+      "name": "Single 6-Minute AF Episode (HRS Guideline Threshold)",
+      "total_windows": 2880,
+      "decoded_af_fraction": 0.004166666666666667,
+      "detected_episodes": 1,
+      "episode_duration_windows": 12,
+      "clinical_assessment": "PASS"
+    },
+    "scenario_06_frequent_short_runs": {
+      "name": "Frequent Micro-Runs (10x 30s bursts)",
+      "total_windows": 720,
+      "decoded_af_fraction": 0.0,
+      "detected_episodes": 0,
+      "fragmentation_suppression_active": true,
+      "clinical_assessment": "SMOOTHED"
+    },
+    "scenario_07_borderline_sinus_p30": {
+      "name": "Borderline Non-AF Probabilities (p=0.30 vs prior 0.1511)",
+      "total_windows": 1440,
+      "decoded_af_fraction": 1.0,
+      "detected_episodes": 1,
+      "clinical_assessment": "DEGENERACY WARNING (Flipped to AF)"
+    },
+    "scenario_08_borderline_af_p60": {
+      "name": "Borderline AF Probabilities (p=0.60)",
+      "total_windows": 1440,
+      "decoded_af_fraction": 1.0,
+      "detected_episodes": 1,
+      "clinical_assessment": "PASS (Stable AF)"
+    },
+    "scenario_09_sudden_conversion_to_sinus": {
+      "name": "Step Conversion AF to Sinus at t=2h",
+      "true_transition_window": 240,
+      "detected_transition_window": 240,
+      "boundary_displacement_seconds": 0.0,
+      "clinical_assessment": "PASS"
+    },
+    "scenario_10_sudden_onset_af": {
+      "name": "Step Onset Sinus to AF at t=2h",
+      "true_transition_window": 240,
+      "detected_transition_window": 240,
+      "boundary_displacement_seconds": 0.0,
+      "clinical_assessment": "PASS"
+    },
+    "scenario_11_intermittent_paroxysms_sparse": {
+      "name": "Sparse Paroxysmal AF (3 distinct 30m episodes)",
+      "true_episodes": 3,
+      "detected_episodes": 3,
+      "episode_sensitivity": 1.0,
+      "clinical_assessment": "PASS (Exact Parity)"
+    },
+    "scenario_12_intermittent_paroxysms_dense": {
+      "name": "Dense Paroxysmal AF (10 episodes of 5 min)",
+      "true_episodes": 10,
+      "detected_episodes": 10,
+      "episode_splits_or_merges": 0,
+      "clinical_assessment": "PASS"
+    },
+    "scenario_13_missing_data_burst_during_af": {
+      "name": "20 Missing Windows (10 min) During Prolonged AF",
+      "detected_episodes": 1,
+      "bridged_continuous_episode": true,
+      "clinical_assessment": "BRIDGED (Robust)"
+    },
+    "scenario_14_missing_data_burst_during_sinus": {
+      "name": "20 Missing Windows During Sinus Rhythm",
+      "detected_episodes": 0,
+      "false_af_introduced": false,
+      "clinical_assessment": "PASS (Zero False AF)"
+    },
+    "scenario_15_uncalibrated_negative_shift": {
+      "name": "Weak AF Signals (p=0.50 vs p=0.95)",
+      "detected_episodes": 1,
+      "clinical_assessment": "DETECTED"
+    },
+    "scenario_16_noisy_emissions_with_random_spikes": {
+      "name": "Random Isolated High-Probability Spikes in Sinus",
+      "spike_count": 10,
+      "detected_false_episodes": 0,
+      "spike_suppression_ratio": 1.0,
+      "clinical_assessment": "PASS (High Noise Immunity)"
+    }
+  },
+  "clinical_validation_summary": [
+    {
+      "model_id": "A001",
+      "decoder": "D0",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "A001",
+      "decoder": "D1",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "A001",
+      "decoder": "D2",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.37666666666666665,
+      "mean_episode_ppv": 0.7592592592592592,
+      "mean_false_episodes_per_hour": 0.011611293729482105,
+      "mean_boundary_error_seconds": 10280.31611111111,
+      "mean_burden_mae": 0.376137443364239,
+      "mean_continuous_density_mae": 0.2722880187206779,
+      "defined_density_count": 7
+    },
+    {
+      "model_id": "A002",
+      "decoder": "D0",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "A002",
+      "decoder": "D1",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "A002",
+      "decoder": "D2",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.6311111111111113,
+      "mean_episode_ppv": 0.769230769230769,
+      "mean_false_episodes_per_hour": 0.01964916073797758,
+      "mean_boundary_error_seconds": 10291.0225,
+      "mean_burden_mae": 0.4821255398641625,
+      "mean_continuous_density_mae": 0.2762959746349549,
+      "defined_density_count": 9
+    },
+    {
+      "model_id": "A003",
+      "decoder": "D0",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "A003",
+      "decoder": "D1",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "A003",
+      "decoder": "D2",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.4933333333333333,
+      "mean_episode_ppv": 0.8333333333333333,
+      "mean_false_episodes_per_hour": 0.008832518937600758,
+      "mean_boundary_error_seconds": 4324.339999999998,
+      "mean_burden_mae": 0.4455901870043216,
+      "mean_continuous_density_mae": 0.32640421272428033,
+      "defined_density_count": 6
+    },
+    {
+      "model_id": "A004",
+      "decoder": "D0",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "A004",
+      "decoder": "D1",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "A004",
+      "decoder": "D2",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.5533333333333333,
+      "mean_episode_ppv": 0.6055555555555555,
+      "mean_false_episodes_per_hour": 0.025787907890860294,
+      "mean_boundary_error_seconds": 14984.419999999996,
+      "mean_burden_mae": 0.4541220512502914,
+      "mean_continuous_density_mae": 0.24732117124639452,
+      "defined_density_count": 10
+    },
+    {
+      "model_id": "D032-v1",
+      "decoder": "D0",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "D032-v1",
+      "decoder": "D1",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "D032-v1",
+      "decoder": "D2",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.4677777777777778,
+      "mean_episode_ppv": 0.6363636363636364,
+      "mean_false_episodes_per_hour": 0.020034230186621888,
+      "mean_boundary_error_seconds": 8370.836999999998,
+      "mean_burden_mae": 0.3542950837719939,
+      "mean_continuous_density_mae": 0.19664751910327583,
+      "defined_density_count": 9
+    },
+    {
+      "model_id": "F053",
+      "decoder": "D0",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "F053",
+      "decoder": "D1",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "F053",
+      "decoder": "D2",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.6122222222222221,
+      "mean_episode_ppv": 0.7202380952380951,
+      "mean_false_episodes_per_hour": 0.022722340253456756,
+      "mean_boundary_error_seconds": 8901.221875,
+      "mean_burden_mae": 0.5178395823153806,
+      "mean_continuous_density_mae": 0.2978717593015711,
+      "defined_density_count": 10
+    },
+    {
+      "model_id": "G061",
+      "decoder": "D0",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.8661616161616161,
+      "mean_episode_ppv": 0.45625359140616883,
+      "mean_false_episodes_per_hour": 3.5165779546105753,
+      "mean_boundary_error_seconds": 38.000277777777974,
+      "mean_burden_mae": 0.1205597500523734,
+      "mean_continuous_density_mae": 0.3780713821288634,
+      "defined_density_count": 15
+    },
+    {
+      "model_id": "G061",
+      "decoder": "D1",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.704040404040404,
+      "mean_episode_ppv": 0.5368386439933863,
+      "mean_false_episodes_per_hour": 0.7662880290146787,
+      "mean_boundary_error_seconds": 333.447444444444,
+      "mean_burden_mae": 0.13318402927175377,
+      "mean_continuous_density_mae": 0.2542878830587938,
+      "defined_density_count": 15
+    },
+    {
+      "model_id": "G061",
+      "decoder": "D2",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.9011111111111111,
+      "mean_episode_ppv": 0.4025213675213675,
+      "mean_false_episodes_per_hour": 0.18987808017032934,
+      "mean_boundary_error_seconds": 1032.5159479166668,
+      "mean_burden_mae": 0.19175200614008034,
+      "mean_continuous_density_mae": 0.21666961177823232,
+      "defined_density_count": 15
+    },
+    {
+      "model_id": "H071-v2",
+      "decoder": "D0",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.016666666666666666,
+      "mean_episode_ppv": 0.10526315789473684,
+      "mean_false_episodes_per_hour": 0.050034360332598754,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16200786386530183,
+      "mean_continuous_density_mae": 0.28101876151952204,
+      "defined_density_count": 3
+    },
+    {
+      "model_id": "H071-v2",
+      "decoder": "D1",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.016666666666666666,
+      "mean_episode_ppv": 0.1,
+      "mean_false_episodes_per_hour": 0.013898701629622765,
+      "mean_boundary_error_seconds": 404.6849999999995,
+      "mean_burden_mae": 0.16177621079202442,
+      "mean_continuous_density_mae": 0.28326626885811346,
+      "defined_density_count": 2
+    },
+    {
+      "model_id": "H071-v2",
+      "decoder": "D2",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.5566666666666666,
+      "mean_episode_ppv": 0.6338842975206611,
+      "mean_false_episodes_per_hour": 0.06178291027111326,
+      "mean_boundary_error_seconds": 5449.067399999998,
+      "mean_burden_mae": 0.3002732046153524,
+      "mean_continuous_density_mae": 0.2771642140294752,
+      "defined_density_count": 11
+    },
+    {
+      "model_id": "I082-v1",
+      "decoder": "D0",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "I082-v1",
+      "decoder": "D1",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": NaN,
+      "mean_false_episodes_per_hour": 0.0,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.16471810263696124,
+      "mean_continuous_density_mae": NaN,
+      "defined_density_count": 0
+    },
+    {
+      "model_id": "I082-v1",
+      "decoder": "D2",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.5655555555555556,
+      "mean_episode_ppv": 0.9090909090909091,
+      "mean_false_episodes_per_hour": 0.005775294133925462,
+      "mean_boundary_error_seconds": 16551.790000000008,
+      "mean_burden_mae": 0.55564465293193,
+      "mean_continuous_density_mae": 0.25527555226290677,
+      "defined_density_count": 4
+    },
+    {
+      "model_id": "I082-v2",
+      "decoder": "D0",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": 0.0,
+      "mean_false_episodes_per_hour": 0.07505105773187652,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.15844053849314899,
+      "mean_continuous_density_mae": 0.14077222583744387,
+      "defined_density_count": 3
+    },
+    {
+      "model_id": "I082-v2",
+      "decoder": "D1",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.0,
+      "mean_episode_ppv": 0.0,
+      "mean_false_episodes_per_hour": 0.01945818228147187,
+      "mean_boundary_error_seconds": NaN,
+      "mean_burden_mae": 0.15832469988733475,
+      "mean_continuous_density_mae": 0.12338266864233832,
+      "defined_density_count": 2
+    },
+    {
+      "model_id": "I082-v2",
+      "decoder": "D2",
+      "num_segments": 15,
+      "mean_episode_sensitivity": 0.5455555555555556,
+      "mean_episode_ppv": 0.46025641025641034,
+      "mean_false_episodes_per_hour": 0.07620915634591975,
+      "mean_boundary_error_seconds": 2949.9635714285705,
+      "mean_burden_mae": 0.2821044015214432,
+      "mean_continuous_density_mae": 0.2682798790009457,
+      "defined_density_count": 12
+    }
+  ]
+}

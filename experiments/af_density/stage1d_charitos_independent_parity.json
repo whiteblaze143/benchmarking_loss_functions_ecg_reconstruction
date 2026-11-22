@@ -1,0 +1,239 @@
+{
+  "audit_name": "charitos_translation_and_parity_audit",
+  "status": "ALL_TESTS_PASSED",
+  "summary": "Proven that Charitos minimum-window density D_AF = [2/(1-b)] \\int [m - L(m)] dm is mathematically translation-invariant across all single-episode, multi-episode, and clinical fixtures. The naive time-domain cumulative area (2/T^2) \\int |A(t) - bt| dt was shown to be location-dependent (0.25 at start vs 0.125 at center for b=0.5) and is formally superseded.",
+  "results": {
+    "test_1_single_episode_shifts": [
+      {
+        "position": "Start (0h to 12h)",
+        "shift_seconds": 0.0,
+        "charitos_continuous_density": 1.0,
+        "naive_cumulative_area": 0.2500115740740741
+      },
+      {
+        "position": "Quarter (3h to 15h)",
+        "shift_seconds": 10800.0,
+        "charitos_continuous_density": 1.0,
+        "naive_cumulative_area": 0.15625578730495543
+      },
+      {
+        "position": "Center (6h to 18h)",
+        "shift_seconds": 21600.0,
+        "charitos_continuous_density": 1.0,
+        "naive_cumulative_area": 0.12500000026791838
+      },
+      {
+        "position": "Three-Quarter (9h to 21h)",
+        "shift_seconds": 32400.0,
+        "charitos_continuous_density": 1.0,
+        "naive_cumulative_area": 0.15624421323088133
+      },
+      {
+        "position": "End (12h to 24h)",
+        "shift_seconds": 43200.0,
+        "charitos_continuous_density": 1.0,
+        "naive_cumulative_area": 0.24998842619384432
+      }
+    ],
+    "test_2_multi_episode_shifts": [
+      {
+        "configuration": "2 Episodes (2h each, 2h gap)",
+        "base_density": 0.8999999999999999,
+        "max_shift_difference": 0.0,
+        "offsets_tested": [
+          0.0,
+          10000.0,
+          25000.0,
+          45000.0,
+          64800.0
+        ]
+      },
+      {
+        "configuration": "3 Episodes (1h each, 1h gaps)",
+        "base_density": 0.9047619047619049,
+        "max_shift_difference": 0.0,
+        "offsets_tested": [
+          0.0,
+          15000.0,
+          30000.0,
+          50000.0,
+          68400.0
+        ]
+      },
+      {
+        "configuration": "5 Episodes (30m each, 30m gaps)",
+        "base_density": 0.9069767441860466,
+        "max_shift_difference": 0.0,
+        "offsets_tested": [
+          0.0,
+          12000.0,
+          28000.0,
+          48000.0,
+          70200.0
+        ]
+      }
+    ],
+    "test_3_binned_convergence": [
+      {
+        "burden": 0.05,
+        "continuous_density": 1.0,
+        "bin_errors": {
+          "bin_60.0s": {
+            "binned_density": 0.9982704678362576,
+            "error": 0.0017295321637423866
+          },
+          "bin_30.0s": {
+            "binned_density": 0.9986337719298247,
+            "error": 0.0013662280701752794
+          },
+          "bin_10.0s": {
+            "binned_density": 0.9988781676413249,
+            "error": 0.0011218323586751344
+          },
+          "bin_5.0s": {
+            "binned_density": 0.9989392056530215,
+            "error": 0.0010607943469784775
+          }
+        }
+      },
+      {
+        "burden": 0.1,
+        "continuous_density": 1.0,
+        "bin_errors": {
+          "bin_60.0s": {
+            "binned_density": 0.9982268518518513,
+            "error": 0.0017731481481486622
+          },
+          "bin_30.0s": {
+            "binned_density": 0.9986126543209871,
+            "error": 0.0013873456790128857
+          },
+          "bin_10.0s": {
+            "binned_density": 0.9988716563785999,
+            "error": 0.0011283436214001297
+          },
+          "bin_5.0s": {
+            "binned_density": 0.998936085390947,
+            "error": 0.0010639146090529739
+          }
+        }
+      },
+      {
+        "burden": 0.25,
+        "continuous_density": 1.0,
+        "bin_errors": {
+          "bin_60.0s": {
+            "binned_density": 0.9980444444444442,
+            "error": 0.0019555555555558213
+          },
+          "bin_30.0s": {
+            "binned_density": 0.99852037037037,
+            "error": 0.0014796296296299971
+          },
+          "bin_10.0s": {
+            "binned_density": 0.998846296296296,
+            "error": 0.0011537037037040454
+          },
+          "bin_5.0s": {
+            "binned_density": 0.9989220679012335,
+            "error": 0.0010779320987664986
+          }
+        }
+      },
+      {
+        "burden": 0.5,
+        "continuous_density": 1.0,
+        "bin_errors": {
+          "bin_60.0s": {
+            "binned_density": 0.9975611111111112,
+            "error": 0.0024388888888887683
+          },
+          "bin_30.0s": {
+            "binned_density": 0.9982805555555555,
+            "error": 0.0017194444444444956
+          },
+          "bin_10.0s": {
+            "binned_density": 0.998766203703704,
+            "error": 0.0012337962962960525
+          },
+          "bin_5.0s": {
+            "binned_density": 0.99888125,
+            "error": 0.0011187499999999462
+          }
+        }
+      },
+      {
+        "burden": 0.75,
+        "continuous_density": 1.0000000000000002,
+        "bin_errors": {
+          "bin_60.0s": {
+            "binned_density": 0.9962019999999999,
+            "error": 0.003798000000000301
+          },
+          "bin_30.0s": {
+            "binned_density": 0.9976173333333337,
+            "error": 0.002382666666666533
+          },
+          "bin_10.0s": {
+            "binned_density": 0.998551851851852,
+            "error": 0.0014481481481481984
+          },
+          "bin_5.0s": {
+            "binned_density": 0.9987689814814816,
+            "error": 0.0012310185185185896
+          }
+        }
+      }
+    ],
+    "test_4_clinical_patient_annotations": [
+      {
+        "file_index": 33,
+        "patient_id": "patient_019",
+        "num_episodes": 2,
+        "original_density": 0.8310626108050205,
+        "shifted_density": 0.8310626108050205,
+        "difference": 0.0
+      },
+      {
+        "file_index": 86,
+        "patient_id": "patient_043",
+        "num_episodes": 2,
+        "original_density": 0.9997038915261102,
+        "shifted_density": 0.9997038915261102,
+        "difference": 0.0
+      },
+      {
+        "file_index": 89,
+        "patient_id": "patient_045",
+        "num_episodes": 11,
+        "original_density": 0.9978626453227226,
+        "shifted_density": 0.9978626453227226,
+        "difference": 0.0
+      },
+      {
+        "file_index": 100,
+        "patient_id": "patient_052",
+        "num_episodes": 4,
+        "original_density": 0.5766040509726453,
+        "shifted_density": 0.5766040509726453,
+        "difference": 0.0
+      },
+      {
+        "file_index": 118,
+        "patient_id": "patient_061",
+        "num_episodes": 4,
+        "original_density": 0.9997950679911753,
+        "shifted_density": 0.9997950679911753,
+        "difference": 0.0
+      },
+      {
+        "file_index": 126,
+        "patient_id": "patient_063",
+        "num_episodes": 5,
+        "original_density": 0.8762246525324747,
+        "shifted_density": 0.8762246525324747,
+        "difference": 0.0
+      }
+    ]
+  }
+}

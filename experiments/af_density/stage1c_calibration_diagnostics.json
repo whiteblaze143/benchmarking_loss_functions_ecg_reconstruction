@@ -1,0 +1,1362 @@
+{
+  "A001": {
+    "pooled_auc_raw": 0.5904695178969198,
+    "pooled_auc_cal": 0.2545182324686524,
+    "mean_within_patient_auc_raw": 0.5288821658663927,
+    "mean_within_patient_auc_cal": 0.5288821658663927,
+    "brier_calibrated": 0.14681538845601344,
+    "brier_prevalence_baseline": 0.13903527778063204,
+    "brier_skill_score": -0.05595781732213845,
+    "slopes": [
+      0.0612928681227725,
+      0.02104808367466987,
+      0.005228138732025873,
+      0.10952248135405135,
+      0.11889549319744981,
+      0.044563823119155334,
+      0.05386816386480882,
+      0.08463897729754163,
+      0.10750714953593137,
+      0.1900646258768791,
+      0.1080517257539842
+    ],
+    "intercepts": [
+      -1.5953918182504072,
+      -1.5512663345710844,
+      -1.522880538534731,
+      -1.5635748518373644,
+      -1.5963345008948338,
+      -1.9586372015508309,
+      -1.548590946658261,
+      -1.8463386633803296,
+      -1.6427222991815962,
+      -1.4518776367442356,
+      -1.540379193544607
+    ],
+    "folds": [
+      {
+        "held_out_patient": "patient_019",
+        "slope_beta_1": 0.0612928681227725,
+        "intercept_beta_0": -1.5953918182504072,
+        "within_patient_auc_raw": 0.7117452717704612,
+        "within_patient_auc_cal": 0.7117452717704612,
+        "af_prevalence": 0.12919523637675928,
+        "num_windows": 2771
+      },
+      {
+        "held_out_patient": "patient_043",
+        "slope_beta_1": 0.02104808367466987,
+        "intercept_beta_0": -1.5512663345710844,
+        "within_patient_auc_raw": 0.91599315077613,
+        "within_patient_auc_cal": 0.91599315077613,
+        "af_prevalence": 0.04760250173731758,
+        "num_windows": 2878
+      },
+      {
+        "held_out_patient": "patient_045",
+        "slope_beta_1": 0.005228138732025873,
+        "intercept_beta_0": -1.522880538534731,
+        "within_patient_auc_raw": 0.5063955199176077,
+        "within_patient_auc_cal": 0.5063955199176077,
+        "af_prevalence": 0.08614102118791248,
+        "num_windows": 5758
+      },
+      {
+        "held_out_patient": "patient_052",
+        "slope_beta_1": 0.10952248135405135,
+        "intercept_beta_0": -1.5635748518373644,
+        "within_patient_auc_raw": 0.2776312576312576,
+        "within_patient_auc_cal": 0.2776312576312576,
+        "af_prevalence": 0.04294478527607362,
+        "num_windows": 2445
+      },
+      {
+        "held_out_patient": "patient_061",
+        "slope_beta_1": 0.11889549319744981,
+        "intercept_beta_0": -1.5963345008948338,
+        "within_patient_auc_raw": 0.4755920332534843,
+        "within_patient_auc_cal": 0.4755920332534843,
+        "af_prevalence": 0.14176939811457578,
+        "num_windows": 2758
+      },
+      {
+        "held_out_patient": "patient_063",
+        "slope_beta_1": 0.044563823119155334,
+        "intercept_beta_0": -1.9586372015508309,
+        "within_patient_auc_raw": 0.3921060568268103,
+        "within_patient_auc_cal": 0.3921060568268103,
+        "af_prevalence": 0.4407574704656011,
+        "num_windows": 5756
+      },
+      {
+        "held_out_patient": "patient_093",
+        "slope_beta_1": 0.05386816386480882,
+        "intercept_beta_0": -1.548590946658261,
+        "within_patient_auc_raw": 0.48902891398668563,
+        "within_patient_auc_cal": 0.48902891398668563,
+        "af_prevalence": 0.03786036818339701,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_119",
+        "slope_beta_1": 0.08463897729754163,
+        "intercept_beta_0": -1.8463386633803296,
+        "within_patient_auc_raw": 0.7783665389716359,
+        "within_patient_auc_cal": 0.7783665389716359,
+        "af_prevalence": 0.5727683223341438,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_121",
+        "slope_beta_1": 0.10750714953593137,
+        "intercept_beta_0": -1.6427222991815962,
+        "within_patient_auc_raw": 0.3341143012915442,
+        "within_patient_auc_cal": 0.3341143012915442,
+        "af_prevalence": 0.2063216394581452,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_136",
+        "slope_beta_1": 0.1900646258768791,
+        "intercept_beta_0": -1.4518776367442356,
+        "within_patient_auc_raw": 0.49909002456529067,
+        "within_patient_auc_cal": 0.49909002456529067,
+        "af_prevalence": 0.07527504342790967,
+        "num_windows": 8635
+      },
+      {
+        "held_out_patient": "patient_144",
+        "slope_beta_1": 0.1080517257539842,
+        "intercept_beta_0": -1.540379193544607,
+        "within_patient_auc_raw": 0.4376407555394116,
+        "within_patient_auc_cal": 0.4376407555394116,
+        "af_prevalence": 0.014321518080916577,
+        "num_windows": 2793
+      }
+    ]
+  },
+  "A002": {
+    "pooled_auc_raw": 0.5268376862711373,
+    "pooled_auc_cal": 0.3036748222981644,
+    "mean_within_patient_auc_raw": 0.5002782348564808,
+    "mean_within_patient_auc_cal": 0.49972176514351924,
+    "brier_calibrated": 0.14608347946179417,
+    "brier_prevalence_baseline": 0.13903527778063204,
+    "brier_skill_score": -0.05069362102676345,
+    "slopes": [
+      -0.208526379778353,
+      -0.24777478455660495,
+      -0.2648830755973018,
+      -0.19083776008112485,
+      -0.1810319989201633,
+      -0.12632946211415663,
+      -0.21600648591473084,
+      -0.21595074032096462,
+      -0.19481553194075354,
+      -0.1503644848580665,
+      -0.1917986206638445
+    ],
+    "intercepts": [
+      -1.5389928864906928,
+      -1.4780749906841173,
+      -1.4327682921608969,
+      -1.508348853933474,
+      -1.5555429382444546,
+      -1.929584562055309,
+      -1.4848960150698285,
+      -1.7848046735230407,
+      -1.573722944968443,
+      -1.4297348838119266,
+      -1.4859180109155432
+    ],
+    "folds": [
+      {
+        "held_out_patient": "patient_019",
+        "slope_beta_1": -0.208526379778353,
+        "intercept_beta_0": -1.5389928864906928,
+        "within_patient_auc_raw": 0.6181820076077671,
+        "within_patient_auc_cal": 0.3818179923922329,
+        "af_prevalence": 0.12919523637675928,
+        "num_windows": 2771
+      },
+      {
+        "held_out_patient": "patient_043",
+        "slope_beta_1": -0.24777478455660495,
+        "intercept_beta_0": -1.4780749906841173,
+        "within_patient_auc_raw": 0.7180793412814865,
+        "within_patient_auc_cal": 0.2819206587185134,
+        "af_prevalence": 0.04760250173731758,
+        "num_windows": 2878
+      },
+      {
+        "held_out_patient": "patient_045",
+        "slope_beta_1": -0.2648830755973018,
+        "intercept_beta_0": -1.4327682921608969,
+        "within_patient_auc_raw": 0.5086886655386765,
+        "within_patient_auc_cal": 0.4913113344613234,
+        "af_prevalence": 0.08614102118791248,
+        "num_windows": 5758
+      },
+      {
+        "held_out_patient": "patient_052",
+        "slope_beta_1": -0.19083776008112485,
+        "intercept_beta_0": -1.508348853933474,
+        "within_patient_auc_raw": 0.20818884818884817,
+        "within_patient_auc_cal": 0.7918111518111518,
+        "af_prevalence": 0.04294478527607362,
+        "num_windows": 2445
+      },
+      {
+        "held_out_patient": "patient_061",
+        "slope_beta_1": -0.1810319989201633,
+        "intercept_beta_0": -1.5555429382444546,
+        "within_patient_auc_raw": 0.3929672381433975,
+        "within_patient_auc_cal": 0.6070327618566025,
+        "af_prevalence": 0.14176939811457578,
+        "num_windows": 2758
+      },
+      {
+        "held_out_patient": "patient_063",
+        "slope_beta_1": -0.12632946211415663,
+        "intercept_beta_0": -1.929584562055309,
+        "within_patient_auc_raw": 0.31861197366885596,
+        "within_patient_auc_cal": 0.6813880263311439,
+        "af_prevalence": 0.4407574704656011,
+        "num_windows": 5756
+      },
+      {
+        "held_out_patient": "patient_093",
+        "slope_beta_1": -0.21600648591473084,
+        "intercept_beta_0": -1.4848960150698285,
+        "within_patient_auc_raw": 0.5874109893021562,
+        "within_patient_auc_cal": 0.412589010697844,
+        "af_prevalence": 0.03786036818339701,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_119",
+        "slope_beta_1": -0.21595074032096462,
+        "intercept_beta_0": -1.7848046735230407,
+        "within_patient_auc_raw": 0.7094531300073461,
+        "within_patient_auc_cal": 0.29054686999265383,
+        "af_prevalence": 0.5727683223341438,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_121",
+        "slope_beta_1": -0.19481553194075354,
+        "intercept_beta_0": -1.573722944968443,
+        "within_patient_auc_raw": 0.5157048235822853,
+        "within_patient_auc_cal": 0.48429517641771475,
+        "af_prevalence": 0.2063216394581452,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_136",
+        "slope_beta_1": -0.1503644848580665,
+        "intercept_beta_0": -1.4297348838119266,
+        "within_patient_auc_raw": 0.5273990655556091,
+        "within_patient_auc_cal": 0.4726009344443909,
+        "af_prevalence": 0.07527504342790967,
+        "num_windows": 8635
+      },
+      {
+        "held_out_patient": "patient_144",
+        "slope_beta_1": -0.1917986206638445,
+        "intercept_beta_0": -1.4859180109155432,
+        "within_patient_auc_raw": 0.3983745005448601,
+        "within_patient_auc_cal": 0.6016254994551399,
+        "af_prevalence": 0.014321518080916577,
+        "num_windows": 2793
+      }
+    ]
+  },
+  "A003": {
+    "pooled_auc_raw": 0.6037682217338901,
+    "pooled_auc_cal": 0.2776783512237369,
+    "mean_within_patient_auc_raw": 0.5639166757408002,
+    "mean_within_patient_auc_cal": 0.5639166757408002,
+    "brier_calibrated": 0.14556057383061674,
+    "brier_prevalence_baseline": 0.13903527778063204,
+    "brier_skill_score": -0.04693266453051015,
+    "slopes": [
+      8.200691438133106,
+      8.429780052851472,
+      7.379879491860472,
+      12.990740106309909,
+      10.961598875495035,
+      10.57263012180325,
+      9.365897136750407,
+      6.067315899018452,
+      10.768978602791934,
+      11.700253422187679,
+      11.410743850625032
+    ],
+    "intercepts": [
+      -1.4542238163752077,
+      -1.411766089357995,
+      -1.4094358837759846,
+      -1.336099559358579,
+      -1.403282245960691,
+      -1.7822607614881096,
+      -1.3890204555949024,
+      -1.73554793813612,
+      -1.4503889708798294,
+      -1.249234130175256,
+      -1.3410348841389244
+    ],
+    "folds": [
+      {
+        "held_out_patient": "patient_019",
+        "slope_beta_1": 8.200691438133106,
+        "intercept_beta_0": -1.4542238163752077,
+        "within_patient_auc_raw": 0.872918340367701,
+        "within_patient_auc_cal": 0.872918340367701,
+        "af_prevalence": 0.12919523637675928,
+        "num_windows": 2771
+      },
+      {
+        "held_out_patient": "patient_043",
+        "slope_beta_1": 8.429780052851472,
+        "intercept_beta_0": -1.411766089357995,
+        "within_patient_auc_raw": 0.8130231121360684,
+        "within_patient_auc_cal": 0.8130231121360684,
+        "af_prevalence": 0.04760250173731758,
+        "num_windows": 2878
+      },
+      {
+        "held_out_patient": "patient_045",
+        "slope_beta_1": 7.379879491860472,
+        "intercept_beta_0": -1.4094358837759846,
+        "within_patient_auc_raw": 0.5687790426797121,
+        "within_patient_auc_cal": 0.5687790426797121,
+        "af_prevalence": 0.08614102118791248,
+        "num_windows": 5758
+      },
+      {
+        "held_out_patient": "patient_052",
+        "slope_beta_1": 12.990740106309909,
+        "intercept_beta_0": -1.336099559358579,
+        "within_patient_auc_raw": 0.33369149369149365,
+        "within_patient_auc_cal": 0.33369149369149365,
+        "af_prevalence": 0.04294478527607362,
+        "num_windows": 2445
+      },
+      {
+        "held_out_patient": "patient_061",
+        "slope_beta_1": 10.961598875495035,
+        "intercept_beta_0": -1.403282245960691,
+        "within_patient_auc_raw": 0.6846845532724579,
+        "within_patient_auc_cal": 0.6846845532724579,
+        "af_prevalence": 0.14176939811457578,
+        "num_windows": 2758
+      },
+      {
+        "held_out_patient": "patient_063",
+        "slope_beta_1": 10.57263012180325,
+        "intercept_beta_0": -1.7822607614881096,
+        "within_patient_auc_raw": 0.4843813272176938,
+        "within_patient_auc_cal": 0.4843813272176938,
+        "af_prevalence": 0.4407574704656011,
+        "num_windows": 5756
+      },
+      {
+        "held_out_patient": "patient_093",
+        "slope_beta_1": 9.365897136750407,
+        "intercept_beta_0": -1.3890204555949024,
+        "within_patient_auc_raw": 0.6005398602325043,
+        "within_patient_auc_cal": 0.6005398602325043,
+        "af_prevalence": 0.03786036818339701,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_119",
+        "slope_beta_1": 6.067315899018452,
+        "intercept_beta_0": -1.73554793813612,
+        "within_patient_auc_raw": 0.6780322639490797,
+        "within_patient_auc_cal": 0.6780322639490797,
+        "af_prevalence": 0.5727683223341438,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_121",
+        "slope_beta_1": 10.768978602791934,
+        "intercept_beta_0": -1.4503889708798294,
+        "within_patient_auc_raw": 0.34945074376146584,
+        "within_patient_auc_cal": 0.34945074376146584,
+        "af_prevalence": 0.2063216394581452,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_136",
+        "slope_beta_1": 11.700253422187679,
+        "intercept_beta_0": -1.249234130175256,
+        "within_patient_auc_raw": 0.5196985694330716,
+        "within_patient_auc_cal": 0.5196985694330716,
+        "af_prevalence": 0.07527504342790967,
+        "num_windows": 8635
+      },
+      {
+        "held_out_patient": "patient_144",
+        "slope_beta_1": 11.410743850625032,
+        "intercept_beta_0": -1.3410348841389244,
+        "within_patient_auc_raw": 0.2978841264075554,
+        "within_patient_auc_cal": 0.2978841264075554,
+        "af_prevalence": 0.014321518080916577,
+        "num_windows": 2793
+      }
+    ]
+  },
+  "A004": {
+    "pooled_auc_raw": 0.5707382863333489,
+    "pooled_auc_cal": 0.3925473096884702,
+    "mean_within_patient_auc_raw": 0.538807509916859,
+    "mean_within_patient_auc_cal": 0.538807509916859,
+    "brier_calibrated": 0.14612342735245232,
+    "brier_prevalence_baseline": 0.13903527778063204,
+    "brier_skill_score": -0.05098094300213396,
+    "slopes": [
+      2.1095619606636395,
+      2.0294318465668084,
+      2.0054071894444605,
+      3.0080195214967564,
+      3.1071882195401503,
+      3.3475571068082552,
+      2.376589378953589,
+      2.008655450430809,
+      2.7258307521652205,
+      3.495637397514459,
+      2.8009167030700692
+    ],
+    "intercepts": [
+      -1.51121349607525,
+      -1.4850930006275738,
+      -1.4823329953440534,
+      -1.4537227470226555,
+      -1.4582194184212263,
+      -1.8358765252340343,
+      -1.4612961836863019,
+      -1.7602796472907356,
+      -1.5287770724553533,
+      -1.2957980821094153,
+      -1.4303206444141017
+    ],
+    "folds": [
+      {
+        "held_out_patient": "patient_019",
+        "slope_beta_1": 2.1095619606636395,
+        "intercept_beta_0": -1.51121349607525,
+        "within_patient_auc_raw": 0.8743688169528647,
+        "within_patient_auc_cal": 0.8743688169528647,
+        "af_prevalence": 0.12919523637675928,
+        "num_windows": 2771
+      },
+      {
+        "held_out_patient": "patient_043",
+        "slope_beta_1": 2.0294318465668084,
+        "intercept_beta_0": -1.4850930006275738,
+        "within_patient_auc_raw": 0.8248707781538519,
+        "within_patient_auc_cal": 0.8248707781538519,
+        "af_prevalence": 0.04760250173731758,
+        "num_windows": 2878
+      },
+      {
+        "held_out_patient": "patient_045",
+        "slope_beta_1": 2.0054071894444605,
+        "intercept_beta_0": -1.4823329953440534,
+        "within_patient_auc_raw": 0.5141355090055295,
+        "within_patient_auc_cal": 0.5141355090055295,
+        "af_prevalence": 0.08614102118791248,
+        "num_windows": 5758
+      },
+      {
+        "held_out_patient": "patient_052",
+        "slope_beta_1": 3.0080195214967564,
+        "intercept_beta_0": -1.4537227470226555,
+        "within_patient_auc_raw": 0.3151159951159951,
+        "within_patient_auc_cal": 0.3151159951159951,
+        "af_prevalence": 0.04294478527607362,
+        "num_windows": 2445
+      },
+      {
+        "held_out_patient": "patient_061",
+        "slope_beta_1": 3.1071882195401503,
+        "intercept_beta_0": -1.4582194184212263,
+        "within_patient_auc_raw": 0.6535807247349263,
+        "within_patient_auc_cal": 0.6535807247349263,
+        "af_prevalence": 0.14176939811457578,
+        "num_windows": 2758
+      },
+      {
+        "held_out_patient": "patient_063",
+        "slope_beta_1": 3.3475571068082552,
+        "intercept_beta_0": -1.8358765252340343,
+        "within_patient_auc_raw": 0.4170485573989577,
+        "within_patient_auc_cal": 0.4170485573989577,
+        "af_prevalence": 0.4407574704656011,
+        "num_windows": 5756
+      },
+      {
+        "held_out_patient": "patient_093",
+        "slope_beta_1": 2.376589378953589,
+        "intercept_beta_0": -1.4612961836863019,
+        "within_patient_auc_raw": 0.5393137482197861,
+        "within_patient_auc_cal": 0.5393137482197861,
+        "af_prevalence": 0.03786036818339701,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_119",
+        "slope_beta_1": 2.008655450430809,
+        "intercept_beta_0": -1.7602796472907356,
+        "within_patient_auc_raw": 0.7069778678381082,
+        "within_patient_auc_cal": 0.7069778678381082,
+        "af_prevalence": 0.5727683223341438,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_121",
+        "slope_beta_1": 2.7258307521652205,
+        "intercept_beta_0": -1.5287770724553533,
+        "within_patient_auc_raw": 0.3373752108981868,
+        "within_patient_auc_cal": 0.3373752108981868,
+        "af_prevalence": 0.2063216394581452,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_136",
+        "slope_beta_1": 3.495637397514459,
+        "intercept_beta_0": -1.2957980821094153,
+        "within_patient_auc_raw": 0.47557015558017435,
+        "within_patient_auc_cal": 0.47557015558017435,
+        "af_prevalence": 0.07527504342790967,
+        "num_windows": 8635
+      },
+      {
+        "held_out_patient": "patient_144",
+        "slope_beta_1": 2.8009167030700692,
+        "intercept_beta_0": -1.4303206444141017,
+        "within_patient_auc_raw": 0.26852524518706866,
+        "within_patient_auc_cal": 0.26852524518706866,
+        "af_prevalence": 0.014321518080916577,
+        "num_windows": 2793
+      }
+    ]
+  },
+  "D032-v1": {
+    "pooled_auc_raw": 0.5879476530968198,
+    "pooled_auc_cal": 0.2733090088086679,
+    "mean_within_patient_auc_raw": 0.5781785900265312,
+    "mean_within_patient_auc_cal": 0.5781785900265312,
+    "brier_calibrated": 0.14727128638041045,
+    "brier_prevalence_baseline": 0.13903527778063204,
+    "brier_skill_score": -0.05923682630226468,
+    "slopes": [
+      0.118948318072998,
+      0.09918258771988452,
+      0.08294182663697425,
+      0.1843031498205489,
+      0.17410879402711693,
+      0.11265944145357389,
+      0.13209811982082198,
+      0.1835322387488485,
+      0.1872130339804817,
+      0.3001389441511279,
+      0.1617001132126937
+    ],
+    "intercepts": [
+      -1.6048666559356628,
+      -1.5641119807612076,
+      -1.539775143803559,
+      -1.5792359948307078,
+      -1.6071771738556597,
+      -1.9618049415571663,
+      -1.562278844142546,
+      -1.8659220811282946,
+      -1.6624422252006996,
+      -1.45982726918692,
+      -1.5538077116375308
+    ],
+    "folds": [
+      {
+        "held_out_patient": "patient_019",
+        "slope_beta_1": 0.118948318072998,
+        "intercept_beta_0": -1.6048666559356628,
+        "within_patient_auc_raw": 0.7484007714266531,
+        "within_patient_auc_cal": 0.7484007714266531,
+        "af_prevalence": 0.12919523637675928,
+        "num_windows": 2771
+      },
+      {
+        "held_out_patient": "patient_043",
+        "slope_beta_1": 0.09918258771988452,
+        "intercept_beta_0": -1.5641119807612076,
+        "within_patient_auc_raw": 0.8782398666371961,
+        "within_patient_auc_cal": 0.8782398666371961,
+        "af_prevalence": 0.04760250173731758,
+        "num_windows": 2878
+      },
+      {
+        "held_out_patient": "patient_045",
+        "slope_beta_1": 0.08294182663697425,
+        "intercept_beta_0": -1.539775143803559,
+        "within_patient_auc_raw": 0.6770287346280697,
+        "within_patient_auc_cal": 0.6770287346280697,
+        "af_prevalence": 0.08614102118791248,
+        "num_windows": 5758
+      },
+      {
+        "held_out_patient": "patient_052",
+        "slope_beta_1": 0.1843031498205489,
+        "intercept_beta_0": -1.5792359948307078,
+        "within_patient_auc_raw": 0.48281644281644287,
+        "within_patient_auc_cal": 0.48281644281644287,
+        "af_prevalence": 0.04294478527607362,
+        "num_windows": 2445
+      },
+      {
+        "held_out_patient": "patient_061",
+        "slope_beta_1": 0.17410879402711693,
+        "intercept_beta_0": -1.6071771738556597,
+        "within_patient_auc_raw": 0.699023875820235,
+        "within_patient_auc_cal": 0.699023875820235,
+        "af_prevalence": 0.14176939811457578,
+        "num_windows": 2758
+      },
+      {
+        "held_out_patient": "patient_063",
+        "slope_beta_1": 0.11265944145357389,
+        "intercept_beta_0": -1.9618049415571663,
+        "within_patient_auc_raw": 0.35956229291420194,
+        "within_patient_auc_cal": 0.35956229291420194,
+        "af_prevalence": 0.4407574704656011,
+        "num_windows": 5756
+      },
+      {
+        "held_out_patient": "patient_093",
+        "slope_beta_1": 0.13209811982082198,
+        "intercept_beta_0": -1.562278844142546,
+        "within_patient_auc_raw": 0.4170900539860232,
+        "within_patient_auc_cal": 0.4170900539860232,
+        "af_prevalence": 0.03786036818339701,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_119",
+        "slope_beta_1": 0.1835322387488485,
+        "intercept_beta_0": -1.8659220811282946,
+        "within_patient_auc_raw": 0.7988951175139405,
+        "within_patient_auc_cal": 0.7988951175139405,
+        "af_prevalence": 0.5727683223341438,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_121",
+        "slope_beta_1": 0.1872130339804817,
+        "intercept_beta_0": -1.6624422252006996,
+        "within_patient_auc_raw": 0.382274237635288,
+        "within_patient_auc_cal": 0.382274237635288,
+        "af_prevalence": 0.2063216394581452,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_136",
+        "slope_beta_1": 0.3001389441511279,
+        "intercept_beta_0": -1.45982726918692,
+        "within_patient_auc_raw": 0.4881641539424883,
+        "within_patient_auc_cal": 0.4881641539424883,
+        "af_prevalence": 0.07527504342790967,
+        "num_windows": 8635
+      },
+      {
+        "held_out_patient": "patient_144",
+        "slope_beta_1": 0.1617001132126937,
+        "intercept_beta_0": -1.5538077116375308,
+        "within_patient_auc_raw": 0.428468942971304,
+        "within_patient_auc_cal": 0.428468942971304,
+        "af_prevalence": 0.014321518080916577,
+        "num_windows": 2793
+      }
+    ]
+  },
+  "F053": {
+    "pooled_auc_raw": 0.5419928517087321,
+    "pooled_auc_cal": 0.2799470677171221,
+    "mean_within_patient_auc_raw": 0.49031845988673994,
+    "mean_within_patient_auc_cal": 0.5096815401132602,
+    "brier_calibrated": 0.1462430400109034,
+    "brier_prevalence_baseline": 0.13903527778063204,
+    "brier_skill_score": -0.05184124738214768,
+    "slopes": [
+      -0.2946413610986546,
+      -0.34266652307474493,
+      -0.3650804999529203,
+      -0.2404788473624155,
+      -0.2519210976911552,
+      -0.293931240252292,
+      -0.2934401191668755,
+      -0.2677937113600694,
+      -0.25496135666752645,
+      -0.1250383774319969,
+      -0.24793501651583022
+    ],
+    "intercepts": [
+      -1.6367654826422195,
+      -1.5970161244753214,
+      -1.5625124960973813,
+      -1.5954639329332367,
+      -1.638020795223635,
+      -2.0171790184819307,
+      -1.5869581445134657,
+      -1.8815625150281727,
+      -1.6643016282992877,
+      -1.4765287272141687,
+      -1.5740290605195772
+    ],
+    "folds": [
+      {
+        "held_out_patient": "patient_019",
+        "slope_beta_1": -0.2946413610986546,
+        "intercept_beta_0": -1.6367654826422195,
+        "within_patient_auc_raw": 0.6915856151618214,
+        "within_patient_auc_cal": 0.30841438483817873,
+        "af_prevalence": 0.12919523637675928,
+        "num_windows": 2771
+      },
+      {
+        "held_out_patient": "patient_043",
+        "slope_beta_1": -0.34266652307474493,
+        "intercept_beta_0": -1.5970161244753214,
+        "within_patient_auc_raw": 0.7378281143064096,
+        "within_patient_auc_cal": 0.2621718856935904,
+        "af_prevalence": 0.04760250173731758,
+        "num_windows": 2878
+      },
+      {
+        "held_out_patient": "patient_045",
+        "slope_beta_1": -0.3650804999529203,
+        "intercept_beta_0": -1.5625124960973813,
+        "within_patient_auc_raw": 0.5134797498191538,
+        "within_patient_auc_cal": 0.4865202501808462,
+        "af_prevalence": 0.08614102118791248,
+        "num_windows": 5758
+      },
+      {
+        "held_out_patient": "patient_052",
+        "slope_beta_1": -0.2404788473624155,
+        "intercept_beta_0": -1.5954639329332367,
+        "within_patient_auc_raw": 0.3188583638583638,
+        "within_patient_auc_cal": 0.681141636141636,
+        "af_prevalence": 0.04294478527607362,
+        "num_windows": 2445
+      },
+      {
+        "held_out_patient": "patient_061",
+        "slope_beta_1": -0.2519210976911552,
+        "intercept_beta_0": -1.638020795223635,
+        "within_patient_auc_raw": 0.6241532927713433,
+        "within_patient_auc_cal": 0.3758467072286566,
+        "af_prevalence": 0.14176939811457578,
+        "num_windows": 2758
+      },
+      {
+        "held_out_patient": "patient_063",
+        "slope_beta_1": -0.293931240252292,
+        "intercept_beta_0": -2.0171790184819307,
+        "within_patient_auc_raw": 0.3221394501483664,
+        "within_patient_auc_cal": 0.6778605498516336,
+        "af_prevalence": 0.4407574704656011,
+        "num_windows": 5756
+      },
+      {
+        "held_out_patient": "patient_093",
+        "slope_beta_1": -0.2934401191668755,
+        "intercept_beta_0": -1.5869581445134657,
+        "within_patient_auc_raw": 0.3051667605074024,
+        "within_patient_auc_cal": 0.6948332394925977,
+        "af_prevalence": 0.03786036818339701,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_119",
+        "slope_beta_1": -0.2677937113600694,
+        "intercept_beta_0": -1.8815625150281727,
+        "within_patient_auc_raw": 0.5632189008366736,
+        "within_patient_auc_cal": 0.43678109916332636,
+        "af_prevalence": 0.5727683223341438,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_121",
+        "slope_beta_1": -0.25496135666752645,
+        "intercept_beta_0": -1.6643016282992877,
+        "within_patient_auc_raw": 0.3519273699798864,
+        "within_patient_auc_cal": 0.6480726300201135,
+        "af_prevalence": 0.2063216394581452,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_136",
+        "slope_beta_1": -0.1250383774319969,
+        "intercept_beta_0": -1.4765287272141687,
+        "within_patient_auc_raw": 0.499462549973508,
+        "within_patient_auc_cal": 0.5005374500264921,
+        "af_prevalence": 0.07527504342790967,
+        "num_windows": 8635
+      },
+      {
+        "held_out_patient": "patient_144",
+        "slope_beta_1": -0.24793501651583022,
+        "intercept_beta_0": -1.5740290605195772,
+        "within_patient_auc_raw": 0.46568289139120955,
+        "within_patient_auc_cal": 0.5343171086087903,
+        "af_prevalence": 0.014321518080916577,
+        "num_windows": 2793
+      }
+    ]
+  },
+  "G061": {
+    "pooled_auc_raw": 0.8685982769395815,
+    "pooled_auc_cal": 0.8296260152854213,
+    "mean_within_patient_auc_raw": 0.8751158963998829,
+    "mean_within_patient_auc_cal": 0.8751158963998829,
+    "brier_calibrated": 0.11782404985656547,
+    "brier_prevalence_baseline": 0.13903527778063204,
+    "brier_skill_score": 0.15256004276506974,
+    "slopes": [
+      0.24878118145383896,
+      0.2256309772816403,
+      0.2257648097865647,
+      0.23199022505095976,
+      0.2311847064247801,
+      0.22687160590753405,
+      0.22339196264281072,
+      0.21342023498484664,
+      0.21951511206503552,
+      0.28318421721555026,
+      0.22742134647032247
+    ],
+    "intercepts": [
+      -1.4584285010297762,
+      -1.3867225639102905,
+      -1.2940211506038968,
+      -1.3222234307360148,
+      -1.3801664477195517,
+      -1.7858002281445078,
+      -1.3408477285148763,
+      -1.6167561537709274,
+      -1.4511928038915678,
+      -1.1043084913834411,
+      -1.3437409357043633
+    ],
+    "folds": [
+      {
+        "held_out_patient": "patient_019",
+        "slope_beta_1": 0.24878118145383896,
+        "intercept_beta_0": -1.4584285010297762,
+        "within_patient_auc_raw": 0.8379494683129325,
+        "within_patient_auc_cal": 0.8379494683129325,
+        "af_prevalence": 0.12919523637675928,
+        "num_windows": 2771
+      },
+      {
+        "held_out_patient": "patient_043",
+        "slope_beta_1": 0.2256309772816403,
+        "intercept_beta_0": -1.3867225639102905,
+        "within_patient_auc_raw": 0.9667365259096127,
+        "within_patient_auc_cal": 0.9667365259096127,
+        "af_prevalence": 0.04760250173731758,
+        "num_windows": 2878
+      },
+      {
+        "held_out_patient": "patient_045",
+        "slope_beta_1": 0.2257648097865647,
+        "intercept_beta_0": -1.2940211506038968,
+        "within_patient_auc_raw": 0.9357231473988795,
+        "within_patient_auc_cal": 0.9357231473988795,
+        "af_prevalence": 0.08614102118791248,
+        "num_windows": 5758
+      },
+      {
+        "held_out_patient": "patient_052",
+        "slope_beta_1": 0.23199022505095976,
+        "intercept_beta_0": -1.3222234307360148,
+        "within_patient_auc_raw": 0.6181237281237281,
+        "within_patient_auc_cal": 0.6181237281237281,
+        "af_prevalence": 0.04294478527607362,
+        "num_windows": 2445
+      },
+      {
+        "held_out_patient": "patient_061",
+        "slope_beta_1": 0.2311847064247801,
+        "intercept_beta_0": -1.3801664477195517,
+        "within_patient_auc_raw": 0.8964264605936053,
+        "within_patient_auc_cal": 0.8964264605936053,
+        "af_prevalence": 0.14176939811457578,
+        "num_windows": 2758
+      },
+      {
+        "held_out_patient": "patient_063",
+        "slope_beta_1": 0.22687160590753405,
+        "intercept_beta_0": -1.7858002281445078,
+        "within_patient_auc_raw": 0.9130805060561901,
+        "within_patient_auc_cal": 0.9130805060561901,
+        "af_prevalence": 0.4407574704656011,
+        "num_windows": 5756
+      },
+      {
+        "held_out_patient": "patient_093",
+        "slope_beta_1": 0.22339196264281072,
+        "intercept_beta_0": -1.3408477285148763,
+        "within_patient_auc_raw": 0.9729010035438678,
+        "within_patient_auc_cal": 0.9729010035438678,
+        "af_prevalence": 0.03786036818339701,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_119",
+        "slope_beta_1": 0.21342023498484664,
+        "intercept_beta_0": -1.6167561537709274,
+        "within_patient_auc_raw": 0.9390332648020234,
+        "within_patient_auc_cal": 0.9390332648020234,
+        "af_prevalence": 0.5727683223341438,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_121",
+        "slope_beta_1": 0.21951511206503552,
+        "intercept_beta_0": -1.4511928038915678,
+        "within_patient_auc_raw": 0.9912796823081287,
+        "within_patient_auc_cal": 0.9912796823081287,
+        "af_prevalence": 0.2063216394581452,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_136",
+        "slope_beta_1": 0.28318421721555026,
+        "intercept_beta_0": -1.1043084913834411,
+        "within_patient_auc_raw": 0.6443690573671788,
+        "within_patient_auc_cal": 0.6443690573671788,
+        "af_prevalence": 0.07527504342790967,
+        "num_windows": 8635
+      },
+      {
+        "held_out_patient": "patient_144",
+        "slope_beta_1": 0.22742134647032247,
+        "intercept_beta_0": -1.3437409357043633,
+        "within_patient_auc_raw": 0.9106520159825645,
+        "within_patient_auc_cal": 0.9106520159825645,
+        "af_prevalence": 0.014321518080916577,
+        "num_windows": 2793
+      }
+    ]
+  },
+  "H071-v2": {
+    "pooled_auc_raw": 0.6753841074054094,
+    "pooled_auc_cal": 0.5994190082488196,
+    "mean_within_patient_auc_raw": 0.5803507464523169,
+    "mean_within_patient_auc_cal": 0.5803507464523169,
+    "brier_calibrated": 0.14222114273235775,
+    "brier_prevalence_baseline": 0.13903527778063204,
+    "brier_skill_score": -0.022914076215623025,
+    "slopes": [
+      0.34420608871013436,
+      0.32963977851355836,
+      0.3498266273936432,
+      0.3503554846335637,
+      0.3563374680526639,
+      0.41126133601696396,
+      0.36226178991642827,
+      0.2577796765871669,
+      0.3720042724254173,
+      0.4488334002522102,
+      0.3688305966642367
+    ],
+    "intercepts": [
+      -1.5096369691012412,
+      -1.4847618878860562,
+      -1.519014198910134,
+      -1.4896386307550784,
+      -1.4970450199118923,
+      -1.79427077854898,
+      -1.448838797634938,
+      -1.7393141914362527,
+      -1.5595419742573515,
+      -1.2617689867194335,
+      -1.4392275940144816
+    ],
+    "folds": [
+      {
+        "held_out_patient": "patient_019",
+        "slope_beta_1": 0.34420608871013436,
+        "intercept_beta_0": -1.5096369691012412,
+        "within_patient_auc_raw": 0.6917326307454733,
+        "within_patient_auc_cal": 0.6917326307454733,
+        "af_prevalence": 0.12919523637675928,
+        "num_windows": 2771
+      },
+      {
+        "held_out_patient": "patient_043",
+        "slope_beta_1": 0.32963977851355836,
+        "intercept_beta_0": -1.4847618878860562,
+        "within_patient_auc_raw": 0.8485687731847027,
+        "within_patient_auc_cal": 0.8485687731847027,
+        "af_prevalence": 0.04760250173731758,
+        "num_windows": 2878
+      },
+      {
+        "held_out_patient": "patient_045",
+        "slope_beta_1": 0.3498266273936432,
+        "intercept_beta_0": -1.519014198910134,
+        "within_patient_auc_raw": 0.6458411878839151,
+        "within_patient_auc_cal": 0.6458411878839151,
+        "af_prevalence": 0.08614102118791248,
+        "num_windows": 5758
+      },
+      {
+        "held_out_patient": "patient_052",
+        "slope_beta_1": 0.3503554846335637,
+        "intercept_beta_0": -1.4896386307550784,
+        "within_patient_auc_raw": 0.3187993487993488,
+        "within_patient_auc_cal": 0.3187993487993488,
+        "af_prevalence": 0.04294478527607362,
+        "num_windows": 2445
+      },
+      {
+        "held_out_patient": "patient_061",
+        "slope_beta_1": 0.3563374680526639,
+        "intercept_beta_0": -1.4970450199118923,
+        "within_patient_auc_raw": 0.7212870490125847,
+        "within_patient_auc_cal": 0.7212870490125847,
+        "af_prevalence": 0.14176939811457578,
+        "num_windows": 2758
+      },
+      {
+        "held_out_patient": "patient_063",
+        "slope_beta_1": 0.41126133601696396,
+        "intercept_beta_0": -1.79427077854898,
+        "within_patient_auc_raw": 0.5028501446684748,
+        "within_patient_auc_cal": 0.5028501446684748,
+        "af_prevalence": 0.4407574704656011,
+        "num_windows": 5756
+      },
+      {
+        "held_out_patient": "patient_093",
+        "slope_beta_1": 0.36226178991642827,
+        "intercept_beta_0": -1.448838797634938,
+        "within_patient_auc_raw": 0.4702679429006723,
+        "within_patient_auc_cal": 0.4702679429006723,
+        "af_prevalence": 0.03786036818339701,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_119",
+        "slope_beta_1": 0.2577796765871669,
+        "intercept_beta_0": -1.7393141914362527,
+        "within_patient_auc_raw": 0.9070069566675047,
+        "within_patient_auc_cal": 0.9070069566675047,
+        "af_prevalence": 0.5727683223341438,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_121",
+        "slope_beta_1": 0.3720042724254173,
+        "intercept_beta_0": -1.5595419742573515,
+        "within_patient_auc_raw": 0.5079850289915936,
+        "within_patient_auc_cal": 0.5079850289915936,
+        "af_prevalence": 0.2063216394581452,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_136",
+        "slope_beta_1": 0.4488334002522102,
+        "intercept_beta_0": -1.2617689867194335,
+        "within_patient_auc_raw": 0.6134439574201628,
+        "within_patient_auc_cal": 0.6134439574201628,
+        "af_prevalence": 0.07527504342790967,
+        "num_windows": 8635
+      },
+      {
+        "held_out_patient": "patient_144",
+        "slope_beta_1": 0.3688305966642367,
+        "intercept_beta_0": -1.4392275940144816,
+        "within_patient_auc_raw": 0.1560751907010534,
+        "within_patient_auc_cal": 0.1560751907010534,
+        "af_prevalence": 0.014321518080916577,
+        "num_windows": 2793
+      }
+    ]
+  },
+  "I082-v1": {
+    "pooled_auc_raw": 0.49618669426504375,
+    "pooled_auc_cal": 0.2600736590781134,
+    "mean_within_patient_auc_raw": 0.47300236113514216,
+    "mean_within_patient_auc_cal": 0.5269976388648578,
+    "brier_calibrated": 0.1458038835799313,
+    "brier_prevalence_baseline": 0.13903527778063204,
+    "brier_skill_score": -0.04868265024060059,
+    "slopes": [
+      -7.842916802539578,
+      -7.935607772937654,
+      -8.393421650144294,
+      -3.475066200531706,
+      -6.690180135922317,
+      -4.663014856245186,
+      -7.405319130522525,
+      -5.290671227969858,
+      -6.6099976296925975,
+      -5.339981628214122,
+      -7.105448961261177
+    ],
+    "intercepts": [
+      -3.296346315006978,
+      -3.272083748593341,
+      -3.3408342619673266,
+      -2.3145910754196892,
+      -3.053569519271505,
+      -2.9737082030857436,
+      -3.152543682969779,
+      -2.989354909394745,
+      -3.066114092268777,
+      -2.612680764263653,
+      -3.0785923972917413
+    ],
+    "folds": [
+      {
+        "held_out_patient": "patient_019",
+        "slope_beta_1": -7.842916802539578,
+        "intercept_beta_0": -3.296346315006978,
+        "within_patient_auc_raw": 0.7734379883637743,
+        "within_patient_auc_cal": 0.22656201163622555,
+        "af_prevalence": 0.12919523637675928,
+        "num_windows": 2771
+      },
+      {
+        "held_out_patient": "patient_043",
+        "slope_beta_1": -7.935607772937654,
+        "intercept_beta_0": -3.272083748593341,
+        "within_patient_auc_raw": 0.6860847844438468,
+        "within_patient_auc_cal": 0.31391521555615326,
+        "af_prevalence": 0.04760250173731758,
+        "num_windows": 2878
+      },
+      {
+        "held_out_patient": "patient_045",
+        "slope_beta_1": -8.393421650144294,
+        "intercept_beta_0": -3.3408342619673266,
+        "within_patient_auc_raw": 0.5619229778938463,
+        "within_patient_auc_cal": 0.43807702210615374,
+        "af_prevalence": 0.08614102118791248,
+        "num_windows": 5758
+      },
+      {
+        "held_out_patient": "patient_052",
+        "slope_beta_1": -3.475066200531706,
+        "intercept_beta_0": -2.3145910754196892,
+        "within_patient_auc_raw": 0.25454822954822953,
+        "within_patient_auc_cal": 0.7454517704517705,
+        "af_prevalence": 0.04294478527607362,
+        "num_windows": 2445
+      },
+      {
+        "held_out_patient": "patient_061",
+        "slope_beta_1": -6.690180135922317,
+        "intercept_beta_0": -3.053569519271505,
+        "within_patient_auc_raw": 0.472393751681529,
+        "within_patient_auc_cal": 0.527606248318471,
+        "af_prevalence": 0.14176939811457578,
+        "num_windows": 2758
+      },
+      {
+        "held_out_patient": "patient_063",
+        "slope_beta_1": -4.663014856245186,
+        "intercept_beta_0": -2.9737082030857436,
+        "within_patient_auc_raw": 0.2618587557151976,
+        "within_patient_auc_cal": 0.7381412442848023,
+        "af_prevalence": 0.4407574704656011,
+        "num_windows": 5756
+      },
+      {
+        "held_out_patient": "patient_093",
+        "slope_beta_1": -7.405319130522525,
+        "intercept_beta_0": -3.152543682969779,
+        "within_patient_auc_raw": 0.37578577816050074,
+        "within_patient_auc_cal": 0.6242142218394993,
+        "af_prevalence": 0.03786036818339701,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_119",
+        "slope_beta_1": -5.290671227969858,
+        "intercept_beta_0": -2.989354909394745,
+        "within_patient_auc_raw": 0.6266320558899949,
+        "within_patient_auc_cal": 0.37336794411000507,
+        "af_prevalence": 0.5727683223341438,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_121",
+        "slope_beta_1": -6.6099976296925975,
+        "intercept_beta_0": -3.066114092268777,
+        "within_patient_auc_raw": 0.33866380802923474,
+        "within_patient_auc_cal": 0.6613361919707653,
+        "af_prevalence": 0.2063216394581452,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_136",
+        "slope_beta_1": -5.339981628214122,
+        "intercept_beta_0": -2.612680764263653,
+        "within_patient_auc_raw": 0.46814353836520395,
+        "within_patient_auc_cal": 0.531856461634796,
+        "af_prevalence": 0.07527504342790967,
+        "num_windows": 8635
+      },
+      {
+        "held_out_patient": "patient_144",
+        "slope_beta_1": -7.105448961261177,
+        "intercept_beta_0": -3.0785923972917413,
+        "within_patient_auc_raw": 0.3835543043952052,
+        "within_patient_auc_cal": 0.6164456956047948,
+        "af_prevalence": 0.014321518080916577,
+        "num_windows": 2793
+      }
+    ]
+  },
+  "I082-v2": {
+    "pooled_auc_raw": 0.6490736530354326,
+    "pooled_auc_cal": 0.5567456486395624,
+    "mean_within_patient_auc_raw": 0.5628039566552384,
+    "mean_within_patient_auc_cal": 0.5628039566552384,
+    "brier_calibrated": 0.14509854656942278,
+    "brier_prevalence_baseline": 0.13903527778063204,
+    "brier_skill_score": -0.043609570790783536,
+    "slopes": [
+      0.3192443905206245,
+      0.30915259033763093,
+      0.32011363651983293,
+      0.3756893767043894,
+      0.33760475772641624,
+      0.30561082785976434,
+      0.31017132529553215,
+      0.29012148661103965,
+      0.34313496018722184,
+      0.4811337973125268,
+      0.328015323098025
+    ],
+    "intercepts": [
+      -1.5869863343625095,
+      -1.5466937387372892,
+      -1.554462385903186,
+      -1.5398267422630336,
+      -1.5551219670335823,
+      -1.903247758278683,
+      -1.5323919990547679,
+      -1.8049744255670763,
+      -1.6003868619569595,
+      -1.4162363107399352,
+      -1.5221774353893858
+    ],
+    "folds": [
+      {
+        "held_out_patient": "patient_019",
+        "slope_beta_1": 0.3192443905206245,
+        "intercept_beta_0": -1.5869863343625095,
+        "within_patient_auc_raw": 0.8372792161638425,
+        "within_patient_auc_cal": 0.8372792161638425,
+        "af_prevalence": 0.12919523637675928,
+        "num_windows": 2771
+      },
+      {
+        "held_out_patient": "patient_043",
+        "slope_beta_1": 0.30915259033763093,
+        "intercept_beta_0": -1.5466937387372892,
+        "within_patient_auc_raw": 0.7632357523094827,
+        "within_patient_auc_cal": 0.7632357523094827,
+        "af_prevalence": 0.04760250173731758,
+        "num_windows": 2878
+      },
+      {
+        "held_out_patient": "patient_045",
+        "slope_beta_1": 0.32011363651983293,
+        "intercept_beta_0": -1.554462385903186,
+        "within_patient_auc_raw": 0.6530610524638001,
+        "within_patient_auc_cal": 0.6530610524638001,
+        "af_prevalence": 0.08614102118791248,
+        "num_windows": 5758
+      },
+      {
+        "held_out_patient": "patient_052",
+        "slope_beta_1": 0.3756893767043894,
+        "intercept_beta_0": -1.5398267422630336,
+        "within_patient_auc_raw": 0.21474155474155476,
+        "within_patient_auc_cal": 0.21474155474155476,
+        "af_prevalence": 0.04294478527607362,
+        "num_windows": 2445
+      },
+      {
+        "held_out_patient": "patient_061",
+        "slope_beta_1": 0.33760475772641624,
+        "intercept_beta_0": -1.5551219670335823,
+        "within_patient_auc_raw": 0.6949131115497944,
+        "within_patient_auc_cal": 0.6949131115497944,
+        "af_prevalence": 0.14176939811457578,
+        "num_windows": 2758
+      },
+      {
+        "held_out_patient": "patient_063",
+        "slope_beta_1": 0.30561082785976434,
+        "intercept_beta_0": -1.903247758278683,
+        "within_patient_auc_raw": 0.6133198834325606,
+        "within_patient_auc_cal": 0.6133198834325606,
+        "af_prevalence": 0.4407574704656011,
+        "num_windows": 5756
+      },
+      {
+        "held_out_patient": "patient_093",
+        "slope_beta_1": 0.31017132529553215,
+        "intercept_beta_0": -1.5323919990547679,
+        "within_patient_auc_raw": 0.8575497631901434,
+        "within_patient_auc_cal": 0.8575497631901434,
+        "af_prevalence": 0.03786036818339701,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_119",
+        "slope_beta_1": 0.29012148661103965,
+        "intercept_beta_0": -1.8049744255670763,
+        "within_patient_auc_raw": 0.6757103344229318,
+        "within_patient_auc_cal": 0.6757103344229318,
+        "af_prevalence": 0.5727683223341438,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_121",
+        "slope_beta_1": 0.34313496018722184,
+        "intercept_beta_0": -1.6003868619569595,
+        "within_patient_auc_raw": 0.37869946732091153,
+        "within_patient_auc_cal": 0.37869946732091153,
+        "af_prevalence": 0.2063216394581452,
+        "num_windows": 2879
+      },
+      {
+        "held_out_patient": "patient_136",
+        "slope_beta_1": 0.4811337973125268,
+        "intercept_beta_0": -1.4162363107399352,
+        "within_patient_auc_raw": 0.36699012571648765,
+        "within_patient_auc_cal": 0.36699012571648765,
+        "af_prevalence": 0.07527504342790967,
+        "num_windows": 8635
+      },
+      {
+        "held_out_patient": "patient_144",
+        "slope_beta_1": 0.328015323098025,
+        "intercept_beta_0": -1.5221774353893858,
+        "within_patient_auc_raw": 0.13534326189611334,
+        "within_patient_auc_cal": 0.13534326189611334,
+        "af_prevalence": 0.014321518080916577,
+        "num_windows": 2793
+      }
+    ]
+  }
+}

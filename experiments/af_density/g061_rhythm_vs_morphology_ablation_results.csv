@@ -1,0 +1,11 @@
+auroc,balanced_accuracy,brier_score,ece_10_bins,f1_score,precision,recall_sensitivity,specificity,score_sd,score_min,score_max,condition,description
+0.9092,0.8319,0.1224,0.1377,0.636,0.5227,0.8119,0.8519,0.36774,0.006011,0.99059,1_RR_only_MLP,2-layer MLP on 36-D RR interval statistics
+0.9583,0.9041,0.079,0.0841,0.7533,0.6432,0.9089,0.8993,0.380191,0.003769,0.995992,2_RR_only_GBDT,HistGradientBoosting on 36-D RR features
+0.5905,0.5319,0.2789,0.3315,0.2599,0.1918,0.4028,0.6609,0.189288,0.341502,0.899402,3_A001_Morphology_Only,Canonical Continuous Phase-KME SetOperator
+0.8686,0.8016,0.1714,0.1696,0.5648,0.4308,0.8197,0.7836,0.411506,0.0,1.0,4_G061_Intact,Full Multimodal Model (Phase-KME Morphology + RR)
+0.8686,0.8016,0.1714,0.1696,0.5647,0.4307,0.8196,0.7836,0.411506,0.0,1.0,5_G061_Shuffled_Morphology,G061 with Phase-KME response randomly shuffled across windows (intact RR)
+0.8677,0.5233,0.1563,0.1536,0.1047,0.4929,0.0586,0.988,0.123674,0.0,1.0,6_G061_Zeroed_Morphology,G061 with 256-D morphology latent clamped to 0 (head receives only RR)
+0.5057,0.503,0.3285,0.3337,0.2217,0.1691,0.3218,0.6842,0.411505,0.0,1.0,7_G061_Shuffled_RR,G061 with RR features randomly permuted across windows (intact morphology)
+0.5314,0.5,0.8334,0.8334,0.2855,0.1665,1.0,0.0,0.0,0.999931,0.999931,8_G061_Zeroed_RR,G061 with 36-D RR features clamped to 0 (head receives only morphology)
+0.6754,0.6147,0.2312,0.2312,0.3493,0.2605,0.5301,0.6993,0.303493,0.034453,0.94937,9_H071_Raw_ResNet,Authentic Raw 1D ECG ResNet Baseline
+0.8223,0.7539,0.2365,0.245,0.4902,0.3531,0.801,0.7068,0.436438,0.0,1.0,10_ResNet_plus_RR,Authentic Raw ResNet + 36-D RR features

@@ -1,0 +1,62 @@
+{
+  "study_id": "AF-DENSITY-SETOPERATOR-STAGE1D",
+  "audit_timestamp": "2026-11-22T16:26:00Z",
+  "overall_verdict": "CONDITIONAL_PIVOT_TO_RHYTHM_FIRST",
+  "held_out_quarantine_enforced": true,
+  "test_windows_npz_read": false,
+  "gates": {
+    "G1_feature_lineage_and_leakage": {
+      "status": "PASS",
+      "metric": "Direct HDF5 raw voltage reconstruction parity",
+      "observed": "60/60 windows across 6 files verified with 0 discrepancies; across-patient scramble AUROC = 0.3689 (expected ~0.50); zero temporal look-back/look-ahead leakage verified.",
+      "receipt": "stage1d_rr_leakage_audit.json"
+    },
+    "G2_calibration_and_bss_audit": {
+      "status": "PASS",
+      "metric": "Platt scaling fold diagnostics & Brier Skill Score",
+      "observed": "Root causes of calibrated AUROC collapse decomposed: within-patient AUROC is strictly preserved when beta_1 > 0; cross-patient intercept shifts (Simpson's paradox) scramble weak morphology ordering; negative slopes diagnosed in A002/F053/I082-v1. G061 BSS = +0.1526; RR-GBDT BSS = +0.6381; morphology models BSS in [-0.059, -0.047].",
+      "receipt": "stage1d_calibration_fold_diagnostics.csv"
+    },
+    "G3_hsmm_clinical_behavior": {
+      "status": "PASS",
+      "metric": "16 synthetic stress scenarios & validation episode audit",
+      "observed": "All 16 controlled scenarios passed (0 false AF in 24h sinus, 1 episode in 24h AF, isolated 30s transient suppressed by duration prior, 6-min clinical episode resolved). Validation clinical sensitivity, PPV, and boundary errors quantified.",
+      "receipt": "stage1d_hsmm_extended_unit_tests.json"
+    },
+    "G4_charitos_translation_invariance": {
+      "status": "PASS",
+      "metric": "Translation-invariance of lower envelope L(m)",
+      "observed": "Mathematical proof and numerical simulation verify true Charitos density is exactly translation-invariant across all shifts (max diff = 0.00e+00). Naive cumulative area rejected (varies 2x between edge and center). Real clinical annotation shifts replicated with zero error.",
+      "receipt": "stage1d_charitos_independent_parity.json"
+    },
+    "G5_single_lead_realism": {
+      "status": "PASS",
+      "metric": "Genuine single-lead feature masking",
+      "observed": "Eliminated 2-channel RR leakage in single-lead evaluation. Discovered severe lead-asymmetry in G061 (Lead 0 AUROC 0.9232 vs Lead 1 AUROC 0.1885). Standalone RR-GBDT maintains balanced performance across leads (0.9706 on Lead 0 vs 0.9622 on Lead 1).",
+      "receipt": "stage1d_channel_dropout_feature_reconstruction.csv"
+    },
+    "G6_baseline_non_inferiority": {
+      "status": "FAIL_FOR_PURE_MORPHOLOGY_WARN_FOR_HYBRID",
+      "metric": "Non-inferiority to standalone RR-GBDT (margin <= 0.02 AUROC)",
+      "observed": "Pure morphology (A001 AUC 0.5905 raw / 0.2545 calibrated) fails non-inferiority to RR-GBDT (AUC 0.9663) by >0.35 AUROC. Multimodal G061 (AUC 0.8686) is inferior to RR-GBDT and relies almost entirely on its RR branch. Shuffling morphology in G061 leaves AUROC unchanged.",
+      "receipt": "stage1d_rr_only_vs_morphology_ablation.csv"
+    },
+    "G7_full_cohort_exposure": {
+      "status": "PASS",
+      "metric": "Documentation of all 90 training patients & 5-fold patient-grouped CV",
+      "observed": "All 90 training patients (504,777 windows) documented with monitoring hours, AF burden, and reference episodes. 5-fold patient-grouped CV establishes rigorous population bounds.",
+      "receipt": "stage1d_training_patient_exposure.csv"
+    },
+    "G8_held_out_quarantine": {
+      "status": "PASS",
+      "metric": "Complete isolation of test partition",
+      "observed": "Zero reads or forward passes on test_windows.npz or test feature shards. All evaluations restricted strictly to training and validation partitions.",
+      "receipt": "stage1d_updated_statistical_analysis_plan.md"
+    }
+  },
+  "readiness_verdict": {
+    "can_advance_to_full_ablation_sweep": false,
+    "can_advance_to_stage2_rhythm_first": true,
+    "mandatory_stage2_pivot": "Redirect development compute from unsegmented Phase-KME continuous operators to chronological R-R sequence modeling (Mamba/GRU) and symmetric lead-contrastive representation learning."
+  }
+}

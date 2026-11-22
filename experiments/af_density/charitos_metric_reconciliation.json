@@ -1,0 +1,81 @@
+{
+  "status": "PASSED",
+  "mathematical_reconciliation": {
+    "formula_continuous": "D_cont = 2 * area / (1 - burden)",
+    "normalization_factor": "1 / (1 - burden)",
+    "behavior_single_contiguous_episode": "D_cont = 1.0 identically for any contiguous run",
+    "behavior_dispersed_episodes": "D_cont -> 0 as episodes fragment and disperse",
+    "explanation_of_0.25_formula": "The unnormalized expression 2 * \\int |m - L(m)| dm omitting 1/(1-p) yields (1-p), reaching 0.50 at p=0.50, and 0.25 if parameterized over elapsed observation time. The published Charitos (2012) definition and 2019 author R script explicitly divide by (1 - burden), normalizing maximal aggregation to 1.0."
+  },
+  "single_episode_evaluations": [
+    {
+      "burden": 0.01,
+      "duration_seconds": 864.0,
+      "continuous_density": 1.0,
+      "binned_author_density": 0.9986495966327602,
+      "is_single_episode_max_density": true
+    },
+    {
+      "burden": 0.05,
+      "duration_seconds": 4320.0,
+      "continuous_density": 1.0,
+      "binned_author_density": 0.9986337719298247,
+      "is_single_episode_max_density": true
+    },
+    {
+      "burden": 0.1,
+      "duration_seconds": 8640.0,
+      "continuous_density": 1.0,
+      "binned_author_density": 0.9986126543209871,
+      "is_single_episode_max_density": true
+    },
+    {
+      "burden": 0.25,
+      "duration_seconds": 21600.0,
+      "continuous_density": 1.0,
+      "binned_author_density": 0.99852037037037,
+      "is_single_episode_max_density": true
+    },
+    {
+      "burden": 0.5,
+      "duration_seconds": 43200.0,
+      "continuous_density": 1.0,
+      "binned_author_density": 0.9982805555555555,
+      "is_single_episode_max_density": true
+    },
+    {
+      "burden": 0.75,
+      "duration_seconds": 64800.0,
+      "continuous_density": 1.0000000000000002,
+      "binned_author_density": 0.9976173333333337,
+      "is_single_episode_max_density": true
+    },
+    {
+      "burden": 0.9,
+      "duration_seconds": 77760.0,
+      "continuous_density": 1.0000000000000004,
+      "binned_author_density": 0.9955258333333343,
+      "is_single_episode_max_density": true
+    },
+    {
+      "burden": 0.99,
+      "duration_seconds": 85536.0,
+      "continuous_density": 0.9999999999999981,
+      "binned_author_density": 0.9652579310344812,
+      "is_single_episode_max_density": true
+    }
+  ],
+  "author_r_numerical_parity": {
+    "verified_against": "Charitos MD PhD author R script v.3 (22-Nov-2019)",
+    "r_runtime": "R 4.3.3 Ubuntu r-base-core 4.3.3-2build2 unpacked locally without system installation",
+    "sha256": "937b5d9a959a66bb874c095409dd29c2435cc9fcab3e782bfb8dcaa161b83da2",
+    "max_difference": 5.329070518200751e-15,
+    "all_passed": true
+  },
+  "dynamic_range_test": {
+    "burden": 0.041666666666666664,
+    "concentrated_density": 1.0,
+    "dispersed_density": 0.00833333333333451,
+    "ratio": 119.99999999998306
+  }
+}

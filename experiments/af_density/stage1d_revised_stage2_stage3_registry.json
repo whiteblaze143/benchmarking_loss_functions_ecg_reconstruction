@@ -1,0 +1,67 @@
+{
+  "study_metadata": {
+    "title": "Stage 1D Revised Research & Ablation Registry",
+    "protocol_version": "STAGE1D-REV-V1.0",
+    "date": "2026-11-22",
+    "governance": "Replaces speculative 136-ablation matrix with hypothesis-driven, empirically grounded priorities."
+  },
+  "empirical_justification": {
+    "finding_1": "RR-GBDT achieves AUROC 0.9663 (11 patients) and 0.9938 (30 patients) with positive Brier Skill Score (+0.6381), proving rhythm alone carries decisive AF information.",
+    "finding_2": "Pure morphology SetOperator (A001, D032-v1) achieves negative Brier Skill Scores (-0.0560, -0.0592) and near-chance within-patient AUROC (~0.53-0.57), establishing zero clinical predictive skill over constant prevalence.",
+    "finding_3": "Multimodal G061 suffers catastrophic single-lead asymmetry under genuine channel dropout: AUROC 0.9232 on Lead 0 vs 0.1885 on Lead 1 (inverted polarity), proving unmasked evaluations previously masked severe failure.",
+    "finding_4": "Charitos continuous density metric is mathematically and empirically translation-invariant under lower-envelope formulation L(m), while naive cumulative area fails."
+  },
+  "prioritized_stage2_campaigns": [
+    {
+      "campaign_id": "STAGE2-RHYTHM-SEQ",
+      "name": "Chronological Beat-Sequence & SSM Rhythm Modeling",
+      "priority": "HIGH (Rank 1)",
+      "rationale": "Given RR interval dominance (AUROC > 0.96), sequence modeling over actual chronological R-R intervals using bidirectional Mamba / S4 / GRU architectures will capture fine-grained ventricular irregularity dynamics far better than static 30s summary statistics.",
+      "candidate_architectures": [
+        "R-Mamba: Bidirectional Selective State Space Model over 60-RR sequences",
+        "R-GRU: 2-layer Bidirectional GRU with attention pooling over beat intervals",
+        "R-Transformer: 4-layer Beat-Interval Self-Attention with sinusoidal position embeddings"
+      ],
+      "evaluation_gate": "Must exceed RR-GBDT AUROC (0.9663) and achieve Brier Skill Score > +0.65."
+    },
+    {
+      "campaign_id": "STAGE2-LEAD-INVARIANCE",
+      "name": "Symmetric Channel-Dropout & Lead-Contrastive Representation",
+      "priority": "HIGH (Rank 2)",
+      "rationale": "G061 collapsed to 0.1885 on Lead 1 because training lacked symmetric channel dropout. Models must be trained with random Bernoulli(0.5) lead masking and contrastive InfoNCE loss enforcing representation invariance across Lead 0 and Lead 1.",
+      "candidate_architectures": [
+        "SimLead-G061: Symmetric cross-lead contrastive pretraining with hard dropout",
+        "LeadAgnostic-ResNet: Shared-weight 1D ResNet with lead permutation invariance"
+      ],
+      "evaluation_gate": "Must maintain AUROC > 0.90 across both Pattern 0 (Lead 0) and Pattern 1 (Lead 1)."
+    },
+    {
+      "campaign_id": "STAGE2-BEAT-MORPHOLOGY",
+      "name": "Genuine Segmented Beat-Level QRS-T Morphology",
+      "priority": "MEDIUM (Rank 3)",
+      "rationale": "Static Phase-KME failed because it compresses the entire 30s recording into an unaligned kernel mean embedding. Real clinical value requires extracting segmented P-QRS-T complexes aligned to detected R-peaks.",
+      "candidate_architectures": [
+        "BeatMorph-Transformer: Set transformer over individual aligned QRS-T complexes",
+        "Rhythm-Conditioned BeatMorph: Dual-stream architecture where rhythm attends to beat morphology"
+      ],
+      "evaluation_gate": "Must demonstrate statistically significant incremental AUROC (+0.02) over rhythm-only baseline."
+    }
+  ],
+  "deprioritized_or_cancelled_directions": [
+    {
+      "direction": "Continuous Coordinate Scaling on Unsegmented Phase-KME (A001-A004)",
+      "status": "DEPRIORITIZED / CANCELLED",
+      "reason": "Empirically demonstrated zero predictive skill (negative BSS, near-chance within-patient ranking). Further parameter scaling on flawed representations is unscientific."
+    },
+    {
+      "direction": "Uncalibrated D2 HSMM Parameter Sweeps",
+      "status": "SUPERSEDED",
+      "reason": "HSMM all-AF degeneracy was fully resolved by Platt calibration. Emission strength tuning without proper probability calibration is obsolete."
+    },
+    {
+      "direction": "136-Ablation Unconditional Sweep",
+      "status": "SUSPENDED",
+      "reason": "Ablations on architectures that fail baseline non-inferiority waste compute. Only models clearing Stage 1D gates enter the ablation pipeline."
+    }
+  ]
+}

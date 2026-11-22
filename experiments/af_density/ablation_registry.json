@@ -1902,5 +1902,41 @@
     "priority": "P0",
     "stage": "Stage 0",
     "expected_behavior": "Demonstrates domain generalization without dataset-specific calibration hacks."
+  },
+  {
+    "id": "D032-v2a",
+    "name": "Mean + Variance Distributional Phase-KME",
+    "stage": "Stage 2",
+    "family": "phase_moments"
+  },
+  {
+    "id": "D032-v2b",
+    "name": "Tri-Moment (Mean + Var + Skewness) Phase-KME",
+    "stage": "Stage 2",
+    "family": "phase_moments"
+  },
+  {
+    "id": "D032-v2c",
+    "name": "Quad-Moment (Mean + Var + Skew + Kurtosis)",
+    "stage": "Stage 2",
+    "family": "phase_moments"
+  },
+  {
+    "id": "D032-v2d",
+    "name": "Quantile-Based (10th, 50th, 90th percentile) Phase-KME",
+    "stage": "Stage 2",
+    "family": "phase_moments"
+  },
+  {
+    "id": "D032-v2e",
+    "name": "Energy-Weighted Moment Phase-KME",
+    "stage": "Stage 2",
+    "family": "phase_moments"
+  },
+  {
+    "id": "D032-v2f",
+    "name": "Inter-Quartile Range (IQR) Dispersion Phase-KME",
+    "stage": "Stage 2",
+    "family": "phase_moments"
   }
 ]

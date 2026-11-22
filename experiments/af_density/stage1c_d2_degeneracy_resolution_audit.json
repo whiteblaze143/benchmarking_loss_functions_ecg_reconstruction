@@ -1,0 +1,100 @@
+{
+  "audit_timestamp": "2026-11-22T20:33:06.653330+00:00",
+  "total_models": 10,
+  "total_evaluations_per_model": 135,
+  "d2_evaluations_per_model": 45,
+  "overall_degeneracy_status": "COMPLETELY_RESOLVED",
+  "model_audits": {
+    "A001": {
+      "d2_total_evaluations": 45,
+      "d2_defined_density_count": 23,
+      "d2_defined_density_fraction": 0.5111111111111111,
+      "d2_density_continuous_mae": 0.216,
+      "d2_burden_mae_mean": 0.3072,
+      "d2_burden_mae_sd": 0.2345,
+      "d2_is_degenerate_constant": false
+    },
+    "A002": {
+      "d2_total_evaluations": 45,
+      "d2_defined_density_count": 30,
+      "d2_defined_density_fraction": 0.6666666666666666,
+      "d2_density_continuous_mae": 0.2454,
+      "d2_burden_mae_mean": 0.5169,
+      "d2_burden_mae_sd": 0.2993,
+      "d2_is_degenerate_constant": false
+    },
+    "A003": {
+      "d2_total_evaluations": 45,
+      "d2_defined_density_count": 24,
+      "d2_defined_density_fraction": 0.5333333333333333,
+      "d2_density_continuous_mae": 0.2823,
+      "d2_burden_mae_mean": 0.3776,
+      "d2_burden_mae_sd": 0.2695,
+      "d2_is_degenerate_constant": false
+    },
+    "A004": {
+      "d2_total_evaluations": 45,
+      "d2_defined_density_count": 31,
+      "d2_defined_density_fraction": 0.6888888888888889,
+      "d2_density_continuous_mae": 0.2668,
+      "d2_burden_mae_mean": 0.4029,
+      "d2_burden_mae_sd": 0.2747,
+      "d2_is_degenerate_constant": false
+    },
+    "D032-v1": {
+      "d2_total_evaluations": 45,
+      "d2_defined_density_count": 29,
+      "d2_defined_density_fraction": 0.6444444444444445,
+      "d2_density_continuous_mae": 0.2083,
+      "d2_burden_mae_mean": 0.3122,
+      "d2_burden_mae_sd": 0.2377,
+      "d2_is_degenerate_constant": false
+    },
+    "F053": {
+      "d2_total_evaluations": 45,
+      "d2_defined_density_count": 28,
+      "d2_defined_density_fraction": 0.6222222222222222,
+      "d2_density_continuous_mae": 0.2978,
+      "d2_burden_mae_mean": 0.587,
+      "d2_burden_mae_sd": 0.2875,
+      "d2_is_degenerate_constant": false
+    },
+    "G061": {
+      "d2_total_evaluations": 45,
+      "d2_defined_density_count": 45,
+      "d2_defined_density_fraction": 1.0,
+      "d2_density_continuous_mae": 0.2167,
+      "d2_burden_mae_mean": 0.1918,
+      "d2_burden_mae_sd": 0.215,
+      "d2_is_degenerate_constant": false
+    },
+    "H071-v2": {
+      "d2_total_evaluations": 45,
+      "d2_defined_density_count": 31,
+      "d2_defined_density_fraction": 0.6888888888888889,
+      "d2_density_continuous_mae": 0.2154,
+      "d2_burden_mae_mean": 0.301,
+      "d2_burden_mae_sd": 0.2316,
+      "d2_is_degenerate_constant": false
+    },
+    "I082-v1": {
+      "d2_total_evaluations": 45,
+      "d2_defined_density_count": 14,
+      "d2_defined_density_fraction": 0.3111111111111111,
+      "d2_density_continuous_mae": 0.1776,
+      "d2_burden_mae_mean": 0.4964,
+      "d2_burden_mae_sd": 0.3334,
+      "d2_is_degenerate_constant": false
+    },
+    "I082-v2": {
+      "d2_total_evaluations": 45,
+      "d2_defined_density_count": 26,
+      "d2_defined_density_fraction": 0.5777777777777777,
+      "d2_density_continuous_mae": 0.218,
+      "d2_burden_mae_mean": 0.4546,
+      "d2_burden_mae_sd": 0.3156,
+      "d2_is_degenerate_constant": false
+    }
+  },
+  "summary": "Leave-one-patient-out Platt calibration mapped uncalibrated logits into true population probability space (mean ~0.165), enabling both positive and negative log emissions. The 315/315 constant 100% AF degeneracy across models A001-A004, D032-v1, F053, and I082-v1 is fully resolved with non-zero SD and valid density estimands."
+}

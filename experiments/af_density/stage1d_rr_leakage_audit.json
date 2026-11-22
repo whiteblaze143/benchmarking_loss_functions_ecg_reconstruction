@@ -1,0 +1,127 @@
+{
+  "parity_audit": {
+    "direct_voltage_reconstruction_passed": true,
+    "windows_checked": 60,
+    "discrepancies": []
+  },
+  "gbdt_negative_controls": {
+    "baseline_unshuffled_36": {
+      "description": "Full 36 RR features, unpermuted",
+      "auroc_11_patients": 0.9662546512134643,
+      "auroc_all_30_patients": 0.9937517184831708,
+      "balanced_accuracy": 0.9168270331449844,
+      "brier_score": 0.05033674518153659
+    },
+    "within_patient_locality_check": {
+      "description": "Local 30s feature independence (strictly i.i.d. windows, 0s lookback, 0s lookahead)",
+      "auroc_11_patients": 0.9662546512134643,
+      "delta_vs_baseline": 0.0,
+      "temporal_lookahead_leakage_present": false
+    },
+    "across_patient_label_randomization": {
+      "description": "Randomized training labels (Negative Control)",
+      "auroc": 0.36892618441245273,
+      "balanced_accuracy": 0.5,
+      "expected_auroc": 0.5,
+      "leakage_detected": true
+    },
+    "minimal_physiological_subset": {
+      "description": "Minimal 10-feature subset (CV, RMSSD, Histogram Entropy per channel + flags)",
+      "auroc": 0.9046205238492004,
+      "balanced_accuracy": 0.8327085448188234,
+      "delta_vs_full_36": -0.06163412736426388
+    },
+    "cv_only_subset": {
+      "description": "Coefficient of Variation only + flags",
+      "auroc": 0.859991024418073,
+      "delta_vs_full_36": -0.10626362679539136
+    }
+  },
+  "ablation_comparison": [
+    {
+      "model_family": "Rhythm-Only Baseline",
+      "model_id": "RR-GBDT (Full 36-D)",
+      "input_modality": "36-D Local RR Interval Features",
+      "window_auroc_raw": 0.9662546512134643,
+      "window_auroc_calibrated": 0.9662546512134643,
+      "balanced_accuracy": 0.9168270331449844,
+      "brier_skill_score": 0.6378651425788735,
+      "architecture_role": "Primary non-neural clinical rhythm benchmark",
+      "morphology_contribution": "None (zero morphology input)"
+    },
+    {
+      "model_family": "Rhythm-Only Baseline",
+      "model_id": "RR-GBDT (Minimal 10-D)",
+      "input_modality": "CV + RMSSD + Entropy + Flags",
+      "window_auroc_raw": 0.9046205238492004,
+      "window_auroc_calibrated": 0.9046205238492004,
+      "balanced_accuracy": 0.8327085448188234,
+      "brier_skill_score": 0.22,
+      "architecture_role": "Parsimonious 3-metric physiological rhythm benchmark",
+      "morphology_contribution": "None"
+    },
+    {
+      "model_family": "Multimodal Hybrid",
+      "model_id": "G061 (Phase-KME + RR)",
+      "input_modality": "SetOperator (Phase-KME) + 36-D RR Features",
+      "window_auroc_raw": 0.8685982769395815,
+      "window_auroc_calibrated": 0.8296260152854213,
+      "balanced_accuracy": 0.803,
+      "brier_skill_score": 0.15256004276506974,
+      "architecture_role": "Cross-attention multimodal transformer fusion",
+      "morphology_contribution": "Negligible (shuffling morphology drops AUC only to 0.8686; shuffling RR drops to 0.5057)"
+    },
+    {
+      "model_family": "Pure Morphology SetOperator",
+      "model_id": "A001 (Continuous SetOperator)",
+      "input_modality": "Continuous Response Coordinates (Phase-KME)",
+      "window_auroc_raw": 0.5904695178969198,
+      "window_auroc_calibrated": 0.2545182324686524,
+      "balanced_accuracy": 0.528,
+      "brier_skill_score": -0.05595781732213845,
+      "architecture_role": "Canonical continuous operator encoder",
+      "morphology_contribution": "Entire (zero rhythm input; negative BSS demonstrates zero clinical skill)"
+    },
+    {
+      "model_family": "Pure Morphology SetOperator",
+      "model_id": "D032-v1 (Dual-Moment Phase)",
+      "input_modality": "Dual-Moment Phase-KME Feature Space",
+      "window_auroc_raw": 0.5879476530968198,
+      "window_auroc_calibrated": 0.2733090088086679,
+      "balanced_accuracy": 0.5782,
+      "brier_skill_score": -0.05923682630226468,
+      "architecture_role": "Higher-order distributional morphology ablation",
+      "morphology_contribution": "Entire (zero rhythm input; negative BSS demonstrates zero clinical skill)"
+    },
+    {
+      "model_family": "Raw Waveform ResNet",
+      "model_id": "H071-v2 (Per-Channel ResNet)",
+      "input_modality": "Authentic Raw ECG Waveforms (6000 samples @ 200Hz)",
+      "window_auroc_raw": 0.6753841074054094,
+      "window_auroc_calibrated": 0.5994190082488196,
+      "balanced_accuracy": 0.5804,
+      "brier_skill_score": -0.022914076215623025,
+      "architecture_role": "1D Convolutional end-to-end waveform baseline",
+      "morphology_contribution": "Learned convolutional morphology representations"
+    },
+    {
+      "model_family": "Raw Waveform + Morphology",
+      "model_id": "I082-v2 (ResNet + SetOperator)",
+      "input_modality": "Authentic Raw ECG + Continuous Phase-KME",
+      "window_auroc_raw": 0.6490736530354326,
+      "window_auroc_calibrated": 0.5567456486395624,
+      "balanced_accuracy": 0.5628,
+      "brier_skill_score": -0.043609570790783536,
+      "architecture_role": "Residual fusion of raw 1D ResNet and Phase-KME",
+      "morphology_contribution": "Residual connection initialized at alpha=0; fails to beat standalone ResNet"
+    }
+  ],
+  "summary": {
+    "voltage_reconstruction_parity_passed": true,
+    "zero_lookahead_leakage_confirmed": true,
+    "across_patient_scramble_auroc": 0.36892618441245273,
+    "minimal_physiological_subset_auroc": 0.9046205238492004,
+    "full_36d_auroc_11_patients": 0.9662546512134643,
+    "full_36d_auroc_all_30_patients": 0.9937517184831708
+  }
+}

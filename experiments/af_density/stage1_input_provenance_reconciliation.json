@@ -1,0 +1,105 @@
+{
+  "audit_timestamp": "2026-11-22T17:05:00Z",
+  "status": "RECONCILED",
+  "source_datasets": {
+    "iridia_af": {
+      "zenodo_id": "8405941_v1.0.1",
+      "raw_ecg_hdf5_dir": "/data/mithunmanivannan/datasets/iridia_af_8405941_v1.0.1/ecg_hdf5",
+      "sample_rate_hz": 200,
+      "raw_window_samples": 6000,
+      "raw_channels": 2,
+      "channel_identities": [
+        "Channel_0 (Nominal Lead I)",
+        "Channel_1 (Nominal Lead II)"
+      ]
+    }
+  },
+  "data_partitions": {
+    "total_windows": 802491,
+    "train": {
+      "patients": 90,
+      "records": 99,
+      "files": 181,
+      "windows": 504777,
+      "artifact": "data_partitions/train_windows.npz",
+      "reference_intervals_csv": "data_partitions/train_reference_intervals.csv"
+    },
+    "validation": {
+      "patients": 30,
+      "records": 34,
+      "files": 60,
+      "windows": 166047,
+      "artifact": "data_partitions/val_windows.npz",
+      "reference_intervals_csv": "data_partitions/val_reference_intervals.csv",
+      "informative_evaluation_patients": 11,
+      "informative_evaluation_segments": 15
+    },
+    "test": {
+      "patients": 32,
+      "records": 34,
+      "files": 48,
+      "windows": 131667,
+      "status": "STRICTLY_ISOLATED",
+      "access_prohibited_during_dev": true
+    }
+  },
+  "model_input_specifications": {
+    "phase_kme_response": {
+      "shape": [
+        2,
+        16,
+        128
+      ],
+      "dtype": "float32",
+      "validity_mask_shape": [
+        2
+      ],
+      "validity_mask_dtype": "bool"
+    },
+    "continuous_operator_q": {
+      "shape": [
+        2,
+        8
+      ],
+      "dtype": "float32",
+      "nominal_coords": {
+        "ch0": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ch1": [
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "authentic_raw_ecg": {
+      "shape": [
+        2,
+        6000
+      ],
+      "dtype": "float32",
+      "source": "HDF5 dataset ecg",
+      "sampling_rate": 200
+    },
+    "rr_features": {
+      "shape": [
+        36
+      ],
+      "dtype": "float32",
+      "components": "32 standardized stats + 4 real validity flags"
+    }
+  }
+}

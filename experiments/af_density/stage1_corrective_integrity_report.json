@@ -1,0 +1,73 @@
+{
+  "program": "T-CAIREM Continuous SetOperator AF-Density Research Program",
+  "audit_phase": "Priority 0 Corrective Remediation (P0.1)",
+  "audit_timestamp": "2026-11-22T17:07:00Z",
+  "auditor": "Data Provenance & Integrity Auditor (Swarm Worker: integrity)",
+  "verdict": "PASS_AND_SEALED",
+  "remediation_summary": {
+    "issue_audited": "P0.1 Mixed-partition label access: previous exploratory scripts loaded monolithic windows.npz (802,491 windows) into heap memory containing 131,667 held-out test windows.",
+    "remediation": "Decommissioned monolithic development reads. Partitioned dataset into physically isolated train and validation files with zero test data inclusion.",
+    "isolation_status": "STRICTLY_ENFORCED_OS_LEVEL"
+  },
+  "physical_partition_artifacts": {
+    "train_windows": {
+      "path": "data_partitions/train_windows.npz",
+      "sha256": "375e839c32524cc87a22c11a9f20fc5ecfe24f35b27f18d4d01960fbd8469263",
+      "windows": 504777,
+      "files": 181,
+      "patients": 90,
+      "test_window_leakage_count": 0
+    },
+    "val_windows": {
+      "path": "data_partitions/val_windows.npz",
+      "sha256": "7dfb370f01ee57ee68e0329921d16cd0043ea14076d9b2a8ad2ad84406b60714",
+      "windows": 166047,
+      "files": 60,
+      "patients": 30,
+      "test_window_leakage_count": 0
+    },
+    "train_reference_intervals": {
+      "path": "data_partitions/train_reference_intervals.csv",
+      "sha256": "af763298e6a5f723525ef23a02ca4f4a1a3dc2ed37a6876a5ceb40bf08df2b5f",
+      "intervals": 247,
+      "test_interval_leakage_count": 0
+    },
+    "val_reference_intervals": {
+      "path": "data_partitions/val_reference_intervals.csv",
+      "sha256": "f0a0f3f488abfb1796c5afcb466fc4d2ba5f4d61561d2ff4ee886edf93a7adbd",
+      "intervals": 95,
+      "test_interval_leakage_count": 0
+    }
+  },
+  "governance_and_population_artifacts": {
+    "training_population_csv": {
+      "path": "stage1_corrected_training_population.csv",
+      "sha256": "e76f6dad4fd4fec6a9b11ae18ffe9a6d059aa3559b94be03c073d33523a4a93f",
+      "verified_patients": 90,
+      "verified_records": 99,
+      "total_windows": 504777,
+      "af_windows": 76281,
+      "non_af_windows": 428496,
+      "mean_af_burden": 0.1511
+    },
+    "input_provenance_reconciliation_json": {
+      "path": "stage1_input_provenance_reconciliation.json",
+      "sha256": "5ba0564b532cd228c957b3967ee746a84a130d4e9d3f47e0a975ed199f568bec",
+      "raw_ecg_source": "/data/mithunmanivannan/datasets/iridia_af_8405941_v1.0.1/ecg_hdf5",
+      "sampling_rate_hz": 200,
+      "raw_window_samples": 6000,
+      "raw_channels": 2
+    },
+    "incident_disposition_md": {
+      "path": "stage1_incident_disposition.md",
+      "disposition": "HOLD_DEVELOPMENT_ONLY_CLEARED_FOR_STAGE_1B"
+    }
+  },
+  "test_partition_protection": {
+    "total_test_patients": 32,
+    "total_test_files": 48,
+    "total_test_windows": 131667,
+    "total_test_intervals": 71,
+    "status": "QUARANTINED_AND_INACCESSIBLE_TO_STAGE1B"
+  }
+}

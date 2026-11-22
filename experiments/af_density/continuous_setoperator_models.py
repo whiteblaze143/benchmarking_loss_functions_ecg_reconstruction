@@ -953,14 +953,20 @@ class PerChannelRawResNetSetOperatorH071(nn.Module):
 
 
 # ============================================================================
-# Stage 1 Variant I082: ResNet + Residual MLP Classification Head
+# Stage 1 Variant I082-v1: SetOperator Residual MLP Capacity Control
 # ============================================================================
 
 class ResNetResidualMLPSetOperatorI082(nn.Module):
-    """ResNet + Residual MLP Classification Head SetOperator (I082).
+    """SetOperator Residual Classification-Head Capacity Control (I082-v1).
     
     Replaces the single Linear(256, 1) head with a 2-layer residual MLP block:
     Linear(256, 256) -> GELU -> Linear(256, 256) + skip -> GELU -> Linear(256, 1).
+    
+    CRITICAL IDENTITY NOTE (P0.3):
+    This model serves as a parameter-capacity control (1,158,593 params) evaluated
+    strictly on Phase-KME SetOperator latent representations. It does NOT load or
+    fuse a raw-waveform 1D ResNet branch. Retained under identity I082-v1 for
+    capacity comparison against the linear head (A001).
     """
 
     def __init__(
@@ -1021,6 +1027,205 @@ class ResNetResidualMLPSetOperatorI082(nn.Module):
         return {"logits": logits, "latent": latent, "tokens": tokens}
 
 
+SetOperatorResidualMLPCapacityControlI082v1 = ResNetResidualMLPSetOperatorI082
+
+
+# ============================================================================
+# Stage 1 Variant I082-v2: Genuine Raw ResNet + SetOperator Residual Fusion
+# ============================================================================
+
+class RawResNetBlock(nn.Module):
+    """Residual block for the 8-block 1D raw ECG ResNet."""
+
+    def __init__(self, in_channels: int, out_channels: int, stride: int = 1):
+        super().__init__()
+        self.main = nn.Sequential(
+            nn.Conv1d(in_channels, out_channels, kernel_size=7, stride=stride, padding=3, bias=False),
+            nn.BatchNorm1d(out_channels),
+            nn.ReLU(),
+            nn.Conv1d(out_channels, out_channels, kernel_size=7, padding=3, bias=False),
+            nn.BatchNorm1d(out_channels),
+        )
+        if in_channels == out_channels and stride == 1:
+            self.skip = nn.Identity()
+        else:
+            self.skip = nn.Sequential(
+                nn.Conv1d(in_channels, out_channels, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm1d(out_channels),
+            )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return F.relu(self.main(x) + self.skip(x))
+
+
+class RawMaskResNetBranch(nn.Module):
+    """Eight-block 1D ResNet for 2-channel raw ECG with observed-channel masking.
+    
+    Accepts raw voltage waveforms of shape (B, 2, 6000) along with boolean
+    channel availability masks (B, 2). Matches the verified RawMaskResNet architecture
+    with exactly 2,186,049 parameters.
+    """
+
+    def __init__(self, in_channels: int = 4, num_classes: int = 1):
+        super().__init__()
+        self.stem = nn.Sequential(
+            nn.Conv1d(in_channels, 32, kernel_size=15, stride=2, padding=7, bias=False),
+            nn.BatchNorm1d(32),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=3, stride=2, padding=1),
+        )
+        self.layers = nn.Sequential(
+            RawResNetBlock(32, 32),
+            RawResNetBlock(32, 32),
+            RawResNetBlock(32, 64, stride=2),
+            RawResNetBlock(64, 64),
+            RawResNetBlock(64, 128, stride=2),
+            RawResNetBlock(128, 128),
+            RawResNetBlock(128, 256, stride=2),
+            RawResNetBlock(256, 256),
+        )
+        self.head = nn.Linear(256, num_classes)
+
+    def forward(self, waveform: torch.Tensor, available: torch.Tensor) -> torch.Tensor:
+        if waveform.ndim != 3 or waveform.shape[1] != 2:
+            raise ValueError(f"Expected (batch, 2, T) raw waveform, got {tuple(waveform.shape)}")
+        if not available.any(dim=1).all():
+            raise ValueError("No observed channel: prediction must remain indeterminate")
+        
+        mask = available[:, :, None]
+        observed = torch.where(mask, waveform, torch.zeros_like(waveform))
+        inp = torch.cat([observed, mask.expand_as(waveform).to(waveform.dtype)], dim=1)
+        feat = self.layers(self.stem(inp)).mean(dim=-1)
+        return self.head(feat).squeeze(-1)
+
+
+class ResNetResidualFusionSetOperatorI082v2(nn.Module):
+    """Genuine ResNet + SetOperator Residual Fusion (I082-v2).
+    
+    Combines an authentic 1D raw ECG ResNet (2,186,049 params) with the
+    continuous Phase-KME SetOperator branch (1,027,009 params) via a learnable
+    zero-initialized residual scalar parameter:
+        logit_fused = logit_raw + alpha * delta_logit
+    where alpha is initialized to 0.0.
+    
+    If Phase-KME features are unavailable (e.g. invalid quality or failed extraction),
+    delta_logit is safely masked to 0, falling back to the raw ResNet prediction.
+    """
+
+    def __init__(
+        self,
+        raw_channels: int = 4,
+        response_dim: int = 128,
+        operator_dim: int = 8,
+        transformer_dim: int = 192,
+        latent_dim: int = 256,
+    ):
+        super().__init__()
+        # Raw ECG 1D ResNet branch
+        self.raw_branch = RawMaskResNetBranch(in_channels=raw_channels, num_classes=1)
+
+        # Continuous Phase-KME SetOperator branch
+        self.operator = nn.Sequential(
+            nn.Linear(operator_dim, 64),
+            nn.GELU(),
+            nn.Linear(64, 64),
+        )
+        self.response = PhaseCNN(response_dim, width=128, blocks=2, classes=128)
+        layer = nn.TransformerEncoderLayer(
+            d_model=transformer_dim,
+            nhead=4,
+            dim_feedforward=384,
+            activation="gelu",
+            batch_first=True,
+        )
+        self.set_encoder = nn.TransformerEncoder(layer, num_layers=2)
+        self.pool_query = nn.Parameter(torch.zeros(1, 1, transformer_dim))
+        self.pool = nn.MultiheadAttention(transformer_dim, 4, batch_first=True)
+        self.latent = nn.Sequential(nn.Linear(transformer_dim, latent_dim), nn.GELU())
+        self.delta_head = nn.Linear(latent_dim, 1)
+
+        # Learnable residual scale initialized to 0.0
+        self.alpha = nn.Parameter(torch.zeros(1))
+
+    def freeze_raw_branch(self):
+        """Freezes raw ResNet branch parameters for residual-only training."""
+        for p in self.raw_branch.parameters():
+            p.requires_grad = False
+
+    def unfreeze_raw_branch(self):
+        """Unfreezes raw ResNet branch parameters for joint fine-tuning."""
+        for p in self.raw_branch.parameters():
+            p.requires_grad = True
+
+    def forward(
+        self,
+        raw_waveforms: torch.Tensor,
+        responses: torch.Tensor,
+        operators: torch.Tensor,
+        mask: Optional[torch.Tensor] = None,
+        phase_valid: Optional[torch.Tensor] = None,
+    ) -> Dict[str, torch.Tensor]:
+        B, M = raw_waveforms.shape[0], raw_waveforms.shape[1]
+        if mask is None:
+            mask = torch.zeros((B, M), dtype=torch.bool, device=raw_waveforms.device)
+        available = ~mask
+
+        if not available.any(dim=1).all():
+            raise ValueError("No observed channel: prediction must remain indeterminate")
+
+        # 1. Raw ResNet prediction
+        logit_raw = self.raw_branch(raw_waveforms, available)  # (B,)
+
+        # 2. Phase-KME SetOperator residual branch
+        if phase_valid is not None:
+            set_mask = mask | (~phase_valid)
+        else:
+            set_mask = mask
+
+        has_valid_phase = (~set_mask).any(dim=1)  # (B,)
+
+        if has_valid_phase.any():
+            B_s, M_s, P_s, D_s = responses.shape
+            q = self.operator(operators)
+            resp = self.response(responses.reshape(B_s * M_s, P_s, D_s)).reshape(B_s, M_s, 128)
+            tokens = torch.cat([q, resp], dim=-1)
+
+            encoded = self.set_encoder(tokens, src_key_padding_mask=set_mask)
+            query = self.pool_query.expand(B_s, -1, -1)
+            pooled, _ = self.pool(query, encoded, encoded, key_padding_mask=set_mask)
+            latent = self.latent(pooled[:, 0])
+            delta_logit = self.delta_head(latent).squeeze(-1)
+
+            # If any sample in the batch has no valid phase, mask its delta to 0
+            if not has_valid_phase.all():
+                delta_logit = torch.where(has_valid_phase, delta_logit, torch.zeros_like(delta_logit))
+        else:
+            tokens = None
+            latent = None
+            delta_logit = torch.zeros_like(logit_raw)
+
+        # 3. Residual fusion
+        logit_fused = logit_raw + self.alpha * delta_logit
+
+        return {
+            "logits": logit_fused,
+            "logit_raw": logit_raw,
+            "delta_logit": delta_logit,
+            "alpha": self.alpha,
+            "latent": latent,
+            "tokens": tokens,
+        }
+
+
+# ============================================================================
+# Aliases for Versioned Model Identifiers
+# ============================================================================
+
+PerChannelRawResNetSetOperatorH071v2 = PerChannelRawResNetSetOperatorH071
+DualMomentPhaseSetOperatorD032v1 = DualMomentPhaseSetOperatorD032
+OrderPreservingBeatSetOperatorD037v1 = OrderPreservingBeatSetOperatorD037
+
+
 # ============================================================================
 # Model Factory and Registry
 # ============================================================================
@@ -1031,13 +1236,18 @@ SET_OPERATOR_MODEL_REGISTRY = {
     "A003": OperatorAblatedSetOperatorA003,
     "A004": Continuous2DSetOperatorA004,
     "D032": DualMomentPhaseSetOperatorD032,
+    "D032-V1": DualMomentPhaseSetOperatorD032,
     "D037": OrderPreservingBeatSetOperatorD037,
+    "D037-V1": OrderPreservingBeatSetOperatorD037,
     "E047": PhaseWiseAttentionSetOperatorE047,
     "F053": NoTransformerSetOperatorF053,
     "F057": ResidualTokenSetOperatorF057,
     "G061": MultimodalRRSetOperatorG061,
     "H071": PerChannelRawResNetSetOperatorH071,
-    "I082": ResNetResidualMLPSetOperatorI082,
+    "H071-V2": PerChannelRawResNetSetOperatorH071,
+    "I082": SetOperatorResidualMLPCapacityControlI082v1,
+    "I082-V1": SetOperatorResidualMLPCapacityControlI082v1,
+    "I082-V2": ResNetResidualFusionSetOperatorI082v2,
 }
 
 
@@ -1045,16 +1255,16 @@ def build_continuous_setoperator(model_id: str, **kwargs) -> nn.Module:
     """Factory function for Continuous SetOperator architectures.
     
     Args:
-        model_id: Ablation identifier (e.g. 'A001', 'A002', 'D032', etc.)
+        model_id: Ablation identifier (e.g. 'A001', 'A002', 'D032', 'I082-v2', etc.)
         **kwargs: Architecture hyperparameters passed to the model constructor
         
     Returns:
         Instantiated nn.Module
     """
-    model_id = model_id.upper()
-    if model_id not in SET_OPERATOR_MODEL_REGISTRY:
-        raise ValueError(f"Unknown SetOperator model_id '{model_id}'. Available: {list(SET_OPERATOR_MODEL_REGISTRY.keys())}")
-    return SET_OPERATOR_MODEL_REGISTRY[model_id](**kwargs)
+    normalized_id = model_id.upper().replace("_", "-")
+    if normalized_id not in SET_OPERATOR_MODEL_REGISTRY:
+        raise ValueError(f"Unknown SetOperator model_id '{model_id}' (normalized '{normalized_id}'). Available: {list(SET_OPERATOR_MODEL_REGISTRY.keys())}")
+    return SET_OPERATOR_MODEL_REGISTRY[normalized_id](**kwargs)
 
 
 def count_trainable_parameters(model: nn.Module) -> int:
@@ -1077,6 +1287,14 @@ def compute_model_flops(
         ops = torch.randn(batch_size, num_channels, 8, device=device)
         with FlopCounterMode(display=False) as flop_counter:
             _ = model(raw, ops)
+        return flop_counter.get_total_flops()
+
+    elif isinstance(model, ResNetResidualFusionSetOperatorI082v2):
+        raw = torch.randn(batch_size, num_channels, 6000, device=device)
+        resp = torch.randn(batch_size, num_channels, 16, 128, device=device)
+        ops = torch.randn(batch_size, num_channels, 8, device=device)
+        with FlopCounterMode(display=False) as flop_counter:
+            _ = model(raw, resp, ops)
         return flop_counter.get_total_flops()
 
     elif isinstance(model, MatchedCategoricalSetOperatorA002):

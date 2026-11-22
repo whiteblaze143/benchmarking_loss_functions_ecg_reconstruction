@@ -1,0 +1,102 @@
+[
+  {
+    "model_id": "A001",
+    "class_name": "ContinuousSetOperatorA001",
+    "trainable_parameters": 1027009,
+    "best_epoch": 3,
+    "best_val_loss": 0.5491670370101929,
+    "total_training_seconds": 119.83,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/A001_best.pt",
+    "checkpoint_sha256": "6f8d06baa8fe30e135c461589a8b235a9735be7c257526c2585ca8a4341111a7"
+  },
+  {
+    "model_id": "A002",
+    "class_name": "MatchedCategoricalSetOperatorA002",
+    "trainable_parameters": 1022401,
+    "best_epoch": 4,
+    "best_val_loss": 0.6818438768386841,
+    "total_training_seconds": 117.51,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/A002_best.pt",
+    "checkpoint_sha256": "2880033305dc9df4b0f147ff6eca119d06ee61bc0123716e844e2ebda6b42be4"
+  },
+  {
+    "model_id": "A003",
+    "class_name": "OperatorAblatedSetOperatorA003",
+    "trainable_parameters": 1022273,
+    "best_epoch": 2,
+    "best_val_loss": 0.6834210753440857,
+    "total_training_seconds": 115.22,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/A003_best.pt",
+    "checkpoint_sha256": "6db3e714e7797b7db41e1f640064f64af7bfcb2aa898d7ac2a06102a373bacdf"
+  },
+  {
+    "model_id": "A004",
+    "class_name": "Continuous2DSetOperatorA004",
+    "trainable_parameters": 1026625,
+    "best_epoch": 4,
+    "best_val_loss": 0.6432330012321472,
+    "total_training_seconds": 115.33,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/A004_best.pt",
+    "checkpoint_sha256": "2ba08ec507c8d0ef42994237484dcd5cca44f898989ee759df63dc4924c18f86"
+  },
+  {
+    "model_id": "D032-v1",
+    "class_name": "DualMomentPhaseSetOperatorD032",
+    "trainable_parameters": 1043393,
+    "best_epoch": 3,
+    "best_val_loss": 0.5334511995315552,
+    "total_training_seconds": 115.25,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/D032-v1_best.pt",
+    "checkpoint_sha256": "1a5c93e4303a8a442cb118b836dc84fc8fc09244c7b771e95e7ebcfc1ede3106"
+  },
+  {
+    "model_id": "F053",
+    "class_name": "NoTransformerSetOperatorF053",
+    "trainable_parameters": 284545,
+    "best_epoch": 3,
+    "best_val_loss": 0.5604439377784729,
+    "total_training_seconds": 115.92,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/F053_best.pt",
+    "checkpoint_sha256": "daa61b3083d2ebc75bffe6ca38978d31879f93ba3fdd18e28523c4456a448bde"
+  },
+  {
+    "model_id": "G061",
+    "class_name": "MultimodalRRSetOperatorG061",
+    "trainable_parameters": 1027045,
+    "best_epoch": 5,
+    "best_val_loss": 0.5750628113746643,
+    "total_training_seconds": 115.58,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/G061_best.pt",
+    "checkpoint_sha256": "2a3e3d1e15cb4faed2566d7422a94d3724d72b5876355d810a5ed2bd923a2626"
+  },
+  {
+    "model_id": "H071-v2",
+    "class_name": "PerChannelRawResNetSetOperatorH071",
+    "trainable_parameters": 2065249,
+    "best_epoch": 1,
+    "best_val_loss": 0.3402206599712372,
+    "total_training_seconds": 502.12,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/H071-v2_best.pt",
+    "checkpoint_sha256": "07ba2c72c147e0cc5c50f4f9c83b30756a418679b91d9a0514cddb7013268371"
+  },
+  {
+    "model_id": "I082-v1",
+    "class_name": "ResNetResidualMLPSetOperatorI082",
+    "trainable_parameters": 1158593,
+    "best_epoch": 5,
+    "best_val_loss": 0.6098974347114563,
+    "total_training_seconds": 118.05,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/I082-v1_best.pt",
+    "checkpoint_sha256": "d7908cee8480b1d82f2b8dd0e29e2ce93e22357498daa5381094c09b3151c163"
+  },
+  {
+    "model_id": "I082-v2",
+    "class_name": "ResNetResidualFusionSetOperatorI082v2",
+    "trainable_parameters": 3213059,
+    "best_epoch": 1,
+    "best_val_loss": 0.39894142746925354,
+    "total_training_seconds": 348.37,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/I082-v2_best.pt",
+    "checkpoint_sha256": "abc48db78ca54b0e14e8ffaf23ace001910552678c525ea1f43cb507450a5acb"
+  }
+]

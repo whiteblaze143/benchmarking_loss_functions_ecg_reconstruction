@@ -1,0 +1,122 @@
+{
+  "A001": {
+    "model_id": "A001",
+    "class_name": "ContinuousSetOperatorA001",
+    "trainable_parameters": 1027009,
+    "best_epoch": 4,
+    "best_val_loss": 0.6227934956550598,
+    "total_training_seconds": 87.17,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/A001_best.pt",
+    "checkpoint_sha256": "aa2b9ead7ea9a2bc3b646fae16a28955a161373e5135b29e2d5e91200466f9df"
+  },
+  "A002": {
+    "model_id": "A002",
+    "class_name": "MatchedCategoricalSetOperatorA002",
+    "trainable_parameters": 1022401,
+    "best_epoch": 1,
+    "best_val_loss": 0.6598835587501526,
+    "total_training_seconds": 85.32,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/A002_best.pt",
+    "checkpoint_sha256": "0f093b7bc8adcc298f6830ec1151225ae4e58bd049956b8c621c79d1ed91456c"
+  },
+  "A003": {
+    "model_id": "A003",
+    "class_name": "OperatorAblatedSetOperatorA003",
+    "trainable_parameters": 1022273,
+    "best_epoch": 1,
+    "best_val_loss": 0.6603971123695374,
+    "total_training_seconds": 83.93,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/A003_best.pt",
+    "checkpoint_sha256": "17da366f895c0943180e8abc02db9bd3672909beb8c82979e402754a7ca252e5"
+  },
+  "A004": {
+    "model_id": "A004",
+    "class_name": "Continuous2DSetOperatorA004",
+    "trainable_parameters": 1026625,
+    "best_epoch": 2,
+    "best_val_loss": 0.6900874972343445,
+    "total_training_seconds": 83.53,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/A004_best.pt",
+    "checkpoint_sha256": "db003bb5679f64dc51fe9b2beabe27da9b866f3ca94ed355d8b28c53425219bd"
+  },
+  "D032": {
+    "model_id": "D032",
+    "class_name": "DualMomentPhaseSetOperatorD032",
+    "trainable_parameters": 1043393,
+    "best_epoch": 4,
+    "best_val_loss": 0.16913071274757385,
+    "total_training_seconds": 84.64,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/D032_best.pt",
+    "checkpoint_sha256": "1a8ee42820c790a4c4b4a3985142394e5078b740838d6ac92ae09854d555d220"
+  },
+  "D037": {
+    "model_id": "D037",
+    "class_name": "OrderPreservingBeatSetOperatorD037",
+    "trainable_parameters": 928449,
+    "best_epoch": 1,
+    "best_val_loss": 0.6915427446365356,
+    "total_training_seconds": 51.44,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/D037_best.pt",
+    "checkpoint_sha256": "63aa41ea60806b6894b99502c4fd83eb519879809ccfb3be8f8d25f326a43d89"
+  },
+  "E047": {
+    "model_id": "E047",
+    "class_name": "PhaseWiseAttentionSetOperatorE047",
+    "trainable_parameters": 1027009,
+    "best_epoch": 2,
+    "best_val_loss": 0.6670854091644287,
+    "total_training_seconds": 87.21,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/E047_best.pt",
+    "checkpoint_sha256": "e6421171894777fa7cfd24af21a43bb54dbd637cf809166ce139c0c3e5d8787f"
+  },
+  "F053": {
+    "model_id": "F053",
+    "class_name": "NoTransformerSetOperatorF053",
+    "trainable_parameters": 284545,
+    "best_epoch": 5,
+    "best_val_loss": 0.6213725805282593,
+    "total_training_seconds": 86.12,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/F053_best.pt",
+    "checkpoint_sha256": "ead7f15d6e78d4b78b210ca8e7aa188750c71e0c7c281a58e5fb192ede340f98"
+  },
+  "F057": {
+    "model_id": "F057",
+    "class_name": "ResidualTokenSetOperatorF057",
+    "trainable_parameters": 1027009,
+    "best_epoch": 1,
+    "best_val_loss": 0.6938138604164124,
+    "total_training_seconds": 86.79,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/F057_best.pt",
+    "checkpoint_sha256": "92c8011ce13467593eb44885405930ee9e3324ceb18bf8a890740dde9a0d74e7"
+  },
+  "G061": {
+    "model_id": "G061",
+    "class_name": "MultimodalRRSetOperatorG061",
+    "trainable_parameters": 1027045,
+    "best_epoch": 5,
+    "best_val_loss": 2.258220672607422,
+    "total_training_seconds": 84.51,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/G061_best.pt",
+    "checkpoint_sha256": "2254b4b259c92bdf33bd82cab8abef9c99adc66005aec60248816ed20df10346"
+  },
+  "H071": {
+    "model_id": "H071",
+    "class_name": "PerChannelRawResNetSetOperatorH071",
+    "trainable_parameters": 2065249,
+    "best_epoch": 1,
+    "best_val_loss": 1.4354875087738037,
+    "total_training_seconds": 353.6,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/H071_best.pt",
+    "checkpoint_sha256": "7ed3a08ca79eb00defe2cfb5b7eb84c06e1ecdb0cc814e12f1fa128794805eca"
+  },
+  "I082": {
+    "model_id": "I082",
+    "class_name": "ResNetResidualMLPSetOperatorI082",
+    "trainable_parameters": 1158593,
+    "best_epoch": 3,
+    "best_val_loss": 0.6815042495727539,
+    "total_training_seconds": 85.98,
+    "checkpoint_path": "/data/mithunmanivannan/codex_artifacts/af_density_continuous_setoperator/checkpoints/I082_best.pt",
+    "checkpoint_sha256": "3a9ae2367fb99192f44a2c86d70b5d44a79a7ac3d49cb3f5e85020d17212877c"
+  }
+}

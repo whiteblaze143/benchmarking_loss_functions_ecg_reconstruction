@@ -1,0 +1,298 @@
+{
+  "diagnostic_metadata": {
+    "program": "T-CAIREM Continuous SetOperator AF-Density Research Program",
+    "component": "Representation & Failure Diagnostics",
+    "timestamp_iso": "2026-11-22T06:35:00Z",
+    "analyst": "diagnostician",
+    "diagnostic_target": "Layer-wise representation collapse and score degeneracy in categorical and identity-ablated SetOperator models",
+    "evidence_sources": [
+      {
+        "path": "/data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/pre_release_corrective_v1/validation_corrected_score_degeneracy_v1.json",
+        "sha256": "895a642d99bb78ce003effadc278e8efecacd12a9b835e829a1d0684a51cd759",
+        "description": "Full validation cohort score distribution over 498,057 conditions"
+      },
+      {
+        "path": "/data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/pre_release_corrective_v1/validation_activation_variation_v2.json",
+        "sha256": "131636860f8b1e8833b8caab44d3ef00d122ce53c0ff964ecdb3ec8379b82e45",
+        "description": "Validation activation variation across 256 windows from 4 patients (initial)"
+      },
+      {
+        "path": "/data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/pre_release_corrective_v1/validation_activation_variation_v3.json",
+        "sha256": "4b4f2f7c51c4c1b411e6edb449a577b460535afe4ffca2c3a5a33a9eb7db5fc6",
+        "description": "Layer-wise validation activation variation across 256 windows distinguishing Layer 1 and Layer 2"
+      },
+      {
+        "path": "/data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/pre_release_corrective_v1/validation_activation_patterns_v2.json",
+        "sha256": "651b5d654196574be03f59388ea79bbf40c3c33366bfb73a9a6150de54c591b5",
+        "description": "Activation variation decomposed across single-lead and multi-lead acquisition patterns"
+      },
+      {
+        "path": "/data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/pre_release_corrective_v1/constant_score_training_diagnostic_training_only_v2.json",
+        "sha256": "c3de20f17ad9a8c75b48b24aaa40ada1b3b69cbc3625cf9b535759f7d650d11f",
+        "description": "Training loss trajectory comparison with theoretical optimal constant predictor"
+      }
+    ]
+  },
+  "summary_findings": {
+    "failure_mode": "Progressive Layer-wise Representation Collapse",
+    "affected_models": [
+      "math_v2_categorical",
+      "math_v2_q_ablated"
+    ],
+    "unaffected_reference_model": "math_v2_hybrid",
+    "key_metrics": {
+      "phasecnn_response_sd": 10.315575,
+      "set_encoder_layer_1_active_token_sd": 0.000601285,
+      "set_encoder_layer_2_active_token_sd": 0.000003448,
+      "pool_query_output_sd": 0.000001333,
+      "latent_feature_sd": 0.0000000799,
+      "output_logit_sd": 0.0000000425,
+      "full_validation_probability_mean": 0.2284196,
+      "full_validation_probability_sd": 0.0000000848,
+      "full_validation_conditions": 498057
+    },
+    "collapse_factor": "Over 2,990,000x reduction in standard deviation from PhaseCNN response encoder (SD 10.32) to SetEncoder Layer 2 (SD 3.45e-6), ending in constant logit SD 4.25e-8 and probability ~0.2284."
+  },
+  "layer_wise_activation_cascade": {
+    "cohort_sample": {
+      "windows": 256,
+      "distinct_patients": 4,
+      "windows_per_patient": 64,
+      "lead_condition": "Channel 0 valid"
+    },
+    "categorical_cascade": [
+      {
+        "layer_name": "phase_input",
+        "tensor_shape": [256, 16, 128],
+        "mean_coordinate_std": 0.035330651,
+        "max_coordinate_std": 0.098296958,
+        "min_value": 0.005853251,
+        "max_value": 0.520314157,
+        "status": "Healthy biological variation across cardiac phases"
+      },
+      {
+        "layer_name": "response_encoder (PhaseCNN)",
+        "tensor_shape": [256, 128],
+        "mean_coordinate_std": 10.315575224,
+        "max_coordinate_std": 37.313171383,
+        "min_value": -188.873352,
+        "max_value": 149.997650,
+        "status": "Rich, non-degenerate morphological representations extracted per lead"
+      },
+      {
+        "layer_name": "set_encoder_layer_1_active_token",
+        "tensor_shape": [256, 192],
+        "mean_coordinate_std": 0.000601285,
+        "max_coordinate_std": 0.002969458,
+        "min_value": -4.2944155,
+        "max_value": 4.0493474,
+        "status": "Severe initial attenuation (>17,000x drop in coordinate standard deviation)"
+      },
+      {
+        "layer_name": "set_encoder_layer_2_active_token",
+        "tensor_shape": [256, 192],
+        "mean_coordinate_std": 0.000003448,
+        "max_coordinate_std": 0.000020835,
+        "min_value": -4.2818394,
+        "max_value": 3.1493716,
+        "status": "Terminal token collapse (~174x further attenuation, SD ~ 3.45e-6)"
+      },
+      {
+        "layer_name": "pool_attention_query",
+        "tensor_shape": [256, 192],
+        "mean_coordinate_std": 0.000001333,
+        "max_coordinate_std": 0.000004843,
+        "min_value": -2.6886921,
+        "max_value": 2.2629983,
+        "status": "Pooled representation inherits collapsed token subspace (SD ~ 1.33e-6)"
+      },
+      {
+        "layer_name": "latent_mlp (Linear(192, 256) + GELU)",
+        "tensor_shape": [256, 256],
+        "mean_coordinate_std": 0.0000000799,
+        "max_coordinate_std": 0.000002315,
+        "min_value": -0.1674435,
+        "max_value": 5.0241251,
+        "status": "Further projected into near-identical static vector (SD ~ 7.99e-8)"
+      },
+      {
+        "layer_name": "classification_logit (Linear(256, 1))",
+        "tensor_shape": [256, 1],
+        "mean_coordinate_std": 0.0000000425,
+        "max_coordinate_std": 0.0000000425,
+        "min_value": -1.21725738,
+        "max_value": -1.21725702,
+        "status": "Frozen constant logit centered at -1.217257 across all 256 patient windows"
+      },
+      {
+        "layer_name": "probability_output (Sigmoid)",
+        "tensor_shape": [256, 1],
+        "mean_coordinate_std": 0.0000000848,
+        "max_coordinate_std": 0.0000000848,
+        "min_value": 0.22841902,
+        "max_value": 0.22842017,
+        "status": "Completely degenerate constant prediction p = 0.2284 (zero discriminatory power)"
+      }
+    ],
+    "q_ablated_cascade": [
+      {
+        "layer_name": "phase_input",
+        "mean_coordinate_std": 0.035330651,
+        "max_coordinate_std": 0.098296958
+      },
+      {
+        "layer_name": "response_encoder (PhaseCNN)",
+        "mean_coordinate_std": 2.982928944,
+        "max_coordinate_std": 9.880626925,
+        "min_value": -148.984909,
+        "max_value": 169.319931
+      },
+      {
+        "layer_name": "set_encoder_layer_1_active_token",
+        "mean_coordinate_std": 0.000223191,
+        "max_coordinate_std": 0.000864938,
+        "min_value": -2.1593583,
+        "max_value": 2.1513836
+      },
+      {
+        "layer_name": "set_encoder_layer_2_active_token",
+        "mean_coordinate_std": 0.000002232,
+        "max_coordinate_std": 0.000008130,
+        "min_value": -2.8215699,
+        "max_value": 2.7631691
+      },
+      {
+        "layer_name": "pool_attention_query",
+        "mean_coordinate_std": 0.000001497,
+        "max_coordinate_std": 0.000005541,
+        "min_value": -6.7460613,
+        "max_value": 7.3791590
+      },
+      {
+        "layer_name": "latent_mlp",
+        "mean_coordinate_std": 0.0000000239,
+        "max_coordinate_std": 0.000002012,
+        "min_value": -0.1696708,
+        "max_value": 13.5199814
+      },
+      {
+        "layer_name": "classification_logit",
+        "mean_coordinate_std": 0.0000001497,
+        "max_coordinate_std": 0.0000001497,
+        "min_value": -1.24581599,
+        "max_value": -1.24581552
+      },
+      {
+        "layer_name": "probability_output",
+        "mean_coordinate_std": 0.0000002714,
+        "min_value": 0.22342092,
+        "max_value": 0.22342524,
+        "status": "Degenerate constant prediction p = 0.2234"
+      }
+    ]
+  },
+  "pattern_decomposed_analysis": {
+    "source_file": "validation_activation_patterns_v2.json",
+    "description": "Analysis of active-token SD under 3 acquisition topologies: Lead I only [1, 0], Lead II only [0, 1], Both leads [1, 1]",
+    "categorical": {
+      "pattern_lead_I_only": {
+        "channel_mask": [true, false],
+        "first_layer_packed_active_tokens_mean_sd": 0.00058877,
+        "second_layer_packed_active_tokens_mean_sd": 0.00000338,
+        "latent_mean_sd": 0.0000000783,
+        "logit_range": [-1.21725738, -1.21725702],
+        "probability_spread": 0.000000067
+      },
+      "pattern_lead_II_only": {
+        "channel_mask": [false, true],
+        "first_layer_packed_active_tokens_mean_sd": 0.00157216,
+        "second_layer_packed_active_tokens_mean_sd": 0.00000954,
+        "latent_mean_sd": 0.0000002934,
+        "logit_range": [-1.21725905, -1.21725714],
+        "probability_spread": 0.000000336
+      },
+      "pattern_both_leads": {
+        "channel_mask": [true, true],
+        "first_layer_packed_active_tokens_mean_sd": 0.01145631,
+        "second_layer_packed_active_tokens_mean_sd": 0.00004503,
+        "latent_mean_sd": 0.0000009701,
+        "logit_range": [-1.21725738, -1.21725428],
+        "probability_spread": 0.000000579
+      }
+    },
+    "q_ablated": {
+      "pattern_lead_I_only": {
+        "channel_mask": [true, false],
+        "first_layer_packed_active_tokens_mean_sd": 0.00022307,
+        "second_layer_packed_active_tokens_mean_sd": 0.00000223,
+        "latent_mean_sd": 0.0000000240,
+        "logit_range": [-1.24581599, -1.24581552]
+      },
+      "pattern_lead_II_only": {
+        "channel_mask": [false, true],
+        "first_layer_packed_active_tokens_mean_sd": 0.00024301,
+        "second_layer_packed_active_tokens_mean_sd": 0.00000244,
+        "latent_mean_sd": 0.0000000255,
+        "logit_range": [-1.24581599, -1.24581552]
+      },
+      "pattern_both_leads": {
+        "channel_mask": [true, true],
+        "first_layer_packed_active_tokens_mean_sd": 0.00208349,
+        "second_layer_packed_active_tokens_mean_sd": 0.00002875,
+        "latent_mean_sd": 0.0000003134,
+        "logit_range": [-1.24582231, -1.24581552]
+      }
+    }
+  },
+  "training_dynamics_pathology": {
+    "source_file": "constant_score_training_diagnostic_training_only_v2.json",
+    "dataset_properties": {
+      "training_windows": 504777,
+      "weighted_training_target_prevalence": 0.23730495,
+      "theoretical_optimal_constant_bce": 0.54795344
+    },
+    "model_trajectories": {
+      "categorical": {
+        "first_epoch_logged_bce": 0.54873786,
+        "selected_epoch_2_bce": 0.54838882,
+        "last_epoch_logged_bce": 0.54813920,
+        "validation_bce": 0.48684735,
+        "interpretation": "Loss never departed from the marginal dataset prevalence. Training was completely trapped in the constant prior attractor throughout all epochs."
+      },
+      "q_ablated": {
+        "first_epoch_logged_bce": 0.54871409,
+        "selected_epoch_2_bce": 0.54872275,
+        "last_epoch_logged_bce": 0.54843054,
+        "validation_bce": 0.48573282,
+        "interpretation": "Identical behavior to categorical; absolute failure to optimize beyond dataset prevalence."
+      },
+      "hybrid_reference": {
+        "first_epoch_logged_bce": 0.23564878,
+        "selected_epoch_37_bce": 0.11835711,
+        "last_epoch_logged_bce": 0.11865502,
+        "validation_bce": 0.12767195,
+        "interpretation": "Learns successfully, reducing BCE by over 78% relative to constant prior."
+      }
+    }
+  },
+  "mechanistic_root_cause_reconstruction": {
+    "core_mechanisms": [
+      {
+        "name": "Discrete Token Symmetry Collapse",
+        "description": "Discrete categorical IDs {0, 1} or constant zero vector in q_ablated provide no spatial or geometric coordinate grounding. When |S| = 1 (single lead valid), self-attention degenerates into an unconstrained feedforward layer. LayerNorm and residual connection damping contract the output toward a fixed-point invariant subspace."
+      },
+      {
+        "name": "Loss Surface Flatness & Marginal Prior Attraction",
+        "description": "Under weighted binary cross-entropy with 23.7% positive prevalence, predicting a constant logit log(0.2373 / (1 - 0.2373)) = -1.167 achieves BCE = 0.54795. Without token-level contrastive or reconstruction gradients, the set encoder discovers that suppressing all PhaseCNN variation (SD 10.32 -> 3.45e-6) provides an immediate local optimum, trapping gradient descent."
+      },
+      {
+        "name": "Decoupled Representation Learning vs Pure Discriminative Objective",
+        "description": "In the absence of an auxiliary reconstruction decoder or geometric alignment loss, the Transformer set encoder acts as an information bottleneck that discards all morphological variation not linearly separable in the initial random projection."
+      }
+    ],
+    "architectural_cure": {
+      "solution": "Continuous SetOperator with Continuous Lead Operator Embeddings (EchoNext)",
+      "mechanism": "Continuous operator projections q in R^8 directly map nominal Einthoven lead vectors into continuous geometric coordinates. This breaks discrete token symmetry, conditions self-attention on physical lead geometry, and prevents contractive collapse across windows and channels."
+    }
+  }
+}

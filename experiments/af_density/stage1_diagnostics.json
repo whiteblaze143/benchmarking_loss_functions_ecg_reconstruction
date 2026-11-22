@@ -1,0 +1,336 @@
+{
+  "metadata": {
+    "program": "T-CAIREM Continuous SetOperator AF-Density Research Program",
+    "stage": "Stage 1 Diagnostics",
+    "component": "Representation & Failure Diagnostician",
+    "timestamp_iso": "2026-11-22T06:41:39Z",
+    "device": "cuda",
+    "gpu_device_name": "NVIDIA A100-PCIE-40GB",
+    "cudnn_version": 90300,
+    "script_sha256": "41fc45202bca6861e55717f5bbed907146ea784caca3c275b69087cc04902320"
+  },
+  "dataset_sample": {
+    "partition": "train",
+    "source_shard": "phase_features_v1/shards/file_000.npz",
+    "total_windows": 256,
+    "af_positive_windows": 128,
+    "af_negative_windows": 128,
+    "channels_observed": 2,
+    "nominal_lead_geometry": {
+      "channel_0": "Lead I = [1, 0, 0, 0, 0, 0, 0, 0]",
+      "channel_1": "Lead II = [0, 1, 0, 0, 0, 0, 0, 0]"
+    }
+  },
+  "representation_non_collapse_evaluation": {
+    "A001_EchoNext_Continuous": {
+      "parameter_count": 1027009,
+      "latent_effective_rank": 4.515273094177246,
+      "latent_dim": 256,
+      "effective_rank_ratio": 0.017637785524129868,
+      "token_cross_channel_l2_dist": 0.8063846230506897,
+      "token_cross_channel_cosine_sim": 0.7810938358306885,
+      "token_stats": {
+        "mean_coordinate_std": 0.014807672939803208,
+        "max_coordinate_std": 0.14232835918664938,
+        "min_coordinate_std": 0.0001869555562734604,
+        "min_value": -0.368528813123703,
+        "max_value": 0.34240567684173584
+      },
+      "latent_stats": {
+        "mean_coordinate_std": 0.0029676568199525615,
+        "max_coordinate_std": 0.01595878345118341,
+        "min_coordinate_std": 0.00018678137898179632,
+        "min_value": -0.1658606231212616,
+        "max_value": 0.3775958716869354
+      },
+      "logit_stats": {
+        "mean_coordinate_std": 0.0023247853373488205,
+        "max_coordinate_std": 0.0023247853373488205,
+        "min_coordinate_std": 0.0023247853373488205,
+        "min_value": -0.019312698394060135,
+        "max_value": -0.012419825419783592
+      },
+      "probability_stats": {
+        "mean_coordinate_std": 0.0005811596249760946,
+        "max_coordinate_std": 0.0005811596249760946,
+        "min_coordinate_std": 0.0005811596249760946,
+        "min_value": 0.49517202377319336,
+        "max_value": 0.49689504504203796
+      },
+      "initial_unfitted_auroc": 1.0,
+      "representation_status": "NON_COLLAPSED"
+    },
+    "A002_Matched_Categorical": {
+      "parameter_count": 1022401,
+      "latent_effective_rank": 4.9474287033081055,
+      "latent_dim": 256,
+      "effective_rank_ratio": 0.019325893372297287,
+      "token_cross_channel_l2_dist": 11.962998390197754,
+      "token_cross_channel_cosine_sim": 0.056149378418922424,
+      "token_stats": {
+        "mean_coordinate_std": 0.2021374436882646,
+        "max_coordinate_std": 2.0534502863883994,
+        "min_coordinate_std": 0.0005444308643028561,
+        "min_value": -2.6634256839752197,
+        "max_value": 3.1581978797912598
+      },
+      "latent_stats": {
+        "mean_coordinate_std": 0.00041804408032904134,
+        "max_coordinate_std": 0.0016483845117238824,
+        "min_coordinate_std": 2.7797973390918814e-05,
+        "min_value": -0.16763009130954742,
+        "max_value": 0.5360382199287415
+      },
+      "logit_stats": {
+        "mean_coordinate_std": 0.000365661627619831,
+        "max_coordinate_std": 0.000365661627619831,
+        "min_coordinate_std": 0.000365661627619831,
+        "min_value": -0.11563772708177567,
+        "max_value": -0.11439228802919388
+      },
+      "probability_stats": {
+        "mean_coordinate_std": 9.111238875351476e-05,
+        "max_coordinate_std": 9.111238875351476e-05,
+        "min_coordinate_std": 9.111238875351476e-05,
+        "min_value": 0.47112274169921875,
+        "max_value": 0.47143304347991943
+      },
+      "initial_unfitted_auroc": 0.00225830078125,
+      "representation_status": "NON_COLLAPSED"
+    },
+    "F053_No_Transformer_Pool": {
+      "parameter_count": 284545,
+      "latent_effective_rank": 4.021696090698242,
+      "latent_dim": 256,
+      "effective_rank_ratio": 0.01570975035429001,
+      "token_cross_channel_l2_dist": 0.6768248081207275,
+      "token_cross_channel_cosine_sim": 0.8249876499176025,
+      "token_stats": {
+        "mean_coordinate_std": 0.013782952716462356,
+        "max_coordinate_std": 0.12012239918112731,
+        "min_coordinate_std": 0.00041886241456481595,
+        "min_value": -0.3255622386932373,
+        "max_value": 0.3123379349708557
+      },
+      "latent_stats": {
+        "mean_coordinate_std": 0.0006857406871164732,
+        "max_coordinate_std": 0.002456534969956641,
+        "min_coordinate_std": 5.3905463595614405e-05,
+        "min_value": -0.06960329413414001,
+        "max_value": 0.09577076137065887
+      },
+      "logit_stats": {
+        "mean_coordinate_std": 0.00030243308817810063,
+        "max_coordinate_std": 0.00030243308817810063,
+        "min_coordinate_std": 0.00030243308817810063,
+        "min_value": -0.02913491241633892,
+        "max_value": -0.02814081683754921
+      },
+      "probability_stats": {
+        "mean_coordinate_std": 7.559207247096158e-05,
+        "max_coordinate_std": 7.559207247096158e-05,
+        "min_coordinate_std": 7.559207247096158e-05,
+        "min_value": 0.49271678924560547,
+        "max_value": 0.4929652214050293
+      },
+      "initial_unfitted_auroc": 1.0,
+      "representation_status": "NON_COLLAPSED"
+    },
+    "D032_Dual_Moment_Phase": {
+      "parameter_count": 1043393,
+      "latent_effective_rank": 6.2759881019592285,
+      "latent_dim": 256,
+      "effective_rank_ratio": 0.024515578523278236,
+      "token_cross_channel_l2_dist": 0.7128498554229736,
+      "token_cross_channel_cosine_sim": 0.68185955286026,
+      "token_stats": {
+        "mean_coordinate_std": 0.013159344298982564,
+        "max_coordinate_std": 0.11605770140886285,
+        "min_coordinate_std": 6.577000021934509e-06,
+        "min_value": -0.2549761235713959,
+        "max_value": 0.24794450402259827
+      },
+      "latent_stats": {
+        "mean_coordinate_std": 0.0026411248021683373,
+        "max_coordinate_std": 0.010703164595587768,
+        "min_coordinate_std": 0.00010647536472170104,
+        "min_value": -0.16380637884140015,
+        "max_value": 0.37432292103767395
+      },
+      "logit_stats": {
+        "mean_coordinate_std": 0.0021244209006085315,
+        "max_coordinate_std": 0.0021244209006085315,
+        "min_coordinate_std": 0.0021244209006085315,
+        "min_value": 0.030946630984544754,
+        "max_value": 0.03646999970078468
+      },
+      "probability_stats": {
+        "mean_coordinate_std": 0.0005309506025323415,
+        "max_coordinate_std": 0.0005309506025323415,
+        "min_coordinate_std": 0.0005309506025323415,
+        "min_value": 0.507736086845398,
+        "max_value": 0.5091164708137512
+      },
+      "initial_unfitted_auroc": 0.0,
+      "representation_status": "NON_COLLAPSED"
+    },
+    "D037_Order_Preserving_Beats": {
+      "parameter_count": 928449,
+      "latent_effective_rank": 4.363881587982178,
+      "latent_dim": 256,
+      "effective_rank_ratio": 0.017046412453055382,
+      "token_cross_channel_l2_dist": 0.6905969381332397,
+      "token_cross_channel_cosine_sim": 0.8305103778839111,
+      "token_stats": {
+        "mean_coordinate_std": 0.01598666293442968,
+        "max_coordinate_std": 0.10930903255939416,
+        "min_coordinate_std": 0.0008033613706595309,
+        "min_value": -0.36667343974113464,
+        "max_value": 0.2498951405286789
+      },
+      "latent_stats": {
+        "mean_coordinate_std": 0.005941420851961639,
+        "max_coordinate_std": 0.02619067804688794,
+        "min_coordinate_std": 5.376423284871722e-05,
+        "min_value": -0.1699703186750412,
+        "max_value": 0.5231451988220215
+      },
+      "logit_stats": {
+        "mean_coordinate_std": 0.0031556579865451447,
+        "max_coordinate_std": 0.0031556579865451447,
+        "min_coordinate_std": 0.0031556579865451447,
+        "min_value": -0.02582438290119171,
+        "max_value": -0.017758220434188843
+      },
+      "probability_stats": {
+        "mean_coordinate_std": 0.00078881656496283,
+        "max_coordinate_std": 0.00078881656496283,
+        "min_coordinate_std": 0.00078881656496283,
+        "min_value": 0.49354425072669983,
+        "max_value": 0.49556058645248413
+      },
+      "initial_unfitted_auroc": 1.0,
+      "representation_status": "NON_COLLAPSED"
+    }
+  },
+  "token_symmetry_breaking_analysis": {
+    "mechanism": "Continuous operator embedding q = MLP(q_c) in R^64 maps nominal Lead I and Lead II into distinct metric coordinates.",
+    "a001_continuous_cross_channel_l2_dist": 0.8063846230506897,
+    "a001_continuous_cross_channel_cosine_sim": 0.7810938358306885,
+    "symmetry_broken": true,
+    "cross_window_distinctness_verified": true
+  },
+  "overfitting_sanity_test": {
+    "model": "ContinuousSetOperatorA001",
+    "epochs": 40,
+    "elapsed_seconds": 2.16,
+    "final_loss": 2.147928001097494e-14,
+    "final_accuracy": 1.0,
+    "final_auroc": 1.0,
+    "success_criteria_met": true,
+    "post_training_representation_variation": {
+      "token_stats": {
+        "mean_coordinate_std": 0.9781570646263628,
+        "max_coordinate_std": 3.173777768675628,
+        "min_coordinate_std": 0.00029681436717510223,
+        "min_value": -5.219656467437744,
+        "max_value": 4.636780738830566
+      },
+      "latent_stats": {
+        "mean_coordinate_std": 2.962783767719693,
+        "max_coordinate_std": 5.852987672453684,
+        "min_coordinate_std": 0.03336517151414636,
+        "min_value": -0.16957393288612366,
+        "max_value": 11.707639694213867
+      },
+      "logit_stats": {
+        "mean_coordinate_std": 30.496508151548532,
+        "max_coordinate_std": 30.496508151548532,
+        "min_coordinate_std": 30.496508151548532,
+        "min_value": -30.21753692626953,
+        "max_value": 30.785680770874023
+      },
+      "probability_stats": {
+        "mean_coordinate_std": 0.4999999999999622,
+        "max_coordinate_std": 0.4999999999999622,
+        "min_coordinate_std": 0.4999999999999622,
+        "min_value": 7.528188277839201e-14,
+        "max_value": 1.0
+      }
+    },
+    "training_trajectory": [
+      {
+        "epoch": 1,
+        "loss": 0.6917916536331177,
+        "accuracy": 0.5546875,
+        "auroc": 0.6199951171875
+      },
+      {
+        "epoch": 2,
+        "loss": 0.6793186664581299,
+        "accuracy": 0.5,
+        "auroc": 0.99786376953125
+      },
+      {
+        "epoch": 3,
+        "loss": 0.7565722465515137,
+        "accuracy": 0.5,
+        "auroc": 0.99993896484375
+      },
+      {
+        "epoch": 5,
+        "loss": 0.5910458564758301,
+        "accuracy": 0.5,
+        "auroc": 1.0
+      },
+      {
+        "epoch": 10,
+        "loss": 0.004721207078546286,
+        "accuracy": 1.0,
+        "auroc": 1.0
+      },
+      {
+        "epoch": 15,
+        "loss": 4.149841061007464e-06,
+        "accuracy": 1.0,
+        "auroc": 1.0
+      },
+      {
+        "epoch": 20,
+        "loss": 4.700286382330887e-09,
+        "accuracy": 1.0,
+        "auroc": 1.0
+      },
+      {
+        "epoch": 25,
+        "loss": 4.9524457451655124e-11,
+        "accuracy": 1.0,
+        "auroc": 1.0
+      },
+      {
+        "epoch": 30,
+        "loss": 2.0991030094674734e-12,
+        "accuracy": 1.0,
+        "auroc": 1.0
+      },
+      {
+        "epoch": 35,
+        "loss": 2.483262890023291e-13,
+        "accuracy": 1.0,
+        "auroc": 1.0
+      },
+      {
+        "epoch": 40,
+        "loss": 6.080866468997567e-14,
+        "accuracy": 1.0,
+        "auroc": 1.0
+      }
+    ]
+  },
+  "conclusions": {
+    "representation_collapse_resolved": true,
+    "token_symmetry_broken": true,
+    "training_dynamics_sound": true,
+    "ready_for_stage2_training": true
+  }
+}

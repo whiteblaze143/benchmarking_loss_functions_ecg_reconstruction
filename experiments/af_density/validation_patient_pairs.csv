@@ -1,0 +1,12 @@
+patient_id,primary_model,baseline_model,primary_continuous_density_mae,baseline_continuous_density_mae,continuous_density_mae_reduction,baseline_binned_density_mae,density_mae_reduction,primary_burden_mae,baseline_burden_mae,burden_mae_reduction
+patient_019,A001,A002,,,,0.178,,0.8707,0.8707,0.0
+patient_043,A001,A002,,,,0.0017,,0.9522,0.9522,0.0
+patient_045,A001,A002,,,,0.0124,,0.9146,0.9146,0.0
+patient_052,A001,A002,,,,0.4419,,0.9572,0.9572,0.0
+patient_061,A001,A002,,,,0.0016,,0.8586,0.8586,0.0
+patient_063,A001,A002,,,,0.3142,,0.5593,0.5593,0.0
+patient_093,A001,A002,,,,0.0039,,0.9621,0.9621,0.0
+patient_119,A001,A002,,,,0.0283,,0.4269,0.4269,0.0
+patient_121,A001,A002,,,,0.4261,,0.7936,0.7936,0.0
+patient_136,A001,A002,,,,0.1668,,0.9247,0.9247,0.0
+patient_144,A001,A002,,,,0.3467,,0.986,0.986,0.0

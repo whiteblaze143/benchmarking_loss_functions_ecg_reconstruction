@@ -1,0 +1,593 @@
+{
+  "metadata": {
+    "test_suite": "T-CAIREM Continuous SetOperator Architecture Reference Tests",
+    "timestamp_utc": "2026-11-22T06:46:07.361291+00:00",
+    "pytorch_version": "2.6.0+cu124",
+    "cuda_available": true,
+    "device": "cuda",
+    "target_baseline_parameter_count": 1027009
+  },
+  "a001_parameter_breakdown": {
+    "pool_query": {
+      "shape": [
+        1,
+        1,
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "operator.0.weight": {
+      "shape": [
+        64,
+        8
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "operator.0.bias": {
+      "shape": [
+        64
+      ],
+      "numel": 64,
+      "requires_grad": true
+    },
+    "operator.2.weight": {
+      "shape": [
+        64,
+        64
+      ],
+      "numel": 4096,
+      "requires_grad": true
+    },
+    "operator.2.bias": {
+      "shape": [
+        64
+      ],
+      "numel": 64,
+      "requires_grad": true
+    },
+    "response.input.weight": {
+      "shape": [
+        128,
+        128,
+        1
+      ],
+      "numel": 16384,
+      "requires_grad": true
+    },
+    "response.input.bias": {
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "requires_grad": true
+    },
+    "response.blocks.0.conv1.weight": {
+      "shape": [
+        128,
+        128,
+        3
+      ],
+      "numel": 49152,
+      "requires_grad": true
+    },
+    "response.blocks.0.conv1.bias": {
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "requires_grad": true
+    },
+    "response.blocks.0.conv2.weight": {
+      "shape": [
+        128,
+        128,
+        3
+      ],
+      "numel": 49152,
+      "requires_grad": true
+    },
+    "response.blocks.0.conv2.bias": {
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "requires_grad": true
+    },
+    "response.blocks.1.conv1.weight": {
+      "shape": [
+        128,
+        128,
+        3
+      ],
+      "numel": 49152,
+      "requires_grad": true
+    },
+    "response.blocks.1.conv1.bias": {
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "requires_grad": true
+    },
+    "response.blocks.1.conv2.weight": {
+      "shape": [
+        128,
+        128,
+        3
+      ],
+      "numel": 49152,
+      "requires_grad": true
+    },
+    "response.blocks.1.conv2.bias": {
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "requires_grad": true
+    },
+    "response.head.weight": {
+      "shape": [
+        128,
+        128
+      ],
+      "numel": 16384,
+      "requires_grad": true
+    },
+    "response.head.bias": {
+      "shape": [
+        128
+      ],
+      "numel": 128,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.self_attn.in_proj_weight": {
+      "shape": [
+        576,
+        192
+      ],
+      "numel": 110592,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.self_attn.in_proj_bias": {
+      "shape": [
+        576
+      ],
+      "numel": 576,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.self_attn.out_proj.weight": {
+      "shape": [
+        192,
+        192
+      ],
+      "numel": 36864,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.self_attn.out_proj.bias": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.linear1.weight": {
+      "shape": [
+        384,
+        192
+      ],
+      "numel": 73728,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.linear1.bias": {
+      "shape": [
+        384
+      ],
+      "numel": 384,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.linear2.weight": {
+      "shape": [
+        192,
+        384
+      ],
+      "numel": 73728,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.linear2.bias": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.norm1.weight": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.norm1.bias": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.norm2.weight": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "set_encoder.layers.0.norm2.bias": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.self_attn.in_proj_weight": {
+      "shape": [
+        576,
+        192
+      ],
+      "numel": 110592,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.self_attn.in_proj_bias": {
+      "shape": [
+        576
+      ],
+      "numel": 576,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.self_attn.out_proj.weight": {
+      "shape": [
+        192,
+        192
+      ],
+      "numel": 36864,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.self_attn.out_proj.bias": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.linear1.weight": {
+      "shape": [
+        384,
+        192
+      ],
+      "numel": 73728,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.linear1.bias": {
+      "shape": [
+        384
+      ],
+      "numel": 384,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.linear2.weight": {
+      "shape": [
+        192,
+        384
+      ],
+      "numel": 73728,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.linear2.bias": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.norm1.weight": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.norm1.bias": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.norm2.weight": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "set_encoder.layers.1.norm2.bias": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "pool.in_proj_weight": {
+      "shape": [
+        576,
+        192
+      ],
+      "numel": 110592,
+      "requires_grad": true
+    },
+    "pool.in_proj_bias": {
+      "shape": [
+        576
+      ],
+      "numel": 576,
+      "requires_grad": true
+    },
+    "pool.out_proj.weight": {
+      "shape": [
+        192,
+        192
+      ],
+      "numel": 36864,
+      "requires_grad": true
+    },
+    "pool.out_proj.bias": {
+      "shape": [
+        192
+      ],
+      "numel": 192,
+      "requires_grad": true
+    },
+    "latent.0.weight": {
+      "shape": [
+        256,
+        192
+      ],
+      "numel": 49152,
+      "requires_grad": true
+    },
+    "latent.0.bias": {
+      "shape": [
+        256
+      ],
+      "numel": 256,
+      "requires_grad": true
+    },
+    "head.weight": {
+      "shape": [
+        1,
+        256
+      ],
+      "numel": 256,
+      "requires_grad": true
+    },
+    "head.bias": {
+      "shape": [
+        1
+      ],
+      "numel": 1,
+      "requires_grad": true
+    }
+  },
+  "architectures": {
+    "A001": {
+      "class_name": "ContinuousSetOperatorA001",
+      "trainable_parameters": 1027009,
+      "delta_vs_a001": 0,
+      "forward_flops_batch1_2ch": 16617472,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": 0.36402150988578796,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 49
+    },
+    "A002": {
+      "class_name": "MatchedCategoricalSetOperatorA002",
+      "trainable_parameters": 1022401,
+      "delta_vs_a001": -4608,
+      "forward_flops_batch1_2ch": 16599040,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": 0.47577744722366333,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 46
+    },
+    "A003": {
+      "class_name": "OperatorAblatedSetOperatorA003",
+      "trainable_parameters": 1022273,
+      "delta_vs_a001": -4736,
+      "forward_flops_batch1_2ch": 16599040,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": -0.05984670668840408,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 45
+    },
+    "A004": {
+      "class_name": "Continuous2DSetOperatorA004",
+      "trainable_parameters": 1026625,
+      "delta_vs_a001": -384,
+      "forward_flops_batch1_2ch": 16615936,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": -0.18700221180915833,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 49
+    },
+    "D032": {
+      "class_name": "DualMomentPhaseSetOperatorD032",
+      "trainable_parameters": 1043393,
+      "delta_vs_a001": 16384,
+      "forward_flops_batch1_2ch": 16683008,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": -0.2494828701019287,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 49
+    },
+    "D037": {
+      "class_name": "OrderPreservingBeatSetOperatorD037",
+      "trainable_parameters": 928449,
+      "delta_vs_a001": -98560,
+      "forward_flops_batch1_2ch": 10326016,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": 0.07729615271091461,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 45
+    },
+    "E047": {
+      "class_name": "PhaseWiseAttentionSetOperatorE047",
+      "trainable_parameters": 1027009,
+      "delta_vs_a001": 0,
+      "forward_flops_batch1_2ch": 57436672,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": 0.18662729859352112,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 49
+    },
+    "F053": {
+      "class_name": "NoTransformerSetOperatorF053",
+      "trainable_parameters": 284545,
+      "delta_vs_a001": -742464,
+      "forward_flops_batch1_2ch": 13912576,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": 0.14759832620620728,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 20
+    },
+    "F057": {
+      "class_name": "ResidualTokenSetOperatorF057",
+      "trainable_parameters": 1027009,
+      "delta_vs_a001": 0,
+      "forward_flops_batch1_2ch": 16617472,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": 0.12244898080825806,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 49
+    },
+    "G061": {
+      "class_name": "MultimodalRRSetOperatorG061",
+      "trainable_parameters": 1027045,
+      "delta_vs_a001": 36,
+      "forward_flops_batch1_2ch": 16617544,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": -0.6325489282608032,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 49
+    },
+    "H071": {
+      "class_name": "PerChannelRawResNetSetOperatorH071",
+      "trainable_parameters": 2065249,
+      "delta_vs_a001": 1038240,
+      "forward_flops_batch1_2ch": 2921493504,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": 0.24838250875473022,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 102
+    },
+    "I082": {
+      "class_name": "ResNetResidualMLPSetOperatorI082",
+      "trainable_parameters": 1158593,
+      "delta_vs_a001": 131584,
+      "forward_flops_batch1_2ch": 16879616,
+      "forward_shape": [
+        4
+      ],
+      "forward_shape_test": "PASS",
+      "finite_logits_test": "PASS",
+      "loss_value": -0.0928916186094284,
+      "loss_backward_test": "PASS",
+      "finite_gradients_test": "PASS",
+      "gradient_tensors_validated": 53
+    }
+  },
+  "property_tests": {
+    "permutation_invariance": {
+      "max_latent_difference": 0.0,
+      "max_logit_difference": 0.0,
+      "tolerance": 1e-05,
+      "status": "PASS"
+    },
+    "masking_isolation": {
+      "max_logit_difference_on_corrupted_masked_lead": 0.0,
+      "tolerance": 1e-05,
+      "status": "PASS"
+    },
+    "all_absent_indeterminate_refusal": {
+      "raised_expected_value_error": true,
+      "error_message": "All-channel representation failure: no active channel for one or more batch items.",
+      "status": "PASS"
+    }
+  },
+  "overall_status": "ALL_TESTS_PASSED",
+  "a001_total_parameters": 1027009,
+  "a001_module_group_counts": {
+    "pool_query": 192,
+    "operator_mlp": 4736,
+    "response_encoder": 230144,
+    "transformer_set_encoder": 594048,
+    "attention_pool": 148224,
+    "latent_mlp": 49408,
+    "af_head": 16769
+  }
+}

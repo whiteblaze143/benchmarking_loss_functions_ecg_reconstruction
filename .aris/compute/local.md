@@ -148,3 +148,13 @@
 - seeded witness:categorical/q-ablated/hybrid BF16 finite gradients and bitwise repeated FP32 logits; fresh documentation witness pending
 - fresh documented-command witness: /root/af_set_training_doc_witness passed categorical/q-ablated/hybrid BF16 gradients and repeated FP32 logits; production models await complete phase cache
 - raw independent replay: /root/af_raw_replay_doc_witness exact documented full run passed166047 validation windows/498141 predictions, bitwise logits/scores, strict best-checkpoint history minimum and exact threshold reselection; no test waveform
+
+### env: af-set-math-sdp-v2@e3ec8eae
+
+- how: warm reuse unchanged venv and cuDNN9.3; no installs; new explicit MATH attention-dispatch policy
+- spec: .aris/compute/af-set-math-sdp-gpu-env-spec.json
+- tier:CPU1/A10040GB,14GiB free GPU required for full development training
+- documentation: /data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1/set_models_math_sdp_v2/RUN_MATH_SDP_V2.md
+- gotcha: saved actual q-ablated batch has nonfinite BF16 default-SDP gradients; MATH BF16 and FP32 alternatives finite. All3 corrected variants share MATH.
+- validation: parent saved-batch witness executed; fresh agent-follows-doc pending. No test authorization.
+- fresh agent-follows-doc: /root/af_math_sdp_doc_witness passed exact documented command;4 finite-gradient cases,0 optimizer updates; parent verified command equality and protocol/witness hashes. No test authorization.

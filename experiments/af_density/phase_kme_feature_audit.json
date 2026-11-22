@@ -1,0 +1,78 @@
+{
+  "program": "T-CAIREM Continuous SetOperator AF-Density Research Program",
+  "audit_timestamp": "2026-11-22T06:40:00Z",
+  "auditor": "Data Provenance & Integrity Auditor (Swarm Worker: integrity)",
+  "component": "Phase-KME Kernel & Nystrom Landmark Feature Representation",
+  "verdict": "PASS",
+  "training_cohort_sampling": {
+    "training_patients": 90,
+    "stored_channels": [
+      0,
+      1
+    ],
+    "windows_per_patient_channel": 32,
+    "total_sampled_channel_windows": 5760,
+    "phase_atoms_per_window": 128,
+    "total_phase_atoms": 737280,
+    "atom_dimension": 2,
+    "atom_coordinates": [
+      "v(t) in mV",
+      "v_prime(t) phase derivative"
+    ],
+    "zero_validation_patients_used": true,
+    "zero_test_patients_used": true
+  },
+  "whitening_transform": {
+    "mean": [
+      -0.48769498432611047,
+      3.9359832893889715e-05
+    ],
+    "principal_components": [
+      [
+        -0.9999999992878283,
+        3.774047346804682e-05
+      ],
+      [
+        -3.774047346804682e-05,
+        -0.9999999992878283
+      ]
+    ],
+    "scales": [
+      0.8337807523716517,
+      25.74083536427966
+    ],
+    "whitened_covariance_verified": "Identity matrix I_2 with zero mean"
+  },
+  "nystrom_mapping": {
+    "kernel_type": "Inverse Multiquadric (IMQ): k(x, y) = 1 / sqrt(||x - y||^2 + c^2)",
+    "c2": 1.0,
+    "num_landmarks": 128,
+    "landmark_dimension": 2,
+    "inverse_root_matrix_shape": [
+      128,
+      128
+    ],
+    "random_seed": 42
+  },
+  "kernel_approximation_audit": {
+    "spearman_rank_correlation": 0.9999084249084248,
+    "spearman_required_minimum": 0.9,
+    "spearman_passed": true,
+    "median_relative_error": 0.00038735602674324385,
+    "median_relative_error_maximum_threshold": 0.15,
+    "median_relative_error_passed": true,
+    "overall_passed": true
+  },
+  "numerical_equivalence_witness": {
+    "description": "Discrepancy between authentic direct Nystrom feature mapping and linear mean-before-inverse-root evaluation",
+    "maximum_float32_absolute_difference": 1e-07,
+    "verified_tolerance_passed": true
+  },
+  "file_checksums": {
+    "phase_kernel_protocol_sha256": "2d31b5d9d62dbe7bcc92160f134c827ab97d8ba5f8ad96f2699dcff57908973f",
+    "phase_kernel_npz_sha256": "9d66f7892a0bcc5bf80dcc6e1730b1a72f7cfca5cb2a5212bd6f7da792ce1187",
+    "phase_kernel_audit_sha256": "036c456ab6fd85b4a4cb04e1492714690caae39ef439e2f5b72237d5bad12b27",
+    "selection_sha256": "9fb1b34bf9124125dbf0786d946e96fead18394b7f6f2d2ed9de5bd3c7303cd6",
+    "fit_input_receipt_sha256": "e36aa88aa826b4bc0ca637815e0d887ec3552b6f07007aee904355a07ce6da28"
+  }
+}

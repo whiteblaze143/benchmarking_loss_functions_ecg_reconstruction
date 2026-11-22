@@ -1,0 +1,40 @@
+{
+  "suite": "TestStage0Integrity",
+  "tests_run": 5,
+  "errors": 0,
+  "failures": 0,
+  "passed": true,
+  "cuda_available": true,
+  "cuda_device": "NVIDIA A100-PCIE-40GB",
+  "tested_capabilities": {
+    "response_tensor_shape": "(B, 2, 16, 128)",
+    "masking": "~active key_padding_masking with unobserved channel isolation",
+    "permutation_invariance": "Exact pooled latent invariance under channel swapping (atol <= 1e-6)",
+    "all_absent_behavior": "Raises ValueError(indeterminate) and refuses beat fabrication",
+    "fp32_gradients_finite": true,
+    "bf16_math_sdp_gradients_finite": true,
+    "nominal_lead_geometry": {
+      "clinical_basis": "[I, II, V1, V2, V3, V4, V5, V6]",
+      "nominal_lead_i": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "nominal_lead_ii": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  }
+}

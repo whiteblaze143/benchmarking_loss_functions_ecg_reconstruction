@@ -44,3 +44,53 @@ class AFSetOperator(nn.Module):
     def forward(self, responses, available, phase_valid, operator_ids):
         latent = self.encode(responses, available, phase_valid, operator_ids)
         return self.original.head(latent).squeeze(-1)
+
+
+class ContinuousAFSetOperator(nn.Module):
+    """Continuous SetOperator with 8-lead clinical basis geometry [I, II, V1, V2, V3, V4, V5, V6].
+
+    Embeds continuous operator coordinates q in R^8.
+    Nominal Lead I = [1, 0, 0, 0, 0, 0, 0, 0]
+    Nominal Lead II = [0, 1, 0, 0, 0, 0, 0, 0]
+    """
+    def __init__(self, operator_dim=8, operator_mode='continuous'):
+        super().__init__()
+        if operator_mode not in ['continuous', 'projective']:
+            raise ValueError(f'ContinuousAFSetOperator requires continuous or projective mode, got {operator_mode}')
+        self.operator_mode = operator_mode
+        self.operator_dim = operator_dim
+        self.original = OperatorSetModel(response_dim=128, classes=1,
+                                         operator_mode=operator_mode,
+                                         operator_dim=operator_dim)
+        # Register nominal Lead I and Lead II coordinates in the 8-lead clinical basis
+        nominal = torch.zeros(2, operator_dim, dtype=torch.float32)
+        nominal[0, 0] = 1.0  # Lead I
+        nominal[1, 1] = 1.0  # Lead II
+        self.register_buffer('nominal_operators', nominal, persistent=True)
+
+    def default_operators(self, batch_size, device=None):
+        return self.nominal_operators.unsqueeze(0).expand(batch_size, -1, -1).to(device=device)
+
+    def encode(self, responses, available, phase_valid, operators=None, operator_ids=None):
+        if responses.ndim != 4 or responses.shape[1:] != (2, 16, 128):
+            raise ValueError('Expected (batch,2,16,128) authentic responses')
+        batch = responses.shape[0]
+        if (available.shape != responses.shape[:2] or available.dtype != torch.bool or
+                phase_valid.shape != available.shape or phase_valid.dtype != torch.bool):
+            raise ValueError('Invalid availability or phase-valid mask')
+        if operators is None:
+            operators = self.default_operators(batch, device=responses.device)
+        elif operators.shape != (batch, 2, self.operator_dim) or not torch.isfinite(operators).all():
+            raise ValueError(f'Expected finite operators of shape ({batch}, 2, {self.operator_dim})')
+        active = available & phase_valid
+        if not active.any(dim=1).all():
+            raise ValueError('No usable observed phase representation: retain indeterminate')
+        clean = torch.where(active[:, :, None, None], responses, 0.)
+        if not torch.isfinite(clean).all():
+            raise ValueError('Nonfinite active phase response')
+        return self.original.encode_context(operators, clean, mask=~active, operator_ids=operator_ids)
+
+    def forward(self, responses, available, phase_valid, operators=None, operator_ids=None):
+        latent = self.encode(responses, available, phase_valid, operators=operators, operator_ids=operator_ids)
+        return self.original.head(latent).squeeze(-1)
+

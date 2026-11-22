@@ -1,0 +1,51 @@
+{
+  "program": "T-CAIREM Continuous SetOperator AF-Density Research Program",
+  "audit_timestamp": "2026-11-22T06:40:00Z",
+  "auditor": "Data Provenance & Integrity Auditor (Swarm Worker: integrity)",
+  "source_dataset": {
+    "name": "IRIDIA-AF",
+    "description": "24-hour continuous ambulatory 2-lead ECG monitoring cohort",
+    "raw_archive_location": "/data/mithunmanivannan/datasets/iridia_af_8405941_v1.0.1/",
+    "extracted_waveform_artifacts": "/data/mithunmanivannan/codex_artifacts/af_density_20261120/waveform_v1",
+    "total_patients": 152,
+    "total_files": 289,
+    "total_windows_30s": 802491
+  },
+  "cohort_splits": {
+    "train": {
+      "patients": 90,
+      "files": 181,
+      "windows": 504777,
+      "window_fraction": 0.6290126618242448
+    },
+    "validation": {
+      "patients": 30,
+      "files": 60,
+      "windows": 166047,
+      "window_fraction": 0.20691447006882321
+    },
+    "held_out_test": {
+      "patients": 32,
+      "files": 48,
+      "windows": 131667,
+      "window_fraction": 0.16407286810693203
+    }
+  },
+  "held_out_test_protection": {
+    "test_patient_authorization": false,
+    "test_data_in_memory": false,
+    "kernel_fitting_patients_accessed": "90 train patients exclusively (0 validation, 0 test)",
+    "training_loader_partition_filter": "Strict manifest filter: `if row['partition'] == 'test': continue`",
+    "zero_test_patient_leakage_verified": true
+  },
+  "verified_file_sha256_hashes": {
+    "input_contract.json": "de2d8816b4ce721d1fdca1ddccac5b38fcb9c148a0792b4615e04936fd31df62",
+    "file_manifest.csv": "af5f65a7a8a6a37e24182b5b40806a5b5449c3916a9a65da95745dd3739567de",
+    "patient_splits.csv": "b342371099b4381d57253543674b9fb8e32f98bffe60093d76a122ddcf2e28bc",
+    "phase_features_v1/protocol.json": "028438d95ce2b2470e5c367789164a18b1b6e5aa426548fcc4212ab7a167fb5b",
+    "phase_kernel_v1/protocol.json": "2d31b5d9d62dbe7bcc92160f134c827ab97d8ba5f8ad96f2699dcff57908973f",
+    "phase_kernel_v1/kernel.npz": "9d66f7892a0bcc5bf80dcc6e1730b1a72f7cfca5cb2a5212bd6f7da792ce1187",
+    "phase_kernel_v1/kernel_audit.json": "036c456ab6fd85b4a4cb04e1492714690caae39ef439e2f5b72237d5bad12b27",
+    "windows.npz": "2195140d4879fdb744b8bbb0a4851620c3ea7e5f2f0ecb04527417851248250e"
+  }
+}

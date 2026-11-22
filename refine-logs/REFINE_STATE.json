@@ -1,28 +1,19 @@
 {
   "phase": "done",
-  "round": 2,
-  "threadId": null,
-  "last_score": null,
+  "round": 3,
+  "threadId": "t-cairem-continuous-setoperator-af-density-20261122",
+  "last_score": 9.45,
   "last_verdict": "READY",
   "status": "completed",
-  "timestamp": "2026-09-10T05:27:00Z",
-  "problem_anchor_frozen": true,
-  "external_reviewer": "unavailable",
-  "external_reviewer_note": "No independent reviewer bridge callable. Local integrity audit only (round 2). Method is stable and champion spec is empirically validated.",
-  "completed": [
-    "Phase 0-3: Problem anchor frozen, initial proposal written, local integrity review (round 1-2)",
-    "25-cell lean_abl2 ablation complete: champion = T_patch10 + Width384 + 16H + Adaptive + NoDice + BoundaryPenalty",
-    "Experiment plan written with SAP-compliant 258-metric evaluation protocol",
-    "PIPELINE_SUMMARY.md written",
-    "EXPERIMENT_TRACKER.md initialized"
-  ],
-  "next_actions": [
-    "Block B: Launch lean_abl2_adaptive_vcg_mmd_queue.sh (11-job VCG/MMD suite)",
-    "Block C: Build evaluate_sap_v2.py (SAP-compliant evaluator), run on all 188 models",
-    "Block D: Confirmatory inference after B+C complete",
-    "Block E: Seed 43/44 on primary model"
-  ],
-  "plan": "refine-logs/EXPERIMENT_PLAN.md",
-  "tracker": "refine-logs/EXPERIMENT_TRACKER.md",
-  "summary": "refine-logs/PIPELINE_SUMMARY.md"
+  "timestamp": "2026-11-22T06:35:00Z",
+  "deliverables": {
+    "final_proposal": "refine-logs/FINAL_PROPOSAL.md",
+    "review_summary": "refine-logs/REVIEW_SUMMARY.md",
+    "refinement_report": "refine-logs/REFINEMENT_REPORT.md",
+    "experiment_plan": "refine-logs/EXPERIMENT_PLAN.md",
+    "experiment_tracker": "refine-logs/EXPERIMENT_TRACKER.md",
+    "pipeline_summary": "refine-logs/PIPELINE_SUMMARY.md",
+    "statistical_analysis_plan": "statistical_analysis_plan.md",
+    "external_validation_plan": "external_validation_plan.md"
+  }
 }

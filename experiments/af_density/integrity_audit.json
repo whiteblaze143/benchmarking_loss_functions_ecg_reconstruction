@@ -1,0 +1,48 @@
+{
+  "program": "T-CAIREM Continuous SetOperator AF-Density Research Program",
+  "verdict": "PASS",
+  "audit_timestamp": "2026-11-22T06:40:00Z",
+  "auditor": "Data Provenance & Integrity Auditor (Swarm Worker: integrity)",
+  "checks": {
+    "check_a_ground_truth_provenance": {
+      "status": "PASS",
+      "description": "Released expert ECG annotations from IRIDIA-AF; official annotation provenance is human-reviewed clinical GT, not model output. Binary 30s target is assigned based on >=50% AF duration with explicit tie-breaking.",
+      "verified_records": 152,
+      "verified_windows": 802491
+    },
+    "check_b_score_normalization": {
+      "status": "PASS",
+      "description": "Intrinsic metric denominators and raw absolute differences. Unknown/unobserved time is strictly retained as indeterminate; no score normalization fraud or artificial denominator suppression.",
+      "all_absent_behavior": "Refuses beat fabrication; returns explicit indeterminate ValueError to preserve clinical denominators."
+    },
+    "check_c_result_existence_and_custody": {
+      "status": "PASS",
+      "description": "All declared input files, manifests, and trained kernel receipts exist and match their cryptographic SHA-256 digests. Deterministic random seeds and frozen receipts prevent silent overwrites."
+    },
+    "check_d_executed_metrics": {
+      "status": "PASS",
+      "description": "Continuous Charitos AF density, binned density, and patient-clustered metrics execute directly over assigned time intervals. No synthetic imputation or heuristic filling."
+    },
+    "check_e_test_isolation_and_scope": {
+      "status": "PASS",
+      "description": "Strict isolation of 32 held-out test patients (131,667 windows). Verified 0 test patient waveforms or feature shards loaded during kernel fitting or model development.",
+      "train_patients": 90,
+      "validation_patients": 30,
+      "held_out_test_patients": 32
+    },
+    "check_f_evaluation_type": {
+      "status": "PASS",
+      "description": "Real ECG waveforms from IRIDIA-AF ambulatory Holter monitoring; no synthetic beat fabrication."
+    }
+  },
+  "hashes": {
+    "input_contract.json": "de2d8816b4ce721d1fdca1ddccac5b38fcb9c148a0792b4615e04936fd31df62",
+    "file_manifest.csv": "af5f65a7a8a6a37e24182b5b40806a5b5449c3916a9a65da95745dd3739567de",
+    "patient_splits.csv": "b342371099b4381d57253543674b9fb8e32f98bffe60093d76a122ddcf2e28bc",
+    "phase_features_v1/protocol.json": "028438d95ce2b2470e5c367789164a18b1b6e5aa426548fcc4212ab7a167fb5b",
+    "phase_kernel_v1/protocol.json": "2d31b5d9d62dbe7bcc92160f134c827ab97d8ba5f8ad96f2699dcff57908973f",
+    "phase_kernel_v1/kernel.npz": "9d66f7892a0bcc5bf80dcc6e1730b1a72f7cfca5cb2a5212bd6f7da792ce1187",
+    "phase_kernel_v1/kernel_audit.json": "036c456ab6fd85b4a4cb04e1492714690caae39ef439e2f5b72237d5bad12b27",
+    "windows.npz": "2195140d4879fdb744b8bbb0a4851620c3ea7e5f2f0ecb04527417851248250e"
+  }
+}

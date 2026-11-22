@@ -1,11 +1,24 @@
-# Experiment Tracker: 12+ Hour GPU Discovery & Validation Campaign
+# Experiment Tracker: T-CAIREM Continuous SetOperator AF-Density Research Program
 
-| Block ID | Experiment Focus | Datasets Involved | Target Metrics & Benchmarks | Status | Artifact Target |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **BLK-01** | Full-Corpus Calibration on Complete Noise Holter | Noise Holter Database (6,130 segments, 34.9h, 316 subjects) | 5-fold CV, AUROC 0.8515, N2 abstention 77.8%, 0.0% false alerts on evaluable data. | **COMPLETED** | `noise_holter_full_cv_results.csv`, `best_multimodal_setoperator.pt` |
-| **BLK-02** | Full SHDB-AF Population Benchmark (All 128 Holters) | All 128 Holters (3,050 hours, >368,000 30s windows) | Evaluated all 128 Holters; concordance tracking paroxysmal & persistent AF (Rec 137 GT 56.2% vs QA 56.1%; Rec 141 GT 21.8% vs QA 21.9%). | **COMPLETED** | `shdb_af_full_128_population_results.csv`, `annotated_window_preds.pt` |
-| **BLK-03** | True Negative Control Specificity Validation | 33 Non-AF Holters (791.4 hours continuous sinus rhythm) | True patient specificity 84.85% (28/33 zero alarms), false burden suppressed from 3.72% to 1.33% pts with 6.92% abstention. | **COMPLETED** | `non_af_controls_specificity_audit.csv` |
-| **BLK-04** | Temporal Smoothing & Burden Concordance Ablation | 98 Annotated SHDB-AF Holters (2,350 hours) | Moving average (9-win, 270s) achieved Pearson $r = 0.7236$, Spearman $\rho = 0.7909$, reducing burden MAE by 50.1% to 15.30% pts. | **COMPLETED** | `hmm_temporal_smoothing_ablation.csv` |
-| **BLK-05** | Multi-Lead Invariance & Channel Dropout Stress Test | 15 Post-Ablation Holters (CC5, NASA, Dual, Dropout) | Dual MAE 25.86% vs CC5 25.91% vs NASA 25.79% vs 50% Dropout 25.82% pts (<0.12% delta across configurations; true set-invariance). | **COMPLETED** | `multi_lead_invariance_benchmark.csv` |
-| **BLK-06** | Monitoring Completeness & Burden Uncertainty Bounds | SHDB-AF Post-Ablation Cohort & Noise Holter | Coverage degradation (24h to 4h wear). 24h: 100% sens (>=30s & >=6min); 16h: 100% (>=30s), 93.9% (>=6min); Intermittent spot-checks: 0.0% sens on >=6min, 99.0% indeterminate. | **COMPLETED** | `monitoring_completeness_burden_bounds.csv`, `wearable_coverage_sensitivity_summary.csv` |
-| **MS-01** | Heart Rhythm 2027 Full Manuscript Authoring | Consolidated empirical findings | 6-page submission-grade LaTeX manuscript (`manuscript/main.tex`) and compiled PDF with 4 tables, KaTeX math, references, and figures. | **COMPLETED** | `manuscript/main.tex`, `manuscript/main.pdf` |
+| Run ID | Milestone | Purpose | System / Variant | Split | Primary Metrics | Priority | Status | Output Artifacts / Notes |
+|---|---|---|---|---|---|---|---|---|
+| **R001** | M0 | Integrity Sanity: Tensor shapes & BF16 gradient validity | A001 (Continuous SetOperator) | Synthetic 32-window batch | Gradient norm, shape match `(B, 2, 16, 128)` | MUST | READY | `experiments/af_density/test_stage0_integrity.py` |
+| **R002** | M0 | Lead Permutation Invariance Preflight | A001 vs Swapped Leads | Synthetic batch | Logit diff $|\hat{s}(C_0, C_1) - \hat{s}(C_1, C_0)|$ | MUST | READY | Expected diff $< 1 \times 10^{-5}$ |
+| **R003** | M0 | All-Absent Channel Handling | A001 with mask `[0, 0]` | Synthetic batch | Indeterminate flag, zero fabricated beats | MUST | READY | Must raise indeterminate or return NaN |
+| **R004** | M1 | Balanced Overfit Sanity: 128 AF+ / 128 AF- | A001 vs A002 | 256 training windows | BCE loss, AUROC, Epochs to converge | MUST | READY | Target: BCE $< 0.05$, AUROC $> 0.98$ |
+| **R005** | M1 | Layer-wise Activation Dispersion Probe | A001 vs A002 vs A003 | 256 validation windows | Active token activation SD, Score SD | MUST | READY | Proves non-collapse ($SD > 0.10$) |
+| **R006** | M1 | Continuous vs Categorical Symmetry Test | A001 vs A002 | Validation subset | Cross-channel cosine similarity | MUST | READY | Proves $q$ breaks token symmetry |
+| **R007** | M1 | Linear Head Baseline: No Transformer | F053 (Masked Mean Pooling) | 256 validation windows | Score SD, Overfit convergence | MUST | READY | Ablation anchor for set-transformer need |
+| **R008** | M2 | Master Model Training: Continuous D1 SetOperator | A001 (EchoNext 1.027M params) | IRIDIA Train (504,777 w) | Patient-weighted validation BCE | MUST | TODO | `best_continuous_setoperator_a001.pt` |
+| **R009** | M2 | Matched Categorical Control Training | A002 (Categorical 1.027M params) | IRIDIA Train (504,777 w) | Patient-weighted validation BCE | MUST | TODO | `best_categorical_setoperator_a002.pt` |
+| **R010** | M2 | Distributional Morphology Training | D032 (Mean + Var Pooling) | IRIDIA Train (504,777 w) | Patient-weighted validation BCE | MUST | TODO | `best_distributional_setoperator_d032.pt` |
+| **R011** | M2 | Ordered-Beat Dynamics Training | D037 (BiGRU Beat Dynamics) | IRIDIA Train (504,777 w) | Patient-weighted validation BCE | MUST | TODO | `best_ordered_dynamics_setoperator_d037.pt` |
+| **R012** | M2 | Full Residual ResNet Fusion Training | I082 (SetOperator + ResNet Bypass) | IRIDIA Train (504,777 w) | Patient-weighted validation BCE | MUST | TODO | `best_residual_fusion_setoperator_i082.pt` |
+| **R013** | M3 | Raw Validation Score Replay & Calibration | A001, A002, D032, D037, I082 | IRIDIA Val (166,047 w) | ECE, Brier Score, AUROC, AUPRC | MUST | TODO | Temperature calibration parameter $T_{\text{cal}}$ |
+| **R014** | M3 | D0 Window Thresholding Benchmarking | All models vs Raw & RR Baselines | IRIDIA Val (60 recordings) | Window Se, Sp, F1, Balanced Acc | MUST | TODO | Evaluated under fixed policy $\tau \in [0.01, 0.99]$ |
+| **R015** | M3 | D1 Median Filter Episode Delineation | All models | IRIDIA Val (11 informative pts) | Episode Se, PPV, Split/Merge Rate | MUST | TODO | Gap merge $\le 60$s within observed blocks |
+| **R016** | M3 | D2 HSMM Episode & Density Benchmarking | All models | IRIDIA Val (11 informative pts) | Charitos Continuous MAE, Binned MAE | MUST | TODO | Primary Table 1 with Bootstrap CIs ($B=2,000$) |
+| **R017** | M3 | Missing Time Sensitivity: Manski vs Context | I082 vs Raw Mask-ResNet | IRIDIA Val (30 patients) | $[Burden_{\min}, Burden_{\max}]$, MAE shift | MUST | TODO | Evaluates Manski worst-case bounds |
+| **R018** | M4 | Zero-Tuning External Benchmark: SHDB | I082 vs Baselines | SHDB (98 records, 93 subjects) | Patient Specificity, False Burden, MAE | MUST | TODO | 49 multi-interval informative subjects |
+| **R019** | M4 | Zero-Tuning External Benchmark: LTAF | I082 vs Baselines | LTAF (84 records, 128 Hz) | Episode Se, PPV, Burden Pearson $r$ | MUST | TODO | 66 multi-interval informative records |
+| **R020** | M4 | Multi-Lead Dropout & Permutation Audit | I082 | Full Validation & SHDB | Logit max diff, Burden spread (%) | MUST | TODO | Tests invariance under lead swap |

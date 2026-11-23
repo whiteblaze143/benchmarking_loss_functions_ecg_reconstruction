@@ -1,0 +1,16 @@
+model_id,architecture_family,decoder,window_auroc,window_balanced_accuracy,window_brier_score,brier_skill_score,continuous_density_mae,defined_density_count,defined_density_fraction,burden_mae,episode_sensitivity,episode_ppv,false_episodes_per_hour,boundary_error_seconds
+A001,Canonical Continuous SetOperator,D0,0.5905,0.5319,0.2789,-1.0097,0.2246,13/15,0.867,0.3283,0.5422,0.27,1.304,2758.5
+A001,Canonical Continuous SetOperator,D1,0.5905,0.5319,0.2789,-1.0097,0.2323,13/15,0.867,0.3332,0.5144,0.3589,0.35,4194.6
+A001,Canonical Continuous SetOperator,D2,0.5905,0.5319,0.2789,-1.0097,,0/15,0.0,0.8353,1.0,1.0,0.0,
+G061,Multimodal Transformer (RR + Phase),D0,0.8686,0.8016,0.1714,-0.2349,0.4185,15/15,1.0,0.1677,1.0,0.1873,11.474,35.5
+G061,Multimodal Transformer (RR + Phase),D1,0.8686,0.8016,0.1714,-0.2349,0.3417,15/15,1.0,0.1649,0.9773,0.1635,3.121,91.6
+G061,Multimodal Transformer (RR + Phase),D2,0.8686,0.8016,0.1714,-0.2349,0.3095,15/15,1.0,0.237,0.97,0.1516,2.324,234.5
+H071-v2,Convolutional 1D Raw ResNet,D0,0.6754,0.6147,0.2312,-0.6657,0.2541,13/15,0.867,0.2741,0.53,0.2727,1.008,1898.9
+H071-v2,Convolutional 1D Raw ResNet,D1,0.6754,0.6147,0.2312,-0.6657,0.2863,13/15,0.867,0.2781,0.53,0.3814,0.264,3872.7
+H071-v2,Convolutional 1D Raw ResNet,D2,0.6754,0.6147,0.2312,-0.6657,0.3142,11/15,0.733,0.5521,0.7809,0.6262,0.063,16391.2
+I082-v2,ResNet Residual Fusion,D0,0.6491,0.6219,0.245,-0.7651,0.3237,14/15,0.933,0.2561,0.5733,0.1745,2.014,1282.9
+I082-v2,ResNet Residual Fusion,D1,0.6491,0.6219,0.245,-0.7651,0.3219,14/15,0.933,0.2557,0.5733,0.1748,0.641,3218.6
+I082-v2,ResNet Residual Fusion,D2,0.6491,0.6219,0.245,-0.7651,,0/15,0.0,0.8353,1.0,1.0,0.0,
+RR-GBDT,Rhythm-Only GBDT,D0,0.9723,0.9235,0.0396,0.7148,0.1633,15/15,1.0,0.0297,1.0,0.5377,1.779,18.8
+RR-GBDT,Rhythm-Only GBDT,D1,0.9723,0.9235,0.0396,0.7148,0.1356,15/15,1.0,0.026,0.9773,0.6541,0.54,119.9
+RR-GBDT,Rhythm-Only GBDT,D2,0.9723,0.9235,0.0396,0.7148,0.123,15/15,1.0,0.0484,0.97,0.6982,0.183,125.7

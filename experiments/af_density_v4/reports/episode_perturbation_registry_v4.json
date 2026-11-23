@@ -1,0 +1,47 @@
+{
+  "families": {
+    "false_positive_insertion": [
+      "FP_INSERT_30S",
+      "FP_INSERT_60S",
+      "FP_INSERT_120S",
+      "FP_INSERT_10M",
+      "FP_INSERT_30M"
+    ],
+    "false_negative_deletion": [
+      "FN_DELETE_SHORTEST",
+      "FN_DELETE_LONGEST",
+      "FN_DELETE_MEDIAN"
+    ],
+    "episode_splitting": [
+      "SPLIT_LONGEST_2",
+      "SPLIT_LONGEST_3",
+      "SPLIT_LONGEST_5"
+    ],
+    "episode_merging": [
+      "MERGE_CLOSEST_PAIR",
+      "MERGE_ALL_LESS_60S"
+    ],
+    "boundary_displacement": [
+      "JITTER_ONSET_MINUS_30S",
+      "JITTER_ONSET_PLUS_30S",
+      "JITTER_OFFSET_PLUS_30S",
+      "JITTER_OFFSET_MINUS_30S"
+    ],
+    "random_window_noise": [
+      "RANDOM_WINDOW_NOISE_1PCT"
+    ]
+  },
+  "counterfactual_families": [
+    "CF_SINGLE_EPISODE",
+    "CF_2_EQUAL_EPISODES",
+    "CF_5_EQUAL_EPISODES",
+    "CF_10_EQUAL_EPISODES",
+    "CF_GEOMETRIC_5",
+    "CF_MAX_DISPERSED"
+  ],
+  "metric_definitions": {
+    "DEA_relative": "|Delta D / D0| / |Delta b / b0|",
+    "DEA_absolute": "|Delta D| / |Delta b|",
+    "topological_amplification_infinite": "Defined when Delta b == 0 and Delta D != 0"
+  }
+}

@@ -1,0 +1,8 @@
+target_coverage,actual_coverage,sqi_cutoff_threshold,rr_only_density_mae,waveform_fallback_q2_mae,quality_weighted_q3_mae,setoperator_g061_mae,provenance_class
+1.0,1.0,0.1073,0.0431,0.0543,0.0704,0.1835,MEASURED
+0.95,0.95,0.2442,0.0404,0.0515,0.0688,0.1728,MEASURED
+0.9,0.899,0.3079,0.0369,0.0468,0.066,0.1601,MEASURED
+0.85,0.849,0.5382,0.0373,0.0433,0.0659,0.1495,MEASURED
+0.8,0.798,0.6128,0.0392,0.0392,0.0664,0.1466,MEASURED
+0.7,0.697,0.6723,0.0367,0.0367,0.0638,0.1328,MEASURED
+0.5,0.504,0.8733,0.0318,0.0318,0.0563,0.0924,MEASURED

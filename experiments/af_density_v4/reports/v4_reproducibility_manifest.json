@@ -1,0 +1,51 @@
+{
+  "directive_version": "T-CAIREM Research Directive V4",
+  "timestamp_utc": "2026-11-23T01:17:00Z",
+  "primary_dataset": "IRIDIA-AF (v1.0.1)",
+  "additional_datasets": [
+    "SHDB-AF",
+    "LTAFDB",
+    "MIT-BIH NSTDB",
+    "PhysioNet Noise Holter Database"
+  ],
+  "hardware_environment": {
+    "gpu": "NVIDIA A100-PCIE-40GB",
+    "cpu_cores": 24,
+    "memory_gb": 16,
+    "os": "Linux x86_64"
+  },
+  "quarantined_test_benchmark": {
+    "status": "HOLD_STRICT_CUSTODY",
+    "access_count": 0,
+    "records_count": 32,
+    "windows_count": 131667
+  },
+  "verified_reports": [
+    "prior_art_af_density_variability_v4.md",
+    "prior_art_matrix_v4.csv",
+    "dataset_capability_and_eligibility_v4.parquet",
+    "model_adapter_inventory_v4.json",
+    "charitos_reference_tests_v4.json",
+    "multiscale_density_profiles_v4.parquet",
+    "density_horizon_stability_v4.csv",
+    "burden_density_discordance_v4.csv",
+    "within_patient_density_variability_v4.csv",
+    "episode_topology_descriptors_v4.parquet",
+    "episode_perturbation_registry_v4.json",
+    "density_error_response_surfaces_v4.parquet",
+    "equal_burden_counterfactuals_v4.csv",
+    "missingness_experiment_results_v4.parquet",
+    "density_identifiability_bounds_v4.parquet",
+    "existing_detector_density_benchmark_v4.csv",
+    "decoder_episode_fidelity_v4.csv",
+    "nstdb_noise_stress_results_v4.parquet",
+    "noise_holter_quality_and_arrhythmia_v4.parquet",
+    "quality_aware_policy_comparison_v4.csv",
+    "matched_coverage_risk_curves_v4.csv",
+    "setoperator_incremental_value_v4.csv",
+    "v4_mixed_effects_gam_analysis.md",
+    "v4_patient_level_analysis.csv",
+    "v4_negative_findings_register.md",
+    "v4_final_research_recommendation.md"
+  ]
+}

@@ -1,0 +1,120 @@
+record_name,quality_stratum,noise_type,arrhythmia_events,is_af_ground_truth,is_clean_nsr,detected_peak_count,rr_gbdt_prob,raw_resnet_prob,g061_prob,rr_gbdt_alarm,raw_resnet_alarm,g061_alarm,provenance_class
+segments/001-001,N2,High Frequency,None,False,True,54,0.0006,0.4447,0.3121,False,False,False,MEASURED
+segments/002-001,N1,Mid Frequency,A. Fib.,False,False,53,0.0374,0.4266,0.9999,False,False,True,MEASURED
+segments/002-003,N1,Mid Frequency,A. Fib.,False,False,50,0.1111,0.4091,1.0,False,False,True,MEASURED
+segments/002-020,Clean,None,A. Fib.,False,False,24,0.0201,0.2767,0.0,False,False,False,MEASURED
+segments/002-022,Clean,None,A. Fib.,False,False,22,0.0483,0.1877,0.033,False,False,False,MEASURED
+segments/002-023,Clean,None,A. Fib.,False,False,22,0.0337,0.189,0.9996,False,False,True,MEASURED
+segments/002-024,Clean,None,A. Fib.,False,False,27,0.6077,0.3775,0.0058,True,False,False,MEASURED
+segments/002-025,Clean,None,A. Fib.,False,False,27,0.059,0.39,0.2439,False,False,False,MEASURED
+segments/002-026,Clean,None,A. Fib.,False,False,23,0.133,0.2165,0.9993,False,False,True,MEASURED
+segments/002-030,Clean,None,A. Fib.,False,False,22,0.0989,0.3388,0.0,False,False,False,MEASURED
+segments/003-001,Clean,None,None,False,True,28,0.0001,0.1872,0.0,False,False,False,MEASURED
+segments/003-002,N1,Mid Frequency,None,False,True,42,0.001,0.4109,0.0011,False,False,False,MEASURED
+segments/003-005,Clean,None,None,False,True,26,0.0002,0.2073,0.0,False,False,False,MEASURED
+segments/003-006,Clean,None,None,False,True,27,0.0001,0.1495,0.0,False,False,False,MEASURED
+segments/003-007,N1,Mid Frequency,None,False,True,36,0.0061,0.4252,0.9408,False,False,True,MEASURED
+segments/003-009,N1,Mid Frequency,None,False,True,36,0.0009,0.2723,0.6035,False,False,True,MEASURED
+segments/003-011,N1,Mid Frequency,None,False,True,38,0.0009,0.4314,0.9287,False,False,True,MEASURED
+segments/003-012,Clean,None,None,False,True,29,0.0,0.1246,0.0,False,False,False,MEASURED
+segments/004-007,N1,Mid Frequency,None,False,True,43,0.0003,0.4329,0.0,False,False,False,MEASURED
+segments/004-008,Clean,None,None,False,True,32,0.0003,0.1772,0.0,False,False,False,MEASURED
+segments/004-009,N1,Mid Frequency,None,False,True,44,0.0123,0.2978,0.5782,False,False,True,MEASURED
+segments/004-010,N2,High Frequency,None,False,True,51,0.7062,0.1941,1.0,True,False,True,MEASURED
+segments/004-011,N1,High Frequency,None,False,True,64,0.9671,0.6481,0.9793,True,True,True,MEASURED
+segments/004-013,Clean,None,TachySV,False,False,77,0.9837,0.6371,0.8339,True,True,True,MEASURED
+segments/004-015,Clean,None,Brady,False,False,23,0.0005,0.0722,0.0,False,False,False,MEASURED
+segments/004-017,N1,Mid Frequency,None,False,True,40,0.0035,0.1727,0.2179,False,False,False,MEASURED
+segments/005-004,Clean,None,None,False,True,32,0.0001,0.3717,0.0002,False,False,False,MEASURED
+segments/005-010,Clean,None,None,False,True,27,0.0001,0.2169,0.0,False,False,False,MEASURED
+segments/005-015,Clean,None,None,False,True,30,0.0,0.2307,0.0,False,False,False,MEASURED
+segments/005-018,Clean,None,SVPB,False,False,28,0.0001,0.1513,0.0,False,False,False,MEASURED
+segments/005-020,Clean,None,None,False,True,26,0.0002,0.1753,0.0,False,False,False,MEASURED
+segments/005-021,Clean,None,None,False,True,28,0.0001,0.1799,0.0,False,False,False,MEASURED
+segments/005-022,Clean,None,None,False,True,26,0.0002,0.1742,0.0,False,False,False,MEASURED
+segments/005-023,Clean,None,None,False,True,30,0.0001,0.2799,0.0,False,False,False,MEASURED
+segments/005-026,Clean,None,None,False,True,48,0.0051,0.4781,0.0062,False,False,False,MEASURED
+segments/005-027,Clean,None,None,False,True,43,0.0012,0.3496,0.0041,False,False,False,MEASURED
+segments/005-029,Clean,None,None,False,True,40,0.0004,0.3448,0.0037,False,False,False,MEASURED
+segments/007-006,Clean,None,VPB,False,False,36,0.0002,0.1496,0.0006,False,False,False,MEASURED
+segments/007-009,Clean,None,SVPB,False,False,34,0.0014,0.0677,0.0004,False,False,False,MEASURED
+segments/007-010,Clean,None,VPB,False,False,33,0.0,0.0663,0.0001,False,False,False,MEASURED
+segments/007-017,Clean,None,VPB,False,False,32,0.0008,0.0656,0.1081,False,False,False,MEASURED
+segments/007-027,Clean,None,VPB,False,False,29,0.0001,0.0502,0.0,False,False,False,MEASURED
+segments/007-033,Clean,None,None,False,True,33,0.0002,0.0498,0.0001,False,False,False,MEASURED
+segments/008-010,Clean,None,SVPB,False,False,31,0.0001,0.1268,0.9934,False,False,True,MEASURED
+segments/008-011,Clean,None,SVPB,False,False,27,0.0013,0.0704,0.2426,False,False,False,MEASURED
+segments/009-001,N1,Mid Frequency,SVPB,False,False,45,0.0012,0.4473,0.9999,False,False,True,MEASURED
+segments/009-002,N1,Mid Frequency,SVPB,False,False,40,0.0006,0.4176,0.4046,False,False,False,MEASURED
+segments/009-004,Clean,None,SVPB,False,False,36,0.171,0.2265,0.9934,False,False,True,MEASURED
+segments/009-011,Clean,None,SVPB,False,False,29,0.002,0.1471,0.0001,False,False,False,MEASURED
+segments/010-002,N1,Electromagnetic Noise,SVPB,False,False,47,0.0014,0.4222,0.4235,False,False,False,MEASURED
+segments/010-004,N2,Motion Artifact,None,False,True,22,0.0114,0.088,1.0,False,False,True,MEASURED
+segments/010-005,N1,Electromagnetic Noise,SVPB,False,False,49,0.0039,0.3003,0.4594,False,False,False,MEASURED
+segments/010-009,Clean,None,SVPB,False,False,33,0.0336,0.132,1.0,False,False,True,MEASURED
+segments/010-010,Clean,None,VPB,False,False,42,0.0047,0.3483,0.0079,False,False,False,MEASURED
+segments/010-011,Clean,None,SVPB,False,False,40,0.0023,0.2938,0.0453,False,False,False,MEASURED
+segments/010-012,Clean,None,VPB,False,False,40,0.0187,0.3482,0.8631,False,False,True,MEASURED
+segments/010-013,Clean,None,SVPB,False,False,38,0.0012,0.2366,0.0001,False,False,False,MEASURED
+segments/010-014,Clean,None,SVPB,False,False,31,0.004,0.1749,0.0007,False,False,False,MEASURED
+segments/010-015,Clean,None,SV Couplet,False,False,27,0.0005,0.0779,0.0003,False,False,False,MEASURED
+segments/011-001,N1,Mid Frequency,SVPB,False,False,43,0.0102,0.4118,0.9657,False,False,True,MEASURED
+segments/011-002,N1,Mid Frequency,SVPB,False,False,42,0.0113,0.0938,0.8072,False,False,True,MEASURED
+segments/011-003,N1,Mid Frequency,SV Couplet,False,False,45,0.0047,0.2268,0.9135,False,False,True,MEASURED
+segments/011-004,N1,Mid Frequency,SV Couplet,False,False,41,0.9599,0.1664,0.9999,True,False,True,MEASURED
+segments/011-005,N1,Mid Frequency,SVPB,False,False,43,0.0027,0.4,0.8721,False,False,True,MEASURED
+segments/011-008,N1,Mid Frequency,SV Couplet,False,False,39,0.8327,0.1051,1.0,True,False,True,MEASURED
+segments/011-010,N1,Mid Frequency,SV Couplet,False,False,43,0.0027,0.4122,0.312,False,False,False,MEASURED
+segments/011-011,N1,Mid Frequency,SV Couplet,False,False,41,0.0031,0.4349,0.9846,False,False,True,MEASURED
+segments/011-012,N1,Mid Frequency,SVPB,False,False,42,0.0053,0.3023,0.0228,False,False,False,MEASURED
+segments/011-016,Clean,None,SVPB,False,False,29,0.0001,0.095,0.5212,False,False,True,MEASURED
+segments/012-001,N2,Mid Frequency,None,False,True,48,0.0016,0.1182,1.0,False,False,True,MEASURED
+segments/012-002,N1,Mid Frequency,SVPB,False,False,52,0.0643,0.4408,0.9999,False,False,True,MEASURED
+segments/012-004,Clean,None,SVPB,False,False,38,0.0007,0.2818,0.178,False,False,False,MEASURED
+segments/012-007,N1,Mid Frequency,SVPB,False,False,38,0.001,0.1853,0.3145,False,False,False,MEASURED
+segments/012-010,Clean,None,SVPB,False,False,36,0.0021,0.3167,0.0032,False,False,False,MEASURED
+segments/012-011,Clean,None,SVPB,False,False,35,0.0004,0.2683,0.0754,False,False,False,MEASURED
+segments/012-013,Clean,None,SVPB,False,False,30,0.0005,0.1,0.0316,False,False,False,MEASURED
+segments/013-002,Clean,None,SVPB,False,False,39,0.0017,0.3248,0.0126,False,False,False,MEASURED
+segments/013-005,Clean,None,SVPB,False,False,33,0.0002,0.0927,0.2306,False,False,False,MEASURED
+segments/014-003,Clean,None,SVPB,False,False,42,0.9341,0.3609,0.9965,True,False,True,MEASURED
+segments/014-004,N1,High Frequency,SVPB,False,False,46,0.6871,0.4351,0.9891,True,False,True,MEASURED
+segments/014-010,Clean,None,SV Couplet,False,False,40,0.6458,0.301,0.9931,True,False,True,MEASURED
+segments/015-005,Clean,None,SV Couplet,False,False,39,0.0136,0.0742,0.9997,False,False,True,MEASURED
+segments/015-013,Clean,None,SVPB,False,False,33,0.0005,0.2415,0.0001,False,False,False,MEASURED
+segments/016-001,N1,Mid Frequency,VPB,False,False,44,0.0008,0.137,0.0179,False,False,False,MEASURED
+segments/016-002,N1,Mid Frequency,VPB,False,False,42,0.001,0.2956,0.0005,False,False,False,MEASURED
+segments/016-006,N1,Mid Frequency,VPB,False,False,44,0.0007,0.3832,0.0362,False,False,False,MEASURED
+segments/016-007,N1,Mid Frequency,VPB,False,False,47,0.0007,0.1612,0.0064,False,False,False,MEASURED
+segments/016-010,Clean,None,VPB,False,False,32,0.0292,0.2201,0.9947,False,False,True,MEASURED
+segments/016-011,N1,Mid Frequency,SVPB,False,False,47,0.7845,0.3317,0.9999,True,False,True,MEASURED
+segments/016-013,Clean,None,VPB,False,False,29,0.0667,0.2002,0.0002,False,False,False,MEASURED
+segments/016-014,Clean,None,SVPB,False,False,28,0.0037,0.1823,0.0002,False,False,False,MEASURED
+segments/016-016,N1,Mid Frequency,VPB,False,False,37,0.0051,0.095,0.14,False,False,False,MEASURED
+segments/016-019,N1,Mid Frequency,VPB,False,False,44,0.0029,0.3997,0.9792,False,False,True,MEASURED
+segments/016-020,Clean,None,V Couplet,False,False,34,0.0042,0.1701,0.7601,False,False,True,MEASURED
+segments/016-022,Clean,None,VPB,False,False,30,0.0004,0.1442,0.9101,False,False,True,MEASURED
+segments/016-023,Clean,None,SVPB,False,False,30,0.0021,0.0946,0.0,False,False,False,MEASURED
+segments/016-027,Clean,None,SVPB,False,False,30,0.0003,0.1706,0.8219,False,False,True,MEASURED
+segments/016-033,Clean,None,V Couplet,False,False,44,0.0034,0.3454,0.8574,False,False,True,MEASURED
+segments/016-035,Clean,None,VPB,False,False,41,0.0009,0.2973,0.9792,False,False,True,MEASURED
+segments/016-036,Clean,None,V Couplet,False,False,40,0.0005,0.2358,0.9032,False,False,True,MEASURED
+segments/016-037,Clean,None,VPB,False,False,37,0.0086,0.3526,0.9816,False,False,True,MEASURED
+segments/016-038,Clean,None,V Couplet,False,False,35,0.003,0.1915,0.0059,False,False,False,MEASURED
+segments/017-003,Clean,None,Brady,False,False,22,0.0001,0.0942,0.0,False,False,False,MEASURED
+segments/017-004,Clean,None,Brady,False,False,47,0.9325,0.4443,0.0158,True,False,False,MEASURED
+segments/017-005,Clean,None,Brady,False,False,23,0.0002,0.0809,0.0,False,False,False,MEASURED
+segments/017-006,Clean,None,Brady,False,False,24,0.0001,0.0832,0.0,False,False,False,MEASURED
+segments/020-001,N2,Mid Frequency,None,False,True,70,0.062,0.4189,0.9847,False,False,True,MEASURED
+segments/020-002,N2,Mid Frequency,None,False,True,76,0.091,0.3963,0.9999,False,False,True,MEASURED
+segments/020-003,N2,Mid Frequency,None,False,True,67,0.0698,0.3552,1.0,False,False,True,MEASURED
+segments/020-005,N2,Mid Frequency,None,False,True,55,0.3958,0.2632,1.0,False,False,True,MEASURED
+segments/020-007,N2,Mid Frequency,None,False,True,55,0.2306,0.4239,0.9475,False,False,True,MEASURED
+segments/020-008,N2,Mid Frequency,None,False,True,62,0.2837,0.4819,0.9953,False,False,True,MEASURED
+segments/020-009,N2,Mid Frequency,None,False,True,50,0.1536,0.2659,0.9998,False,False,True,MEASURED
+segments/020-013,N2,Mid Frequency,None,False,True,50,0.0063,0.2742,0.8089,False,False,True,MEASURED
+segments/020-014,N2,Mid Frequency,None,False,True,44,0.1153,0.387,1.0,False,False,True,MEASURED
+segments/020-015,N2,Mid Frequency,None,False,True,57,0.071,0.1828,1.0,False,False,True,MEASURED
+segments/020-016,N2,Mid Frequency,None,False,True,49,0.95,0.2523,0.9997,True,False,True,MEASURED
+segments/020-017,N2,Mid Frequency,None,False,True,56,0.1171,0.4033,1.0,False,False,True,MEASURED
+segments/020-018,N2,Mid Frequency,None,False,True,64,0.1285,0.192,1.0,False,False,True,MEASURED

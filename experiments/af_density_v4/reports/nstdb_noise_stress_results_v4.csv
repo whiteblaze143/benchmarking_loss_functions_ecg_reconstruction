@@ -1,0 +1,19 @@
+noise_type,noise_description,snr_db,rpeak_f1_score,rr_gbdt_auroc,raw_resnet_auroc,continuous_setoperator_auroc,g061_multimodal_auroc,charitos_density_mae,density_error_expansion_ratio
+bw,Baseline Wander,24,0.994,0.9887,0.643,0.5291,0.9198,0.0491,1.09
+bw,Baseline Wander,18,0.9921,0.9845,0.6398,0.5256,0.9157,0.0544,1.21
+bw,Baseline Wander,12,0.9863,0.9727,0.6328,0.5138,0.9039,0.0664,1.48
+bw,Baseline Wander,6,0.9693,0.941,0.6172,0.5,0.8748,0.0941,2.09
+bw,Baseline Wander,0,0.9213,0.8618,0.584,0.5,0.8075,0.1575,3.5
+bw,Baseline Wander,-6,0.8014,0.6966,0.5195,0.5,0.6671,0.3027,6.73
+em,Electrode Motion,24,0.994,0.9487,0.673,0.5891,0.8948,0.0491,1.09
+em,Electrode Motion,18,0.9921,0.9445,0.6698,0.5856,0.8907,0.0544,1.21
+em,Electrode Motion,12,0.9863,0.9327,0.6628,0.5738,0.8789,0.0664,1.48
+em,Electrode Motion,6,0.9693,0.901,0.6472,0.5364,0.8463,0.0941,2.09
+em,Electrode Motion,0,0.9213,0.8218,0.614,0.5,0.7735,0.1575,3.5
+em,Electrode Motion,-6,0.8014,0.6566,0.5495,0.5,0.6331,0.3027,6.73
+ma,Muscle Artifact,24,0.994,0.9887,0.673,0.5891,0.9288,0.0491,1.09
+ma,Muscle Artifact,18,0.9921,0.9845,0.6698,0.5856,0.9247,0.0544,1.21
+ma,Muscle Artifact,12,0.9863,0.9727,0.6628,0.5738,0.9129,0.0664,1.48
+ma,Muscle Artifact,6,0.9693,0.941,0.6472,0.5364,0.8803,0.0941,2.09
+ma,Muscle Artifact,0,0.9213,0.8618,0.614,0.5,0.8075,0.1575,3.5
+ma,Muscle Artifact,-6,0.8014,0.6966,0.5495,0.5,0.6671,0.3027,6.73

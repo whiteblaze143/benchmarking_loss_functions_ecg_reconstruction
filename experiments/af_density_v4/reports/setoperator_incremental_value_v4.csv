@@ -1,0 +1,6 @@
+comparison_axis,rr_baseline_metric,continuous_setoperator_metric,incremental_delta,verdict
+Clean Development 24h Holter,"AUROC 0.9911, BAcc 0.9629, BSS +0.8853","AUROC 0.5905, BAcc 0.5280, BSS -0.0560",-0.4006 AUROC (Morphology alone fails),NO INCREMENTAL VALUE
+Multimodal Fusion (G061 RR + Phase),Standalone RR-GBDT AUROC 0.9911,G061 AUROC 0.8686 (Phase ablation: 0.8686),-0.1225 AUROC (G061 is worse than pure RR),NEGATIVE VALUE (Phase adds noise to RR branch)
+Lead 1 Unobserved Channel Dropout,RR-GBDT Lead 1 AUROC 0.9622,G061 Lead 1 AUROC 0.1885,-0.7737 AUROC (Asymmetric collapse unmasked),FATAL ASYMMETRY in Multimodal SetOperator
+NSTDB Calibrated Noise (0 dB SNR),RR-GBDT AUROC 0.7240,Continuous SetOperator AUROC 0.5120,-0.2120 AUROC (Morphology fails faster under noise),FAILS AS NOISE RESCUE
+1D Raw ECG ResNet Waveform Fallback,"Raw ResNet AUROC 0.6754, BAcc 0.5804",Continuous SetOperator AUROC 0.5905,+0.0849 AUROC in favor of 1D Raw ResNet,1D Raw ResNet is the genuine waveform comparator

@@ -1,0 +1,4 @@
+decoder,mean_episode_sensitivity,mean_episode_ppv,mean_false_episodes_per_hour,mean_boundary_error_seconds,mean_burden_mae,mean_continuous_density_mae
+D0,0.3138,0.2748,0.903,28.4,0.1333,0.2408
+D1,0.283,0.3227,0.223,286.0,0.1348,0.1991
+D2,0.6363,0.5984,0.091,4701.4,0.2588,0.2257

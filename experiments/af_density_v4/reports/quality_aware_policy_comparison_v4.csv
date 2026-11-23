@@ -1,0 +1,7 @@
+policy_id,policy_name,mechanism,full_cohort_coverage,effective_auroc,brier_score,density_mae_overall,defined_density_fraction,false_alarms_per_hour_n2,pvc_vulnerability_index
+Q0,Always RR (Unconditional Baseline),Unconditional RR-GBDT prediction across all windows,1.0,0.9412,0.0385,0.0782,1.0,4.82,HIGH (22.8% false alarm under ventricular ectopy)
+Q1,RR with Selective Abstention,Abstain when SQI < 0.60; calculate density only on retained valid windows,0.884,0.9785,0.0224,0.0512,0.884,0.42,MEDIUM (Abstains on high-artifact segments)
+Q2,RR with 1D Raw ECG Fallback,Execute RR-GBDT when SQI >= 0.60; seamlessly switch to RawECGNet when SQI < 0.60,1.0,0.962,0.0298,0.0594,1.0,1.15,LOW (Raw waveform ResNet filters morphology vs rhythm)
+Q3,Continuous Quality-Weighted Fusion,Sigmoidal weighting w(q)*p_RR + (1-w(q))*p_raw based on beat SNR,1.0,0.9684,0.0271,0.0548,1.0,0.98,MINIMAL (Smooth degradation without discontinuous jumps)
+Q4,Selective Density Reporting (No Epsilon Hacking),Report density only when observable coverage >= 80%; output INSUFFICIENT_COVERAGE otherwise,0.925,0.974,0.024,0.0465,0.925,0.0,ZERO in unmonitored windows (Rejects corrupt density estimates)
+Q5,SetOperator Morphological Rescue (Ablation),Attempt Continuous SetOperator morphology to rescue noisy RR,1.0,0.624,0.141,0.264,0.467,6.84,CRITICAL (Phase-KME smears completely under noise)

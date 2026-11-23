@@ -1,0 +1,4 @@
+quality_stratum,n_records,rr_gbdt_fa_per_hour,raw_resnet_fa_per_hour,g061_fa_per_hour
+Clean,16,0.0,0.0,0.0
+N1,8,15.0,15.0,75.0
+N2,17,14.12,0.0,112.94

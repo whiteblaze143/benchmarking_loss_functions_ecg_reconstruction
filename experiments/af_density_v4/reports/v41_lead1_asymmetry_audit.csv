@@ -1,0 +1,3 @@
+model_id,symmetry_delta,is_symmetric,root_cause_finding
+G061,0.006538,True,"Operator embeddings differentiate channel 0 vs 1 intentionally, but shared backbone preserves rhythm invariance."
+H071-v2,0.046042,True,"Per-channel 1D ResNet weights are shared across leads, ensuring architectural symmetry."

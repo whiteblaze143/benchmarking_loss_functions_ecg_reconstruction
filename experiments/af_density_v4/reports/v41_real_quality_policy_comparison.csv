@@ -1,0 +1,7 @@
+policy_id,policy_name,mechanism,full_cohort_coverage,effective_auroc,brier_score,density_mae_overall,false_alarms_per_hour_n2,pvc_false_alarm_pct,provenance_class
+Q0,Always RR (Unconditional Baseline),Unconditional RR-GBDT across all windows,1.0,,0.0757,0.0431,14.12,0.0,MEASURED
+Q1,RR with Selective Abstention,Abstain when SQI < 0.60; calculate on retained windows,0.807,,0.0752,0.0388,0.0,0.0,MEASURED
+Q2,RR with Raw ResNet Fallback,Execute RR when SQI >= 0.60; switch to Raw ResNet H071-v2 when noisy,1.0,,0.0806,0.0543,0.0,0.0,MEASURED
+Q3,Continuous Quality-Weighted Fusion,"Sigmoidal weighting w(q)*p_RR + (1-w(q))*p_raw (alpha=0.32, q0=0.10)",1.0,,0.059,0.0704,7.06,0.0,MEASURED
+Q4,Selective Density Reporting,Report density only when observable coverage >= 80%,0.857,,0.0708,0.0369,0.0,0.0,MEASURED
+Q5,SetOperator Morphological Rescue,Attempt Continuous SetOperator morphology to rescue noisy RR,1.0,,0.4147,0.1835,112.94,0.0,MEASURED

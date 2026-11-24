@@ -1,0 +1,120 @@
+{
+  "IRIDIA": {
+    "dataset": "IRIDIA-AF",
+    "official_version": "v1.0.1",
+    "doi": "10.5281/zenodo.8405941",
+    "recordings_count": 167,
+    "patients_count": 152,
+    "multi_recording_patients": 13,
+    "max_recordings_per_patient": 4,
+    "total_monitoring_seconds": 24085688,
+    "total_monitoring_hours": 6690.47,
+    "physical_h5_files": 289,
+    "metadata_files_reported": 289,
+    "h5_files_match_metadata": true,
+    "sampling_rate_hz": 200,
+    "status": "SOURCE_VERIFIED"
+  },
+  "SHDB": {
+    "dataset": "SHDB-AF",
+    "official_name": "Shengjing Hospital Dynamic ECG Database",
+    "total_recordings_available": 128,
+    "annotated_recordings_count": 98,
+    "unannotated_recordings_count": 30,
+    "unique_patients_total": 122,
+    "unique_patients_annotated": 93,
+    "unique_patients_unannotated": 30,
+    "physical_atr_count": 98,
+    "physical_hea_count": 128,
+    "annotated_atr_provenance_verified": false,
+    "native_sampling_rate_hz": 200,
+    "annotated_monitoring_hours": 2330.71,
+    "clinical_columns_count": 45,
+    "annotated_patients_with_echo_lad": 92,
+    "annotated_patients_with_echo_lvef": 92,
+    "status": "SOURCE_VERIFIED"
+  },
+  "LTAFDB": {
+    "dataset": "LTAFDB",
+    "official_name": "Long-Term AF Database (PhysioNet)",
+    "version": "1.0.0",
+    "recordings_count": 84,
+    "patients_count": 84,
+    "native_sampling_rate_hz": 128,
+    "total_monitoring_hours": 1960.6,
+    "total_rhythm_annotations": 59663,
+    "total_af_runs": 7358,
+    "top1_patient_runs": 1044,
+    "top1_patient_id": "74",
+    "top1_percentage": 14.19,
+    "top3_runs": 2887,
+    "top3_percentage": 39.24,
+    "top5_runs": 3994,
+    "top5_percentage": 54.28,
+    "top10_runs": 5387,
+    "top10_percentage": 73.21,
+    "top20_runs": 6501,
+    "top20_percentage": 88.35,
+    "status": "SOURCE_VERIFIED"
+  },
+  "Noise-Holter": {
+    "dataset": "Noise-Holter-Database",
+    "official_name": "A multi-device multi-arrhythmia real-world clinical ECG signal quality benchmark",
+    "version": "1.0.0",
+    "physical_excerpts_count": 6130,
+    "unique_subjects_count": 310,
+    "total_duration_hours": 34.9,
+    "clean_excerpts": 2665,
+    "clean_percentage": 43.47,
+    "n1_mild_noise_excerpts": 2202,
+    "n1_percentage": 35.92,
+    "n2_severe_noise_excerpts": 1263,
+    "n2_percentage": 20.6,
+    "af_excerpts_count": 379,
+    "afl_excerpts_count": 122,
+    "svpb_excerpts_count": 741,
+    "vpb_excerpts_count": 629,
+    "published_vs_released_discrepancy": "Paper reports 6,255 excerpts across 258 subjects; released PhysioNet v1.0.0 contains 6,130 excerpts across 310 subject prefixes.",
+    "status": "SOURCE_VERIFIED_WITH_QUALIFICATIONS"
+  },
+  "NSTDB": {
+    "dataset": "MIT-BIH NSTDB",
+    "version": "1.0.0",
+    "total_hea_files": 15,
+    "stress_test_118_records": [
+      "118e00",
+      "118e06",
+      "118e12",
+      "118e18",
+      "118e24",
+      "118e_6"
+    ],
+    "stress_test_119_records": [
+      "119e00",
+      "119e06",
+      "119e12",
+      "119e18",
+      "119e24",
+      "119e_6"
+    ],
+    "pure_noise_traces": [
+      "bw",
+      "em",
+      "ma"
+    ],
+    "native_sampling_rate_hz": 360,
+    "signal_content_verification": "Records 118 and 119 are from MIT-BIH Arrhythmia Database (RBBB and sinus rhythm with ventricular ectopy; neither has AF). Historical AF noise stress benchmarks injected bw/em/ma noise into authentic 200 Hz development ECG waveforms, rather than evaluating 118/119 as AF.",
+    "status": "SOURCE_VERIFIED"
+  },
+  "Combined_Continuous_Cohort": {
+    "datasets": [
+      "IRIDIA-AF",
+      "SHDB-AF (Annotated)",
+      "LTAFDB"
+    ],
+    "total_recordings": 349,
+    "total_unique_dataset_scoped_patients": 329,
+    "total_monitoring_hours": 10981.78,
+    "anchor_reconciled": true
+  }
+}

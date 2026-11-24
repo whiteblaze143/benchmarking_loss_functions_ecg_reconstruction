@@ -1,0 +1,10 @@
+{
+  "n_interepisode_windows": 13761,
+  "n_unique_patients": 82,
+  "time_collinearity_r": 0.0951,
+  "beta_since_termination": -0.0551,
+  "p_since_termination": 0.257128,
+  "beta_until_onset": 0.1823,
+  "p_until_onset": 0.03747,
+  "dominant_driver": "UNTIL_ONSET"
+}

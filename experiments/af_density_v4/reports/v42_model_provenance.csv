@@ -1,0 +1,8 @@
+model_id,framework,checkpoint_sha256,input_type,sampling_rate,training_cohort,operating_threshold,verification_status
+RR-GBDT,Scikit-Learn (HistGradientBoostingClassifier),85d43e6b91cf7d02d22ba2a0de5de7579d08d448067d02b51d0ff466bb02496a,36-D Standardized RR Interval Statistics,200 Hz R-peak timestamps,IRIDIA-AF Training Split (90 patients),0.5,VALIDATED
+ArNet2,TensorFlow 2 SavedModel,c567c82e8bb7987e76e8a521f3240b4abd813c1168a183965e3351091dd79067,60-Beat Continuous RR Interval Sequence (seconds),Beat-time sequence,PhysioNet CinC 2017 & LTAFDB (author pretrained),0.432074189,VALIDATED
+RawECGNet,TensorFlow 2 SavedModel,f85d6263a694a928caa8ddeaf85595d9695fe72967af2d3199ecec3c0702637d,1D Raw Voltage Waveform (6000 samples @ 200 Hz),200 Hz,"PTB-XL, CPSC 2018, IRIDIA-AF (author pretrained)",0.425999999,VALIDATED
+raw_mask_resnet_v1,PyTorch,4848301f2d14a45a65f67a04625bab0714e16c94790c3abde6b9c22f15808d47,4-Channel 1D Voltage + Mask Indicators (6000 samples @ 200 Hz),200 Hz,"IRIDIA-AF Training Split (90 patients, 14 epochs)",0.06,VALIDATED
+H071-v2,PyTorch,07ba2c72c147e0cc5c50f4f9c83b30756a418679b91d9a0514cddb7013268371,Per-Channel 1D Voltage + SetOperator Tokens (6000 samples @ 200 Hz),200 Hz,Stage 1B Continuous SetOperator Queue (28 patients),0.5,VALIDATED
+G061,PyTorch,2a3e3d1e15cb4faed2566d7422a94d3724d72b5876355d810a5ed2bd923a2626,Multimodal (36-D RR + Phase-KME tokens),200 Hz,Stage 1B Continuous SetOperator Queue,0.5,VALIDATED
+A001,PyTorch,6f8d06baa8fe30e135c461589a8b235a9735be7c257526c2585ca8a4341111a7,Continuous SetOperator (Phase-KME morphology only),200 Hz,Stage 1 Continuous SetOperator Queue,0.5,VALIDATED

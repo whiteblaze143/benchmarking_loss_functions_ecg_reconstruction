@@ -1,0 +1,14 @@
+{
+  "n_total_source_episodes": 8582,
+  "n_eligible_1h_rule": 399,
+  "n_excluded_1h_rule": 8183,
+  "pct_episodes_excluded_by_1h_rule": 95.35,
+  "duration_median_eligible_min": 47.5,
+  "duration_median_excluded_min": 0.3,
+  "duration_shift_p": 0.0,
+  "n_total_baseline_episodes": 246,
+  "n_episodes_with_prior_af_lt_15m": 16,
+  "n_episodes_with_prior_af_lt_30m": 22,
+  "n_episodes_with_prior_af_lt_60m": 32,
+  "pct_baseline_episodes_lt_30m_from_prior_af": 8.94
+}

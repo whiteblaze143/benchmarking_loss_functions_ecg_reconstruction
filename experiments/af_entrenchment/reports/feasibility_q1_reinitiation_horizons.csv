@@ -1,0 +1,6 @@
+horizon,horizon_seconds,reinitiating_episodes,total_terminating_episodes,reinitiation_rate_episodes_pct,reinitiating_patients,total_patients,reinitiation_rate_patients_pct
+30s,30.0,6074,8435,72.01,93,262,35.5
+2m,120.0,7140,8435,84.65,108,262,41.22
+6m,360.0,7590,8435,89.98,121,262,46.18
+30m,1800.0,7876,8435,93.37,133,262,50.76
+1h,3600.0,7947,8435,94.21,143,262,54.58

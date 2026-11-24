@@ -1,0 +1,57 @@
+{
+  "entrenchment_and_frailty": {
+    "hazard_15s": 0.529981,
+    "hazard_1h": 0.007194,
+    "hazard_collapse_ratio": 73.7,
+    "hazard_collapse_verified": true,
+    "alpha_within": 0.5854,
+    "theta_frailty_variance": 2.3398,
+    "frailty_shape_verified": true,
+    "discordant_arc_patients": 26,
+    "discordance_verified": true
+  },
+  "pmv_dynamics_and_recurrence": {
+    "n_fixed_episodes": 207,
+    "fixed_panel_relative_drop_pct": 16.58,
+    "delta_pmv_patient_median_0_2m": 0.003172,
+    "delta_pmv_ci95_low": -0.001471,
+    "delta_pmv_ci95_high": 0.006725,
+    "delta_pmv_p_value": 0.06141893,
+    "did_effect": 0.007393,
+    "did_p_value": 0.01571395,
+    "negative_control_flat": true,
+    "negative_control_p_value": 0.350101,
+    "ltafdb_adjusted_hr": 0.9983,
+    "ltafdb_adjusted_p": 0.9842,
+    "shdb_adjusted_hr": 0.754,
+    "shdb_adjusted_p": 0.0262,
+    "post_af_elevation_verified": true,
+    "recurrence_vanishes_verified": true
+  },
+  "shdb_structural_association": {
+    "multi_episode_beta_density_mm": -13.595946583711498,
+    "multi_episode_p_value": 0.0088762484622639,
+    "contemporaneous_90d_beta_density_mm": 7.768642892206152,
+    "contemporaneous_90d_p_value": 0.3085705455284641,
+    "beta_excl_top_outlier": -3.641028931698093,
+    "pval_excl_top_outlier": 0.4749511227269026,
+    "max_cooks_distance": 0.318,
+    "outlier_patient": "shdb_2148042",
+    "structural_sign_reversal_verified": true,
+    "high_leverage_verified": true
+  },
+  "rosman_translation": {
+    "observed_high_density_pct": 61.82,
+    "horizon_migration_pct": 36.2,
+    "icc_burden": 0.9048315777306808,
+    "icc_density": 0.5300107244561463,
+    "rosman_replication_verified": true,
+    "burden_more_stable_than_density": true
+  },
+  "historical_density_attrition": {
+    "eligible_patients_12h_gate6": 24,
+    "eligible_pairs_12h_gate6": 196,
+    "eligible_patients_density_gate3a": 73,
+    "attrition_reconciled": true
+  }
+}

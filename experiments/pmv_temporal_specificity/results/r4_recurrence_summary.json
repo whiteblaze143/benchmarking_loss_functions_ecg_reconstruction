@@ -1,0 +1,14 @@
+{
+  "n_total_post_af_episodes": 684,
+  "n_immediate_recurrence_lt_2m": 137,
+  "n_landmarked_episodes": 547,
+  "n_recurrent_events": 338,
+  "median_early_pmv": 0.031067,
+  "spearman_r_pmv_vs_time_to_recurrence": 0.2527,
+  "spearman_p_val": 0.0,
+  "cox_hazard_ratio_log_pmv": 0.8453,
+  "cox_p_val": 0.0004,
+  "cox_ci95_low": 0.7706,
+  "cox_ci95_high": 0.9273,
+  "early_pmv_predicts_recurrence": true
+}

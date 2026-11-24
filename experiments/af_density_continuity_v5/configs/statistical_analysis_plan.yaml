@@ -1,0 +1,27 @@
+random_seed: 42
+patient_bootstrap_reps: 2000
+randomization_permutations: 2000
+
+primary_endpoints:
+  E01:
+    name: "absolute_density_disagreement_60m"
+    description: "Absolute difference |D_native - D_60m| under exact hourly AF-duration aggregation"
+    target_metric: "median_and_iqr"
+  E02:
+    name: "adjusted_q120_diff_smax_contrast_025"
+    description: "Adjusted absolute percentage-point difference in Q120 associated with 0.25 contrast in S_max"
+    target_metric: "percentage_points"
+  E03:
+    name: "localization_contrast_delta_c_80"
+    description: "Patient-level localization contrast Delta C(0.80) = C_rapid(0.80) - 0.80"
+    target_metric: "median_and_iqr"
+
+secondary_endpoints:
+  E01_bounds: "Width of certified density uncertainty interval [D_L, D_U]"
+  E01_continuity_ambiguity: "Range of compatible longest uninterrupted AF durations across feasible within-bin realizations"
+  E02_matched_pairs: "Within-pair difference Delta Q120 (continuous minus fragmented)"
+  E03_missed_rapid_af_minutes: "Absolute minutes of rapid AF occurring outside the 80% concentration interval"
+
+clustering:
+  unit: "patient_id"
+  cohort_stratified: true

@@ -1,0 +1,97 @@
+{
+  "all_fixtures_passed": true,
+  "fixtures": [
+    {
+      "fixture_id": "F01_EMPTY_AF",
+      "description": "Empty AF timeline (burden = 0)",
+      "expected": "None (Undefined)",
+      "observed": null,
+      "passed": true
+    },
+    {
+      "fixture_id": "F02_ALL_AF",
+      "description": "Entirely AF timeline (burden = 1)",
+      "expected": "None (Undefined)",
+      "observed": null,
+      "passed": true
+    },
+    {
+      "fixture_id": "F03_SINGLE_START",
+      "description": "Single 1-hour episode at start [0, 3600)",
+      "expected": 1.0,
+      "observed": 1.0,
+      "passed": true
+    },
+    {
+      "fixture_id": "F04_SINGLE_MIDDLE",
+      "description": "Single 1-hour episode in middle [40000, 43600)",
+      "expected": 1.0,
+      "observed": 1.0,
+      "passed": true
+    },
+    {
+      "fixture_id": "F05_SINGLE_END",
+      "description": "Single 1-hour episode at end [T-3600, T)",
+      "expected": 1.0,
+      "observed": 1.0,
+      "passed": true
+    },
+    {
+      "fixture_id": "F06_TRANSLATION_INVARIANCE",
+      "description": "Shifted 2-episode timeline (delta = +9000s)",
+      "expected": "Equal to d_a (0.976013)",
+      "observed": 0.9760131864493398,
+      "passed": true
+    },
+    {
+      "fixture_id": "F07_TIME_REVERSAL_INVARIANCE",
+      "description": "Time-reversed multi-episode timeline",
+      "expected": "Equal to d_a (0.976013)",
+      "observed": 0.9760131864493398,
+      "passed": true
+    },
+    {
+      "fixture_id": "F08_GAP_SENSITIVITY",
+      "description": "Two equal 1000s episodes: 10s gap vs 18000s gap",
+      "expected": "d_tight > d_wide",
+      "observed": "tight=0.9999, wide=0.7867",
+      "passed": true
+    },
+    {
+      "fixture_id": "F09_LOW_BURDEN_STABILITY",
+      "description": "Single episode with burden = 0.001 (86.4s / 24h)",
+      "expected": 1.0,
+      "observed": 1.0,
+      "passed": true
+    },
+    {
+      "fixture_id": "F10_HIGH_BURDEN_BOUND",
+      "description": "Two episodes with burden = 0.999",
+      "expected": "Defined in [0, 1]",
+      "observed": 0.4999998748750148,
+      "passed": true
+    },
+    {
+      "fixture_id": "F11_LOWER_BOUND_SMAX_SQ",
+      "description": "Verification of D >= S_max^2 (S_max^2 = 0.6944)",
+      "expected": ">= 0.6944",
+      "observed": 0.9418988101015682,
+      "passed": true
+    },
+    {
+      "fixture_id": "F12_CLUSTERING_SENSITIVITY",
+      "description": "4 episodes of 500s: clustered (50s gap) vs dispersed (15000s gap)",
+      "expected": "d_clust > d_disp",
+      "observed": "clustered=0.9982, dispersed=0.4668",
+      "passed": true
+    }
+  ],
+  "combinatorial_verification": {
+    "num_bins": 10,
+    "total_configurations_tested": 1022,
+    "valid_density_count": 1022,
+    "range_violations": 0,
+    "lower_bound_violations": 0,
+    "status": "PASS"
+  }
+}

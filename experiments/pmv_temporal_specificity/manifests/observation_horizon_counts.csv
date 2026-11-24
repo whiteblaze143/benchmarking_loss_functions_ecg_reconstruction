@@ -1,0 +1,9 @@
+horizon,horizon_seconds,pre_af_episodes,pre_af_unique_patients,post_af_episodes,post_af_unique_patients,paired_episodes,paired_unique_patients,interepisode_intervals,interepisode_unique_patients
+2m,120.0,971,248,982,236,623,187,641,135
+5m,300.0,678,243,664,229,412,170,401,125
+10m,600.0,572,240,549,225,323,162,320,119
+15m,900.0,524,239,498,223,288,150,282,117
+30m,1800.0,459,231,433,211,256,140,240,105
+60m,3600.0,399,223,376,202,211,131,198,96
+120m,7200.0,329,210,308,190,156,113,147,87
+240m,14400.0,261,190,244,180,101,83,103,74

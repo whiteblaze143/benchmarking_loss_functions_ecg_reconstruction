@@ -1,0 +1,5 @@
+washout_group,n_episodes_with_baseline,n_unique_patients,baseline_D_median,baseline_D_q25,baseline_D_q75,baseline_D_mean
+Group_A_ShortWashout_<1h,4,4,0.000701,0.000524,0.00097,0.000793
+Group_B_Intermediate_1-4h,55,36,0.00199,0.000456,0.004326,0.075787
+Group_C_LongWashout_>=4h,43,39,0.001505,0.000444,0.003438,0.002832
+Group_Isolated_NoPriorAF,144,136,0.001539,0.000521,0.004803,0.165731

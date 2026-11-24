@@ -1,0 +1,5 @@
+washout_group,n_episodes,delta_D_median,v_rel_median
+Group_A_ShortWashout_<1h,4,1.3e-05,1.0246
+Group_B_Intermediate_1-4h,52,-0.00028,0.8455
+Group_C_LongWashout_>=4h,42,0.000131,1.1999
+Group_Isolated_NoPriorAF,142,-8.7e-05,0.8912

@@ -1,0 +1,33 @@
+{
+  "experiment": "E01_native_entrenchment_hazards",
+  "total_episodes": 8540,
+  "total_patients": 307,
+  "landmark_correlation_15m": {
+    "Pooled (All Unweighted)": {
+      "spearman_rho": -1.0,
+      "p_value": 0.0,
+      "entrenchment_detected": true
+    },
+    "Patient-Weighted (Balanced)": {
+      "spearman_rho": -0.9727,
+      "p_value": 5.14217704904919e-07,
+      "entrenchment_detected": true
+    },
+    "IRIDIA-AF": {
+      "spearman_rho": -0.9909,
+      "p_value": 3.762571807085399e-09,
+      "entrenchment_detected": true
+    },
+    "SHDB-AF (Saitama)": {
+      "spearman_rho": -0.9909,
+      "p_value": 3.762571807085399e-09,
+      "entrenchment_detected": true
+    },
+    "LTAFDB": {
+      "spearman_rho": -1.0,
+      "p_value": 0.0,
+      "entrenchment_detected": true
+    }
+  },
+  "runtime_s": 2.73
+}

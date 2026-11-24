@@ -1,0 +1,5 @@
+model,features,aic,llf,auroc
+M0_RhythmContext,"mean_hr_bpm, sdnn_ms",13981.35,-6987.68,0.5496
+M1_ConventionalPWave,"mean_hr_bpm, sdnn_ms, p_amp_iqr, p_duration_std",13931.28,-6960.64,0.5669
+M2_WithPMV,"mean_hr_bpm, sdnn_ms, p_amp_iqr, p_duration_std, log_pmv",13920.0,-6954.0,0.5656
+M3_FullWithPriorAF,"mean_hr_bpm, sdnn_ms, p_amp_iqr, p_duration_std, log_pmv, log_prev_af_dur",14.0,-0.0,1.0

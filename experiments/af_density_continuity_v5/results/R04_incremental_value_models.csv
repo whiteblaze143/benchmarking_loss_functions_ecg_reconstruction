@@ -1,0 +1,5 @@
+model,n_obs,n_clusters,log_likelihood,aic,bic,covariates,density_continuous_coef,density_continuous_pval
+Mod1_Burden_Only,188,180,-43.932835666925456,95.86567133385091,-903.5947178235947,cohort_LTAFDB+cohort_SHDB-AF+af_burden,,
+Mod2_Burden_Longest_Episode,188,180,-42.24355951193854,94.48711902387709,-901.7368281707385,cohort_LTAFDB+cohort_SHDB-AF+af_burden+log_longest_af_s,,
+Mod3_Burden_Longest_Continuous_Density,188,180,-42.15205702739911,96.30411405479822,-896.6833911769875,cohort_LTAFDB+cohort_SHDB-AF+af_burden+log_longest_af_s+density_continuous,-0.7190738187068755,0.58283131626684
+Mod4_Burden_Longest_Density_Tiers,188,180,-41.51760064128256,101.03520128256513,-882.2429780607307,cohort_LTAFDB+cohort_SHDB-AF+af_burden+log_longest_af_s+dens_tier_Low+dens_tier_Medium+dens_tier_Medium-High+dens_tier_Undefined,,

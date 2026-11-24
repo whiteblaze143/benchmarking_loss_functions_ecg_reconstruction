@@ -1,0 +1,12 @@
+{
+  "n_pre_af_segments": 333,
+  "n_unique_patients": 174,
+  "positive_acceleration_count": 44,
+  "positive_acceleration_pct": 13.21,
+  "mean_changepoint_m": -24.88,
+  "median_changepoint_m": -24.0,
+  "mean_slope_beta1": 1.303592,
+  "remote_control_accel_pct": 14.79,
+  "fisher_exact_p_vs_control": 0.571849,
+  "mean_delta_v": 0.601318
+}

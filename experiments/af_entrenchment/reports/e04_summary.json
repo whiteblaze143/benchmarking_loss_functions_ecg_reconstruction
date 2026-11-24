@@ -1,0 +1,129 @@
+{
+  "experiment": "E04_vcc_nested_predictive_modeling",
+  "landmark_duration_s": 60.0,
+  "prediction_horizon_s": 900.0,
+  "n_analyzed_episodes": 2389,
+  "n_analyzed_patients": 267,
+  "summary_by_dataset": [
+    {
+      "dataset": "IRIDIA-AF",
+      "n_episodes": 342,
+      "n_patients": 143,
+      "mean_hr": 109.36702523943497,
+      "sdnn": 118.37620267733301,
+      "rmssd": 153.82586014497568,
+      "cv_rr": 19.997176462468232,
+      "vcc": 19.19337598271533,
+      "pct_terminate_15m": 28.362573099415204
+    },
+    {
+      "dataset": "LTAFDB",
+      "n_episodes": 1704,
+      "n_patients": 64,
+      "mean_hr": 87.94606439453996,
+      "sdnn": 171.40399226313033,
+      "rmssd": 238.08644704141682,
+      "cv_rr": 21.99558188241573,
+      "vcc": 23.378104271470836,
+      "pct_terminate_15m": 84.97652582159625
+    },
+    {
+      "dataset": "SHDB-AF",
+      "n_episodes": 351,
+      "n_patients": 60,
+      "mean_hr": 104.82468791897797,
+      "sdnn": 134.36257668643998,
+      "rmssd": 177.7758288522147,
+      "cv_rr": 21.30193576472492,
+      "vcc": 20.646424319005696,
+      "pct_terminate_15m": 68.66096866096866
+    }
+  ],
+  "nested_models": [
+    {
+      "model": "M0_Baseline",
+      "df": 1,
+      "log_likelihood": -1349.7,
+      "deviance": 2699.4,
+      "AIC": 2701.4,
+      "BIC": 2707.18,
+      "AUROC": 0.5,
+      "LRT_chi2_vs_prev": NaN,
+      "df_diff": 0,
+      "LRT_p_value": NaN
+    },
+    {
+      "model": "M1_Dataset",
+      "df": 3,
+      "log_likelihood": -1131.83,
+      "deviance": 2263.67,
+      "AIC": 2269.67,
+      "BIC": 2287.0,
+      "AUROC": 0.7195,
+      "LRT_chi2_vs_prev": 435.73,
+      "df_diff": 2,
+      "LRT_p_value": 2.413645050957422e-95
+    },
+    {
+      "model": "M2_M1_plus_HR",
+      "df": 4,
+      "log_likelihood": -1129.79,
+      "deviance": 2259.58,
+      "AIC": 2267.58,
+      "BIC": 2290.69,
+      "AUROC": 0.7144,
+      "LRT_chi2_vs_prev": 4.09,
+      "df_diff": 1,
+      "LRT_p_value": 0.043155472885076686
+    },
+    {
+      "model": "M3_M2_plus_HRV",
+      "df": 7,
+      "log_likelihood": -1102.84,
+      "deviance": 2205.68,
+      "AIC": 2219.68,
+      "BIC": 2260.13,
+      "AUROC": 0.7767,
+      "LRT_chi2_vs_prev": 53.9,
+      "df_diff": 3,
+      "LRT_p_value": 1.1812453001735743e-11
+    },
+    {
+      "model": "M4_M3_plus_VCC",
+      "df": 8,
+      "log_likelihood": -1099.9,
+      "deviance": 2199.8,
+      "AIC": 2215.8,
+      "BIC": 2262.03,
+      "AUROC": 0.7781,
+      "LRT_chi2_vs_prev": 5.89,
+      "df_diff": 1,
+      "LRT_p_value": 0.015243788010157343
+    }
+  ],
+  "vcc_m4_parameter": {
+    "coef": -0.4058,
+    "se_clustered": 0.2349,
+    "odds_ratio": 0.6664,
+    "ci_95": [
+      0.4206,
+      1.0561
+    ],
+    "z_stat": -1.73,
+    "p_value": 0.0840323876184285
+  },
+  "verdict": {
+    "vcc_incremental_predictive_value": "MINIMAL_OR_NEGLIGIBLE",
+    "m4_vs_m3_lrt_chi2": 5.89,
+    "m4_vs_m3_lrt_p": 0.015243788010157343,
+    "delta_auroc": 0.0014,
+    "vcc_odds_ratio": 0.6664,
+    "vcc_or_95ci": [
+      0.4206,
+      1.0561
+    ],
+    "vcc_p_value": 0.0840323876184285,
+    "interpretation": "VCC Likelihood Ratio Test vs Standard HRV: Chi2 = 5.89 (df=1, p = 1.5244e-02). AUROC changes from 0.7767 (M3) to 0.7781 (M4) (Delta = +0.0014). Per 1-SD increase in VCC, adjusted termination odds ratio is 0.6664 (95% CI: [0.4206, 1.0561], p = 8.4032e-02). VCC is partially collinear with standard RMSSD and CV_RR, offering modest incremental discrimination."
+  },
+  "runtime_s": 0.17
+}

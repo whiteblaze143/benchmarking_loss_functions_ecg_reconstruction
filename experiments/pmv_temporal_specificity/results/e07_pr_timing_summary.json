@@ -1,0 +1,6 @@
+{
+  "pct_segments_pr_reduced": 95.94,
+  "mean_pmv_reduction_pct_from_alignment": 25.66,
+  "mean_pr_jitter_shift_ms": 3.38,
+  "correlation_hr_vs_pmv": 0.2928
+}

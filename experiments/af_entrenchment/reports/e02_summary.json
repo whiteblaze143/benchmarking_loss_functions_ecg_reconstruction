@@ -1,0 +1,35 @@
+{
+  "experiment": "E02_harmonized_and_censored_survival",
+  "total_incident_episodes": 8452,
+  "entrenchment_across_duration_filters": {
+    "Native (0s)": {
+      "n_episodes": 8452,
+      "n_patients": 276,
+      "spearman_rho": -1.0,
+      "p_value": 0.0,
+      "entrenchment_confirmed": true
+    },
+    ">= 30s (HRS)": {
+      "n_episodes": 3439,
+      "n_patients": 273,
+      "spearman_rho": -1.0,
+      "p_value": 0.0,
+      "entrenchment_confirmed": true
+    },
+    ">= 2min": {
+      "n_episodes": 1653,
+      "n_patients": 258,
+      "spearman_rho": -1.0,
+      "p_value": 0.0,
+      "entrenchment_confirmed": true
+    },
+    ">= 6min (AHRE)": {
+      "n_episodes": 922,
+      "n_patients": 247,
+      "spearman_rho": -1.0,
+      "p_value": 1.4042654220543672e-24,
+      "entrenchment_confirmed": true
+    }
+  },
+  "runtime_s": 3.25
+}

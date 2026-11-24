@@ -1,0 +1,6 @@
+horizon,gate0_horizon_avail_pairs,gate0_horizon_avail_patients,gate1_uncensored_pairs,gate1_uncensored_patients,gate2_prev_sub_60s_pairs,gate2_prev_sub_60s_patients,gate3a_ge2runs_density_pairs,gate3a_ge2runs_density_patients,gate3b_ge3runs_freedom_pairs,gate3b_ge3runs_freedom_patients,gate4a_petrutiu_4min_2runs_pairs,gate4a_petrutiu_4min_2runs_patients,gate4b_petrutiu_4min_3runs_pairs,gate4b_petrutiu_4min_3runs_patients,gate5_replicates_ge2pairs_pairs,gate5_replicates_ge2pairs_patients,gate6_within_pat_var_pairs,gate6_within_pat_var_patients
+30m,8081,180,8081,180,1241,153,853,73,727,51,392,60,305,40,294,29,287,27
+1h,7808,180,7808,180,1218,153,916,77,822,62,443,66,374,52,354,32,346,29
+3h,7407,178,7407,178,1147,148,942,89,872,72,468,80,415,63,391,39,358,28
+6h,6527,170,6527,170,992,141,852,92,796,77,443,83,404,66,381,43,325,29
+12h,4181,146,4181,146,630,115,543,73,511,69,307,70,282,64,260,42,196,24

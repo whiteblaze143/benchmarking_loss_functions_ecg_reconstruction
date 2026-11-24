@@ -1,0 +1,4 @@
+dataset,total_af_episodes,total_patients,pts_pre_af_ge_15m,pts_post_af_ge_15m,pts_pre_af_ge_60m,pts_post_af_ge_60m,pts_paired_ge_15m,pts_paired_ge_60m,pts_interepisode_ge_15m,pts_interepisode_ge_60m
+IRIDIA-AF,388,152,143,125,141,123,101,94,60,57
+SHDB-AF,794,77,67,65,65,61,39,33,40,34
+LTAFDB,7400,83,29,33,17,18,10,4,17,5

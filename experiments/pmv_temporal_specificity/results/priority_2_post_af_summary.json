@@ -1,0 +1,16 @@
+{
+  "n_post_af_subsegments": 15661,
+  "n_unique_patients": 159,
+  "early_0_2m_median": 0.045735,
+  "late_30_60m_median": 0.031769,
+  "early_0_2m_delta_vs_baseline": 0.006412,
+  "early_0_2m_paired_p": 3e-06,
+  "mixedlm_log_pmv_0_2m_coef": 0.267859,
+  "mixedlm_log_pmv_0_2m_p": 0.0,
+  "mixedlm_log_pmv_2_5m_coef": 0.154932,
+  "mixedlm_log_pmv_2_5m_p": 1.68e-06,
+  "mixedlm_log_pmv_5_10m_coef": 0.09006,
+  "mixedlm_log_pmv_5_10m_p": 0.00057287,
+  "n_fixed_panel_episodes": 226,
+  "post_af_early_elevation_supported": true
+}

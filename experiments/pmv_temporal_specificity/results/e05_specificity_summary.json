@@ -1,0 +1,12 @@
+{
+  "n_samples": 20428,
+  "n_cases_pre_af": 2212,
+  "n_controls_remote": 18216,
+  "m0_auroc": 0.5496,
+  "m1_auroc": 0.5669,
+  "m2_auroc": 0.5656,
+  "m3_auroc": 1.0,
+  "delta_auroc_pmv": -0.0013,
+  "pmv_or_adjusted": 0.899,
+  "pmv_coef": -0.1065
+}

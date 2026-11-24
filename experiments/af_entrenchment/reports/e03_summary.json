@@ -1,0 +1,43 @@
+{
+  "experiment": "E03_frailty_and_heterogeneity_models",
+  "verdict": {
+    "hypothesis_a_within_episode_entrenchment": "CONFIRMED",
+    "hypothesis_b_population_heterogeneity": "CO_EXISTS",
+    "population_alpha": 0.3669,
+    "within_patient_alpha": 0.5854,
+    "frailty_variance": 2.3398,
+    "lrt_p_value": 0.0,
+    "patient_level_pct_decreasing": 85.15,
+    "interpretation": "Decisive empirical resolution: While significant patient heterogeneity exists (sigma^2 = 2.34, p < 1e-10), the within-patient baseline hazard shape parameter remains dramatically below unity (alpha_within = 0.5854 << 1.0). Furthermore, 85.1% of independent multi-episode patients independently exhibit alpha_i < 1.0. This proves that early AF entrenchment is a genuine physiological property of individual AF episodes, not a statistical artifact of between-patient frailty sorting."
+  },
+  "dataset_models": [
+    {
+      "dataset": "IRIDIA-AF",
+      "n_episodes": 364,
+      "n_patients": 143,
+      "alpha_population": 0.4712,
+      "alpha_within_patient": 0.6608,
+      "frailty_variance": 1.1613,
+      "lrt_chi2": 105.22
+    },
+    {
+      "dataset": "SHDB-AF",
+      "n_episodes": 772,
+      "n_patients": 65,
+      "alpha_population": 0.3955,
+      "alpha_within_patient": 0.534,
+      "frailty_variance": 1.126,
+      "lrt_chi2": 328.72
+    },
+    {
+      "dataset": "LTAFDB",
+      "n_episodes": 7316,
+      "n_patients": 68,
+      "alpha_population": 0.439,
+      "alpha_within_patient": 0.59,
+      "frailty_variance": 1.6141,
+      "lrt_chi2": 3722.83
+    }
+  ],
+  "runtime_s": 0.82
+}

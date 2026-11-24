@@ -1,0 +1,7 @@
+metric_representation,median_0_2m,median_30_60m,relative_elevation_pct,n_paired_episodes,paired_wilcoxon_p,trajectory_persists
+Raw_MAD_Energy_D,0.001377,0.001091,26.2,215,0.00024521,True
+Spatial_PCA_PMV_V,0.030563,0.02797,9.27,215,0.00013737,False
+Lead_0_PMV_V0,0.038983,0.036887,5.68,215,0.00099612,False
+Lead_1_PMV_V1,0.062723,0.053483,17.28,215,0.00014423,True
+PR_Aligned_PMV_Valign,0.027277,0.024857,9.74,215,0.00027281,False
+PR_Aligned_MAD_Energy_Dalign,0.001174,0.000975,20.41,215,0.00029446,True

@@ -1,0 +1,7 @@
+{
+  "log_af_dur_coef": 0.006,
+  "log_af_dur_p_val": 0.640571,
+  "ci_lower": -0.0192,
+  "ci_upper": 0.0312,
+  "dose_response_supported": false
+}

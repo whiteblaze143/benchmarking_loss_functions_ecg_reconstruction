@@ -1,0 +1,19 @@
+{
+  "specificity_tested": [
+    "Raw_MAD_Energy_D",
+    "Spatial_PCA_PMV_V",
+    "Lead_0_PMV_V0",
+    "Lead_1_PMV_V1",
+    "PR_Aligned_PMV_Valign",
+    "PR_Aligned_MAD_Energy_Dalign"
+  ],
+  "raw_energy_D_elevation_pct": 26.2,
+  "raw_energy_D_p": 0.00024521,
+  "lead0_elevation_pct": 5.68,
+  "lead0_p": 0.00099612,
+  "lead1_elevation_pct": 17.28,
+  "lead1_p": 0.00014423,
+  "pr_aligned_elevation_pct": 9.74,
+  "pr_aligned_p": 0.00027281,
+  "all_representations_consistent": false
+}

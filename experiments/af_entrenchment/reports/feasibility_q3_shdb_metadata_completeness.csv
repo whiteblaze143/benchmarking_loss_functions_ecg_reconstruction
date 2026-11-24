@@ -1,0 +1,20 @@
+Domain,Variable,Valid_Entries,Total_Annotated,Completeness_Pct,Summary_or_Top_Values
+Demographics,Age_at_Holter,98,98,100.0,Mean: 68.0 +/- 11.2
+Demographics,Sex,98,98,100.0,"{'M': 53, 'F': 45}"
+Demographics,BMI,95,98,96.94,Mean: 22.9 +/- 4.2
+AF History,AF_Type,98,98,100.0,"{'PAF': 69, 'non-AF': 20, 'PerAF': 9}"
+AF History,AF_Duration_Months,50,98,51.02,Mean: 18.0 +/- 27.8
+AF History,Previous_AF_Ablation,98,98,100.0,"{False: 73, True: 25}"
+AF History,Previously_Documented_AFL,98,98,100.0,"{False: 84, True: 14}"
+Medications,Antiarrhythmic_Drug_nonBB,26,98,26.53,"{'bepridil': 8, 'amiodarone': 8, 'pilsicainide': 6}"
+Medications,Antiarrhythmic_Drug_BB,28,98,28.57,"{'bisoprolol': 20, 'carvedilol': 7, 'metoprolol': 1}"
+Medications,Anticoagulation,48,98,48.98,"{'edoxaban': 23, 'apixaban': 10, 'rivaroxaban': 8}"
+Echocardiography,Echo_LAD,97,98,98.98,Mean: 40.2 +/- 7.0
+Echocardiography,Echo_LVEF,97,98,98.98,Mean: 62.9 +/- 11.7
+Echocardiography,Moderate_or_Severe_MR,97,98,98.98,Mean: 0.0 +/- 0.2
+Comorbidities,CHF,98,98,100.0,Mean: 0.1 +/- 0.3
+Comorbidities,HTN,98,98,100.0,"{False: 64, True: 34}"
+Comorbidities,DM,98,98,100.0,"{False: 91, True: 7}"
+Comorbidities,Stroke,98,98,100.0,"{False: 80, True: 18}"
+Comorbidities,Vascular_Diseases,98,98,100.0,"{False: 87, True: 11}"
+PPM,PPM_on_Holter,98,98,100.0,{False: 98}

@@ -1,0 +1,17 @@
+{
+  "audit_timestamp": "2026-11-23 19:33:42",
+  "runtime_s": 6.25,
+  "q1_reinitiation_within_30s_episodes_pct": 72.01,
+  "q1_reinitiation_within_1h_episodes_pct": 94.21,
+  "q1_patients_with_reinit_within_6m_pct": 46.18,
+  "q2_discordant_recordings_count": 26,
+  "q2_discordant_patients_count": 26,
+  "q2_discordant_total_af_exposure_hours": 4.15,
+  "q2_discordant_median_af_burden_pct": 0.35,
+  "q3_shdb_annotated_records": 98,
+  "q3_shdb_lad_completeness_pct": 98.98,
+  "q3_shdb_lvef_completeness_pct": 98.98,
+  "q4_ltafdb_top10_patient_concentration_pct": 73.21,
+  "q4_ltafdb_sinus_gap_pct": 42.93,
+  "q5_durable_candidates_with_ge_1h_followup_pct": 86.94
+}

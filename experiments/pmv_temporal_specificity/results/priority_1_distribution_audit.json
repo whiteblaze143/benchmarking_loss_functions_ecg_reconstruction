@@ -1,0 +1,12 @@
+{
+  "n_valid_subsegments": 50398,
+  "pmv_median": 0.03575,
+  "pmv_q25": 0.014664,
+  "pmv_q75": 0.097349,
+  "pmv_mean": 0.350308,
+  "pmv_std": 9.400994,
+  "pmv_max": 1075.798348,
+  "mad_energy_D_median": 0.001263,
+  "ref_energy_Ei_median": 0.039335,
+  "mean_to_median_ratio": 9.8
+}

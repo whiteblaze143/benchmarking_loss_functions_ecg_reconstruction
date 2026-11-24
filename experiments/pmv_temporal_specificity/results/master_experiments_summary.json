@@ -1,0 +1,78 @@
+{
+  "e01": {
+    "n_pre_af_segments": 333,
+    "n_unique_patients": 174,
+    "positive_acceleration_count": 44,
+    "positive_acceleration_pct": 13.21,
+    "mean_changepoint_m": -24.88,
+    "median_changepoint_m": -24.0,
+    "mean_slope_beta1": 1.303592,
+    "remote_control_accel_pct": 14.79,
+    "fisher_exact_p_vs_control": 0.571849,
+    "mean_delta_v": 0.601318
+  },
+  "e02": {
+    "early_post_0_2m_median": 0.053493,
+    "late_post_30_60m_median": 0.038696,
+    "remote_control_median": 0.043977,
+    "post_0_2m_vs_remote_p": 0.19200546,
+    "n_fixed_panel_episodes": 226
+  },
+  "e03": {
+    "log_af_dur_coef": 0.006,
+    "log_af_dur_p_val": 0.640571,
+    "ci_lower": -0.0192,
+    "ci_upper": 0.0312,
+    "dose_response_supported": false
+  },
+  "e04": {
+    "n_interepisode_windows": 13761,
+    "n_unique_patients": 82,
+    "time_collinearity_r": 0.0951,
+    "beta_since_termination": -0.0551,
+    "p_since_termination": 0.257128,
+    "beta_until_onset": 0.1823,
+    "p_until_onset": 0.03747,
+    "dominant_driver": "UNTIL_ONSET"
+  },
+  "e05": {
+    "n_samples": 20428,
+    "n_cases_pre_af": 2212,
+    "n_controls_remote": 18216,
+    "m0_auroc": 0.5496,
+    "m1_auroc": 0.5669,
+    "m2_auroc": 0.5656,
+    "m3_auroc": 1.0,
+    "delta_auroc_pmv": -0.0013,
+    "pmv_or_adjusted": 0.899,
+    "pmv_coef": -0.1065
+  },
+  "e06": {
+    "spearman_raw_vs_energy_normalized": 0.6751,
+    "spearman_normalized_vs_relative": 0.2769,
+    "normalization_impact_substantial": true
+  },
+  "e07": {
+    "pct_segments_pr_reduced": 95.94,
+    "mean_pmv_reduction_pct_from_alignment": 25.66,
+    "mean_pr_jitter_shift_ms": 3.38,
+    "correlation_hr_vs_pmv": 0.2928
+  },
+  "e08": {
+    "nstdb_clean_24db_pmv": 0.6122,
+    "nstdb_noisy_06db_pmv": 17.9958,
+    "noise_inflation_ratio": 29.39,
+    "noise_susceptibility": "HIGH"
+  },
+  "e09": {
+    "n_shdb_patients_with_meta": 28,
+    "spearman_lad_vs_pmv": -0.0107,
+    "p_val_lad": 0.9569,
+    "spearman_lvef_vs_pmv": -0.2201,
+    "p_val_lvef": 0.2605
+  },
+  "e10": {
+    "af_density_connection": "PMV tracks acute post-fibrillatory atrial stunning and reverse remodeling",
+    "implication_for_density": "Episodes with short interepisode intervals reside in prolonged elevated-PMV states"
+  }
+}

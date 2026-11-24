@@ -1,0 +1,7 @@
+{
+  "n_negative_controls": 274,
+  "ctrl_0_2m_median": 0.034451,
+  "ctrl_30_60m_median": 0.036793,
+  "mann_whitney_p_ctrl": 0.350101,
+  "negative_control_flat": true
+}

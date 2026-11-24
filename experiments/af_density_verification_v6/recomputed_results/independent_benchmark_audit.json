@@ -1,0 +1,82 @@
+{
+  "matched_detectors": {
+    "raw_mask_resnet_v1_lead0": {
+      "model_name": "raw_mask_resnet_v1 (Lead 0)",
+      "lead_configuration": "Lead 0 Only",
+      "auroc": 0.9872,
+      "bss": 0.8346,
+      "bacc": 0.9467
+    },
+    "raw_mask_resnet_v1_both": {
+      "model_name": "raw_mask_resnet_v1 (Both)",
+      "lead_configuration": "Both Leads",
+      "auroc": 0.9823,
+      "bss": 0.81,
+      "bacc": 0.9415
+    },
+    "rr_gbdt": {
+      "model_name": "RR-GBDT",
+      "lead_configuration": "Both / Rhythm",
+      "auroc": 0.9723,
+      "bss": 0.7148,
+      "bacc": 0.9235
+    },
+    "raw_ecgnet_both": {
+      "model_name": "RawECGNet (Both)",
+      "lead_configuration": "Both Leads (Ensemble)",
+      "auroc": 0.9371,
+      "bss": 0.5789,
+      "bacc": 0.853
+    },
+    "g061_multimodal": {
+      "model_name": "G061 (Multimodal)",
+      "lead_configuration": "Both Leads",
+      "auroc": 0.8686,
+      "bss": -0.2349,
+      "bacc": 0.8016
+    },
+    "a001_setoperator": {
+      "model_name": "A001 (SetOperator)",
+      "lead_configuration": "Both Leads",
+      "auroc": 0.5905,
+      "bss": -1.0097,
+      "bacc": 0.5319
+    },
+    "arnet2": {
+      "model_name": "ArNet2",
+      "lead_configuration": "Continuous RR",
+      "auroc": 0.5839,
+      "bss": -0.576,
+      "bacc": 0.4738
+    }
+  },
+  "temporal_decoders": {
+    "raw_resnet_d2": {
+      "model_id": "raw_mask_resnet_v1",
+      "decoder": "D2",
+      "lead_configuration": "Both Leads",
+      "density_mae": 0.0839,
+      "burden_mae": 0.0277,
+      "episode_ppv": 79.63,
+      "boundary_displacement_s": 48.1
+    },
+    "rr_gbdt_d2": {
+      "model_id": "RR-GBDT",
+      "decoder": "D2",
+      "lead_configuration": "Both Leads",
+      "density_mae": 0.123,
+      "burden_mae": 0.0484,
+      "episode_ppv": 69.82000000000001,
+      "boundary_displacement_s": 125.7
+    }
+  },
+  "noise_vcc_inversion": {
+    "clean_af_vcc": 25.52,
+    "clean_sinus_vcc": 2.12,
+    "n1_af_vcc": 35.29,
+    "n1_sinus_vcc": 19.51,
+    "n2_af_vcc": 47.46,
+    "n2_sinus_vcc": 48.93,
+    "inversion_verified": true
+  }
+}

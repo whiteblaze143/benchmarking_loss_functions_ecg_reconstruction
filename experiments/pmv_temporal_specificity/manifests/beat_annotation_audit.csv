@@ -1,0 +1,4 @@
+dataset,annotation_source,qrs_timestamps_available,beat_classes_available,sinus_beat_label,ectopic_beat_labels,p_wave_delineation,verified_normal_sinus_support
+LTAFDB,WFDB .atr (expert reviewed),True,True,N (Normal Sinus),"A (Atrial Premature), V (Ventricular Premature)","Indirect (fixed 140ms pre-QRS search window [-220ms, -80ms])",EXCELLENT
+SHDB-AF,WFDB .qrs (expert audited QRS),True,False,QRS fiducial point within (N rhythm intervals,Ectopy detected via RR irregularity (dRR > 20%) within sinus rhythm,"Indirect (fixed 140ms pre-QRS search window [-220ms, -80ms])",GOOD (QRS timestamps inside confirmed (N intervals)
+IRIDIA-AF,Raw 200 Hz multi-channel ECG + xqrs_detect,True,False,Automated xqrs_detect within non-AF intervals,"Local RR outlier filtering (200ms <= RR <= 3000ms, dRR threshold)","Indirect (fixed 140ms pre-QRS search window [-220ms, -80ms])",MODERATE (Automated QRS inside probable sinus rhythm)

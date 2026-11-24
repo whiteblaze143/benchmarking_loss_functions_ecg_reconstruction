@@ -1,0 +1,84 @@
+{
+  "cohort_distributions": {
+    "IRIDIA-AF": {
+      "total_af_positive_recordings": 167,
+      "multi_run_recordings": 71,
+      "single_run_recordings": 96,
+      "multi_run_fraction_pct": 42.5,
+      "median_burden": 0.1576,
+      "iqr_burden": 0.2719,
+      "median_density_all_af": 1.0,
+      "median_density_multi_run": 0.8235,
+      "median_binned_density_all_af": 0.9983,
+      "median_binned_density_multi_run": 0.8221
+    },
+    "SHDB-AF": {
+      "total_af_positive_recordings": 77,
+      "multi_run_recordings": 54,
+      "single_run_recordings": 23,
+      "multi_run_fraction_pct": 70.1,
+      "median_burden": 0.1104,
+      "iqr_burden": 0.3488,
+      "median_density_all_af": 0.9967,
+      "median_density_multi_run": 0.9577,
+      "median_binned_density_all_af": 0.9954,
+      "median_binned_density_multi_run": 0.9564
+    },
+    "LTAFDB": {
+      "total_af_positive_recordings": 83,
+      "multi_run_recordings": 66,
+      "single_run_recordings": 17,
+      "multi_run_fraction_pct": 79.5,
+      "median_burden": 0.383,
+      "iqr_burden": 0.9038,
+      "median_density_all_af": 0.9777,
+      "median_density_multi_run": 0.9055,
+      "median_binned_density_all_af": 0.9055,
+      "median_binned_density_multi_run": 0.8655
+    }
+  },
+  "continuous_vs_binned_discrepancy": {
+    "median_absolute_discrepancy": 0.001358,
+    "mean_absolute_discrepancy": 0.015541,
+    "p95_absolute_discrepancy": 0.0516,
+    "max_absolute_discrepancy": 0.57165,
+    "max_discrepancy_record": "18",
+    "max_discrepancy_dataset": "LTAFDB",
+    "max_discrepancy_burden": 0.999516,
+    "max_discrepancy_continuous_d": 1.0,
+    "max_discrepancy_binned_d": 0.42835,
+    "discrepancy_target_match": true
+  },
+  "threshold_sensitivity": {
+    "native": {
+      "recordings_count": 349,
+      "total_af_runs": 8540,
+      "total_af_hours": 3095.84
+    },
+    "30s": {
+      "recordings_count": 349,
+      "total_af_runs": 3524,
+      "total_af_hours": 3083.15
+    },
+    "2min": {
+      "recordings_count": 349,
+      "total_af_runs": 1736,
+      "total_af_hours": 3053.44
+    },
+    "6min": {
+      "recordings_count": 349,
+      "total_af_runs": 1003,
+      "total_af_hours": 3011.91
+    },
+    "LTAFDB_30s_Filtering": {
+      "native_runs": 7358,
+      "runs_ge_30s": 2654,
+      "runs_excluded_count": 4704,
+      "runs_excluded_pct": 63.93,
+      "native_af_hours": 1030.89,
+      "af_hours_ge_30s": 1019.43,
+      "duration_preserved_pct": 98.89,
+      "audit_target_match": true
+    }
+  }
+}

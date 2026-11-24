@@ -1,0 +1,16 @@
+{
+  "total_pre_af_episodes": 335,
+  "n_episodes_censored_at_baseline": 89,
+  "baseline_censoring_pct": 26.57,
+  "group_A_short_baseline_D_median": 0.000701,
+  "group_B_intermediate_baseline_D_median": 0.00199,
+  "group_C_long_baseline_D_median": 0.001505,
+  "group_isolated_baseline_D_median": 0.001539,
+  "mann_whitney_p_intermediate_vs_long": 0.273368,
+  "kruskal_wallis_p_all_groups": 0.496261,
+  "group_B_relative_pmv_median": 0.8455,
+  "group_C_relative_pmv_median": 1.1999,
+  "group_isolated_relative_pmv_median": 0.8912,
+  "spearman_af_burden_vs_pmv": 0.033,
+  "p_val_burden_vs_pmv": 0.6645
+}

@@ -1,0 +1,6 @@
+cohort,horizon,n_eligible_pairs_basic,n_patients_basic,n_eligible_pairs_petrutiu_4min,n_patients_petrutiu_4min,n_pairs_ge_2_runs_density,n_patients_ge_2_runs_density,n_pairs_ge_3_runs_density,n_patients_ge_3_runs_density,n_pairs_ge_4_runs_density,n_patients_ge_4_runs_density,n_pairs_petrutiu_and_ge_2_runs,n_patients_petrutiu_and_ge_2_runs
+All_Cohorts,30m,1241,153,694,144,853,73,727,51,644,46,392,60
+All_Cohorts,1h,1218,153,684,143,916,77,822,62,751,52,443,66
+All_Cohorts,3h,1147,148,637,138,942,89,872,72,827,59,468,80
+All_Cohorts,6h,992,141,563,132,852,92,796,77,753,62,443,83
+All_Cohorts,12h,630,115,386,111,543,73,511,69,468,53,307,70

@@ -1,0 +1,7 @@
+{
+  "n_total_baseline_episodes": 246,
+  "n_episodes_with_prior_af_lt_15m": 16,
+  "n_episodes_with_prior_af_lt_30m": 22,
+  "n_episodes_with_prior_af_lt_60m": 32,
+  "pct_baseline_episodes_lt_30m_from_prior_af": 8.94
+}

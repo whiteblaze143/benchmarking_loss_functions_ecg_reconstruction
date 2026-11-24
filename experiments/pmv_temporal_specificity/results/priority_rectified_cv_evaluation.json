@@ -1,0 +1,11 @@
+{
+  "n_samples": 22900,
+  "n_unique_patients": 220,
+  "n_cases": 4844,
+  "n_controls": 18056,
+  "cv_auroc_m1_rhythm": 0.5625,
+  "cv_auroc_m2_conventional": 0.5326,
+  "cv_auroc_m3_with_pmv": 0.511,
+  "delta_cv_auroc_pmv": -0.0216,
+  "prospective_incremental_value_supported": false
+}

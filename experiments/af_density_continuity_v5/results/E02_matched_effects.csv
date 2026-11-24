@@ -1,0 +1,2 @@
+contrast,n_pairs,n_unique_patients,mean_delta_q120_pct_points,median_delta_q120_pct_points,std_delta_q120_pct_points,pct_pairs_exceeding_10pp,pct_pairs_exceeding_20pp,mean_delta_burden,mean_delta_density
+S_max >= 0.50 vs S_max <= 0.20 (|Delta S_max| >= 0.30),11,22,-17.05068608881485,0.0,37.26758580099418,45.45454545454545,45.45454545454545,0.010644379997895585,0.010532069362779627

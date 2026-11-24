@@ -1,0 +1,26 @@
+datasets:
+  ltafdb:
+    path: "/data/mithunmanivannan/datasets/ltafdb_1.0.0_reference"
+    fs: 128
+    format: "wfdb"
+    has_reference_beats: true
+  shdb_af:
+    path: "/data/mithunmanivannan/datasets/shdb_af"
+    fs: 200
+    format: "wfdb"
+    has_reference_beats: false
+    metadata_csv: "/data/mithunmanivannan/datasets/shdb_af/record_level_metadata.csv"
+  iridia_af:
+    path: "/data/mithunmanivannan/datasets/iridia_af_8405941_v1.0.1/ecg_hdf5"
+    fs: 200
+    format: "hdf5"
+    has_reference_beats: false
+    metadata_dir: "/data/mithunmanivannan/datasets/iridia_af_8405941_v1.0.1"
+  noise_holter:
+    path: "/data/mithunmanivannan/datasets/noise_holter_database"
+    fs: 200
+    format: "wfdb"
+  nstdb:
+    path: "/data/mithunmanivannan/datasets/nstdb/mit-bih-noise-stress-test-database-1.0.0"
+    fs: 360
+    format: "wfdb"

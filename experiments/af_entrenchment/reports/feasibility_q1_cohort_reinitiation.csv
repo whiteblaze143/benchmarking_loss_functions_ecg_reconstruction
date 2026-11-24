@@ -1,0 +1,4 @@
+dataset,total_terminating_episodes,total_patients,ep_reinit_30s_pct,pt_reinit_30s,pt_reinit_30s_pct,ep_reinit_2m_pct,pt_reinit_2m,pt_reinit_2m_pct,ep_reinit_6m_pct,pt_reinit_6m,pt_reinit_6m_pct,ep_reinit_30m_pct,pt_reinit_30m,pt_reinit_30m_pct,ep_reinit_1h_pct,pt_reinit_1h,pt_reinit_1h_pct
+IRIDIA-AF,340,125,1.18,4,3.2,10.29,12,9.6,17.94,20,16.0,25.59,27,21.6,30.0,37,29.6
+LTAFDB,7315,70,78.82,60,85.71,90.9,62,88.57,95.26,62,88.57,97.88,65,92.86,98.39,65,92.86
+SHDB-AF,780,67,38.97,29,43.28,58.46,34,50.75,71.92,39,58.21,80.64,41,61.19,83.08,41,61.19

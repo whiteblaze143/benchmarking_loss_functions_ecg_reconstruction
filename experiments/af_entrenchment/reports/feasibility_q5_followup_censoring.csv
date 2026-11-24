@@ -1,0 +1,7 @@
+followup_threshold,threshold_seconds,episodes_with_sufficient_followup,total_candidate_episodes,percentage_sufficient,right_censored_potential_pct
+30s,30.0,214,222,96.4,3.6
+2m,120.0,211,222,95.05,4.95
+6m,360.0,207,222,93.24,6.76
+30m,1800.0,200,222,90.09,9.91
+1h,3600.0,193,222,86.94,13.06
+6h,21600.0,133,222,59.91,40.09

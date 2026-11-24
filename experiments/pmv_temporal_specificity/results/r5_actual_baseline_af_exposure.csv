@@ -1,0 +1,6 @@
+exposure_category,n_subsegments,n_episodes,median_raw_D,iqr_raw_D,median_pmv_V,iqr_pmv_V
+Acute Prior AF (<15m),65,16,0.000791,0.001867,0.042106,0.051656
+Early Prior AF (15-30m),29,7,0.000916,0.002568,0.044361,0.056448
+Intermediate Prior AF (30-120m),113,24,0.002017,0.003832,0.047816,0.120425
+Isolated (No prior AF in record),712,144,0.001412,0.004474,0.050471,0.130509
+Remote Prior AF (>=120m),290,58,0.001506,0.004715,0.039072,0.120047

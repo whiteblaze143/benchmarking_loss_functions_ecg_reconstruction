@@ -1,0 +1,10 @@
+{
+  "n_paired_episodes": 215,
+  "n_paired_patients": 131,
+  "patient_median_ratio_D": 1.2277,
+  "patient_median_ratio_V": 1.2277,
+  "patient_median_pct_elevation": 22.77,
+  "bootstrap_ci95_low": 6.63,
+  "bootstrap_ci95_high": 41.77,
+  "wilcoxon_p": 5.1e-07
+}

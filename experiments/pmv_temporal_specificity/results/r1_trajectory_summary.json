@@ -1,0 +1,21 @@
+{
+  "n_total_post_patients": 163,
+  "n_paired_patients": 149,
+  "paired_patient_coverage_pct": 91.41,
+  "early_0_2m_median": 0.030563,
+  "late_30_60m_median": 0.02797,
+  "delta_pmv_patient_median_0_2m": 0.003172,
+  "delta_pmv_ci95_low": -0.001471,
+  "delta_pmv_ci95_high": 0.006725,
+  "patient_paired_p_0_2m": 0.06141893,
+  "n_fixed_panel_episodes": 207,
+  "fixed_panel_0_2m_median": 0.034355,
+  "fixed_panel_30_60m_median": 0.028659,
+  "fixed_panel_relative_drop_pct": 16.58,
+  "mixedlm_coef_0_2m": 0.185679,
+  "mixedlm_p_0_2m": 0.0,
+  "mixedlm_coef_2_5m": 0.07412,
+  "mixedlm_p_2_5m": 0.01027898,
+  "mixedlm_coef_5_10m": 0.036784,
+  "mixedlm_p_5_10m": 0.13808131
+}

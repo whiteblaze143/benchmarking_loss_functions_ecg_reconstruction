@@ -1,0 +1,7 @@
+{
+  "n_shdb_patients_with_meta": 28,
+  "spearman_lad_vs_pmv": -0.0107,
+  "p_val_lad": 0.9569,
+  "spearman_lvef_vs_pmv": -0.2201,
+  "p_val_lvef": 0.2605
+}

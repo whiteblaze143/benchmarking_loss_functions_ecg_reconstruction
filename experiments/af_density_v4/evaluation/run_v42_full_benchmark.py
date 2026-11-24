@@ -111,67 +111,6 @@ def compute_patient_clustered_ci(
     return point_est, ci_lower, ci_upper
 
 
-def evaluate_episode_metrics(
-    pred_intervals: List[Tuple[float, float]],
-    ref_intervals: List[Tuple[float, float]],
-    total_duration_s: float
-) -> Dict[str, float]:
-    """Evaluates episode-level sensitivity, PPV, false episode rate, and boundary error."""
-    if len(ref_intervals) == 0:
-        false_episodes = len(pred_intervals)
-        return {
-            "episode_sensitivity": np.nan,
-            "episode_ppv": 0.0 if false_episodes > 0 else 1.0,
-            "false_episodes_per_hour": false_episodes / (total_duration_s / 3600.0),
-            "boundary_displacement_s": np.nan,
-            "burden_mae": float(sum(e - s for s, e in pred_intervals)) / total_duration_s,
-        }
-
-    matched_refs = 0
-    matched_preds = 0
-    boundary_errors = []
-
-    for r_s, r_e in ref_intervals:
-        best_overlap = 0.0
-        best_match = None
-        for p_s, p_e in pred_intervals:
-            overlap = max(0.0, min(r_e, p_e) - max(r_s, p_s))
-            if overlap > best_overlap:
-                best_overlap = overlap
-                best_match = (p_s, p_e)
-        if best_overlap >= 30.0 or (best_overlap / (r_e - r_s)) >= 0.5:
-            matched_refs += 1
-            if best_match:
-                start_err = abs(best_match[0] - r_s)
-                end_err = abs(best_match[1] - r_e)
-                boundary_errors.append((start_err + end_err) / 2.0)
-
-    for p_s, p_e in pred_intervals:
-        for r_s, r_e in ref_intervals:
-            overlap = max(0.0, min(r_e, p_e) - max(r_s, p_s))
-            if overlap >= 30.0 or (overlap / (p_e - p_s)) >= 0.5:
-                matched_preds += 1
-                break
-
-    ep_sens = matched_refs / len(ref_intervals)
-    ep_ppv = matched_preds / len(pred_intervals) if len(pred_intervals) > 0 else 1.0
-    false_eps = max(0, len(pred_intervals) - matched_preds)
-    fa_per_hour = false_eps / (total_duration_s / 3600.0)
-    mean_boundary = float(np.mean(boundary_errors)) if boundary_errors else np.nan
-
-    ref_burden = float(sum(e - s for s, e in ref_intervals)) / total_duration_s
-    pred_burden = float(sum(e - s for s, e in pred_intervals)) / total_duration_s
-    burden_mae = abs(pred_burden - ref_burden)
-
-    return {
-        "episode_sensitivity": ep_sens,
-        "episode_ppv": ep_ppv,
-        "false_episodes_per_hour": fa_per_hour,
-        "boundary_displacement_s": mean_boundary,
-        "burden_mae": burden_mae,
-    }
-
-
 def main():
     print("=" * 80)
     print("T-CAIREM V4.2: Full Head-to-Head Matched Detector Benchmark & Decoders")
@@ -180,9 +119,12 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"PyTorch execution device: {device}")
 
-    # 1. Load Validation Windows metadata
+    # 1. Load Validation Windows metadata & duration model
     print("\n[Data] Loading partition metadata from val_windows.npz...")
     val_npz = np.load(PARTITIONS_DIR / "val_windows.npz")
+    duration_path = WAVEFORM_DIR / "duration_model_v1/fitted_law.npz"
+    with np.load(duration_path) as z:
+        duration_model = {k: z[k] for k in z.files}
     all_fi = val_npz["file_index"]
     all_starts = val_npz["input_start"]
     all_targets = val_npz["target"]
@@ -268,6 +210,11 @@ def main():
         # Load raw ECG from HDF5
         with h5py.File(h5_path, "r") as h:
             full_ecg = h["ecg"][:]
+
+        # Load released RR milliseconds from cache
+        rr_h5_file = Path(f"/tmp/iridia_rr_cache/rr_{fi:03d}.h5")
+        with h5py.File(rr_h5_file, "r") as h:
+            released_rr = h["rr"][:]
 
         raw_list = []
         raw_ecg_lead0 = []
@@ -414,6 +361,7 @@ def main():
             "assigned_starts": assigned_starts,
             "assigned_ends": assigned_ends,
             "ref_pairs": ref_pairs,
+            "released_rr": released_rr,
             "total_duration_s": total_seg_duration_s,
             "predictions": {
                 "RR-GBDT": p_rr,
@@ -542,88 +490,111 @@ def main():
     # -------------------------------------------------------------
     # 5. Compute Decoder Episode & Density Comparison (Deliverable 3)
     # -------------------------------------------------------------
-    print("\n[Evaluating Temporal Decoders D0 / D1 / D2 across All Models]...")
+    print("\n[Evaluating Temporal Decoders D0 / D1 / D2 across All Models using evaluate_conditions]...")
 
     decoder_models = [
-        ("RR-GBDT", "RR-GBDT", 0.50),
-        ("ArNet2", "ArNet2", 0.432074189),
-        ("RawECGNet", "RawECGNet_Both", 0.425999999),
-        ("raw_mask_resnet_v1", "raw_mask_resnet_v1_Both", 0.060),
-        ("H071-v2", "H071-v2_Both", 0.50),
-        ("G061", "G061", 0.50),
-        ("A001", "A001", 0.50),
+        ("RR-GBDT", 0.50, "rhythm"),
+        ("ArNet2", 0.432074189, "rhythm"),
+        ("RawECGNet", 0.425999999, "rawecg"),
+        ("raw_mask_resnet_v1", 0.060, "rmr"),
+        ("H071-v2", 0.50, "h071"),
+        ("G061", 0.50, "rhythm"),
+        ("A001", 0.50, "rhythm"),
     ]
 
-    decoders = ["D0", "D1", "D2"]
-    episode_records = []
+    all_condition_rows = []
 
-    for model_id, pred_key, thresh in decoder_models:
-        for dec in decoders:
-            seg_sens_list = []
-            seg_ppv_list = []
-            seg_fa_list = []
-            seg_bound_list = []
-            seg_burden_mae_list = []
-            seg_density_mae_list = []
-            defined_count = 0
+    for model_id, thresh, m_type in decoder_models:
+        print(f"  -> Decoding {model_id} (threshold={thresh})...")
+        for fi in informative_segments:
+            seg_info = segment_eval_data[fi]
+            assigned_s = seg_info["assigned_starts"]
+            assigned_e = seg_info["assigned_ends"]
+            ref_pairs = seg_info["ref_pairs"]
+            released_rr = seg_info["released_rr"]
+            pat_id = seg_info["patient_id"]
+            preds = seg_info["predictions"]
 
-            for fi in informative_segments:
-                seg_info = segment_eval_data[fi]
-                p_arr = seg_info["predictions"][pred_key]
-                assigned_s = seg_info["assigned_starts"]
-                assigned_e = seg_info["assigned_ends"]
-                ref_pairs = seg_info["ref_pairs"]
-                dur_s = seg_info["total_duration_s"]
+            # Form scores_3pat: (N, 3) where columns are [Lead 0, Lead 1, Both Leads]
+            if m_type == "rawecg":
+                scores_3pat = np.column_stack([preds["RawECGNet_Lead0"], preds["RawECGNet_Lead1"], preds["RawECGNet_Both"]])
+            elif m_type == "rmr":
+                scores_3pat = np.column_stack([preds["raw_mask_resnet_v1_Lead0"], preds["raw_mask_resnet_v1_Lead1"], preds["raw_mask_resnet_v1_Both"]])
+            elif m_type == "h071":
+                scores_3pat = np.column_stack([preds["H071-v2_Lead0"], preds["H071-v2_Lead1"], preds["H071-v2_Both"]])
+            else:
+                p_arr = preds[model_id]
+                scores_3pat = np.column_stack([p_arr, p_arr, p_arr])
 
-                # Apply Decoder
-                if dec == "D0":
-                    pred_intervals = decode_d0_threshold(p_arr, assigned_s, assigned_e, threshold=thresh)
-                elif dec == "D1":
-                    pred_intervals = decode_d1_continuous_smoothing(p_arr, assigned_s, assigned_e, threshold=thresh)
-                else:
-                    pred_intervals = decode_d2_hsmm_duration(p_arr, assigned_s, assigned_e)
+            conditions = evaluate_conditions(
+                scores_3pat,
+                ref_pairs,
+                assigned_s,
+                assigned_e,
+                sampling_rate=200,
+                threshold=thresh,
+                training_target_prior=0.1511,
+                duration_model=duration_model,
+                released_rr_milliseconds=released_rr,
+            )
 
-                ep_stats = evaluate_episode_metrics(pred_intervals, ref_pairs, dur_s)
-                if np.isfinite(ep_stats["episode_sensitivity"]):
-                    seg_sens_list.append(ep_stats["episode_sensitivity"])
-                if np.isfinite(ep_stats["episode_ppv"]):
-                    seg_ppv_list.append(ep_stats["episode_ppv"])
-                seg_fa_list.append(ep_stats["false_episodes_per_hour"])
-                if np.isfinite(ep_stats["boundary_displacement_s"]):
-                    seg_bound_list.append(ep_stats["boundary_displacement_s"])
-                seg_burden_mae_list.append(ep_stats["burden_mae"])
+            for cond in conditions:
+                pat = cond["pattern"]  # 0: Lead 0, 1: Lead 1, 2: Both Leads
+                dec = cond["decoder"]  # D0, D1, D2
+                m = extract_summary_metrics(cond["results"])
+                lead_name = "Lead 0" if pat == 0 else ("Lead 1" if pat == 1 else "Both Leads")
+                all_condition_rows.append({
+                    "model_id": model_id,
+                    "decoder": dec,
+                    "pattern": pat,
+                    "lead_configuration": lead_name,
+                    "patient_id": pat_id,
+                    "file_index": fi,
+                    "operating_threshold": thresh,
+                    "continuous_density_mae": m["density_continuous_absolute_error"],
+                    "binned_density_mae": m["density_author_binned_absolute_error"],
+                    "burden_mae": m["burden_absolute_error"],
+                    "episode_sensitivity": m["episode_sensitivity"],
+                    "episode_ppv": m["episode_ppv"],
+                    "false_episodes_per_hour": m["false_episodes_per_hour"],
+                    "boundary_displacement_s": m["uncensored_boundary_absolute_error_seconds"],
+                })
 
-                # Calculate Charitos Density Error
-                ref_inter_objs = [Interval(float(s), float(e)) for s, e in ref_pairs]
-                pred_inter_objs = [Interval(float(s), float(e)) for s, e in pred_intervals]
+    df_all_cond = pd.DataFrame(all_condition_rows)
 
-                d_ref = compute_charitos_density(ref_inter_objs, dur_s)
-                d_pred = compute_charitos_density(pred_inter_objs, dur_s)
+    # Summarize across segments
+    summary_ep_rows = []
+    for (model_id, dec, lead_name), grp in df_all_cond.groupby(["model_id", "decoder", "lead_configuration"], sort=False):
+        c_dens = [v for v in grp["continuous_density_mae"] if v is not None and np.isfinite(v)]
+        b_dens = [v for v in grp["binned_density_mae"] if v is not None and np.isfinite(v)]
+        b_mae = [v for v in grp["burden_mae"] if v is not None and np.isfinite(v)]
+        ep_sens = [v for v in grp["episode_sensitivity"] if v is not None and np.isfinite(v)]
+        ep_ppv = [v for v in grp["episode_ppv"] if v is not None and np.isfinite(v)]
+        fa_rate = [v for v in grp["false_episodes_per_hour"] if v is not None and np.isfinite(v)]
+        bound_err = [v for v in grp["boundary_displacement_s"] if v is not None and np.isfinite(v)]
 
-                if d_pred.is_defined and d_ref.is_defined:
-                    defined_count += 1
-                    seg_density_mae_list.append(abs(d_pred.density - d_ref.density))
+        summary_ep_rows.append({
+            "model_id": model_id,
+            "decoder": dec,
+            "lead_configuration": lead_name,
+            "operating_threshold": grp["operating_threshold"].iloc[0],
+            "episode_sensitivity": round(float(np.mean(ep_sens)), 4) if ep_sens else np.nan,
+            "episode_ppv": round(float(np.mean(ep_ppv)), 4) if ep_ppv else np.nan,
+            "false_episodes_per_hour": round(float(np.mean(fa_rate)), 3) if fa_rate else np.nan,
+            "boundary_displacement_s": round(float(np.mean(bound_err)), 1) if bound_err else np.nan,
+            "burden_mae": round(float(np.mean(b_mae)), 4) if b_mae else np.nan,
+            "continuous_density_mae": round(float(np.mean(c_dens)), 4) if c_dens else np.nan,
+            "binned_density_mae": round(float(np.mean(b_dens)), 4) if b_dens else np.nan,
+            "defined_fraction": f"{len(c_dens)}/15",
+            "provenance_class": "MEASURED",
+        })
 
-            episode_records.append({
-                "model_id": model_id,
-                "decoder": dec,
-                "operating_threshold": thresh,
-                "episode_sensitivity": round(float(np.mean(seg_sens_list)), 4) if seg_sens_list else np.nan,
-                "episode_ppv": round(float(np.mean(seg_ppv_list)), 4) if seg_ppv_list else np.nan,
-                "false_episodes_per_hour": round(float(np.mean(seg_fa_list)), 3),
-                "boundary_displacement_s": round(float(np.mean(seg_bound_list)), 1) if seg_bound_list else np.nan,
-                "burden_mae": round(float(np.mean(seg_burden_mae_list)), 4),
-                "continuous_density_mae": round(float(np.mean(seg_density_mae_list)), 4) if seg_density_mae_list else np.nan,
-                "defined_fraction": f"{defined_count}/15",
-                "provenance_class": "MEASURED",
-            })
-
-    df_episodes = pd.DataFrame(episode_records)
+    df_episodes = pd.DataFrame(summary_ep_rows)
     out_ep_csv = REPORTS_DIR / "v42_episode_density_comparison.csv"
     df_episodes.to_csv(out_ep_csv, index=False)
     df_episodes.to_csv(CODEX_DIR / "v42_episode_density_comparison.csv", index=False)
     print(f"\nSaved Episode & Density Comparison to: {out_ep_csv}")
-    print(df_episodes[["model_id", "decoder", "continuous_density_mae", "burden_mae", "false_episodes_per_hour", "episode_sensitivity", "episode_ppv"]])
+    print(df_episodes[df_episodes["lead_configuration"] == "Both Leads"][["model_id", "decoder", "continuous_density_mae", "burden_mae", "false_episodes_per_hour", "episode_sensitivity", "episode_ppv"]])
 
     # -------------------------------------------------------------
     # 6. Model Provenance Register (Deliverable 4)

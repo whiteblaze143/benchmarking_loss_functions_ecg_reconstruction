@@ -1,0 +1,26 @@
+ M experiments/af_density_v4/evaluation/run_v42_full_benchmark.py
+ M experiments/af_density_v4/reports/dataset_capability_and_eligibility_v4.csv
+ ? external/AFtoolkit
+ m external/Cardiac-Sensing-FM
+?? experiments/af_density_continuity_v5/
+?? experiments/af_density_continuity_v5_directive.md
+?? experiments/af_density_v4/noise/run_v42_nstdb_external.py
+?? experiments/af_density_v4/reports/iridia_reference_af_density_dataset.csv
+?? experiments/af_density_v4/reports/three_dataset_harmonized_sensitivity_manifest.csv
+?? experiments/af_density_v4/reports/three_dataset_reference_af_density_manifest.csv
+?? experiments/af_density_v4/reports/three_dataset_reference_af_density_report.md
+?? experiments/af_density_v4/reports/v42_episode_density_comparison.csv
+?? experiments/af_density_v4/reports/v42_final_scientific_verdict.md
+?? experiments/af_density_v4/reports/v42_matched_detector_benchmark.csv
+?? experiments/af_density_v4/reports/v42_model_provenance.csv
+?? experiments/af_density_v4/reports/v42_nstdb_and_external_benchmark.csv
+?? experiments/af_density_verification_v6/
+?? experiments/af_entrenchment/
+?? experiments/experiments/
+?? experiments/pmv_temporal_specificity/
+?? reports/
+?? scripts/benchmark_three_cohort_reference_distributions.py
+?? scripts/build_reconciled_report.py
+?? scripts/generate_iridia_reference_af_density_dataset.py
+?? scripts/reconcile_multicohort_af_reference.py
+?? scripts/run_clinical_feasibility_audit.py

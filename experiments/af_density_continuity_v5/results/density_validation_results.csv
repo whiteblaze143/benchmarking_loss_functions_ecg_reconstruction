@@ -1,0 +1,4 @@
+cohort,density_defined_windows,single_episode_windows,single_episode_density_equals_1,multi_episode_windows,median_continuous_density,median_binned_60m_density,median_abs_diff_continuous_vs_60m,iqr_abs_diff_continuous_vs_60m
+LTAFDB,59,4,True,55,0.8797590831710865,0.8467498946555444,0.15205490520960152,0.15119508326339043
+SHDB-AF,57,20,True,37,0.9955432392587193,0.8463924349640963,0.12990866903567,0.04812347453800292
+IRIDIA-AF,92,69,True,23,1.0,0.8621411767097145,0.12248744875275944,0.04588369084822419

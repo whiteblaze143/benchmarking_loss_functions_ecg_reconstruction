@@ -1,0 +1,11 @@
+{
+  "n_recordings_with_paired_control": 123,
+  "n_patients_with_paired_control": 123,
+  "patient_median_delta_AF": 0.00529,
+  "patient_median_delta_ctrl": -9.8e-05,
+  "patient_paired_DiD_median": 0.007393,
+  "did_ci95_low": 0.000966,
+  "did_ci95_high": 0.016353,
+  "did_wilcoxon_p": 0.01571395,
+  "did_significant": true
+}

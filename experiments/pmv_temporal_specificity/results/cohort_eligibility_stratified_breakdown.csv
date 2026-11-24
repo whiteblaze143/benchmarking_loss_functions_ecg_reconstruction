@@ -1,0 +1,13 @@
+duration_threshold,dataset,total_runs,eligible_runs_ge_1h,pct_eligible_runs,total_patients,eligible_patients,pct_eligible_patients,median_episode_dur_min
+Native (All runs),IRIDIA-AF,388,256,65.98,152,141,92.76,82.08
+Native (All runs),SHDB-AF,794,116,14.61,77,65,84.42,0.86
+Native (All runs),LTAFDB,7400,27,0.36,83,17,20.48,0.25
+Native (All runs),Total Cohort,8582,399,4.65,312,223,71.47,0.32
+Clinical AF (>=30s),IRIDIA-AF,386,256,66.32,152,141,92.76,82.79
+Clinical AF (>=30s),SHDB-AF,484,68,14.05,76,53,69.74,2.81
+Clinical AF (>=30s),LTAFDB,2691,8,0.3,82,8,9.76,1.55
+Clinical AF (>=30s),Total Cohort,3561,332,9.32,310,202,65.16,1.93
+Sustained AF (>=2m),IRIDIA-AF,335,237,70.75,152,137,90.13,119.35
+Sustained AF (>=2m),SHDB-AF,280,42,15.0,67,39,58.21,12.72
+Sustained AF (>=2m),LTAFDB,1142,4,0.35,75,4,5.33,5.26
+Sustained AF (>=2m),Total Cohort,1757,283,16.11,294,180,61.22,8.37

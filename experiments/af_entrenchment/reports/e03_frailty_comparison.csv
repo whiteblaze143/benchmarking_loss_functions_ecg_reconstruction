@@ -1,0 +1,3 @@
+Model,Parameters,alpha_shape,frailty_sigma2,log_likelihood,AIC
+M0_Population_Weibull,"alpha, lambda",0.3669,0.0,-47099.23,94202.47
+M1_Shared_Gamma_Frailty_Weibull,"alpha_within, lambda, sigma2",0.5854,2.3398,-43670.49,87346.97

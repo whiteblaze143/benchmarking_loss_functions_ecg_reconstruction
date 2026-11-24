@@ -1,0 +1,4 @@
+clinical_characteristic,eligible_1h_median,eligible_1h_iqr,excluded_1h_median,excluded_1h_iqr,mann_whitney_p,significant_phenotype_shift
+AF Episode Duration (min),47.5,209.49,0.3,1.04,0.0,True
+Preceding Sinus Duration (min),414.98,707.0,0.02,0.27,0.0,True
+Subsequent Sinus Duration (min),80.55,452.58,0.03,0.3,0.0,True

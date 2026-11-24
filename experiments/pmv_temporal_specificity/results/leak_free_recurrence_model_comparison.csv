@@ -1,0 +1,5 @@
+cohort,n_episodes,n_patients,n_events_total,n_events_60m,unadjusted_hr_log_pmv,unadjusted_ci95_low,unadjusted_ci95_high,unadjusted_p,adjusted_hr_log_pmv,adjusted_ci95_low,adjusted_ci95_high,adjusted_p,c_index_model1_clinical,c_index_model2_with_pmv,delta_c_index_pmv,auroc_model1_clinical,auroc_model2_with_pmv,delta_auroc_pmv,within_patient_median_spearman_r,within_patient_pct_positive_r
+Pooled (All Cohorts),676,165,414,304,0.7645,0.7049,0.829,0.0,0.8932,0.8017,0.9952,0.0406,0.7032,0.7059,0.0027,0.6907,0.7079,0.0172,0.0,47.5
+IRIDIA-AF (Primary Cohort),204,99,129,53,0.7189,0.5814,0.889,0.0023,,,,,0.5,0.5,0.0,0.8386,0.8359,-0.0026,0.0,45.8
+SHDB-AF (Replication 1),112,24,91,67,0.8818,0.7291,1.0666,0.195,0.754,0.5879,0.9671,0.0262,0.6408,0.6635,0.0227,0.6697,0.7095,0.0398,0.0523,60.0
+LTAFDB (Replication 2),360,42,194,184,0.7782,0.7058,0.8581,0.0,0.9983,0.8467,1.1771,0.9842,0.6372,0.6375,0.0003,0.6982,0.6979,-0.0003,-0.037,44.4

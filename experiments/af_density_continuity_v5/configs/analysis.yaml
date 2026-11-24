@@ -1,0 +1,37 @@
+horizons:
+  primary_s: 43200     # 12 hours
+  secondary_s: 86400   # 24 hours
+  sensitivity_s: 21600 # 6 hours
+
+temporal_aggregation:
+  primary_bin_s: 3600  # 60 minutes
+  bins_s: [30, 60, 300, 900, 1800, 3600, 7200, 21600]
+
+duration_filters_s:
+  native: 0
+  min_30s: 30
+  min_2m: 120
+  min_6m: 360
+  min_30m: 1800
+
+ventricular_rate:
+  window_s: 30
+  sensitivity_windows_s: [10, 60]
+  rate_threshold_bpm: 120
+  secondary_thresholds_bpm: [110, 130]
+  min_rate_coverage: 0.90
+  sensitivity_rate_coverage: [0.80, 0.95]
+
+localization:
+  primary_coverage: 0.80
+  secondary_coverages: [0.50, 0.75, 0.90]
+
+matching:
+  burden_caliper: 0.025
+  density_caliper: 0.025
+  min_smax_contrast: 0.30
+  illustrative_q120_thresholds: [0.10, 0.20]
+
+models:
+  smax_standard_contrast: 0.25
+  cv_folds: 5

@@ -1,0 +1,152 @@
+{
+  "definitions_hash": "6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3",
+  "git_hash": "cc84d8b0",
+  "run_timestamp": "2026-11-28T00:32:26Z",
+  "variants": {
+    "g0": {
+      "cohorts": {
+        "IRIDIA": {
+          "n_events": 338,
+          "n_patients": 125,
+          "reinit_360s_n": 338,
+          "reinit_360s_rate": 0.17455621301775148
+        },
+        "LTAFDB": {
+          "n_events": 1529,
+          "n_patients": 61,
+          "reinit_360s_n": 1527,
+          "reinit_360s_rate": 0.9259986902423052
+        },
+        "SHDB": {
+          "n_events": 479,
+          "n_patients": 71,
+          "reinit_360s_n": 454,
+          "reinit_360s_rate": 0.711453744493392
+        }
+      },
+      "min_run_sec": 30.0,
+      "n_events": 2346,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261128T001937Z_cc84d8b0/stage4/events_g0.parquet"
+    },
+    "g0_confirmed_sinus": {
+      "min_run_sec": 30.0,
+      "n_events": 1980,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261128T001937Z_cc84d8b0/stage4/events_g0_confirmed_sinus.parquet"
+    },
+    "g0_min120s": {
+      "min_run_sec": 120.0,
+      "n_events": 1337,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261128T001937Z_cc84d8b0/stage4/events_g0_min120s.parquet"
+    },
+    "g0_min300s": {
+      "min_run_sec": 300.0,
+      "n_events": 867,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261128T001937Z_cc84d8b0/stage4/events_g0_min300s.parquet"
+    },
+    "g0_strict_n": {
+      "min_run_sec": 30.0,
+      "n_events": 1627,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261128T001937Z_cc84d8b0/stage4/events_g0_strict_n.parquet"
+    },
+    "g120": {
+      "cohorts": {
+        "IRIDIA": {
+          "n_events": 305,
+          "n_patients": 125,
+          "reinit_360s_n": 305,
+          "reinit_360s_rate": 0.08524590163934426
+        },
+        "LTAFDB": {
+          "n_events": 382,
+          "n_patients": 47,
+          "reinit_360s_n": 380,
+          "reinit_360s_rate": 0.5552631578947368
+        },
+        "SHDB": {
+          "n_events": 256,
+          "n_patients": 71,
+          "reinit_360s_n": 231,
+          "reinit_360s_rate": 0.36796536796536794
+        }
+      },
+      "min_run_sec": 30.0,
+      "n_events": 943,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261128T001937Z_cc84d8b0/stage4/events_g120.parquet"
+    },
+    "g2400": {
+      "cohorts": {
+        "IRIDIA": {
+          "n_events": 246,
+          "n_patients": 125,
+          "reinit_360s_n": 246,
+          "reinit_360s_rate": 0.0
+        },
+        "LTAFDB": {
+          "n_events": 108,
+          "n_patients": 47,
+          "reinit_360s_n": 106,
+          "reinit_360s_rate": 0.0
+        },
+        "SHDB": {
+          "n_events": 130,
+          "n_patients": 71,
+          "reinit_360s_n": 104,
+          "reinit_360s_rate": 0.0
+        }
+      },
+      "min_run_sec": 30.0,
+      "n_events": 484,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261128T001937Z_cc84d8b0/stage4/events_g2400.parquet"
+    },
+    "g30": {
+      "cohorts": {
+        "IRIDIA": {
+          "n_events": 335,
+          "n_patients": 125,
+          "reinit_360s_n": 335,
+          "reinit_360s_rate": 0.16716417910447762
+        },
+        "LTAFDB": {
+          "n_events": 673,
+          "n_patients": 51,
+          "reinit_360s_n": 671,
+          "reinit_360s_rate": 0.7943368107302533
+        },
+        "SHDB": {
+          "n_events": 366,
+          "n_patients": 71,
+          "reinit_360s_n": 341,
+          "reinit_360s_rate": 0.5982404692082112
+        }
+      },
+      "min_run_sec": 30.0,
+      "n_events": 1374,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261128T001937Z_cc84d8b0/stage4/events_g30.parquet"
+    },
+    "g360": {
+      "cohorts": {
+        "IRIDIA": {
+          "n_events": 279,
+          "n_patients": 125,
+          "reinit_360s_n": 279,
+          "reinit_360s_rate": 0.0
+        },
+        "LTAFDB": {
+          "n_events": 208,
+          "n_patients": 46,
+          "reinit_360s_n": 206,
+          "reinit_360s_rate": 0.0
+        },
+        "SHDB": {
+          "n_events": 183,
+          "n_patients": 71,
+          "reinit_360s_n": 158,
+          "reinit_360s_rate": 0.0
+        }
+      },
+      "min_run_sec": 30.0,
+      "n_events": 670,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261128T001937Z_cc84d8b0/stage4/events_g360.parquet"
+    }
+  }
+}

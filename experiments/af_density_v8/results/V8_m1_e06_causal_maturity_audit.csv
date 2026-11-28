@@ -1,0 +1,3 @@
+task,n_rows,strict_matured_propensity_auroc
+P01_CleanAnnotated,90057,0.4936
+P03_Survival15m,4196,0.6099

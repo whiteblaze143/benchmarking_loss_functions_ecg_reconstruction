@@ -1,0 +1,39 @@
+# Task specifications for V7-P Predictive Framework
+tasks:
+  P01:
+    name: "Forecasting Sustained AF Onset"
+    description: "Forecast whether a new sustained AF episode (>=30m) begins within the next 30m from non-AF monitoring grids"
+    primary_cohorts: ["SHDB-AF", "LTAFDB"]
+    secondary_cohorts: ["IRIDIA-AF"]
+    grid_step_seconds: 300  # 5 minutes
+    min_preceding_history_seconds: 1800  # 30 minutes minimum preceding observation
+    forecast_horizon_seconds: 1800  # 30 minutes
+    primary_sustained_threshold_seconds: 1800  # 30 minutes
+    secondary_sustained_thresholds_seconds: [360, 3600]  # 6m, 60m
+    secondary_horizons_seconds: [300, 900, 3600]  # 5m, 15m, 60m
+
+  P02:
+    name: "Early Prediction of AF Episode Persistence"
+    description: "Predict whether an ongoing AF episode will persist to >=30m at early landmarks (60s landmark)"
+    primary_cohorts: ["IRIDIA-AF", "SHDB-AF"]
+    secondary_cohorts: ["LTAFDB"]
+    primary_landmark_seconds: 60  # 1 minute post-onset
+    secondary_landmarks_seconds: [10, 30, 120, 300]  # 10s, 30s, 2m, 5m
+    primary_persistence_threshold_seconds: 1800  # 30 minutes
+    secondary_persistence_thresholds_seconds: [360, 3600]  # 6m, 60m
+
+  P03:
+    name: "Dynamic AF Termination and Residual Duration"
+    description: "Dynamic survival prediction of remaining AF duration and 15m termination probability at landmarks"
+    primary_cohorts: ["IRIDIA-AF", "SHDB-AF"]
+    secondary_cohorts: ["LTAFDB"]
+    landmarks_seconds: [60, 300, 900]  # 1m, 5m, 15m
+    primary_horizon_seconds: 900  # 15 minutes termination horizon
+    secondary_horizons_seconds: [300, 1800]  # 5m, 30m
+
+  P04:
+    name: "Authentic Noise Holter Rhythm Classification"
+    description: "Rhythm identification (AF vs non-AF / AFL / Ectopy) and selective prediction under authentic ambulatory noise"
+    primary_cohorts: ["Noise-Holter"]
+    strata: ["Clean", "N1", "N2"]
+    source_dataset_path: "/data/mithunmanivannan/datasets/noise-holter-database-a-multi-device-multi-arrhythmia-real-world-clinical-ecg-signal-quality-benchmark-1.0.0"

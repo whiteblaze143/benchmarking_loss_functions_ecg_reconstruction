@@ -1,0 +1,17 @@
+{
+  "definitions_hash": "6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3",
+  "git_hash": "cc84d8b0",
+  "max_sample_discrepancy": 0,
+  "n_annotated_patients": 329,
+  "n_annotated_records": 349,
+  "n_patients": 358,
+  "n_records": 379,
+  "n_runs_pre_harmonisation": 8540,
+  "n_unannotated_shdb": 30,
+  "run_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261128T042010Z_cc84d8b0",
+  "run_timestamp": "2026-11-28T04:20:10Z",
+  "seed": 20260101,
+  "total_af_hours": 3095.22501875,
+  "total_known_non_af_hours": 7857.241924652777,
+  "total_unknown_hours": 748.985995486111
+}

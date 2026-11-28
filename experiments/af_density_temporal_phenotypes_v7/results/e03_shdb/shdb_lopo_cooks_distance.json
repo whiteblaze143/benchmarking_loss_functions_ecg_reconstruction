@@ -1,0 +1,100 @@
+{
+  "threshold_90d": {
+    "n_total": 18,
+    "threshold_4_n": 0.2222222222222222,
+    "n_outliers": 3,
+    "outlier_records": [
+      {
+        "record_id": "011",
+        "patient_id": "shdb_5493975",
+        "cooks_d": 0.9009306667718467,
+        "Echo_LAD": 29.0,
+        "af_burden_12h": 0.0020688657407406563,
+        "density_12h": 0.6616863277879961
+      },
+      {
+        "record_id": "031",
+        "patient_id": "shdb_5303760",
+        "cooks_d": 0.2785762127663285,
+        "Echo_LAD": 49.0,
+        "af_burden_12h": 0.5109322916666666,
+        "density_12h": 0.9963938555398768
+      },
+      {
+        "record_id": "138",
+        "patient_id": "shdb_5022948",
+        "cooks_d": 0.226755018789905,
+        "Echo_LAD": 45.0,
+        "af_burden_12h": 0.9350445601851854,
+        "density_12h": 0.5501940794900704
+      }
+    ],
+    "original_m3a_density_coef": 2.8618141023517083,
+    "original_m3a_density_p": 0.7162710371371884,
+    "original_effect_per_010": 0.28618141023517085,
+    "clean_n": 15,
+    "clean_m3a_density_coef": -0.997379818966575,
+    "clean_m3a_density_p": 0.8924996927656567,
+    "clean_effect_per_010": -0.0997379818966575
+  },
+  "threshold_30d": {
+    "n_total": 14,
+    "threshold_4_n": 0.2857142857142857,
+    "n_outliers": 2,
+    "outlier_records": [
+      {
+        "record_id": "011",
+        "patient_id": "shdb_5493975",
+        "cooks_d": 1.4565488177897394,
+        "Echo_LAD": 29.0,
+        "af_burden_12h": 0.0020688657407406563,
+        "density_12h": 0.6616863277879961
+      },
+      {
+        "record_id": "138",
+        "patient_id": "shdb_5022948",
+        "cooks_d": 0.42737372424867764,
+        "Echo_LAD": 45.0,
+        "af_burden_12h": 0.9350445601851854,
+        "density_12h": 0.5501940794900704
+      }
+    ],
+    "original_m3a_density_coef": 2.3517589666275693,
+    "original_m3a_density_p": 0.8130341395243483,
+    "original_effect_per_010": 0.23517589666275696,
+    "clean_n": 12,
+    "clean_m3a_density_coef": -0.8566312979346833,
+    "clean_m3a_density_p": 0.9437510888505607,
+    "clean_effect_per_010": -0.08566312979346834
+  },
+  "threshold_180d": {
+    "n_total": 20,
+    "threshold_4_n": 0.2,
+    "n_outliers": 2,
+    "outlier_records": [
+      {
+        "record_id": "011",
+        "patient_id": "shdb_5493975",
+        "cooks_d": 1.0250371015492323,
+        "Echo_LAD": 29.0,
+        "af_burden_12h": 0.0020688657407406563,
+        "density_12h": 0.6616863277879961
+      },
+      {
+        "record_id": "031",
+        "patient_id": "shdb_5303760",
+        "cooks_d": 0.2531016986008514,
+        "Echo_LAD": 49.0,
+        "af_burden_12h": 0.5109322916666666,
+        "density_12h": 0.9963938555398768
+      }
+    ],
+    "original_m3a_density_coef": 1.4972032278362235,
+    "original_m3a_density_p": 0.8441329254128946,
+    "original_effect_per_010": 0.14972032278362235,
+    "clean_n": 18,
+    "clean_m3a_density_coef": -6.131717614854015,
+    "clean_m3a_density_p": 0.3031890368094027,
+    "clean_effect_per_010": -0.6131717614854015
+  }
+}

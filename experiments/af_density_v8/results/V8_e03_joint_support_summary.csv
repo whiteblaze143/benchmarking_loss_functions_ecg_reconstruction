@@ -1,0 +1,13 @@
+stratum,cohort,n_pts_total,n_low_frag_le5_runs,med_burden_low_frag,n_high_frag_ge10_runs,med_burden_high_frag,common_support_feasible
+All_MultiRun_12h,ALL,111,56,0.1595,45,0.2335,True
+All_MultiRun_12h,IRIDIA-AF,23,21,0.1228,0,,False
+All_MultiRun_12h,LTAFDB,55,18,0.5888,33,0.4704,True
+All_MultiRun_12h,SHDB-AF,33,17,0.0582,12,0.1162,True
+HighDens_ge0.80_12h,ALL,67,38,0.1036,23,0.1242,True
+HighDens_ge0.80_12h,IRIDIA-AF,14,13,0.0566,0,,False
+HighDens_ge0.80_12h,LTAFDB,33,13,0.1214,18,0.1391,True
+HighDens_ge0.80_12h,SHDB-AF,20,12,0.2075,5,0.1242,True
+JointBand_B05_50_D80_100_12h,ALL,34,20,0.1735,11,0.1242,True
+JointBand_B05_50_D80_100_12h,IRIDIA-AF,10,10,0.0787,0,,False
+JointBand_B05_50_D80_100_12h,LTAFDB,12,3,0.1641,7,0.1169,False
+JointBand_B05_50_D80_100_12h,SHDB-AF,12,7,0.2322,4,0.1984,False

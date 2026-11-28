@@ -1,0 +1,6 @@
+layer,n_all36,mean_masked_pct_all36,n_mixed19,mean_masked_pct_mixed19,max_masked_pct_mixed19,n_still_mixed,n_all_known_af,n_confirmed_all_af
+R2_VT_Unknown,36,0.1045,19,0.1979,1.831,7,12,0
+R2_VT_SBR10_Unknown,36,0.2103,19,0.3984,1.866,3,16,0
+R2_VT_SBR60_Unknown,36,0.2552,19,0.4836,2.316,3,16,0
+R1_Waveform_ConsUnknown,36,0.1457,19,0.2762,1.831,6,13,0
+R2_Cons_Sub10_Unknown,36,0.2228,19,0.4221,1.895,2,17,0

@@ -1,0 +1,48 @@
+# Checkpoints registry for Foundation Models and SetOperators in V7-P
+foundation_models:
+  FM01:
+    name: "CSFM_Tiny"
+    path: "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/external/Cardiac-Sensing-FM/pretrained/CSFM_tiny.pth"
+    tier: 1
+    input_channels: 1
+    sampling_rate: 250
+    input_length_s: 10
+  FM02:
+    name: "CLEF_Medium"
+    path: "/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/foundation_model_comparison/candidate_weights/clef/clef_medium.ckpt"
+    tier: 1
+    input_channels: 1
+    sampling_rate: 500
+    input_length_s: 10
+  FM03:
+    name: "ECGFounder_1lead"
+    path: "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/af_density_prediction_v7p/checkpoints/1_lead_ECGFounder.pth"
+    tier: 1
+    input_channels: 1
+    sampling_rate: 500
+    input_length_s: 10
+  FM04:
+    name: "ECGFM_KED"
+    path: "/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/foundation_model_comparison/candidate_weights/ecgfm_ked/best_valid_all_increase_with_augment_epoch_3.pt"
+    tier: 1
+    input_channels: 12
+    sampling_rate: 500
+    input_length_s: 10
+
+set_operators:
+  SO01:
+    name: "F2_SetOperator"
+    path: "/data/mithunmanivannan/codex_artifacts/temporal_setoperator_fm_20261120/artifacts/F2/pilot_final.pt"
+    description: "Phase SetOperator with continuous operator conditioning"
+  SO02:
+    name: "F0_SetOperator"
+    path: "/data/mithunmanivannan/codex_artifacts/temporal_setoperator_fm_20261120/artifacts/F0/pilot_final.pt"
+    description: "Phase SetOperator baseline without continuous conditioning"
+  SO03:
+    name: "G1_EchoNext_Geometry_SetOperator"
+    path: "/data/mithunmanivannan/codex_artifacts/echonext_geometry_setoperator_v1/runs/g1_seed42/best_model.pt"
+    description: "Geometry-conditioned SetOperator"
+  SO04:
+    name: "Control_Capacity_SetOperator"
+    path: "/data/mithunmanivannan/codex_artifacts/echonext_geometry_setoperator_v1/runs/control_capacity_seed42/best_model.pt"
+    description: "Matched capacity control SetOperator"

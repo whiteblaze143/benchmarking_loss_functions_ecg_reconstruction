@@ -1,0 +1,8 @@
+panel,window_name,n_episodes,n_patients,mean_hr_bpm,se_hr_bpm,mean_cvrr,se_cvrr,mean_rmssd_ms,se_rmssd_ms
+Matched_Through_17_5m,win_30_180s,622,257,97.49,1.073,0.2158,0.0028,195.25,3.63
+Matched_Through_17_5m,win_5_7_5m,622,257,96.941,1.062,0.217,0.0029,198.53,3.58
+Matched_Through_17_5m,win_15_17_5m,622,257,96.686,1.049,0.2142,0.0027,196.37,3.38
+Matched_Through_32_5m,win_30_180s,509,244,97.292,1.166,0.2173,0.0032,196.62,4.12
+Matched_Through_32_5m,win_5_7_5m,509,244,96.442,1.167,0.2194,0.0033,202.29,4.11
+Matched_Through_32_5m,win_15_17_5m,509,244,96.658,1.17,0.2146,0.003,197.81,3.88
+Matched_Through_32_5m,win_30_32_5m,509,244,95.816,1.156,0.2133,0.0031,200.56,4.17

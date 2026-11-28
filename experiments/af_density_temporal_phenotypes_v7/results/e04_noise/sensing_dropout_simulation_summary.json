@@ -1,0 +1,29 @@
+{
+  "total_recordings_simulated": 124,
+  "by_dataset": {
+    "IRIDIA-AF": 70,
+    "SHDB-AF": 54
+  },
+  "s1a_brief_30s_omission": {
+    "mean_burden_error": -0.00040894445939794244,
+    "mean_abs_burden_error": 0.00040894445939794244,
+    "mean_density_error": 0.00382874593314673,
+    "mean_abs_density_error": 0.0040380378022440684
+  },
+  "s1b_brief_10s_omission": {
+    "mean_burden_error": -6.300310656597923e-05,
+    "mean_abs_burden_error": 6.300310656597923e-05,
+    "mean_density_error": 0.002341829424573812,
+    "mean_abs_density_error": 0.0024569196015389073
+  },
+  "s2_gap_bridging_60s": {
+    "mean_burden_error": 0.0007200084470694451,
+    "mean_abs_burden_error": 0.0007200084470694451,
+    "mean_density_error": 0.0006395569791256552,
+    "mean_abs_density_error": 0.0010988323752746205
+  },
+  "s3_intermittent_dropout_20pct": {
+    "mean_manski_width": 0.31793220071468575,
+    "empirical_coverage_rate": 100.0
+  }
+}

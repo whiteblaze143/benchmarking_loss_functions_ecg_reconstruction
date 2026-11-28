@@ -1,0 +1,5 @@
+scenario,cohort,post_vs_remote_rr,post_vs_pre_rr,n_patients,notes
+"Baseline Primary (All Patients, Complete Runs < 30s)",ALL,4.12,2.34,58,Standard primary protocol
+Exclude Top Prolific Patient (ltafdb_115),ALL,,,114,Tests if prolific patient drives conclusion
+LTAFDB Cohort Only,LTAFDB,,,61,Holter ambulatory population
+SHDB-AF Cohort Only,SHDB-AF,,,54,Clinical telemetry population

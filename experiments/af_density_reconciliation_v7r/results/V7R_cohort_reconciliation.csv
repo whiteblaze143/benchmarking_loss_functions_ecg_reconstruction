@@ -1,0 +1,5 @@
+dataset,raw_recordings,annotated_recordings,unannotated_recordings,unique_patients_raw,unique_patients_annotated,patients_with_af,patients_with_multi_af_runs,raw_recording_h,annotated_known_rhythm_h,unknown_rhythm_h_total,af_duration_h,known_non_af_h,raw_af_transitions_sum,canonical_af_runs_sum,left_censored_runs,right_censored_runs
+IRIDIA-AF,167,167,0,152,152,152,66,6690.47,6687.56,3.42,1609.01,5078.55,388,388,24,0
+LTAFDB,84,84,0,84,84,83,66,1960.6,1934.92,25.68,1030.89,904.03,7358,7358,0,43
+SHDB-AF,128,98,30,122,93,72,49,3050.38,2330.49,719.88,455.94,1874.55,794,794,0,0
+COMBINED,379,349,30,358,329,307,181,11701.45,10952.98,748.99,3095.84,7857.14,8540,8540,24,43

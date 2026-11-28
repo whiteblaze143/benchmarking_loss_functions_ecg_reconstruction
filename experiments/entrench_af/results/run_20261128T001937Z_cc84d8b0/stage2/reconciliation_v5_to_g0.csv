@@ -1,0 +1,10 @@
+tier,cohort,n_canon_af_intervals,n_merged_lt5_gap_beats,n_merged_non_sinus_gap,n_dropped_lt5_af_beats,n_retained_g0,check_balance_diff,git_hash,definitions_hash,run_timestamp
+confirmed_sinus_nsbr,IRIDIA,388,0,0,0,388,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:24:20Z
+confirmed_sinus_nsbr,LTAFDB,7358,3001,505,1028,2824,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:24:20Z
+confirmed_sinus_nsbr,SHDB,794,43,31,0,720,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:24:20Z
+native_any_non_af,IRIDIA,388,0,0,0,388,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:24:20Z
+native_any_non_af,LTAFDB,7358,3001,0,1071,3286,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:24:20Z
+native_any_non_af,SHDB,794,43,0,0,751,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:24:20Z
+strict_sinus_n_only,IRIDIA,388,0,0,0,388,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:24:20Z
+strict_sinus_n_only,LTAFDB,7358,3001,1159,964,2234,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:24:20Z
+strict_sinus_n_only,SHDB,794,43,31,0,720,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:24:20Z

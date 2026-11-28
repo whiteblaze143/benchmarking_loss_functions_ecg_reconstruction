@@ -1,0 +1,6 @@
+sensitivity_scenario,excluded_patients,pre_vs_remote_rr,pre_vs_remote_p,post_vs_remote_rr,post_vs_remote_p,post_vs_pre_rr,post_vs_pre_p
+None (Full Pooled),None,6.236,1.5911734466284313e-07,4.39,7.565323951510185e-05,0.704,0.175816075089957
+Exclude Top-1 LTAFDB Pt,ltafdb_112,6.236,1.5911734466284313e-07,4.39,7.565323951510185e-05,0.704,0.175816075089957
+Exclude Top-3 LTAFDB Pts,"ltafdb_112,ltafdb_100,ltafdb_74",8.509,4.321936309913282e-14,5.947,1.954912911512152e-08,0.699,0.18354708764698457
+Exclude Top-5 LTAFDB Pts,"ltafdb_112,ltafdb_100,ltafdb_74,ltafdb_15,ltafdb_53",10.548,5.851909953808556e-19,7.114,5.935945892922424e-09,0.674,0.19803243187584296
+Exclude Top-10 LTAFDB Pts,"ltafdb_112,ltafdb_100,ltafdb_74,ltafdb_15,ltafdb_53,ltafdb_32,ltafdb_25,ltafdb_204,ltafdb_115,ltafdb_101",10.32,7.069455092893703e-16,8.889,6.183283304426746e-10,0.861,0.6828012541257773

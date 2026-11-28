@@ -1,0 +1,64 @@
+{
+  "annotation_merge_beats": 5,
+  "definitions_hash": "6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3",
+  "gap_family": [
+    {
+      "af_burden_rel_diff_pct": 0.0,
+      "af_only_hours": 3094.6413452256943,
+      "gap_merge_sec": 0,
+      "merged_span_hours": 3097.4805105902774,
+      "n_iridia": 388,
+      "n_ltafdb": 3286,
+      "n_runs": 4425,
+      "n_shdb": 751,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261126T193111Z_cc84d8b0/stage2/runs_g0.parquet"
+    },
+    {
+      "af_burden_rel_diff_pct": 1.4694670566204145e-14,
+      "af_only_hours": 3094.6413452256947,
+      "gap_merge_sec": 30,
+      "merged_span_hours": 3104.4206840277775,
+      "n_iridia": 384,
+      "n_ltafdb": 1363,
+      "n_runs": 2237,
+      "n_shdb": 490,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261126T193111Z_cc84d8b0/stage2/runs_g30.parquet"
+    },
+    {
+      "af_burden_rel_diff_pct": 0.0,
+      "af_only_hours": 3094.6413452256943,
+      "gap_merge_sec": 120,
+      "merged_span_hours": 3120.4312323784725,
+      "n_iridia": 353,
+      "n_ltafdb": 619,
+      "n_runs": 1310,
+      "n_shdb": 338,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261126T193111Z_cc84d8b0/stage2/runs_g120.parquet"
+    },
+    {
+      "af_burden_rel_diff_pct": 1.4694670566204145e-14,
+      "af_only_hours": 3094.6413452256947,
+      "gap_merge_sec": 360,
+      "merged_span_hours": 3143.278214496527,
+      "n_iridia": 327,
+      "n_ltafdb": 339,
+      "n_runs": 899,
+      "n_shdb": 233,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261126T193111Z_cc84d8b0/stage2/runs_g360.parquet"
+    },
+    {
+      "af_burden_rel_diff_pct": 0.0,
+      "af_only_hours": 3094.6413452256943,
+      "gap_merge_sec": 2400,
+      "merged_span_hours": 3215.265289496528,
+      "n_iridia": 294,
+      "n_ltafdb": 179,
+      "n_runs": 627,
+      "n_shdb": 154,
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261126T193111Z_cc84d8b0/stage2/runs_g2400.parquet"
+    }
+  ],
+  "git_hash": "cc84d8b0",
+  "min_run_beats": 5,
+  "run_timestamp": "2026-11-26T19:35:01Z"
+}

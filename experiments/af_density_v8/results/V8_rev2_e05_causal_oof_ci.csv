@@ -1,0 +1,9 @@
+layer,contrast,n_pts,mean_delta_deviance,ci95_lo,ci95_hi,boot_p
+R0_Native,M3_Burden_Density_Cont_minus_M2_Burden_Density,128,-16.487,-31.932,-3.151,0.019
+R0_Native,M3_Burden_Density_Cont_minus_M1_Burden,128,-19.425,-41.977,-1.785,0.026
+R2_VT_SBR60_Unknown,M3_Burden_Density_Cont_minus_M2_Burden_Density,112,-6.444,-19.408,4.132,0.3068
+R2_VT_SBR60_Unknown,M3_Burden_Density_Cont_minus_M1_Burden,112,-7.675,-21.253,4.228,0.2319
+R3_gap30s,M3_Burden_Density_Cont_minus_M2_Burden_Density,111,-2.438,-10.059,3.185,0.4978
+R3_gap30s,M3_Burden_Density_Cont_minus_M1_Burden,111,-7.184,-22.567,2.671,0.2639
+R3_gap60s,M3_Burden_Density_Cont_minus_M2_Burden_Density,111,-0.666,-3.979,2.47,0.6797
+R3_gap60s,M3_Burden_Density_Cont_minus_M1_Burden,111,-2.637,-8.757,2.181,0.3538

@@ -1,0 +1,26 @@
+{
+  "af_hours_rel_err_pct": 0.0032313886712562133,
+  "definitions_hash": "6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3",
+  "git_hash": "cc84d8b0",
+  "max_sample_diff": 0,
+  "n_annotated_records": 349,
+  "n_intervals": 56787,
+  "n_uncovered_segments_labeled_unknown": 15,
+  "rhythm_class_counts": {
+    "AF": 8540,
+    "CONFIRMED_SINUS_N": 23744,
+    "IRIDIA_NON_AF_UNSPECIFIED": 516,
+    "ORGANIZED_ATRIAL": 3371,
+    "SINUS_BRADYCARDIA": 11326,
+    "UNKNOWN": 361,
+    "VENTRICULAR_OR_ECTOPIC": 8929
+  },
+  "rhythm_counts": {
+    "AF": 8540,
+    "nonAF": 47886,
+    "unknown": 361
+  },
+  "run_timestamp": "2026-11-28T03:28:55Z",
+  "target_af_hours": 3095.225,
+  "total_af_hours": 3095.32501875
+}

@@ -1,0 +1,5 @@
+task_id,task_name,primary_cohorts,total_samples,positive_events,negative_samples,positive_prevalence,unique_patients,unique_records,censored_count,feasibility_status
+P01,Forecast Sustained AF (>=30m within 30m),"SHDB-AF, LTAFDB, IRIDIA-AF",98404,1692,96712,0.017194422990935328,330,335,0,HIGHLY_FEASIBLE
+P02,Predict Episode Persistence to >=30m at 60s Landmark,"IRIDIA-AF, SHDB-AF, LTAFDB",2458,531,1927,0.2160292921074044,290,303,8,HIGHLY_FEASIBLE
+P03,"Dynamic Survival and 15m Termination at [1m, 5m, 15m]","IRIDIA-AF, SHDB-AF, LTAFDB",4196,2397,1799,0.571258341277407,290,303,121,HIGHLY_FEASIBLE
+P04,Authentic Ambulatory Noise Holter Rhythm Classification,Noise-Holter (PhysioNet v1.0.0),6130,379,5751,0.06182707993474715,310,6130,0,HIGHLY_FEASIBLE

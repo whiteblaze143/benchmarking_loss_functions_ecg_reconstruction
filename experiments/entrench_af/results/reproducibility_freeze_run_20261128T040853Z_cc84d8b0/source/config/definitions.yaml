@@ -1,0 +1,81 @@
+seed: 20260101
+
+cohorts:
+  - IRIDIA
+  - SHDB
+  - LTAFDB
+
+qc_cohorts:
+  - NOISE_HOLTER
+  - NSTDB
+
+annotation_merge_beats: 5
+min_run_beats: 5
+min_run_sec_primary: 30
+min_run_sec_sensitivity:
+  - 120
+  - 300
+
+post_termination_followup_min_sec: 3600
+reinit_thresholds_sec:
+  - 60
+  - 360
+  - 3600
+
+gap_merge_family_sec:
+  - 0
+  - 30
+  - 120
+  - 360
+  - 2400
+
+spitaler_rules:
+  min_daily_burden_min: 6
+  full_day_min: 1400
+  intra_day_tolerance_min: 40
+  bridge_midnight_requires_full_day: true
+
+terminal_window_sec: 300
+post_window_A_sec:
+  - 0
+  - 120
+post_window_D_sec:
+  - 600
+  - 720
+
+hazard_thresholds_sec:
+  - 30
+  - 60
+  - 120
+  - 300
+  - 600
+  - 1800
+  - 3600
+  - 7200
+  - 10800
+  - 14400
+  - 18000
+  - 21600
+  - 43200
+  - 86400
+  - 172800
+
+hazard_windows_sec:
+  - 60
+  - 300
+  - 3600
+  - 86400
+
+bsqi_strata:
+  clean:
+    - 0.85
+    - 1.0
+  N1:
+    - 0.50
+    - 0.85
+  N2:
+    - 0.0
+    - 0.50
+
+sqi_gate_rule: "marker_error < 0.5 * between_event_SD"
+super_contributor_rule: "top 10 patients by event count (LTAFDB) and top 12 overall"

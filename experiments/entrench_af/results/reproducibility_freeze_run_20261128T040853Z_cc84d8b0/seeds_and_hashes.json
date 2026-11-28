@@ -1,0 +1,39 @@
+{
+  "run_name": "run_20261128T040853Z_cc84d8b0",
+  "run_dir": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/entrench_af/results/run_20261128T040853Z_cc84d8b0",
+  "git_hash": "cc84d8b0",
+  "definitions_hash": "6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3",
+  "exported_utc": "2026-11-28T04:18:54Z",
+  "random_seeds": {
+    "global_seed": 20260401,
+    "aim1_bootstrap_km_and_na_seed": 20260401,
+    "aim1_delayed_entry_verification_seed": 20260432,
+    "aim2_threshold_bootstrap_seed": 20260401,
+    "aim2_paired_bootstrap_seed": 20260500,
+    "secondary_icc_bootstrap_seed": 20260401
+  },
+  "source_sha256": {
+    "source/config/cohorts.yaml": "b1aea38362ce4fa26408638b69fcdd8d3694a590502e54016ca888bcef3404ef",
+    "source/config/definitions.yaml": "6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3",
+    "source/config/references.yaml": "dd313258ff439065fa06e03c39e62c817552b739a7ef798bd32ce1a1780dbaa8",
+    "source/scripts/00_freeze_inventory.py": "8f9a1f4171b38d47fbe0d627594f7efcaf2ff64b3785cb1791223f8f3fb92732",
+    "source/scripts/01_build_canonical_timelines.py": "c6f062b97ee0d5c7d66fe3d7339da8b48a4a040a2f31f5c56f1734712fff2a69",
+    "source/scripts/02_harmonize_runs.py": "945b9336e6e5ad9bc9883b2d5c3b629fe023d597d928071fc884c1ee102c4397",
+    "source/scripts/03_sqi_calibration.py": "b1b59305504ea64f0086101f29bc1562e9db898e60c3dc211d40e241f7aa8ede",
+    "source/scripts/04_event_table.py": "a03bde0402bb65dd62004ee41f86550aeb75a36541456cd152314df14190edcb",
+    "source/scripts/05_markers_terminal_af.py": "729051dbfbc2ed85bfcf876a5430fa85b4ffc1f7bbd43dedab5596479dbfd521",
+    "source/scripts/06_markers_post_termination.py": "78d8703a28f683b9a2e6cb9b07798f34169259469d80c46c62b7f63776918765",
+    "source/scripts/07_aim1_termination_hazard.py": "25d849f64ab07a6e174cf9286b6eb582378f98f915fff02aa6607c3c77af6af3",
+    "source/scripts/08_aim2_reconstruction_equivalence.py": "5b9f99a5349d2d21e0a1424cb36494c099ed1482ef5cebebe78b597e8badd111",
+    "source/scripts/09_aim3_reinitiation_models.py": "6b49c8eeb3d7f0c4f122d93a2ba4f1ebbbe3d0288bcb2f0bed4663b1e08b3035",
+    "source/scripts/10_aim4_duration_distributions.py": "e52e3f710845759180e7e6b491fcf03d44c012de2c4b17d358178aa4ffc1d159",
+    "source/scripts/11_secondary_subgroups.py": "37291336b5225fc75b8fb198945ae0bc9e55b0f0788eccf96bda79ff1f51919b",
+    "source/scripts/12_figures_tables.py": "6d0dac2213a3bf9b71c7b4da364b281d5c2717224a73372a7bf383efc383e39a",
+    "source/scripts/13_report_build.py": "9d22ea37ae5ac9d7d6b1a0b84df524bab4c2b08bd35a4b20c3c9afe8c1ba40e0",
+    "source/scripts/14_ep_review_packet.py": "2a25869438a7d3217b4872ededcd14b2acc920f11c6b9d7007e5bce1ee990a4b",
+    "source/scripts/15_export_reproducibility_freeze.py": "c9ac4177f5bbc74087a3ace564b6abac0c308c61033aa3eb81cebba195a060ce",
+    "source/scripts/common.py": "0dfcabe1e0479b36a5fa9b68a0ed7afd05cca13f5763fc208697ec09a5b922a4",
+    "source/scripts/verify_references.py": "0f2bd4e413c1ca0a4a468043d566702ff1374c2c5c3677d569ae24cd4f51e3f6",
+    "source/tests/test_entrench_af.py": "e63ed1c9f2d22bfb96bb683b446ec911ba2802db9274bf7c3c16d6cc17ecfd5a"
+  }
+}

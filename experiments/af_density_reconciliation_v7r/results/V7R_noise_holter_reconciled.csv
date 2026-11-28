@@ -1,0 +1,14 @@
+comparison,auroc,coverage_pct,n
+All_6130_Real_RR_LGBM,0.9023,100.0,6130
+All_6130_ECGFounder_LGBM,0.9578,100.0,6130
+Oracle_Keep_Clean_N1_Real_RR,0.934,79.4,4867
+Oracle_Keep_Clean_N1_ECGFounder,0.9666,79.4,4867
+Automated_Deployable_SQI_Real_RR,0.9433,79.4,4867
+Automated_Deployable_SQI_ECGFounder,0.9641,79.4,4867
+Automated_SQI_Detector_for_N2,0.9242,100.0,6130
+AF_vs_AFL_only_ECGFounder,0.8103,100.0,501
+AF_vs_AFL_only_RealRR,0.8134,100.0,501
+AF_vs_Ectopy_only_ECGFounder,0.9497,100.0,1904
+AF_vs_Ectopy_only_RealRR,0.863,100.0,1904
+AF_vs_CleanNSR_ECGFounder,0.9821,100.0,1428
+AF_vs_CleanNSR_RealRR,0.985,100.0,1428

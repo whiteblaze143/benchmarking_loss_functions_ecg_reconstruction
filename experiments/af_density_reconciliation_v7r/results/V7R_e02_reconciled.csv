@@ -1,0 +1,5 @@
+analysis,cohort,n_episodes,n_patients,density_hr,ci_lo,ci_hi,p_value,gam_5fold_oof_r2_base,gam_5fold_oof_r2_plus_density,gam_5fold_oof_delta_density
+Cox_PH_CompleteDefinedDensity,Pooled_DefinedDensity,6438,145,1.1382,0.7718,1.6783,0.5137301866218338,0.33308,0.3347,0.00161
+Cox_PH_CompleteDefinedDensity,LTAFDB_DefinedDensity,5715,59,1.292,0.877,1.9035,0.1949305851942088,0.33308,0.3347,0.00161
+Cox_PH_CompleteDefinedDensity,SHDB_DefinedDensity,583,42,1.1605,0.4077,3.3033,0.7803712433309321,0.33308,0.3347,0.00161
+Cox_PH_CompleteDefinedDensity,IRIDIA_DefinedDensity,140,44,4.0896,1.0155,16.4692,0.04751226301068068,0.33308,0.3347,0.00161

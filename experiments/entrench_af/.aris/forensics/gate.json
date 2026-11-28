@@ -1,0 +1,31 @@
+{
+  "gate_version": "1",
+  "generated_at": "2026-11-27T23:54:35Z",
+  "upstream_verdict": "REVIEW_UNAVAILABLE",
+  "upstream_adjudicator": "deterministic-rules-v2",
+  "policy_decision": "BLOCK",
+  "anti_ar_commit": "d8f510c49c29ccb5f98ecb1f8e397a7a27eb97c4",
+  "report_sha256": "4a5477535002d7e3e0dc0c25336cac2edc249e358fab0cf60e03ef8c4b9c5bc8",
+  "ledger_bound": true,
+  "malformed_ledger_entries": 0,
+  "paper_fingerprint": "3fa0d2788deae862f546b97a1aa519691bb58c269c44cc61df9e494c17374f74",
+  "obligations_sha256": "758b54280ccf8472471a299b7df1f3ce0edb688ea460a70420e6735eb2b2ec85",
+  "claims_ledger_sha256": "269637e07f05cf230a9ac3ce38d55edef28d7b6352050eb6abeae30197948f0f",
+  "observability_level": 2,
+  "coverage": {
+    "consistency-audit": "review_unavailable",
+    "experiment-forensics": "review_unavailable",
+    "baseline-comparison-audit": "review_unavailable",
+    "citation-forensics": "review_unavailable",
+    "presentation-signals": "review_unavailable",
+    "proof-derivation-forensics": "review_unavailable",
+    "eval-design-forensics": "review_unavailable",
+    "adversarial-case-builder": "review_unavailable",
+    "novelty-duplication-advisory": "review_unavailable",
+    "ai-style-impressions": "review_unavailable"
+  },
+  "open_obligations": 0,
+  "open_critical_obligations": 0,
+  "executor_model": "antigravity",
+  "proposal_provenance": "unknown"
+}

@@ -1,0 +1,8 @@
+fixture,burden,density,expected_density,reason,abs_diff
+zero_af,0.0,,,ZERO_AF,0.0
+all_af,1.0,,,ALL_AF,0.0
+single_block_B0.2,0.2,1.0,1.0,DEFINED,0.0
+two_endpoints_B0.5,0.5,0.5,0.5,DEFINED,0.0
+high_burden_boundary_gap_B0.98,0.98,1.0000000000000027,1.0,DEFINED,2.6645352591003757e-15
+high_burden_uniform_50gaps_B0.98,0.9800000000000008,0.020000000000013465,0.02000000000001808,DEFINED,4.614364446098307e-15
+high_burden_after_bridging_to_1block,0.9996,1.000000000000156,1.0,DEFINED,1.56097357262297e-13

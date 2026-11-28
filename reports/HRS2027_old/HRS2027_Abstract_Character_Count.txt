@@ -1,0 +1,22 @@
+Heart Rhythm 2027 Abstract Character-Count Audit
+================================================
+HRS Ceiling (excl. Title): 2,500 chars (with spaces)
+Reserved Figure Allowance (1 Composite Figure): 560 chars
+Remaining Text Ceiling (2,500 - 560): 1,940 chars
+Compact Figure Caption Length: 185 chars
+
+1. Abstract A (Completed-Results-Only — HRS2027_Abstract_Draft.md)
+   Body Chars (with spaces):    1716
+   Body Chars (no spaces):      1467
+   Words:                       246
+   Body + 560 Fig Reserve:      2276 / 2,500 (PASS=True)
+   Body + 560 + Caption:        2461 / 2,500 (PASS=True)
+   Section breakdown:           {'Background': 245, 'Objective': 153, 'Methods': 400, 'Results': 737, 'Conclusion': 173}
+
+2. Abstract B (Clinical-Review-Ready Template — HRS2027_Abstract_Clinical_Review_Template.md)
+   Body Chars (with spaces):    1631  [Note: placeholder tokens fill with ~2-4 digits each]
+   Body Chars (no spaces):      1408
+   Words:                       220
+   Body + 560 Fig Reserve:      2191 / 2,500 (PASS=True)
+   Body + 560 + Caption:        2376 / 2,500 (PASS=True)
+   Section breakdown:           {'Background': 234, 'Objective': 176, 'Methods': 432, 'Results': 598, 'Conclusion': 183}

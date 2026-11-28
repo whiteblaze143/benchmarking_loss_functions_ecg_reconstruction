@@ -1,0 +1,15 @@
+{
+  "znorm": {
+    "znorm": true,
+    "iridia_val_auroc": 0.9815,
+    "iridia_val_bal_acc": 0.9484,
+    "thr": 0.8
+  },
+  "raw": {
+    "znorm": false,
+    "iridia_val_auroc": 0.9796,
+    "iridia_val_bal_acc": 0.9484,
+    "thr": 0.88
+  },
+  "elapsed_s": 2991.0
+}

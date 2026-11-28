@@ -1,0 +1,2 @@
+n_events,n_postA_valid,postA_valid_rate,n_postA_truncated,n_postA_insufficient,n_postD_eligible,n_postD_valid,bsqi_gate,PMV_A_median,PMV_D_median,HR_mean_A_median,RMSSD_A_median,git_hash,definitions_hash,run_timestamp
+2346,1051,0.44799658994032393,1584,1099,458,436,0.85,0.05463779963680404,0.03671304634813282,69.32042645038916,131.62164497430723,cc84d8b0,6cc57e3a858b,2026-11-26T19:39:02Z

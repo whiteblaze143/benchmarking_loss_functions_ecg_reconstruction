@@ -1,0 +1,27 @@
+\begin{table*}[t]
+\centering
+\caption{Patient-Disjoint 5-Fold Cross-Validated Predictive Performance Across Clinical Tasks (P01--P04).}
+\label{tab:v7p_benchmarks}
+\small
+\begin{tabular}{llcccc}
+\toprule
+Task & Representation / Model & AUROC & AUPRC & Brier Score & Balanced Acc. \\
+\midrule
+P01 Onset Forecast & Burden alone (X02) & 0.585 & 0.030 & 0.017 & 0.500 \\
+P01 Onset Forecast & History + Density + HR/HRV (X07) & 0.669 & 0.037 & 0.017 & 0.501 \\
+P01 Onset Forecast & Best ECG Foundation Model (ECGFounder) & 0.612 & 0.024 & 0.017 & 0.500 \\
+\midrule
+P02 Persistence (60s) & Burden alone (X02) & 0.847 & 0.656 & 0.110 & 0.766 \\
+P02 Persistence (60s) & History + Density + HR/HRV (X07) & 0.891 & 0.709 & 0.100 & 0.773 \\
+P02 Persistence (60s) & Best ECG Foundation Model (EchoNext) & 0.700 & 0.460 & 0.151 & 0.640 \\
+P02 Persistence (60s) & SetOperator F2 (Downstream Head) & 0.654 & 0.406 & 0.154 & 0.593 \\
+\midrule
+P03 Survival (15m) & History + Density + HR/HRV (X07) & 0.884 & 0.908 & 0.135 & 0.795 \\
+P03 Survival (15m) & Best ECG Foundation Model (ECGFounder) & 0.666 & 0.693 & 0.255 & 0.603 \\
+\midrule
+P04 Noise Rhythm & Conventional HR/HRV Tabular (X07) & 0.412 & 0.052 & 0.058 & 0.500 \\
+P04 Noise Rhythm & SetOperator F2 (Downstream Head) & 0.679 & 0.100 & 0.062 & 0.498 \\
+P04 Noise Rhythm & Best ECG Foundation Model (ECGFounder) & 0.958 & 0.665 & 0.035 & 0.699 \\
+\bottomrule
+\end{tabular}
+\end{table*}

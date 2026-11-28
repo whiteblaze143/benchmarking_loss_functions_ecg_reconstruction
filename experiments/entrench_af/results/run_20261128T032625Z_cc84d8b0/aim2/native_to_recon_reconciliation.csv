@@ -1,0 +1,13 @@
+mode,stratum,n_runs_total,n_patients,retained_single_run,merged_multi_run,excluded_day_lt6min,excluded_boundary_censored,excluded_partial_calendar_day,excluded_missing_clock,balance_diff,n_wall_clock_episodes,n_wall_clock_multiday_bridged,git_hash,definitions_hash,run_timestamp
+recording_24h_windows,POOLED,4425,307,91,2104,60,2170,0,0,0,,,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+recording_24h_windows,IRIDIA,388,152,77,188,2,121,0,0,0,,,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+recording_24h_windows,IRIDIA_1day_lt36h,232,101,32,117,1,82,0,0,0,,,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+recording_24h_windows,IRIDIA_multiday_ge36h,156,57,45,71,1,39,0,0,0,,,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+recording_24h_windows,SHDB,751,72,12,537,35,167,0,0,0,,,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+recording_24h_windows,LTAFDB,3286,83,2,1379,23,1882,0,0,0,,,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+wall_clock_spitaler,POOLED,4425,307,42,59,5,160,4159,0,0,68.0,3.0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+wall_clock_spitaler,IRIDIA,388,152,42,59,5,73,209,0,0,68.0,3.0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+wall_clock_spitaler,IRIDIA_1day_lt36h,232,101,0,0,0,48,184,0,0,0.0,0.0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+wall_clock_spitaler,IRIDIA_multiday_ge36h,156,57,42,59,5,25,25,0,0,68.0,3.0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+wall_clock_spitaler,SHDB,751,72,0,0,0,22,729,0,0,0.0,0.0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+wall_clock_spitaler,LTAFDB,3286,83,0,0,0,65,3221,0,0,0.0,0.0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z

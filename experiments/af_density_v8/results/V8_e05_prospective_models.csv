@@ -1,0 +1,13 @@
+estimand,model,n_patients,log_lik,aic,delta_ll_vs_prev,coef_hist_density,p_hist_density,coef_hist_lam_on,p_hist_lam_on
+Unconditional_Future_Onsets_NB,M0_Cohort,116,-274.975,555.95,,,,,
+Unconditional_Future_Onsets_NB,M1_Burden,116,-272.639,553.28,2.336,,,,
+Unconditional_Future_Onsets_NB,M2_Burden_Density,116,-264.413,538.83,8.226,-0.561,0.0,,
+Unconditional_Future_Onsets_NB,M3_M2_Plus_Continuity,116,-245.213,502.43,19.201,0.0137,0.9339,,
+Unconditional_Future_Onsets_NB,M4_M3_Plus_RunCount,116,-241.268,496.54,3.944,0.1721,0.3143,,
+Unconditional_Future_Onsets_NB,M5_M4_Plus_HistOnsetRate,116,-239.267,494.53,2.002,0.2724,0.1267,0.2441,0.0563
+Conditional_Onset_Rate_Per_NonAF_H_NB,M0_Cohort,101,-346.088,698.18,,,,,
+Conditional_Onset_Rate_Per_NonAF_H_NB,M1_Burden,101,-296.115,600.23,49.973,,,,
+Conditional_Onset_Rate_Per_NonAF_H_NB,M2_Burden_Density,101,-292.843,595.69,3.272,-0.3827,0.0021,,
+Conditional_Onset_Rate_Per_NonAF_H_NB,M3_M2_Plus_Continuity,101,-274.226,560.45,18.616,0.1388,0.3964,,
+Conditional_Onset_Rate_Per_NonAF_H_NB,M4_M3_Plus_RunCount,101,-273.834,561.67,0.393,0.1572,0.3464,,
+Conditional_Onset_Rate_Per_NonAF_H_NB,M5_M4_Plus_HistOnsetRate,101,-267.121,550.24,6.712,0.4016,0.0217,0.5278,0.0

@@ -1,0 +1,35 @@
+feature_name,feature_group,units,description
+time_since_rec_start_s,F0,seconds,Elapsed time on monitoring recording clock
+elapsed_af_duration_s,F0,seconds,Elapsed duration of active AF episode at landmark
+last_af_duration_s,F1,seconds,Duration of immediately preceding complete AF episode
+time_since_last_af_s,F1,seconds,Elapsed gap since last AF episode termination (NaN if no prior AF)
+has_prior_af,F1,indicator,Binary indicator that at least one prior complete AF episode exists
+af_burden_15m,F1,ratio,Cumulative AF burden during the preceding 15 minutes
+af_burden_30m,F1,ratio,Cumulative AF burden during the preceding 30 minutes
+af_burden_60m,F1,ratio,Cumulative AF burden during the preceding 60 minutes
+af_burden_1h,F2,ratio,Cumulative AF burden over the preceding 1 hour
+episode_count_1h,F2,count,Number of distinct AF episodes in preceding 1 hour
+longest_af_run_1h,F2,seconds,Longest continuous AF run duration in preceding 1 hour
+brief_run_count_1h,F2,count,Number of brief AF runs (<30s) in preceding 1 hour
+af_burden_3h,F2,ratio,Cumulative AF burden over the preceding 3 hours
+episode_count_3h,F2,count,Number of distinct AF episodes in preceding 3 hours
+longest_af_run_3h,F2,seconds,Longest continuous AF run duration in preceding 3 hours
+brief_run_count_3h,F2,count,Number of brief AF runs (<30s) in preceding 3 hours
+af_burden_6h,F2,ratio,Cumulative AF burden over the preceding 6 hours
+episode_count_6h,F2,count,Number of distinct AF episodes in preceding 6 hours
+longest_af_run_6h,F2,seconds,Longest continuous AF run duration in preceding 6 hours
+brief_run_count_6h,F2,count,Number of brief AF runs (<30s) in preceding 6 hours
+charitos_density_1h,F3,density,Continuous Charitos lower envelope density over 1h (NaN if burden is 0 or 1)
+af_aggregation_1h,F3,ratio,Charitos AF aggregation s_max / total_af over 1h (NaN if burden is 0 or 1)
+charitos_density_3h,F3,density,Continuous Charitos lower envelope density over 3h (NaN if burden is 0 or 1)
+af_aggregation_3h,F3,ratio,Charitos AF aggregation s_max / total_af over 3h (NaN if burden is 0 or 1)
+charitos_density_6h,F3,density,Continuous Charitos lower envelope density over 6h (NaN if burden is 0 or 1)
+af_aggregation_6h,F3,ratio,Charitos AF aggregation s_max / total_af over 6h (NaN if burden is 0 or 1)
+is_density_defined_3h,F3,indicator,Binary indicator that density is mathematically defined (0 < burden < 1)
+mean_hr_bpm,F4,bpm,Mean ventricular heart rate in causal 300s window (NaN if <2 beats)
+std_hr_bpm,F4,bpm,Standard deviation of ventricular heart rate in causal 300s window (NaN if <2 beats)
+rmssd_ms,F4,milliseconds,Root mean square of successive RR differences (NaN if <2 beats)
+cvrr,F4,ratio,Coefficient of variation of RR intervals (NaN if <2 beats)
+pnn50,F4,ratio,Proportion of adjacent RR differences exceeding 50ms (NaN if <2 beats)
+is_rr_valid,F4,indicator,Binary indicator that >=2 plausible RR intervals exist in window
+embedding_vector,F5,latent,Pre-trained foundation model / SetOperator frozen embedding vector

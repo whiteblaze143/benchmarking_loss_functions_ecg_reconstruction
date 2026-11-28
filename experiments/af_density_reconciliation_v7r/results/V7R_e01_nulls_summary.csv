@@ -1,0 +1,5 @@
+null_type,n_recordings,obs_pre_total,null_pre_expected,pre_obs_over_exp,obs_post_total,null_post_expected,post_obs_over_exp,frac_rec_p_pre_lt005,frac_rec_p_post_lt005
+Null_A_All,58,179.0,171.82,1.042,127.0,152.99,0.83,0.3276,0.1552
+Null_A_LTAFDB,33,151.0,166.92,0.905,100.0,148.45,0.674,0.2727,0.1515
+Null_A_SHDB,25,28.0,4.89,5.722,27.0,4.53,5.956,0.4,0.16
+Null_B_Exchangeable_Ordering,58,40.0,62.1,0.644,26.0,62.12,0.419,0.0,

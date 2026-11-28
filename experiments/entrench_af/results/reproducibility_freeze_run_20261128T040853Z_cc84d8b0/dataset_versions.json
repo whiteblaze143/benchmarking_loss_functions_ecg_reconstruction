@@ -1,0 +1,66 @@
+{
+  "IRIDIA": {
+    "config": {
+      "raw_name": "IRIDIA-AF",
+      "base_dir": "/data/mithunmanivannan/datasets/iridia_af_8405941_v1.0.1",
+      "metadata_csv": "/data/mithunmanivannan/datasets/iridia_af_8405941_v1.0.1/iridia-af-metadata-v1.0.1.csv",
+      "timeline_intervals_csv": "/data/mithunmanivannan/datasets/iridia_af_8405941_v1.0.1/timeline_intervals.csv",
+      "fs_hz": 200.0
+    },
+    "metadata_csv_sha256": "2f90247a84cacaca491b71840f38f9dcb95165fe5b560b32eceac2beb6b56acd",
+    "raw_dir_exists": true,
+    "raw_file_count": 33537
+  },
+  "SHDB": {
+    "config": {
+      "raw_name": "SHDB-AF",
+      "base_dir": "/data/mithunmanivannan/datasets/shdb_af",
+      "metadata_csv": "/data/mithunmanivannan/datasets/shdb_af/AdditionalData.csv",
+      "fs_hz": 200.0,
+      "unannotated_ids": [
+        "053",
+        "057",
+        "058",
+        "059",
+        "060",
+        "061",
+        "063",
+        "066",
+        "067",
+        "068",
+        "069",
+        "079",
+        "080",
+        "081",
+        "083",
+        "085",
+        "087",
+        "088",
+        "090",
+        "092",
+        "093",
+        "094",
+        "095",
+        "096",
+        "097",
+        "098",
+        "099",
+        "100",
+        "101",
+        "104"
+      ]
+    },
+    "metadata_csv_sha256": "ccf3efa688865fed8563539fca2561e4f598fb7c03aa61d72202a24337353191",
+    "raw_dir_exists": true,
+    "raw_file_count": 33537
+  },
+  "LTAFDB": {
+    "config": {
+      "raw_name": "LTAFDB",
+      "base_dir": "/data/mithunmanivannan/datasets/ltafdb_1.0.0_reference",
+      "fs_hz": 128.0
+    },
+    "raw_dir_exists": true,
+    "raw_file_count": 33537
+  }
+}

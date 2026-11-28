@@ -1,0 +1,132 @@
+references:
+  - key: spitaler2026
+    authors: "Spitaler et al."
+    year: 2026
+    title: "Atrial fibrillation begets atrial fibrillation revisited: Early entrenchment of AF episodes"
+    journal: "Heart Rhythm"
+    doi: "10.1016/j.hrthm.2026.10.019"
+  - key: gilon2023
+    authors: "Gilon et al."
+    year: 2023
+    title: "IRIDIA-AF, a large paroxysmal atrial fibrillation long-term electrocardiogram monitoring database"
+    journal: "Scientific Data"
+    doi: "10.1038/s41597-023-02621-1"
+  - key: tsutsui2025
+    authors: "Tsutsui et al."
+    year: 2025
+    title: "SHDB-AF: a Japanese Holter ECG database of atrial fibrillation"
+    journal: "Scientific Data"
+    doi: "10.1038/s41597-025-04777-4"
+  - key: petrutiu2007
+    authors: "Petrutiu et al."
+    year: 2007
+    title: "Abrupt changes in fibrillatory wave characteristics at the termination of paroxysmal atrial fibrillation in humans"
+    journal: "EP Europace"
+    doi: "10.1093/europace/eum096"
+  - key: clauset2009
+    authors: "Clauset, Shalizi, Newman"
+    year: 2009
+    title: "Power-Law Distributions in Empirical Data"
+    journal: "SIAM Review"
+    doi: "10.1137/070710111"
+  - key: moody1984
+    authors: "Moody, Muldrow, Mark"
+    year: 1984
+    title: "MIT-BIH Noise Stress Test Database"
+    journal: "PhysioNet"
+    doi: "10.13026/c2hs3t"
+  - key: dharmaprani2024
+    authors: "Dharmaprani et al."
+    year: 2024
+    title: "Observable Atrial and Ventricular Fibrillation Episode Durations Are Conformant With a Power Law Based on System Size and Spatial Synchronization"
+    journal: "Circulation: Arrhythmia and Electrophysiology"
+    doi: "10.1161/circep.123.012684"
+  - key: henriksson2021
+    authors: "Henriksson et al."
+    year: 2021
+    title: "Modeling and Estimation of Temporal Episode Patterns in Paroxysmal Atrial Fibrillation"
+    journal: "IEEE Transactions on Biomedical Engineering"
+    doi: "10.1109/tbme.2020.2995563"
+  - key: israel2003
+    authors: "Israel et al."
+    year: 2003
+    title: "Immediate Reinitiation of Atrial Tachyarrhythmias after Spontaneous Restoration of Sinus Rhythm in Patients with an Implanted Monitoring Device"
+    journal: "Pacing and Clinical Electrophysiology"
+    doi: "10.1046/j.1460-9592.2003.t01-1-00189.x"
+  - key: choudhary2013
+    authors: "Choudhary et al."
+    year: 2013
+    title: "Low atrial fibrillatory rate is associated with spontaneous conversion of recent-onset atrial fibrillation"
+    journal: "EP Europace"
+    doi: "10.1093/europace/eut057"
+  - key: holmqvist2006
+    authors: "Holmqvist et al."
+    year: 2006
+    title: "Atrial fibrillatory rate and sinus rhythm maintenance in patients undergoing cardioversion of persistent atrial fibrillation"
+    journal: "European Heart Journal"
+    doi: "10.1093/eurheartj/ehl098"
+  - key: alcaraz2007
+    authors: "Alcaraz & Rieta"
+    year: 2007
+    title: "Organization deterioration assessment from the surface ECG in the onset and termination of paroxysmal atrial fibrillation"
+    journal: "2007 Computers in Cardiology"
+    doi: "10.1109/cic.2007.4745531"
+  - key: julian2015
+    authors: "Julián et al."
+    year: 2015
+    title: "Application of Hurst exponents to assess atrial reverse remodeling in paroxysmal atrial fibrillation"
+    journal: "Physiological Measurement"
+    doi: "10.1088/0967-3334/36/11/2231"
+  - key: alcaraz2011
+    authors: "Alcaraz et al."
+    year: 2011
+    title: "Noninvasive organization analysis along consecutive episodes of paroxysmal atrial fibrillation"
+    journal: "Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC)"
+    doi: "10.1109/iembs.2011.6090340"
+  - key: saizvivo2023
+    authors: "Saiz-Vivó et al."
+    year: 2023
+    title: "Heart rate characteristic based modelling of atrial fibrillatory rate using implanted cardiac monitor data"
+    journal: "Physiological Measurement"
+    doi: "10.1088/1361-6579/acbc08"
+  - key: rosman2026
+    authors: "Rosman et al."
+    year: 2026
+    title: "Atrial fibrillation density as a biomarker for ischaemic stroke risk prediction"
+    journal: "European Heart Journal"
+    doi: "10.1093/eurheartj/ehag203"
+  - key: charitos2021
+    authors: "Charitos, Herrmann, Ziegler"
+    year: 2021
+    title: "Atrial fibrillation recurrence and spontaneous conversion to sinus rhythm after cardiac surgery: Insights from 426 patients with continuous rhythm monitoring"
+    journal: "Journal of Cardiovascular Electrophysiology"
+    doi: "10.1111/jce.15126"
+  - key: butkuviene2024
+    authors: "Butkuvienė et al."
+    year: 2024
+    title: "Characterization of Atrial Fibrillation Episode Patterns: A Comparative Study"
+    journal: "IEEE Transactions on Biomedical Engineering"
+    doi: "10.1109/tbme.2023.3293252"
+  - key: wadforth2024
+    authors: "Wadforth et al."
+    year: 2024
+    title: "Predicting Spontaneous Termination of Atrial Fibrillation Based on Analysis of Standard Electrocardiograms"
+    journal: "Annals of Noninvasive Electrocardiology"
+    doi: "10.1111/anec.70025"
+  - key: doehner2025
+    authors: "Doehner et al."
+    year: 2025
+    title: "Atrial fibrillation burden in clinical practice, research, and technology development: a clinical consensus statement of the European Society of Cardiology Council on Stroke and the European Heart Rhythm Association"
+    journal: "EP Europace"
+    doi: "10.1093/europace/euaf019"
+  - key: wineinger2019
+    authors: "Wineinger et al."
+    year: 2019
+    title: "Identification of paroxysmal atrial fibrillation subtypes in over 13,000 individuals"
+    journal: "Heart Rhythm"
+    doi: "10.1016/j.hrthm.2018.08.012"
+
+blocklisted_dois:
+  - "10.1093/europace/euad122"
+  - "10.1038/s41597-023-02632-y"
+  - "10.13026/shdb-af"

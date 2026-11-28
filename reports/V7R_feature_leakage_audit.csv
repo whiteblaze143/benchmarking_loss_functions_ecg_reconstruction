@@ -1,0 +1,7 @@
+test_type,task_id,dataset,n_landmarks_tested,max_abs_feature_diff,leakage_detected
+Future_Deletion_And_Adversarial_Corruption,P01,IRIDIA-AF,25,0.0,False
+Future_Deletion_And_Adversarial_Corruption,P01,LTAFDB,25,0.0,False
+Future_Deletion_And_Adversarial_Corruption,P01,SHDB-AF,25,0.0,False
+Future_Deletion_And_Adversarial_Corruption,P02,IRIDIA-AF,25,0.0,False
+Future_Deletion_And_Adversarial_Corruption,P02,LTAFDB,25,0.0,False
+Future_Deletion_And_Adversarial_Corruption,P02,SHDB-AF,25,0.0,False

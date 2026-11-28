@@ -1,0 +1,21 @@
+{
+  "status": "SUCCESS",
+  "n_trajectory_benchmarks": 24,
+  "n_duration_benchmarks": 12,
+  "trajectory_landmarks": [
+    "7.5m (450s)",
+    "17.5m (1050s)",
+    "32.5m (1950s)"
+  ],
+  "trajectory_outcomes": [
+    "delta_cv_rr",
+    "delta_rate_bpm"
+  ],
+  "duration_horizons": [
+    "H1 (1h)",
+    "H3 (3h)",
+    "H6 (6h, Primary)"
+  ],
+  "primary_m4_dev_gain_cvrr": 0.02857396109673571,
+  "primary_m4_dev_gain_duration": 0.05966178361177066
+}

@@ -1,0 +1,197 @@
+{
+  "P02": {
+    "C1_X02_vs_X03": {
+      "delta_auroc_mean": 0.07393832670730492,
+      "delta_auroc_ci95_low": 0.047083654389646824,
+      "delta_auroc_ci95_high": 0.10116584627911444,
+      "p_value": 0.0,
+      "is_statistically_significant": true,
+      "delta_auprc_mean": 0.0463521490983005,
+      "description": "Burden alone vs Full architectural breakdown",
+      "stage_a": "X02",
+      "stage_b": "X03"
+    },
+    "C2_X06_vs_X07": {
+      "delta_auroc_mean": 0.0023417647292242006,
+      "delta_auroc_ci95_low": -0.001185388712839347,
+      "delta_auroc_ci95_high": 0.006533081458824741,
+      "p_value": 0.264,
+      "is_statistically_significant": false,
+      "delta_auprc_mean": 0.01104789150166462,
+      "description": "History/density alone vs History/density + RR physiology",
+      "stage_a": "X06",
+      "stage_b": "X07"
+    },
+    "C3_X06_vs_X11": {
+      "delta_auroc_mean": -0.07001882710730001,
+      "delta_auroc_ci95_low": -0.0890814961845248,
+      "delta_auroc_ci95_high": -0.050134771990655365,
+      "p_value": 0.0,
+      "is_statistically_significant": true,
+      "delta_auprc_mean": -0.12981391752837498,
+      "description": "History/density alone vs Instantaneous physiology + FM",
+      "stage_a": "X06",
+      "stage_b": "X11"
+    },
+    "C4_X07_vs_X12": {
+      "delta_auroc_mean": -0.06896771387070848,
+      "delta_auroc_ci95_low": -0.08457647712176909,
+      "delta_auroc_ci95_high": -0.051601738327783225,
+      "p_value": 0.0,
+      "is_statistically_significant": true,
+      "delta_auprc_mean": -0.1418118977255571,
+      "description": "Full conventional vs Full Multimodal (Conventional + FM)",
+      "stage_a": "X07",
+      "stage_b": "X12"
+    },
+    "C5_X11_vs_X12": {
+      "delta_auroc_mean": 0.003392877965815738,
+      "delta_auroc_ci95_low": -0.004048562588222707,
+      "delta_auroc_ci95_high": 0.01100450268601474,
+      "p_value": 0.404,
+      "is_statistically_significant": false,
+      "delta_auprc_mean": -0.0009500886955175289,
+      "description": "Full without density vs Full Multimodal with Continuous Density",
+      "stage_a": "X11",
+      "stage_b": "X12"
+    }
+  },
+  "P03": {
+    "C1_X02_vs_X03": {
+      "delta_auroc_mean": 0.026588847237703925,
+      "delta_auroc_ci95_low": 0.014796687411378212,
+      "delta_auroc_ci95_high": 0.03756063155468668,
+      "p_value": 0.0,
+      "is_statistically_significant": true,
+      "delta_auprc_mean": 0.06120561900268883,
+      "description": "Burden alone vs Full architectural breakdown",
+      "stage_a": "X02",
+      "stage_b": "X03"
+    },
+    "C2_X06_vs_X07": {
+      "delta_auroc_mean": 0.003967282743427593,
+      "delta_auroc_ci95_low": 0.00018669343263177658,
+      "delta_auroc_ci95_high": 0.00802365356728868,
+      "p_value": 0.044,
+      "is_statistically_significant": true,
+      "delta_auprc_mean": 0.0035799557907189097,
+      "description": "History/density alone vs History/density + RR physiology",
+      "stage_a": "X06",
+      "stage_b": "X07"
+    },
+    "C3_X06_vs_X11": {
+      "delta_auroc_mean": -0.03484034450986555,
+      "delta_auroc_ci95_low": -0.04404998816862575,
+      "delta_auroc_ci95_high": -0.025868269071387624,
+      "p_value": 0.0,
+      "is_statistically_significant": true,
+      "delta_auprc_mean": -0.02906428826561268,
+      "description": "History/density alone vs Instantaneous physiology + FM",
+      "stage_a": "X06",
+      "stage_b": "X11"
+    },
+    "C4_X07_vs_X12": {
+      "delta_auroc_mean": -0.03696180681082611,
+      "delta_auroc_ci95_low": -0.045074219042956325,
+      "delta_auroc_ci95_high": -0.02868339107934943,
+      "p_value": 0.0,
+      "is_statistically_significant": true,
+      "delta_auprc_mean": -0.03182968394519591,
+      "description": "Full conventional vs Full Multimodal (Conventional + FM)",
+      "stage_a": "X07",
+      "stage_b": "X12"
+    },
+    "C5_X11_vs_X12": {
+      "delta_auroc_mean": 0.0018458204424670346,
+      "delta_auroc_ci95_low": -0.0011803765997972031,
+      "delta_auroc_ci95_high": 0.004987264248815143,
+      "p_value": 0.248,
+      "is_statistically_significant": false,
+      "delta_auprc_mean": 0.0008145601111356784,
+      "description": "Full without density vs Full Multimodal with Continuous Density",
+      "stage_a": "X11",
+      "stage_b": "X12"
+    }
+  },
+  "P04": {
+    "C4_X07_vs_X12": {
+      "delta_auroc_mean": 0.24543817450047647,
+      "delta_auroc_ci95_low": 0.10345034242215424,
+      "delta_auroc_ci95_high": 0.4001577542168826,
+      "p_value": 0.0,
+      "is_statistically_significant": true,
+      "delta_auprc_mean": 0.04644522335746924,
+      "description": "Full conventional vs Full Multimodal (Conventional + FM)",
+      "stage_a": "X07",
+      "stage_b": "X12"
+    },
+    "C5_X11_vs_X12": {
+      "delta_auroc_mean": 0.0,
+      "delta_auroc_ci95_low": 0.0,
+      "delta_auroc_ci95_high": 0.0,
+      "p_value": 2.0,
+      "is_statistically_significant": false,
+      "delta_auprc_mean": 0.0,
+      "description": "Full without density vs Full Multimodal with Continuous Density",
+      "stage_a": "X11",
+      "stage_b": "X12"
+    }
+  },
+  "P01": {
+    "C1_X02_vs_X03": {
+      "delta_auroc_mean": 0.0030228059339085524,
+      "delta_auroc_ci95_low": -0.007472921001901025,
+      "delta_auroc_ci95_high": 0.013014849256460022,
+      "p_value": 0.548,
+      "is_statistically_significant": false,
+      "delta_auprc_mean": 0.00025946715238404705,
+      "description": "Burden alone vs Full architectural breakdown",
+      "stage_a": "X02",
+      "stage_b": "X03"
+    },
+    "C2_X06_vs_X07": {
+      "delta_auroc_mean": 0.0709713360375291,
+      "delta_auroc_ci95_low": 0.04155022004103739,
+      "delta_auroc_ci95_high": 0.09801537561147401,
+      "p_value": 0.0,
+      "is_statistically_significant": true,
+      "delta_auprc_mean": 0.0037351280603596425,
+      "description": "History/density alone vs History/density + RR physiology",
+      "stage_a": "X06",
+      "stage_b": "X07"
+    },
+    "C3_X06_vs_X11": {
+      "delta_auroc_mean": 0.023357570335084076,
+      "delta_auroc_ci95_low": -0.015548582365488612,
+      "delta_auroc_ci95_high": 0.057463201277293444,
+      "p_value": 0.192,
+      "is_statistically_significant": false,
+      "delta_auprc_mean": -0.006049176952539095,
+      "description": "History/density alone vs Instantaneous physiology + FM",
+      "stage_a": "X06",
+      "stage_b": "X11"
+    },
+    "C4_X07_vs_X12": {
+      "delta_auroc_mean": -0.04041838263583814,
+      "delta_auroc_ci95_low": -0.05609746112742457,
+      "delta_auroc_ci95_high": -0.025315006982769218,
+      "p_value": 0.0,
+      "is_statistically_significant": true,
+      "delta_auprc_mean": -0.007889777254677098,
+      "description": "Full conventional vs Full Multimodal (Conventional + FM)",
+      "stage_a": "X07",
+      "stage_b": "X12"
+    },
+    "C5_X11_vs_X12": {
+      "delta_auroc_mean": 0.007195383066606883,
+      "delta_auroc_ci95_low": -0.00026890989756236933,
+      "delta_auroc_ci95_high": 0.014998083518693795,
+      "p_value": 0.06,
+      "is_statistically_significant": false,
+      "delta_auprc_mean": 0.001894527758221639,
+      "description": "Full without density vs Full Multimodal with Continuous Density",
+      "stage_a": "X11",
+      "stage_b": "X12"
+    }
+  }
+}

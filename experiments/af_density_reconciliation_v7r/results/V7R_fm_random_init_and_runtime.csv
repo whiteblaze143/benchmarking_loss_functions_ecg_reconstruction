@@ -1,0 +1,5 @@
+model,task,gpu_infer_s_6130,throughput_strips_per_s,pretrained_logistic_auroc,pretrained_lgbm_auroc,random_init_logistic_auroc,random_init_lgbm_auroc,pretrain_gain_logistic,pretrain_gain_lgbm
+ECGFOUNDER,P04_NoiseHolter,92.543,66.2,0.9432,0.9488,0.5639,0.5789,0.3793,0.3699
+ECHONEXT,P04_NoiseHolter,4.323,1418.1,0.6402,0.6533,0.5887,0.6171,0.0515,0.0362
+F2,P04_NoiseHolter,1.819,3370.5,0.6433,0.6348,0.636,0.6498,0.0073,-0.015
+CSFM,P04_NoiseHolter,1.807,3392.8,0.6865,0.6789,0.6906,0.7048,-0.0041,-0.0259

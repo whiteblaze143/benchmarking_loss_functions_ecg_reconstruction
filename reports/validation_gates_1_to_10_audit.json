@@ -1,0 +1,119 @@
+{
+  "audit_timestamp": "2026-11-24T08:35:00Z",
+  "program": "T-CAIREM V7 AF Density Research Directive",
+  "overall_verdict": "PASS",
+  "total_gates_audited": 10,
+  "passed_gates": 10,
+  "gates": [
+    {
+      "gate": "Gate 1 \u2014 Reference timeline validity",
+      "status": "PASS",
+      "findings": {
+        "invalid_run_durations_count": 0,
+        "invalid_rhythm_durations_count": 0,
+        "run_time_order_violations": 0,
+        "rhythm_time_order_violations": 0,
+        "overlapping_runs_count": 0,
+        "runs_with_censoring_flags": true
+      }
+    },
+    {
+      "gate": "Gate 2 \u2014 Neighbourhood construction",
+      "status": "PASS",
+      "findings": {
+        "total_prolonged_episodes_ge_30m": 553,
+        "index_episode_neighbourhood_leakage_count": 0
+      }
+    },
+    {
+      "gate": "Gate 3 \u2014 Risk-time validity",
+      "status": "PASS",
+      "findings": {
+        "total_observation_time_hours": 11701.964862499999,
+        "total_af_time_hours": 3095.8416868055556,
+        "total_non_af_risk_time_hours": 8606.123175694443,
+        "risk_time_positive": true
+      }
+    },
+    {
+      "gate": "Gate 4 \u2014 Historical exposure validity",
+      "status": "PASS",
+      "findings": {
+        "causal_filtering_enforced": true,
+        "lookahead_leakage_prevention": "Target window starts strictly at or after landmark prediction timestamp",
+        "verification": "Verified via P01-P03 landmark indexing protocol"
+      }
+    },
+    {
+      "gate": "Gate 5 \u2014 Physiological landmark validity",
+      "status": "PASS",
+      "findings": {
+        "episodes_ge_180s_for_30_180s_landmark": 1391,
+        "episodes_ge_450s_for_5m_landmark": 907,
+        "episodes_ge_1050s_for_15m_landmark": 649,
+        "eligibility_rule": "Shorter episodes are censored/excluded from elapsed physiological landmarks"
+      }
+    },
+    {
+      "gate": "Gate 6 \u2014 Statistical support",
+      "status": "PASS",
+      "findings": {
+        "independent_patient_counts": {
+          "IRIDIA-AF": 152,
+          "LTAFDB": 83,
+          "SHDB-AF": 72
+        },
+        "episode_counts": {
+          "IRIDIA-AF": 388,
+          "LTAFDB": 7358,
+          "SHDB-AF": 794
+        },
+        "cross_validation_strategy": "5-fold patient-disjoint splitting (no intra-patient cross-contamination)",
+        "bootstrap_protocol": "B=2000 patient-clustered bootstrap for confidence intervals"
+      }
+    },
+    {
+      "gate": "Gate 7 \u2014 Clinical linkage",
+      "status": "PASS",
+      "findings": {
+        "total_records": 128,
+        "unique_subjects": 122,
+        "valid_lad_count": 125,
+        "valid_lvef_count": 125,
+        "valid_af_type_count": 128,
+        "prior_ablation_count": 128
+      }
+    },
+    {
+      "gate": "Gate 8 \u2014 Authentic observability",
+      "status": "PASS",
+      "findings": {
+        "total_noise_records_in_index": 6255,
+        "quality_strata": [
+          "Clean",
+          "N1 (Mild Noise)",
+          "N2 (Severe Noise)"
+        ],
+        "abstention_policy": "Selective prediction: abstention on N2 uninterpretable strips"
+      }
+    },
+    {
+      "gate": "Gate 9 \u2014 Conditional null validity",
+      "status": "PASS",
+      "findings": {
+        "null_a_repositioning": "Brief runs repositioned uniformly in non-AF intervals conditional on prolonged episode locations",
+        "null_b_duration_ordering": "Episode durations permuted within patient history conditional on gap distribution",
+        "burden_preservation": "Total AF burden and episode counts exactly preserved under null realizations"
+      }
+    },
+    {
+      "gate": "Gate 10 \u2014 Scientific interpretation",
+      "status": "PASS",
+      "findings": {
+        "evidence_separation": "Strictly separates reference rhythm evidence, physiological feature evidence, and clinical correlations",
+        "negative_results_governance": "Null associations, non-significant predictor contributions, and sensor degradation explicitly reported",
+        "noninferiority_policy": "No claim of superiority without multiplicity-adjusted statistical significance"
+      }
+    }
+  ]
+}

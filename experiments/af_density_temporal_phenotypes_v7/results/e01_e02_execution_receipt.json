@@ -1,0 +1,141 @@
+{
+  "execution_status": "SUCCESS",
+  "total_deliverables": 22,
+  "e01_deliverables": 12,
+  "e02_deliverables": 10,
+  "timestamp_utc": "2026-11-24T09:20:50Z",
+  "files": [
+    {
+      "filename": "E01_duration_class_inventory.csv",
+      "experiment": "E01",
+      "size_bytes": 5085,
+      "sha256": "b8b8c3b788a14dcc21dff3ec4f7468b4a28605a6881690b30b668fc7416b3d21"
+    },
+    {
+      "filename": "E01_patient_feasibility.csv",
+      "experiment": "E01",
+      "size_bytes": 41243,
+      "sha256": "cc98db225b3ac0e93ebc8257355463bab1f57d2d2bbba52134ac3b11e5037a2a"
+    },
+    {
+      "filename": "E01_index_episode_manifest.parquet",
+      "experiment": "E01",
+      "size_bytes": 29434,
+      "sha256": "8aa1e1b0d6ee1f30841209df1c58718d75c32874435dd3cfc951affcf591ce3b"
+    },
+    {
+      "filename": "E01_neighbourhood_intervals.parquet",
+      "experiment": "E01",
+      "size_bytes": 102600,
+      "sha256": "67f26c17705d6b1e297c08b0b1cde4293a5735ae696e6648971b09f825436bce"
+    },
+    {
+      "filename": "E01_neighbourhood_event_assignments.parquet",
+      "experiment": "E01",
+      "size_bytes": 35014,
+      "sha256": "8d0ade00655428f891eae412e8d963e09f42b4da242722bcc78f3c2462801db2"
+    },
+    {
+      "filename": "E01_risk_time_summary.csv",
+      "experiment": "E01",
+      "size_bytes": 2471,
+      "sha256": "ccf35895f948f7bb978c952126ff35287e467f23839bc48e219f05b4829a3f3a"
+    },
+    {
+      "filename": "E01_remote_comparison_manifest.parquet",
+      "experiment": "E01",
+      "size_bytes": 93655,
+      "sha256": "733be6e6553df271381dcbc8e9f398dd70353170391d56063411891710eafb92"
+    },
+    {
+      "filename": "E01_neighbourhood_rate_ratios.csv",
+      "experiment": "E01",
+      "size_bytes": 14520,
+      "sha256": "48de7e26961dd7892188c3b107632ba4194769396f089d2054bd14c3a024fd7d"
+    },
+    {
+      "filename": "E01_patient_level_effects.csv",
+      "experiment": "E01",
+      "size_bytes": 13690,
+      "sha256": "46ded160e0362dc325056feceebd7cd19fa5b3199f2ba914c3191fe385d07b24"
+    },
+    {
+      "filename": "E01_conditional_null_results.parquet",
+      "experiment": "E01",
+      "size_bytes": 20828,
+      "sha256": "5be936cf32e2bb72f51efd58951afee82f70788f54bc1c298f068317cdc779c7"
+    },
+    {
+      "filename": "E01_density_architecture_results.csv",
+      "experiment": "E01",
+      "size_bytes": 23392,
+      "sha256": "e05d5875519433af1540b51adb06f972def9f69b926f7cff2d5102f9f65d52a0"
+    },
+    {
+      "filename": "E01_sensitivity_analysis.csv",
+      "experiment": "E01",
+      "size_bytes": 383,
+      "sha256": "d99af3f08356b5638c45ee8d2ae65171018822ac5ffdb2ebc0a33c6414aee86b"
+    },
+    {
+      "filename": "E02_historical_exposure_manifest.parquet",
+      "experiment": "E02",
+      "size_bytes": 1111049,
+      "sha256": "fdcd350c24038e4be418671f05312e663b01c417e6ae7244236e2b6595e5fe77"
+    },
+    {
+      "filename": "E02_landmark_feasibility.csv",
+      "experiment": "E02",
+      "size_bytes": 3981,
+      "sha256": "c18f57a1e4559c87b3b2c6e639dc8af20a1497c57d4f354d7ae876f919c6f2a0"
+    },
+    {
+      "filename": "E02_conditional_support.csv",
+      "experiment": "E02",
+      "size_bytes": 556,
+      "sha256": "89c47432af074dae30565d506ed6da87f5221be3d16b2df37222c0e47b495b52"
+    },
+    {
+      "filename": "E02_fixed_elapsed_rr_features.parquet",
+      "experiment": "E02",
+      "size_bytes": 382474,
+      "sha256": "79fad20f18bffe3c9d613c7af8c6af41fb78856e2dbdf89afa7f678b6376d071"
+    },
+    {
+      "filename": "E02_ventricular_trajectory_models.csv",
+      "experiment": "E02",
+      "size_bytes": 863,
+      "sha256": "aa5eab8823b114f88d1a9a065c11d51a8d48e696d5539043c7a47fbfb750343a"
+    },
+    {
+      "filename": "E02_within_patient_effects.csv",
+      "experiment": "E02",
+      "size_bytes": 364,
+      "sha256": "e629c51781f294ed7ba0cbf8938785f731f1bb699b303dd43cf5485d2d066a62"
+    },
+    {
+      "filename": "E02_between_patient_effects.csv",
+      "experiment": "E02",
+      "size_bytes": 364,
+      "sha256": "7e38d5650da84ecb834c5f928b77e7aee7e339889772ed1c63c101040c726686"
+    },
+    {
+      "filename": "E02_survival_risk_sets.csv",
+      "experiment": "E02",
+      "size_bytes": 315,
+      "sha256": "fa04c34570690314ed77ece9a263cabad97847ccee2f1e4bf980d639c23fc914"
+    },
+    {
+      "filename": "E02_subsequent_episode_models.csv",
+      "experiment": "E02",
+      "size_bytes": 2817,
+      "sha256": "b4ae7bd46907e9906395775ee3efbe5f7e8e8bd1edccf98ff96a5201e8f6b166"
+    },
+    {
+      "filename": "E02_nested_model_comparisons.csv",
+      "experiment": "E02",
+      "size_bytes": 347,
+      "sha256": "3b843c6ca1b024e10298b880a6245680598a76a33f5b0d2022dd33e0b2721719"
+    }
+  ]
+}

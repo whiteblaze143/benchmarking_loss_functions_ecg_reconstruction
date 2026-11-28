@@ -1,0 +1,29 @@
+# Study Summary for Dr. Christopher Cheung — Temporal AF Density Reliability
+
+## The Clinical Question
+Ambulatory ECG monitors and implantable loop recorders report cumulative **AF burden** (the percentage of monitored time spent in atrial fibrillation), yet two patients with the same 50% burden can have completely different episode patterns: one continuous episode versus dozens of brief paroxysms. Two metrics were proposed to measure how episodes cluster over time:
+- **Charitos AF density** (ranging from $0$ for evenly scattered episodes to $1$ for a single consolidated block), which divides an episode-concentration score (**AF aggregation**) by the non-AF time remaining ($1 - \text{burden}$), and
+- **Longest-episode proportion** (the fraction of total AF time occupied by the single longest AF episode).
+
+**Core question:** *Even when cumulative AF burden is measured accurately on ambulatory ECG, can AF density and episode continuity be measured reliably—and what causes them to break down?*
+
+---
+
+## Three Findings Across 329 Holter Patients
+We analyzed multi-hour Holter ECG recordings from three clinical databases (`349` recordings across `329` patients, typically `~24` hours each). In the **`182` recordings with full ECG waveforms** (`177` patients: **`148` with both AF and non-AF rhythm**, **`22` entirely in sinus rhythm**, and **`12` entirely in AF**), we tested how segment-based ECG reporting and an automated single-lead R-R interval AF detector measure density and episode continuity. In **`19` high-burden patients ($\ge 80\%$ AF)** who had non-AF breaks annotated during the **first `12` hours of monitoring**, we examined every short break (`<10` seconds):
+
+1. **Mathematical Instability Near Persistent AF ($1 / (1 - \text{burden})$ Scaling):**
+   Charitos density divides episode concentration (**AF aggregation**) by the non-AF fraction ($1 - \text{burden}$). As AF burden approaches `100%`, that denominator approaches zero. As a result, merging or reclassifying just a few seconds of brief breaks barely moves AF burden, yet amplifies changes in Charitos density by $1 / (1 - \text{burden})$—up to **`500`-fold** at **`99.8%` burden**. Dropping that denominator (unnormalized **AF aggregation**) prevents the blow-up near `100%` AF, but only because the metric shrinks toward zero and stops separating fragmented AF from one continuous episode at high burden.
+
+2. **Loss of Density Under Binary Yes/No Segment Reporting & Automated R-R Detector Errors:**
+   Instead of marking exact beat-by-beat AF start and stop times, ambulatory monitors and Holter software commonly divide the recording into consecutive time segments (`10 s`, `30 s`, `1 min`, `5 min`, `15 min`, or `60 min`) and assign each segment a **binary yes/no label** ("AF" whenever AF occupies $\ge 50\%$ of that segment, otherwise "not AF"). Even with **zero detection errors** inside any segment, binary yes/no labeling wipes out short non-AF pauses that happen to sit inside AF-predominant segments. That makes mixed recordings appear as `100%` AF with no breaks left, rendering Charitos density mathematically undefined in **`7.4%` (`11/148`)** of mixed recordings using `10`-second segments and **`41.9%` (`62/148`)** using `60`-minute segments. Simply keeping the **exact percentage of AF time inside each segment**—rather than collapsing the segment to yes/no—keeps density measurable in **`100%` (`148/148`)** of recordings across all segment lengths (`10-s` mean error `0.00001` vs. `0.01038`).
+
+   Separately, we tested an externally trained **automated single-lead AF detector** (automated QRS detection followed by `60-beat` R-R interval irregularity classification). On **`34` uniform recordings** with no true rhythm switches, the detector created false transitions in **`67.6%` (`23/34`)**—calling false AF episodes in **`16/22`** continuous sinus recordings and inserting false non-AF breaks in **`7/12`** continuous-AF recordings. Even among recordings where this automated detector matched reference AF burden and Charitos density within `±0.01`, **`32.4%–40.6%`** still had a **`>0.15` error in longest-episode proportion** because spurious or missed short breaks split sustained episodes apart.
+
+3. **Brief Ventricular Arrhythmias and Bradycardic Pauses Drive Low Density at High Burden:**
+   During the first `12` hours of recording in **`19` patients with $\ge 80\%$ AF burden** whose database labels still showed non-AF breaks, annotations contained **`1,078` breaks shorter than `10` seconds**. Rather than sustained sinus rhythm, most of these brief breaks were labeled as **ventricular tachycardia**, **idioventricular rhythm**, **ventricular bigeminy/trigeminy**, or **brief sinus bradycardia**. When ventricular runs and short bradycardic pauses (`<60` s) were treated as rhythm-uncertain rather than confirmed AF terminations, **`16` of `19` recordings (median `11.8` s excluded)** were left with zero confirmed non-AF intervals. In one patient with `10` such brief breaks totaling `21.6` s over `12` hours, checking every AF vs. non-AF combination across those `10` segments (`2^10 = 1,024` possibilities) kept AF burden tightly between **`99.95%` and `100.00%`**, yet allowed Charitos density to fall anywhere from **`0.1637` to `0.9682`—or undefined**.
+
+---
+
+## Why Your Blinded ECG Review Is Needed
+Original Holter database tags cannot prove whether the atria actually converted out of AF during these `<10`-second breaks, or whether ventricular ectopy, wide-complex runs, or slow beats masked ongoing AF. Your blinded review of **`58` target strips** (**`19` primary cases** [one per patient], **`39` additional cases**, plus **`8` clear AF or sinus controls**) provides the clinical reading needed to tell whether atrial fibrillation truly terminated during these short breaks.

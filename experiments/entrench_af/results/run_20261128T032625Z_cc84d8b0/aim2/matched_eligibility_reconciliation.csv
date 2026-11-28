@@ -1,0 +1,5 @@
+cohort,n_runs_in_eligible_windows,n_excluded_unknown_onset,n_matched_known_onset_runs,n_matched_complete_terminations,n_matched_right_censored,balance_diff,git_hash,definitions_hash,run_timestamp
+IRIDIA,265,0,265,265,0,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+SHDB,538,0,538,538,0,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+LTAFDB,1361,0,1361,1361,0,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z
+POOLED,2164,0,2164,2164,0,0,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T03:38:35Z

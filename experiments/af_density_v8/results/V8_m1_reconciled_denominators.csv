@@ -1,0 +1,7 @@
+horizon_h,dataset,e03_1st_rec_pts_eligible,e03_1st_rec_af_plus,e03_1st_rec_dens_defined,e01_any_rec_dens_defined_pts,discrepancy_count,discrepant_patient_ids
+12.0,IRIDIA-AF,152,88,87,89,2,patient_056;patient_109
+12.0,LTAFDB,82,76,59,59,0,
+12.0,SHDB-AF,92,57,52,52,0,
+24.0,IRIDIA-AF,57,33,33,35,2,patient_082;patient_109
+24.0,LTAFDB,33,33,27,27,0,
+24.0,SHDB-AF,7,7,7,7,0,

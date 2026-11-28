@@ -1,0 +1,3 @@
+model,n_rows,n_events,n_censored,oof_c_index,unadjusted_density_3h_c_index,density_3h_hr,density_3h_p
+S2_Core3h_CoxPH,4196,4075,121,0.7025,0.6895,0.3424,0.0
+S3a_Core3h_PlusDens_CoxPH,4196,4075,121,0.7082,0.6895,0.3424,0.0

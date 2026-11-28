@@ -1,0 +1,16 @@
+{
+  "af_hours_rel_err_pct": 0.0032321066230049404,
+  "definitions_hash": "6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3",
+  "git_hash": "cc84d8b0",
+  "max_sample_diff": 0,
+  "n_annotated_records": 349,
+  "n_intervals": 56772,
+  "rhythm_counts": {
+    "AF": 8540,
+    "nonAF": 47886,
+    "unknown": 346
+  },
+  "run_timestamp": "2026-11-26T19:32:04Z",
+  "target_af_hours": 3095.225,
+  "total_af_hours": 3095.325040972222
+}

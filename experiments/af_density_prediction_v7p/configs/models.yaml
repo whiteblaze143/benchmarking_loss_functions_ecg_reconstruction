@@ -1,0 +1,83 @@
+# Model registry for V7-P Predictive Framework
+tiers:
+  tier_a:
+    empirical_prevalence:
+      type: "baseline"
+      class: "EmpiricalPrevalenceBaseline"
+      description: "Training-fold prevalence predictor"
+    elapsed_duration_survival:
+      type: "baseline"
+      class: "ElapsedDurationSurvivalBaseline"
+      description: "Kaplan-Meier S(t+h)/S(t) conditional survival baseline"
+    elastic_net_logistic:
+      type: "linear"
+      class: "ElasticNetLogisticRegression"
+      description: "L1/L2 penalized regularized logistic regression"
+      hyperparameters:
+        l1_ratio: [0.1, 0.5, 0.7, 0.9]
+        C: [0.01, 0.1, 1.0, 10.0]
+    gam:
+      type: "additive"
+      class: "LogisticGAM"
+      description: "Generalized Additive Model with penalized splines"
+      hyperparameters:
+        n_splines: [5, 10]
+        lam: [0.1, 1.0, 10.0]
+    ebm:
+      type: "explainable_boosting"
+      class: "ExplainableBoostingClassifier"
+      description: "InterpretML Explainable Boosting Machine"
+      hyperparameters:
+        max_bins: 128
+        interactions: 0
+
+  tier_b:
+    linear_svm:
+      type: "kernel"
+      class: "LinearSVC"
+      description: "L2-regularized linear support vector classifier"
+      hyperparameters:
+        C: [0.01, 0.1, 1.0]
+    rbf_svm:
+      type: "kernel"
+      class: "SVC_RBF"
+      description: "Support vector classifier with radial basis function"
+      hyperparameters:
+        C: [0.1, 1.0, 10.0]
+        gamma: ["scale", "auto"]
+    decision_tree:
+      type: "tree"
+      class: "DecisionTreeClassifier"
+      description: "Shallow CART decision tree benchmark"
+      hyperparameters:
+        max_depth: [3, 5]
+        min_samples_leaf: [10, 20]
+    gbdt_lightgbm:
+      type: "ensemble"
+      class: "LGBMClassifier"
+      description: "LightGBM gradient boosted decision tree"
+      hyperparameters:
+        max_depth: [3, 5]
+        num_leaves: [15, 31]
+        learning_rate: [0.05, 0.1]
+        n_estimators: [50, 100]
+    gbdt_xgboost:
+      type: "ensemble"
+      class: "XGBClassifier"
+      description: "XGBoost gradient boosted decision tree"
+      hyperparameters:
+        max_depth: [3, 5]
+        learning_rate: [0.05, 0.1]
+        n_estimators: [50, 100]
+
+  tier_c:
+    cox_proportional_hazards:
+      type: "survival"
+      class: "CoxPHFitter"
+      description: "Semi-parametric Cox proportional hazards model"
+      penalizer: 0.1
+    weibull_aft:
+      type: "survival"
+      class: "WeibullAFTFitter"
+      description: "Parametric Weibull accelerated failure time model"
+      penalizer: 0.1

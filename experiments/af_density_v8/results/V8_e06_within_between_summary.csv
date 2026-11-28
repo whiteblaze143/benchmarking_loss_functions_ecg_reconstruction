@@ -1,0 +1,7 @@
+task,model,pooled_s2m_auroc,pooled_s3am_auroc,causal_pt_propensity_only_auroc,n_both_outcome_pts,med_pos_per_eq_pt,med_neg_per_eq_pt,within_pt_s2m_auroc,within_pt_s3am_auroc,within_pt_causal_prop_auroc
+P01_CleanAnnotated,logistic,0.6014,0.6114,0.7623,195,6.0,238.0,0.7623,0.7805,0.6337
+P01_CleanAnnotated,lgbm,0.5845,0.5814,0.7623,195,6.0,238.0,0.6214,0.6193,0.6337
+P02_Persistence60s,logistic,0.8874,0.8886,0.8295,91,2.0,4.0,0.4789,0.4974,0.187
+P02_Persistence60s,lgbm,0.8692,0.8706,0.8295,91,2.0,4.0,0.5245,0.495,0.187
+P03_Survival15m,logistic,0.8812,0.8817,0.8419,101,5.0,6.0,0.5812,0.5856,0.4006
+P03_Survival15m,lgbm,0.8603,0.8583,0.8419,101,5.0,6.0,0.5954,0.5819,0.4006

@@ -1,0 +1,5 @@
+dataset,population,total_episodes,total_patients,episodes_with_valid_density,patients_with_valid_density,patients_with_ge_2_episodes,patients_with_density_range_ge_0_05,patients_with_density_range_ge_0_10,mean_within_patient_density_std
+IRIDIA-AF,Population_B_Primary_H6_1050s,201,115,62,34,16,10,10,0.12436245561027712
+LTAFDB,Population_B_Primary_H6_1050s,168,44,166,42,26,22,20,0.16226491919977126
+SHDB-AF,Population_B_Primary_H6_1050s,82,40,66,29,10,9,9,0.15548717759138875
+ALL,Population_B_Primary_H6_1050s,451,199,294,105,52,41,39,0.14929921086293027

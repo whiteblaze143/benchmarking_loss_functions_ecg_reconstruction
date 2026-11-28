@@ -1,0 +1,7 @@
+{
+  "n_train_windows": 2624,
+  "n_val_windows": 864,
+  "iridia_val_auroc": 0.9886,
+  "iridia_val_bal_acc": 0.9513,
+  "chosen_threshold": 0.77
+}

@@ -1,0 +1,121 @@
+{
+  "audit_version": "V7-R",
+  "cv_protocol": "5-fold patient-disjoint cross-validation; zero inner hyperparam search for fixed canonical models; logistic C=1.0 max_iter=500; lgbm n_estimators=100 lr=0.05 num_leaves=31 seed=42",
+  "calibration_policy": "Unmodified CV out-of-fold probabilities evaluated directly for AUROC, AUPRC, Brier, and clinical threshold sweep",
+  "bootstrap_protocol": "Patient-clustered paired bootstrap B=2,000 replicates; exact two-sided Monte Carlo p-value with +1/(B+1) resolution floor (min_attainable_p = 2/2001 = 0.0009995)",
+  "tasks": {
+    "P01_CleanAnnotated": {
+      "horizon_s": 1800.0,
+      "target": "target_sustained_30m",
+      "ascertainment": "Initiation of >=30m AF episode in [t0, t0+1800s] strictly inside annotated known-rhythm non-AF landmarks (removed 8,126 unannotated SHDB + 221 UNKNOWN LTAFDB rows)"
+    },
+    "P02_Persistence60s": {
+      "horizon_s": 1800.0,
+      "target": "target_persists_30m",
+      "ascertainment": "Landmark at t=60s after AF onset for episodes with duration >=60s; outcome = eventual total_duration_s >= 1800s; future duration strictly excluded from predictors"
+    },
+    "P03_Survival15m": {
+      "horizon_s": 900.0,
+      "target": "target_terminate_in_15m",
+      "ascertainment": "Landmark at t in {60s, 300s, 900s} during ongoing AF; outcome = episode terminates within (t, t+900s]"
+    },
+    "P04_NoiseHolter": {
+      "horizon_s": 10.0,
+      "target": "af_present",
+      "ascertainment": "10s annotated excerpt classification across Clean, N1, N2 quality strata (n=6,130)"
+    }
+  },
+  "canonical_feature_sets": {
+    "S0_Baseline": [
+      "time_since_rec_start_s",
+      "elapsed_af_duration_s"
+    ],
+    "S1_Burden": [
+      "S0 + last_af_duration_s, time_since_last_af_s, has_prior_af, af_burden_{15m,30m,1h,3h,6h}"
+    ],
+    "S2_Architecture": [
+      "S1 + {episode_count, longest_af_run, brief_run_count}_{15m,30m,1h,3h,6h}"
+    ],
+    "S3a_Arch_Plus_DensityOnly": [
+      "S2 + charitos_density_{15m,30m,1h,3h,6h} + is_density_defined_3h"
+    ],
+    "S3b_Arch_Plus_AggrOnly": [
+      "S2 + af_aggregation_{15m,30m,1h,3h,6h} + is_density_defined_3h"
+    ],
+    "S3c_Arch_Plus_Dens_Aggr": [
+      "S2 + charitos_density + af_aggregation + is_density_defined_3h"
+    ],
+    "S4_CleanRR_NoCohortShortcut": [
+      "S3c + {mean_hr_bpm, std_hr_bpm, rmssd_ms, cvrr, pnn50} evaluated strictly within LTAFDB+SHDB valid-RR subset without is_rr_valid"
+    ]
+  },
+  "manifest_sha256": {
+    "P01_raw": "d78a447183996f39265e498fcc13522a813d7524214dce136c651ff2acefffe7",
+    "P02": "3e4bafbace50da5694f44a9c907911d131c02493e5944260735475cd35f3ca99",
+    "P03": "7979cf6716d4f937b5388a6815eb76addf4c249c941c7ab8c2a4588e59ce34b4",
+    "P04": "8e716c6ea3d66b6082a71a69691844f7fa843b1779f76853c9e13c5521396b31",
+    "V7R_recording_inventory": "9302a99be8852b43a1f7686c83082359a89aa4f724276a5851b2367184370cf4"
+  },
+  "checkpoint_sha256": {
+    "CSFM": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/external/Cardiac-Sensing-FM/pretrained/CSFM_tiny.pth",
+      "adapter_key": "CSFM",
+      "sha256": "25b5c2886e506c2fee211fdc0a6799a05f9c8dc78be3fff711838061d1dd27bb"
+    },
+    "CLEF": {
+      "path": "/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/foundation_model_comparison/candidate_weights/clef/clef_medium.ckpt",
+      "adapter_key": "CLEF",
+      "sha256": "51aa5ca6a0d98393ee6ce5acbb24e2c376d79fa8747892ecaf6a0fef61a01917"
+    },
+    "ECGFOUNDER": {
+      "path": "experiments/af_density_prediction_v7p/checkpoints/1_lead_ECGFounder.pth",
+      "adapter_key": "ECGFOUNDER",
+      "sha256": "f863a38897fb49a27fec7e44008ea3c7bdbd29c77fa4a02ecbb8c56df4f37603"
+    },
+    "ECGFM_KED": {
+      "path": "/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/foundation_model_comparison/candidate_weights/ecgfm_ked/best_valid_all_increase_with_augment_epoch_3.pt",
+      "adapter_key": "KED",
+      "sha256": "c348b52eb90dd3874501eed156dfcc06c65197bd0ebcb4314550d68920a95fc3"
+    },
+    "ECHONEXT": {
+      "path": "/home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/external/IntroECG/7-EchoNext Minimodel/models/echonext_multilabel_minimodel/weights.pt",
+      "adapter_key": "ECHONEXT",
+      "sha256": "aac57aad0ec9763021c6264e89c74e3d78f8b711159b1880e5bd4515d5e21cd6"
+    },
+    "DINOSR": {
+      "path": "/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/foundation_model_comparison/candidate_sources/ecg_pretraining_strategies/checkpoints/dinosr_e10.ckpt",
+      "adapter_key": "DINOSR",
+      "sha256": "7a0499e2c6ea691b04933a7002e0f2d0ead55f26cb6a45974067d35c77ef1a1b"
+    },
+    "JEPA": {
+      "path": "/data/mithunmanivannan/codex_artifacts/ptbxl_distributional_repecg/foundation_model_comparison/candidate_sources/ecg_pretraining_strategies/checkpoints/jepa_e10.ckpt",
+      "adapter_key": "JEPA",
+      "sha256": "7acb9dc4f68626112ee2a6c51c09483f7b69635ca1d30a4e9cbeb043599b422a"
+    },
+    "NEFCORE": {
+      "path": "/data/mithunmanivannan/nef-net-aim/02_nef_core/pretrained/nefcore_full.pt",
+      "adapter_key": "NEFCORE",
+      "sha256": "d5d9197e2f3d58a711e2b8ad198f8766650591d8cdf4963d6a532127d31ef054"
+    },
+    "F2": {
+      "path": "/data/mithunmanivannan/codex_artifacts/temporal_setoperator_fm_20261120/artifacts/F2/pilot_final.pt",
+      "adapter_key": "F2",
+      "sha256": "2d5974eac44aa6904f3fe4dc684a19329b283c3759a1ffe23703d2adbc334e0e"
+    },
+    "F0": {
+      "path": "/data/mithunmanivannan/codex_artifacts/temporal_setoperator_fm_20261120/artifacts/F0/pilot_final.pt",
+      "adapter_key": "F0",
+      "sha256": "47bfb526784b260fdcc40415d039b7e26374cd9cdd672a87a1aa024f3de91773"
+    },
+    "G1": {
+      "path": "/data/mithunmanivannan/codex_artifacts/echonext_geometry_setoperator_v1/runs/g1_seed42/best_model.pt",
+      "adapter_key": "G1",
+      "sha256": "48bd5f11880f86ed5ddaaa8a77bc92c25e029359bbbae91263f5fca8b66808e7"
+    },
+    "CONTROL": {
+      "path": "/data/mithunmanivannan/codex_artifacts/echonext_geometry_setoperator_v1/runs/control_capacity_seed42/best_model.pt",
+      "adapter_key": "CAPACITY",
+      "sha256": "6a12ef815363f7d4a9b1ae83a3018a8193f352872d296884112e7ae365e674cf"
+    }
+  }
+}

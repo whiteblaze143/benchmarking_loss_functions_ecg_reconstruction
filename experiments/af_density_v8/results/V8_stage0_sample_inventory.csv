@@ -1,0 +1,5 @@
+dataset,raw_recordings,annotated_recordings,unique_patients_raw,unique_patients_annotated,raw_h,known_h,unknown_h,raw_minus_known_plus_unknown_h,max_sample_discrepancy,af_known_h,known_non_af_h
+IRIDIA-AF,167,167,152,152,6690.476,6687.051,3.425,0.0,0,1608.3916,5078.6594
+LTAFDB,84,84,84,84,1960.6,1934.9233,25.6767,-0.0,0,1030.8932,904.0301
+SHDB-AF,128,98,122,93,3050.3769,2330.4926,719.8843,0.0,0,455.9402,1874.5524
+COMBINED,379,349,358,329,11701.4529,10952.4669,748.986,-0.0,0,3095.225,7857.2419

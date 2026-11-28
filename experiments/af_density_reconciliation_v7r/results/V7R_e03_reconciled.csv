@@ -1,0 +1,17 @@
+cohort_subset,outcome,echo_latency_window,n_patients,m2_burden_r2,m3a_plus_density_r2,partial_r2_density,effect_per_0_10_density,boot_ci95_low,boot_ci95_high,ols_p_value,excludes_zero
+PAF_MultiRun_PatientDedup,Echo_LAD,<=30d,13,0.4132,0.4276,0.0144,0.5777,-3.3585,5.6991,0.6657,False
+PAF_AllDefinedDensity_PatientDedup,Echo_LAD,<=30d,26,0.267,0.279,0.012,0.6071,-1.3186,4.3429,0.5613,False
+PAF_MultiRun_PatientDedup,Echo_LAD,<=90d,17,0.2389,0.2423,0.0034,0.188,-2.298,2.2701,0.8208,False
+PAF_AllDefinedDensity_PatientDedup,Echo_LAD,<=90d,31,0.2447,0.2563,0.0116,0.5132,-0.873,2.4368,0.53,False
+PAF_MultiRun_PatientDedup,Echo_LAD,<=180d,19,0.2094,0.2129,0.0035,0.1955,-1.9011,2.8303,0.8069,False
+PAF_AllDefinedDensity_PatientDedup,Echo_LAD,<=180d,33,0.2375,0.2474,0.01,0.4802,-0.8026,2.4555,0.5473,False
+PAF_MultiRun_PatientDedup,Echo_LAD,Unrestricted,28,0.0308,0.046,0.0152,-0.3832,-1.8587,1.3907,0.5504,False
+PAF_AllDefinedDensity_PatientDedup,Echo_LAD,Unrestricted,50,0.1106,0.1107,0.0001,-0.0459,-1.1867,1.4682,0.9347,False
+PAF_MultiRun_PatientDedup,Echo_LVEF,<=30d,13,0.1357,0.3911,0.2554,3.9641,-1.5297,19.0897,0.1044,False
+PAF_AllDefinedDensity_PatientDedup,Echo_LVEF,<=30d,26,0.1758,0.1948,0.019,-1.0839,-7.5994,2.7535,0.4897,False
+PAF_MultiRun_PatientDedup,Echo_LVEF,<=90d,17,0.1547,0.1548,0.0,-0.0199,-2.9138,6.0469,0.9898,False
+PAF_AllDefinedDensity_PatientDedup,Echo_LVEF,<=90d,31,0.2126,0.2567,0.0441,-1.4603,-3.6601,0.5594,0.2255,False
+PAF_MultiRun_PatientDedup,Echo_LVEF,<=180d,19,0.108,0.1144,0.0063,-0.6084,-4.5985,6.6504,0.7566,False
+PAF_AllDefinedDensity_PatientDedup,Echo_LVEF,<=180d,33,0.1071,0.163,0.0559,-1.8253,-4.0718,0.2796,0.1825,False
+PAF_MultiRun_PatientDedup,Echo_LVEF,Unrestricted,28,0.0988,0.1316,0.0328,-0.9314,-2.5256,1.7016,0.361,False
+PAF_AllDefinedDensity_PatientDedup,Echo_LVEF,Unrestricted,50,0.1202,0.1404,0.0202,-0.8417,-1.845,0.712,0.3092,False

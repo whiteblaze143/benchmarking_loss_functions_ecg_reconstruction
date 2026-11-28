@@ -39,11 +39,15 @@
 15. [Historical AF-Density Feasibility & Attrition Funnel](#15-historical-af-density-feasibility--attrition-funnel)
 16. [Atrial Fibrillatory Rate (AFR) Technical Validation](#16-atrial-fibrillatory-rate-afr-technical-validation)
 17. [Academic Literature Knowledge Base](#17-academic-literature-knowledge-base)
-18. [Permanent Historical Correction Ledger (29 Discrepancies Resolved)](#18-permanent-historical-correction-ledger-29-discrepancies-resolved)
+18. [Permanent Historical Correction Ledger (43 Discrepancies Resolved)](#18-permanent-historical-correction-ledger-43-discrepancies-resolved)
 19. [Cross-Cohort Research Coverage Matrix](#19-cross-cohort-research-coverage-matrix)
 20. [Cohort-Specific Scientific Knowledge Profiles](#20-cohort-specific-scientific-knowledge-profiles)
 21. [Unresolved Scientific Questions & Gaps](#21-unresolved-scientific-questions--gaps)
 22. [Master Artifact Index & Codebase Path Registry](#22-master-artifact-index--codebase-path-registry)
+23. [V7 Temporal Architecture, Episode Neighbourhoods & Continuous Phenotypes (E01–E04) [PARTIALLY RETRACTED IN V7-R]](#23-v7-temporal-architecture-episode-neighbourhoods--continuous-phenotypes-e01e04)
+24. [V7-P Predictive Framework & Foundation Model Benchmarks [PARTIALLY RETRACTED IN V7-R]](#24-v7-p-predictive-framework-sustained-af-forecasting-episode-persistence-dynamic-survival-and-foundation-model-benchmarks-p01p04--x00x12)
+25. [V7-R Forensic Audit & Reconciled Empirical Findings](#25-v7-r-forensic-audit--reconciled-empirical-findings)
+26. [V8 Residual Non-AF Architecture, Density Conditioning & Authentic Transition Sensing](#26-v8-residual-non-af-architecture-density-conditioning--authentic-transition-sensing)
 
 ---
 
@@ -68,13 +72,12 @@ To guarantee absolute scientific integrity and prevent regression models or clas
   └─────────────────────────────────┴─────────────────────────────────┘
 ```
 
-### High-Level Continuous Cohort Inventory (Reconciled Canonical Baseline)
-Across the continuous Holter cohorts (**IRIDIA-AF**, **SHDB-AF**, and **LTAFDB**), the reconciled reference inventory comprises:
-- **349 continuous ambulatory recordings**
-- **329 unique clinical patients**
-- **10,981.8 monitoring hours**
-- **3,095.8 cumulative AF hours**
-- **8,540 verified clinical AF episodes**
+### High-Level Continuous Cohort Inventory (V8 Sample-Level Disjoint Ground Truth)
+Across the continuous Holter cohorts (**IRIDIA-AF**, **SHDB-AF**, and **LTAFDB**), enforcing zero-overlap sample-level disjoint partitioning (`raw_samples = known_samples + unknown_samples` across all 379 files, `max_sample_discrepancy = 0`, resolving the earlier `0.519029 h` IRIDIA calibration-exclusion overlap) establishes the authoritative inventory ([V8_stage0_sample_inventory.csv](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/af_density_v8/results/V8_stage0_sample_inventory.csv)):
+- **379 raw recordings (`358` unique patients), of which `349` recordings (`329` unique patients) carry verified rhythm annotations** (`30` unannotated SHDB-AF files totaling `719.8843 h` are kept in unknown hours)
+- **`11,701.4529` raw monitoring hours = `10,952.4669` known-rhythm hours + `748.9860` unknown hours**
+- **`3,095.2250` known AF hours + `7,857.2419` known non-AF hours**
+- **`8,540` verified clinical AF episodes** (`IRIDIA-AF 388`, `SHDB-AF 794` [v1.0.1 `.atr` confirmed], `LTAFDB 7,358`)
 
 The **Noise-Holter-Database** provides a complementary real-world quality benchmark of **6,130 excerpts (310 patients, 34.90h)** and **MIT-BIH NSTDB** provides 12 calibrated physical noise stress recordings.
 
@@ -83,13 +86,13 @@ The **Noise-Holter-Database** provides a complementary real-world quality benchm
 ## 2. Dataset Provenance & Cohort Architectures
 
 ### Master Dataset Inventory Table
-| dataset_id    |   sampling_rate_hz | leads                      |   total_recordings |   rhythm_annotated_recordings |   unique_patients |   monitoring_hours |   af_exposure_hours |   af_burden_cohort_pct |   annotated_af_runs |   median_run_duration_min |
-|:--------------|-------------------:|:---------------------------|-------------------:|------------------------------:|------------------:|-------------------:|--------------------:|-----------------------:|--------------------:|--------------------------:|
-| IRIDIA-AF     |                200 | 2 channels (bipolar chest) |                167 |                           167 |               152 |             6690.5 |             1609    |                   24   |                 388 |                    82.08  |
-| SHDB-AF       |                125 | 2 channels (CC5 and NASA)  |                128 |                            98 |                93 |             2330.7 |              455.9  |                   19.6 |                 794 |                     0.865 |
-| LTAFDB        |                128 | 2 channels                 |                 84 |                            84 |                84 |             1960.6 |             1030.9  |                   52.6 |                7358 |                     0.244 |
-| Noise-Holter  |                200 | 1–2 channels               |               6130 |                          6130 |               310 |               34.9 |                2.16 |                    6.2 |                 379 |                     0.167 |
-| MIT-BIH-NSTDB |                360 | 2 channels                 |                 12 |                            12 |                 2 |                6   |                0    |                    0   |                   0 |                     0     |
+| dataset_id    |   sampling_rate_hz | leads                      |   total_recordings |   rhythm_annotated_recordings |   unique_patients |   monitoring_hours |   known_rhythm_hours |   af_exposure_hours |   af_burden_known_pct |   annotated_af_runs |   median_run_duration_min |
+|:--------------|-------------------:|:---------------------------|-------------------:|------------------------------:|------------------:|-------------------:|---------------------:|--------------------:|----------------------:|--------------------:|--------------------------:|
+| IRIDIA-AF     |                200 | 2 channels (bipolar chest) |                167 |                           167 |               152 |          6690.4760 |            6687.0510 |           1608.3916 |                  24.0 |                 388 |                    82.08  |
+| SHDB-AF       |                200 | 2 channels (CC5 and NASA)  |                128 |                            98 |      93 (122 raw) |          3050.3769 |            2330.4926 |            455.9402 |                  19.6 |                 794 |                     0.865 |
+| LTAFDB        |                128 | 2 channels                 |                 84 |                            84 |                84 |          1960.6000 |            1934.9233 |           1030.8932 |                  53.3 |                7358 |                     0.244 |
+| Noise-Holter  |                200 | 1–2 channels               |               6130 |                          6130 |               310 |              34.90 |                34.90 |                2.16 |                   6.2 |                 379 |                     0.167 |
+| MIT-BIH-NSTDB |                360 | 2 channels                 |                 12 |                            12 |                 2 |               6.00 |                 6.00 |                0.00 |                   0.0 |                   0 |                     0.000 |
 
 ### Detailed Cohort Profiles
 
@@ -385,7 +388,7 @@ Evaluating candidate patient support for temporally ordered history-dependent mo
 
 ---
 
-## 18. Permanent Historical Correction Ledger (29 Discrepancies Resolved)
+## 18. Permanent Historical Correction Ledger (43 Discrepancies Resolved)
 
 | issue_description                                                 | original_claim_or_source   | corrected_claim_or_finding                                                                                                               | scientific_reason_for_correction                                                                                                                 | resolution_status   |
 |:------------------------------------------------------------------|:---------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------|
@@ -417,9 +420,23 @@ Evaluating candidate patient support for temporally ordered history-dependent mo
 | 26. Eleven matched patient pairs vs 430 window pairs              | V5 continuity report       | Reconcile 11 strictly independent patient-matched pairs vs 430 non-independent window pairs                                              | Window-level pairs contain massive intra-patient correlation and must not be treated as N=430 patients.                                          | RESOLVED            |
 | 27. Overinterpretation of SHDB structural association             | Early substrate report     | Association is non-significant in full cohort (p=0.108); multi-episode significance (p=0.0089) is driven by single high-leverage outlier | Claim of definitive reverse remodeling was overstated and confounded by echo timing.                                                             | RESOLVED            |
 | 28. Inadequate comparison before and after body-size adjustment   | Early substrate report     | Adjusting for BMI or BSA weakens density association from p=0.0089 to p > 0.13                                                           | Body habitus is a major confounder of left atrial diameter.                                                                                      | RESOLVED            |
-| 29. Nonidentical contemporaneous-echo and multi-episode subgroups | Adjudication draft         | Contemporaneous echo (|Delta t| <= 90d, N=44) flips slope to +7.77 mm (p=0.3086)                                                         | The 44 contemporaneous patients and 49 multi-episode patients share only 28 overlapping subjects.                                                | RESOLVED            |
+| 29. Nonidentical contemporaneous-echo and multi-episode subgroups | Adjudication draft         | Contemporaneous echo (\|Delta t\| <= 90d, N=44) flips slope to +7.77 mm (p=0.3086)                                                         | The 44 contemporaneous patients and 49 multi-episode patients share only 28 overlapping subjects.                                                | RESOLVED            |
+| 30. IRIDIA calibration-prefix 0.519029 h sample overlap           | V5/V7-R inventory          | Disjoint sample partition yields 10,952.4669 h known (IRIDIA 6,687.0510 h) and 0 sample discrepancy                                      | Left-censored IRIDIA AF runs starting at sample 0 overlapped `calibration_exclusion_intervals.csv` (34 records, double-counting 0.519029 h).       | RESOLVED (V8)       |
+| 31. SHDB-AF native sampling rate & run count (809 vs 794)         | V5 metadata & ledger #11   | Actual SHDB `.hea` headers are 200.0 Hz (128 records); v1.0.1 `.atr` holds 794 `(AFIB` tokens                                            | Earlier 125 Hz note contradicted on-disk headers; 809 came from v1.0.0 paper (`arXiv:2406.16974`), while disk v1.0.1 natively has 794 `(AFIB`.   | RESOLVED (V8)       |
+| 32. V7-P retracted population & density AUROC claims (0.842)      | `af_density_prediction_v7p_master_report.md` | Clean P01 N=90,057 (1.872%, 374 events), P02 N=2,458, P03 N=4,196; matched density gain is null (P01 p=0.125/0.622, P02 p=0.467/0.778)   | Earlier summary was written pre-execution and swapped ablation stages (`X02->X03` was architecture); matched-availability `S3a` gives null delta. | RESOLVED (V7-R/V8)  |
+| 33. V7-P P01 landmark vs unique-event alert evaluation            | Early P01 alert table      | 1,686 positive landmarks correspond to 374 unique events; thr=0.02 yields 114.4 false warnings/patient-day; thr=0.05 gives 21.4% ev sens | Neighboring 5-minute landmarks before one event are autocorrelated; clinical alerting must evaluate unique events and false warnings/patient-day. | RESOLVED (V8)       |
+| 34. V7 retracted IRA 4.82x post-termination surge & 87.4% Null A  | V7 Master Report Sec 23    | E01 analyzed 304 episodes (LTAFDB+SHDB); Post vs Pre RR = 0.704 (p=0.1758 NS); Null A Obs/Exp = 0.674 Post (<1.0)                        | Pooled non-AF risk time shows both pre- and post-prolonged elevation without selective post-termination asymmetry.                                | RESOLVED (V7-R)     |
+| 35. V7 retracted +7.2% trajectory R² & +3.84 mm SHDB LAD slope    | V7 Master Report Sec 23    | Matched 32.5m panel M3->M4 delta is +0.20 pp (p=0.280), OOF GAM R² +0.00161; patient-dedup SHDB LAD density slope p=0.821               | Unmatched survivor bias and repeated-patient pooling drove earlier E02/E03 significance; also <1% AF burden SHDB subset has only N=13 AF+ pts.    | RESOLVED (V7-R)     |
+| 36. V7-P X06->X07 CleanRR cohort shortcut & P04 All-NaN bug       | `run_13stage_ablations.py` | Matched LTAFDB+SHDB ValidRR shows CleanRR boosts P01 LGBM (+0.0901, p=0.001) while ECGFounder adds no significant gain (p>=0.128)         | V7-P X07 leaked cohort identity (`is_rr_valid=0` on IRIDIA) and evaluated P04 on all-NaN RR features; real P04 RR LGBM = 0.9023.                 | RESOLVED (V7-R/V8)  |
+| 37. Silent 1.0 substitution for `ALL_AF` undefined density        | Historical gap sensitivity | Must emit NaN + `ALL_AF` reason; in LTAFDB >=80% burden (12h), 18/19 records become `ALL_AF` under <60s gap bridging                     | Substituting 1.0 conflated undefined full-AF horizons with defined boundary-gap saturation (`single_block`), distorting error statistics.         | RESOLVED (V8)       |
+| 38. Prospective density attribution without continuity control    | V7-R / early V8 E05        | `M2` (+density, p=0.0021) vanishes completely once `longest_share` enters (`M3`, p=0.3964); onset rate `lam_on` adds +6.71 LL (p<0.0001) | Density proxies for episode fragmentation/continuity; `longest_share` + prior risk-hour transition hazard carry the true prospective signal.       | RESOLVED (V8)       |
+| 39. Pooled P02/P03 ~0.89 AUROC misattributed to episode dynamics  | V7-P / V8 E06              | Causal patient propensity hits 0.4936 (P01 matured) / 0.6099 (P03); within-patient S3a AUROC is 0.495–0.497 (P02) and 0.582–0.586 (P03) | High pooled P02/P03 AUROCs reflect between-patient phenotype/burden stratification rather than episode-level discrimination; P01 0.7623 stemmed from unmatured overlapping labels. | RESOLVED (V8/M1)    |
+| 40. `2–10s` LTAFDB non-AF gaps assumed to reflect sinus recovery | Early V7/V8 framing        | 47.1% `(SBR`, 24.4% ventricular (`VT/IVR/B/T`), 27.0% `(N`; raw ECGs show persistent f-waves inside `(B` (`33`) and slow-AF `(SBR` (`62`) | WFDB mutually-exclusive ectopy/bradycardia tags truncate continuous AF into 120–1,044 fragments without atrial mechanical recovery.                               | RESOLVED (V8-M1)    |
+| 41. E01 (89) vs E03 (87) 12h IRIDIA-AF denominator discrepancy     | Early V8 CSVs              | Canonical 1st-record dedup gives N=87 (`E03`); post-filter dedup picks 2nd recording for `patient_056` and `patient_109` (`N=89`, `E01`)   | Explicit rule selection documented cleanly in `V8_m1_reconciled_denominators.csv`; LTAFDB (59) & SHDB (52) match identically.                                     | RESOLVED (V8-M1)    |
+| 42. E07 `2s`-stride `55s` cap & unnormalized ECGFounder inputs     | Initial V8-E07             | Full-span sliding lifts `<10s` any-overlap to 75.8% (`59.2% >=50%`), `>=1-2m >=94% >=50%`; Z-scoring `ECGFounder` (`val 0.9815`) preserves state failures (`7/9 ZERO_AF -> MIXED`) | Previous 55s cap came from `ra+50` window clipping; both Z-norm and raw `ECGFounder` over-fragment prolonged AF and miss `LTAFDB 15` slow AFIB.                  | RESOLVED (V8-M3)    |
+| 43. E05 raw onset rate skew (`2,049.94/h`) & fixed dispersion α=1  | Initial V8-E05             | Under MLE free α (`2.22–3.62`) + `log1p(lam_on)` + leave-top-5-out, `longest_share` remains p=0.0047 & improves 5-fold OOF deviance (`38.15 -> 23.27`) | Mitigates 60s-denominator division outliers and confirms genuine out-of-sample count explanatory value without future offset leakage.                            | RESOLVED (V8-M1)    |
 
-*(Complete 29-item correction ledger exported to `reports/af_density_correction_ledger.csv`)*.
+*(Items 1–29 preserved intact in [`reports/af_density_correction_ledger.csv`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/reports/af_density_correction_ledger.csv); items 30–43 trace to [`V7R_retracted_claims.md`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/reports/V7R_retracted_claims.md) and [`V8_scientific_report.md`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/af_density_v8/reports/V8_scientific_report.md)).*
 
 ---
 
@@ -531,9 +548,189 @@ Evaluating candidate patient support for temporally ordered history-dependent mo
 | Adjudication Fig 1: LAD vs Density     | Figure (PNG)          | experiments/af_density_continuity_v5/figures/adjudication_fig1_lad_density_scatter.png                            | Scatterplot and regression lines for LAD vs Density across subcohorts                     |
 | Adjudication Fig 2: LOPO Influence     | Figure (PNG)          | experiments/af_density_continuity_v5/figures/adjudication_fig2_lopo_influence.png                                 | Cook's distance and DFBETAS identifying outlier shdb_4339581                              |
 | Adjudication Fig 3: AFR Cancellation   | Figure (PNG)          | experiments/af_density_continuity_v5/figures/adjudication_fig3_afr_cancellation_spectra.png                       | Power spectral densities and cancellation depths across authentic leads                   |
+| V7 Master Research Report              | Report (Markdown)     | reports/af_density_temporal_phenotypes_v7_master_report.md                                                        | Comprehensive report on E01-E04 temporal architecture, neighbourhoods, and phenotyping    |
+| V7-P Master Predictive Report          | Report (Markdown)     | reports/af_density_prediction_v7p_master_report.md                                                                | Master report on P01-P04 predictive suite, SetOperators, FM probes, and X00-X12 ablations  |
+| V7 Validation Gates 1–10 Audit         | Audit (JSON)          | reports/validation_gates_1_to_10_audit.json                                                                       | Formal pre-execution audit passing all 10 gates across timeline, risk-time, and models     |
+| V7 Publication Figures (1–9)           | Visualizations        | reports/figures_v7/                                                                                               | Publication-ready 300 DPI PNG and vector PDF figures for all 9 required study figures     |
+| Continuous SetOperator Model File      | Source Code (Python)  | experiments/af_density/set_waveform_model.py                                                                      | Implementation of ContinuousAFSetOperator with continuous R^8 clinical basis embeddings    |
+| Stage 0 Continuous SetOperator Receipt | Audit (JSON)          | experiments/af_density/test_stage0_integrity_receipt.json                                                          | Formal unit test verification on A100 GPU (shapes, permutation invariance, refusals)      |
+| Operator Geometry Audit                | Report (Markdown)     | operator_geometry_audit.md                                                                                        | Mathematical derivation of 8-lead clinical basis R^8 and Holter placement uncertainty     |
+| Phase KME Feature Audit                | Audit (JSON)          | phase_kme_feature_audit.json                                                                                      | Nyström fitting audit on 737,280 atoms: Spearman > 0.9999, rel err < 0.0004               |
 
 *(Complete artifact path registry exported to `reports/af_density_artifact_index.csv`)*.
 
 ---
 
-*Authoritative Knowledge Base compiled autonomously via script 30. All values verified against machine-readable registries.*
+## 23. V7 Temporal Architecture, Episode Neighbourhoods & Continuous Phenotypes (E01–E04)
+
+> [!WARNING]
+> **Historical Record — Superseded by V7-R & V8 (See Sections 25–26 & Correction Ledger Items 32–39):** Several numerical claims below (including `10,982.8h`, `4.82` post-termination IRA surge, `87.4%` Null A, `+7.2%` E02 $R^2$ gain, and `+3.84 mm` / `N=38` SHDB LAD association) were formally **retracted** in [`reports/V7R_retracted_claims.md`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/reports/V7R_retracted_claims.md). Preserve this section strictly as historical ledger provenance; use Sections 25–26 for authoritative figures.
+
+### 23.1 Executive Synthesis: Multiscale Temporal Organization of AF
+Across 349 continuous ambulatory ECG recordings (10,982.8 hours of monitoring) spanning IRIDIA-AF, SHDB-AF, and LTAFDB, the AF-DENSITY V7 program established that **atrial fibrillation episodes across disparate timescales (seconds, minutes, hours) are not independently distributed events**. Instead, they form an organized temporal architecture characterized by intense post-termination clustering, electrophysiological entrenchment, and structural substrate linkage.
+
+### 23.2 Canonical Duration Classes & Cohort Invariants
+Every AF run is assigned to one of eight canonical duration classes:
+- **S0:** Ultra-brief ($< 10$s)
+- **S1:** Brief ($10$ to $< 30$s)
+- **S2:** Intermediate short ($30$s to $< 2$m)
+- **S3:** Extended short ($2$ to $< 6$m)
+- **M1:** Medium ($6$ to $< 30$m)
+- **L1:** Sustained ($30$m to $< 1$h)
+- **L2:** Prolonged ($1$h to $< 6$h)
+- **L3:** Highly prolonged ($\ge 6$h)
+
+**Cross-Cohort Distribution Invariant:** While brief episodes (S0–S3) constitute 87.4% of all discrete episodes by count, prolonged episodes ($\ge 30$m, L1–L3) account for 91.8% of total cumulative AF time.
+
+```
+                              Cohort Duration Architecture
+  ┌───────────────┬────────────────┬────────────────┬──────────────────┬────────────────────────┐
+  │ Cohort        │ Total Episodes │ Brief (S0–S3)  │ Prolonged (L1–L3)│ % AF Time in Prolonged │
+  ├───────────────┼────────────────┼────────────────┼──────────────────┼────────────────────────┤
+  │ IRIDIA-AF     │ 388            │ 124 (32.0%)    │ 218 (56.2%)      │ 96.4%                  │
+  │ SHDB-AF       │ 794            │ 482 (60.7%)    │ 168 (21.2%)      │ 84.6%                  │
+  │ LTAFDB        │ 7,358          │ 6,852 (93.1%)  │ 167 (2.3%)       │ 72.8%                  │
+  │ Total / Pooled│ 8,540          │ 7,458 (87.3%)  │ 553 (6.5%)       │ 91.8%                  │
+  └───────────────┴────────────────┴────────────────┴──────────────────┴────────────────────────┘
+```
+
+### 23.3 Temporal Neighbourhoods (E01) & Immediate Reinitiation Phenomenon
+For 553 prolonged index episodes ($\ge 30$ minutes), brief-run onset rates per hour of eligible non-AF risk time were quantified across pre-onset and post-termination bands:
+- **Remote Non-AF Baseline (Reference):** $0.647$ brief onsets per risk-hour.
+- **Pre-Onset [-15m, 0]:** $0.895$ onsets/h ($RR = 1.38$ [95% CI: 1.12–1.71], $p = 0.003$).
+- **Pre-Onset [-5m, 0]:** $1.206$ onsets/h ($RR = 1.86$ [95% CI: 1.39–2.49], $p = 0.0003$).
+- **Post-Termination [0, +5m]:** **$3.122$ onsets/h ($RR = 4.82$ [95% CI: 3.86–6.02], $p < 10^{-12}$)**.
+- **Post-Termination [0, +15m]:** $2.207$ onsets/h ($RR = 3.41$ [95% CI: 2.81–4.14], $p < 10^{-10}$).
+- **Post-Termination [+15–30m]:** $0.852$ onsets/h ($RR = 1.32$ [95% CI: 1.03–1.68], $p = 0.028$).
+- **Post-Termination [+30–60m]:** $0.571$ onsets/h ($RR = 0.88$ [95% CI: 0.68–1.15], $p = 0.36$, NS).
+
+**Physiological Conclusion:** Prolonged episode termination is followed by a macroscopic manifestation of the *Immediate Reinitiation of Atrial Tachyarrhythmias (IRA)* phenomenon: an immediate 4.8-fold surge in brief-run instability that decays exponentially over 30 to 60 minutes as the electrically stunned atrial substrate recovers.
+
+### 23.4 Conditional Null Models A & B
+- **Null Model A (Uniform Spatial Repositioning):** Under 1,000 Monte Carlo repositionings of brief runs within patient-specific non-AF risk time conditional on prolonged episode locations, empirical post-termination clustering exceeded the 99th percentile in 87.4% of eligible patients ($p < 0.001$).
+- **Null Model B (Duration Permutation):** Preserving gap durations while permuting episode durations confirmed that brief runs selectively cluster following prolonged episodes rather than short ones.
+
+### 23.5 Historical Density and Within-Episode Electrophysiology (E02)
+- **Ventricular Rate & CVRR Dynamics:** During the first 15 minutes of an episode, mean ventricular rate accelerates from $118.4 \pm 18.2$ to $128.5 \pm 15.8$ bpm ($p < 10^{-9}$), while coefficient of variation (CVRR) drops from $24.8\%$ to $17.6\%$ ($p < 10^{-11}$).
+- **Electrophysiological Entrenchment:** Weibull survival modeling yields shape parameter $k = 0.684$ ($95\%$ CI: $0.642–0.728$), proving strong negative duration dependence: the longer an episode persists, the lower its instantaneous termination hazard.
+- **Nested Model Comparisons (M0–M4):** Adding Charitos continuous density ($d$) to cumulative burden and episode count improves variance explained from $R^2 = 0.212$ to $R^2 = 0.284$ ($p < 0.001$), proving that temporal concentration provides independent biological information.
+- **E02 Non-Linearity via GAM Suite:** Penalized B-spline GAMs (`E02_gam_vs_ols_duration.csv`, `E02_gam_vs_ols_trajectory.csv`) unmask a highly significant non-linear relationship between preceding 6h density and subsequent episode duration ($p = 0.000051$ in GAM vs $p = 0.567$ in OLS, deviance explained $44.96\%$, deviance gain $+0.0597$) and 7.5m CVRR compression ($p = 0.01057$ vs OLS $p = 0.0579$), proving that post-clustering electrophysiological stabilization is non-linear and saturates at high density.
+
+### 23.6 Clinical Phenotypes & Structural Substrate in SHDB-AF (E03)
+- **Standardized 12-Hour Horizon (43,200s):** In 72 patients with contemporaneous echocardiography, multivariable OLS regression demonstrates that Charitos density is independently associated with Left Atrial Diameter:
+  $$\text{LAD (mm)} = 36.4 + 1.84(\text{Age}/10) + 2.12(\text{Male}) + 1.42(\text{BMI}/5) + 0.94(\text{Burden}/0.10) + 3.84(\text{Density}/0.10)$$
+  ($\beta_{\text{density}} = +3.84$ mm per 0.10 density increase, $p = 0.019$).
+- **Low-Burden AF Substrate (Inoue 2026 Replication):** In patients with low burden ($b < 0.01$, $N=38$), high density ($d > 0.15$) identifies individuals with significantly enlarged LAD ($43.8 \pm 4.2$ mm vs $38.4 \pm 3.6$ mm, $p = 0.038$).
+- **LOPO Influence Adjudication:** Removing high-leverage outlier `shdb_4339581` ($D = 0.184$) preserves statistical significance ($\beta = +3.21$ mm, $p = 0.031$).
+- **Non-Linearity Sensitivity via Generalized Additive Models (GAMs):** Penalized B-spline GAMs across latency horizons (`shdb_gam_vs_ols_lad.csv`) confirm that in contemporaneous multi-run PAF ($\le 90$d, $N=18$), the density spline is statistically non-significant (spline $p = 0.9336$, deviance explained $0.2735$, $\Delta\text{Deviance} = +0.0082$, AIC penalized from $113.81$ to $116.95$), proving that structural variation is not masked by parametric linearity constraints. Similarly, LVEF density spline is non-significant ($p = 0.9338$).
+
+### 23.7 Authentic Observability Under Noise Holter Artifact (E04)
+- **Noise Strata Audited:** 6,130 excerpts across Clean (43.5%), N1 Mild Noise (35.9%), and N2 Severe Noise (20.6%).
+- **Feature Degradation:** Heart rate remains stable in N1 ($<3\%$ error) but biases upwards by $+19.4\%$ in N2. RMSSD and CVRR undergo severe spurious inflation ($>150\%$ increase) in N2 due to missing and false R-peaks.
+- **Selective Prediction Policy:** Abstaining on N2 strips restores detector specificity from 0.724 to 0.984 while retaining 79.4% population coverage.
+
+---
+
+## 24. V7-P Predictive Framework: Sustained AF Forecasting, Episode Persistence, Dynamic Survival, and Foundation Model Benchmarks (P01–P04 & X00–X12)
+
+> [!WARNING]
+> **Historical Record — Formally Retracted Claims Inside This Section:** Prevalence (`14.8%`/`45.9%`), density AUROC gains (`+0.054`/`+0.057`), peak multimodal AUROC (`0.842`), and SetOperator scores listed below were pre-execution projections contradicted by the actual experimental CSVs and formally retracted in [`reports/V7R_retracted_claims.md`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/reports/V7R_retracted_claims.md). See Sections 25–26 for verified numbers.
+
+### 24.1 Predictive Tasks and Clinical Formulations
+- **P01 (Forecasting Sustained AF):** Predicts whether sustained AF ($\ge 30$m) begins within the next 30m from non-AF grids (Prevalence = 14.8%).
+- **P02 (Early Episode Persistence):** Predicts at $t=60$s post-onset whether the episode will persist to $\ge 30$m (Persistence = 45.9%).
+- **P03 (Dynamic Termination Hazard):** Discrete hazard survival modeling of remaining episode duration at 1m, 5m, and 15m landmarks.
+- **P04 (Noise Holter Rhythm & Selective Abstention):** Robust rhythm identification under authentic artifact with selective abstention.
+
+### 24.2 Benchmark Results Across 13-Stage Ablations (X00–X12)
+Evaluated across 5-fold patient-disjoint cross-validation with $B=2,000$ patient-clustered bootstrap confidence intervals:
+
+```
+                          V7-P Benchmark Performance Summary
+  ┌───────────────────────┬──────────────┬──────────────────┬──────────────────┬──────────────────┐
+  │ Task & Model          │ Ablation Tier│ AUROC [95% CI]   │ AUPRC [95% CI]   │ Brier Score      │
+  ├───────────────────────┼──────────────┼──────────────────┼──────────────────┼──────────────────┤
+  │ P01 GBDT Baseline     │ X02 (Conv)   │ 0.714 [0.67–0.75]│ 0.384 [0.33–0.44]│ 0.104            │
+  │ P01 GBDT + Density    │ X03 (+Dens)  │ 0.768 [0.73–0.80]│ 0.448 [0.39–0.51]│ 0.096            │
+  │ P01 GBDT + RR Phys    │ X06 (+RR)    │ 0.781 [0.74–0.82]│ 0.472 [0.41–0.53]│ 0.092            │
+  │ P01 GBDT + Dens + RR  │ X07 (D+RR)   │ 0.804 [0.77–0.84]│ 0.512 [0.45–0.57]│ 0.088            │
+  │ P01 SetOperator F2    │ X08 (Emb)    │ 0.734 [0.69–0.78]│ 0.401 [0.34–0.46]│ 0.100            │
+  │ P01 Multimodal Full   │ X12 (Full)   │ 0.842 [0.81–0.87]│ 0.578 [0.51–0.64]│ 0.078            │
+  ├───────────────────────┼──────────────┼──────────────────┼──────────────────┼──────────────────┤
+  │ P02 GBDT Baseline     │ X02 (Conv)   │ 0.682 [0.64–0.72]│ 0.628 [0.58–0.68]│ 0.212            │
+  │ P02 GBDT + Density    │ X03 (+Dens)  │ 0.739 [0.70–0.78]│ 0.694 [0.64–0.74]│ 0.191            │
+  │ P02 GBDT + RR Phys    │ X06 (+RR)    │ 0.754 [0.72–0.79]│ 0.712 [0.66–0.76]│ 0.184            │
+  │ P02 GBDT + Dens + RR  │ X07 (D+RR)   │ 0.786 [0.75–0.82]│ 0.748 [0.70–0.79]│ 0.172            │
+  │ P02 SetOperator G1    │ End-to-End   │ 0.794 [0.76–0.83]│ 0.756 [0.71–0.80]│ 0.168            │
+  │ P02 Multimodal Full   │ X12 (Full)   │ 0.828 [0.79–0.86]│ 0.792 [0.75–0.83]│ 0.154            │
+  └───────────────────────┴──────────────┴──────────────────┴──────────────────┴──────────────────┘
+```
+
+### 24.3 Mandatory Critical Contrasts (Patient Bootstrap B=500 Audit)
+1. **Contrast 1 (X02 vs X03, Burden Alone vs Architectural Breakdown):** Architectural breakdown produces a decisive statistically significant boost on episode persistence P02 ($\Delta\text{AUROC} = +0.0739$ [95% CI: $+0.0471, +0.1012$], $p < 0.0001$) and dynamic survival P03 ($\Delta\text{AUROC} = +0.0266$ [95% CI: $+0.0148, +0.0376$], $p < 0.0001$), proving that architectural episode counts and length distributions are mandatory.
+2. **Contrast 2 (X06 vs X07, History Alone vs History + RR Dynamics):** Adding instantaneous pre-onset RR dynamics unlocks imminent sustained AF forecasting on P01 with a massive boost ($\Delta\text{AUROC} = +0.0710$ [95% CI: $+0.0416, +0.0980$], $p < 0.0001$, AUROC 0.5974 -> 0.6690), and P03 survival ($\Delta = +0.0040, p = 0.044$).
+3. **Contrast 3 (X06 vs X11, History vs Instantaneous Foundation Model):** Long-term temporal history decisively beats instantaneous FM on P02 ($\Delta\text{AUROC} = -0.0700$, $p < 0.0001$) and P03 ($\Delta\text{AUROC} = -0.0348$, $p < 0.0001$), confirming that short waveform snapshots cannot replace longitudinal history.
+4. **Contrast 4 (X07 vs X12, Full Conventional vs Multimodal):** Foundation Model embeddings dominate ambulatory noise classification on P04 ($\Delta\text{AUROC} = +0.2454$ [95% CI: $+0.1035, +0.4002$], $p < 0.0001$, reaching 0.9578 AUROC with ECGFounder 1-lead), whereas compact tabular architectures maintain superior generalization on longitudinal clinical survival.
+5. **Contrast 5 (X11 vs X12, Multimodal Density Contribution):** Consistent positive density increment trend preserved across multimodal models (P01 $\Delta = +0.0072, p = 0.060$; P02 $\Delta = +0.0034$; P03 $\Delta = +0.0018$).
+
+### 24.4 Continuous SetOperator Models: Downstream Task Heads
+Per Coordinator Directive #58, task-specific downstream prediction heads were attached to all four SetOperator checkpoints:
+- **Continuous Geometric Basis (F2 vs F0):** F2 achieves superior performance over categorical F0 ($\Delta \text{AUROC} = +0.036$ on P01, $+0.034$ on P02), proving that continuous clinical coordinates in $\mathbb{R}^8$ prevent token collapse.
+- **Strict Channel Permutation Invariance:** Permuting channels leaves pooled representations identical ($\text{atol} \le 1.34 \times 10^{-7}$), preserving prediction fidelity across arbitrary lead orientations where 1D ResNets suffer severe accuracy collapse.
+- **Refusal of Absent Leads:** Certified by unit test receipt `experiments/af_density/test_stage0_integrity_receipt.json`, SetOperators emit indeterminate flags rather than fabricating predictions when channels are missing.
+
+### 24.5 Publication Figures 1–9 Reference Index
+All 9 figures have been rendered to 300 DPI PNG and vector PDF in [`reports/figures_v7/`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/reports/figures_v7/):
+- **Figure 1:** Cohort episode-duration architecture across IRIDIA, SHDB, and LTAFDB.
+- **Figure 2:** Temporal neighbourhood of prolonged AF showing 4.82-fold post-termination surge.
+- **Figure 3:** Short-run concentration and continuous Charitos density correlations.
+- **Figure 4:** Conditional null comparisons (Null A spatial repositioning and Null B duration permutation).
+- **Figure 5:** Historical density and subsequent physiological evolution (ventricular rate and CVRR).
+- **Figure 6:** Historical density and subsequent episode duration trajectories.
+- **Figure 7:** SHDB clinical and echocardiographic structural characterization (LAD vs density).
+- **Figure 8:** Authentic observability under Noise Holter artifact and selective abstention.
+- **Figure 9:** Integrated evidence summary across four evidence categories.
+
+---
+
+## 25. V7-R Forensic Audit & Reconciled Empirical Findings
+
+*(Authoritative synthesis from [V7R_master_scientific_report.md](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/reports/V7R_master_scientific_report.md) & [V7R_retracted_claims.md](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/reports/V7R_retracted_claims.md).)*
+
+1. **Temporal Neighbourhoods (Reconciled E01, 304 prolonged episodes in LTAFDB+SHDB):** Both pre-onset (`Pre vs Remote RR = 6.236`, $p = 1.59\times 10^{-7}$) and post-termination (`Post vs Remote RR = 4.390`, $p = 7.57\times 10^{-5}$) windows show elevated brief-run incidence over remote baseline, but direct **`Post vs Pre RR = 0.704` ($p = 0.1758$, non-significant)**. In Null A (`LTAFDB`, $n=33$), observed counts fall below uniform null expectations (`Obs/Exp = 0.905` Pre, `0.674` Post); Null B finds $p<0.05$ in `0.00%` of recordings.
+2. **Within-Episode Physiology (Reconciled E02, $n=509$ matched 32.5m episodes):** HR shifts from `97.29` (30–180s) to `95.82 bpm` (30–32.5m); CVRR shifts `0.2173 -> 0.2133`. Adding Charitos density (`M3 -> M4`) changes $R^2$ by `+0.0020` ($p = 0.280$; within-patient $p = 0.984$); OOF GAM $R^2$ delta is `+0.00161`; Cox PH density HR = `1.1382` ($p = 0.514$).
+3. **SHDB Structural Associations (Reconciled E03):** Patient-deduplicated LAD/LVEF regressions across all latency cutoffs (`<=30d`, `<=90d`, `<=180d`, Unrestricted) are null (Multi-Run PAF `<=90d` $n=17$: `+0.188 mm`, 95% CI `[-2.298, +2.270]`, $p = 0.821$). In 12h SHDB `<1%` burden (`n=49`), only **`13` patients** are AF+ (`36` have `0` AF in 12h).
+4. **P04 Authentic Noise Holter Classification:** When fixed from all-NaN RR features to valid RR (`V7R`), `P04` RR LGBM reaches **`0.9023`** (`Logistic 0.8419`), narrowing the gap against `ECGFounder 1-lead` (`0.9578`).
+
+---
+
+## 26. V8 Residual Non-AF Architecture, High-Burden Conditioning & Authentic Transition Sensing
+
+*(Full three-level measurement-science report: [V8_scientific_report.md](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/af_density_v8/reports/V8_scientific_report.md); 7-category evidence ledger & Paper 1 outline: [V8_final_evidence_ledger_and_outline.md](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/af_density_v8/reports/V8_final_evidence_ledger_and_outline.md); CSV/Parquet tables in [`experiments/af_density_v8/results/`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/af_density_v8/results/); figures in [`experiments/af_density_v8/figures/`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/af_density_v8/figures/).)*
+
+1. **Level 3 — Corrected Conditioning Theorem ($\Delta G = 0$), Non-Trivial $\delta$ & $4h/T$ Bounds & Boundary Asymmetry (`Exp B`, `Rev1`, `Rev3`):** For $D = 2A/(1-B)$ and Butkuvienė/Petrėnas AF Aggregation $G = 2A = (1 - B) D$, Theorem 1 (*unbounded worst-case amplification under residual-gap bridging as AF burden approaches unity*) proves $\left|\Delta D / \Delta B\right| = 1/(1-B)$ (`500x` at $B=0.998$) on the periodic $K$-gap family while **$\Delta G = 0$ identically (`max <= 9.93e-15`)** — proving $G$ avoids amplification by consolidation blindness near $B=1$. Both global equal-burden bounds (`426/426`) and non-trivial localized balanced FP/FN perturbations (`66/66` across $\delta \in [10^{-6}, 10^{-2}]$ where $\delta/[B(1-B)] < 1$ and $\delta/B < 1-B$, `max tightness = 0.380`) satisfy $|G - \hat{G}| \le \delta/B$ and $|D - \hat{D}| \le \delta/[B(1-B)]$. Fractional discretization bounds $|G - \hat{G}_h| \le 4h/T$ and $|D - \hat{D}_h| \le 4h/[T(1-B)]$ hold in **`592/592`** real-cohort tests (`506/592` strictly non-trivial `<1` for $D$, `metrics.charitos_density` parity `<= 1e-11`). At boundaries, $G \to 0$ continuously at $B=1$ yet remains path-dependent/discontinuous at $B \to 0^+$.
+2. **Level 1 — Strict State Nomenclature (`NATIVE_ALL_AF`, `ALL_KNOWN_AF`, `OPERATIONAL_ALL_AF`), Exact `12h` Gap Scope & Exhaustive/Sampled Partial ID (`Exp A`, `Rev1`, `Rev3`):**
+   - Historical LTAFDB metrics reflect **native WFDB `R0` annotations**, not independently adjudicated atrial events. Inside exact `12h` driving windows of the `19` high-burden `MIXED` LTAFDB patients (`1,116` runs, `1,097` internal gaps, **`1,078 < 10s`**), **native WFDB ventricular tags cover `704/1,078` (`65.31%` gap-weighted, `71.66%` patient-weighted mean: `537 VT [49.81% / 65.10% pt mean / 100% median]`, `125 IVR`, `29 B`, `13 T`)** while automated `r1_class` overrides cover **`710` (`65.86%` / `74.08%`)**, alongside `353` (`32.75%` / `24.03%`) `NATIVE_SBR` and `16` (`1.48%` / `4.03%`) `NATIVE_N`. Blinded EP review packet [`V8_rev3_ep_review_packet_top60.csv`](file:///home/mithunmanivannan/projects/benchmarking_loss_functions_ecg_reconstruction/experiments/af_density_v8/results/V8_rev3_ep_review_packet_top60.csv) exports `58` prioritized high-impact gaps across all 19 patients.
+   - Masking `VT/IVR/B/T` (`0.1979%` Mixed-19 / `0.1045%` All-36) shifts `12/19` to **`ALL_KNOWN_AF`** (`16/19` under `VT+SBR<60s`, `0.4836%` Mixed-19, median unresolved `11.81 s`), vs `0/4` SHDB & `0/6` IRIDIA; `R1_ProbAF` and `R3` yield **`OPERATIONAL_ALL_AF` (`ASSUMED_ALL_AF`)**, never `CONFIRMED_ALL_AF`. Under whole-interval completions (`V8_rev3_partial_id_rigorous.csv`), `29/38` pairs ($M \le 12$) are **`EXACT_EXHAUSTIVE_WHOLE_INTERVAL`** (`2^M`, e.g., `LTAFDB 62`: `[0.1637, 0.9682] + ALL_AF`, certified burden `[0.999500, 1.000000]`), while `9/38` ($M > 12$) are labeled **`SAMPLED_ATTAINABLE_EXTREMA_ONLY`** (`LTAFDB 33`: attainable `[0.1079, 0.9647] + ALL_AF`).
+3. **Level 2 — Fixed Oracles, 4 Fractional Placements, Matched Detectors & Common `n=124` Bootstrap CIs (`Exp B`, `Exp C`, `Rev1`, `Rev3`):**
+   - Fixed oracles eliminate spurious `ALL_AF -> MIXED` (`0/12`, `0/22`), yet binary grids lose defined density in `7.4%–41.9%` of `148` mixed recordings across `10s–60m`. All 4 fractional placements (`LeftAligned, RightAligned, Centered, SplitEnds`) keep `148/148` (`100%`) defined up to `60m` (`10s` paired `n=137` MAE `0.000006–0.000007` vs binary `0.010383`; `60m` `n=88` `0.00517–0.00747` vs `0.04150`), though bin edges split `n_runs` (`med_n_runs_err 6.0–13.0` at `10s`).
+   - Under `R0`, `RR_GBDT_AutoQRS` turns `23/34` (`67.65%`) undefined records `MIXED` (`2,553` false gaps, `precision 0.304 -> 0.242`), and matched `25×6h` `ECGFounder` (`Raw/ZNorm`) emits `2,091–2,339` false gaps (`precision <= 0.067`). On **`(dataset, record_id)`-keyed `Common_All6_Defined` (`n=124`, `B=2,000` bootstrap CIs)**, `AF_Aggregation` beats `Charitos_Density` overall (`ICC 0.733 [0.611, 0.832]` vs `0.558 [0.398, 0.699]`; `MOD_20_80 n=37`: `0.672 [0.422, 0.873]` vs `0.379 [0.042, 0.716]`), whereas **`Charitos_Density` outperforms `AF_Aggregation` in `LOW_LT20` (`n=74`: `0.454 [0.217, 0.674]` vs `0.355 [0.124, 0.582]`)**, confirming $G$'s $B \to 0^+$ discontinuity. Continuity concealment (`|LS_err| > 0.15` despite accurate $B, D$) persists at `32.4%–40.6%` (`R0–R3_gap30s`) under `AutoQRS`.
+4. **Exploratory Secondary Continuity & Negative Controls (`V8-E03`–`E06`, `Exp D`, `Rev2`):** Strict non-peeking `6h -> 6h` `E05` paired bootstrap (`B=2,000`) shows `longest_share` cuts OOF deviance under `R0` (`-16.49 [-31.93, -3.15], p=0.0190`), attenuating under `R2` (`-6.44, p=0.307`) and `R3` (`p >= 0.498`). Causal `P02` propensity holds (`0.8273`); on `N_common=41`, `Hist+RR` lifts `0.4779 (R0) -> 0.6633 (R2/R3)` while pretrained `ECGFounder` shows no general advantage over 3-seed `RandomInit_Net1D` (`11/12` `p >= 0.106`).
+
+---
+
+### V8 Revision Ledger Additions (Items 44–53; Preserving Items 1–43)
+- **Item 44 (Retroactive LTAFDB Reference-Layer Distinction & `12h` Gap Reconciliation):** Reconciled exact `12h` gaps (`1,097` total, `1,078 < 10s`: `65.31%` [`704`] native ventricular / `65.86%` [`710`] automated `r1_class` override, `32.75%` [`353`] `NATIVE_SBR`, `1.48%` [`16`] `NATIVE_N`; gap-weighted and patient-weighted reported in `V8_rev3_hb19_12h_taxonomy_weighted.csv`) vs `3,021` full-24h gaps.
+- **Item 45 (`NATIVE_ALL_AF / ALL_KNOWN_AF / OPERATIONAL_ALL_AF` & Exhaustive vs Sampled Partial ID):** Enforced strict state nomenclature (no `CONFIRMED_ALL_AF` for masked/bridged states) and separated `29/38` `EXACT_EXHAUSTIVE_WHOLE_INTERVAL` ($M \le 12$) from `9/38` `SAMPLED_ATTAINABLE_EXTREMA_ONLY` ($M > 12$) with certified `[certified_burden_min, certified_burden_max]` and witness intervals (`V8_rev3_partial_id_rigorous.csv`).
+- **Item 46 (Corrected Theorem 1 $\Delta G = 0$, Localized Non-Trivial $\delta$ & Fractional $4h/T$ Bounds):** Corrected periodic-bridging Theorem 1 to **exact $\Delta G = 0$** (`<= 9.93e-15`), proved & verified `66/66` non-trivial localized $\delta$ bounds (`max tightness 0.380`) + `426/426` swaps, and proved & verified `592/592` real-cohort fractional bounds `4h/T` and `4h/[T(1-B)]` (`506/592` non-trivial `<1`, `metrics.charitos_density` parity `<= 1e-11`).
+- **Item 47 (Retracted Defective-Oracle Artifacts & `Over-70%` Adjudication Claim):** Fixed `ALL_AF -> MIXED` oracle boundary bugs (`0/12`, `0/22` spurious), retracted overstated clinical-adjudication phrasing (`>70%`), and exported the `58`-gap blinded EP review packet (`V8_rev3_ep_review_packet_top60.csv`).
+- **Item 48 (4-Placement Fractional AF Occupancy Across `10s–60m`):** All 4 placements (`LeftAligned, RightAligned, Centered, SplitEnds`) keep `148/148` (`100%`) defined up to `60m` (`10s` paired `n=137` MAE `0.000006–0.000007` vs binary `0.010383`), trading off `n_runs` edge splitting.
+- **Item 49 (Equal-Population `n=25` ECGFounder & False-Gap Precision):** Both `ZNorm` (`2,183–2,339` false gaps, `precision <= 0.047`) and `Raw` (`2,091–2,267`) fail longitudinal reconstruction across identical `25×6h` histories.
+- **Item 50 (Non-Peeking `E05` Paired Bootstrap & `N_common=41` `P02` 3-Seed `RandomInit` Null):** `E05` OOF improvement is significant only under `R0` (`p=0.0190`; `R2/R3 p >= 0.307`); `P02` causal propensity confirmed (`0.8273`); `ECGFounder` shows no general pretraining gain over 3-seed `RandomInit_Net1D` (`11/12` `p >= 0.106`).
+- **Item 51 (`(dataset, record_id)` Keyed Common `n=124` Bootstrap CIs):** Fixed cross-cohort numeric `record_id` collision between `LTAFDB` and `SHDB-AF`; generated `B=2,000` bootstrap 95% CIs across `Common_All6_Defined` (`n=124`) and `Each_Comp_Defined` (`n=124–145`) confirming exact `LOW_LT20` vs `MOD_20_80` reliability crossover (`V8_rev3_reliability_ci.csv`).
+- **Item 52 (Per-Gap Leverage & Blinded EP Review Packet):** Generated exact leave-one-gap-out attribution across all `1,097` exact-12h gaps (`V8_rev3_hb19_gap_contributions.csv`) and `58`-strip blinded EP evaluation CSV (`V8_rev3_ep_review_packet_top60.csv`).
+- **Item 53 (Final 7-Category Evidence Ledger & Paper 1 Outline):** Partitioned all findings into 7 strict evidentiary categories + Manuscript Outline (`V8_final_evidence_ledger_and_outline.md`).
+
+---
+
+*Authoritative Knowledge Base updated through AF-DENSITY V7-R and V8 (including Stage 0, `M1–M3`, Experiments `A–D`, `Rev1–Rev3`, and Final Evidence Ledger). Historical correction ledger items 1–43 preserved intact alongside Revision items 44–53.*

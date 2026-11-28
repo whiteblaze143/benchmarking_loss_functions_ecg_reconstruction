@@ -1,0 +1,6 @@
+model,n_pts,oof_poisson_deviance,oof_count_mae,oof_spearman_r,oof_fut_prolonged_auroc
+M1_Burden,116,38.73,19.266,0.4899,0.6439
+M2_Burden_Density,116,38.146,21.68,0.5106,0.643
+M3_M2_Plus_Continuity,116,23.273,15.531,0.5941,0.6164
+M4_M3_Plus_RunCount,116,22.027,15.675,0.5898,0.6209
+M5_Full_LogRate,116,22.504,16.884,0.6072,0.6676

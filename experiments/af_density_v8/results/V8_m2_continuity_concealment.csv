@@ -1,0 +1,9 @@
+comparator,high_burden_ge80,n_both_def,n_ref_def,med_abs_burden_err,med_abs_dens_err,mean_abs_dens_err,med_abs_ls_err,n_accurate_b_and_d_lt0.01_all,n_concealed_ls_gt0.30_all,pct_concealed_ls_gt0.30_all
+Oracle_10sGrid,False,115,115,9e-05,0.0002,0.0036,0.0007,115,3,2.6
+Oracle_10sGrid,True,33,33,8e-05,0.0592,0.166,0.125,115,3,2.6
+Oracle_60BeatRR,False,114,115,0.00033,0.0013,0.0154,0.0082,97,17,17.5
+Oracle_60BeatRR,True,33,33,0.00214,0.3113,0.3086,0.2697,97,17,17.5
+RR_GBDT_AutoQRS,False,114,115,0.00763,0.0556,0.1323,0.1859,32,8,25.0
+RR_GBDT_AutoQRS,True,33,33,0.05598,0.2159,0.2644,0.3157,32,8,25.0
+RR_GBDT_RefBeats,False,115,115,0.00746,0.0393,0.116,0.2078,38,10,26.3
+RR_GBDT_RefBeats,True,33,33,0.08923,0.2454,0.2861,0.3173,38,10,26.3

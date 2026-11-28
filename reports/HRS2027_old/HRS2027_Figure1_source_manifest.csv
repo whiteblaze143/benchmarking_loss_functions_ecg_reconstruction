@@ -1,0 +1,4 @@
+panel,description,source_artifact,verification_summary
+Panel A,"Representative raw WFDB ECG strip (5.16s target + context), unrevealed Case_ID & blinded pre-review",LTAFDB WFDB rec 49 (20045.156-20050.312s) via V8_rev3_ep_review_packet_top60.csv,"128.0 Hz Ch1 physical mV, median DC offset removed only, 25 mm/s x 10 mm/mV"
+Panel B,"LTAFDB record 62 exhaustive 2^10 = 1,024 whole-interval completion space under R2_VT_SBR60_Unknown",experiments/af_density_v8/results/V8_rev3_partial_id_rigorous.csv,"Certified burden [0.999500, 1.000000]; 1,023 MIXED [0.1637, 0.9682] + 1 ALL_AF (undefined); R0 D=0.1655"
+Panel C,Density-defined coverage (%) across 10s-60m for Majority Binary vs Fractional Occupancy Oracles,experiments/af_density_v8/results/V8_rev3_fractional_multiscale_summary.csv,n=148 native mixed multi-hour recordings; Binary 137/148 (92.6%) -> 86/148 (58.1%); Fractional 148/148 (100.0%)

@@ -1,0 +1,2 @@
+n_events,n_sqi_pass,sqi_pass_rate,bsqi_gate,afr_df_in_3_12hz_pct,afr_df_median_hz,vcc_median_pct,git_hash,definitions_hash,run_timestamp
+2346,2178,0.928388746803069,0.75,100.0,4.27,23.28871506138476,cc84d8b0,6cc57e3a858b,2026-11-28T00:32:32Z

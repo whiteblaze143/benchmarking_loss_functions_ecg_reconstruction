@@ -1,0 +1,54 @@
+# Statistical Analysis Plan for V7-P Predictive Framework
+validation:
+  n_folds: 5
+  grouping_variable: "patient_id"
+  patient_disjoint: true
+  bootstrap_replicates: 500
+  confidence_interval_alpha: 0.05
+
+evaluation_metrics:
+  binary_classification:
+    - auroc
+    - auprc
+    - brier_score
+    - brier_skill_score
+    - log_loss
+    - calibration_intercept
+    - calibration_slope
+    - balanced_accuracy
+    - f1_score
+    - sensitivity
+    - specificity
+    - ppv
+    - npv
+  survival:
+    - harrell_c_index
+    - integrated_brier_score
+    - time_dependent_auroc_15m
+  alert_forecasting:
+    - episodes_detected_fraction
+    - median_lead_time_minutes
+    - false_alerts_per_monitoring_hour
+    - alarm_burden_percent_time
+
+feature_ablation_sequence:
+  X00: "F0: Baseline elapsed duration and clinical demographics"
+  X01: "F0 + F1: Recent episode history and gaps"
+  X02: "F0 + F1 + F2: Complete conventional temporal architecture"
+  X03: "X02 + F3: Conventional architecture + Continuous Charitos density"
+  X04: "X02 + Aggregation: Conventional architecture + AF aggregation"
+  X05: "X02 + F3 + Aggregation: Combined density and aggregation"
+  X06: "X02 + F4: Conventional architecture + Conventional RR physiology"
+  X07: "X03 + F4: Architecture + Density + Conventional RR physiology"
+  X08: "F5: Frozen ECG embeddings only"
+  X09: "X02 + F5: Architecture + Frozen embeddings"
+  X10: "X03 + F5: Architecture + Density + Frozen embeddings"
+  X11: "X06 + F5: Architecture + RR physiology + Frozen embeddings"
+  X12: "X07 + F5: Full multimodal fusion (Architecture + Density + RR + Embeddings)"
+
+mandatory_contrasts:
+  - ["X02", "X03", "Does density contribute information beyond conventional history?"]
+  - ["X06", "X07", "Does density contribute beyond history + RR physiology?"]
+  - ["X06", "X11", "Do foundation model embeddings add information beyond RR physiology?"]
+  - ["X07", "X12", "Do foundation models add information beyond full classical representation?"]
+  - ["X11", "X12", "Does density remain useful after foundation model embeddings are included?"]

@@ -1,0 +1,19 @@
+{
+  "paper_id": "ENTRENCH-AF",
+  "observability_level": 2,
+  "artifacts": [
+    {
+      "kind": "repo",
+      "present": true
+    },
+    {
+      "kind": "results",
+      "present": true
+    }
+  ],
+  "repo": {
+    "present": true,
+    "rerunnable": false
+  },
+  "notes": "derived L2 by rule (repo=True, results=True, latex=False, pdf=False)"
+}

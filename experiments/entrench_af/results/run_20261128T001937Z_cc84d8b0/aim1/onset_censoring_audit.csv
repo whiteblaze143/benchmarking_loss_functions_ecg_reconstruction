@@ -1,0 +1,5 @@
+cohort,n_runs_g0_total,n_excluded_unknown_onset,n_analyzed_known_onset,n_complete_terminations,n_right_censored_end,n_patients_analyzed,git_hash,definitions_hash,run_timestamp
+POOLED,4425,88,4337,4266,71,268,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:37:59Z
+IRIDIA,388,24,364,316,48,143,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:37:59Z
+SHDB,751,22,729,729,0,65,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:37:59Z
+LTAFDB,3286,42,3244,3221,23,60,cc84d8b0,6cc57e3a858b7b5f00277abb3ca0299bf8febcb84fc247192e9169ec5c8575a3,2026-11-28T00:37:59Z

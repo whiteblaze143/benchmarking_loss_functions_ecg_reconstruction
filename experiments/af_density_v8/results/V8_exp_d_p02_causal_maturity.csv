@@ -1,0 +1,3 @@
+task,n_rows,n_patients,strict_matured_propensity_auroc
+P02_All,2458,290,0.8273
+P02_ValidRR,2116,147,0.7882
